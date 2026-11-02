@@ -23,7 +23,10 @@ import {
   inlinePausedAgentRunSpec,
   type StoredRunSpec,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-paused-agent-run-spec.util';
-import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-workflow-step-agents.util';
+import {
+  inlineWorkflowStepAgents,
+  type KeptWorkflowStep,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/inline-workflow-step-agents.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
@@ -63,12 +66,11 @@ type StepAgentRoleRow = Required<
 };
 
 type StepAgents = {
-  // the application step agents belong to, which a step without an agent runs under
   workspaceCustomApplicationId: string | null;
   inlineConfigByAgentId: Map<string, StepAgentInlineConfig>;
   labelByAgentId: Map<string, string>;
-  // archived ones, which must keep stopping their steps, and ones whose role's row-level predicates have no scope equivalent
   keptAgentIds: Set<string>;
+  archivedAgentIds: Set<string>;
   // what each inlined agent was when read, so a step is not rewritten from an agent edited since
   snapshots: { id: string; prompt: string; updatedAt: string }[];
 };
@@ -84,15 +86,13 @@ type StoredWakeUpPayload = {
   runSpec: StoredRunSpec;
 };
 
-type ConversationalStepAgentSource = {
+type VisibleStepAgentSource = {
   stepName: string | null;
-  // where the step lives, to name the agent after its workflow
   table: 'coreWorkflowVersion' | 'workflowVersion' | 'workflowRun';
   rowId: string;
 };
 
-// Moves each builder AI step's hidden agent into the step; deleting the agents is a later command.
-// A step with human input or a conversation is an Agent step: it keeps its agent, made visible so that deletion spares it
+// deleting the agents is a later command, which spares the ones made visible here for the steps that keep theirs
 @RegisteredWorkspaceCommand('2.56.0', 1793638670435)
 @Command({
   name: 'upgrade:2-56:inline-workflow-step-agents',
@@ -144,9 +144,9 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       dataSource,
       workspaceId,
     });
-    const conversationalSourceByAgentId = new Map<
+    const visibleAgentSourceByAgentId = new Map<
       string,
-      ConversationalStepAgentSource
+      VisibleStepAgentSource
     >();
     const conversationalRunStepKeys = new Set<string>();
     const inlineSteps = ({
@@ -154,7 +154,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       rowId,
       steps,
     }: {
-      sourceTable: ConversationalStepAgentSource['table'];
+      sourceTable: VisibleStepAgentSource['table'];
       rowId: string;
       steps: StoredWorkflowStep[];
     }) => {
@@ -164,23 +164,34 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         keptAgentIds: stepAgents.keptAgentIds,
       });
 
-      for (const { stepId, stepName, agentId } of result.conversationalSteps) {
-        if (!conversationalSourceByAgentId.has(agentId)) {
-          conversationalSourceByAgentId.set(agentId, {
+      const keepAgentVisible = ({ stepName, agentId }: KeptWorkflowStep) => {
+        if (!visibleAgentSourceByAgentId.has(agentId)) {
+          visibleAgentSourceByAgentId.set(agentId, {
             stepName,
             table: sourceTable,
             rowId,
           });
         }
+      };
+
+      for (const conversationalStep of result.conversationalSteps) {
+        keepAgentVisible(conversationalStep);
 
         if (sourceTable === 'workflowRun') {
-          conversationalRunStepKeys.add(`${rowId}:${stepId}`);
+          conversationalRunStepKeys.add(
+            `${rowId}:${conversationalStep.stepId}`,
+          );
         }
       }
 
-      for (const keptStepId of result.keptStepIds) {
+      for (const keptStep of result.keptSteps) {
+        if (!stepAgents.archivedAgentIds.has(keptStep.agentId)) {
+          keepAgentVisible(keptStep);
+          continue;
+        }
+
         this.logger.warn(
-          `Workspace ${workspaceId}: step ${keptStepId} of ${sourceTable} ${rowId} keeps its agent, which is archived or has a role with row-level predicates a step scope cannot express`,
+          `Workspace ${workspaceId}: step ${keptStep.stepId} of ${sourceTable} ${rowId} keeps its archived agent`,
         );
       }
 
@@ -313,8 +324,8 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
             };
           }
 
-          if (!conversationalSourceByAgentId.has(agentId)) {
-            conversationalSourceByAgentId.set(agentId, {
+          if (!visibleAgentSourceByAgentId.has(agentId)) {
+            visibleAgentSourceByAgentId.set(agentId, {
               stepName: isString(payload.runSpec.title)
                 ? payload.runSpec.title
                 : null,
@@ -327,13 +338,13 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         },
       });
 
-    const visibleAgentCount = await this.makeConversationalStepAgentsVisible({
+    const visibleAgentCount = await this.makeKeptStepAgentsVisible({
       dataSource,
       workspaceId,
       isDryRun,
       workflowTables,
       labelByAgentId: stepAgents.labelByAgentId,
-      conversationalSourceByAgentId,
+      visibleAgentSourceByAgentId,
     });
 
     if (!isDryRun && coreWorkflowVersionCount > 0) {
@@ -349,7 +360,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the agents of ${coreWorkflowVersionCount} core workflow version(s), ${workflowVersionCount} workflow version(s), ${workflowRunCount} workflow run(s) and ${pendingWakeUpCount} paused run(s), and made ${visibleAgentCount} conversational step agent(s) visible`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the agents of ${coreWorkflowVersionCount} core workflow version(s), ${workflowVersionCount} workflow version(s), ${workflowRunCount} workflow run(s) and ${pendingWakeUpCount} paused run(s), and made ${visibleAgentCount} kept step agent(s) visible`,
     );
   }
 
@@ -392,6 +403,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       inlineConfigByAgentId: new Map(),
       labelByAgentId: new Map(),
       keptAgentIds: new Set(),
+      archivedAgentIds: new Set(),
       snapshots: [],
     };
 
@@ -401,6 +413,10 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       const scope = isDefined(agentRow.roleId)
         ? scopeByRoleId.get(agentRow.roleId)
         : null;
+
+      if (!agentRow.isActive) {
+        stepAgents.archivedAgentIds.add(agentRow.id);
+      }
 
       if (!agentRow.isActive || scope === undefined) {
         stepAgents.keptAgentIds.add(agentRow.id);
@@ -425,39 +441,36 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     return stepAgents;
   }
 
-  private async makeConversationalStepAgentsVisible({
+  private async makeKeptStepAgentsVisible({
     dataSource,
     workspaceId,
     isDryRun,
     workflowTables,
     labelByAgentId,
-    conversationalSourceByAgentId,
+    visibleAgentSourceByAgentId,
   }: {
     dataSource: DataSource;
     workspaceId: string;
     isDryRun: boolean;
     workflowTables: WorkflowTables;
     labelByAgentId: ReadonlyMap<string, string>;
-    conversationalSourceByAgentId: ReadonlyMap<
-      string,
-      ConversationalStepAgentSource
-    >;
+    visibleAgentSourceByAgentId: ReadonlyMap<string, VisibleStepAgentSource>;
   }): Promise<number> {
-    if (conversationalSourceByAgentId.size === 0) {
+    if (visibleAgentSourceByAgentId.size === 0) {
       return 0;
     }
 
     if (isDryRun) {
-      return conversationalSourceByAgentId.size;
+      return visibleAgentSourceByAgentId.size;
     }
 
     const workflowNameBySourceKey = await this.findWorkflowNames({
       dataSource,
       workflowTables,
-      sources: [...conversationalSourceByAgentId.values()],
+      sources: [...visibleAgentSourceByAgentId.values()],
     });
 
-    const visibleAgents = [...conversationalSourceByAgentId].map(
+    const visibleAgents = [...visibleAgentSourceByAgentId].map(
       ([agentId, source]) => ({
         id: agentId,
         label: buildConversationalStepAgentLabel({
@@ -488,30 +501,28 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
   }: {
     dataSource: DataSource;
     workflowTables: WorkflowTables;
-    sources: ConversationalStepAgentSource[];
+    sources: VisibleStepAgentSource[];
   }): Promise<Map<string, string | null>> {
-    const queryByTable: Record<
-      ConversationalStepAgentSource['table'],
-      string | null
-    > = {
-      coreWorkflowVersion: `SELECT version.id, workflow.name FROM core."workflowVersion" version
+    const queryByTable: Record<VisibleStepAgentSource['table'], string | null> =
+      {
+        coreWorkflowVersion: `SELECT version.id, workflow.name FROM core."workflowVersion" version
          JOIN core."workflow" workflow ON workflow.id = version."coreWorkflowId"
          WHERE version.id = ANY($1::uuid[])`,
-      workflowVersion:
-        isDefined(workflowTables.workflow) &&
-        isDefined(workflowTables.workflowVersion)
-          ? `SELECT version.id, workflow.name FROM ${workflowTables.workflowVersion} version
+        workflowVersion:
+          isDefined(workflowTables.workflow) &&
+          isDefined(workflowTables.workflowVersion)
+            ? `SELECT version.id, workflow.name FROM ${workflowTables.workflowVersion} version
              JOIN ${workflowTables.workflow} workflow ON workflow.id = version."workflowId"
              WHERE version.id = ANY($1::uuid[])`
-          : null,
-      workflowRun:
-        isDefined(workflowTables.workflow) &&
-        isDefined(workflowTables.workflowRun)
-          ? `SELECT run.id, workflow.name FROM ${workflowTables.workflowRun} run
+            : null,
+        workflowRun:
+          isDefined(workflowTables.workflow) &&
+          isDefined(workflowTables.workflowRun)
+            ? `SELECT run.id, workflow.name FROM ${workflowTables.workflowRun} run
              JOIN ${workflowTables.workflow} workflow ON workflow.id = run."workflowId"
              WHERE run.id = ANY($1::uuid[])`
-          : null,
-    };
+            : null,
+      };
 
     const workflowNameBySourceKey = new Map<string, string | null>();
 

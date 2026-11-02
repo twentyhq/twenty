@@ -8,7 +8,7 @@ import {
   type StoredWorkflowStep,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
-export type ConversationalWorkflowStep = {
+export type KeptWorkflowStep = {
   stepId: string;
   stepName: string | null;
   agentId: string;
@@ -26,13 +26,13 @@ export const inlineWorkflowStepAgents = ({
   steps: StoredWorkflowStep[];
   hasChanged: boolean;
   inlinedAgentIds: string[];
-  keptStepIds: string[];
-  conversationalSteps: ConversationalWorkflowStep[];
+  keptSteps: KeptWorkflowStep[];
+  conversationalSteps: KeptWorkflowStep[];
 } => {
   let hasChanged = false;
   const inlinedAgentIds = new Set<string>();
-  const keptStepIds: string[] = [];
-  const conversationalSteps: ConversationalWorkflowStep[] = [];
+  const keptSteps: KeptWorkflowStep[] = [];
+  const conversationalSteps: KeptWorkflowStep[] = [];
 
   const rewrittenSteps = steps.map((step) => {
     const input = step.settings?.input;
@@ -45,6 +45,12 @@ export const inlineWorkflowStepAgents = ({
     const isStepAgent =
       inlineConfigByAgentId.has(agentId) || keptAgentIds.has(agentId);
 
+    const keptStep = {
+      stepId: String(step.id),
+      stepName: isString(step.name) ? step.name : null,
+      agentId,
+    };
+
     // human input or a conversation needs an agent, so the step keeps it
     if (
       isStepAgent &&
@@ -55,17 +61,13 @@ export const inlineWorkflowStepAgents = ({
           : undefined,
       })
     ) {
-      conversationalSteps.push({
-        stepId: String(step.id),
-        stepName: isString(step.name) ? step.name : null,
-        agentId,
-      });
+      conversationalSteps.push(keptStep);
 
       return step;
     }
 
     if (keptAgentIds.has(agentId)) {
-      keptStepIds.push(String(step.id));
+      keptSteps.push(keptStep);
 
       return step;
     }
@@ -105,7 +107,7 @@ export const inlineWorkflowStepAgents = ({
     steps: rewrittenSteps,
     hasChanged,
     inlinedAgentIds: [...inlinedAgentIds],
-    keptStepIds,
+    keptSteps,
     conversationalSteps,
   };
 };

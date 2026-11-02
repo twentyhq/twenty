@@ -110,7 +110,7 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       inlinedAgentIds: [],
-      keptStepIds: [],
+      keptSteps: [],
       conversationalSteps: [],
     });
   });
@@ -122,7 +122,9 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       inlinedAgentIds: [],
-      keptStepIds: ['step-id'],
+      keptSteps: [
+        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
+      ],
       conversationalSteps: [],
     });
   });
@@ -140,7 +142,7 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       inlinedAgentIds: [],
-      keptStepIds: [],
+      keptSteps: [],
       conversationalSteps: [
         { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
       ],
@@ -159,7 +161,7 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       inlinedAgentIds: [],
-      keptStepIds: [],
+      keptSteps: [],
       conversationalSteps: [
         { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
       ],

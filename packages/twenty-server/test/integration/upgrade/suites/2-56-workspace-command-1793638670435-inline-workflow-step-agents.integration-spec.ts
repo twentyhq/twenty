@@ -20,6 +20,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import {
@@ -32,6 +33,8 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793638670435-inline-workflow-step-agents.command';
 import {
@@ -199,6 +202,7 @@ const EDITED_STEP_AGENT_INSTRUCTIONS = 'Summarize the company for a sales call';
 describe('2-56 workspace command - inline workflow step agents (integration)', () => {
   let command: InlineWorkflowStepAgentsCommand;
   let stepAgentRoleId: string;
+  const roleIds: string[] = [];
   let workspaceCustomApplicationId: string;
   let generateWorkflow: LegacyAiStepWorkflow;
   let conversationalWorkflow: LegacyAiStepWorkflow;
@@ -389,6 +393,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     });
 
     stepAgentRoleId = roleData.createOneRole.id;
+    roleIds.push(stepAgentRoleId);
 
     await upsertObjectPermissions({
       expectToFail: false,
@@ -515,16 +520,18 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       await deleteOneAgent({ expectToFail: false, input: { id } });
     }
 
-    const [remainingRole] = await global.testDataSource.query(
-      `SELECT id FROM core."role" WHERE id = $1`,
-      [stepAgentRoleId],
-    );
+    for (const roleId of roleIds) {
+      const [remainingRole] = await global.testDataSource.query(
+        `SELECT id FROM core."role" WHERE id = $1`,
+        [roleId],
+      );
 
-    if (remainingRole !== undefined) {
-      await deleteOneRole({
-        expectToFail: false,
-        input: { idToDelete: stepAgentRoleId },
-      });
+      if (isDefined(remainingRole)) {
+        await deleteOneRole({
+          expectToFail: false,
+          input: { idToDelete: roleId },
+        });
+      }
     }
 
     // the command also reveals the conversational step agents the dev seed creates
@@ -724,5 +731,78 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       (await readCoreSteps(editedWorkflow.coreWorkflowVersionId))[0].settings
         .input,
     ).toMatchObject({ instructions: EDITED_STEP_AGENT_INSTRUCTIONS });
+  });
+
+  it('keeps a step agent whose role has row-level predicates and makes it visible under its workflow and step names', async () => {
+    const { data: roleData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Inline step agents row-level role',
+        description: 'A step agent role a scope cannot express',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: true,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+    const rowLevelRoleId = roleData.createOneRole.id;
+
+    roleIds.push(rowLevelRoleId);
+
+    const [{ objectMetadataId, fieldMetadataId }] =
+      await global.testDataSource.query(
+        `SELECT object.id AS "objectMetadataId", field.id AS "fieldMetadataId"
+         FROM core."objectMetadata" object
+         JOIN core."fieldMetadata" field ON field."objectMetadataId" = object.id
+         WHERE object."workspaceId" = $1 AND object."universalIdentifier" = $2
+           AND field."universalIdentifier" = $3`,
+        [
+          SEED_APPLE_WORKSPACE_ID,
+          COMPANY.universalIdentifier,
+          COMPANY.fields.name.universalIdentifier,
+        ],
+      );
+
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: rowLevelRoleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Acme',
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
+
+    const rowLevelWorkflowName = 'Company summary limited to some companies';
+    const rowLevelWorkflow = await createLegacyAiStepWorkflow({
+      name: rowLevelWorkflowName,
+      stepInput: { prompt: STEP_PROMPT },
+    });
+
+    await updateOneAgent({
+      expectToFail: false,
+      input: { id: rowLevelWorkflow.agentId, roleId: rowLevelRoleId },
+    });
+
+    await runCommand();
+
+    expect(await readCoreSteps(rowLevelWorkflow.coreWorkflowVersionId)).toEqual(
+      [rowLevelWorkflow.step],
+    );
+    expect(await readAgent(rowLevelWorkflow.agentId)).toEqual({
+      isSystem: false,
+      label: `${rowLevelWorkflowName} · ${STEP_NAME}`,
+    });
   });
 });
