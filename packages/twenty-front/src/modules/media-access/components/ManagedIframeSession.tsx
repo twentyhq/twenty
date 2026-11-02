@@ -1,6 +1,6 @@
 import { ManagedIframeEnableButton } from '@/media-access/components/ManagedIframeEnableButton';
 import { ManagedIframeMediaAccessSessionEffect } from '@/media-access/components/ManagedIframeMediaAccessSessionEffect';
-import { ManagedIframePermissionDialogCleanupEffect } from '@/media-access/components/ManagedIframePermissionDialogCleanupEffect';
+import { ManagedIframePermissionDialogEffect } from '@/media-access/components/ManagedIframePermissionDialogEffect';
 import { type ManagedIframeElementProps } from '@/media-access/types/ManagedIframeElementProps';
 import { getDelegatedIframeMediaPermission } from '@/media-access/utils/getDelegatedIframeMediaPermission';
 import { isIframeMediaPermissionCovered } from '@/media-access/utils/isIframeMediaPermissionCovered';
@@ -96,6 +96,9 @@ export const ManagedIframeSession = ({
     activatedPermission: permissionAwaitingConfirmation,
     permission,
   });
+  const hasInvalidRequest =
+    isDefined(permissionAwaitingConfirmation) &&
+    !isDefined(permissionToConfirm);
   const handleConfirm = () => {
     setActivatedPermission(permissionToConfirm);
     setPermissionAwaitingConfirmation(null);
@@ -117,8 +120,10 @@ export const ManagedIframeSession = ({
   return (
     <>
       {requiresConfirmation && (
-        <ManagedIframePermissionDialogCleanupEffect
+        <ManagedIframePermissionDialogEffect
           dialogId={confirmationDialogId}
+          hasInvalidRequest={hasInvalidRequest}
+          onReset={setPermissionAwaitingConfirmation}
         />
       )}
       {isDefined(permissionAwaitingConfirmation) && (

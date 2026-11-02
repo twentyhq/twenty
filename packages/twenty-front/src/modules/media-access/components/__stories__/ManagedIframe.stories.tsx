@@ -259,6 +259,60 @@ export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
   },
 };
 
+export const RevokedPermissionClosesPendingConfirmation: StoryObj<
+  typeof ManagedIframe
+> = {
+  render: () => (
+    <StrictMode>
+      <ManagedIframePreview ownerType="application" />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const documentBody = within(canvasElement.ownerDocument.body);
+    const initialFrame = canvas.getByTitle('Aircall phone');
+    const revokeMediaAccess = canvas.getByRole('button', {
+      name: 'Revoke media access',
+    });
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
+    );
+    const confirmation = await documentBody.findByRole('dialog', {
+      name: 'Enable media access for Aircall?',
+    });
+
+    await expect(confirmation).toBeVisible();
+    revokeMediaAccess.click();
+
+    await waitFor(() => expect(confirmation).not.toBeInTheDocument());
+    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+    await expect(initialFrame).toHaveAttribute(
+      'allow',
+      "microphone 'none'; camera 'none'; encrypted-media",
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Grant media access' }),
+    );
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
+    );
+
+    const freshConfirmation = await documentBody.findByRole('dialog', {
+      name: 'Enable media access for Aircall?',
+    });
+
+    await userEvent.click(
+      within(freshConfirmation).getByRole('button', { name: 'Enable' }),
+    );
+    await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+    await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+      'allow',
+      "microphone https://example.com; camera 'none'; encrypted-media",
+    );
+  },
+};
+
 export const CameraPermission: StoryObj<typeof ManagedIframe> = {
   render: () => (
     <ManagedIframePreview
