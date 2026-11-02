@@ -4,6 +4,7 @@ import { parse } from 'graphql';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -608,11 +609,7 @@ describe('Addressing channels and existing conversations as an application', () 
   const sendOrThrow = async (input: SendInboxMessageInput) => {
     const response = await sendInboxMessage(input);
 
-    if (isDefined(response.body.errors)) {
-      throw new Error(
-        `Could not send the inbox message: ${JSON.stringify(response.body.errors)}`,
-      );
-    }
+    assertGraphQLSuccessfulResponse(response);
 
     const delivery: SendInboxMessageResult =
       response.body.data.sendInboxMessage;
@@ -630,11 +627,7 @@ describe('Addressing channels and existing conversations as an application', () 
       variables: { input: { name: `Inbox channel ${uuidv4()}`, roleIds } },
     });
 
-    if (isDefined(response.body.errors)) {
-      throw new Error(
-        `Could not create the channel: ${JSON.stringify(response.body.errors)}`,
-      );
-    }
+    assertGraphQLSuccessfulResponse(response);
 
     const channelId: string = response.body.data.createAgentChatChannel.id;
 
