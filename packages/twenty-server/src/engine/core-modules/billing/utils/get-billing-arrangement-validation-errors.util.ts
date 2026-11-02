@@ -16,10 +16,13 @@ const ALL_SETTING_KEYS = [
   ),
 ];
 
-const isSettingSet = (
-  arrangement: BillingArrangementDraft,
-  setting: BillingArrangementSettingKey,
-): boolean => {
+const isSettingSet = ({
+  arrangement,
+  setting,
+}: {
+  arrangement: BillingArrangementDraft;
+  setting: BillingArrangementSettingKey;
+}): boolean => {
   const value = arrangement[setting];
 
   return isString(value) ? isNonEmptyString(value) : isDefined(value);
@@ -33,7 +36,7 @@ export const getBillingArrangementValidationErrors = (
     BILLING_ARRANGEMENT_SETTINGS_BY_TYPE[arrangement.type];
 
   for (const setting of ALL_SETTING_KEYS) {
-    const isSet = isSettingSet(arrangement, setting);
+    const isSet = isSettingSet({ arrangement, setting });
 
     if (required.includes(setting) && !isSet) {
       errors.push({ code: 'MISSING_SETTING', setting });

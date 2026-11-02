@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.55.0', 1793391693286)
+@RegisteredInstanceCommand('2.55.0', 1793612049448)
 export class CreateBillingArrangementTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const billingCustomerTables = await queryRunner.query(
@@ -21,9 +21,9 @@ export class CreateBillingArrangementTableFastInstanceCommand implements FastIns
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP INDEX "core"."IDX_BILLING_ARRANGEMENT_WORKSPACE_ID_TYPE"');
-    await queryRunner.query('DROP TABLE "core"."billingArrangement"');
-    await queryRunner.query('DROP TYPE "core"."billingArrangement_seatcapmode_enum"');
-    await queryRunner.query('DROP TYPE "core"."billingArrangement_type_enum"');
+    await queryRunner.query('DROP INDEX IF EXISTS "core"."IDX_BILLING_ARRANGEMENT_WORKSPACE_ID_TYPE"');
+    await queryRunner.query('DROP TABLE IF EXISTS "core"."billingArrangement"');
+    await queryRunner.query('DROP TYPE IF EXISTS "core"."billingArrangement_seatcapmode_enum"');
+    await queryRunner.query('DROP TYPE IF EXISTS "core"."billingArrangement_type_enum"');
   }
 }
