@@ -101,7 +101,25 @@ describe('defineApplicationRole', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Application roles cannot declare row-level permission rules: workspace admins add them on the granted role',
+      'Application roles cannot declare row-level permission rules: the granted role carries none',
+    );
+  });
+
+  it('should reject field permissions', () => {
+    const result = defineApplicationRole({
+      ...validConfig,
+      fieldPermissions: [
+        {
+          objectUniversalIdentifier: 'object-universal-identifier',
+          fieldUniversalIdentifier: 'field-universal-identifier',
+          canReadFieldValue: false,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Application roles cannot declare field permissions: the granted role carries none',
     );
   });
 });

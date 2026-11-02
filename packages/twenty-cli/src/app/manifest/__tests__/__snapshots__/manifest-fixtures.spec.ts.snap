@@ -1184,15 +1184,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "canUpdateAllObjectRecords": false,
         "canUpdateAllSettings": false,
         "description": "Default role for function Twenty client",
-        "fieldPermissions": [
-          {
-            "canReadFieldValue": false,
-            "canUpdateFieldValue": false,
-            "fieldUniversalIdentifier": "58a0a314-d7ea-4865-9850-7fb84e72f30b",
-            "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
-            "universalIdentifier": "d0b74fcb-3993-5ff9-bbd6-d76ea9b6493f",
-          },
-        ],
+        "fieldPermissions": [],
         "label": "Default function role",
         "objectPermissions": [
           {

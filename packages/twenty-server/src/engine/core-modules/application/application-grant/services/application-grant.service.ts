@@ -15,7 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type ApplicationGrantObjectAccessInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-access.input';
-import { ApplicationGrantFieldPermissionsService } from 'src/engine/core-modules/application/application-grant/services/application-grant-field-permissions.service';
 import { fromObjectAccessInputToGrantObjectAccess } from 'src/engine/core-modules/application/application-grant/utils/from-object-access-input-to-grant-object-access.util';
 import { fromRoleManifestGrantToApplicationGrantPermissionDto } from 'src/engine/core-modules/application/application-grant/utils/from-role-manifest-grant-to-application-grant-permission-dto.util';
 import { type ApplicationGrantDTO } from 'src/engine/core-modules/application/application-grant/dtos/application-grant.dto';
@@ -87,7 +86,6 @@ export class ApplicationGrantService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly applicationGrantFieldPermissionsService: ApplicationGrantFieldPermissionsService,
   ) {}
 
   async loadGrantState({
@@ -626,23 +624,6 @@ export class ApplicationGrantService {
       approvedRoleRequest: () =>
         `'${JSON.stringify(approvedRoleManifest).replace(/'/g, "''")}'::jsonb`,
     });
-
-    if (isDefined(state.requestedFlatRole)) {
-      const { grantFlatRole } = await this.loadGrantState({
-        workspaceId: state.application.workspaceId,
-        applicationId: state.application.id,
-      });
-
-      if (isDefined(grantFlatRole)) {
-        await this.applicationGrantFieldPermissionsService.copyRequestedFieldPermissions(
-          {
-            workspaceId: state.application.workspaceId,
-            requestedRoleId: state.requestedFlatRole.id,
-            grantRoleId: grantFlatRole.id,
-          },
-        );
-      }
-    }
 
     this.logger.log(
       `Application grant written for application ${state.application.id}`,

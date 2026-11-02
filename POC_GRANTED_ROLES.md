@@ -4,7 +4,7 @@ Proof of concept for the "requested role / granted role" design (core-team-issue
 
 Screenshots are in `poc-screenshots/`. Numbers `01` to `07` are referenced below.
 
-v1 is object-level only. The admin decides two things: which objects an "all objects" request covers (all objects, including future ones, or a chosen list), and extra objects, each with an access level. Field permissions and permission flags are exactly as requested, and grants have no row-level rules.
+v1 is object-level only. The admin decides two things: which objects an "all objects" request covers (all objects, including future ones, or a chosen list), and extra objects, each with an access level. Permission flags are exactly as requested, and grants have no field permissions or row-level rules: an app's default role and the roles its agents use can't declare either. Standalone roles meant for members keep both.
 
 ## What works
 
@@ -27,14 +27,13 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
 - **Sync of a confined app** (`normalizeConfinedApplicationManifest`)
   - Its own objects are requested with every action unless the manifest names them.
   - The requested role's assignment flags are forced off.
-  - Row-level rules in the requested role are rejected. The SDK rejects them too: `defineApplicationRole()` fails the build.
+  - Field permissions and row-level rules in the requested role, or in a role one of its agents uses, are rejected. The build rejects them too: `defineApplicationRole()` fails on them, and the CLI rejects them on agent roles. Roles no agent uses keep both.
   - Agents that point at the requested role no longer get an app-owned role target. The grant service assigns them the grant.
 - **Install, upgrade and uninstall** (`ApplicationGrantService`, hooked into `applyManifestToWorkspace`)
   - The grant, its object and flag rows, the application target and the agent targets are written in one workspace migration, run as the custom app.
   - The grant is labelled "<App name> role", with a numeric suffix on collision.
   - Install creates the grant from the request, or from the admin's object access choices (`buildGrantRoleManifestFromObjectAccess` in twenty-shared). Choices go through the same locked-minimum check as Access tab saves (`computeGrantMissingLockedPermissions`, also in twenty-shared). That check runs before the install job is queued, so a rejected choice installs nothing.
   - Access levels are record sharing's (`RecordShareAccessLevel`), mapped to object permissions the way record sharing maps them to operations: Read = read; Read & write = read + update; Full = read + update + delete + destroy.
-  - The grant's field permissions are copied from the request after each grant write (`ApplicationGrantFieldPermissionsService`), and can't be edited.
   - On upgrade, what the new request drops is removed from the grant right away, and the admin's additions are kept. What it adds becomes pending, and Approve applies it.
   - LOCAL (dev) apps mirror their request on every sync. I checked this with `twenty app dev`.
   - Uninstall deletes the grant and its targets.
@@ -62,12 +61,12 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - A `triggerInstallApplication` call below the locked minimum is rejected before the job is queued (checked with the previous install input; the check is unchanged).
   - OAuth: browser `twenty auth login`, then `app publish --private` and `getRoles` with that token, all worked. With its grant removed, the grant demo's route was denied.
   - The agent is assigned to the grant (`getRoles` lists it under "Grant demo role"). I did not run the agent: no LLM provider is configured in this environment.
-  - Not checked: copying requested field permissions, because the example app requests none.
+  - Field permissions and row-level rules: a field permission on grant-demo's requested role failed the build ("Application roles cannot declare field permissions"), and so did a member role with a field permission and a row-level rule once the agent pointed at it. The same member role, used by no agent, built and installed with both.
 
 Tests:
 - `application-grant/utils/__tests__/` covers the install grant, scope, locked minimum, pending and narrowing, plus manifest normalization. `twenty-shared` `grantObjectAccess.test.ts` covers building a grant from object access and reading it back.
 - `resolve-application-role-id.util.spec.ts` was rewritten for grants and exempt apps.
-- The SDK `define-application-role.spec.ts` covers the row-level rule rejection.
+- The SDK `define-application-role.spec.ts` covers the field permission and row-level rule rejections; the CLI `validate-agent-roles-within-application-role.spec.ts` covers them for agent roles; `normalize-confined-application-manifest.util.spec.ts` covers the server sync.
 - Typecheck (server, front) and `lint:diff-with-main` (server, front) pass, and so do the unit tests of the touched areas.
 
 ## How to try it
@@ -93,14 +92,13 @@ Tests:
 
 ## Shortcuts and hacks
 
-- **The grant is `isEditable: false`.** The generic role APIs therefore cannot touch it, and the grant service and grant mutations run with `isSystemBuild: true`. To allow that, the object permission, field permission and role permission flag validators now skip the "role not editable" check for system builds; the role and row-level validators already did. The "disabled actions on an object" check is also skipped for system builds, because the grant may need owner rights on the app's own objects. The runtime still enforces this through the role → app map.
-- **`upsertFieldPermissions`** got an `isSystemBuild` option so the grant can get the request's field permissions. Field permissions the request later drops are not removed from the grant.
+- **The grant is `isEditable: false`.** The generic role APIs therefore cannot touch it, and the grant service and grant mutations run with `isSystemBuild: true`. To allow that, the object permission and role permission flag validators now skip the "role not editable" check for system builds; the role and row-level validators already did. The "disabled actions on an object" check is also skipped for system builds, because the grant may need owner rights on the app's own objects. The runtime still enforces this through the role → app map.
 - **The runtime role is a computed field on `FlatApplication`.** It is set by the flat application cache, which now also reads `roleTarget` rows and the workspace's custom app id. The cache is invalidated whenever role targets change. An application read from the database instead of the cache falls back to "exempt if it has no approved request".
 - **Provenance is not stored per row.** The grant stores only the approved request snapshot. "From the request" means covered by that snapshot; anything else in the grant is treated as the admin's. The pending, narrowing and lock logic reuses `getRoleManifestGrantsNotCoveredBy` from twenty-shared.
 - **Tarball registrations now store the full manifest.** Before, they stored only `application`, so the install page could not show the requested role until after the first install (`application-tarball.service.ts`).
 - **Chosen versus added objects are inferred.** Without per-row provenance, a row that grants exactly the requested "all objects" actions, under a narrowed scope, reads back as a chosen object; any other extra row reads back as an added object (`getGrantObjectAccess`). So an object added at the same level as the "all objects" request shows as chosen after a reload.
 - **Request version.** `application.requestedRoleVersion` (one more generated instance command) records the version whose request was last synced. `application.version` is only written when an install or upgrade completes. Pending computation starts at manifest sync, about ten seconds earlier, so labelling pending permissions with `version` showed the previous version in that window. `approvedRoleRequest` is written in the same reconcile step as the grant, so it has no such window.
-- **Requested row-level rules cannot exist**, and grants never have row-level rules in v1.
+- **The postcard example and the rich-app fixture** declared field permissions in their default role; those entries are removed so they still build.
 - **Pending labels are plain English strings** built on the server, not translated.
 - **Example app versions** are switched by `scripts/use-version.mjs`, which rewrites a constant and `package.json`. The logic function lists objects through the metadata GraphQL API, because `/rest/metadata/objects` needs the `DATA_MODEL` flag.
 - **No backfill and no workspace command.** Existing confined apps installed before this change have no grant, so they get no access.
@@ -116,7 +114,7 @@ Tests:
 
 1. **Scope versus additions.** Should the grant store the admin's scope choice separately from the extra rows? Without it, narrowing an "all objects" request cannot remove the chosen objects (see above), and an object added at the "all objects" level reads back as a chosen one.
 2. **One "all objects" level.** The list shows one top row for the "all objects" request, at the requested level. A request with read on all objects and update on all objects gets one scope for both; the POC does not let the admin scope them separately.
-3. **Hidden fields break generic reads.** A requested field permission that hides a field makes `GET /rest/<object>` fail outright instead of omitting the field. Should app requests omit restricted fields instead?
+3. **Hidden fields break generic reads.** A field permission that hides a field makes `GET /rest/<object>` fail outright instead of omitting the field. If grants get field permissions in a later version, should app requests omit restricted fields instead?
 4. **Implied read.** A named row such as "update Companies" under a requested "read all objects" makes read on Companies effectively required. The POC locks the effective values of named rows, so admins cannot scope that read away. Is that right?
 5. **Take-it-or-leave-it switches on upgrade.** `canAccessAllAgentChatChannels` is outside `getRoleManifestGrantsNotCoveredBy`. The POC copies it from the approved request, so a new request for it is never shown as pending.
 6. **The custom app as owner.** The custom app owns the grant's rows. Exporting the custom app skips the grant (non-editable roles are not exported), so a grant is never reproduced in another workspace. Is that the desired behavior for "workspace as code"?

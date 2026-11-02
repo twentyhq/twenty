@@ -55,7 +55,51 @@ describe('normalizeConfinedApplicationManifest', () => {
     ];
 
     expect(() => normalizeConfinedApplicationManifest(manifest)).toThrow(
-      'cannot declare row-level permission rules',
+      'cannot declare field permissions or row-level permission rules',
+    );
+  });
+
+  it('rejects field permissions in the requested role', () => {
+    const manifest = buildManifest();
+
+    manifest.roles[0].fieldPermissions = [
+      {
+        objectUniversalIdentifier: 'company',
+        fieldUniversalIdentifier: 'name',
+        canReadFieldValue: false,
+      },
+    ];
+
+    expect(() => normalizeConfinedApplicationManifest(manifest)).toThrow(
+      'cannot declare field permissions or row-level permission rules',
+    );
+  });
+
+  it('rejects field permissions in a role an agent uses, and keeps them on member roles', () => {
+    const memberRole = {
+      universalIdentifier: 'member-role',
+      label: 'Member role',
+      fieldPermissions: [
+        {
+          objectUniversalIdentifier: 'company',
+          fieldUniversalIdentifier: 'name',
+          canReadFieldValue: false,
+        },
+      ],
+    };
+    const manifest = buildManifest();
+
+    manifest.roles.push(memberRole);
+
+    expect(() => normalizeConfinedApplicationManifest(manifest)).not.toThrow();
+
+    manifest.agents?.push({
+      universalIdentifier: 'other-agent',
+      roleUniversalIdentifier: 'member-role',
+    } as never);
+
+    expect(() => normalizeConfinedApplicationManifest(manifest)).toThrow(
+      'Role "Member role" is the application role or an agent role',
     );
   });
 });

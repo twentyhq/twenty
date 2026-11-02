@@ -69,6 +69,46 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     expect(errors).toEqual([]);
   });
 
+  it.each([
+    [
+      'field permissions',
+      {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+            fieldUniversalIdentifier: 'job-title',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+    ],
+    [
+      'row-level rules',
+      {
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: 'predicate',
+            objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+            fieldUniversalIdentifier: 'name',
+            operand: 'IS',
+          },
+        ],
+      },
+    ],
+  ])('rejects %s in a role an agent uses', (_, restrictions) => {
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [buildAgent()],
+      roles: [applicationRole, buildRole(restrictions as Partial<RoleManifest>)],
+      objects: [],
+      permissionFlags: [],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(errors).toContain(
+      'Role "Agent role" used by agent "assistant" cannot declare field permissions or row-level permission rules.',
+    );
+  });
+
   it('ignores agents without a role and agents on the application role', () => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [

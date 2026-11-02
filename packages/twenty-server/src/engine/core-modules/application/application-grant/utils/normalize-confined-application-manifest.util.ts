@@ -19,8 +19,8 @@ export const findRequestedRoleManifest = (
       manifest.application.defaultRoleUniversalIdentifier,
   );
 
-// A confined application's default role is a request: it requests its own objects with every
-// action, carries no row-level rules, and is assigned to nothing (its agents run with the grant).
+// A confined application's default role is a request: it requests its own objects with every action,
+// and is assigned to nothing (its agents run with the grant).
 export const normalizeConfinedApplicationManifest = (
   manifest: Manifest,
 ): Manifest => {
@@ -30,14 +30,29 @@ export const normalizeConfinedApplicationManifest = (
     return manifest;
   }
 
-  if (
-    isNonEmptyArray(requestedRole.rowLevelPermissionPredicates) ||
-    isNonEmptyArray(requestedRole.rowLevelPermissionPredicateGroups)
-  ) {
-    throw new ApplicationException(
-      `Application role "${requestedRole.label}" cannot declare row-level permission rules`,
-      ApplicationExceptionCode.INVALID_INPUT,
-    );
+  const agentRoleUniversalIdentifiers = new Set(
+    (manifest.agents ?? [])
+      .map((agentManifest) => agentManifest.roleUniversalIdentifier)
+      .filter(isDefined),
+  );
+
+  // Grants carry no field permissions or row-level rules in v1, so neither can the roles they come from
+  for (const role of manifest.roles) {
+    const isRequestedOrAgentRole =
+      role.universalIdentifier === requestedRole.universalIdentifier ||
+      agentRoleUniversalIdentifiers.has(role.universalIdentifier);
+
+    if (
+      isRequestedOrAgentRole &&
+      (isNonEmptyArray(role.fieldPermissions) ||
+        isNonEmptyArray(role.rowLevelPermissionPredicates) ||
+        isNonEmptyArray(role.rowLevelPermissionPredicateGroups))
+    ) {
+      throw new ApplicationException(
+        `Role "${role.label}" is the application role or an agent role, so it cannot declare field permissions or row-level permission rules`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
   }
 
   const normalizedRequestedRole: RoleManifest = {

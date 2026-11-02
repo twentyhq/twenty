@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type ObjectDescriptor = Pick<
   ObjectManifest,
@@ -208,6 +208,31 @@ const validateAgentRolesAreCoveredByApplicationRole = ({
   );
 };
 
+// Agents run with the grant, which carries no field permissions or row-level rules in v1
+const validateAgentRolesHaveNoFieldOrRowLevelRules = ({
+  agentNamesByRoleUniversalIdentifier,
+  roles,
+}: {
+  agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
+  roles: RoleManifest[];
+}): string[] =>
+  [...agentNamesByRoleUniversalIdentifier].flatMap(
+    ([roleUniversalIdentifier, agentNames]) => {
+      const agentRole = roles.find(
+        (role) => role.universalIdentifier === roleUniversalIdentifier,
+      );
+
+      return isDefined(agentRole) &&
+        (isNonEmptyArray(agentRole.fieldPermissions) ||
+          isNonEmptyArray(agentRole.rowLevelPermissionPredicates) ||
+          isNonEmptyArray(agentRole.rowLevelPermissionPredicateGroups))
+        ? [
+            `Role "${agentRole.label}" used by agent ${describeAgentList(agentNames)} cannot declare field permissions or row-level permission rules.`,
+          ]
+        : [];
+    },
+  );
+
 export const validateAgentRolesWithinApplicationRole = ({
   agents,
   roles,
@@ -234,6 +259,10 @@ export const validateAgentRolesWithinApplicationRole = ({
 
   return [
     ...validateAgentRolesAreDefined({
+      agentNamesByRoleUniversalIdentifier,
+      roles,
+    }),
+    ...validateAgentRolesHaveNoFieldOrRowLevelRules({
       agentNamesByRoleUniversalIdentifier,
       roles,
     }),
