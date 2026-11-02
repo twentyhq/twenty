@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
+import { type EntityManager, In } from 'typeorm';
 
 import { type PrivateRecordInsertSql } from 'src/engine/permissions/private-record/utils/build-private-record-insert-sql.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -40,6 +40,11 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
+import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
+import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
+import { isAgentChatThreadSettledForMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-thread-settled-for-member.util';
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 type BuildParticipantWriteQuery = (
@@ -84,9 +89,9 @@ const buildMentionResolutionQuery = ({
      AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
    RETURNING *`;
 
-// Mirrored by applyAgentChatInboxAction for the optimistic copy, and ARCHIVE_IF_SETTLED by isAgentChatThreadSettledForMember
+// Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
-  AgentChatInboxAction,
+  Exclude<AgentChatInboxAction, AgentChatInboxAction.ARCHIVE_IF_SETTLED>,
   BuildParticipantWriteQuery
 > = {
   // Read up to what the thread holds now, never past it, and never back.
@@ -129,31 +134,6 @@ const INBOX_ACTION_QUERIES: Record<
        "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
-  // Filed at the settled activity, so activity that waited on the lock still comes after; NO KEY spares a reply's foreign key check
-  [AgentChatInboxAction.ARCHIVE_IF_SETTLED]: ({
-    participantTable,
-    threadTable,
-  }) =>
-    `WITH locked_thread AS (
-       SELECT * FROM ${threadTable} WHERE id = $1 FOR NO KEY UPDATE
-     )
-     UPDATE ${participantTable} AS participant
-     SET "archivedAt" = thread."lastActivityAt" + interval '1 microsecond',
-       "snoozedUntil" = NULL,
-       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
-     FROM locked_thread thread
-     WHERE participant."threadId" = thread.id
-       AND participant."workspaceMemberId" = $2
-       AND ${IS_IN_INBOX}
-       AND NOT ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
-       AND thread."pendingQuestionMessageId" IS NULL
-       AND thread."deletedAt" IS NULL
-       AND thread."workspaceMemberId" = $2::uuid
-       AND thread."lastActivityAt" IS NOT NULL
-       AND thread."lastActivityAt" <= participant."lastReadAt"
-       AND thread."lastMessageSenderWorkspaceMemberId" IS NULL
-       AND thread."assigneeId" IS DISTINCT FROM $2::uuid
-     RETURNING participant.*`,
   [AgentChatInboxAction.SNOOZE]: buildSnoozeQuery,
   [AgentChatInboxAction.MOVE_TO_INBOX]: ({
     participantTable,
@@ -210,7 +190,21 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
+const PARTICIPANT_COLUMN_NAMES = [
+  'id',
+  'workspaceMemberId',
+  'threadId',
+  'lastReadAt',
+  'archivedAt',
+  'snoozedUntil',
+  'isSubscribed',
+  'lastMentionedAt',
+  'mentionsResolvedAt',
+  'updatedAt',
+];
+const PARTICIPANT_COLUMNS = PARTICIPANT_COLUMN_NAMES.map(
+  (columnName) => `"${columnName}"`,
+).join(', ');
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -253,6 +247,13 @@ export class AgentChatThreadParticipantService {
       threadIds: uniqueThreadIds,
     });
 
+    if (action === AgentChatInboxAction.ARCHIVE_IF_SETTLED) {
+      return this.archiveSettledThreads({
+        ...memberArgs,
+        threadIds: uniqueThreadIds,
+      });
+    }
+
     // Queued before the write, so no saved snooze lacks its end; the end of
     // a snooze that was never saved finds nothing to end
     if (isDefined(snoozeEnd)) {
@@ -287,11 +288,7 @@ export class AgentChatThreadParticipantService {
     };
 
     return this.write(
-      {
-        ...memberArgs,
-        threadIds: uniqueThreadIds,
-        isEveryRowRequired: action !== AgentChatInboxAction.ARCHIVE_IF_SETTLED,
-      },
+      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
       INBOX_ACTION_QUERIES[action],
       isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
@@ -684,6 +681,85 @@ export class AgentChatThreadParticipantService {
       });
 
     return summary;
+  }
+
+  // Filed just past the activity the member saw, so any later activity brings the chat back
+  private async archiveSettledThreads({
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+  }): Promise<AgentChatThreadParticipantRow[]> {
+    const threads = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds) },
+    });
+
+    const writes = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const participantRepository =
+          this.workspaceOrmManager.getRepository<AgentChatThreadParticipantWorkspaceEntity>(
+            'agentChatThreadParticipant',
+            { shouldBypassPermissionChecks: true },
+            { shouldSkipEventEmission: true },
+          );
+        const findParticipant = async (threadId: string) => {
+          const [participant] = await participantRepository
+            .createQueryBuilder()
+            .select(PARTICIPANT_COLUMN_NAMES)
+            .where({ threadId, workspaceMemberId })
+            .withDeleted()
+            .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
+
+          return participant;
+        };
+        const archivedWrites: AgentChatThreadParticipantWrite[] = [];
+
+        for (const thread of threads) {
+          const before = await findParticipant(thread.id);
+
+          if (
+            !isDefined(before) ||
+            !isDefined(thread.lastActivityAt) ||
+            !isAgentChatThreadSettledForMember({ thread, participant: before })
+          ) {
+            continue;
+          }
+
+          await participantRepository.update(
+            { id: before.id },
+            {
+              archivedAt: new Date(
+                new Date(thread.lastActivityAt).getTime() + 1,
+              ).toISOString(),
+              snoozedUntil: null,
+              updatedAt: buildNextAgentChatThreadParticipantUpdatedAt(
+                before.updatedAt,
+              ),
+            },
+          );
+
+          const after = await findParticipant(thread.id);
+
+          if (isDefined(after)) {
+            archivedWrites.push({ before, after });
+          }
+        }
+
+        return archivedWrites;
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
+
+    for (const write of writes) {
+      await this.participantEventService.emitParticipantWritten({
+        workspaceId,
+        ...write,
+      });
+    }
+
+    return writes.map(({ after }) => after);
   }
 
   private async scheduleSnoozeEnd({
