@@ -84,7 +84,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 <Note>
 **Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/ru/developers/extend/apps/config/install-hooks).
 
-[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Она не объявляет триггер: Twenty вызывает ее по требованию при открытии страницы настроек приложения.
+[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Приложение объявляет одну проверку без триггера. По умолчанию Twenty вызывает свой обработчик без аргументов при открытии настроек приложения рабочего пространства. Установите `runOnUserPreferences: true`, чтобы вместо этого запускать его на странице настроек приложений участника с обязательным `userWorkspaceId`.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

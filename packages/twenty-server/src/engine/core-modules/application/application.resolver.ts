@@ -141,6 +141,21 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => Boolean)
+  runOnUserPreferences(
+    @Parent()
+    application: Partial<
+      Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
+        Pick<ApplicationDTO, 'runOnUserPreferences'>
+    >,
+  ): boolean {
+    return (
+      application.runOnUserPreferences ??
+      application.isUserHealthCheckEnabled ??
+      false
+    );
+  }
+
+  @ResolveField(() => Boolean)
   isUninstallBlockedByOtherWorkspaceInstallations(
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,

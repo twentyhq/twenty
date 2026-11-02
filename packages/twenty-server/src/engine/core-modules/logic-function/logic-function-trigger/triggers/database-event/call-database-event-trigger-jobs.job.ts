@@ -46,26 +46,11 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const {
-      flatLogicFunctionMaps,
-      flatApplicationMaps,
-      rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      workspaceEventBatch.workspaceId,
-      [
-        'flatLogicFunctionMaps',
-        'flatApplicationMaps',
-        'rolesPermissions',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-      ],
-    );
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceEventBatch.workspaceId,
+        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+      );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
       flatLogicFunctionMaps,
@@ -96,6 +81,10 @@ export class CallDatabaseEventTriggerJobsJob {
       this.recordAccessPolicyService.buildEventRecordAccessGate(
         workspaceEventBatch,
       );
+    const metadataMaps =
+      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+        workspaceEventBatch.workspaceId,
+      );
 
     for (const [
       applicationId,
@@ -113,14 +102,9 @@ export class CallDatabaseEventTriggerJobsJob {
 
       const admittedEvents = await resolveEventsReadableByRole({
         roleId: application.defaultRoleId,
-        owningApplicationId: application.id,
         workspaceEventBatch,
         eventRecordAccessGate,
-        rolesPermissions,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
+        metadataMaps,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
