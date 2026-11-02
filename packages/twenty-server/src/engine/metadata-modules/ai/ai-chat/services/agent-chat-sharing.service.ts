@@ -27,6 +27,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -80,6 +81,7 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -314,16 +316,15 @@ export class AgentChatSharingService {
       threadId,
       authContext,
     });
+    const threadFlatObjectMetadata =
+      await this.getThreadObjectMetadata(workspaceId);
+
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const members = await this.workspaceOrmManager
         .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
           shouldBypassPermissionChecks: true,
         })
         .find({ where: { id: In([...roleIdByMemberId.keys()]) } });
-      const repository = this.workspaceOrmManager.getRepository(
-        'agentChatThread',
-        { shouldBypassPermissionChecks: true },
-      );
       const hypotheticalRecordShareAccessLevel =
         shouldConsiderNewShares && canManageSharing
           ? RecordShareAccessLevel.READ_WRITE
@@ -340,12 +341,13 @@ export class AgentChatSharingService {
 
               const grants = await Promise.all(
                 AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                  repository.hasPrincipalGrantOnRecords({
+                  this.recordAccessPolicyService.hasAccessToRecords({
                     principal: {
                       workspaceId,
                       intersectionOf: { userWorkspaceRoleId: roleId },
                       workspaceMember: member,
                     },
+                    flatObjectMetadata: threadFlatObjectMetadata,
                     recordIds: [threadId],
                     operationType,
                     hypotheticalRecordShareAccessLevel,

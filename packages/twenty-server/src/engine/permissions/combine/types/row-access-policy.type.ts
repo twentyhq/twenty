@@ -37,6 +37,11 @@ export type PermissionsRowAccessRequest = {
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
 };
 
+export type PermissionsObjectAccessRequest = Pick<
+  PermissionsRowAccessRequest,
+  'principal' | 'metadataMaps' | 'flatObjectMetadata' | 'operationType'
+>;
+
 export type RowAccessRecord = { id: string } & Record<string, unknown>;
 
 export type RowAccessEvaluationContext = {

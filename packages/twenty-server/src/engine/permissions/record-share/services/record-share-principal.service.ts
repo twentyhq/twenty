@@ -6,6 +6,9 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -23,7 +26,10 @@ type RecordSharePrincipal = Pick<
 
 @Injectable()
 export class RecordSharePrincipalService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+  ) {}
 
   // Undefined for everyone, and for a member who left or whose membership is gone
   async resolveRoleIds({
@@ -104,30 +110,33 @@ export class RecordSharePrincipalService {
       workspaceId,
       principals: namedPrincipals,
     });
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-    const repository = transactionScope.getRepository(
-      flatObjectMetadata.nameSingular,
-      { shouldBypassPermissionChecks: true },
-    );
+    const metadataMaps =
+      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+        workspaceId,
+      );
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
 
-      if (!isDefined(roleId)) {
+      if (
+        !isDefined(roleId) ||
+        !isDefined(metadataMaps.rolesPermissions[roleId])
+      ) {
         continue;
       }
 
-      const roleObjectsPermissions = rolesPermissions[roleId];
+      const rolePrincipal: PermissionsPrincipal = {
+        workspaceId,
+        intersectionOf: { userWorkspaceRoleId: roleId },
+      };
 
       if (
-        isDefined(roleObjectsPermissions) &&
-        !(
-          roleObjectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords ??
-          false
-        )
+        !isRolePermittingOperation({
+          principal: rolePrincipal,
+          metadataMaps,
+          flatObjectMetadata,
+          operationType: 'select',
+        })
       ) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
@@ -149,13 +158,15 @@ export class RecordSharePrincipalService {
           shouldBypassPermissionChecks: true,
         })
         .findOne({ where: { id: principal.principalId } });
-      const hasGrant = await repository.hasPrincipalGrantOnRecords({
+      const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
         principal: {
-          workspaceId,
-          intersectionOf: { userWorkspaceRoleId: roleId },
+          ...rolePrincipal,
           workspaceMember: workspaceMember ?? undefined,
         },
+        flatObjectMetadata,
+        operationType: 'select',
         recordIds,
+        transactionScope,
       });
 
       if (!hasGrant) {
