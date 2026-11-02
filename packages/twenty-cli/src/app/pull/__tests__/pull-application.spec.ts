@@ -294,7 +294,9 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     const build = async () => {
       const result = await buildAndValidateManifest(appPath);
       expect(result.success, JSON.stringify(result)).toBe(true);
-      if (!result.success) throw new Error(result.errors.join('\n'));
+      if (!result.success) {
+        throw new Error(result.errors.join('\n'));
+      }
       const { builtFileInfos } = await buildApplication({
         appPath,
         manifest: result.manifest,
@@ -348,6 +350,53 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     expect(await read(componentPath)).toBe(updated.files[0].content);
   });
 
+  it('pulls source-only changes and reports local edits with Windows paths and an apply baseline', async () => {
+    const exported = createComponentExport();
+    requireSuccess(await pull(exported));
+    const base = JSON.parse(await read(BASE_PATH));
+    delete base.remoteSourceFingerprints;
+    await writeFile(join(appPath, BASE_PATH), JSON.stringify(base));
+    await writeFile(
+      join(appPath, componentPath),
+      exported.files[0].content + '// Local edit\n',
+    );
+    const scan = sourceScanner.scanProjectSourceFiles;
+    vi.spyOn(sourceScanner, 'scanProjectSourceFiles').mockImplementation(
+      async (...options) =>
+        (await scan(...options)).map((file) => ({
+          ...file,
+          relativePath: file.relativePath.split('/').join('\\'),
+        })),
+    );
+    const updated = createComponentExport();
+    updated.files[0].content += '// Remote edit\n';
+    const result = requireSuccess(await pull(updated));
+    expect(await read(componentPath)).toBe(updated.files[0].content);
+    expect(result.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: componentIdentifier,
+      relativePath: componentPath,
+    });
+  });
+
+  it('does not reuse stale fingerprints when a component moves back to an earlier remote path', async () => {
+    const original = createComponentExport();
+    requireSuccess(await pull(original));
+    const moved = createComponentExport('Moved');
+    const movedPath = 'src/front-components/moved.tsx';
+    moved.manifest.frontComponents[0].sourceComponentPath = movedPath;
+    moved.files[0].path = movedPath;
+    requireSuccess(await pull(moved));
+    expect(await read(componentPath)).toBe(moved.files[0].content);
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([movedPath]);
+    requireSuccess(await pull(original));
+    expect(await read(componentPath)).toBe(original.files[0].content);
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([componentPath]);
+  });
+
   it('keeps an unsupported component, then removes its local file only after confirmed remote deletion', async () => {
     requireSuccess(await pull(createComponentExport()));
     const unsupported = createExport({
@@ -363,6 +412,9 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     });
     expect(requireSuccess(await pull(unsupported)).deletions).toEqual([]);
     expect(await read(componentPath)).toContain('defineFrontComponent');
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([componentPath]);
     expect(
       requireSuccess(await pull(createExport({ includeObject: false })))
         .deletions,

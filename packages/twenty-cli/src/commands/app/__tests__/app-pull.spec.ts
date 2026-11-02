@@ -229,7 +229,21 @@ describe('app pull command with the packaged worker', () => {
 
   it('keeps metadata and dependency pull working on servers without source export', async () => {
     sourceFilesUnsupported = true;
+    exported.coverage.push({
+      metadataName: 'frontComponent',
+      universalIdentifier: '11111111-1111-4111-8111-111111111111',
+      status: 'UNSUPPORTED',
+      reason: 'front components are not exported yet',
+    });
+    exported.files.push({
+      folder: 'dependencies',
+      path: 'yarn.lock',
+      content: 'legacy-lock',
+    });
     const result = await runJson();
+    expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+      'legacy-lock',
+    );
     expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
     const requests = server.requests
       .filter((request) => request.body.includes('exportApplication'))

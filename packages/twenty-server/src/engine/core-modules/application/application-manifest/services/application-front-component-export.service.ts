@@ -51,9 +51,11 @@ export class ApplicationFrontComponentExportService {
           packageJson.dependencies,
           packageJson.devDependencies,
           packageJson.peerDependencies,
+          packageJson.optionalDependencies,
         ]) {
-          if (isPlainObject(dependencies))
+          if (isPlainObject(dependencies)) {
             Object.keys(dependencies).forEach((name) => packageNames.add(name));
+          }
         }
       }
     }
@@ -99,6 +101,9 @@ export class ApplicationFrontComponentExportService {
           reason = getUnsupportedFrontComponentSourceReason({
             source: content,
             universalIdentifier: component.universalIdentifier,
+            name: component.name,
+            description: component.description,
+            componentName: component.componentName,
             packageNames,
           });
         }
@@ -118,8 +123,9 @@ export class ApplicationFrontComponentExportService {
         universalIdentifier: component.universalIdentifier,
         status: ApplicationExportCoverageStatus.EXPORTED,
       });
-      if (shouldIncludeSourceFiles)
+      if (shouldIncludeSourceFiles) {
         files.push({ folder: FileFolder.Source, path, content });
+      }
     }
     return { frontComponents, files, coverage };
   }

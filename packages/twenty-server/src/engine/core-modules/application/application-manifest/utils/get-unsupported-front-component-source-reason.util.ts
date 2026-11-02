@@ -4,12 +4,34 @@ import { isDefined } from 'twenty-shared/utils';
 export const getUnsupportedFrontComponentSourceReason = ({
   source,
   universalIdentifier,
+  name,
+  description,
+  componentName,
   packageNames,
 }: {
   source: string;
   universalIdentifier: string;
+  name: string;
+  description: string | null;
+  componentName: string;
   packageNames: ReadonlySet<string>;
 }): string | undefined => {
+  const { diagnostics } = typescript.transpileModule(source, {
+    fileName: 'component.tsx',
+    compilerOptions: {
+      jsx: typescript.JsxEmit.Preserve,
+      target: typescript.ScriptTarget.Latest,
+    },
+    reportDiagnostics: true,
+  });
+  if (
+    diagnostics?.some(
+      (diagnostic) =>
+        diagnostic.category === typescript.DiagnosticCategory.Error,
+    )
+  ) {
+    return 'source contains syntax errors';
+  }
   const sourceFile = typescript.createSourceFile(
     'component.tsx',
     source,
@@ -62,7 +84,9 @@ export const getUnsupportedFrontComponentSourceReason = ({
     typescript.forEachChild(node, visit);
   };
   visit(sourceFile);
-  if (isDefined(reason)) return reason;
+  if (isDefined(reason)) {
+    return reason;
+  }
 
   const definition = sourceFile.statements.find(typescript.isExportAssignment);
   if (
@@ -104,6 +128,40 @@ export const getUnsupportedFrontComponentSourceReason = ({
       universalIdentifier.toLowerCase()
   ) {
     return 'source does not declare the stored front component identifier';
+  }
+  for (const { key, storedValue, defaultValue } of [
+    { key: 'name', storedValue: name, defaultValue: componentName },
+    { key: 'description', storedValue: description, defaultValue: null },
+  ]) {
+    const properties = config.properties.filter(
+      (property) =>
+        isDefined(property.name) &&
+        (typescript.isIdentifier(property.name) ||
+          typescript.isStringLiteral(property.name)) &&
+        property.name.text === key,
+    );
+    const property = properties[0];
+    let sourceValue = defaultValue;
+    if (properties.length > 1) {
+      return `source contains duplicate front component ${key}`;
+    }
+    if (isDefined(property)) {
+      if (!typescript.isPropertyAssignment(property)) {
+        return `source front component ${key} cannot be statically verified`;
+      }
+      const value = property.initializer;
+      if (typescript.isStringLiteralLike(value)) {
+        sourceValue = value.text;
+      } else if (
+        value.kind !== typescript.SyntaxKind.NullKeyword &&
+        !(typescript.isIdentifier(value) && value.text === 'undefined')
+      ) {
+        return `source front component ${key} cannot be statically verified`;
+      }
+    }
+    if (sourceValue !== storedValue) {
+      return `source front component ${key} does not match stored metadata`;
+    }
   }
   return undefined;
 };

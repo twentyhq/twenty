@@ -1,6 +1,13 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stop } from 'esbuild';
@@ -87,6 +94,7 @@ export default defineFrontComponent({ component: Component });`,
     expect(
       extractDefineEntity(
         '// export default defineObject({});\nexport default defineApplication({});',
+        'application.ts',
       ),
     ).toBe('defineApplication');
     for (const source of [
@@ -97,8 +105,26 @@ export default defineFrontComponent({ component: Component });`,
       'export default renamedDefine({});',
       'function helper() { return defineApplication({}); }',
     ]) {
-      expect(extractDefineEntity(source)).toBeUndefined();
+      expect(extractDefineEntity(source, 'application.ts')).toBeUndefined();
     }
+  });
+
+  it('finds an application identity following JSX in a TSX file', async () => {
+    await symlink(
+      resolve('../../node_modules/react'),
+      join(appPath, 'node_modules/react'),
+      'dir',
+    );
+    await writeFile(
+      join(appPath, 'app.tsx'),
+      sourceApplication('const Preview = () => <div>Preview</div>;'),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: {
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        displayName: 'Source app',
+      },
+    });
   });
 
   it('distinguishes missing, duplicate, and invalid application identities', async () => {

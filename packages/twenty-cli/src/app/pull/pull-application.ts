@@ -156,10 +156,7 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
-      remoteSourceFingerprints: {
-        ...base.remoteSourceFingerprints,
-        ...frontComponentPlan.fingerprints,
-      },
+      remoteSourceFingerprints: frontComponentPlan.fingerprints,
       dependencyFingerprints: {
         ...base.dependencyFingerprints,
         ...dependencyPlan.fingerprints,

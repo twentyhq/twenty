@@ -30,7 +30,7 @@ export const readApplicationIdentity = async ({
     signal.throwIfAborted();
 
     if (
-      extractDefineEntity(await readFile(filePath, 'utf8')) !==
+      extractDefineEntity(await readFile(filePath, 'utf8'), filePath) !==
       'defineApplication'
     ) {
       continue;

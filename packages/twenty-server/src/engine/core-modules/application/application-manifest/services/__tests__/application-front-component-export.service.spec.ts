@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { PageLayoutType, FileFolder } from 'twenty-shared/types';
@@ -36,13 +37,6 @@ const component = {
   widgetAvailability: [],
 };
 const maps = createEmptyAllFlatEntityMaps();
-const applicationAllFlatEntityMaps = {
-  ...maps,
-  flatFrontComponentMaps: addAllFlatEntitiesToFlatEntityMaps({
-    flatEntities: [component],
-    flatEntityMaps: maps.flatFrontComponentMaps,
-  }),
-};
 
 describe('ApplicationFrontComponentExportService', () => {
   const storage = { checkFileExists: jest.fn(), readFile: jest.fn() };
@@ -52,16 +46,25 @@ describe('ApplicationFrontComponentExportService', () => {
   const run = (
     shouldIncludeSourceFiles = true,
     dependencyFiles: ApplicationExportFile[] = [],
+    frontComponent: FlatFrontComponent = component,
   ) =>
     service.exportFrontComponents({
       workspaceId: identifier,
       applicationUniversalIdentifier: identifier,
-      applicationAllFlatEntityMaps,
+      applicationAllFlatEntityMaps: {
+        ...maps,
+        flatFrontComponentMaps: addAllFlatEntitiesToFlatEntityMaps({
+          flatEntities: [frontComponent],
+          flatEntityMaps: maps.flatFrontComponentMaps,
+        }),
+      },
       dependencyFiles,
       shouldIncludeSourceFiles,
     });
   beforeEach(() => {
     jest.useRealTimers();
+    storage.checkFileExists.mockReset();
+    storage.readFile.mockReset();
     storage.checkFileExists.mockResolvedValue(true);
     storage.readFile.mockImplementation(async () =>
       Readable.from([Buffer.from(source)]),
@@ -74,6 +77,7 @@ describe('ApplicationFrontComponentExportService', () => {
       { folder: FileFolder.Source, path: sourcePath, content: source },
     ]);
     expect(result.coverage[0].status).toBe('EXPORTED');
+    expect(storage.readFile).toHaveBeenCalledTimes(1);
     expect(storage.readFile).toHaveBeenCalledWith({
       workspaceId: identifier,
       applicationUniversalIdentifier: identifier,
@@ -106,6 +110,88 @@ describe('ApplicationFrontComponentExportService', () => {
     ]);
     expect(result.coverage[0].status).toBe('EXPORTED');
     expect(result.files[0].content).toBe(entrySource);
+  });
+  it.each([{ name: 'Renamed' }, { description: 'Edited in the workspace' }])(
+    'reports source metadata drift for %j',
+    async (updates) => {
+      const result = await run(true, [], { ...component, ...updates });
+      expect(result.frontComponents).toEqual([]);
+      expect(result.files).toEqual([]);
+      expect(result.coverage).toEqual([
+        expect.objectContaining({
+          universalIdentifier: identifier,
+          status: 'UNSUPPORTED',
+          reason: expect.stringContaining('does not match stored metadata'),
+        }),
+      ]);
+    },
+  );
+  it('accepts matching literal metadata', async () => {
+    storage.readFile.mockImplementation(async () =>
+      Readable.from([
+        Buffer.from(
+          source.replace(
+            'component: Hello',
+            'name: "Named", description: "Details", component: Hello',
+          ),
+        ),
+      ]),
+    );
+    expect(
+      (
+        await run(true, [], {
+          ...component,
+          name: 'Named',
+          description: 'Details',
+        })
+      ).coverage[0].status,
+    ).toBe('EXPORTED');
+  });
+  it('reports unresolved object restrictions instead of exporting unrestricted availability', async () => {
+    const result = await run(true, [], {
+      ...component,
+      universalWidgetAvailability: [
+        {
+          pageLayoutType: PageLayoutType.RECORD_PAGE,
+          objectMetadataUniversalIdentifier: null,
+        },
+      ],
+    });
+    expect(result.frontComponents).toEqual([]);
+    expect(result.files).toEqual([]);
+    expect(result.coverage[0]).toMatchObject({
+      status: 'UNSUPPORTED',
+      reason: expect.stringContaining('widget availability'),
+    });
+    expect(storage.readFile).not.toHaveBeenCalled();
+  });
+  it('retains unrestricted record page availability', async () => {
+    const result = await run(true, [], {
+      ...component,
+      universalWidgetAvailability: [
+        { pageLayoutType: PageLayoutType.RECORD_PAGE },
+      ],
+    });
+    expect(result.frontComponents[0].widgetAvailability).toEqual({
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
+    });
+  });
+  it('accepts imports from optional dependencies', async () => {
+    storage.readFile.mockImplementation(async () =>
+      Readable.from([
+        Buffer.from(`import 'optional-package/style.css';\n${source}`),
+      ]),
+    );
+    const result = await run(true, [
+      {
+        folder: FileFolder.Dependencies,
+        path: 'package.json',
+        content: JSON.stringify({
+          optionalDependencies: { 'optional-package': '1.0.0' },
+        }),
+      },
+    ]);
+    expect(result.coverage[0].status).toBe('EXPORTED');
   });
   it('keeps source bytes out of metadata-only exports', async () => {
     expect((await run(false)).files).toEqual([]);

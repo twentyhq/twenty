@@ -6,6 +6,9 @@ const check = (source: string) =>
   getUnsupportedFrontComponentSourceReason({
     source,
     universalIdentifier: identifier,
+    name: 'Component',
+    description: null,
+    componentName: 'Component',
     packageNames: new Set(['twenty-sdk', 'react', 'twenty-ui']),
   });
 
@@ -32,7 +35,38 @@ ${definition}`),
   ])('reports an incomplete source for %s', (importSource) => {
     expect(check(`${importSource}\n${definition}`)).toBeDefined();
   });
-  it('rejects mismatched or computed identifiers and non-authorable source', () => {
+  it.each(['const broken = ;', 'const Component = () => <div><span></div>;'])(
+    'rejects malformed TSX: %s',
+    (invalidSource) => {
+      expect(check(`${invalidSource}\n${definition}`)).toBe(
+        'source contains syntax errors',
+      );
+    },
+  );
+  it('rejects computed metadata keys', () => {
+    expect(
+      check(
+        definition.replace(
+          'component: Component',
+          `[universalIdentifier]: '${identifier}', component: Component`,
+        ),
+      ),
+    ).toBe('source contains computed or spread front component metadata');
+  });
+  it.each(['name', 'description'])(
+    'rejects %s that cannot be verified statically',
+    (key) => {
+      expect(
+        check(
+          definition.replace(
+            'component: Component',
+            `${key}: runtimeValue, component: Component`,
+          ),
+        ),
+      ).toContain('cannot be statically verified');
+    },
+  );
+  it('rejects mismatched or duplicate identifiers and non-authorable source', () => {
     expect(
       check(definition.replace(identifier, 'another-identifier')),
     ).toBeDefined();

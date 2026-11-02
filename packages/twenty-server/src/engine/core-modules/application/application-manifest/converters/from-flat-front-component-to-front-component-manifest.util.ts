@@ -1,3 +1,4 @@
+import { isNull } from '@sniptt/guards';
 import { type FrontComponentManifest } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,13 @@ export const fromFlatFrontComponentToFrontComponentManifest = (
 ): FrontComponentManifest | undefined => {
   const availability = component.universalWidgetAvailability;
   const pageLayoutType = availability[0]?.pageLayoutType;
-  if (availability.some((entry) => entry.pageLayoutType !== pageLayoutType)) {
+  if (
+    availability.some(
+      (entry) =>
+        entry.pageLayoutType !== pageLayoutType ||
+        isNull(entry.objectMetadataUniversalIdentifier),
+    )
+  ) {
     return undefined;
   }
   const objects = availability

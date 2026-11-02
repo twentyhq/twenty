@@ -50,7 +50,9 @@ export const planFrontComponentWrites = async ({
         file.universalIdentifier?.toLowerCase() ===
           universalIdentifier.toLowerCase(),
     );
-    const relativePath = existing?.relativePath ?? sourceComponentPath;
+    const relativePath = (existing?.relativePath ?? sourceComponentPath)
+      .split('\\')
+      .join('/');
     const pathKey = relativePath.toLowerCase();
     const existingContent = (await pathExists(join(appPath, relativePath)))
       ? await readFile(join(appPath, relativePath), 'utf8')
@@ -70,16 +72,18 @@ export const planFrontComponentWrites = async ({
     usedPaths.add(pathKey);
     const fingerprint = hashContent(file.content);
     fingerprints[sourceComponentPath] = fingerprint;
-    const previousFingerprint =
-      remoteSourceFingerprints[sourceComponentPath] ??
-      sourceFingerprints[relativePath];
-    if (existingContent === file.content)
+    if (existingContent === file.content) {
       unchangedSourceFingerprints[relativePath] = fingerprint;
+    }
     const previous = baseManifest?.frontComponents?.find(
       (entry) =>
         entry.universalIdentifier.toLowerCase() ===
         universalIdentifier.toLowerCase(),
     );
+    const previousFingerprint =
+      (isDefined(previous)
+        ? remoteSourceFingerprints[previous.sourceComponentPath]
+        : undefined) ?? sourceFingerprints[relativePath];
     if (
       existingContent === file.content ||
       (isDefined(existingContent) &&
@@ -101,21 +105,32 @@ export const planFrontComponentWrites = async ({
     });
   }
   for (const previous of baseManifest?.frontComponents ?? []) {
-    if (protectedIdentifiers.has(previous.universalIdentifier.toLowerCase()))
+    if (protectedIdentifiers.has(previous.universalIdentifier.toLowerCase())) {
+      const previousFingerprint =
+        remoteSourceFingerprints[previous.sourceComponentPath];
+      if (
+        isDefined(previousFingerprint) &&
+        !manifest.frontComponents?.some(
+          (component) =>
+            component.universalIdentifier.toLowerCase() ===
+            previous.universalIdentifier.toLowerCase(),
+        )
+      ) {
+        fingerprints[previous.sourceComponentPath] = previousFingerprint;
+      }
       continue;
+    }
     const existing = scannedFiles.find(
       (file) =>
         file.entityKey === 'frontComponents' &&
         file.universalIdentifier?.toLowerCase() ===
           previous.universalIdentifier.toLowerCase(),
     );
-    if (
-      isDefined(existing) &&
-      !usedPaths.has(existing.relativePath.toLowerCase())
-    ) {
+    const relativePath = existing?.relativePath.split('\\').join('/');
+    if (isDefined(relativePath) && !usedPaths.has(relativePath.toLowerCase())) {
       deletions.push({
         universalIdentifier: previous.universalIdentifier,
-        relativePath: existing.relativePath,
+        relativePath,
       });
     }
   }
