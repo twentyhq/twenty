@@ -1,10 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
+import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
 import { settingsAiOverviewStoryParameters } from '~/pages/settings/ai/components/__stories__/settingsAiOverviewStoryParameters';
 import { settingsAiOverviewStorySections } from '~/pages/settings/ai/components/__stories__/settingsAiOverviewStorySections';
 import { type SettingsAiOverviewProps } from '~/pages/settings/ai/types/SettingsAiOverviewProps';
@@ -64,9 +65,12 @@ export const WithSections: Story = {
       </Section.Root>
     ),
     behaviorSection: (
-      <Section.Root>
-        <Section.Header title="Behavior" />
-      </Section.Root>
+      <SettingsAiBehaviorExample
+        directMessageMode="MENTION_ONLY"
+        inboxMode="AUTOMATIC"
+        onDirectMessageModeChange={fn()}
+        onInboxModeChange={fn()}
+      />
     ),
     summarySection: (
       <Section.Root>
@@ -87,6 +91,12 @@ export const WithSections: Story = {
       'Workspace Instructions',
       'System Prompt',
     ]);
+    expect(canvas.getByRole('combobox', { name: 'DMs' })).toHaveTextContent(
+      'Only when mentioned',
+    );
+    expect(
+      canvas.getByRole('combobox', { name: 'Global inbox' }),
+    ).toHaveTextContent('Auto');
     expect(canvas.getByText('Overview navigation')).toBeInTheDocument();
   },
 };
