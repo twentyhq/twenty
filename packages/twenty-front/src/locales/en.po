@@ -13622,6 +13622,11 @@ msgstr "Get the most out of your workspace by inviting your team."
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Gets this record only: their role can't access {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr "Getting started"
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25486,6 +25491,11 @@ msgstr "Show on"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Show only rows with errors"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr "Show the Getting started page and sidebar card, and open it on landing during the trial."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx

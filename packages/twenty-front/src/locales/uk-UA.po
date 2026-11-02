@@ -13627,6 +13627,11 @@ msgstr "Отримайте максимум від свого робочого �
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Отримує лише цей запис: його роль не має доступу до {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr ""
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25491,6 +25496,11 @@ msgstr "Показувати на"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Показати лише рядки з помилками"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx

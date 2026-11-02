@@ -13627,6 +13627,11 @@ msgstr "Treu el màxim partit al teu espai de treball convidant al teu equip."
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Només rep aquest registre: el seu rol no pot accedir a {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr ""
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25491,6 +25496,11 @@ msgstr "Mostra a"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Mostra només les files amb errors"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx

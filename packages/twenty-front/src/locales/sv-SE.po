@@ -13627,6 +13627,11 @@ msgstr "Få ut det mesta av din arbetsyta genom att bjuda in ditt team."
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Får endast denna post: deras roll kan inte komma åt {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr ""
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25495,6 +25500,11 @@ msgstr "Visa på"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Visa endast rader med fel"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx

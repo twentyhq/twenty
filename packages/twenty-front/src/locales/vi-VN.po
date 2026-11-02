@@ -13627,6 +13627,11 @@ msgstr "Tối ưu hóa không gian làm việc của bạn bằng cách mời te
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Chỉ nhận bản ghi này: vai trò của họ không thể truy cập {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr ""
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25491,6 +25496,11 @@ msgstr "Hiển thị trên"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Chỉ hiển thị các hàng có lỗi"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx

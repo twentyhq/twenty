@@ -13627,6 +13627,11 @@ msgstr "Օգտվեք ձեր աշխատանքային տարածքից՝ հրավ
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Ստանում է միայն այս գրառումը. նրա դերը հասանելիություն չունի {objectLabelPlural}-ին"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Getting started"
+msgstr ""
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -25491,6 +25496,11 @@ msgstr "Ցուցադրել"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Ցույց տալ միայն սխալներով տողերը"
+
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
