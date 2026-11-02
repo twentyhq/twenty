@@ -138,6 +138,7 @@ exports[`syncApplication should create a TEXT field on the standard Company obje
       },
     ],
     "applicationUniversalIdentifier": Any<String>,
+    "warnings": [],
   },
 }
 `;
@@ -1632,6 +1633,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       },
     ],
     "applicationUniversalIdentifier": Any<String>,
+    "warnings": [],
   },
 }
 `;
@@ -1874,6 +1876,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       },
     ],
     "applicationUniversalIdentifier": Any<String>,
+    "warnings": [],
   },
 }
 `;
@@ -3389,6 +3392,7 @@ This is a test skill.",
       },
     ],
     "applicationUniversalIdentifier": Any<String>,
+    "warnings": [],
   },
 }
 `;

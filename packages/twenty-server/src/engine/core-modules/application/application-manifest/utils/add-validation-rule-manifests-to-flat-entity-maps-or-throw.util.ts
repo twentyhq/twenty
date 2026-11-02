@@ -312,6 +312,23 @@ const isErrorFieldDetachedByWorkspace = ({
     ],
   );
 
+const buildUnavailableFieldMessage = ({
+  validationRuleName,
+  unavailableField: { name, state },
+}: {
+  validationRuleName: string;
+  unavailableField: UnavailableField;
+}): string => {
+  switch (state) {
+    case 'deactivated':
+      return `Validation rule "${validationRuleName}" was left inactive: it uses the field "${name}", which is deactivated in this workspace. Reactivate the field, then turn the rule back on.`;
+    case 'deleted':
+      return `Validation rule "${validationRuleName}" was left inactive: it uses the field "${name}", which no longer exists in this workspace. Update the rule's expression or add the field back, then turn the rule back on.`;
+    case 'removedFromApplication':
+      return `Validation rule "${validationRuleName}" uses the field "${name}", which no longer exists. Update the rule's expression or add the field back to your app.`;
+  }
+};
+
 const resolveCompilationOutcome = ({
   compilationResult,
   validationRuleManifest,
@@ -334,6 +351,7 @@ const resolveCompilationOutcome = ({
 }): {
   bindings: ValidationRuleBindings;
   isActive: boolean;
+  warning?: string;
 } => {
   if (compilationResult.isValid) {
     return {
@@ -357,9 +375,14 @@ const resolveCompilationOutcome = ({
     );
   }
 
+  const message = buildUnavailableFieldMessage({
+    validationRuleName: validationRuleManifest.name,
+    unavailableField,
+  });
+
   if (unavailableField.state === 'removedFromApplication') {
     throw new ApplicationException(
-      `Validation rule "${validationRuleManifest.name}" uses the field "${unavailableField.name}", which no longer exists. Update the rule's expression or add the field back to your app.`,
+      message,
       ApplicationExceptionCode.INVALID_INPUT,
     );
   }
@@ -367,6 +390,7 @@ const resolveCompilationOutcome = ({
   return {
     bindings: existingFlatValidationRule?.bindings ?? {},
     isActive: false,
+    warning: message,
   };
 };
 
@@ -384,9 +408,11 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   now: string;
-}): void => {
+}): { warnings: string[] } => {
+  const warnings: string[] = [];
+
   if (validationRules.length === 0) {
-    return;
+    return { warnings };
   }
 
   const fieldsAfterSync = computeFieldsAfterSync({
@@ -438,7 +464,7 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       }),
     });
 
-    const { bindings, isActive } = resolveCompilationOutcome({
+    const { bindings, isActive, warning } = resolveCompilationOutcome({
       compilationResult,
       validationRuleManifest,
       existingFlatValidationRule,
@@ -447,12 +473,22 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       existingAllFlatEntityMaps,
     });
 
+    if (isDefined(warning)) {
+      warnings.push(warning);
+    }
+
     const isErrorFieldDetached = isErrorFieldDetachedByWorkspace({
       validationRuleManifest,
       existingFlatValidationRule,
       existingAllFlatEntityMaps,
       toAllUniversalFlatEntityMaps,
     });
+
+    if (isErrorFieldDetached) {
+      warnings.push(
+        `Validation rule "${validationRuleManifest.name}" is no longer attached to its error field, which does not exist in this workspace.`,
+      );
+    }
 
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity:
@@ -473,4 +509,6 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
         toAllUniversalFlatEntityMaps.flatValidationRuleMaps,
     });
   }
+
+  return { warnings };
 };

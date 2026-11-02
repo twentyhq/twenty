@@ -187,6 +187,7 @@ export class ApplicationManifestMigrationService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
+    warnings: string[];
   }> {
     const now = new Date().toISOString();
 
@@ -260,7 +261,7 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
-    addValidationRuleManifestsToFlatEntityMapsOrThrow({
+    const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
       validationRules: manifest.validationRules ?? [],
       ownerFlatApplication,
       inferDeletionFromMissingEntities,
@@ -357,6 +358,7 @@ export class ApplicationManifestMigrationService {
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+      warnings,
     };
   }
 

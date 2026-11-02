@@ -242,7 +242,7 @@ describe('Validation rules declared in an application manifest', () => {
     );
   }, 60000);
 
-  it('should leave the rule off when the workspace deleted a field outside the application', async () => {
+  it('should leave the rule off and warn when the workspace deleted a field outside the application', async () => {
     const companyObjectMetadataId = await findCompanyObjectMetadataId();
     const { data } = await createOneFieldMetadata({
       input: {
@@ -274,8 +274,16 @@ describe('Validation rules declared in an application manifest', () => {
       expectToFail: false,
     });
 
-    await syncApplication({ manifest, expectToFail: false });
+    const afterDeactivation = await syncApplication({
+      manifest,
+      expectToFail: false,
+    });
 
+    expect(afterDeactivation.data.syncApplication.warnings).toEqual([
+      expect.stringContaining(
+        'uses the field "validationRuleManifestScore", which is deactivated',
+      ),
+    ]);
     expect(
       await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
     ).toMatchObject({ isActive: false });
@@ -285,8 +293,17 @@ describe('Validation rules declared in an application manifest', () => {
       expectToFail: false,
     });
 
-    await syncApplication({ manifest, expectToFail: false });
+    const afterDeletion = await syncApplication({
+      manifest,
+      expectToFail: false,
+    });
 
+    expect(afterDeletion.data.syncApplication.warnings).toEqual([
+      expect.stringContaining(
+        'uses the field "validationRuleManifestScore", which no longer exists',
+      ),
+      expect.stringContaining('is no longer attached to its error field'),
+    ]);
     expect(
       await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
     ).toMatchObject({
@@ -322,7 +339,7 @@ describe('Validation rules declared in an application manifest', () => {
     ).toMatchObject({ isActive: true });
   }, 60000);
 
-  it('should leave the rule off when the workspace deactivated a standard field through an override', async () => {
+  it('should leave the rule off and warn when the workspace deactivated a standard field through an override', async () => {
     const companyObjectMetadataId = await findCompanyObjectMetadataId();
     const rows: { id: string }[] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'employees'`,
@@ -353,8 +370,16 @@ describe('Validation rules declared in an application manifest', () => {
         expectToFail: false,
       });
 
-      await syncApplication({ manifest, expectToFail: false });
+      const { data } = await syncApplication({
+        manifest,
+        expectToFail: false,
+      });
 
+      expect(data.syncApplication.warnings).toEqual([
+        expect.stringContaining(
+          'uses the field "employees", which is deactivated',
+        ),
+      ]);
       expect(
         await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
       ).toMatchObject({ isActive: false });
