@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type CachedClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/cached-client-id-metadata-document.type';
@@ -7,6 +9,9 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 const DOCUMENT_URL = 'https://claude.ai/oauth/mcp-client-metadata';
+
+const MINUTE_MS = 60 * 1000;
+const HOUR_MS = 60 * MINUTE_MS;
 
 const RAW_DOCUMENT = {
   client_id: DOCUMENT_URL,
@@ -19,7 +24,10 @@ describe('ClientIdMetadataDocumentService', () => {
   let service: ClientIdMetadataDocumentService;
   let httpGet: jest.Mock;
   let getHttpClient: jest.Mock;
-  let cache: Map<string, CachedClientIdMetadataDocument>;
+  let cache: Map<
+    string,
+    { value: CachedClientIdMetadataDocument; expiresAt: number }
+  >;
 
   const moveClockPastRefresh = () => {
     const now = Date.now();
@@ -41,9 +49,20 @@ describe('ClientIdMetadataDocumentService', () => {
         {
           provide: CacheStorageNamespace.EngineOAuthClientMetadataDocument,
           useValue: {
-            get: async (key: string) => cache.get(key),
-            set: async (key: string, value: CachedClientIdMetadataDocument) => {
-              cache.set(key, value);
+            get: async (key: string) => {
+              const storedEntry = cache.get(key);
+
+              return isDefined(storedEntry) &&
+                Date.now() < storedEntry.expiresAt
+                ? storedEntry.value
+                : undefined;
+            },
+            set: async (
+              key: string,
+              value: CachedClientIdMetadataDocument,
+              ttlMs: number,
+            ) => {
+              cache.set(key, { value, expiresAt: Date.now() + ttlMs });
             },
           },
         },
@@ -110,5 +129,51 @@ describe('ClientIdMetadataDocumentService', () => {
     );
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+  });
+
+  describe('while its host is unreachable', () => {
+    const START = 1_700_000_000_000;
+
+    const setClock = (elapsedMs: number) => {
+      jest.spyOn(Date, 'now').mockReturnValue(START + elapsedMs);
+    };
+
+    it('serves the last good document until a day after it was fetched, however often it is asked', async () => {
+      setClock(0);
+      await service.findDocument(DOCUMENT_URL);
+      httpGet.mockRejectedValue(new Error('ECONNREFUSED'));
+
+      setClock(23 * HOUR_MS);
+      await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+        clientName: 'Claude',
+      });
+
+      setClock(23 * HOUR_MS + 30 * MINUTE_MS);
+      await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+        clientName: 'Claude',
+      });
+
+      setClock(24 * HOUR_MS + MINUTE_MS);
+      await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+      expect(httpGet).toHaveBeenCalledTimes(4);
+    });
+
+    it('counts the day from the latest successful fetch', async () => {
+      setClock(0);
+      await service.findDocument(DOCUMENT_URL);
+
+      httpGet.mockRejectedValueOnce(new Error('ECONNREFUSED'));
+      setClock(23 * HOUR_MS);
+      await service.findDocument(DOCUMENT_URL);
+
+      setClock(23 * HOUR_MS + 10 * MINUTE_MS);
+      await service.findDocument(DOCUMENT_URL);
+
+      httpGet.mockRejectedValue(new Error('ECONNREFUSED'));
+      setClock(46 * HOUR_MS);
+      await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+        clientName: 'Claude',
+      });
+    });
   });
 });

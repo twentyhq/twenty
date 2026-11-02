@@ -1,20 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isAxiosError } from 'axios';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
 import { type CachedClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/cached-client-id-metadata-document.type';
+import { type ClientIdMetadataDocumentFetchResult } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document-fetch-result.type';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
+import { buildClientIdMetadataDocumentCacheEntry } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/build-client-id-metadata-document-cache-entry.util';
 import { parseClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/parse-client-id-metadata-document.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-
-type ClientIdMetadataDocumentFetchResult =
-  | { status: 'fetched'; document: ClientIdMetadataDocument }
-  | { status: 'invalid' | 'unreachable' };
 
 @Injectable()
 export class ClientIdMetadataDocumentService {
@@ -36,7 +34,7 @@ export class ClientIdMetadataDocumentService {
 
     if (
       isDefined(cachedEntry) &&
-      Date.now() - cachedEntry.fetchedAt <
+      Date.now() - cachedEntry.checkedAt <
         CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs
     ) {
       return cachedEntry.document;
@@ -44,40 +42,19 @@ export class ClientIdMetadataDocumentService {
 
     const fetchResult = await this.fetchDocument(clientIdMetadataDocumentUrl);
 
-    // Failures are cached too, re-stamping the last good document during an outage, so requests stop waiting on the vendor
-    const document = this.selectDocumentToCache({
+    const { entry, ttlMs } = buildClientIdMetadataDocumentCacheEntry({
       fetchResult,
-      cachedDocument: cachedEntry?.document ?? null,
+      cachedEntry,
+      now: Date.now(),
     });
 
     await this.cacheStorage.set<CachedClientIdMetadataDocument>(
       clientIdMetadataDocumentUrl,
-      { document, fetchedAt: Date.now() },
-      isDefined(document)
-        ? CLIENT_ID_METADATA_DOCUMENT_LIMITS.staleCacheTtlMs
-        : CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs,
+      entry,
+      ttlMs,
     );
 
-    return document;
-  }
-
-  private selectDocumentToCache({
-    fetchResult,
-    cachedDocument,
-  }: {
-    fetchResult: ClientIdMetadataDocumentFetchResult;
-    cachedDocument: ClientIdMetadataDocument | null;
-  }): ClientIdMetadataDocument | null {
-    switch (fetchResult.status) {
-      case 'fetched':
-        return fetchResult.document;
-      case 'unreachable':
-        return cachedDocument;
-      case 'invalid':
-        return null;
-      default:
-        return assertUnreachable(fetchResult);
-    }
+    return entry.document;
   }
 
   private async fetchDocument(
