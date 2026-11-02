@@ -3193,6 +3193,7 @@ export interface Query {
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     validatePasswordResetToken: ValidatePasswordResetToken
     validationRules: ValidationRule[]
+    validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
     __typename: 'Query'
@@ -7868,6 +7869,7 @@ export interface QueryGenqlSelection{
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
+    validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
     __typename?: boolean | number
