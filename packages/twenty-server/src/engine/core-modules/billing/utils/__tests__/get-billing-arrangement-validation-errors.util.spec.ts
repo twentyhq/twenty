@@ -19,7 +19,7 @@ const draft = (
   seats: null,
   seatCapMode: null,
   stripePriceId: null,
-  stripeCouponId: null,
+  stripeDiscountId: null,
   creditAllowanceMicro: null,
   stripeCreditNoteId: null,
   creditGrantId: null,
@@ -47,7 +47,7 @@ describe('getBillingArrangementValidationErrors', () => {
       'a discount',
       draft({
         type: BillingArrangementType.DISCOUNT,
-        stripeCouponId: 'coupon_non_profit',
+        stripeDiscountId: 'di_non_profit',
       }),
     ],
     [
@@ -94,12 +94,12 @@ describe('getBillingArrangementValidationErrors', () => {
     ]);
   });
 
-  it.each(['', '   '])('treats %p as a missing setting', (stripeCouponId) => {
+  it.each(['', '   '])('treats %p as a missing setting', (stripeDiscountId) => {
     expect(
       getBillingArrangementValidationErrors(
-        draft({ type: BillingArrangementType.DISCOUNT, stripeCouponId }),
+        draft({ type: BillingArrangementType.DISCOUNT, stripeDiscountId }),
       ),
-    ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeCouponId' }]);
+    ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeDiscountId' }]);
   });
 
   it('reports settings that belong to another type', () => {
@@ -108,10 +108,10 @@ describe('getBillingArrangementValidationErrors', () => {
         draft({
           type: BillingArrangementType.FREE_SEATS,
           seats: 3,
-          stripeCouponId: 'coupon_non_profit',
+          stripeDiscountId: 'di_non_profit',
         }),
       ),
-    ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeCouponId' }]);
+    ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeDiscountId' }]);
   });
 
   it.each([0, -1, 1.5, 2_147_483_648])('rejects %s seats', (seats) => {

@@ -19,7 +19,7 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
     optional: ['endsAt'],
   },
   [BillingArrangementType.DISCOUNT]: {
-    required: ['stripeCouponId'],
+    required: ['stripeDiscountId'],
     optional: ['endsAt'],
   },
   [BillingArrangementType.TRIAL_EXTENSION]: {

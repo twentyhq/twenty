@@ -54,8 +54,9 @@ export class BillingArrangementEntity {
   @Column({ nullable: true, type: 'varchar' })
   stripePriceId: string | null;
 
+  @Index('IDX_BILLING_ARRANGEMENT_STRIPE_DISCOUNT_ID_UNIQUE', { unique: true })
   @Column({ nullable: true, type: 'varchar' })
-  stripeCouponId: string | null;
+  stripeDiscountId: string | null;
 
   @Column({
     nullable: true,
