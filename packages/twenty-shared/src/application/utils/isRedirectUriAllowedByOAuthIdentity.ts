@@ -11,7 +11,9 @@ const matchesRedirectUri = ({
   allowedRedirectUri: string;
   redirectUri: string;
 }): boolean => {
-  if (!allowedRedirectUri.includes(OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT)) {
+  if (
+    !allowedRedirectUri.includes(OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT)
+  ) {
     return allowedRedirectUri === redirectUri;
   }
 

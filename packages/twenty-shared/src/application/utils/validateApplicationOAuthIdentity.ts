@@ -9,7 +9,9 @@ const getRedirectUriErrors = (redirectUri: string): string[] => {
   const redirectUrl = getUrlSafely(redirectUri);
 
   if (redirectUrl === null || redirectUrl.href !== redirectUri) {
-    return [`OAuth identity redirect URI "${redirectUri}" must be a canonical URL`];
+    return [
+      `OAuth identity redirect URI "${redirectUri}" must be a canonical URL`,
+    ];
   }
 
   const errors: string[] = [];
@@ -24,9 +26,10 @@ const getRedirectUriErrors = (redirectUri: string): string[] => {
     );
   }
 
-  const hasWildcardOutsidePath = `${redirectUrl.host}${redirectUrl.search}`.includes(
-    OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT,
-  );
+  const hasWildcardOutsidePath =
+    `${redirectUrl.host}${redirectUrl.search}`.includes(
+      OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT,
+    );
   const hasPartialWildcardSegment = redirectUrl.pathname
     .split('/')
     .some(
