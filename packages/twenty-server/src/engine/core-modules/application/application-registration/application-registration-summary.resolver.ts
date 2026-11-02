@@ -4,6 +4,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
+import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 
 @MetadataResolver(() => ApplicationRegistrationSummaryDTO)
 export class ApplicationRegistrationSummaryResolver {
@@ -18,5 +20,12 @@ export class ApplicationRegistrationSummaryResolver {
     return this.applicationRegistrationAssetUrlService.buildLogoUrl(
       registration,
     );
+  }
+
+  @ResolveField(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): WellKnownOAuthClient | null {
+    return getWellKnownOAuthClientOfRegistration(registration);
   }
 }

@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum ApplicationRegistrationExceptionCode {
   APPLICATION_REGISTRATION_NOT_FOUND = 'APPLICATION_REGISTRATION_NOT_FOUND',
   UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED = 'UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED',
+  RESERVED_REGISTRATION_TAKEN = 'RESERVED_REGISTRATION_TAKEN',
   INVALID_SCOPE = 'INVALID_SCOPE',
   INVALID_REDIRECT_URI = 'INVALID_REDIRECT_URI',
   INVALID_INPUT = 'INVALID_INPUT',
@@ -35,6 +36,8 @@ const getExceptionUserFriendlyMessage = (
       return msg`Application registration not found.`;
     case ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED:
       return msg`This universal identifier is already claimed by another registration.`;
+    case ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN:
+      return msg`This application is unavailable on this server. Please contact your administrator.`;
     case ApplicationRegistrationExceptionCode.INVALID_SCOPE:
       return msg`One or more requested scopes are invalid.`;
     case ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI:

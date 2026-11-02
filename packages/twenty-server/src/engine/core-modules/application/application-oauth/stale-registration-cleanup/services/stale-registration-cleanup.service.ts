@@ -100,6 +100,7 @@ export class StaleRegistrationCleanupService {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .andWhere('registration.createdAt < :cutoffDate', { cutoffDate })
+      .andWhere('registration.isListed = false')
       .orderBy('registration.createdAt', 'ASC')
       .take(batchSize);
 
