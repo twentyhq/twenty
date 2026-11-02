@@ -3,7 +3,7 @@ title: Inbox
 description: Post messages from your app in members' inbox, from a logic function or a front component.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Overview
 
@@ -79,7 +79,7 @@ await sendInboxMessage({
 - The call runs with the same access as [sending a message](#who-sends-the-message): a member must be able to edit the conversation, and your application can write in a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`.
 - `idempotencyKey` identifies the message within the conversation for your app: another app using the same key writes its own message.
 - The conversation keeps its title, owner and channel, and no opening message is added: `channelId` is refused, and `title` is ignored.
-- `workspaceMemberIds` and `mentionedWorkspaceMemberIds` add members to a conversation that has an owner, as they do for a conversation your app opened.
+- `workspaceMemberIds` and `mentionedWorkspaceMemberIds` can notify members who already have access to a conversation that has an owner. Granting access to new members requires a prior message authored by your app. A call made by a member also uses that member's sharing rights.
 
 ## Posting in a channel
 

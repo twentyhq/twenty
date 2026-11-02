@@ -224,9 +224,11 @@ export class AgentChatSharingService {
   // manage it, so only the members who can reply afterwards are returned
   async shareThreadWithMembers({
     memberIds,
+    shouldCreateNewShares = true,
     ...args
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
+    shouldCreateNewShares?: boolean;
   }): Promise<string[]> {
     const chatMemberIds = await this.filterMemberIds(memberIds, (memberId) =>
       this.getAuthContext({
@@ -247,7 +249,7 @@ export class AgentChatSharingService {
     };
     const sharing = await this.recordSharingService.getSharing(recordTarget);
 
-    if (sharing.canManageSharing) {
+    if (shouldCreateNewShares && sharing.canManageSharing) {
       for (const memberId of chatMemberIds) {
         const memberShare = sharing.shares.find(
           ({ principalId }) => principalId === memberId,

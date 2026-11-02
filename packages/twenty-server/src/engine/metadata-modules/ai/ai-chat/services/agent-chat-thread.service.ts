@@ -341,6 +341,7 @@ export class AgentChatThreadService {
   async mentionParticipants(
     args: AgentChatThreadAccessArgs & {
       participantWorkspaceMemberIds: string[];
+      shouldCreateNewShares?: boolean;
     },
   ): Promise<string[]> {
     return this.addParticipants({
@@ -353,6 +354,7 @@ export class AgentChatThreadService {
   async deliverToParticipants(
     args: AgentChatThreadAccessArgs & {
       participantWorkspaceMemberIds: string[];
+      shouldCreateNewShares?: boolean;
     },
   ): Promise<string[]> {
     return this.addParticipants({
@@ -364,10 +366,12 @@ export class AgentChatThreadService {
 
   private async addParticipants({
     participantWorkspaceMemberIds,
+    shouldCreateNewShares = true,
     writeParticipant,
     ...args
   }: AgentChatThreadAccessArgs & {
     participantWorkspaceMemberIds: string[];
+    shouldCreateNewShares?: boolean;
     writeParticipant: (
       participantArgs: AgentChatThreadAccessArgs,
     ) => Promise<void>;
@@ -387,6 +391,7 @@ export class AgentChatThreadService {
       await this.sharingService.shareThreadWithMembers({
         ...args,
         memberIds: candidateMemberIds,
+        shouldCreateNewShares,
       });
 
     if (participantMemberIds.length === 0) {

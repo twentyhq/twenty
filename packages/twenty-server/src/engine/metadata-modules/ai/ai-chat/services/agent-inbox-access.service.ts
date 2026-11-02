@@ -59,7 +59,7 @@ export class AgentInboxAccessService {
     }
   }
 
-  private doesApplicationParticipateInThread({
+  doesApplicationParticipateInThread({
     workspaceId,
     applicationId,
     threadId,

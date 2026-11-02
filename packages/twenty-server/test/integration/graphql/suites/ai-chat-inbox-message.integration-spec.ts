@@ -12,10 +12,12 @@ import {
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   type SendInboxMessageInput,
   type SendInboxMessageResult,
@@ -32,6 +34,7 @@ import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-c
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -39,6 +42,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -636,7 +640,11 @@ describe('Addressing channels and existing conversations as an application', () 
     return channelId;
   };
 
-  const createMemberThread = async (): Promise<string> => {
+  const createMemberThread = async ({
+    channelId,
+  }: {
+    channelId?: string;
+  } = {}): Promise<string> => {
     const memberThreadId = uuidv4();
 
     await getAppProviderByClassName<AgentChatThreadService>(
@@ -646,6 +654,7 @@ describe('Addressing channels and existing conversations as an application', () 
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       id: memberThreadId,
       title: 'Renewal prep',
+      channelId,
     });
     threadIds.push(memberThreadId);
 
@@ -667,6 +676,16 @@ describe('Addressing channels and existing conversations as an application', () 
         `SELECT "principalId" FROM "${schema}"."recordShare"
          WHERE "recordId" = $1 AND "rowCause" = 'RULE'
            AND "principalType" = 'ROLE' AND "deletedAt" IS NULL`,
+        [id],
+      )
+    ).map(({ principalId }: { principalId: string }) => principalId);
+
+  const readManualGrantMemberIds = async (id: string): Promise<string[]> =>
+    (
+      await global.testDataSource.query(
+        `SELECT "principalId" FROM "${schema}"."recordShare"
+         WHERE "recordId" = $1 AND "rowCause" = 'MANUAL'
+           AND "principalType" = 'WORKSPACE_MEMBER' AND "deletedAt" IS NULL`,
         [id],
       )
     ).map(({ principalId }: { principalId: string }) => principalId);
@@ -920,6 +939,178 @@ describe('Addressing channels and existing conversations as an application', () 
 
     expect(JSON.stringify(response.body.errors)).toContain('THREAD_NOT_FOUND');
     expect(await readThreadMessages(memberThreadId)).toEqual([]);
+  });
+
+  describe('Sharing recipients of an existing conversation', () => {
+    let memberRoleId: string;
+    let originalAllChannelsAccess: boolean;
+
+    const setMemberAllChannelsAccess = async (
+      canAccessAllAgentChatChannels: boolean,
+    ) => {
+      const { errors } = await updateOneRole({
+        input: {
+          idToUpdate: memberRoleId,
+          updatePayload: { canAccessAllAgentChatChannels },
+        },
+        gqlFields: 'id',
+      });
+
+      expect(errors).toBeUndefined();
+
+      await getAppProviderByClassName<MetadataEventEmitter>(
+        'MetadataEventEmitter',
+      ).drain();
+      await waitForAllJobsToFinish();
+    };
+
+    beforeAll(async () => {
+      const memberRole = await findOneRoleByLabel({
+        label: 'Member',
+        gqlFields: 'id canAccessAllAgentChatChannels',
+      });
+
+      memberRoleId = memberRole.id;
+      originalAllChannelsAccess = memberRole.canAccessAllAgentChatChannels;
+
+      await setMemberAllChannelsAccess(false);
+    });
+
+    afterAll(() => setMemberAllChannelsAccess(originalAllChannelsAccess));
+
+    it('refuses recipients and mentions outside a writable channel before writing, while allowing a reply', async () => {
+      const channelId = await createChannelOrThrow([
+        applicationRoleId,
+        adminRoleId,
+      ]);
+      const memberThreadId = await createMemberThread({ channelId });
+
+      for (const input of [
+        {
+          threadId: memberThreadId,
+          idempotencyKey: 'unauthorized-recipient',
+          text: 'An outsider should not receive this.',
+          workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+        },
+        {
+          threadId: memberThreadId,
+          idempotencyKey: 'unauthorized-mention',
+          text: 'An outsider should not be mentioned.',
+          mentionedWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+        },
+      ]) {
+        const response = await sendInboxMessage(input);
+
+        expect(JSON.stringify(response.body.errors)).toContain(
+          'THREAD_NOT_FOUND',
+        );
+      }
+
+      expect(await readThreadMessages(memberThreadId)).toEqual([]);
+      expect(await readManualGrantMemberIds(memberThreadId)).toEqual([]);
+      expect(
+        await readParticipant({
+          threadId: memberThreadId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      ).toBeUndefined();
+
+      await sendOrThrow({
+        threadId: memberThreadId,
+        idempotencyKey: 'authorized-reply',
+        text: 'A reply is allowed by the channel role.',
+      });
+
+      expect(await readThreadMessages(memberThreadId)).toHaveLength(1);
+    });
+
+    it('delivers and mentions an existing channel member without creating a manual share', async () => {
+      const channelId = await createChannelOrThrow([
+        applicationRoleId,
+        adminRoleId,
+        memberRoleId,
+      ]);
+      const memberThreadId = await createMemberThread({ channelId });
+
+      await sendOrThrow({
+        threadId: memberThreadId,
+        idempotencyKey: 'existing-recipient',
+        text: 'Jony, please review this.',
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+        mentionedWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      });
+
+      expect(
+        await readParticipant({
+          threadId: memberThreadId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      ).toMatchObject({
+        isSubscribed: true,
+        lastMentionedAt: expect.anything(),
+      });
+      expect(await readManualGrantMemberIds(memberThreadId)).toEqual([]);
+    });
+
+    it('checks member sharing rights and preserves delivery by a participating application', async () => {
+      const channelId = await createChannelOrThrow([
+        applicationRoleId,
+        adminRoleId,
+      ]);
+      const opened = await sendOrThrow({
+        channelId,
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        threadKey: `sharing-${uuidv4()}`,
+        idempotencyKey: 'opened',
+        title: 'A conversation opened by the application',
+        text: 'Jane owns this conversation.',
+      });
+      const memberToken = (
+        await generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: application.id,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+          userId: USER_DATA_SEED_IDS.TIM,
+        })
+      ).applicationAccessToken.token;
+      const response = await makeMetadataApiRequest(
+        {
+          query: SEND_INBOX_MESSAGE,
+          variables: {
+            input: {
+              threadId: opened.threadId,
+              idempotencyKey: 'member-sharing',
+              text: 'Tim cannot share this conversation as Jane.',
+              workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+            },
+          },
+        },
+        memberToken,
+      );
+
+      expect(JSON.stringify(response.body.errors)).toContain(
+        'THREAD_NOT_FOUND',
+      );
+      expect(await readManualGrantMemberIds(opened.threadId)).toEqual([]);
+      expect(await readThreadMessages(opened.threadId)).toHaveLength(2);
+
+      await sendOrThrow({
+        threadId: opened.threadId,
+        idempotencyKey: 'application-sharing',
+        text: 'The application delivers its conversation to Jony.',
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      });
+
+      expect(await readManualGrantMemberIds(opened.threadId)).toContain(
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      );
+      expect(
+        await readParticipant({
+          threadId: opened.threadId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      ).toMatchObject({ isSubscribed: true });
+    });
   });
 
   it('refuses a message addressed both by key and by id', async () => {

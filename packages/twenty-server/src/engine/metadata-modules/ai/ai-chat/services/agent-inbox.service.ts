@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -35,6 +36,11 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 type OpenedThread = {
   thread: AgentChatThreadWorkspaceEntity;
   isCreated: boolean;
+};
+
+type ExistingThreadParticipantOptions = {
+  workspaceMemberId: string;
+  shouldCreateNewShares: boolean;
 };
 
 const findNewWorkspaceMemberIds = (
@@ -122,8 +128,24 @@ export class AgentInboxService {
       };
     }
 
+    const participantOptions =
+      'threadId' in addressing
+        ? await this.getExistingThreadParticipantOptionsOrThrow({
+            workspaceId,
+            thread: existingThread ?? throwAgentChatThreadNotFound(),
+            sender,
+            workspaceMemberIds: input.workspaceMemberIds,
+            authContext,
+          })
+        : undefined;
+
     if (await this.messageExists({ workspaceId, id: messageId })) {
-      await this.openOrJoinThread({ workspaceId, sender, input });
+      await this.openOrJoinThread({
+        workspaceId,
+        sender,
+        input,
+        participantOptions,
+      });
 
       return {
         threadId,
@@ -162,6 +184,7 @@ export class AgentInboxService {
       workspaceId,
       sender,
       input,
+      participantOptions,
     });
 
     if (
@@ -233,6 +256,7 @@ export class AgentInboxService {
         workspaceId,
         thread,
         workspaceMemberIds: input.mentionedWorkspaceMemberIds,
+        participantOptions,
       });
     }
 
@@ -261,6 +285,7 @@ export class AgentInboxService {
     workspaceId,
     sender,
     input,
+    participantOptions,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
@@ -268,6 +293,7 @@ export class AgentInboxService {
       NormalizedSendInboxMessageInput,
       'addressing' | 'workspaceMemberIds'
     >;
+    participantOptions?: ExistingThreadParticipantOptions;
   }): Promise<OpenedThread> {
     const { addressing } = input;
 
@@ -286,6 +312,7 @@ export class AgentInboxService {
       workspaceId,
       threadId: addressing.threadId,
       workspaceMemberIds: input.workspaceMemberIds,
+      participantOptions,
     });
   }
 
@@ -363,20 +390,81 @@ export class AgentInboxService {
     workspaceId,
     threadId,
     workspaceMemberIds,
+    participantOptions,
   }: {
     workspaceId: string;
     threadId: string;
     workspaceMemberIds: string[];
+    participantOptions?: ExistingThreadParticipantOptions;
   }): Promise<OpenedThread> {
     const thread =
       (await this.findThread({ workspaceId, threadId })) ??
       throwAgentChatThreadNotFound();
 
     if (!isDefined(thread.deletedAt)) {
-      await this.addParticipants({ workspaceId, thread, workspaceMemberIds });
+      await this.addParticipants({
+        workspaceId,
+        thread,
+        workspaceMemberIds,
+        participantOptions,
+      });
     }
 
     return { thread, isCreated: false };
+  }
+
+  private async getExistingThreadParticipantOptionsOrThrow({
+    workspaceId,
+    thread,
+    sender,
+    workspaceMemberIds,
+    authContext,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    sender: AgentInboxSender;
+    workspaceMemberIds: string[];
+    authContext: AgentInboxCallerAuthContext | undefined;
+  }): Promise<ExistingThreadParticipantOptions | undefined> {
+    if (!isNonEmptyArray(workspaceMemberIds)) {
+      return undefined;
+    }
+
+    if (!isDefined(thread.workspaceMemberId)) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    const workspaceMemberId =
+      isDefined(authContext) && isUserAuthContext(authContext)
+        ? authContext.workspaceMemberId
+        : thread.workspaceMemberId;
+
+    const shouldCreateNewShares =
+      sender.type !== 'application' ||
+      (await this.inboxAccessService.doesApplicationParticipateInThread({
+        workspaceId,
+        threadId: thread.id,
+        applicationId: sender.application.id,
+      }));
+    const candidateWorkspaceMemberIds = workspaceMemberIds.filter(
+      (memberId) => memberId !== workspaceMemberId,
+    );
+    const eligibleWorkspaceMemberIds =
+      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
+        workspaceId,
+        threadId: thread.id,
+        workspaceMemberId,
+        memberIds: candidateWorkspaceMemberIds,
+        shouldConsiderNewShares: shouldCreateNewShares,
+      });
+
+    if (
+      eligibleWorkspaceMemberIds.length !== candidateWorkspaceMemberIds.length
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    return { workspaceMemberId, shouldCreateNewShares };
   }
 
   private async createThread({
@@ -463,10 +551,12 @@ export class AgentInboxService {
     workspaceId,
     thread,
     workspaceMemberIds,
+    participantOptions,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
     workspaceMemberIds: string[];
+    participantOptions?: ExistingThreadParticipantOptions;
   }): Promise<void> {
     const newWorkspaceMemberIds = findNewWorkspaceMemberIds(
       thread,
@@ -477,7 +567,10 @@ export class AgentInboxService {
       return;
     }
 
-    if (!isDefined(thread.workspaceMemberId)) {
+    const workspaceMemberId =
+      participantOptions?.workspaceMemberId ?? thread.workspaceMemberId;
+
+    if (!isDefined(workspaceMemberId)) {
       return throwAgentChatThreadNotFound();
     }
 
@@ -485,8 +578,9 @@ export class AgentInboxService {
       await this.threadService.deliverToParticipants({
         workspaceId,
         threadId: thread.id,
-        workspaceMemberId: thread.workspaceMemberId,
+        workspaceMemberId,
         participantWorkspaceMemberIds: newWorkspaceMemberIds,
+        shouldCreateNewShares: participantOptions?.shouldCreateNewShares,
       });
 
     if (participantWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
@@ -499,10 +593,12 @@ export class AgentInboxService {
     workspaceId,
     thread,
     workspaceMemberIds,
+    participantOptions,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
     workspaceMemberIds: string[];
+    participantOptions?: ExistingThreadParticipantOptions;
   }): Promise<void> {
     if (!isNonEmptyArray(workspaceMemberIds)) {
       return;
@@ -512,8 +608,11 @@ export class AgentInboxService {
       workspaceId,
       threadId: thread.id,
       workspaceMemberId:
-        thread.workspaceMemberId ?? throwAgentChatThreadNotFound(),
+        participantOptions?.workspaceMemberId ??
+        thread.workspaceMemberId ??
+        throwAgentChatThreadNotFound(),
       participantWorkspaceMemberIds: workspaceMemberIds,
+      shouldCreateNewShares: participantOptions?.shouldCreateNewShares,
     });
   }
 
