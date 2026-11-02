@@ -32,13 +32,13 @@ export const buildDeprecatedPermissionsPrincipalsFromConfig = ({
 
   return {
     workspaceId,
-    mainPrincipal: { roleId: mainPrincipal.roleId, isDeprecatedRoleOnly: true },
+    mainPrincipal: { type: 'deprecatedRoleOnly', roleId: mainPrincipal.roleId },
     limitingPrincipal: isDefined(limitingPrincipal)
-      ? { roleId: limitingPrincipal.roleId, isDeprecatedRoleOnly: true }
+      ? { type: 'deprecatedRoleOnly', roleId: limitingPrincipal.roleId }
       : undefined,
     applicationPrincipal:
-      'roleId' in applicationPrincipal
-        ? { roleId: applicationPrincipal.roleId, isDeprecatedRoleOnly: true }
-        : { isCustomApp: true },
+      applicationPrincipal.type === 'customApplication'
+        ? applicationPrincipal
+        : { type: 'deprecatedRoleOnly', roleId: applicationPrincipal.roleId },
   };
 };

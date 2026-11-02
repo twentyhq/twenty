@@ -309,9 +309,10 @@ describe('A restricted record on an object open by default', () => {
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
           mainPrincipal: {
+            type: 'workspaceMember',
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
-          applicationPrincipal: { isCustomApp: true },
+          applicationPrincipal: { type: 'customApplication' },
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
