@@ -37,15 +37,15 @@ export const collectFrontComponentTypeReferences = ({
       return entry;
     }
     const content = readFile(path);
-    const modulePath = normalizedPath.indexOf('/node_modules/');
+    const nodeModulesPathIndex = normalizedPath.indexOf('/node_modules/');
 
     if (
       isDefined(content) &&
-      modulePath !== -1 &&
+      nodeModulesPathIndex !== -1 &&
       (/\.[cm]?tsx?$/.test(normalizedPath) ||
         normalizedPath.endsWith('/package.json'))
     ) {
-      files[normalizedPath.slice(modulePath)] = content;
+      files[normalizedPath.slice(nodeModulesPathIndex)] = content;
     }
     return content;
   };

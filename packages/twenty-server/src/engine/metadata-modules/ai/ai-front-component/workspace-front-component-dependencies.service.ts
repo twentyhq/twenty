@@ -27,6 +27,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
+import { computeTypeReferencesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/compute-type-references-checksum.util';
 import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { isDefined } from 'twenty-shared/utils';
@@ -104,7 +105,7 @@ export class WorkspaceFrontComponentDependenciesService {
         if (
           isDefined(existingManifest) &&
           isDefined(cachedTypeReferences) &&
-          this.computeTypeReferencesChecksum(cachedTypeReferences) ===
+          computeTypeReferencesChecksum(cachedTypeReferences) ===
             existingManifest.typeReferencesChecksum
         ) {
           return {
@@ -167,8 +168,7 @@ export class WorkspaceFrontComponentDependenciesService {
         }
         const typeReferences = Buffer.from(result.typeReferences, 'base64');
         const manifest: SharedDependenciesBuildManifest = {
-          typeReferencesChecksum:
-            this.computeTypeReferencesChecksum(typeReferences),
+          typeReferencesChecksum: computeTypeReferencesChecksum(typeReferences),
           checksum: result.checksum,
           exports: result.exports,
           packageJsonChecksum: dependencies.packageJsonChecksum,
@@ -230,10 +230,6 @@ export class WorkspaceFrontComponentDependenciesService {
         maxRetries: BUILD_LOCK_MAX_RETRIES,
       },
     );
-  }
-
-  private computeTypeReferencesChecksum(content: Buffer): string {
-    return createHash('sha256').update(content).digest('hex');
   }
 
   private async readBuildManifest(
