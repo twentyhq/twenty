@@ -30,7 +30,8 @@ describe('workspace context sharing enforcement', () => {
             useValue: {
               getOrRecompute: jest.fn().mockResolvedValue({
                 flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-                flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
                 featureFlagsMap: {},
               }),
             },

@@ -124,7 +124,6 @@ export class ObjectRecordEventPublisher {
         streamData,
         workspaceEventBatch: eventBatch,
         permissionsContext,
-        flatWorkspaceMemberMaps,
         workspaceMemberIdByUserId,
         eventRecordAccessGate,
       });
@@ -151,7 +150,6 @@ export class ObjectRecordEventPublisher {
     streamData,
     workspaceEventBatch,
     permissionsContext,
-    flatWorkspaceMemberMaps,
     workspaceMemberIdByUserId,
     eventRecordAccessGate,
   }: {
@@ -159,7 +157,6 @@ export class ObjectRecordEventPublisher {
     streamData: EventStreamData;
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
     workspaceMemberIdByUserId: Map<string, string>;
     eventRecordAccessGate: EventRecordAccessGate;
   }): Promise<void> {

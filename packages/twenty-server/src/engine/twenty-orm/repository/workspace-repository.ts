@@ -2298,7 +2298,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ? this.options.authContext.workspaceMemberId
         : undefined,
       flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-    }) ?? { workspaceId: this.options.internalContext.workspaceId, roleIds: [] });
+    }) ?? {
+      workspaceId: this.options.internalContext.workspaceId,
+      roleIds: [],
+    });
   }
 
   private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {
