@@ -45,8 +45,8 @@ describe('Chat participation through the authenticated API', () => {
       threadId,
       participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
-  const createDirectMessage = async () => {
-    const threadId = await context.createThread();
+  const createDirectMessage = async (isAssistantParticipant = true) => {
+    const threadId = await context.createThread(isAssistantParticipant);
 
     await context.setConversationType({
       threadId,
@@ -129,7 +129,7 @@ describe('Chat participation through the authenticated API', () => {
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
       aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
     });
-    const threadId = await createDirectMessage();
+    const threadId = await createDirectMessage(false);
     const response = await sendChatParticipationMessage({
       threadId,
       isAssistantParticipant: false,
