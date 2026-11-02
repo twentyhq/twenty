@@ -17,6 +17,8 @@ type UiDocumentation = {
   }[];
 };
 
+let documentation: Promise<UiDocumentation> | undefined;
+
 export const createGetFrontComponentUiDocsTool = () =>
   tool({
     description:
@@ -31,16 +33,20 @@ export const createGetFrontComponentUiDocsTool = () =>
         ),
     }),
     execute: async ({ names }) => {
-      const documentation: UiDocumentation = JSON.parse(
-        await readFile(
-          join(
-            ASSET_PATH,
-            'engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json',
-          ),
-          'utf8',
+      documentation ??= readFile(
+        join(
+          ASSET_PATH,
+          'engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json',
         ),
-      );
-      const pages = documentation.pages.filter(
+        'utf8',
+      )
+        .then((content): UiDocumentation => JSON.parse(content))
+        .catch((error: unknown) => {
+          documentation = undefined;
+          throw error;
+        });
+      const loadedDocumentation = await documentation;
+      const pages = loadedDocumentation.pages.filter(
         (page) =>
           !isDefined(page.entryPoint) ||
           FRONT_COMPONENT_UI_IMPORTS.includes(page.entryPoint),
@@ -61,7 +67,7 @@ export const createGetFrontComponentUiDocsTool = () =>
       return {
         success: true,
         result: {
-          version: documentation.version,
+          version: loadedDocumentation.version,
           ...(names.length === 0
             ? { availableNames }
             : { pages: pages.filter((page) => names.includes(page.name)) }),

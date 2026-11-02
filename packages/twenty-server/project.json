@@ -12,12 +12,11 @@
         "parallel": false,
         "commands": [
           "rimraf dist",
-          "node scripts/build-ui-documentation.mjs",
           "nest build --path ./tsconfig.build.json",
           "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
         ]
       },
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate:ui-documentation"],
       "inputs": [
         "production",
         "^production",
@@ -34,7 +33,8 @@
           "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration-secure.config.ts --logHeapUsage"
         ]
       },
-      "parallel": false
+      "parallel": false,
+      "dependsOn": ["generate:ui-documentation"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -52,11 +52,12 @@
             "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration.config.ts --logHeapUsage"
           ]
         }
-      }
+      },
+      "dependsOn": ["generate:ui-documentation"]
     },
     "test:ci": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate:ui-documentation"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "jest --config ./jest.config.mjs --ci --maxWorkers=3 --workerIdleMemoryLimit=1GB --cacheDirectory=../../.cache/jest/packages/twenty-server"
@@ -78,18 +79,19 @@
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate:ui-documentation"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start"
-      }
+        "command": "NODE_ENV=development nest start"
+      },
+      "dependsOn": ["generate:ui-documentation"]
     },
     "start:ci-if-needed": {
       "executor": "nx:run-commands",
@@ -101,10 +103,10 @@
     },
     "start:debug": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate:ui-documentation"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch --debug"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
       }
     },
     "reset:env": {
@@ -144,10 +146,10 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate:ui-documentation"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
+        "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
       }
     },
     "ts-node": {
@@ -337,6 +339,25 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx tsx scripts/bump-version.ts"
+      }
+    },
+    "generate:ui-documentation": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [
+        "{projectRoot}/scripts/build-ui-documentation.mjs",
+        "{workspaceRoot}/packages/twenty-docs/ui/**/*.mdx",
+        "{workspaceRoot}/packages/twenty-ui/generated/components.docs.json",
+        "{workspaceRoot}/packages/twenty-ui/package.json",
+        "^production"
+      ],
+      "outputs": [
+        "{projectRoot}/src/engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json"
+      ],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node scripts/build-ui-documentation.mjs"
       }
     }
   }

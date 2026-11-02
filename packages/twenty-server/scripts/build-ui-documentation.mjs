@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FRONT_COMPONENT_UI_IMPORTS } from 'twenty-shared/front-component-build';
+import { isDefined } from 'twenty-shared/utils';
 
 const serverRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const documentationRoot = resolve(serverRoot, '../twenty-docs/ui');
@@ -25,28 +26,37 @@ const pages = components
   .filter((component) =>
     FRONT_COMPONENT_UI_IMPORTS.includes(component.entryPoint),
   )
-  .map((component) => {
+  .flatMap((component) => {
     const guide = guides.find(({ content }) =>
       content.includes(`/snippets/ui/generated/${component.slug}.mdx`),
     );
 
-    if (!guide) {
-      throw new Error(`Missing UI guide for ${component.name}`);
+    if (!isDefined(guide)) {
+      process.stderr.write(
+        `Skipping UI documentation for ${component.name}: guide missing.\n`,
+      );
+      return [];
     }
 
-    return {
-      name: component.name,
-      entryPoint: component.entryPoint,
-      content: guide.content,
-      api: component,
-    };
+    return [
+      {
+        name: component.name,
+        entryPoint: component.entryPoint,
+        content: guide.content,
+        api: component,
+      },
+    ];
   });
 
 for (const name of ['getting-started', 'theming', 'icons', 'accessibility']) {
-  pages.push({
-    name,
-    content: await readFile(resolve(documentationRoot, `${name}.mdx`), 'utf8'),
-  });
+  const guide = guides.find((guide) => guide.name === `${name}.mdx`);
+  if (!isDefined(guide)) {
+    process.stderr.write(
+      `Skipping UI documentation for ${name}: guide missing.\n`,
+    );
+    continue;
+  }
+  pages.push({ name, content: guide.content });
 }
 
 const output = resolve(
