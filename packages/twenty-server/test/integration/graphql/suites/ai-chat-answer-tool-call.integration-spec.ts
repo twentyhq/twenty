@@ -422,7 +422,7 @@ describe('Answering a chat tool call', () => {
     );
   });
 
-  it('leaves a turn stopped before it starts cancelled with no reply', async () => {
+  it('leaves a turn stopped before it starts cancelled without running it', async () => {
     const response = await makeMetadataApiRequest({
       query: parse(
         `mutation Send($threadId: UUID!, $text: String!, $messageId: UUID!) {

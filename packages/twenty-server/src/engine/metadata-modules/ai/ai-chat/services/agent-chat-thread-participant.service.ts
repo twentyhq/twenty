@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isAgentChatMentionUnresolved } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
@@ -42,7 +43,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
-import { hasAgentChatUnresolvedMention } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-unresolved-mention.util';
 import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -321,7 +321,7 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  // Last write wins: the resolved cursor copies the mention the row holds, with no lock
+  // Last write wins; the copy rounds up a millisecond since the stored mention keeps microseconds
   async resolveMentionInTransaction({
     scope,
     workspaceMemberId,
@@ -351,7 +351,12 @@ export class AgentChatThreadParticipantService {
     if (
       !isDefined(before) ||
       !isDefined(before.lastMentionedAt) ||
-      !hasAgentChatUnresolvedMention(before)
+      !isAgentChatMentionUnresolved({
+        lastMentionedAt: new Date(before.lastMentionedAt).toISOString(),
+        mentionsResolvedAt: isDefined(before.mentionsResolvedAt)
+          ? new Date(before.mentionsResolvedAt).toISOString()
+          : null,
+      })
     ) {
       return null;
     }
@@ -359,7 +364,9 @@ export class AgentChatThreadParticipantService {
     await participantRepository.update(
       { id: before.id },
       {
-        mentionsResolvedAt: new Date(before.lastMentionedAt).toISOString(),
+        mentionsResolvedAt: new Date(
+          new Date(before.lastMentionedAt).getTime() + 1,
+        ).toISOString(),
         updatedAt: buildNextAgentChatThreadParticipantUpdatedAt(
           before.updatedAt,
         ),
