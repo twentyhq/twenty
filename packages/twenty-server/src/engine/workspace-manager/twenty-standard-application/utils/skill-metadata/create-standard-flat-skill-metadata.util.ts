@@ -267,7 +267,7 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
    print(summary)  # { 'created': 4000, 'updated': 380, 'upserted': 4380, 'failed': 0, 'errors': [] }
    \`\`\`
    \`bulk_upsert\` batches at 200 (the platform maximum) and paginates to completion. Never stop at "partial" — if some batches failed, report the count and retry the failed offsets.
-8. **Report a compact summary only** — the \`created\` / \`updated\` / \`failed\` split plus a few sample errors. Never echo the created records back into the conversation.
+8. **Report a compact summary only** — the \`created\` / \`updated\` / \`failed\` split plus a few sample errors. Add the 2 check rows' \`created\` / \`updated\` counts so the totals cover every row. Never echo the created records back into the conversation.
 
 ### Anti-patterns — never do these
 

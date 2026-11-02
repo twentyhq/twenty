@@ -7,11 +7,14 @@ export const getTriggerTypeIcon = ({
 }: {
   type: string;
   databaseEvent: string | null | undefined;
-}): string | undefined =>
-  type === 'DATABASE_EVENT'
-    ? DATABASE_TRIGGER_TYPES.find(
-        (databaseTriggerType) => databaseTriggerType.event === databaseEvent,
-      )?.icon
-    : OTHER_TRIGGER_TYPES.find(
-        (otherTriggerType) => otherTriggerType.type === type,
-      )?.icon;
+}): string | undefined => {
+  if (type === 'DATABASE_EVENT') {
+    return DATABASE_TRIGGER_TYPES.find(
+      (databaseTriggerType) => databaseTriggerType.event === databaseEvent,
+    )?.icon;
+  }
+
+  return OTHER_TRIGGER_TYPES.find(
+    (otherTriggerType) => otherTriggerType.type === type,
+  )?.icon;
+};
