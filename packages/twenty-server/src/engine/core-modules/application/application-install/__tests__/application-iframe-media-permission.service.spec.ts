@@ -71,6 +71,16 @@ describe('ApplicationIframeMediaPermissionService', () => {
       workspaceId: APPLICATION.workspaceId,
       grantedIframeMediaPermissions: expect.any(Function),
     });
+
+    const [, update] = applicationService.update.mock.calls[0] as Parameters<
+      ApplicationService['update']
+    >;
+    const createGrantQuery =
+      update.grantedIframeMediaPermissions as () => string;
+    const grantQuery = createGrantQuery();
+
+    expect(grantQuery).toContain(JSON.stringify([NEW_PERMISSION]));
+    expect(grantQuery).not.toContain(OTHER_PERMISSION.origin);
   });
 
   it('rejects permissions absent from the installed manifest', async () => {
