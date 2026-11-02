@@ -30,8 +30,7 @@ export class AgentChatOpenThreadsSummaryService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  // Over the chats the member can open and follows, the way the inbox lists
-  // them
+  // Over the chats the member can open and follows, as the inbox lists them
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
@@ -81,7 +80,6 @@ export class AgentChatOpenThreadsSummaryService {
         );
       }, authContext)
       .catch((error: unknown) => {
-        // A role that cannot read chats has none open
         if (
           error instanceof PermissionsException &&
           error.code === PermissionsExceptionCode.PERMISSION_DENIED
