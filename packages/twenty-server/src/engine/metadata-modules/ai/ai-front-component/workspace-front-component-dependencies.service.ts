@@ -99,22 +99,18 @@ export class WorkspaceFrontComponentDependenciesService {
             }),
           );
           if (
-            createHash('sha256').update(typeReferences).digest('hex') !==
+            createHash('sha256').update(typeReferences).digest('hex') ===
             existingManifest.typeReferencesChecksum
           ) {
-            throw new FrontComponentException(
-              'Frontend component type references checksum mismatch.',
-              FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
-            );
+            return {
+              applicationId: dependencies.applicationId,
+              applicationUniversalIdentifier:
+                dependencies.applicationUniversalIdentifier,
+              typeReferences: typeReferences.toString('base64'),
+              ...existingManifest,
+              dependencyRevision: dependencies.revision,
+            };
           }
-          return {
-            applicationId: dependencies.applicationId,
-            applicationUniversalIdentifier:
-              dependencies.applicationUniversalIdentifier,
-            typeReferences: typeReferences.toString('base64'),
-            ...existingManifest,
-            dependencyRevision: dependencies.revision,
-          };
         }
 
         const result = await this.driverFactory

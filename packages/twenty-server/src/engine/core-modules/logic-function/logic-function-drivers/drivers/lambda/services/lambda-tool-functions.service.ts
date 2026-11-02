@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
@@ -178,6 +179,15 @@ export class LambdaToolFunctionsService {
     workspaceId,
     ...input
   }: FrontComponentBuilderRequest & { workspaceId: string }): Promise<unknown> {
+    const payload = JSON.stringify(input);
+    if (
+      Buffer.byteLength(payload) > FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES
+    ) {
+      throw new FrontComponentException(
+        'Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size.',
+        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+      );
+    }
     const isDependenciesBuild = input.action === 'buildDependencies';
     const functionName = await getFrontComponentBuilderName({
       workspaceId,
@@ -206,7 +216,7 @@ export class LambdaToolFunctionsService {
     const result = await lambdaClient.send(
       new InvokeCommand({
         FunctionName: functionName,
-        Payload: JSON.stringify(input),
+        Payload: payload,
       }),
       { abortSignal: AbortSignal.timeout(timeoutSeconds * 1000) },
     );

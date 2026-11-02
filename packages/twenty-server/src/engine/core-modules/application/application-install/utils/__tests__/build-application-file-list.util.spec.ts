@@ -97,6 +97,11 @@ describe('buildApplicationFileList', () => {
           isRequired: true,
         },
         {
+          relativePath: 'front-component-shared-dependencies.mjs.types.json.gz',
+          fileFolder: FileFolder.Dependencies,
+          isRequired: false,
+        },
+        {
           relativePath: 'front-component-shared-dependencies.mjs.json',
           fileFolder: FileFolder.Dependencies,
           isRequired: false,

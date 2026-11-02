@@ -1,17 +1,19 @@
-import { resolve } from 'node:path';
+import { posix, resolve } from 'node:path';
 import ts from 'typescript';
 import { isDefined } from '../utils/validation/isDefined';
 
 export const collectFrontComponentTypeReferences = ({
   directory,
   dependencies,
-  includeLibraries = false,
+  shouldIncludeLibraries = false,
 }: {
   directory: string;
   dependencies: string[];
-  includeLibraries?: boolean;
+  shouldIncludeLibraries?: boolean;
 }): Record<string, string> => {
-  const entryPath = resolve(directory, 'component-type-references.ts');
+  const entryPath = posix.normalize(
+    resolve(directory, 'component-type-references.ts').replace(/\\/g, '/'),
+  );
   const entry = dependencies
     .filter((specifier) => !specifier.endsWith('.css'))
     .map((specifier) => `export * from ${JSON.stringify(specifier)};`)
@@ -22,7 +24,7 @@ export const collectFrontComponentTypeReferences = ({
     moduleResolution: ts.ModuleResolutionKind.Bundler,
     preserveSymlinks: true,
     noEmit: true,
-    noLib: !includeLibraries,
+    noLib: !shouldIncludeLibraries,
     types: [],
   };
   const files: Record<string, string> = {};
@@ -30,18 +32,20 @@ export const collectFrontComponentTypeReferences = ({
   const readFile = host.readFile;
 
   host.readFile = (path) => {
-    if (path === entryPath) {
+    const normalizedPath = posix.normalize(path.replace(/\\/g, '/'));
+    if (normalizedPath === entryPath) {
       return entry;
     }
     const content = readFile(path);
-    const modulePath = path.indexOf('/node_modules/');
+    const modulePath = normalizedPath.indexOf('/node_modules/');
 
     if (
       isDefined(content) &&
       modulePath !== -1 &&
-      (/\.[cm]?tsx?$/.test(path) || path.endsWith('/package.json'))
+      (/\.[cm]?tsx?$/.test(normalizedPath) ||
+        normalizedPath.endsWith('/package.json'))
     ) {
-      files[path.slice(modulePath)] = content;
+      files[normalizedPath.slice(modulePath)] = content;
     }
     return content;
   };

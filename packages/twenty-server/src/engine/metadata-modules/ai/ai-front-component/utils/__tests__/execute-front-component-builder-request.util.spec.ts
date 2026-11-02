@@ -1,3 +1,5 @@
+import { CustomError } from 'twenty-shared/utils';
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
@@ -91,6 +93,55 @@ describe('executeFrontComponentBuilderRequest', () => {
     ).resolves.toEqual({
       success: false,
       error: 'Build failed with 1 error: unexpected closing tag',
+    });
+  });
+
+  it('budgets type references within the dependency response limit', async () => {
+    jest
+      .mocked(installAndBuildFrontComponentSharedDependencies)
+      .mockResolvedValueOnce({
+        source: 'bundle',
+        checksum: 'checksum',
+        exportNamesBySpecifier: new Map(),
+        typeReferences: 'x'.repeat(FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES),
+      });
+    await expect(
+      executeFrontComponentBuilderRequest({
+        input: {
+          action: 'buildDependencies',
+          packageJson: '{}',
+          yarnLock: '# lock',
+        },
+        yarnEngineDirectory: '/unused',
+      }),
+    ).resolves.toMatchObject({
+      success: false,
+      code: 'INVALID_INPUT',
+      error: expect.stringContaining(
+        'type references exceed the remaining builder response budget',
+      ),
+    });
+  });
+
+  it('returns oversized type reference errors through the builder protocol', async () => {
+    jest
+      .mocked(installAndBuildFrontComponentSharedDependencies)
+      .mockRejectedValueOnce(
+        new CustomError('Type references exceed 32 MiB', 'OUTPUT_TOO_LARGE'),
+      );
+    await expect(
+      executeFrontComponentBuilderRequest({
+        input: {
+          action: 'buildDependencies',
+          packageJson: '{}',
+          yarnLock: '# lock',
+        },
+        yarnEngineDirectory: '/unused',
+      }),
+    ).resolves.toEqual({
+      success: false,
+      code: 'OUTPUT_TOO_LARGE',
+      error: 'Type references exceed 32 MiB',
     });
   });
 

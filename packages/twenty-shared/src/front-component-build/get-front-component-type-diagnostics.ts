@@ -60,22 +60,38 @@ export const getFrontComponentTypeDiagnostics = ({
     writeFile: () => undefined,
   };
   const program = ts.createProgram([sourcePath, previewPath], options, host);
+  const sourceFile = program.getSourceFile(sourcePath);
+  const sourceSymbol = isDefined(sourceFile)
+    ? program.getTypeChecker().getSymbolAtLocation(sourceFile)
+    : undefined;
+  const componentDeclaration = isDefined(sourceSymbol)
+    ? program
+        .getTypeChecker()
+        .getExportsOfModule(sourceSymbol)
+        .find((symbol) => symbol.name === 'Component')?.declarations?.[0]
+    : undefined;
   const diagnostics = [
     ...program.getOptionsDiagnostics(),
     ...program.getGlobalDiagnostics(),
-    ...[sourcePath, previewPath].flatMap((path) => {
-      const file = program.getSourceFile(path);
-      if (!isDefined(file)) {
-        throw new Error(`Missing typecheck source: ${path}`);
-      }
-      return [
+    ...program
+      .getSourceFiles()
+      .filter(
+        (file) => file.fileName === sourcePath || file.fileName === previewPath,
+      )
+      .flatMap((file) => [
         ...program.getSyntacticDiagnostics(file),
         ...program.getSemanticDiagnostics(file),
-      ];
-    }),
+      ]),
   ];
 
   return diagnostics.slice(0, 20).map((diagnostic) => {
+    if (diagnostic.file?.fileName === previewPath && isDefined(sourceFile)) {
+      diagnostic = {
+        ...diagnostic,
+        file: sourceFile,
+        start: componentDeclaration?.getStart(sourceFile) ?? 0,
+      };
+    }
     const position =
       isDefined(diagnostic.file) && isDefined(diagnostic.start)
         ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)

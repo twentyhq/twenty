@@ -1,6 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import * as fs from 'fs/promises';
+import { createHash } from 'crypto';
+import {
+  decodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferences,
+} from 'twenty-shared/front-component-build';
+import { isDefined } from 'twenty-shared/utils';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 
 import { FileFolder } from 'twenty-shared/types';
 
@@ -22,10 +29,16 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
+const SDK_TYPE_REFERENCES_CACHE_ENTRIES = 8;
+const SDK_TYPE_REFERENCES_CACHE_ENTRY_BYTES = 1024 * 1024;
 
 @Injectable()
 export class SdkClientArchiveService {
   private readonly logger = new Logger(SdkClientArchiveService.name);
+  private readonly typeReferencesCache = new Map<
+    string,
+    { checksum: string; content: Buffer }
+  >();
 
   constructor(
     private readonly fileStorageService: FileStorageService,
@@ -118,6 +131,17 @@ export class SdkClientArchiveService {
     applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<Record<string, string>> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(params.workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const checksum =
+      flatApplicationMaps.byId[params.applicationId]?.sdkClientCoreChecksum;
+    const key = `${params.workspaceId}:${params.applicationId}`;
+    const cached = readLruEntry({ map: this.typeReferencesCache, key });
+    if (isDefined(checksum) && cached?.checksum === checksum) {
+      return decodeFrontComponentTypeReferences(cached.content);
+    }
     const archiveBuffer = await this.downloadArchiveBufferOrGenerate(params);
     const { default: unzipper } = await import('unzipper');
     const directory = await unzipper.Open.buffer(archiveBuffer);
@@ -135,7 +159,29 @@ export class SdkClientArchiveService {
             ] as const,
         ),
     );
-    return Object.fromEntries(files);
+    const references = Object.fromEntries(files);
+    const core = directory.files.find(
+      (file) =>
+        file.path === 'dist/core.mjs' || file.path === './dist/core.mjs',
+    );
+    if (
+      isDefined(checksum) &&
+      isDefined(core) &&
+      createHash('sha256')
+        .update(await core.buffer())
+        .digest('hex') === checksum
+    ) {
+      const content = encodeFrontComponentTypeReferences(references);
+      if (content.byteLength <= SDK_TYPE_REFERENCES_CACHE_ENTRY_BYTES) {
+        writeLruEntry({
+          map: this.typeReferencesCache,
+          key,
+          value: { checksum, content },
+          maxEntries: SDK_TYPE_REFERENCES_CACHE_ENTRIES,
+        });
+      }
+    }
+    return references;
   }
 
   async markSdkLayerFresh({
