@@ -40,6 +40,10 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
+import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
+import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
+import { hasAgentChatUnresolvedMention } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-unresolved-mention.util';
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 type BuildParticipantWriteQuery = (
@@ -72,17 +76,6 @@ const buildSnoozeQuery: BuildParticipantWriteQuery = ({
      "isSubscribed" = true,
      "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    RETURNING *`;
-
-const buildMentionResolutionQuery = ({
-  participantTable,
-}: {
-  participantTable: string;
-}) =>
-  `UPDATE ${participantTable} AS participant
-   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
-   WHERE "threadId" = $1 AND "workspaceMemberId" = $2
-     AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
-   RETURNING ${PARTICIPANT_COLUMNS}`;
 
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
@@ -185,7 +178,21 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
+const PARTICIPANT_COLUMN_NAMES = [
+  'id',
+  'workspaceMemberId',
+  'threadId',
+  'lastReadAt',
+  'archivedAt',
+  'snoozedUntil',
+  'isSubscribed',
+  'lastMentionedAt',
+  'mentionsResolvedAt',
+  'updatedAt',
+];
+const PARTICIPANT_COLUMNS = PARTICIPANT_COLUMN_NAMES.map(
+  (columnName) => `"${columnName}"`,
+).join(', ');
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -314,53 +321,54 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  // An answer takes it before the thread, in the order the member's other writes take both
-  async lockInTransaction({
+  // Last write wins: the resolved cursor copies the mention the row holds, with no lock
+  async resolveMentionInTransaction({
     scope,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
-  }): Promise<void> {
-    await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
-      buildAgentChatThreadParticipantLockKey(args),
-    ]);
-  }
-
-  async findOneInTransaction({
-    scope,
-    workspaceId,
     workspaceMemberId,
     threadId,
   }: AgentChatThreadAccessArgs & {
-    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
-  }): Promise<AgentChatThreadParticipantRow | null> {
-    const [participant] = (await scope.executeRawQuery(
-      `SELECT ${PARTICIPANT_COLUMNS}
-       FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-      [threadId, workspaceMemberId],
-    )) as unknown as AgentChatThreadParticipantRow[];
+    scope: Pick<AgentHistoryTransactionScope, 'getRepository'>;
+  }): Promise<AgentChatThreadParticipantWrite | null> {
+    const participantRepository =
+      scope.getRepository<AgentChatThreadParticipantWorkspaceEntity>(
+        'agentChatThreadParticipant',
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+    const findParticipant = async () => {
+      const [participant] = await participantRepository
+        .createQueryBuilder()
+        .select(PARTICIPANT_COLUMN_NAMES)
+        .where({ threadId, workspaceMemberId })
+        .withDeleted()
+        .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
 
-    return participant ?? null;
-  }
+      return participant;
+    };
 
-  async resolveMentionInTransaction({
-    scope,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
-  }): Promise<AgentChatThreadParticipantRow | null> {
-    // Taken by the writes on the other pool too, so before and after stay this write's
-    await this.lockInTransaction({ scope, ...args });
+    const before = await findParticipant();
 
-    const [resolvedParticipant] = (await scope.executeRawQuery(
-      buildMentionResolutionQuery({
-        participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
-      }),
-      [args.threadId, args.workspaceMemberId],
-    )) as unknown as AgentChatThreadParticipantRow[];
+    if (
+      !isDefined(before) ||
+      !isDefined(before.lastMentionedAt) ||
+      !hasAgentChatUnresolvedMention(before)
+    ) {
+      return null;
+    }
 
-    return resolvedParticipant ?? null;
+    await participantRepository.update(
+      { id: before.id },
+      {
+        mentionsResolvedAt: new Date(before.lastMentionedAt).toISOString(),
+        updatedAt: buildNextAgentChatThreadParticipantUpdatedAt(
+          before.updatedAt,
+        ),
+      },
+    );
+
+    const after = await findParticipant();
+
+    return isDefined(after) ? { before, after } : null;
   }
 
   // An assignee follows the chat and finds it in their inbox, unread unless

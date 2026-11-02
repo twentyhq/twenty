@@ -15,7 +15,6 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { buildToolCallStatusWhere } from 'src/engine/metadata-modules/ai/ai-history/utils/build-tool-call-status-where.util';
 import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
@@ -75,15 +74,11 @@ export class ToolCallAnswerRecorderService {
       await this.conversationWriterService.runInTransaction(
         workspaceId,
         async (scope) => {
-          await this.participantService.lockInTransaction({
-            scope,
-            ...mentionAccess,
-          });
-
-          const mentionResolution = await this.resolveMentionInTransaction({
-            scope,
-            ...mentionAccess,
-          });
+          const mentionResolution =
+            await this.participantService.resolveMentionInTransaction({
+              scope,
+              ...mentionAccess,
+            });
           const claimedPartCount = await scope.update(
             'agentMessagePart',
             { id: partId, toolOutput: buildToolCallStatusWhere('pending') },
@@ -139,13 +134,6 @@ export class ToolCallAnswerRecorderService {
       await this.conversationWriterService.runInTransaction(
         workspaceId,
         async (scope) => {
-          if (isDefined(mentionAccess)) {
-            await this.participantService.lockInTransaction({
-              scope,
-              ...mentionAccess,
-            });
-          }
-
           const clearedThreadCount = isLastAnswer
             ? await scope.update(
                 'agentChatThread',
@@ -154,7 +142,7 @@ export class ToolCallAnswerRecorderService {
               )
             : 0;
           const mentionResolution = isDefined(mentionAccess)
-            ? await this.resolveMentionInTransaction({
+            ? await this.participantService.resolveMentionInTransaction({
                 scope,
                 ...mentionAccess,
               })
@@ -208,24 +196,6 @@ export class ToolCallAnswerRecorderService {
     });
 
     return message?.turnId ?? null;
-  }
-
-  private async resolveMentionInTransaction({
-    scope,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    scope: AgentHistoryTransactionScope;
-  }): Promise<AgentChatThreadParticipantWrite | null> {
-    const before = await this.participantService.findOneInTransaction({
-      scope,
-      ...args,
-    });
-    const after = await this.participantService.resolveMentionInTransaction({
-      scope,
-      ...args,
-    });
-
-    return isDefined(after) ? { before, after } : null;
   }
 
   private async emitParticipantWrite({

@@ -1428,49 +1428,6 @@ describe('Chat thread participant state through the authenticated API', () => {
         mentionsResolvedAt: repliedParticipant!.lastMentionedAt,
       });
     });
-
-    it('queues a reply while another write of the member locks the chat', async () => {
-      const threadId = await createTestThread();
-
-      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-
-      const writeEvents = new EventEmitter();
-      const writeStarted = once(writeEvents, 'started');
-      const writeResumed = once(writeEvents, 'resumed');
-      const write =
-        getAppProviderByClassName<AgentChatThreadParticipantService>(
-          'AgentChatThreadParticipantService',
-        ).updateInboxState({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          threadIds: [threadId],
-          action: AgentChatInboxAction.READ,
-          snoozedUntil: null,
-          writeThread: async ({ manager, table }) => {
-            const [{ backendProcessId }] = await manager.query<
-              { backendProcessId: number }[]
-            >('SELECT pg_backend_pid() AS "backendProcessId"');
-
-            writeEvents.emit('started', backendProcessId);
-            await writeResumed;
-            await manager.query(
-              `SELECT id FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
-              [threadId],
-            );
-          },
-        });
-
-      const [blockingProcessId] = await writeStarted;
-      const reply = queueReply(threadId);
-
-      await waitForBlockedDatabaseQueryOrThrow(blockingProcessId);
-      writeEvents.emit('resumed');
-
-      await expect(Promise.all([write, reply])).resolves.toEqual([
-        [expect.objectContaining({ threadId })],
-        expect.objectContaining({ threadId }),
-      ]);
-    });
   });
 
   it('delivers app recipients without creating or clearing an explicit mention', async () => {
@@ -1561,10 +1518,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     const answer = getAppProviderByClassName<AgentConversationWriterService>(
       'AgentConversationWriterService',
     ).runInTransaction(SEED_APPLE_WORKSPACE_ID, async (scope) => {
-      await participantService.lockInTransaction({
-        scope,
-        ...buildJonyThreadAccess(threadId),
-      });
       await scope.update(
         'agentChatThread',
         { id: threadId },

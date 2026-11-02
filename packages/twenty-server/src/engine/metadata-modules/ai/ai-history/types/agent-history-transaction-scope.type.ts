@@ -5,6 +5,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 
 export type AgentHistoryTransactionScope = {
   executeRawQuery: WorkspaceTransactionScope['executeRawQuery'];
+  getRepository: WorkspaceTransactionScope['getRepository'];
   insert: (
     name: AgentHistoryObjectName,
     values: ObjectLiteral | ObjectLiteral[],
