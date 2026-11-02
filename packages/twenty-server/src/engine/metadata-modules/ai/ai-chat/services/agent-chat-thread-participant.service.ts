@@ -858,16 +858,14 @@ export class AgentChatThreadParticipantService {
         withDeleted: true,
       });
 
-    const participantsBefore = await findParticipants();
-    const participantBeforeByMemberId = new Map(
-      participantsBefore.map((participant) => [
-        participant.workspaceMemberId,
-        participant,
-      ]),
+    let participantsBefore = await findParticipants();
+    const existingMemberIds = new Set(
+      participantsBefore.map(({ workspaceMemberId }) => workspaceMemberId),
     );
     const missingMemberIds = memberIds.filter(
-      (memberId) => !participantBeforeByMemberId.has(memberId),
+      (memberId) => !existingMemberIds.has(memberId),
     );
+    const insertedParticipantIds = new Set<string>();
 
     if (isNonEmptyArray(missingMemberIds)) {
       const lastMentionedAt = isMention ? new Date().toISOString() : null;
@@ -880,6 +878,10 @@ export class AgentChatThreadParticipantService {
         { onConflictDoNothing: true },
       );
 
+      for (const { id } of identifiers) {
+        insertedParticipantIds.add(id);
+      }
+
       await this.privateRecordStorageService.setPrivate({
         workspaceId,
         flatObjectMetadata: participantObjectMetadata,
@@ -887,9 +889,17 @@ export class AgentChatThreadParticipantService {
         isPrivate: true,
         transactionScope: scope,
       });
+
+      participantsBefore = await findParticipants();
     }
 
-    for (const participantBefore of participantsBefore) {
+    const participantBeforeByMemberId = new Map(
+      participantsBefore
+        .filter(({ id }) => !insertedParticipantIds.has(id))
+        .map((participant) => [participant.workspaceMemberId, participant]),
+    );
+
+    for (const participantBefore of participantBeforeByMemberId.values()) {
       await participantRepository.update(
         { id: participantBefore.id },
         {
