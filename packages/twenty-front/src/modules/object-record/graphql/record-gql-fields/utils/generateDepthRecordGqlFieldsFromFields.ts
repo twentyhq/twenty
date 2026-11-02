@@ -3,7 +3,6 @@ import {
   RelationType,
   type RecordGqlFields,
 } from 'twenty-shared/types';
-import { t } from '@lingui/core/macro';
 import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
@@ -31,28 +30,30 @@ export const generateDepthRecordGqlFieldsFromFields = ({
       const relationType = fieldMetadata.settings?.relationType;
 
       if (isRelation) {
+        const targetObjectMetadataId =
+          fieldMetadata.relation?.targetObjectMetadata?.id;
+
+        if (!isDefined(targetObjectMetadataId)) {
+          return recordGqlFields;
+        }
+
         const targetObjectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
-            objectMetadataItem.id ===
-            fieldMetadata.relation?.targetObjectMetadata.id,
+            objectMetadataItem.id === targetObjectMetadataId,
         );
 
-        if (!targetObjectMetadataItem) {
-          throw new Error(
-            doNotTranslate(
-              `Target object metadata item not found for ${fieldMetadata.name}`,
-            ),
-          );
+        if (!isDefined(targetObjectMetadataItem)) {
+          return recordGqlFields;
         }
 
         const junctionConfig = resolveJunctionConfig({
           settings: fieldMetadata.settings,
           relationObjectMetadataId: targetObjectMetadataItem.id,
           relationTargetFieldMetadataId:
-            fieldMetadata.relation?.targetFieldMetadata.id,
+            fieldMetadata.relation?.targetFieldMetadata?.id,
           sourceObjectMetadataId:
             sourceObjectMetadataItem?.id ??
-            fieldMetadata.relation?.sourceObjectMetadata.id,
+            fieldMetadata.relation?.sourceObjectMetadata?.id,
           objectMetadataItems,
         });
 
@@ -94,24 +95,25 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
       if (isMorphRelation) {
         if (!isDefined(fieldMetadata.morphRelations)) {
-          throw new Error(
-            t`Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
-          );
+          return recordGqlFields;
         }
 
-        const morphGqlFields = fieldMetadata.morphRelations.map(
-          (morphRelation) => {
+        const morphGqlFields = fieldMetadata.morphRelations
+          .map((morphRelation) => {
+            const morphTargetObjectMetadataId =
+              morphRelation.targetObjectMetadata?.id;
+
+            if (!isDefined(morphTargetObjectMetadataId)) {
+              return null;
+            }
+
             const morphTargetObjectMetadataItem = objectMetadataItems.find(
               (objectMetadataItem) =>
-                objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
+                objectMetadataItem.id === morphTargetObjectMetadataId,
             );
 
-            if (!morphTargetObjectMetadataItem) {
-              throw new Error(
-                doNotTranslate(
-                  `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
-                ),
-              );
+            if (!isDefined(morphTargetObjectMetadataItem)) {
+              return null;
             }
 
             return {
@@ -128,8 +130,8 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                 morphTargetObjectMetadataItem,
               ),
             };
-          },
-        );
+          })
+          .filter(isDefined);
 
         return {
           ...recordGqlFields,
