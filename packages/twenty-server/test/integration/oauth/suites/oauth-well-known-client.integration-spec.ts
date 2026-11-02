@@ -3,12 +3,14 @@ import crypto from 'crypto';
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
@@ -56,6 +58,58 @@ describe('OAuth well-known clients (integration)', () => {
   const register = (body: Record<string, unknown>) =>
     request(baseUrl).post('/oauth/register').send(body);
 
+  const authorizeAsMember = async ({
+    clientId,
+    token,
+  }: {
+    clientId: string;
+    token: string;
+  }) => {
+    const response = await makeMetadataApiRequest(
+      {
+        query: authorizeAppMutation,
+        variables: {
+          clientId,
+          redirectUrl: CLAUDE_CALLBACK,
+          codeChallenge,
+        },
+      },
+      token,
+    );
+
+    return new URL(
+      response.body.data.authorizeApp.redirectUrl,
+    ).searchParams.get('code');
+  };
+
+  const exchangeCode = ({
+    clientId,
+    code,
+  }: {
+    clientId: string;
+    code: string | null;
+  }) =>
+    request(baseUrl).post('/oauth/token').send({
+      grant_type: 'authorization_code',
+      code,
+      client_id: clientId,
+      code_verifier: CODE_VERIFIER,
+      redirect_uri: CLAUDE_CALLBACK,
+    });
+
+  const refresh = ({
+    clientId,
+    refreshToken,
+  }: {
+    clientId: string;
+    refreshToken: string;
+  }) =>
+    request(baseUrl).post('/oauth/token').send({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientId,
+    });
+
   beforeAll(async () => {
     ds = global.testDataSource;
 
@@ -79,6 +133,13 @@ describe('OAuth well-known clients (integration)', () => {
     ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
 
     if (createdRegistrationClientIds.length > 0) {
+      await ds.query(
+        `DELETE FROM core."application" application
+         USING core."applicationRegistration" registration
+         WHERE registration.id = application."applicationRegistrationId"
+           AND registration."oAuthClientId" = ANY($1)`,
+        [createdRegistrationClientIds],
+      );
       await ds.query(
         `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
         [createdRegistrationClientIds],
@@ -220,42 +281,21 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   describe('Shared installation', () => {
-    const authorizeAsMember = async (token: string) => {
-      const response = await makeMetadataApiRequest(
-        {
-          query: authorizeAppMutation,
-          variables: {
-            clientId: claudeClientId,
-            redirectUrl: CLAUDE_CALLBACK,
-            codeChallenge,
-          },
-        },
-        token,
-      );
-
-      return new URL(
-        response.body.data.authorizeApp.redirectUrl,
-      ).searchParams.get('code');
-    };
-
-    const exchangeCode = (code: string | null) =>
-      request(baseUrl).post('/oauth/token').send({
-        grant_type: 'authorization_code',
-        code,
-        client_id: claudeClientId,
-        code_verifier: CODE_VERIFIER,
-        redirect_uri: CLAUDE_CALLBACK,
-      });
-
     it('should give two members connecting at once one Claude application', async () => {
       const [janeCode, jonyCode] = await Promise.all([
-        authorizeAsMember(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-        authorizeAsMember(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        authorizeAsMember({
+          clientId: claudeClientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        }),
+        authorizeAsMember({
+          clientId: claudeClientId,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        }),
       ]);
 
       const [janeExchange, jonyExchange] = await Promise.all([
-        exchangeCode(janeCode),
-        exchangeCode(jonyCode),
+        exchangeCode({ clientId: claudeClientId, code: janeCode }),
+        exchangeCode({ clientId: claudeClientId, code: jonyCode }),
       ]);
 
       expect(janeExchange.status).toBe(200);
@@ -347,6 +387,73 @@ describe('OAuth well-known clients (integration)', () => {
         response.body.data.findApplicationRegistrationByClientId
           .wellKnownOAuthClient,
       ).toBeNull();
+    });
+  });
+
+  describe('Uninstall', () => {
+    const connect = async ({
+      clientId,
+      token,
+    }: {
+      clientId: string;
+      token: string;
+    }): Promise<string> => {
+      const exchange = await exchangeCode({
+        clientId,
+        code: await authorizeAsMember({ clientId, token }),
+      }).expect(200);
+
+      const refreshed = await refresh({
+        clientId,
+        refreshToken: exchange.body.refresh_token,
+      }).expect(200);
+
+      return refreshed.body.refresh_token;
+    };
+
+    it('should disconnect the members of older per-connection Claude installs too', async () => {
+      const legacyClaudeClientId = crypto.randomUUID();
+
+      // Each Claude connection registered its own client before the shared one existed
+      await ds.query(
+        `INSERT INTO core."applicationRegistration"
+          ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")
+         VALUES ($1, 'claudeai', $2, $3, $4, 'oauth-only')`,
+        [
+          crypto.randomUUID(),
+          legacyClaudeClientId,
+          [CLAUDE_CALLBACK],
+          [...ALL_OAUTH_SCOPES],
+        ],
+      );
+      createdRegistrationClientIds.push(legacyClaudeClientId);
+
+      const legacyRefreshToken = await connect({
+        clientId: legacyClaudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const sharedRefreshToken = await connect({
+        clientId: claudeClientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      const { errors } = await uninstallApplication({
+        universalIdentifier:
+          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      });
+
+      expect(errors).toBeUndefined();
+
+      const [legacyRefresh, sharedRefresh] = await Promise.all([
+        refresh({
+          clientId: legacyClaudeClientId,
+          refreshToken: legacyRefreshToken,
+        }),
+        refresh({ clientId: claudeClientId, refreshToken: sharedRefreshToken }),
+      ]);
+
+      expect(legacyRefresh.body.error).toBe('invalid_grant');
+      expect(sharedRefresh.body.error).toBe('invalid_grant');
     });
   });
 });
