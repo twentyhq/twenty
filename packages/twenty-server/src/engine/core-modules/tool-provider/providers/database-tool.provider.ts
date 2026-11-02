@@ -163,9 +163,7 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const isExplicitlyGranted = (
-        objectPermission: ObjectPermissionAction,
-      ) =>
+      const isExplicitlyGranted = (objectPermission: ObjectPermissionAction) =>
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>

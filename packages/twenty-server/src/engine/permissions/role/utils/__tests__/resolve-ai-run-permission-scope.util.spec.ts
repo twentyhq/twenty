@@ -123,16 +123,48 @@ describe('resolveAiRunPermissionScope', () => {
     ).toMatchObject({ canRead: false });
   });
 
-  it('grants nothing for an object the workspace does not have', () => {
-    const { objectsPermissions } = resolve({
-      objectPermissions: [
-        { objectUniversalIdentifier: 'unknown', canReadObjectRecords: true },
-      ],
-    });
-
-    expect(objectsPermissions[PERSON_ID]?.canReadObjectRecords).toBe(false);
-    expect(objectsPermissions[COMPANY_ID]?.canReadObjectRecords).toBe(false);
-  });
+  it.each([
+    {
+      unknown: 'an object',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: 'unknown', canReadObjectRecords: false },
+        ],
+      },
+      message: 'Object unknown in an AI run scope does not exist',
+    },
+    {
+      unknown: 'the object of a field',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'unknown',
+            fieldUniversalIdentifier: 'email',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      message: 'Object unknown in an AI run scope does not exist',
+    },
+    {
+      unknown: 'a field',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'person',
+            fieldUniversalIdentifier: 'unknown',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      message: 'Field unknown in an AI run scope does not exist',
+    },
+  ])(
+    'refuses a scope naming $unknown the workspace does not have',
+    ({ scope, message }) => {
+      expect(() => resolve(scope)).toThrow(message);
+    },
+  );
 
   describe('on the workflow objects, which the workflows flag grants', () => {
     const WORKFLOWS_FLAG = SystemPermissionFlag[PermissionFlagType.WORKFLOWS];

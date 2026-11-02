@@ -149,7 +149,7 @@ describe('ActionToolProvider', () => {
 
   it('withholds the tools that do not honour a scope from a caller narrowed by one, even when granted', async () => {
     const { provider } = buildProvider({
-      isRecordSharingEnabled: false,
+      isRecordSharingEnabled: true,
       arePermissionFlagsGranted: true,
     });
 
