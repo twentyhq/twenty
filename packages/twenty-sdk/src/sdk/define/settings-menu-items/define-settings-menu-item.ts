@@ -53,16 +53,20 @@ export const defineSettingsMenuItem: DefineEntity<SettingsMenuItemConfig> = (
     );
   }
 
-  if (isDefined(config.slug)) {
-    if (!isValidSettingsMenuItemSlug(config.slug)) {
-      errors.push(
-        `SettingsMenuItem slug "${config.slug}" must be lowercase kebab-case (letters, digits and single hyphens) and at most ${SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters`,
-      );
-    } else if (isReservedSettingsMenuItemSlug(config.slug)) {
-      errors.push(
-        `SettingsMenuItem slug "${config.slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
-      );
-    }
+  if (isDefined(config.slug) && !isValidSettingsMenuItemSlug(config.slug)) {
+    errors.push(
+      `SettingsMenuItem slug "${config.slug}" must be lowercase kebab-case (letters, digits and single hyphens) and at most ${SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters`,
+    );
+  }
+
+  if (
+    isDefined(config.slug) &&
+    isValidSettingsMenuItemSlug(config.slug) &&
+    isReservedSettingsMenuItemSlug(config.slug)
+  ) {
+    errors.push(
+      `SettingsMenuItem slug "${config.slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
+    );
   }
 
   return createValidationResult({ config, errors, warnings: [] });

@@ -22,6 +22,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
+import { SETTINGS_GENERAL_TAB_ID } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -65,8 +66,6 @@ import { getMissingRequiredApplicationVariables } from '@/settings/applications/
 import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
-
-const GENERAL_TAB_ID = 'general';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -199,7 +198,7 @@ export const SettingsApplicationDetails = () => {
   };
 
   const tabs: SingleTabProps[] = [
-    { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
+    { id: SETTINGS_GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     ...(hasVariablesTab
       ? [
           {
@@ -288,7 +287,7 @@ export const SettingsApplicationDetails = () => {
     }
 
     switch (activeTabId) {
-      case GENERAL_TAB_ID:
+      case SETTINGS_GENERAL_TAB_ID:
         return (
           <SettingsApplicationDetailGeneralTab
             application={application}

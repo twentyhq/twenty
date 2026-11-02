@@ -98,6 +98,9 @@ export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { RESERVED_SETTINGS_MENU_ITEM_SLUGS } from './constants/ReservedSettingsMenuItemSlugs';
+export { SETTINGS_GENERAL_TAB_ID } from './constants/SettingsGeneralTabId';
+export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export type {
@@ -296,10 +299,7 @@ export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrants
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
-export {
-  RESERVED_SETTINGS_MENU_ITEM_SLUGS,
-  isReservedSettingsMenuItemSlug,
-} from './utils/isReservedSettingsMenuItemSlug';
+export { isReservedSettingsMenuItemSlug } from './utils/isReservedSettingsMenuItemSlug';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,

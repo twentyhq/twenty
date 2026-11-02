@@ -54,9 +54,7 @@ const hasSiblingSettingsMenuItemCollision = ({
       isColliding(existingSettingsMenuItem),
   );
 
-// The slug is the tab id in the URL hash, so it is unique per application across
-// scopes. Checked against the final state rather than by a unique index so two
-// items can swap slugs in one sync.
+// Checked against the final state, not a unique index, so two items can swap slugs.
 const getSettingsMenuItemSlugErrors = ({
   slug,
   ...siblingCollisionArgs
@@ -175,10 +173,7 @@ export class FlatSettingsMenuItemValidatorService {
       });
     }
 
-    // The final state already holds every item this manifest creates, so a shared
-    // position or slug would be reported on both of them. Ignoring the creations
-    // still queued leaves exactly one error, on the later item, while items merely
-    // changed by this migration are compared with the values they end on.
+    // Ignoring still-queued creations reports a shared position or slug once, on the later item.
     const siblingCollisionArgs = {
       universalIdentifier: flatSettingsMenuItem.universalIdentifier,
       applicationUniversalIdentifier:
@@ -189,9 +184,7 @@ export class FlatSettingsMenuItemValidatorService {
       ),
     };
 
-    // Two menu items of the same application sharing a position in the same scope
-    // would render in an order the manifest does not determine, so the sync refuses
-    // it rather than picking a winner.
+    // A shared position in one scope would render in an undetermined order.
     if (
       hasSiblingSettingsMenuItemCollision({
         ...siblingCollisionArgs,

@@ -1,8 +1,8 @@
 import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
+import { isDefined } from 'twenty-shared/utils';
 import { type SettingsMenuItem } from '~/generated-metadata/graphql';
 
-// Links shared before slugs existed point at the universalIdentifier, which stays
-// a valid alias of the tab.
+// Links shared before slugs existed still point at the universalIdentifier.
 export const getSettingsMenuItemLegacyTabIdRedirect = ({
   settingsMenuItems,
   hashTabId,
@@ -23,7 +23,7 @@ export const getSettingsMenuItemLegacyTabIdRedirect = ({
     (settingsMenuItem) => settingsMenuItem.universalIdentifier === hashTabId,
   );
 
-  return legacySettingsMenuItem
+  return isDefined(legacySettingsMenuItem)
     ? getSettingsMenuItemTabId(legacySettingsMenuItem)
     : undefined;
 };
