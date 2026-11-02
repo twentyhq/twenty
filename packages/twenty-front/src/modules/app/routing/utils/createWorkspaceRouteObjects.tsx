@@ -9,6 +9,12 @@ import {
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
+const GettingStartedPage = lazy(() =>
+  import('~/pages/getting-started/GettingStartedPage').then((module) => ({
+    default: module.GettingStartedPage,
+  })),
+);
+
 const AgentCoreIndexPage = lazy(() =>
   import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
     default: module.AgentCoreIndexPage,
@@ -84,6 +90,14 @@ export const createWorkspaceRouteObjects = ({
   });
 
   return [
+    {
+      path: AppPath.GettingStarted,
+      element: (
+        <LazyRoute>
+          <GettingStartedPage />
+        </LazyRoute>
+      ),
+    },
     {
       path: AppPath.WorkflowCoreShowPage,
       element: (
