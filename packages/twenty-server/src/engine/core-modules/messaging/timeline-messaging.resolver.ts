@@ -153,16 +153,11 @@ export class TimelineMessagingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { messageThreadId }: GetMessageThreadChannelArgs,
   ): Promise<TimelineThreadChannelDTO | null> {
-    const { threadChannelByThreadId } =
-      await this.timelineMessagingService.getThreadVisibilityAndChannelByThreadId(
-        {
-          messageThreadIds: [messageThreadId],
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        },
-      );
-
-    return threadChannelByThreadId[messageThreadId] ?? null;
+    return this.timelineMessagingService.getMessageThreadChannel({
+      messageThreadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
   }
 
   @Query(() => TimelineThreadSearchResultDTO)
