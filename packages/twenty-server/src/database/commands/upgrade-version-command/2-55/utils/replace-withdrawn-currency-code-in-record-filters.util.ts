@@ -10,10 +10,19 @@ const replaceWithdrawnCurrencyCodeInRecordFilter = ({
   recordFilter: unknown;
   currencyFieldMetadataIds: Set<string>;
 }): unknown => {
+  if (!isPlainObject(recordFilter)) {
+    return recordFilter;
+  }
+
+  const filteredFieldMetadataId = isString(
+    recordFilter.relationTargetFieldMetadataId,
+  )
+    ? recordFilter.relationTargetFieldMetadataId
+    : recordFilter.fieldMetadataId;
+
   if (
-    !isPlainObject(recordFilter) ||
-    !isString(recordFilter.fieldMetadataId) ||
-    !currencyFieldMetadataIds.has(recordFilter.fieldMetadataId) ||
+    !isString(filteredFieldMetadataId) ||
+    !currencyFieldMetadataIds.has(filteredFieldMetadataId) ||
     recordFilter.subFieldName !== 'currencyCode'
   ) {
     return recordFilter;

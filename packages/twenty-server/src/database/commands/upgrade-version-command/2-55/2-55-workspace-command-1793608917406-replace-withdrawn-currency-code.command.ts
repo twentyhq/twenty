@@ -18,6 +18,8 @@ import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/c
 import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-default-value.util';
 import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-filter-value.util';
 import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
+import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-55/utils/to-mapped-value.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -29,6 +31,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
+import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const REWRITE_BATCH_SIZE = 100;
 
@@ -47,7 +50,7 @@ type RewriteRowsArgs<TRow extends StoredJsonbRow> = {
 @RegisteredWorkspaceCommand('2.55.0', 1793608917406)
 @Command({
   name: 'upgrade:2-55:replace-withdrawn-currency-code',
-  description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow steps`,
+  description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow steps and triggers`,
 })
 export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -134,7 +137,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     const mapStoredRecordFilterRow = ({ value }: StoredJsonbRow) =>
       replaceWithdrawnCurrencyCodeInFilterValue(value);
 
-    const recordFilterWhereClause = `"workspaceId" = $1 AND "fieldMetadataId" = ANY($2::uuid[]) AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
+    const recordFilterWhereClause = `"workspaceId" = $1 AND "subFieldName" = 'currencyCode' AND jsonb_typeof(value) = 'string'`;
     const recordFilterWhereParameters = [
       workspaceId,
       [...currencyFieldMetadataIds],
@@ -145,7 +148,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       isDryRun,
       tableName: 'core."viewFilter"',
       columnName: 'value',
-      whereClause: recordFilterWhereClause,
+      whereClause: `${recordFilterWhereClause} AND COALESCE("relationTargetFieldMetadataId", "fieldMetadataId") = ANY($2::uuid[])`,
       whereParameters: recordFilterWhereParameters,
       mapRow: mapStoredRecordFilterRow,
     });
@@ -155,7 +158,7 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       isDryRun,
       tableName: 'core."rowLevelPermissionPredicate"',
       columnName: 'value',
-      whereClause: recordFilterWhereClause,
+      whereClause: `${recordFilterWhereClause} AND "fieldMetadataId" = ANY($2::uuid[])`,
       whereParameters: recordFilterWhereParameters,
       mapRow: mapStoredRecordFilterRow,
     });
@@ -196,6 +199,31 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       mapRow: mapWorkflowVersionStepsRow,
     });
 
+    const coreWorkflowVersionTriggersCount = await this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName: 'core."workflowVersion"',
+      columnName: 'triggers',
+      whereClause: `"workspaceId" = $1 AND triggers @> $2::jsonb`,
+      whereParameters: [
+        workspaceId,
+        JSON.stringify([{ type: WorkflowTriggerType.DATABASE_EVENT }]),
+      ],
+      mapRow: ({ value: triggers }) =>
+        Array.isArray(triggers)
+          ? toMappedValue({
+              original: triggers,
+              mapped: triggers.map(
+                (trigger) =>
+                  replaceWithdrawnCurrencyCodeInWorkflowTrigger({
+                    trigger,
+                    currencyFieldMetadataIds,
+                  }).value,
+              ),
+            })
+          : { value: triggers, hasChanged: false },
+    });
+
     const workflowVersionFlatObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
@@ -217,12 +245,33 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         })
       : 0;
 
+    const workspaceWorkflowVersionTriggerCount = isDefined(
+      workflowVersionFlatObjectMetadata,
+    )
+      ? await this.rewriteRows({
+          dataSource,
+          isDryRun,
+          tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
+          columnName: 'trigger',
+          whereClause: `trigger @> $1::jsonb`,
+          whereParameters: [
+            JSON.stringify({ type: WorkflowTriggerType.DATABASE_EVENT }),
+          ],
+          mapRow: ({ value: trigger }) =>
+            replaceWithdrawnCurrencyCodeInWorkflowTrigger({
+              trigger,
+              currencyFieldMetadataIds,
+            }),
+        })
+      : 0;
+
     if (
       !isDryRun &&
       viewFilterCount +
         rowLevelPermissionPredicateCount +
         chartWidgetCount +
-        coreWorkflowVersionCount >
+        coreWorkflowVersionCount +
+        coreWorkflowVersionTriggersCount >
         0
     ) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -233,6 +282,12 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
       ]);
     }
 
+    if (!isDryRun && coreWorkflowVersionTriggersCount > 0) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
+    }
+
     if (
       fieldDefaultValueCount +
         recordCount +
@@ -240,11 +295,13 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         rowLevelPermissionPredicateCount +
         chartWidgetCount +
         coreWorkflowVersionCount +
-        workspaceWorkflowVersionCount >
+        coreWorkflowVersionTriggersCount +
+        workspaceWorkflowVersionCount +
+        workspaceWorkflowVersionTriggerCount >
       0
     ) {
       this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}Replaced ${WITHDRAWN_CURRENCY_CODE} with ${REPLACEMENT_CURRENCY_CODE} in workspace ${workspaceId}: ${fieldDefaultValueCount} field default value(s), ${recordCount} record(s), ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version(s), ${workspaceWorkflowVersionCount} workflow version(s)`,
+        `${isDryRun ? '[DRY RUN] ' : ''}Replaced ${WITHDRAWN_CURRENCY_CODE} with ${REPLACEMENT_CURRENCY_CODE} in workspace ${workspaceId}: ${fieldDefaultValueCount} field default value(s), ${recordCount} record(s), ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version step(s), ${coreWorkflowVersionTriggersCount} core workflow version trigger(s), ${workspaceWorkflowVersionCount} workflow version step(s), ${workspaceWorkflowVersionTriggerCount} workflow version trigger(s)`,
       );
     }
   }

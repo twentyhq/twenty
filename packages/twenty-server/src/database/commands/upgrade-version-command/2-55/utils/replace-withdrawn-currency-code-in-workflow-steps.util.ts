@@ -5,38 +5,9 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/replacement-currency-code.constant';
 import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-55/constants/withdrawn-currency-code.constant';
 import { type MappedValue } from 'src/database/commands/upgrade-version-command/2-55/types/mapped-value.type';
-import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-filter-value.util';
 import { replaceWithdrawnCurrencyCodeInRecordFilters } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-record-filters.util';
+import { replaceWithdrawnCurrencyCodeInStepFilters } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-step-filters.util';
 import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-55/utils/to-mapped-value.util';
-
-const replaceWithdrawnCurrencyCodeInStepFilters = ({
-  stepFilters,
-  currencyFieldMetadataIds,
-}: {
-  stepFilters: unknown;
-  currencyFieldMetadataIds: Set<string>;
-}): unknown => {
-  if (!Array.isArray(stepFilters)) {
-    return stepFilters;
-  }
-
-  return stepFilters.map((stepFilter) => {
-    if (
-      !isPlainObject(stepFilter) ||
-      !isString(stepFilter.fieldMetadataId) ||
-      !currencyFieldMetadataIds.has(stepFilter.fieldMetadataId) ||
-      stepFilter.compositeFieldSubFieldName !== 'currencyCode'
-    ) {
-      return stepFilter;
-    }
-
-    const { value, hasChanged } = replaceWithdrawnCurrencyCodeInFilterValue(
-      stepFilter.value,
-    );
-
-    return hasChanged ? { ...stepFilter, value } : stepFilter;
-  });
-};
 
 const replaceWithdrawnCurrencyCodeInObjectRecord = ({
   objectRecord,
@@ -124,24 +95,28 @@ export const replaceWithdrawnCurrencyCodeInWorkflowSteps = ({
     return { value: steps, hasChanged: false };
   }
 
-  const mappedSteps = steps.map((step) =>
-    isPlainObject(step) &&
-    isPlainObject(step.settings) &&
-    isPlainObject(step.settings.input)
-      ? {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: replaceWithdrawnCurrencyCodeInStepInput({
-              stepType: step.type,
-              input: step.settings.input,
-              currencyFieldMetadataIds,
-              currencyFieldNamesByObjectNameSingular,
-            }),
-          },
-        }
-      : step,
-  );
+  const mappedSteps = steps.map((step) => {
+    if (
+      !isPlainObject(step) ||
+      !isPlainObject(step.settings) ||
+      !isPlainObject(step.settings.input)
+    ) {
+      return step;
+    }
+
+    return {
+      ...step,
+      settings: {
+        ...step.settings,
+        input: replaceWithdrawnCurrencyCodeInStepInput({
+          stepType: step.type,
+          input: step.settings.input,
+          currencyFieldMetadataIds,
+          currencyFieldNamesByObjectNameSingular,
+        }),
+      },
+    };
+  });
 
   return toMappedValue({ original: steps, mapped: mappedSteps });
 };
