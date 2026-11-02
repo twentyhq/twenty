@@ -1,11 +1,19 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type ComponentProps } from 'react';
+import { useArgs } from 'storybook/preview-api';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
+import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
+
+type SettingsAiBehaviorStoryArgs = ComponentProps<
+  typeof SettingsAiBehaviorSection
+> & {
+  shouldRejectChanges?: boolean;
+};
 
 const meta = {
   title: 'Pages/Settings/AI/Behavior',
-  component: SettingsAiBehaviorExample,
+  component: SettingsAiBehaviorSection,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 694 } },
   args: {
@@ -14,10 +22,41 @@ const meta = {
     onDirectMessageModeChange: fn(),
     onInboxModeChange: fn(),
   },
-} satisfies Meta<typeof SettingsAiBehaviorExample>;
+  render: function Render(args) {
+    const [, updateArgs] = useArgs<SettingsAiBehaviorStoryArgs>();
+
+    return (
+      <SettingsAiBehaviorSection
+        directMessageMode={args.directMessageMode}
+        inboxMode={args.inboxMode}
+        onDirectMessageModeChange={(value) => {
+          args.onDirectMessageModeChange(value);
+
+          if (args.shouldRejectChanges) {
+            return;
+          }
+
+          updateArgs({ directMessageMode: value });
+        }}
+        onInboxModeChange={(value) => {
+          args.onInboxModeChange(value);
+
+          if (args.shouldRejectChanges) {
+            return;
+          }
+
+          updateArgs({ inboxMode: value });
+        }}
+        isLoading={args.isLoading}
+        disabled={args.disabled}
+        errorMessage={args.errorMessage}
+      />
+    );
+  },
+} satisfies Meta<SettingsAiBehaviorStoryArgs>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<SettingsAiBehaviorStoryArgs>;
 
 export const IndependentSelection: Story = {
   play: async ({ canvasElement, args }) => {
@@ -26,6 +65,7 @@ export const IndependentSelection: Story = {
     const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
     const document = within(canvasElement.ownerDocument.body);
 
+    expect(canvas.getByRole('status')).toBeEmptyDOMElement();
     expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
     await userEvent.click(directMessages);

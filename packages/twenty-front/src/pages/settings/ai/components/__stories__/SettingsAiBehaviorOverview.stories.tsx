@@ -3,7 +3,7 @@ import { expect, fn, within } from 'storybook/test';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
+import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
 import { settingsAiOverviewStoryParameters } from '~/pages/settings/ai/components/__stories__/settingsAiOverviewStoryParameters';
 import { settingsAiOverviewStorySections } from '~/pages/settings/ai/components/__stories__/settingsAiOverviewStorySections';
@@ -31,7 +31,7 @@ const meta = {
       </Section.Root>
     ),
     behaviorSection: (
-      <SettingsAiBehaviorExample
+      <SettingsAiBehaviorSection
         directMessageMode="MENTION_ONLY"
         inboxMode="AUTOMATIC"
         onDirectMessageModeChange={fn()}
