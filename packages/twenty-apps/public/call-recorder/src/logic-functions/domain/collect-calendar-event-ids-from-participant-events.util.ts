@@ -1,0 +1,27 @@
+import { type ObjectRecordBaseEvent } from 'twenty-sdk/define';
+
+import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functions/types/calendar-event-participant-for-database-event.type';
+import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+
+// Only participants matched to a workspace member can change the policy, so
+// external attendees, which are most of the sync traffic, are ignored.
+export const collectCalendarEventIdsFromParticipantEvents = (
+  events: ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>[],
+): string[] =>
+  getUniqueSortedIds(
+    events.flatMap((event) => {
+      const { before, after } = event.properties;
+
+      if (
+        !isNonEmptyString(before?.workspaceMemberId) &&
+        !isNonEmptyString(after?.workspaceMemberId)
+      ) {
+        return [];
+      }
+
+      return [before?.calendarEventId, after?.calendarEventId].filter(
+        isNonEmptyString,
+      );
+    }),
+  );
