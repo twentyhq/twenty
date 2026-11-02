@@ -46,7 +46,7 @@ const waitForOrThrow = async (isDone: () => boolean, timeoutMs = 10_000) => {
 };
 
 const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
-  type === 'message-persisted' ||
+  type === 'run-finished' ||
   type === 'credits-exhausted' ||
   type === 'stream-error';
 
@@ -129,7 +129,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
           .join(''),
       ).toBe('Acme looks like a fit');
       expect(ownStream.events.find(isRunEnd)).toMatchObject({
-        type: 'message-persisted',
+        type: 'run-finished',
       });
 
       // one server connection receives both channels in publish order, so a keepalive the other
