@@ -7,8 +7,7 @@ import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 
-// TODO(@charlesBochet): remove with isPrivateRecordEnabled; until the 2.55 upgrade
-// converts a workspace's chats to private records, only their shares reach them
+// TODO(@charlesBochet): remove after 2.55; chats reach only their shares until converted to private records
 export const isRecordAccessHeldToShares = ({
   metadataMaps,
   flatObjectMetadata,
