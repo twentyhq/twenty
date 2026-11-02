@@ -122,7 +122,7 @@ const findCompanyObjectMetadataId = async () => {
     [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
-  return { data: rows[0].id };
+  return rows[0].id;
 };
 
 describe('Validation rules declared in an application manifest', () => {
@@ -243,13 +243,13 @@ describe('Validation rules declared in an application manifest', () => {
   }, 60000);
 
   it('should leave the rule off and warn when the workspace deleted a field outside the application', async () => {
-    const { data: objectData } = await findCompanyObjectMetadataId();
+    const companyObjectMetadataId = await findCompanyObjectMetadataId();
     const { data } = await createOneFieldMetadata({
       input: {
         name: 'validationRuleManifestScore',
         label: 'Validation Rule Manifest Score',
         type: FieldMetadataType.NUMBER,
-        objectMetadataId: objectData,
+        objectMetadataId: companyObjectMetadataId,
       },
       gqlFields: 'id universalIdentifier',
       expectToFail: false,
@@ -340,8 +340,7 @@ describe('Validation rules declared in an application manifest', () => {
   }, 60000);
 
   it('should leave the rule off and warn when the workspace deactivated a standard field through an override', async () => {
-    const { data: companyObjectMetadataId } =
-      await findCompanyObjectMetadataId();
+    const companyObjectMetadataId = await findCompanyObjectMetadataId();
     const rows: { id: string }[] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'employees'`,
       [companyObjectMetadataId],
