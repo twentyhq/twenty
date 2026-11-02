@@ -75,8 +75,6 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     await userEvent.type(instructions, 'Use concise replies.');
     expect(fixture.saveInstructions).not.toHaveBeenCalled();
 
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
     await waitFor(
       () => expect(fixture.saveInstructions).toHaveBeenCalledOnce(),
       { timeout: 3000 },
@@ -85,6 +83,8 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
       aiAdditionalInstructions: expect.stringContaining('Use concise replies.'),
     });
 
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
     expect(
       canvas.queryByRole('heading', {
         name: 'Workspace Instructions',
