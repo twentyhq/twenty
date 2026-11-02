@@ -12,6 +12,7 @@ import {
   CHATGPT_CONNECTABLE_APP,
   CLAUDE_CONNECTABLE_APP,
 } from '@/settings/app-preferences/testing/connectableAppFixtures';
+import { CONNECTABLE_APPS_GRAPHQL_HANDLER } from '@/settings/app-preferences/testing/connectableAppsGraphqlHandler';
 import { SettingsAppPreferencesApp } from '~/pages/settings/accounts/SettingsAppPreferencesApp';
 import { SettingsConnectableApp } from '~/pages/settings/accounts/SettingsConnectableApp';
 import { removeConnectedAccountsPermission } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -51,23 +52,7 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
-        graphql.query('FindManyMarketplaceApps', () =>
-          HttpResponse.json({
-            data: {
-              findManyMarketplaceApps: [
-                CHATGPT_CONNECTABLE_APP,
-                CLAUDE_CONNECTABLE_APP,
-              ].map((connectableApp) => ({
-                __typename: 'MarketplaceApp',
-                author: '',
-                category: 'Productivity',
-                sourcePackage: null,
-                isListed: true,
-                ...connectableApp,
-              })),
-            },
-          }),
-        ),
+        CONNECTABLE_APPS_GRAPHQL_HANDLER,
         graphql.query('CurrentUserApplicationAuthorizations', () =>
           HttpResponse.json({
             data: {
