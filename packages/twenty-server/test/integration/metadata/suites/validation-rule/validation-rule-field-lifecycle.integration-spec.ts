@@ -191,6 +191,14 @@ describe('Validation rules should follow the fields they read', () => {
       expect(
         validationRules.find(({ id }) => id === standardFieldRuleId),
       ).toMatchObject({ isActive: false });
+
+      const enableResponse = await updateValidationRule(standardFieldRuleId, {
+        isActive: true,
+      });
+
+      expect(enableResponse.body.errors?.[0]?.message).toBe(
+        'Unknown field "employees"',
+      );
     } finally {
       await updateOneFieldMetadata({
         expectToFail: false,

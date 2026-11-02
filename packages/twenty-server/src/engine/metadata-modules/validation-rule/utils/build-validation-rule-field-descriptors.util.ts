@@ -12,18 +12,26 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+
+// The ORM cache leaves overrides out, so record writes only see the raw isActive
+type ValidationRuleFlatFieldMetadata = OrmFlatFieldMetadata &
+  OverridableFlatEntity;
 
 type BuildValidationRuleFieldDescriptorsArgs = {
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<ValidationRuleFlatFieldMetadata>;
 };
 
 const findActiveFlatFieldMetadatasOfObject = ({
   objectMetadataId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-}: BuildValidationRuleFieldDescriptorsArgs): OrmFlatFieldMetadata[] => {
+}: BuildValidationRuleFieldDescriptorsArgs): ValidationRuleFlatFieldMetadata[] => {
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
@@ -41,7 +49,13 @@ const findActiveFlatFieldMetadatasOfObject = ({
       }),
     )
     .filter(isDefined)
-    .filter((flatFieldMetadata) => flatFieldMetadata.isActive);
+    .filter((flatFieldMetadata) =>
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadata,
+        property: 'isActive',
+      }),
+    );
 };
 
 const toScalarFieldDescriptor = (
