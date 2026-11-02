@@ -1,4 +1,9 @@
 import {
+  type AgentMessageRow,
+  mapAgentMessagesToUIMessages,
+} from 'twenty-shared/ai';
+
+import {
   type AgentConversationHistory,
   type AgentConversationInput,
 } from '@/sdk/logic-function/agents/types/agent-conversation.type';
@@ -16,8 +21,6 @@ const CONVERSATION_MESSAGES_QUERY = `
       createdAt
       processedAt
       parts {
-        id
-        messageId
         orderIndex
         type
         textContent
@@ -41,13 +44,6 @@ const CONVERSATION_MESSAGES_QUERY = `
         fileUrl
         fileId
         providerMetadata
-        createdAt
-      }
-      reactions {
-        emoji
-        workspaceMemberIds
-        agentIds
-        hasAssistantReacted
       }
     }
     streamCatchup: chatStreamCatchupChunks(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) {
@@ -61,11 +57,22 @@ const CONVERSATION_MESSAGES_QUERY = `
   }
 `;
 
-export const listConversationMessages = (
+export const listConversationMessages = async (
   conversation: AgentConversationInput,
-): Promise<AgentConversationHistory> =>
-  postGraphqlRequest<AgentConversationInput, AgentConversationHistory>({
+): Promise<AgentConversationHistory> => {
+  const { messages, streamCatchup } = await postGraphqlRequest<
+    AgentConversationInput,
+    Pick<AgentConversationHistory, 'streamCatchup'> & {
+      messages: AgentMessageRow[];
+    }
+  >({
     query: CONVERSATION_MESSAGES_QUERY,
     variables: conversation,
     caller: 'listConversationMessages',
   });
+
+  return {
+    messages: mapAgentMessagesToUIMessages(messages),
+    streamCatchup,
+  };
+};

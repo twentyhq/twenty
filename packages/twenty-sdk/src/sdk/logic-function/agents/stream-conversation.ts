@@ -1,11 +1,4 @@
-import {
-  isArray,
-  isBoolean,
-  isNonEmptyString,
-  isNumber,
-  isObject,
-  isString,
-} from '@sniptt/guards';
+import { isArray, isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,54 +33,11 @@ const toErrorMessages = (errors: unknown[]): string[] =>
       : JSON.stringify(error),
   );
 
-const isReactionSummary = (reaction: unknown): boolean =>
-  isRecord(reaction) &&
-  isString(reaction.emoji) &&
-  isArray(reaction.workspaceMemberIds) &&
-  reaction.workspaceMemberIds.every(isString) &&
-  isArray(reaction.agentIds) &&
-  reaction.agentIds.every(isString) &&
-  isBoolean(reaction.hasAssistantReacted);
-
-const EVENT_FIELD_VALIDATORS: Record<
-  AgentChatSubscriptionEvent['type'],
-  (event: Record<string, unknown>) => boolean
-> = {
-  'stream-chunk': ({ chunk, seq }) =>
-    isRecord(chunk) && (seq === undefined || isNumber(seq)),
-  'message-persisted': ({ messageId }) => isString(messageId),
-  'message-added': ({ messageId }) => isString(messageId),
-  'queue-updated': () => true,
-  'tool-call-resolved': ({ toolCallId }) => isString(toolCallId),
-  'message-reactions-updated': ({ messageId, reactions, revision }) =>
-    isString(messageId) &&
-    isArray(reactions) &&
-    reactions.every(isReactionSummary) &&
-    isNumber(revision),
-  'stream-error': ({ code, message }) => isString(code) && isString(message),
-  'credits-exhausted': () => true,
-  'user-credits-exhausted': ({
-    workspaceMemberId,
-    isFallingBackToWorkspaceCredits,
-    renewsAt,
-  }) =>
-    isString(workspaceMemberId) &&
-    isBoolean(isFallingBackToWorkspaceCredits) &&
-    isString(renewsAt),
-  keepalive: () => true,
-};
-
-const isKnownEventType = (
-  type: string,
-): type is AgentChatSubscriptionEvent['type'] =>
-  Object.prototype.hasOwnProperty.call(EVENT_FIELD_VALIDATORS, type);
-
+// only the type is checked, so a field a newer server adds never fails an older SDK
 const isAgentChatSubscriptionEvent = (
-  event: Record<string, unknown>,
+  event: unknown,
 ): event is AgentChatSubscriptionEvent =>
-  isString(event.type) &&
-  isKnownEventType(event.type) &&
-  EVENT_FIELD_VALIDATORS[event.type](event);
+  isRecord(event) && isString(event.type);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
 const parseServerSentEvent = (block: string): ServerSentEvent => {
@@ -121,15 +71,6 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
     isRecord(result.data) && isRecord(result.data.onAgentChatEvent)
       ? result.data.onAgentChatEvent.event
       : undefined;
-
-  if (!isRecord(event) || !isString(event.type)) {
-    throw new Error(`streamConversation() failed: unexpected result ${data}`);
-  }
-
-  // an event a newer server added is skipped rather than failing the stream
-  if (!isKnownEventType(event.type)) {
-    return null;
-  }
 
   if (!isAgentChatSubscriptionEvent(event)) {
     throw new Error(`streamConversation() failed: unexpected result ${data}`);

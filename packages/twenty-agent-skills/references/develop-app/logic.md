@@ -88,17 +88,22 @@ When adding AI behavior:
 import { listConversationMessages, streamConversation } from 'twenty-sdk/logic-function';
 
 const conversation = { agentUniversalIdentifier, threadKey: 'deal-42' };
-const { messages, streamCatchup } = await listConversationMessages(conversation);
+let maxCatchupSeq: number | undefined;
 
+// subscribe before reading the history, so nothing streamed in between is lost
 for await (const event of streamConversation({ ...conversation, signal })) {
-  if (event.type === 'stream-chunk') console.log(event.chunk, event.seq);
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } = await listConversationMessages(conversation);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) console.log(event.chunk);
 }
 ```
 
 - Events are the chat's `AgentChatSubscriptionEvent`s: `stream-chunk` (an AI SDK `UIMessageChunk` with a `seq`), notifications such as `message-persisted`, `queue-updated` and `stream-error`, and a periodic `keepalive`. Pipe chunks into `readUIMessageStream()` from `ai` to build messages as the chat does.
-- Messages come as the chat reads them, parts as stored. `streamCatchup` holds the chunks of a reply still streaming; skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
-- The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; read the history and stream again to resume. It can start before the first run reaches the conversation.
-- Both need an application token and reach only the app's own conversations. Turns run as a member show only their text, in the history and live, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless.
+- Messages come as AI SDK `UIMessage`s, as the chat builds them, with the run in `metadata.turnId`. `streamCatchup` holds the chunks of a reply still streaming; skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
+- The first event once connected is a `keepalive`: read the history then. The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; stream again to resume. It can start before the first run reaches the conversation.
+- Both need an application token and reach only the app's own conversations. Turns a member opened elsewhere, such as in the chat, show only their text, in the history, live and in the agent's next run, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless. Turns the app ran as a member stay whole when the app reads on its own.
 
 ## AI Generate
 

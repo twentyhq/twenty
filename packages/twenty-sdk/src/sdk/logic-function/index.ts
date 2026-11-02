@@ -90,9 +90,9 @@ export type {
   AgentConversationHistory,
   AgentConversationInput,
   AgentConversationMessage,
-  AgentConversationMessagePart,
 } from '@/sdk/logic-function/agents/types/agent-conversation.type';
 export type { AgentChatSubscriptionEvent } from 'twenty-shared/ai';
+export { isAgentChatTurnEndEvent } from 'twenty-shared/ai';
 
 export { ai, type GenerateInput } from '@/sdk/logic-function/ai/ai';
 export type { GenerateResult } from 'twenty-shared/application';

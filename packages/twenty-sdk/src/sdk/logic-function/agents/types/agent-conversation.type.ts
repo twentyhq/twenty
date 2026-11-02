@@ -1,51 +1,22 @@
-import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
-
 // an application names its conversation with an agent by the key it passes to runAgent
 export type AgentConversationInput = {
   agentUniversalIdentifier: string;
   threadKey: string;
 };
 
-export type AgentConversationMessagePart = {
-  id: string;
-  messageId: string;
-  orderIndex: number;
-  type: string;
-  textContent: string | null;
-  reasoningContent: string | null;
-  toolName: string | null;
-  toolCallId: string | null;
-  toolInput: unknown;
-  toolOutput: unknown;
-  state: string | null;
-  providerExecuted: boolean | null;
-  errorMessage: string | null;
-  sourceUrlSourceId: string | null;
-  sourceUrlUrl: string | null;
-  sourceUrlTitle: string | null;
-  sourceDocumentSourceId: string | null;
-  sourceDocumentMediaType: string | null;
-  sourceDocumentTitle: string | null;
-  sourceDocumentFilename: string | null;
-  fileMediaType: string | null;
-  fileFilename: string | null;
-  fileUrl: string | null;
-  fileId: string | null;
-  providerMetadata: Record<string, unknown> | null;
-  createdAt: string;
-};
-
+// an AI SDK UIMessage, as the chat and its live chunks build it, typed without the ai package
 export type AgentConversationMessage = {
   id: string;
-  threadId: string;
-  turnId: string | null;
-  senderWorkspaceMemberId: string | null;
   role: 'system' | 'user' | 'assistant';
-  status: string;
-  createdAt: string;
-  processedAt: string | null;
-  parts: AgentConversationMessagePart[];
-  reactions: AgentMessageReactionSummary[];
+  parts: ({ type: string } & Record<string, unknown>)[];
+  metadata?: {
+    createdAt?: string;
+    startedAt?: string;
+    finishedAt?: string;
+    senderWorkspaceMemberId?: string | null;
+    // the run the message belongs to, as runAgent() returns it
+    turnId?: string | null;
+  };
 };
 
 export type AgentConversationHistory = {

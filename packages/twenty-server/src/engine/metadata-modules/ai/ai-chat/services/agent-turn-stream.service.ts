@@ -332,10 +332,11 @@ export class AgentTurnStreamService {
         workspaceId,
         event:
           completion.stopReason === 'workspaceAllowance'
-            ? { type: 'credits-exhausted' }
+            ? { type: 'credits-exhausted', turnId }
             : {
                 type: 'message-persisted',
                 messageId: streamed.assistantMessageId,
+                turnId,
               },
       })
       .catch((error: unknown) =>

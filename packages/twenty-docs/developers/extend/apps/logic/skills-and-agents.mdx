@@ -338,33 +338,40 @@ conversation by the agent and the `thread` key you pass to `runAgent()`; you
 can start following it before the first run reaches it.
 
 ```ts src/logic-functions/follow-conversation.ts
-import { streamConversation } from 'twenty-sdk/logic-function';
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
 
-const abortController = new AbortController();
-let replyMessageId: unknown;
-
-for await (const event of streamConversation({
+const conversation = {
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
   signal: abortController.signal,
 })) {
-  if (event.type === 'stream-chunk') {
-    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
-    if (event.chunk.type === 'start') {
-      replyMessageId = event.chunk.messageId;
-    }
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    maxCatchupSeq = streamCatchup.maxSeq;
   }
 
-  // a member's message is saved too, so only the save of the streamed reply ends it
-  const isReplySaved =
-    event.type === 'message-persisted' && event.messageId === replyMessageId;
-
-  // a reply cut short by the credits ends as credits-exhausted instead
   if (
-    isReplySaved ||
-    event.type === 'credits-exhausted' ||
-    event.type === 'stream-error'
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
   ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
     abortController.abort();
   }
 }
@@ -372,26 +379,28 @@ for await (const event of streamConversation({
 
 - Events are the chat's own: `stream-chunk` carries an AI SDK
   `UIMessageChunk` and a `seq`, and notifications such as `message-persisted`
-  (a message was saved: a member's, or the reply whose `start` chunk carried
-  its `messageId`), `credits-exhausted` (the reply stopped when the
-  workspace ran out of credits), `queue-updated` or `stream-error` say when
-  to read the history again. A `keepalive` comes once connected, then every few seconds;
-  what happened before it is in the history.
+  (a message was saved: a member's, or the reply, which carries its run's
+  `turnId`), `credits-exhausted` (the reply stopped when the workspace ran
+  out of credits), `queue-updated` or `stream-error` say when
+  to read the history again. A `keepalive` comes once connected, then every
+  few seconds: read the history on the first one, since what happened before
+  it is there.
 - To turn chunks into messages as the chat does, pipe them into
   `readUIMessageStream()` from the `ai` package.
 - `listConversationMessages()` returns `{ messages, streamCatchup }`: the saved
-  messages with their parts, and the chunks of a reply still streaming. Skip
-  live chunks whose `seq` is at most `streamCatchup.maxSeq`, since they repeat
-  them.
+  messages as AI SDK `UIMessage`s, as the chat builds them, and the chunks of
+  a reply still streaming. Skip live chunks whose `seq` is at most
+  `streamCatchup.maxSeq`, since they repeat them.
 - `runAgent()` returns `runId`, the turn the call opens: messages of that run
-  carry it as `turnId`. A run that waits goes on in later turns of the
-  conversation.
+  carry it as `metadata.turnId`. A run that waits goes on in later turns of
+  the conversation.
 - The stream stays open until you abort its `signal` or `break`, and throws if
-  the connection drops: read the history and stream again to resume.
-- An app reads only its own conversations. Turns run as a member (see above)
-  show only their text, as they do to other members in the chat: live, their
-  other chunks arrive as empty `message-metadata` chunks, so `seq` stays
-  gapless.
+  the connection drops: stream again to resume.
+- An app reads only its own conversations. Turns a member opened elsewhere,
+  such as in the chat, show only their text, in the history, live and in the
+  agent's next run: live, their other chunks arrive as empty
+  `message-metadata` chunks, so `seq` stays gapless. Turns your app ran as a
+  member (see above) stay whole when it reads on its own.
 - Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 </Accordion>

@@ -6,7 +6,7 @@ import {
 
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
-// keep in sync with packages/twenty-front/src/modules/ai/utils/mapDBPartToUIMessagePart.ts
+// keep in sync with packages/twenty-shared/src/ai/utils/map-agent-message-part-to-ui-message-part.util.ts
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePartWorkspaceEntity,
