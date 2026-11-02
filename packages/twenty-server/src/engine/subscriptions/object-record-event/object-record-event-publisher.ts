@@ -376,8 +376,7 @@ export class ObjectRecordEventPublisher {
     const selectedFieldsResult =
       commonQueryParser.parseSelectedFields(selectedFields);
 
-    // Repositories take their member from the workspace context, which is the
-    // writer's here, so relations load as the subscriber's roles alone
+    // The ambient context is the writer's, so relations load as the subscriber's roles alone
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.processNestedRelationsHelper.processNestedRelations({

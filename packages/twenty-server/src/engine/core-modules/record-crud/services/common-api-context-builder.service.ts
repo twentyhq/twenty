@@ -96,7 +96,7 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { objectsPermissions, principal } = await this.getObjectsPermissions({
+    const { objectsPermissions, principal } = await this.getPermissionsContext({
       authContext,
       rolePermissionConfig,
     });
@@ -132,7 +132,7 @@ export class CommonApiContextBuilderService {
     };
   }
 
-  private async getObjectsPermissions({
+  private async getPermissionsContext({
     authContext,
     rolePermissionConfig,
   }: {

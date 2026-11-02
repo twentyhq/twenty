@@ -17,12 +17,9 @@ import { UpsertRecordService } from 'src/engine/core-modules/record-crud/service
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
-import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 
 @Module({
   imports: [
-    RecordShareModule,
     CoreCommonApiModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
@@ -39,7 +36,6 @@ import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-f
     DeleteManyRecordsService,
     MergeManyRecordsService,
     FindRecordsService,
-    CommonSelectFieldsBuilder,
     GroupByRecordsService,
     UpsertRecordService,
     UpsertManyRecordsService,

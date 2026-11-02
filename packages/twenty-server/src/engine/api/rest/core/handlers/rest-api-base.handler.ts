@@ -86,7 +86,7 @@ export abstract class RestApiBaseHandler {
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
 
-  private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
+  private getPermissionsContext = async (authContext: WorkspaceAuthContext) => {
     let intersectionOf: RoleIdsBySource;
 
     if (isApiKeyAuthContext(authContext)) {
@@ -172,7 +172,7 @@ export abstract class RestApiBaseHandler {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { principal, objectsPermissions } =
-      await this.getObjectsPermissions(authContext);
+      await this.getPermissionsContext(authContext);
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
@@ -210,7 +210,7 @@ export abstract class RestApiBaseHandler {
     selectedFields: CommonSelectedFields;
   }> {
     const { principal, objectsPermissions } =
-      await this.getObjectsPermissions(authContext);
+      await this.getPermissionsContext(authContext);
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
@@ -230,7 +230,6 @@ export abstract class RestApiBaseHandler {
     });
   }
 
-  // Without depth no relation is selected, so the share lookup is skipped
   private async findRelationReadableObjectMetadataIds({
     principal,
     objectsPermissions,

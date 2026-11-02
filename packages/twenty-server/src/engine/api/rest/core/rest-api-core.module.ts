@@ -17,7 +17,6 @@ import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/res
 import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
 import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
-import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
@@ -28,7 +27,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 
 const restApiCoreResolvers = [
   RestApiCreateOneHandler,
@@ -51,7 +49,6 @@ const restApiCoreResolvers = [
 
 @Module({
   imports: [
-    RecordShareModule,
     WorkspaceCacheStorageModule,
     AuthModule,
     ApiKeyModule,
@@ -64,10 +61,6 @@ const restApiCoreResolvers = [
     WorkspaceCacheModule,
   ],
   controllers: [RestApiCoreController],
-  providers: [
-    RestApiCoreService,
-    ...restApiCoreResolvers,
-    CommonSelectFieldsBuilder,
-  ],
+  providers: [RestApiCoreService, ...restApiCoreResolvers],
 })
 export class RestApiCoreModule {}
