@@ -19,6 +19,7 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
+import { buildPermissionsShareCondition } from 'src/engine/permissions/record-share/utils/build-permissions-share-condition.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
@@ -250,7 +251,21 @@ describe('buildPermissionsCondition', () => {
       flatObjectMetadata: person,
     });
 
-    expect(sql).toContain('"workspace"."recordShare"');
+    const shareSql =
+      buildPermissionsShareCondition({
+        principal: readEverything,
+        metadataMaps,
+        tableAlias: person.nameSingular,
+        flatObjectMetadata: person,
+        operationType: 'select',
+        recordShareTableExpression: '"workspace"."recordShare"',
+      })?.sql ?? '';
+    const withoutParameterSuffixes = (conditionSql: string) =>
+      conditionSql.replace(/_[0-9a-f]{10}\b/g, '');
+
+    expect(withoutParameterSuffixes(sql)).toBe(
+      withoutParameterSuffixes(shareSql),
+    );
     expect(sql).not.toContain('_isPrivate');
   });
 
@@ -266,6 +281,7 @@ describe('buildPermissionsCondition', () => {
 
     expect(sql).toContain('"person"."title" = :restricted');
     expect(sql).toContain('"workspace"."recordShare"');
+    expect(sql).not.toContain(' OR ');
   });
 
   // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
