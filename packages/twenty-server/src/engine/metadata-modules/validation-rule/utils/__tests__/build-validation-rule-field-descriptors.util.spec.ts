@@ -25,10 +25,13 @@ const buildField = (
     ...field,
   });
 
-const buildFieldNames = (
-  fields: FlatFieldMetadata[],
-  shouldIncludeInactiveFields?: boolean,
-) => {
+const buildFieldNames = ({
+  fields,
+  shouldIncludeInactiveFields,
+}: {
+  fields: FlatFieldMetadata[];
+  shouldIncludeInactiveFields?: boolean;
+}) => {
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
     createEmptyFlatEntityMaps();
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
@@ -61,37 +64,46 @@ const buildFieldNames = (
 describe('buildValidationRuleFieldDescriptors', () => {
   it('should leave out a field the workspace deactivated through an override', () => {
     expect(
-      buildFieldNames([
-        buildField({ name: 'score' }),
-        buildField({
-          name: 'employees',
-          overrides: { 'workspace-application': { isActive: false } },
-        }),
-      ]),
+      buildFieldNames({
+        fields: [
+          buildField({ name: 'score' }),
+          buildField({
+            name: 'employees',
+            overrides: { 'workspace-application': { isActive: false } },
+          }),
+        ],
+      }),
     ).toEqual(['score']);
   });
 
   it('should keep a field the workspace reactivated through an override', () => {
     expect(
-      buildFieldNames([
-        buildField({
-          name: 'employees',
-          isActive: false,
-          overrides: { 'workspace-application': { isActive: true } },
-        }),
-      ]),
+      buildFieldNames({
+        fields: [
+          buildField({
+            name: 'employees',
+            isActive: false,
+            overrides: { 'workspace-application': { isActive: true } },
+          }),
+        ],
+      }),
     ).toEqual(['employees']);
   });
 
   it('should leave out a field whose own isActive is false', () => {
     expect(
-      buildFieldNames([buildField({ name: 'score', isActive: false })]),
+      buildFieldNames({
+        fields: [buildField({ name: 'score', isActive: false })],
+      }),
     ).toEqual([]);
   });
 
   it('should keep inactive fields for record writes, which cannot see overrides', () => {
     expect(
-      buildFieldNames([buildField({ name: 'score', isActive: false })], true),
+      buildFieldNames({
+        fields: [buildField({ name: 'score', isActive: false })],
+        shouldIncludeInactiveFields: true,
+      }),
     ).toEqual(['score']);
   });
 });

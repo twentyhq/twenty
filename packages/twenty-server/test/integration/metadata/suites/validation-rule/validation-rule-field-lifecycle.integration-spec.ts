@@ -249,6 +249,24 @@ describe('Validation rules should follow the fields they read', () => {
       expect(await findValidationRulesReadingField(fieldId)).toEqual([
         expect.objectContaining({ name: 'Person company has employees' }),
       ]);
+
+      const peopleRows: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT field.id
+           FROM core."fieldMetadata" field
+           JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
+           WHERE object."universalIdentifier" = $1
+             AND object."workspaceId" = $2
+             AND field.name = 'people'`,
+          [
+            STANDARD_OBJECTS.company.universalIdentifier,
+            SEED_APPLE_WORKSPACE_ID,
+          ],
+        );
+
+      expect(await findValidationRulesReadingField(peopleRows[0].id)).toEqual([
+        expect.objectContaining({ name: 'Person company has employees' }),
+      ]);
     } finally {
       await deleteValidationRule(response.body.data.createValidationRule.id);
     }
