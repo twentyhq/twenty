@@ -2177,18 +2177,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  async hasPrincipalGrantOnRecords({
+  async findPrincipalAdmittedRecordIds({
     principal,
     recordIds,
-    operationType = 'select',
+    operationType,
     hypotheticalRecordShareAccessLevel,
   }: {
     principal: PermissionsPrincipal;
     recordIds: string[];
-    operationType?: OperationType;
+    operationType: OperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): Promise<boolean> {
-    const uniqueRecordIds = [...new Set(recordIds)];
+  }): Promise<Set<string>> {
     const condition = buildPermissionsCondition({
       principal,
       metadataMaps: this.resolvePermissionsMetadataMaps(),
@@ -2198,18 +2197,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       hypotheticalRecordShareAccessLevel,
     });
 
-    if (condition === false) {
-      return false;
-    }
-
-    if (uniqueRecordIds.length === 0) {
-      return true;
+    if (condition === false || recordIds.length === 0) {
+      return new Set();
     }
 
     const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
     )
-      .where({ id: In(uniqueRecordIds) })
+      .where({ id: In(recordIds) })
       .withDeleted()
       .select(['id']);
     const admittedRecords = await (
@@ -2221,7 +2216,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         : queryBuilder
     ).getMany<ObjectRecord>({ noFormatting: true });
 
-    return admittedRecords.length === uniqueRecordIds.length;
+    return new Set(admittedRecords.map(({ id }) => String(id)));
   }
 
   // Whether the role alone permits the operation, regardless of any record

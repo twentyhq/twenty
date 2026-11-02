@@ -4,12 +4,26 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import {
+  type PermissionsMetadataMaps,
+  type PermissionsObjectAccessRequest,
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
+import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
+import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
+import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
@@ -18,11 +32,96 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 
 @Injectable()
 export class RecordAccessPolicyService {
+  private readonly sharedAccessLevelsByPrincipal = new WeakMap<
+    PermissionsPrincipal,
+    Promise<Map<string, RecordShareAccessLevel[]>>
+  >();
+
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
+
+  // Shares only count once a row exists, so an object reached by nothing stays out of reach
+  async hasAccessToSomeRecords({
+    principal,
+    flatObjectMetadata,
+    operationType,
+  }: Omit<PermissionsObjectAccessRequest, 'metadataMaps'>): Promise<boolean> {
+    const request = {
+      principal,
+      metadataMaps: await this.loadPermissionsMetadataMaps(
+        principal.workspaceId,
+      ),
+      flatObjectMetadata,
+      operationType,
+    };
+
+    if (isObjectOperationDisabledToPrincipal(request)) {
+      return false;
+    }
+
+    if (isRolePermittingOperation(request)) {
+      return true;
+    }
+
+    const shareGrant = resolvePermissionsShareGrant(request);
+
+    if (!isDefined(shareGrant)) {
+      return false;
+    }
+
+    const sharedAccessLevels =
+      (await this.findSharedAccessLevelsByObjectMetadataId(principal)).get(
+        flatObjectMetadata.id,
+      ) ?? [];
+
+    return sharedAccessLevels.some((accessLevel) =>
+      shareGrant.accessLevels.includes(accessLevel),
+    );
+  }
+
+  async hasAccessToRecords({
+    principal,
+    flatObjectMetadata,
+    operationType,
+    recordIds,
+    hypotheticalRecordShareAccessLevel,
+    transactionScope,
+  }: Omit<PermissionsObjectAccessRequest, 'metadataMaps'> & {
+    recordIds: string[];
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<boolean> {
+    const uniqueRecordIds = [...new Set(recordIds)];
+    const findAdmittedRecordIds = (repository: WorkspaceRepository) =>
+      repository.findPrincipalAdmittedRecordIds({
+        principal,
+        recordIds: uniqueRecordIds,
+        operationType,
+        hypotheticalRecordShareAccessLevel,
+      });
+    const admittedRecordIds = isDefined(transactionScope)
+      ? await findAdmittedRecordIds(
+          transactionScope.getRepository(flatObjectMetadata.nameSingular, {
+            shouldBypassPermissionChecks: true,
+          }),
+        )
+      : await this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            findAdmittedRecordIds(
+              this.workspaceOrmManager.getRepository(
+                flatObjectMetadata.nameSingular,
+                { shouldBypassPermissionChecks: true },
+              ),
+            ),
+          buildSystemAuthContext(principal.workspaceId),
+        );
+
+    return uniqueRecordIds.every((recordId) => admittedRecordIds.has(recordId));
+  }
 
   async loadPermissionsMetadataMaps(
     workspaceId: string,
@@ -149,5 +248,26 @@ export class RecordAccessPolicyService {
           },
         }),
     };
+  }
+
+  private findSharedAccessLevelsByObjectMetadataId(
+    principal: PermissionsPrincipal,
+  ): Promise<Map<string, RecordShareAccessLevel[]>> {
+    const cachedSharedAccessLevels =
+      this.sharedAccessLevelsByPrincipal.get(principal);
+
+    if (isDefined(cachedSharedAccessLevels)) {
+      return cachedSharedAccessLevels;
+    }
+
+    const sharedAccessLevels =
+      this.recordShareStorageService.findAccessLevelsByObjectMetadataId({
+        workspaceId: principal.workspaceId,
+        principalIds: getPermissionsPrincipalShareKeys(principal),
+      });
+
+    this.sharedAccessLevelsByPrincipal.set(principal, sharedAccessLevels);
+
+    return sharedAccessLevels;
   }
 }

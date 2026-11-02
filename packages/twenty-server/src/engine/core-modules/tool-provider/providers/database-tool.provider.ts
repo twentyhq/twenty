@@ -31,6 +31,10 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
@@ -44,6 +48,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -98,6 +103,19 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
+    const principal: PermissionsPrincipal | undefined =
+      'intersectionOf' in context.rolePermissionConfig
+        ? {
+            workspaceId: context.workspaceId,
+            intersectionOf: context.rolePermissionConfig.intersectionOf,
+            workspaceMember:
+              isDefined(context.authContext) &&
+              isUserAuthContext(context.authContext)
+                ? context.authContext.workspaceMember
+                : undefined,
+          }
+        : undefined;
+
     const { explicitObjectGrantsRoleId } = context;
     const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
 
@@ -151,22 +169,40 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const canReadRecords =
-        permission.canReadObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canReadObjectRecords === true);
-      const canUpdateRecords =
+      const isExplicitlyGranted = (
+        objectPermission: keyof Pick<
+          FlatObjectPermission,
+          | 'canReadObjectRecords'
+          | 'canUpdateObjectRecords'
+          | 'canSoftDeleteObjectRecords'
+          | 'canDestroyObjectRecords'
+        >,
+      ) =>
+        !requireExplicitObjectGrants ||
+        explicitPermission?.[objectPermission] === true;
+      const hasAccessToSomeRecords = async (operationType: OperationType) =>
+        !isDefined(principal) ||
+        (await this.recordAccessPolicyService.hasAccessToSomeRecords({
+          principal,
+          flatObjectMetadata: flatObject,
+          operationType,
+        }));
+
+      const canCreateRecords =
         permission.canUpdateObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canUpdateObjectRecords === true);
+        isExplicitlyGranted('canUpdateObjectRecords');
+      const canReadRecords =
+        isExplicitlyGranted('canReadObjectRecords') &&
+        (await hasAccessToSomeRecords('select'));
+      const canUpdateRecords =
+        isExplicitlyGranted('canUpdateObjectRecords') &&
+        (await hasAccessToSomeRecords('update'));
       const canSoftDeleteRecords =
-        permission.canSoftDeleteObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canSoftDeleteObjectRecords === true);
+        isExplicitlyGranted('canSoftDeleteObjectRecords') &&
+        (await hasAccessToSomeRecords('soft-delete'));
       const canDestroyRecords =
-        permission.canDestroyObjectRecords &&
-        (!requireExplicitObjectGrants ||
-          explicitPermission?.canDestroyObjectRecords === true);
+        isExplicitlyGranted('canDestroyObjectRecords') &&
+        (await hasAccessToSomeRecords('delete'));
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
@@ -270,7 +306,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (canUpdateRecords && canBeManagedByAutomation) {
+      if (canCreateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -323,7 +359,9 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'create_many',
         });
+      }
 
+      if (canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `update_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -376,7 +414,9 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
+      }
 
+      if (canCreateRecords && canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `upsert_many_${snakePlural}`,
           ...getCrudToolLabels(
