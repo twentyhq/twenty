@@ -97,10 +97,19 @@ const WORKFLOW_PREVIEWS_MOCK: MockedResponse = {
   },
 };
 
+const StyledPageFrame = styled.div`
+  width: 1200px;
+`;
+
 const meta: Meta<typeof GettingStartedPageContent> = {
   title: 'Modules/GettingStarted/GettingStartedPageContent',
   component: GettingStartedPageContent,
   decorators: [
+    (Story) => (
+      <StyledPageFrame>
+        <Story />
+      </StyledPageFrame>
+    ),
     ToastDecorator,
     ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
