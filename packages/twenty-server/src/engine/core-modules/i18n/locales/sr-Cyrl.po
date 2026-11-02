@@ -1354,6 +1354,22 @@ msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Апликација"
 
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr ""
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr ""
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr ""
+
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
@@ -9855,6 +9871,16 @@ msgstr "Само особа која је креирала овај ток ра�
 msgid "Only the values of this form can be changed."
 msgstr "Могу се променити само вредности овог обрасца."
 
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr ""
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr ""
+
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -11627,6 +11653,13 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr ""
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr ""
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11643,6 +11676,11 @@ msgstr "Улога „{roleLabel}“ не може бити додељена в�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Улога \"{roleLabel}\" не може бити додељена: прилагођене улоге захтевају план Organization"
+
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr ""
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11741,11 +11779,11 @@ msgstr "Циљ улоге већ постоји"
 msgid "Role target is missing identifier."
 msgstr "Недостаје идентификатор циља улоге."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr "Циљ улоге мора да има тачно једно од следећег: apiKeyId, userWorkspaceId, agentUniversalIdentifier или webhookUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr ""
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -13120,6 +13158,12 @@ msgstr "Прилагодите свој радни простор"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Отпремање tarball архиве није пронађено."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr ""
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

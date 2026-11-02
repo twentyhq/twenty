@@ -7055,6 +7055,11 @@ msgstr ""
 msgid "Connect additional MCP clients using install links or client docs."
 msgstr ""
 
+#. js-lingui-id: vPCRNy
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
+msgstr ""
+
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
@@ -17316,7 +17321,7 @@ msgid "Maximum values"
 msgstr ""
 
 #. js-lingui-id: nA8kxD
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 msgid "MCP"
 msgstr ""
 
@@ -17329,6 +17334,11 @@ msgstr ""
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
+msgstr ""
+
+#. js-lingui-id: 8CWirf
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "MCP Server"
 msgstr ""
 
 #. js-lingui-id: 8qgfac
@@ -17767,9 +17777,9 @@ msgid "Model used when you chat with Twenty"
 msgstr ""
 
 #. js-lingui-id: //nm2/
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr ""
 
@@ -20900,6 +20910,7 @@ msgid "Overrides the mode above until you switch back to automatic"
 msgstr ""
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -25389,6 +25400,11 @@ msgstr ""
 msgid "Set up forwarding from the source address to this destination."
 msgstr ""
 
+#. js-lingui-id: dq5Wx1
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Set up MCP"
+msgstr ""
+
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
@@ -25870,8 +25886,8 @@ msgstr ""
 #. js-lingui-id: PCSkw2
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Skills"
 msgstr ""
 
@@ -28516,8 +28532,8 @@ msgstr ""
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr ""
 
@@ -30001,12 +30017,12 @@ msgstr ""
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -31543,6 +31559,7 @@ msgid "Workspace Info"
 msgstr ""
 
 #. js-lingui-id: BYrMT0
+#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 msgid "Workspace Instructions"

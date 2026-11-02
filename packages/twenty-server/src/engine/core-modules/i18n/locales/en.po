@@ -1349,6 +1349,22 @@ msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Application"
 
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr "Application \"{applicationName}\" cannot be assigned a role"
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr "Application already has a role assigned"
+
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
@@ -9850,6 +9866,16 @@ msgstr "Only the person who created this workflow can change who sees it"
 msgid "Only the values of this form can be changed."
 msgstr "Only the values of this form can be changed."
 
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr "Only the workspace can assign roles to applications"
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr "Only the workspace custom application can assign roles to applications"
+
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -11622,6 +11648,13 @@ msgstr "Role \"{roleLabel}\" cannot be assigned to agents"
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr "Role \"{roleLabel}\" cannot be assigned to API keys"
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr "Role \"{roleLabel}\" cannot be assigned to applications"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11638,6 +11671,11 @@ msgstr "Role \"{roleLabel}\" cannot be assigned to webhooks"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11736,11 +11774,11 @@ msgstr "Role target already exists"
 msgid "Role target is missing identifier."
 msgstr "Role target is missing identifier."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -13115,6 +13153,12 @@ msgstr "Tailor your workspace"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Tarball upload not found."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr "Target application not found"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

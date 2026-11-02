@@ -7060,6 +7060,11 @@ msgstr "Connecter un nouveau compte à votre espace de travail"
 msgid "Connect additional MCP clients using install links or client docs."
 msgstr "Connectez des clients MCP supplémentaires à l'aide de liens d'installation ou de documentations clients."
 
+#. js-lingui-id: vPCRNy
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
+msgstr ""
+
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
@@ -17357,7 +17362,7 @@ msgid "Maximum values"
 msgstr "Valeurs maximales"
 
 #. js-lingui-id: nA8kxD
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -17371,6 +17376,11 @@ msgstr "Configuration du client MCP"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
 msgstr "Serveur MCP"
+
+#. js-lingui-id: 8CWirf
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "MCP Server"
+msgstr ""
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17808,9 +17818,9 @@ msgid "Model used when you chat with Twenty"
 msgstr "Modèle utilisé lorsque vous discutez avec Twenty"
 
 #. js-lingui-id: //nm2/
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Modèles"
 
@@ -20941,6 +20951,7 @@ msgid "Overrides the mode above until you switch back to automatic"
 msgstr "Remplace le mode ci-dessus jusqu'à ce que vous reveniez au mode automatique"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -25430,6 +25441,11 @@ msgstr "Configurer le transfert et le DNS"
 msgid "Set up forwarding from the source address to this destination."
 msgstr "Configurez le transfert de l’adresse source vers cette destination."
 
+#. js-lingui-id: dq5Wx1
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Set up MCP"
+msgstr ""
+
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
@@ -25911,8 +25927,8 @@ msgstr "Compétence introuvable"
 #. js-lingui-id: PCSkw2
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Skills"
 msgstr "Compétences"
 
@@ -28559,8 +28575,8 @@ msgstr "Détails de l'outil : {displayMessage}"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "Outils"
 
@@ -30044,12 +30060,12 @@ msgstr "us-east-1"
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -31586,6 +31602,7 @@ msgid "Workspace Info"
 msgstr "Infos sur l'espace de travail"
 
 #. js-lingui-id: BYrMT0
+#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 msgid "Workspace Instructions"
