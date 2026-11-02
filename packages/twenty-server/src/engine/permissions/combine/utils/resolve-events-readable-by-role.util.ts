@@ -7,17 +7,18 @@ import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
 >({
+  applicationId,
   roleId,
   workspaceEventBatch,
   eventRecordAccessGate,
   metadataMaps,
 }: {
+  applicationId: string;
   roleId: string | null;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
@@ -27,20 +28,21 @@ export const resolveEventsReadableByRole = async <
     return [];
   }
 
-  const principal = buildPermissionsPrincipal({
+  const principal: PermissionsPrincipalsWithRolesContext = {
     workspaceId: workspaceEventBatch.workspaceId,
-    roleId,
-    applicationId: resolvePermissionsPrincipalActingApplicationId({
-      intersectionOf: { applicationRoleId: roleId },
-      flatApplicationMaps: metadataMaps.flatApplicationMaps,
-    }),
-  });
+    mainPrincipal: { roleId, applicationId },
+    applicationPrincipal: { roleId, applicationId },
+  };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,
     metadataMaps,
   });
   const admittedRecordIds =
-    await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
+    await eventRecordAccessGate.resolveAdmittedRecordIds({
+      workspaceId: workspaceEventBatch.workspaceId,
+      mainPrincipal: { applicationId },
+      applicationPrincipal: { applicationId },
+    });
 
   return workspaceEventBatch.events
     .filter((event) => admittedRecordIds.has(event.recordId))
