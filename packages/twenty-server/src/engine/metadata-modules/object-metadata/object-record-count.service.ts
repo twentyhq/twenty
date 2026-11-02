@@ -18,8 +18,8 @@ export class ObjectRecordCountService {
   ) {}
 
   // reltuples is -1 until a table is analyzed, so new/small tables read 0.
-  // n_live_tup is kept current by the stats collector on insert, so take
-  // whichever is larger to stay accurate before autovacuum analyzes.
+  // n_live_tup is an asynchronously updated estimate that reflects inserts
+  // before the next analyze, so take whichever estimate is larger.
   async getApproximateRecordCountByTableName(
     workspaceId: string,
   ): Promise<Map<string, number>> {
