@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { generateId } from 'ai';
-import { type AgentRunSummary } from 'twenty-shared/ai';
+import { type AgentRunSummary, type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,6 +18,7 @@ import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
+import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
@@ -32,6 +35,7 @@ import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
+import { buildRetriedAgentRunOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-retried-agent-run-outcome.util';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -41,8 +45,12 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
@@ -68,6 +76,7 @@ export class AgentRunnerService {
     private readonly agentRunTurnService: AgentRunTurnService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly conversationReaderService: AgentConversationReaderService,
+    private readonly conversationWriterService: AgentConversationWriterService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
@@ -79,12 +88,15 @@ export class AgentRunnerService {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async start(input: RunAgentJobData): Promise<void> {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
-      input,
+      isDefined(input.conversation)
+        ? input
+        : { ...input, turnId: randomUUID() },
       await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
         spec: input.spec,
@@ -94,10 +106,12 @@ export class AgentRunnerService {
 
   async runStarted(jobData: RunAgentJobData): Promise<void> {
     const { workspaceId, conversation, caller, parkId } = jobData;
+    const threadId = conversation?.threadId ?? null;
 
     if (
+      isDefined(threadId) &&
       !(await this.waitingRunService.shouldRunLegacyParkedCopy({
-        threadId: conversation.threadId,
+        threadId,
         parkId,
       }))
     ) {
@@ -111,7 +125,7 @@ export class AgentRunnerService {
       await this.agentRunSuspensionService.deliverOutcome({
         workspaceId,
         caller,
-        threadId: conversation.threadId,
+        threadId,
         outcome: {
           status: 'FAILED',
           error: 'The caller stopped waiting before the run started',
@@ -122,16 +136,33 @@ export class AgentRunnerService {
       return;
     }
 
-    const result = await this.runClaimedOrDeliverFailure({ jobData, handler });
+    const result = await this.runOrDeliverFailure({ jobData, handler });
 
     if (!isDefined(result)) {
+      return;
+    }
+
+    if (result !== CONVERSATION_BUSY && result.outcome.status !== 'SUSPENDED') {
+      await this.agentRunSuspensionService.deliverOutcome({
+        workspaceId,
+        caller,
+        threadId,
+        outcome: result.outcome,
+        summary: result.summary,
+      });
+
+      return;
+    }
+
+    // only a run holding a conversation finds it busy or pauses in it
+    if (!isDefined(threadId)) {
       return;
     }
 
     if (result === CONVERSATION_BUSY) {
       await this.waitingRunService.wait({
         workspaceId,
-        threadId: conversation.threadId,
+        threadId,
         run: {
           jobName: RUN_AGENT_JOB_NAME,
           jobData: { ...jobData, parkId: undefined },
@@ -145,71 +176,73 @@ export class AgentRunnerService {
       return;
     }
 
-    if (result.outcome.status === 'SUSPENDED') {
-      await this.showSuspension({
-        workspaceId,
-        caller,
-        threadId: conversation.threadId,
-        summary: result.summary,
-      });
-
-      return;
-    }
-
-    await this.agentRunSuspensionService.deliverOutcome({
+    await this.showSuspension({
       workspaceId,
       caller,
-      threadId: conversation.threadId,
-      outcome: result.outcome,
+      threadId,
       summary: result.summary,
     });
   }
 
   // a run that fails before it settles is delivered as failed here, so null means nothing is left to do
-  private async runClaimedOrDeliverFailure({
-    jobData: { workspaceId, conversation, caller, spec, prompt },
+  private async runOrDeliverFailure({
+    jobData: { workspaceId, conversation, turnId, caller, spec, prompt },
     handler,
   }: {
     jobData: RunAgentJobData;
     handler: AgentRunCallerHandler;
   }): Promise<AgentRunnerResult | typeof CONVERSATION_BUSY | null> {
     try {
+      const retriedTurn = isDefined(turnId)
+        ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
+        : null;
+
+      if (isDefined(retriedTurn)) {
+        await this.settleRetriedRun({ workspaceId, caller, turn: retriedTurn });
+
+        return null;
+      }
+
       const [executionContext, persona] = await Promise.all([
         handler.buildExecutionContext({ workspaceId, caller }),
         this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
+      const run = (stream: AgentRunStream | null) =>
+        workspaceAuthContextStorage.run(executionContext.authContext, () =>
+          this.runTurn({
+            input: {
+              workspaceId,
+              conversation,
+              turnId,
+              caller,
+              spec,
+              persona,
+              prompt,
+              executionContext,
+            },
+            suspension: null,
+            stream,
+          }),
+        );
 
-      return await this.withClaimedConversation({
-        workspaceId,
-        threadId: conversation.threadId,
-        title: spec.title,
-        work: (stream) =>
-          workspaceAuthContextStorage.run(executionContext.authContext, () =>
-            this.runTurn({
-              input: {
-                workspaceId,
-                conversation,
-                caller,
-                spec,
-                persona,
-                prompt,
-                executionContext,
-              },
-              suspension: null,
-              stream,
-            }),
-          ),
-      });
+      return isDefined(conversation)
+        ? await this.withClaimedConversation({
+            workspaceId,
+            threadId: conversation.threadId,
+            title: spec.title,
+            work: run,
+          })
+        : await run(null);
     } catch (error) {
       this.logger.error(
-        `Agent run in thread ${conversation.threadId} of workspace ${workspaceId} failed`,
+        `Agent run in thread ${conversation?.threadId ?? 'none'} of workspace ${workspaceId} failed`,
         error instanceof Error ? error.stack : error,
       );
 
       await this.agentRunSuspensionService.deliverOutcome({
         workspaceId,
         caller,
-        threadId: conversation.threadId,
+        threadId: conversation?.threadId ?? null,
         outcome: {
           status: 'FAILED',
           error: error instanceof Error ? error.message : String(error),
@@ -219,6 +252,43 @@ export class AgentRunnerService {
 
       return null;
     }
+  }
+
+  // a stalled job's retry settles the run from its turn rather than run again, since its agent may already have acted
+  private async settleRetriedRun({
+    workspaceId,
+    caller,
+    turn,
+  }: {
+    workspaceId: string;
+    caller: AgentRunCaller;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error' | 'result'>;
+  }): Promise<void> {
+    if (turn.status === AgentTurnStatus.RUNNING) {
+      await this.turnRecorderService.finish({
+        workspaceId,
+        turnId: turn.id,
+        status: AgentTurnStatus.FAILED,
+        error: AGENT_TURN_INTERRUPTED_ERROR,
+      });
+    }
+
+    const outcome = buildRetriedAgentRunOutcome({
+      turn,
+      completedResult: turn.result,
+    });
+
+    if (!isDefined(outcome)) {
+      return;
+    }
+
+    await this.agentRunSuspensionService.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId: null,
+      outcome,
+      summary: null,
+    });
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
@@ -471,21 +541,167 @@ export class AgentRunnerService {
   private async runTurn({
     input,
     suspension,
-    stream: { claim, abortSignal },
+    stream,
   }: {
     input: AgentRunnerRunInput;
     // what a continued run resumes from
     suspension: AgentRunSuspension | null;
-    stream: AgentRunStream;
+    // null for a run without a conversation, which streams to no one
+    stream: AgentRunStream | null;
   }): Promise<AgentRunnerResult> {
-    const {
+    const { workspaceId, spec, persona, prompt, executionContext } = input;
+    const abortSignal = stream?.abortSignal;
+    // read before the turn opens, so nothing fails between opening it and the stream finishing it
+    const canStoreResult =
+      await this.conversationWriterService.canStoreTurnResult(workspaceId);
+    const { turnId, priorMessages } = await this.openTurn({
+      input,
+      suspension,
+    });
+    const canPause = isDefined(stream);
+
+    const startedAtMs = Date.now();
+    const turnInput = {
+      persona,
+      messages: prompt?.messages ?? [],
+      priorMessages,
+      // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
+      // the engine's, so it explains them; the caller's own instructions come last
+      baseSystemPrompt: [
+        spec.baseSystemPrompt,
+        ...(canPause ? [AGENT_WAIT_PROMPT] : []),
+        ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
+      ].join('\n\n'),
+      pausingTools: canPause ? createAgentWaitTools() : {},
+      canAskHumans: canPause && spec.capabilities.canAskHumans,
+      responseFormat:
+        spec.responseFormat ?? persona.responseFormat ?? undefined,
       workspaceId,
-      conversation: { threadId, isCreated },
-      spec,
+      executionContext,
+      additionalExcludedToolNames: spec.additionalExcludedToolNames,
+      toolLoadingStrategy: spec.toolLoadingStrategy,
+      abortSignal,
+    };
+
+    // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
+    const {
+      completion: { execution, wait, isAborted },
+      finish,
+    } = await withDedicatedAiTrace(() =>
+      this.turnStreamService.streamTurn({
+        workspaceId,
+        claim: stream?.claim ?? null,
+        turnId,
+        abortSignal,
+        startTurn: () => this.agentRunTurnService.startTurn(turnInput),
+        completeTurn: async (streamed) => {
+          if (isDefined(streamed.streamError)) {
+            throw streamed.streamError;
+          }
+
+          const execution = await this.agentRunTurnService.completeTurn({
+            ...turnInput,
+            started: streamed.started,
+          });
+          const wait = execution.isPaused
+            ? findAgentRunWait(
+                execution.steps[execution.steps.length - 1]?.toolResults ?? [],
+              )
+            : undefined;
+          // a stop can land after the stream ended; read once so the turn and its caller agree
+          const isAborted = streamed.isAborted || abortSignal?.aborted === true;
+          const isCompleted =
+            !isAborted &&
+            !isDefined(execution.stopReason) &&
+            !execution.isPaused;
+
+          return {
+            execution,
+            wait,
+            isAborted,
+            result:
+              isCompleted && canStoreResult ? execution.result : undefined,
+            modelId: execution.modelId,
+            stopReason: execution.stopReason,
+            isWaiting: isDefined(wait),
+            usage: execution.structuredOutputSteps.reduce(
+              (usage, step) => ({
+                ...usage,
+                ...addStepToAgentTurnUsage(
+                  streamed.started.source.modelConfig,
+                  usage,
+                  step,
+                ),
+              }),
+              streamed.usage,
+            ),
+          };
+        },
+        isBackgroundRun: true,
+      }),
+    );
+
+    const summary = sumAgentRunSummaries({
+      previousSummary: suspension?.summary ?? null,
+      nextSummary: buildAgentRunSummary({
+        execution,
+        durationMs: Date.now() - startedAtMs,
+      }),
+    });
+
+    return {
+      summary,
+      outcome: isAborted
+        ? { status: 'FAILED', error: 'The run was stopped' }
+        : await this.settleTurn({
+            input,
+            execution,
+            wait,
+            isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
+            summary,
+            suspension,
+            stream,
+          }),
+    };
+  }
+
+  private async openTurn({
+    input: {
+      workspaceId,
+      conversation,
+      turnId: oneShotTurnId,
       persona,
       prompt,
       executionContext,
-    } = input;
+    },
+    suspension,
+  }: {
+    input: Pick<
+      AgentRunnerRunInput,
+      | 'workspaceId'
+      | 'conversation'
+      | 'turnId'
+      | 'persona'
+      | 'prompt'
+      | 'executionContext'
+    >;
+    suspension: AgentRunSuspension | null;
+  }): Promise<{ turnId: string; priorMessages: ExtendedUIMessage[] }> {
+    if (!isDefined(conversation)) {
+      return {
+        turnId: await this.conversationWriterService.insertTurn({
+          workspaceId,
+          id: oneShotTurnId,
+          threadId: null,
+          agentId: persona.agentId,
+          status: AgentTurnStatus.RUNNING,
+          createdBy: executionContext.turnCreatedBy,
+        }),
+        priorMessages: [],
+      };
+    }
+
+    const { threadId, isCreated } = conversation;
 
     if (!isCreated && !isDefined(suspension)) {
       await this.agentRunSuspensionService.assertConversationNotSuspended({
@@ -520,116 +736,23 @@ export class AgentRunnerService {
         threadId,
         actor: executionContext.conversationActor,
       });
-    const priorMessages = conversationMessages.filter(
-      ({ id }) => !promptMessageIds.includes(id),
-    );
-
-    const startedAtMs = Date.now();
-    const turnInput = {
-      persona,
-      messages: prompt?.messages ?? [],
-      priorMessages,
-      // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
-      // the engine's, so it explains them; the caller's own instructions come last
-      baseSystemPrompt: [
-        spec.baseSystemPrompt,
-        AGENT_WAIT_PROMPT,
-        ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
-      ].join('\n\n'),
-      pausingTools: createAgentWaitTools(),
-      canAskHumans: spec.capabilities.canAskHumans,
-      responseFormat:
-        spec.responseFormat ?? persona.responseFormat ?? undefined,
-      workspaceId,
-      executionContext,
-      additionalExcludedToolNames: spec.additionalExcludedToolNames,
-      toolLoadingStrategy: spec.toolLoadingStrategy,
-      abortSignal,
-    };
-
-    // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
-    const {
-      streamed,
-      completion: { execution, wait },
-      finish,
-    } = await withDedicatedAiTrace(() =>
-      this.turnStreamService.streamTurn({
-        claim,
-        turnId,
-        abortSignal,
-        startTurn: () => this.agentRunTurnService.startTurn(turnInput),
-        completeTurn: async (streamed) => {
-          if (isDefined(streamed.streamError)) {
-            throw streamed.streamError;
-          }
-
-          const execution = await this.agentRunTurnService.completeTurn({
-            ...turnInput,
-            started: streamed.started,
-          });
-          const wait = execution.isPaused
-            ? findAgentRunWait(
-                execution.steps[execution.steps.length - 1]?.toolResults ?? [],
-              )
-            : undefined;
-
-          return {
-            execution,
-            wait,
-            modelId: execution.modelId,
-            stopReason: execution.stopReason,
-            isWaiting: isDefined(wait),
-            usage: execution.structuredOutputSteps.reduce(
-              (usage, step) => ({
-                ...usage,
-                ...addStepToAgentTurnUsage(
-                  streamed.started.source.modelConfig,
-                  usage,
-                  step,
-                ),
-              }),
-              streamed.usage,
-            ),
-          };
-        },
-        isBackgroundRun: true,
-      }),
-    );
-
-    const summary = sumAgentRunSummaries({
-      previousSummary: suspension?.summary ?? null,
-      nextSummary: buildAgentRunSummary({
-        execution,
-        durationMs: Date.now() - startedAtMs,
-      }),
-    });
 
     return {
-      summary,
-      // a stop can also land while the structured output is asked for, after the stream ended
-      outcome:
-        streamed.isAborted || abortSignal.aborted
-          ? { status: 'FAILED', error: 'The run was stopped' }
-          : await this.settleTurn({
-              input,
-              execution,
-              wait,
-              isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
-              summary,
-              suspension,
-              streamId: claim.streamId,
-            }),
+      turnId,
+      priorMessages: conversationMessages.filter(
+        ({ id }) => !promptMessageIds.includes(id),
+      ),
     };
   }
 
   private async settleTurn({
-    input: { workspaceId, conversation, caller, spec },
+    input: { workspaceId, caller, spec },
     execution,
     wait,
     isAwaitingAnswer,
     summary,
     suspension,
-    streamId,
+    stream,
   }: {
     input: AgentRunnerRunInput;
     execution: AgentExecutionResult;
@@ -637,13 +760,18 @@ export class AgentRunnerService {
     isAwaitingAnswer: boolean;
     summary: AgentRunSummary;
     suspension: AgentRunSuspension | null;
-    streamId: string;
+    stream: AgentRunStream | null;
   }): Promise<AgentRunnerOutcome> {
     if (!isDefined(execution.stopReason) && !execution.isPaused) {
       return { status: 'COMPLETED', result: execution.result };
     }
 
-    const { threadId } = conversation;
+    // offered no way to pause, a run without a conversation stops early only when out of credits
+    if (!isDefined(stream)) {
+      return { status: 'FAILED', error: AGENT_RUN_OUT_OF_CREDITS_ERROR };
+    }
+
+    const { threadId, streamId } = stream.claim;
     const continuationCount = isDefined(suspension)
       ? suspension.continuationCount + 1
       : 0;
@@ -704,7 +832,7 @@ export class AgentRunnerService {
     if (isDefined(execution.stopReason)) {
       return {
         status: 'FAILED',
-        error: 'Agent stopped: no more available credits.',
+        error: AGENT_RUN_OUT_OF_CREDITS_ERROR,
       };
     }
 
