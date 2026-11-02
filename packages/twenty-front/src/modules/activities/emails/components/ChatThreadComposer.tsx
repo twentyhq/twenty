@@ -24,7 +24,7 @@ const StyledPendingMessages = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  max-height: 120px;
+  max-height: ${themeCssVariables.spacing[30]};
   overflow-y: auto;
 `;
 
