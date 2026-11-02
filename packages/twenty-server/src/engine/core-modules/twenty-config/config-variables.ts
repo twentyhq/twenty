@@ -2684,6 +2684,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   APP_REGISTRY_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Let OAuth clients such as MCP clients register themselves (RFC 7591). When off, only pre-registered clients and clients identified by a Client ID Metadata Document can connect',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED = true;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

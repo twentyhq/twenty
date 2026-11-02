@@ -20,6 +20,7 @@ export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
       'https://chatgpt.com/connector_platform_oauth_redirect',
       /^https:\/\/chatgpt\.com\/connector\/oauth\/[A-Za-z0-9_-]+$/,
     ],
+    clientIdMetadataDocumentHostnames: ['chatgpt.com'],
   },
   {
     client: WellKnownOAuthClient.CLAUDE,
@@ -34,5 +35,6 @@ export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
     websiteUrl: 'https://claude.ai',
     logo: 'claude.png',
     allowedRedirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+    clientIdMetadataDocumentHostnames: ['claude.ai'],
   },
 ];

@@ -51,7 +51,6 @@ import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/ap
 import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
-import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
@@ -438,46 +437,6 @@ export class ApplicationRegistrationService {
     }
 
     return registration;
-  }
-
-  async findOneByClientId(
-    clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-    });
-  }
-
-  async findPublicByClientId(
-    clientId: string,
-  ): Promise<PublicApplicationRegistrationDTO | null> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-      select: [
-        'id',
-        'name',
-        'logo',
-        'logoFileId',
-        'sourceType',
-        'sourcePackage',
-        'latestAvailableVersion',
-        'websiteUrl',
-        'oAuthScopes',
-      ],
-    });
-
-    if (!registration) {
-      return null;
-    }
-
-    return {
-      id: registration.id,
-      name: registration.name,
-      logoUrl:
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
-      websiteUrl: registration.websiteUrl,
-      oAuthScopes: registration.oAuthScopes,
-    };
   }
 
   async createWithClientSecret({

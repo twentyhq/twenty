@@ -13,4 +13,5 @@ export type WellKnownOAuthClientDefinition = {
   websiteUrl: string;
   logo: string;
   allowedRedirectUris: (string | RegExp)[];
+  clientIdMetadataDocumentHostnames: string[];
 };

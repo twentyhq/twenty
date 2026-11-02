@@ -3,11 +3,14 @@ import crypto from 'crypto';
 import gql from 'graphql-tag';
 import IORedis from 'ioredis';
 import request from 'supertest';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
+import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -16,6 +19,14 @@ const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
 const CODE_VERIFIER = 'integration-verifier';
 const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
+const CHATGPT_PLATFORM_CALLBACK =
+  'https://chatgpt.com/connector_platform_oauth_redirect';
+const CHATGPT_DOCUMENT = {
+  clientId: 'https://chatgpt.com/oauth/integration-test-client.json',
+  clientName: 'ChatGPT',
+  logoUri: null,
+  redirectUris: [CHATGPT_PLATFORM_CALLBACK],
+};
 
 const clearTokenBuckets = async (keyPattern: string) => {
   const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
@@ -45,6 +56,14 @@ const authorizeAppMutation = gql`
       codeChallenge: $codeChallenge
     ) {
       redirectUrl
+    }
+  }
+`;
+
+const findApplicationRegistrationByClientIdQuery = gql`
+  query FindApplicationRegistrationByClientId($clientId: String!) {
+    findApplicationRegistrationByClientId(clientId: $clientId) {
+      name
     }
   }
 `;
@@ -109,6 +128,19 @@ describe('OAuth well-known clients (integration)', () => {
       redirect_uri: redirectUri,
     });
 
+  const refresh = ({
+    clientId,
+    refreshToken,
+  }: {
+    clientId: string;
+    refreshToken: string;
+  }) =>
+    request(baseUrl).post('/oauth/token').send({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientId,
+    });
+
   beforeAll(async () => {
     ds = global.testDataSource;
 
@@ -152,7 +184,13 @@ describe('OAuth well-known clients (integration)', () => {
 
     await ds.query(
       `DELETE FROM core."appToken" WHERE context->>'redirectUri' = ANY($1)`,
-      [[CLAUDE_CALLBACK, CHATGPT_CONNECTION_CALLBACK]],
+      [
+        [
+          CLAUDE_CALLBACK,
+          CHATGPT_CONNECTION_CALLBACK,
+          CHATGPT_PLATFORM_CALLBACK,
+        ],
+      ],
     );
   });
 
@@ -251,6 +289,171 @@ describe('OAuth well-known clients (integration)', () => {
       );
 
       expect(claudeApplications).toHaveLength(1);
+    });
+  });
+
+  describe('Client ID metadata document of a well-known client', () => {
+    let findDocumentSpy: jest.SpyInstance;
+    let isFetchDueSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      const clientIdMetadataDocumentService =
+        getAppProviderByClassName<ClientIdMetadataDocumentService>(
+          'ClientIdMetadataDocumentService',
+        );
+
+      findDocumentSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'findDocument')
+        .mockResolvedValue(CHATGPT_DOCUMENT);
+      isFetchDueSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'isFetchDue')
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      findDocumentSpy.mockRestore();
+      isFetchDueSpy.mockRestore();
+    });
+
+    it('should exchange and refresh with the document URL it authorized with', async () => {
+      const code = await authorizeAsMember({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      const exchangeResponse = await exchangeCode({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        code,
+        redirectUri: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      expect(exchangeResponse.status).toBe(200);
+
+      const refreshResponse = await refresh({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        refreshToken: exchangeResponse.body.refresh_token,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+    });
+
+    it('should reject a vendor callback that the document does not list', async () => {
+      const response = await requestAuthorization({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_CONNECTION_CALLBACK,
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain(
+        'redirectUrl mismatch',
+      );
+    });
+  });
+
+  describe('Client ID metadata document lookups', () => {
+    const clearFetchRateLimit = () =>
+      clearTokenBuckets('oauth-client-metadata-document-fetch:*');
+
+    const buildUnreachableDocumentUrl = () =>
+      `https://10.255.255.1/${crypto.randomUUID()}`;
+
+    const lookUp = (clientId: string) =>
+      makeMetadataApiRequest(
+        {
+          query: findApplicationRegistrationByClientIdQuery,
+          variables: { clientId },
+        },
+        null,
+      );
+
+    const exhaustFetchRateLimitWithLookups = async (): Promise<string> => {
+      const cachedDocumentUrl = buildUnreachableDocumentUrl();
+
+      for (
+        let lookup = 0;
+        lookup < CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX;
+        lookup++
+      ) {
+        const response = await lookUp(
+          lookup === 0 ? cachedDocumentUrl : buildUnreachableDocumentUrl(),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.findApplicationRegistrationByClientId,
+        ).toBeNull();
+      }
+
+      return cachedDocumentUrl;
+    };
+
+    beforeEach(clearFetchRateLimit);
+    afterAll(clearFetchRateLimit);
+
+    it('should rate limit the lookups that fetch a document, not the cached or registered ones', async () => {
+      const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
+      const throttledResponse = await lookUp(buildUnreachableDocumentUrl());
+
+      expect(throttledResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+        'LIMIT_REACHED',
+      );
+
+      const cachedResponse = await lookUp(cachedDocumentUrl);
+
+      expect(cachedResponse.body.errors).toBeUndefined();
+
+      const registeredClientResponse = await lookUp(claudeClientId);
+
+      expect(registeredClientResponse.body.errors).toBeUndefined();
+      expect(
+        registeredClientResponse.body.data
+          .findApplicationRegistrationByClientId,
+      ).toEqual({ name: 'Claude' });
+    });
+
+    it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {
+      const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
+      const throttledResponses = await Promise.all([
+        request(baseUrl).post('/oauth/token').send({
+          grant_type: 'refresh_token',
+          refresh_token: 'not-a-refresh-token',
+          client_id: buildUnreachableDocumentUrl(),
+        }),
+        request(baseUrl).post('/oauth/revoke').send({
+          token: 'not-a-token',
+          client_id: buildUnreachableDocumentUrl(),
+        }),
+        request(baseUrl).post('/oauth/introspect').send({
+          token: 'not-a-token',
+          client_id: buildUnreachableDocumentUrl(),
+        }),
+      ]);
+
+      for (const throttledResponse of throttledResponses) {
+        expect(throttledResponse.status).toBe(429);
+        expect(throttledResponse.body.error).toBe('rate_limit_exceeded');
+      }
+
+      const cachedDocumentResponse = await refresh({
+        clientId: cachedDocumentUrl,
+        refreshToken: 'not-a-refresh-token',
+      });
+
+      expect(cachedDocumentResponse.status).toBe(401);
+      expect(cachedDocumentResponse.body.error).toBe('invalid_client');
+
+      const registeredClientResponse = await exchangeCode({
+        clientId: claudeClientId,
+        code: await authorizeAsMember({
+          clientId: claudeClientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        }),
+      });
+
+      expect(registeredClientResponse.status).toBe(200);
     });
   });
 });

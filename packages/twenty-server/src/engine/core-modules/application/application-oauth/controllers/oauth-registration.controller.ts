@@ -34,6 +34,7 @@ import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { Repository } from 'typeorm';
@@ -53,6 +54,7 @@ export class OAuthRegistrationController {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Post('register')
@@ -64,6 +66,20 @@ export class OAuthRegistrationController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    if (
+      !this.twentyConfigService.get(
+        'IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED',
+      )
+    ) {
+      res.status(404);
+
+      return {
+        error: 'not_found',
+        error_description:
+          'Dynamic client registration is disabled on this server',
+      };
+    }
+
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
