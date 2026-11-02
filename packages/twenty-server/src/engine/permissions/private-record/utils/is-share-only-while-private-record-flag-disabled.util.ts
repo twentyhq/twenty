@@ -8,7 +8,7 @@ import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/ut
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 
 // TODO(@charlesBochet): remove after 2.55; chats reach only their shares while IS_PRIVATE_RECORD_ENABLED is off
-export const isRecordAccessHeldToShares = ({
+export const isShareOnlyWhilePrivateRecordFlagDisabled = ({
   metadataMaps,
   flatObjectMetadata,
   operationType,
