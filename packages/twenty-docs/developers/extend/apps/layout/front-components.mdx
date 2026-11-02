@@ -1212,7 +1212,7 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 
 ### Embedded websites with media access
 
-To embed a phone or video tool, declare its HTTPS origin in your application's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), with microphone and camera access set separately. Installing the app grants these websites to the workspace. Package updates preserve existing grants and do not automatically grant additional media access. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. Twenty reads the granted websites when a tab loads, so reload open Twenty tabs after installation or approval.
+To embed a phone or video tool, declare its HTTPS origin in your application's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), with microphone and camera access set separately. Installing the app grants these websites to the workspace. Updates to published apps preserve existing grants and do not automatically grant additional media access. Locally synced development apps automatically receive the websites declared in their manifest. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. Twenty reads the granted websites when a tab loads, so reload open Twenty tabs after installation or approval.
 
 Request the corresponding features on the iframe:
 
