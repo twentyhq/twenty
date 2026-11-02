@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { describe, expect, it } from 'vitest';
 import { type ObjectRecordBaseEvent } from 'twenty-sdk/define';
 
@@ -17,10 +18,10 @@ const buildEvent = ({
   ({
     recordId: 'participant-1',
     properties: {
-      before:
-        before === undefined ? undefined : { id: 'participant-1', ...before },
-      after:
-        after === undefined ? undefined : { id: 'participant-1', ...after },
+      before: isUndefined(before)
+        ? undefined
+        : { id: 'participant-1', ...before },
+      after: isUndefined(after) ? undefined : { id: 'participant-1', ...after },
     },
   }) as ParticipantEvent;
 

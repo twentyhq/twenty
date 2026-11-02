@@ -14,7 +14,6 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
-// Fixtures attribute no attendee by default, so this only matters in the attendee tests.
 const EVERYONE_OPTED_IN = new Set<string>();
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';

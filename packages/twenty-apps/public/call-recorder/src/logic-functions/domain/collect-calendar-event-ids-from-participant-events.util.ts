@@ -4,8 +4,7 @@ import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functio
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-// Only participants matched to a workspace member can change the policy, so
-// external attendees, which are most of the sync traffic, are ignored.
+// Only attendees matched to a workspace member can change the policy, so external ones, most of the sync traffic, are skipped.
 export const collectCalendarEventIdsFromParticipantEvents = (
   events: ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>[],
 ): string[] =>
