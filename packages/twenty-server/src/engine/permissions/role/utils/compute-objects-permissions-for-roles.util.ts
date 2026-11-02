@@ -1,42 +1,39 @@
+/* @license Enterprise */
+
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
 
-export const computeObjectsPermissionsForRolePermissionConfig = ({
-  intersectionOf,
+export const computeObjectsPermissionsForRoles = ({
+  roleIds,
+  applicationId,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
-}: {
-  intersectionOf: RoleIdsBySource;
+}: Pick<PermissionsPrincipal, 'roleIds' | 'applicationId'> & {
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
-  const roleIds = getRoleIdsToIntersect(intersectionOf);
-
-  if (!isDefined(roleIds)) {
+  if (!isNonEmptyArray(roleIds)) {
     return {};
   }
 
-  const actingApplicationId = resolvePermissionsPrincipalActingApplicationId({
-    intersectionOf,
-    flatApplicationMaps,
-  });
+  const actingApplicationRoleId = isDefined(applicationId)
+    ? flatApplicationMaps.byId[applicationId]?.defaultRoleId
+    : undefined;
 
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
@@ -47,9 +44,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           actingApplicationId:
-            roleId === intersectionOf.applicationRoleId
-              ? actingApplicationId
-              : undefined,
+            roleId === actingApplicationRoleId ? applicationId : undefined,
         })
       : undefined;
   });

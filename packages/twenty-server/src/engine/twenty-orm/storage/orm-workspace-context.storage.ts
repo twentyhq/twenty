@@ -17,6 +17,7 @@ import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-va
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 
 export type ORMWorkspaceContext = {
   authContext: WorkspaceAuthContext;
@@ -33,6 +34,7 @@ export type ORMWorkspaceContext = {
   flatApplicationMaps: FlatApplicationCacheMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+  flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
   flatValidationRuleMaps?: FlatValidationRuleMaps;
 };
 

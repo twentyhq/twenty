@@ -47,6 +47,7 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
             })
             .find({ withDeleted: true }),
         buildSystemAuthContext(workspaceId),
+        { lite: true },
       );
 
     return buildFlatWorkspaceMemberMaps({

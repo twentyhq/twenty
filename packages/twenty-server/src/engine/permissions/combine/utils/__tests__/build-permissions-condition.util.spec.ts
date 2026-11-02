@@ -125,18 +125,19 @@ const buildConditionOutcome = (
 
 const readEverything: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
-  intersectionOf: { userWorkspaceRoleId: FULL_ACCESS_ROLE_ID },
-  workspaceMember: { id: 'member-1' },
+  roleIds: [FULL_ACCESS_ROLE_ID],
+  workspaceMemberId: 'member-1',
 };
 
 const owningApplication: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
-  intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
+  roleIds: [APPLICATION_ROLE_ID],
+  applicationId: APPLICATION_ID,
 };
 
 const withoutObjectPermission: PermissionsPrincipal = {
   ...readEverything,
-  intersectionOf: { userWorkspaceRoleId: ROLE_WITHOUT_PERMISSION_ID },
+  roleIds: [ROLE_WITHOUT_PERMISSION_ID],
 };
 
 const build = ({
@@ -291,7 +292,7 @@ describe('buildPermissionsCondition', () => {
       });
     const withoutCompanyPermission: PermissionsPrincipal = {
       ...readEverything,
-      intersectionOf: { userWorkspaceRoleId: 'role-2', apiKeyRoleId: 'role-3' },
+      roleIds: ['role-2', 'role-3'],
     };
 
     it('narrows a principal without object permission to the records named for them', () => {
@@ -344,7 +345,7 @@ describe('buildPermissionsCondition', () => {
       expect(
         buildForCompany({
           workspaceId: 'workspace-id',
-          intersectionOf: { userWorkspaceRoleId: null },
+          roleIds: [],
         }),
       ).toEqual({ kind: 'denied' });
     });

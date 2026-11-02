@@ -109,6 +109,7 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
@@ -2284,22 +2285,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return isObjectOperationDisabledToPrincipal({
       principal: this.resolvePermissionsPrincipal(),
-      metadataMaps: this.resolvePermissionsMetadataMaps(),
       flatObjectMetadata,
       operationType,
     });
   }
 
   private resolvePermissionsPrincipal(): PermissionsPrincipal {
-    return (this.permissionsPrincipal ??= {
+    return (this.permissionsPrincipal ??= buildPermissionsPrincipal({
       workspaceId: this.options.internalContext.workspaceId,
-      intersectionOf:
-        'intersectionOf' in this.options.rolePermissionConfig
-          ? this.options.rolePermissionConfig.intersectionOf
-          : {},
-      workspaceMember: isUserAuthContext(this.options.authContext)
-        ? this.options.authContext.workspaceMember
+      rolePermissionConfig: this.options.rolePermissionConfig,
+      workspaceMemberId: isUserAuthContext(this.options.authContext)
+        ? this.options.authContext.workspaceMemberId
         : undefined,
+      flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
+    }) ?? {
+      workspaceId: this.options.internalContext.workspaceId,
+      roleIds: [],
     });
   }
 
@@ -2315,6 +2316,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.options.internalContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         this.options.internalContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps:
+        this.options.internalContext.flatWorkspaceMemberMaps,
     });
   }
 
