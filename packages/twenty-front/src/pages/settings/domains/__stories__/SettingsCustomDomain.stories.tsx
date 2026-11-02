@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -12,7 +13,7 @@ import { SettingsCustomDomainPage } from '~/pages/settings/domains/SettingsCusto
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Domains/SettingsCustomDomain',
   component: SettingsCustomDomainPage,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: { routePath: '/settings/domains/custom-domain' },
   parameters: {
     msw: graphqlMocks,
@@ -38,9 +39,9 @@ export const InvalidDomain: Story = {
 
     await expect(errorMessage).toBeVisible();
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeDisabled();
+    await expect(saveButton).toBeDisabled();
   },
 };
 
@@ -53,8 +54,8 @@ export const ValidDomain: Story = {
     await userEvent.clear(input);
     await userEvent.type(input, 'crm.example.com');
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeEnabled();
+    await expect(saveButton).toBeEnabled();
   },
 };

@@ -13,6 +13,9 @@ import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMe
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
+import { contextStorePageTitleComponentState } from '@/context-store/states/contextStorePageTitleComponentState';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -21,6 +24,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -35,6 +39,7 @@ import {
   IconLifebuoy,
   IconPlus,
   IconSearch,
+  IconSettings,
   IconTable,
   type IconComponent,
 } from 'twenty-ui/icon';
@@ -44,6 +49,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
+  THIS_PAGE: IconSettings,
   SELECTION: IconCheckbox,
   CURRENT_VIEW: IconTable,
   THIS_OBJECT: IconBox,
@@ -61,6 +67,14 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const contextStorePageTitle = useAtomComponentStateValue(
+    contextStorePageTitleComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+  const contextStorePageCommands = useAtomComponentStateValue(
+    contextStorePageCommandsComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
@@ -91,11 +105,21 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const nonFallbackCommandMenuItems = useMemo(
     () =>
-      pinnedFirstCommandMenuItems.filter(
-        (item) =>
-          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
-      ),
-    [pinnedFirstCommandMenuItems],
+      pinnedFirstCommandMenuItems
+        .filter(
+          (item) =>
+            item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
+        )
+        .filter((item) => {
+          const pageCommand = contextStorePageCommands[item.engineComponentKey];
+
+          return (
+            !isDefined(pageCommand) ||
+            !pageCommand.isDisabled ||
+            pageCommand.isLoading
+          );
+        }),
+    [pinnedFirstCommandMenuItems, contextStorePageCommands],
   );
 
   const fallbackCommandMenuItems = useMemo(
@@ -120,6 +144,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const getSectionHeading = (section: CommandMenuItemSection) => {
     switch (section) {
+      case 'THIS_PAGE':
+        return contextStorePageTitle ?? t`This page`;
       case 'SELECTION':
         return t`Selection`;
       case 'CURRENT_VIEW':

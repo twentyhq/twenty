@@ -74,6 +74,7 @@ const createCommandMenuItem = (
   shortLabel: overrides.label,
   position: 1,
   isPinned: false,
+  isPinLocked: false,
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,

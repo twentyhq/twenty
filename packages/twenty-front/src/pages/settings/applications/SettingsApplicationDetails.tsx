@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
@@ -31,17 +32,12 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import {
-  IconApps,
-  IconDeviceFloppy,
-  IconSettings,
-  IconVariable,
-} from 'twenty-ui/icon';
+import { IconApps, IconSettings, IconVariable } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
+  EngineComponentKey,
   FindOneApplicationDocument,
   SettingsMenuItemScope,
   UpdateOneApplicationVariableDocument,
@@ -372,18 +368,15 @@ export const SettingsApplicationDetails = () => {
         tabs={tabs}
         tabListComponentInstanceId={APPLICATION_DETAIL_ID}
         tabListAriaLabel={t`Application details`}
-        actionButton={
+        pageCommands={
           activeTabId === SETTINGS_VARIABLES_TAB_ID ? (
-            <Button
-              startIcon={<IconDeviceFloppy />}
-              variant="solid"
-              color="accent"
-              size="sm"
-              onClick={saveApplicationVariablesAndRecheckHealth}
-              disabled={
+            <PageCommandEffect
+              engineComponentKey={EngineComponentKey.SAVE_PAGE}
+              onRun={saveApplicationVariablesAndRecheckHealth}
+              isDisabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
-            >{t`Save settings`}</Button>
+            />
           ) : undefined
         }
       >

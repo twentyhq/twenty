@@ -45,6 +45,7 @@ const getWrapper =
         commandMenuItems: [],
         commandMenuContextApi: {
           pageType: ContextStorePageType.Index,
+          pageCommandKeys: [],
           isInSidePanel,
           isDashboardPageLayoutInEditMode: false,
           isLayoutCustomizationModeEnabled: false,

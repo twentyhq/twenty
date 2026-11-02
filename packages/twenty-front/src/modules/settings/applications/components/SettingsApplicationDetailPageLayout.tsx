@@ -15,7 +15,7 @@ type SettingsApplicationDetailPageLayoutProps = {
   tabs: SingleTabProps[];
   tabListComponentInstanceId: string;
   tabListAriaLabel: string;
-  actionButton?: ReactNode;
+  pageCommands?: ReactNode;
   children: ReactNode;
 };
 
@@ -27,7 +27,7 @@ export const SettingsApplicationDetailPageLayout = ({
   tabs,
   tabListComponentInstanceId,
   tabListAriaLabel,
-  actionButton,
+  pageCommands,
   children,
 }: SettingsApplicationDetailPageLayoutProps) => (
   <SettingsPageLayout
@@ -44,7 +44,7 @@ export const SettingsApplicationDetailPageLayout = ({
       ) : undefined
     }
     links={links}
-    actionButton={actionButton}
+    pageCommands={pageCommands}
     secondaryBar={
       tabs.length > 1 ? (
         <SettingsTabBar

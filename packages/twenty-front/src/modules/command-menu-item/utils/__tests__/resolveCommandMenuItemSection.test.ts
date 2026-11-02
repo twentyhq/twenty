@@ -1,3 +1,4 @@
+import { PAGE_COMMAND_ENGINE_COMPONENT_KEYS } from '@/command-menu-item/page-command/constants/PageCommandEngineComponentKeys';
 import { resolveCommandMenuItemSection } from '@/command-menu-item/utils/resolveCommandMenuItemSection';
 import {
   CommandMenuItemAvailabilityType,
@@ -27,6 +28,17 @@ describe('resolveCommandMenuItemSection', () => {
             CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
         }),
       ).toBe('CURRENT_VIEW');
+    }
+  });
+
+  it('places every page command in the this page section', () => {
+    for (const engineComponentKey of PAGE_COMMAND_ENGINE_COMPONENT_KEYS) {
+      expect(
+        resolveCommandMenuItemSection({
+          engineComponentKey,
+          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+        }),
+      ).toBe('THIS_PAGE');
     }
   });
 

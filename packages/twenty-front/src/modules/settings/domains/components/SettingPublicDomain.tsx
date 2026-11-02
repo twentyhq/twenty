@@ -1,5 +1,4 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -7,6 +6,7 @@ import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/componen
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -249,8 +249,8 @@ export const SettingPublicDomain = () => {
         },
         { children: <Trans>Custom Domain</Trans> },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           onCancel={navigateToApplication}
           isSaveDisabled={loading || isEditingPublicDomain}
           onSave={onCreate}

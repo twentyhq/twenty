@@ -7,11 +7,15 @@ import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalH
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
+type GlobalHotkeysSequenceOptions = Options & {
+  enableOnSettingsPage?: boolean;
+};
+
 export const useGlobalHotkeysSequence = (
   firstKey: Keys,
   secondKey: Keys,
   sequenceCallback: () => void,
-  options: Options = {
+  options: GlobalHotkeysSequenceOptions = {
     enableOnContentEditable: true,
     enableOnFormTags: true,
     preventDefault: true,
@@ -33,6 +37,7 @@ export const useGlobalHotkeysSequence = (
           setPendingHotkey(firstKey);
         },
         preventDefault: Boolean(options.preventDefault),
+        enableOnSettingsPage: options.enableOnSettingsPage,
       });
     },
     {
@@ -65,6 +70,7 @@ export const useGlobalHotkeysSequence = (
           sequenceCallback();
         },
         preventDefault: false,
+        enableOnSettingsPage: options.enableOnSettingsPage,
       });
     },
     {

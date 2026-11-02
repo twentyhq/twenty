@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/components/SettingsAppPreferencesGeneralTab';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
@@ -23,11 +24,11 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { IconDeviceFloppy, IconSettings, IconVariable } from 'twenty-ui/icon';
+import { IconSettings, IconVariable } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationVariableScope,
+  EngineComponentKey,
   UpdateMyUserApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
@@ -162,18 +163,15 @@ export const SettingsApplicationPreferencesDetail = ({
       tabs={tabs}
       tabListComponentInstanceId={tabListComponentInstanceId}
       tabListAriaLabel={t`${appName} preferences`}
-      actionButton={
+      pageCommands={
         activeTabId === SETTINGS_VARIABLES_TAB_ID ? (
-          <Button
-            startIcon={<IconDeviceFloppy />}
-            variant="solid"
-            color="accent"
-            size="sm"
-            onClick={saveApplicationVariables}
-            disabled={
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.SAVE_PAGE}
+            onRun={saveApplicationVariables}
+            isDisabled={
               !hasUnsavedApplicationVariables || isSavingApplicationVariables
             }
-          >{t`Save settings`}</Button>
+          />
         ) : undefined
       }
     >

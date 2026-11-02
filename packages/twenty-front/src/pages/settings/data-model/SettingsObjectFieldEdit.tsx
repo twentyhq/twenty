@@ -10,9 +10,9 @@ import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFiel
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
@@ -350,8 +350,8 @@ export const SettingsObjectFieldEdit = () => {
               children: fieldMetadataItem.label,
             },
           ]}
-          actionButton={
-            <SaveAndCancelButtons
+          pageCommands={
+            <SettingsSaveAndCancelPageCommands
               isLoading={isSubmitting}
               isSaveDisabled={!canSave || readonly}
               isCancelDisabled={isSubmitting || readonly}

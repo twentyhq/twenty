@@ -73,6 +73,8 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const serverItemsById = new Map(
     commandMenuItems.map((item) => [item.id, item]),
   );
+  const isPinLockedOnServer = (item: CommandMenuItemFieldsFragment) =>
+    item.isPinLocked && serverItemsById.get(item.id)?.isPinned === true;
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
 
@@ -109,19 +111,23 @@ export const SidePanelCommandMenuItemEditPage = () => {
   ];
 
   const handleTogglePin = ({
-    itemId,
+    item,
     currentlyPinned,
   }: {
-    itemId: string;
+    item: CommandMenuItemFieldsFragment;
     currentlyPinned: boolean;
   }) => {
     if (currentlyPinned) {
+      if (isPinLockedOnServer(item)) {
+        return;
+      }
+
       const nextOtherPosition =
         allOtherItems.length === 0
           ? 0
           : allOtherItems[allOtherItems.length - 1].position + 1;
 
-      updateCommandMenuItemInDraft(itemId, {
+      updateCommandMenuItemInDraft(item.id, {
         isPinned: false,
         position: nextOtherPosition,
       });
@@ -134,7 +140,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
         ? 0
         : allPinnedItems[allPinnedItems.length - 1].position + 1;
 
-    updateCommandMenuItemInDraft(itemId, {
+    updateCommandMenuItemInDraft(item.id, {
       isPinned: true,
       position: nextPinnedPosition,
     });
@@ -225,10 +231,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       <SelectableListItem
                         itemId={item.id}
                         onEnter={() =>
-                          handleTogglePin({
-                            itemId: item.id,
-                            currentlyPinned: true,
-                          })
+                          handleTogglePin({ item, currentlyPinned: true })
                         }
                       >
                         <DraggableListRow
@@ -259,18 +262,20 @@ export const SidePanelCommandMenuItemEditPage = () => {
                                   </LightIconButton>
                                 }
                               />
-                              <LightIconButton
-                                aria-label={t`Unpin`}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleTogglePin({
-                                    itemId: item.id,
-                                    currentlyPinned: true,
-                                  });
-                                }}
-                              >
-                                <IconPinnedOff />
-                              </LightIconButton>
+                              {!isPinLockedOnServer(item) && (
+                                <LightIconButton
+                                  aria-label={t`Unpin`}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleTogglePin({
+                                      item,
+                                      currentlyPinned: true,
+                                    });
+                                  }}
+                                >
+                                  <IconPinnedOff />
+                                </LightIconButton>
+                              )}
                             </ButtonGroup>
                           }
                         >
@@ -295,7 +300,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                   key={item.id}
                   itemId={item.id}
                   onEnter={() =>
-                    handleTogglePin({ itemId: item.id, currentlyPinned: false })
+                    handleTogglePin({ item, currentlyPinned: false })
                   }
                 >
                   <ListItem
@@ -310,10 +315,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       <LightIconButton
                         aria-label={t`Pin`}
                         onClick={() =>
-                          handleTogglePin({
-                            itemId: item.id,
-                            currentlyPinned: false,
-                          })
+                          handleTogglePin({ item, currentlyPinned: false })
                         }
                       >
                         <IconPin />

@@ -19,6 +19,7 @@ const buildCommandMenuItem = (
 describe('groupCommandMenuItemsBySection', () => {
   it('groups every section, empty ones included', () => {
     expect(Object.keys(groupCommandMenuItemsBySection([]))).toEqual([
+      'THIS_PAGE',
       'SELECTION',
       'CURRENT_VIEW',
       'THIS_OBJECT',

@@ -4,6 +4,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findCommandMenuItemByEngineComponentKey } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-item-by-engine-component-key.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
@@ -11,6 +12,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
@@ -144,6 +146,48 @@ describe('CommandMenuItem update should fail', () => {
     await destroyOnePageLayout({
       expectToFail: false,
       input: { id: pageLayoutId },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when unpinning a locked command', async () => {
+    const { id } = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id, isPinned: false },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when changing the engine component key of a locked command', async () => {
+    const { id } = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id, engineComponentKey: EngineComponentKey.CANCEL_PAGE },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when scoping a locked command to selected records', async () => {
+    const { id } = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: {
+        id,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      },
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });

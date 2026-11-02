@@ -1,5 +1,5 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
-
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
+import { PageCommandLinkEffect } from '@/command-menu-item/page-command/components/PageCommandLinkEffect';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -14,12 +14,10 @@ import {
   IconBook,
   IconChartBar,
   IconCpu,
-  IconPlus,
   IconSparkle2,
   IconSparkles,
   IconTool,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
@@ -28,6 +26,7 @@ import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
 import { SettingsMcpSetup } from '@/settings/mcp/components/SettingsMcpSetup';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
@@ -87,24 +86,18 @@ export const SettingsAI = () => {
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />
       }
-      actionButton={
+      pageCommands={
         isSkillsTab ? (
-          <NavigationButton
+          <PageCommandLinkEffect
+            engineComponentKey={EngineComponentKey.CREATE_AI_SKILL}
             to={getSettingsPath(SettingsPath.AiNewSkill)}
-            startIcon={<IconPlus />}
-            size="sm"
-            variant="solid"
-            color="accent"
-          >{t`New Skill`}</NavigationButton>
+          />
         ) : isToolsTab ? (
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            onClick={handleCreateTool}
-            disabled={isCreatingTool}
-            variant="solid"
-            color="accent"
-          >{t`New Tool`}</Button>
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.CREATE_AI_TOOL}
+            onRun={handleCreateTool}
+            isDisabled={isCreatingTool}
+          />
         ) : undefined
       }
       links={[

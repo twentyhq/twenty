@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -202,7 +203,7 @@ const buildApplicationHandlers = ({
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Applications/SettingsApplicationDetails',
   component: SettingsApplicationDetails,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: {
     routePath: '/settings/applications/:applicationId',
     routeParams: { ':applicationId': APPLICATION_ID },
@@ -314,7 +315,7 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
     );
 
     const saveButton = await canvas.findByRole('button', {
-      name: 'Save settings',
+      name: 'Save',
     });
     const workspaceUrlInput = await canvas.findByDisplayValue(
       'https://recorder.example.com',

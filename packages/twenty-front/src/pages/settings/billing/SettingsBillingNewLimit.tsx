@@ -15,9 +15,9 @@ import { useUsageQuotaScopeConsumption } from '@/settings/billing/hooks/useUsage
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreateUsageLimitInput';
 import { buildUsageLimitFormValuesFromPreset } from '@/settings/billing/utils/buildUsageLimitFormValuesFromPreset';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsBillingNewLimit = () => {
@@ -86,8 +86,8 @@ export const SettingsBillingNewLimit = () => {
         },
         { children: <Trans>New limit</Trans> },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           onSave={handleSave}
           onCancel={() => navigate(SettingsPath.BillingLimits)}
           isSaveDisabled={!isDefined(input)}

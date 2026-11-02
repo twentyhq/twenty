@@ -31,6 +31,7 @@ const MERGE_COMMAND: FlatCommandMenuItem = {
   icon: 'IconArrowMerge',
   position: 12,
   isPinned: false,
+  isPinLocked: false,
   isActive: true,
   isSystemSideEffect: false,
   engineComponentKey: EngineComponentKey.MERGE_MULTIPLE_RECORDS,

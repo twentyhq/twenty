@@ -1,8 +1,8 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { PageCommandLinkEffect } from '@/command-menu-item/page-command/components/PageCommandLinkEffect';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -28,13 +28,8 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowUpRight,
-  IconAppWindow,
-  IconListDetails,
-  IconPlus,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { IconAppWindow, IconListDetails, IconSettings } from 'twenty-ui/icon';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '@/settings/data-model/object-details/states/updatedObjectNamePluralState';
@@ -164,25 +159,20 @@ export const SettingsObjectDetailPage = () => {
           children: objectMetadataItem.labelPlural,
         },
       ]}
-      actionButton={
+      pageCommands={
         <>
-          <NavigationButton
-            startIcon={<IconArrowUpRight />}
-            size="sm"
+          <PageCommandLinkEffect
+            engineComponentKey={EngineComponentKey.SEE_OBJECT_RECORDS}
             to={getAppPath(AppPath.RecordIndexPage, {
               objectNamePlural: objectMetadataItem.namePlural,
             })}
-            variant="ghost"
-          >{t`See records`}</NavigationButton>
+          />
           {!readonly &&
             activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-              <NavigationButton
+              <PageCommandLinkEffect
+                engineComponentKey={EngineComponentKey.CREATE_DATA_MODEL_FIELD}
                 to="./new-field/select"
-                size="sm"
-                startIcon={<IconPlus />}
-                variant="solid"
-                color="accent"
-              >{t`New Field`}</NavigationButton>
+              />
             )}
         </>
       }

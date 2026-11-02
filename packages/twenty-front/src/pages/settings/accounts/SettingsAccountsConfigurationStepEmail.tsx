@@ -1,14 +1,14 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 type SettingsAccountsConfigurationStepEmailProps = {
   messageChannel: MessageChannel;
@@ -43,25 +43,19 @@ export const SettingsAccountsConfigurationStepEmail = ({
           children: t`1. Email`,
         },
       ]}
-      actionButton={
+      pageCommands={
         hasNextStep ? (
-          <Button
-            startIcon={<IconChevronRight />}
-            size="sm"
-            onClick={onNext}
-            disabled={isSubmitting}
-            variant="outline"
-            color="accent"
-          >{t`Next`}</Button>
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.NEXT_PAGE_STEP}
+            onRun={onNext}
+            isDisabled={isSubmitting}
+          />
         ) : (
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            onClick={onAddAccount}
-            disabled={isSubmitting}
-            variant="solid"
-            color="accent"
-          >{t`Add account`}</Button>
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.ADD_CONNECTED_ACCOUNT}
+            onRun={onAddAccount}
+            isDisabled={isSubmitting}
+          />
         )
       }
     >

@@ -40,6 +40,7 @@ export const fromWorkflowManifestToUniversalFlatCommandMenuItem = ({
     position: 0,
     icon: settings.icon ?? null,
     isPinned: settings.isPinned ?? false,
+    isPinLocked: false,
     availabilityType: isRecordSelection
       ? CommandMenuItemAvailabilityType.RECORD_SELECTION
       : CommandMenuItemAvailabilityType.GLOBAL,

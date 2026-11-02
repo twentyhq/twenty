@@ -37,6 +37,7 @@ const buildCommandMenuItem = ({
   icon: 'IconSend',
   position: 66,
   isPinned: false,
+  isPinLocked: false,
   isActive: true,
   isSystemSideEffect: false,
   engineComponentKey: EngineComponentKey.COMPOSE_CAMPAIGN,

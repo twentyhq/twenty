@@ -1,7 +1,6 @@
 import { addDays } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
@@ -10,6 +9,7 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
@@ -148,8 +148,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         },
         { children: t`New Key` },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           isSaveDisabled={!canSave}
           onCancel={() => {
             navigateSettings(

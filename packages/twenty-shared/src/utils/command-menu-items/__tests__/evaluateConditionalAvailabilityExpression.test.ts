@@ -5,6 +5,7 @@ const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
   pageType: ContextStorePageType.Index,
+  pageCommandKeys: [],
   isInSidePanel: false,
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,
@@ -595,6 +596,30 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       expect(
         evaluateConditionalAvailabilityExpression(
           'pageType == "INDEX_PAGE" and hasAnySoftDeleteFilterOnView',
+          context,
+        ),
+      ).toBe(false);
+    });
+  });
+
+  describe('page commands', () => {
+    it('shows a page command the current page registered', () => {
+      const context = buildContext({ pageCommandKeys: ['SAVE_PAGE'] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'includes(pageCommandKeys, "SAVE_PAGE")',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('hides a page command the current page did not register', () => {
+      const context = buildContext({ pageCommandKeys: ['CANCEL_PAGE'] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'includes(pageCommandKeys, "SAVE_PAGE")',
           context,
         ),
       ).toBe(false);

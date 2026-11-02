@@ -20,6 +20,7 @@ const FIND_MANY_COMMAND_MENU_ITEMS_QUERY = `
       shortLabel
       position
       isPinned
+      isPinLocked
       payload {
         __typename
         ... on PathCommandMenuItemPayload {

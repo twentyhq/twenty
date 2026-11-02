@@ -2,10 +2,13 @@ import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { type DeleteCommandMenuItemFactoryInput } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item-query-factory.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findCommandMenuItemByEngineComponentKey } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-item-by-engine-component-key.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 type TestContext = {
   input: DeleteCommandMenuItemFactoryInput;
@@ -59,6 +62,19 @@ describe('CommandMenuItem deletion should fail', () => {
       });
     },
   );
+
+  it('when deleting a locked command', async () => {
+    const { id } = await findCommandMenuItemByEngineComponentKey(
+      EngineComponentKey.SAVE_PAGE,
+    );
+
+    const { errors } = await deleteCommandMenuItem({
+      expectToFail: true,
+      input: { id },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
 
   it('when the caller lacks the LAYOUTS permission', async () => {
     const { errors } = await deleteCommandMenuItem({

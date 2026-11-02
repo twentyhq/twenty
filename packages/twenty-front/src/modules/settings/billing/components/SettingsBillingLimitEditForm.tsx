@@ -17,9 +17,9 @@ import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFo
 import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQuotaWithConsumption';
 import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreateUsageLimitInput';
 import { buildUsageLimitFormValues } from '@/settings/billing/utils/buildUsageLimitFormValues';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -109,8 +109,8 @@ export const SettingsBillingLimitEditForm = ({
         },
         { children: <Trans>Edit limit</Trans> },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           onSave={handleSave}
           onCancel={() => navigate(SettingsPath.BillingLimits)}
           isSaveDisabled={!isDefined(input)}

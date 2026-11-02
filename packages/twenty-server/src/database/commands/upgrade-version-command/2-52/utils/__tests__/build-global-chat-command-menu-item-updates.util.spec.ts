@@ -43,6 +43,7 @@ const NEW_CHAT: FlatCommandMenuItem = {
   icon: 'IconMessageCirclePlus',
   position: 43,
   isPinned: true,
+  isPinLocked: false,
   isActive: true,
   isSystemSideEffect: false,
   engineComponentKey: EngineComponentKey.NEW_AI_CHAT,

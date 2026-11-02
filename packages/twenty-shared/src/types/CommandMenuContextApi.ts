@@ -4,6 +4,7 @@ import { type ObjectRecord } from './ObjectRecord';
 
 export type CommandMenuContextApi = {
   pageType: ContextStorePageType;
+  pageCommandKeys: string[];
   isInSidePanel: boolean;
   isDashboardPageLayoutInEditMode: boolean;
   isLayoutCustomizationModeEnabled: boolean;

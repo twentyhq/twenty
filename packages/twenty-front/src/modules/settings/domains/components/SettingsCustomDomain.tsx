@@ -1,6 +1,5 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/components/CheckCustomDomainValidRecordsEffect';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
@@ -8,6 +7,7 @@ import { useSettingsCustomDomain } from '@/settings/domains/hooks/useSettingsCus
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -63,8 +63,8 @@ export const SettingsCustomDomain = () => {
         },
         { children: <Trans>Custom Domain</Trans> },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           onCancel={() => navigate(SettingsPath.General)}
           isSaveDisabled={isSaveDisabled}
           isLoading={isSubmitting}

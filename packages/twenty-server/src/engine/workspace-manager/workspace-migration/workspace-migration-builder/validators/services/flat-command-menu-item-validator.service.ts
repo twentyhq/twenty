@@ -14,6 +14,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateCommandMenuItemPinLock } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-command-menu-item-pin-lock.util';
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
@@ -23,6 +24,7 @@ export class FlatCommandMenuItemValidatorService {
       flatObjectMetadataMaps,
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'create'> {
@@ -84,6 +86,15 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    const pinLockError = validateCommandMenuItemPinLock({
+      toFlatCommandMenuItem: flatCommandMenuItem,
+      buildOptions,
+    });
+
+    if (isDefined(pinLockError)) {
+      validationResult.errors.push(pinLockError);
+    }
+
     return validationResult;
   }
 
@@ -126,6 +137,7 @@ export class FlatCommandMenuItemValidatorService {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
       flatObjectMetadataMaps,
     },
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'update'> {
@@ -193,6 +205,19 @@ export class FlatCommandMenuItemValidatorService {
       flatObjectMetadataMaps,
       validationResult,
     });
+
+    const pinLockError = validateCommandMenuItemPinLock({
+      fromFlatCommandMenuItem,
+      toFlatCommandMenuItem: {
+        ...fromFlatCommandMenuItem,
+        ...flatEntityUpdate,
+      },
+      buildOptions,
+    });
+
+    if (isDefined(pinLockError)) {
+      validationResult.errors.push(pinLockError);
+    }
 
     return validationResult;
   }

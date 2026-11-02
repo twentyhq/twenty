@@ -6,6 +6,7 @@ import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
@@ -17,6 +18,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   component: SettingsDevelopersWebhookForm,
   decorators: [
     ComponentDecorator,
+    ContextStoreDecorator,
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,

@@ -1,8 +1,9 @@
 /* @license Enterprise */
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsFormSubmitOnEnter } from '@/settings/page-commands/components/SettingsFormSubmitOnEnter';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import SettingsSsoIdentitiesProvidersForm from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm';
 import { useCreateSsoIdentityProvider } from '@/settings/security/hooks/useCreateSsoIdentityProvider';
 import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
@@ -57,16 +58,18 @@ export const SettingsSecuritySsoIdentifyProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
+      <SettingsFormSubmitOnEnter disabled={form.formState.isSubmitting} />
       <FormProvider
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...form}
       >
         <SettingsPageLayout
           title={t`New SSO Configuration`}
-          actionButton={
-            <SaveAndCancelButtons
+          pageCommands={
+            <SettingsSaveAndCancelPageCommands
               onCancel={() => navigate(SettingsPath.Security)}
               isSaveDisabled={form.formState.isSubmitting}
+              onSave={form.handleSubmit(handleSave)}
             />
           }
           links={[

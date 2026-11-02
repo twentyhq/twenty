@@ -30,9 +30,10 @@ export const useGoToHotkeys = ({
       navigate(location);
     },
     {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
+      enableOnContentEditable: false,
+      enableOnFormTags: false,
       preventDefault: true,
+      enableOnSettingsPage: true,
     },
     [navigate, location, preNavigateFunction, isEnabled],
   );

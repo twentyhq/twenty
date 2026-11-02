@@ -1,4 +1,5 @@
 export type CommandMenuItemSection =
+  | 'THIS_PAGE'
   | 'SELECTION'
   | 'CURRENT_VIEW'
   | 'THIS_OBJECT'
