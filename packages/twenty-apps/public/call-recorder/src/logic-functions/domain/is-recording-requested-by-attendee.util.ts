@@ -1,4 +1,3 @@
-// A meeting whose attendees match no workspace member keeps recording, so an opt-out only applies to attributable meetings.
 export const isRecordingRequestedByAttendee = ({
   participantWorkspaceMemberIds,
   optedInWorkspaceMemberIds,

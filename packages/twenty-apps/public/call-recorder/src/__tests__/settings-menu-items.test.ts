@@ -19,7 +19,6 @@ describe('settings menu items', () => {
     }
   });
 
-  // Declaring any menu item stops the server from synthesizing the legacy workspace tab.
   it('keeps the workspace settings tab on the existing settings component', () => {
     expect(settingsMenuItem.config).toMatchObject({
       scope: 'WORKSPACE',
