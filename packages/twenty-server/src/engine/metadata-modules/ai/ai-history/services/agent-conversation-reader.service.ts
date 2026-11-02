@@ -114,10 +114,7 @@ export class AgentConversationReaderService {
         },
         relations: ['parts', 'parts.file'],
       }),
-      this.turnRepository.find(workspaceId, {
-        where: { threadId },
-        select: ['id', 'status', 'createdBy'],
-      }),
+      this.turnRepository.find(workspaceId, { where: { threadId } }),
     ]);
 
     // a failed run is kept on record but leaves the conversation as it was, and a chat message
