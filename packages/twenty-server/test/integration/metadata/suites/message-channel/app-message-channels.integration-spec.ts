@@ -894,6 +894,16 @@ describe('app message channels API (e2e)', () => {
       }
     });
 
+    it('returns no channel for a message thread the user cannot read', async () => {
+      const response = await makeGraphqlApiRequest({
+        query: GET_MESSAGE_THREAD_CHANNEL_QUERY,
+        variables: { messageThreadId: uuidv4() },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.getMessageThreadChannel).toBeNull();
+    });
+
     it('returns the same ids when a provider redelivers the same message', async () => {
       const channel = await createChannelOrThrow();
       const threadExternalId = `thread-${uuidv4()}`;

@@ -416,6 +416,39 @@ export class TimelineMessagingService {
     }, authContext);
   }
 
+  public async getMessageThreadChannel({
+    messageThreadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    messageThreadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<TimelineThreadChannelDTO | null> {
+    const allowedRecordIds =
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+        this.workspaceOrmManager
+          .getRepositoryWithContextPermissions('messageThread')
+          .findRecordIdsAllowedForOperations({
+            recordIds: [messageThreadId],
+            operationTypes: ['select'],
+          }),
+      );
+
+    if (!allowedRecordIds.select.has(messageThreadId)) {
+      return null;
+    }
+
+    const { threadChannelByThreadId } =
+      await this.getThreadVisibilityAndChannelByThreadId({
+        messageThreadIds: [messageThreadId],
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return threadChannelByThreadId[messageThreadId] ?? null;
+  }
+
   public async getThreadVisibilityAndChannelByThreadId({
     messageThreadIds,
     userWorkspaceId,
