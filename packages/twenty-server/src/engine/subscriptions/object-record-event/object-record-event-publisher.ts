@@ -359,7 +359,10 @@ export class ObjectRecordEventPublisher {
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
           principal: {
             ...principal,
-            main: { roleId: principal.main.roleId },
+            main:
+              'workspaceMemberId' in principal.main
+                ? { roleId: principal.main.roleId }
+                : principal.main,
           },
           objectsPermissions,
           flatObjectMetadataMaps,
