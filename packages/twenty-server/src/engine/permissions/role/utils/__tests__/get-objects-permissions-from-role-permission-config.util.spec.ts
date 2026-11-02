@@ -180,7 +180,11 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should deny when the main actor has no role', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        actors: NO_ACTORS,
+        actors: {
+          main: { workspaceMemberId: 'member-id' },
+          agentId: undefined,
+          applicationId: undefined,
+        },
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,

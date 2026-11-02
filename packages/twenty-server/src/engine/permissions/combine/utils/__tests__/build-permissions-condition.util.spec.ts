@@ -347,7 +347,6 @@ describe('buildPermissionsCondition', () => {
       });
     });
 
-
     it('lets a named grant bypass the row filter of the role', () => {
       (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
         NOTE_FILTER,

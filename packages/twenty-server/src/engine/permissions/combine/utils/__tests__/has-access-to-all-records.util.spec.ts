@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { hasAccessToAllRecords } from 'src/engine/permissions/combine/utils/has-access-to-all-records.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
@@ -39,6 +40,24 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
+const buildPrincipal = (roleId: string): PermissionsPrincipalsContext => {
+  const applicationId = APPLICATION_ID_BY_ROLE_ID[roleId];
+
+  if (!isDefined(applicationId)) {
+    return {
+      workspaceId: 'workspace-id',
+      mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
+      app: { isCustomApp: true },
+    };
+  }
+
+  return {
+    workspaceId: 'workspace-id',
+    mainPrincipal: { roleId, applicationId },
+    app: { roleId, applicationId },
+  };
+};
+
 const hasAccess = ({
   roleId = READ_ONLY_ROLE_ID,
   operationType = 'select',
@@ -49,21 +68,7 @@ const hasAccess = ({
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
 }) => {
   const request: PermissionsObjectAccessRequest = {
-    principal: {
-      workspaceId: 'workspace-id',
-      ...(isDefined(APPLICATION_ID_BY_ROLE_ID[roleId])
-        ? {
-            mainPrincipal: {
-              roleId,
-              applicationId: APPLICATION_ID_BY_ROLE_ID[roleId],
-            },
-            app: { roleId, applicationId: APPLICATION_ID_BY_ROLE_ID[roleId] },
-          }
-        : {
-            mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
-            app: { isCustomApp: true },
-          }),
-    },
+    principal: buildPrincipal(roleId),
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
