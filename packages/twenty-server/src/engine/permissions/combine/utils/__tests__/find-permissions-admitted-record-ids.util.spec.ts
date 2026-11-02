@@ -18,7 +18,7 @@ import {
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
@@ -99,19 +99,22 @@ const fullAccess = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const rolePrincipal: PermissionsPrincipal = {
+const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  roleIds: [MEMBER_ROLE_ID],
+  mainPrincipal: { roleId: MEMBER_ROLE_ID, isDeprecatedRoleOnly: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
-const memberPrincipal: PermissionsPrincipal = {
+const memberPrincipal: PermissionsPrincipalsWithRolesContext = {
   ...rolePrincipal,
-  workspaceMemberId: MEMBER_ID,
+  mainPrincipal: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
+  applicationPrincipal: { isCustomApp: true },
 };
 
-const deniedPrincipal: PermissionsPrincipal = {
+const deniedPrincipal: PermissionsPrincipalsWithRolesContext = {
   ...memberPrincipal,
-  roleIds: ['missing-role'],
+  mainPrincipal: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const filterByStatus = (status: string) =>
@@ -134,7 +137,7 @@ const findAdmitted = ({
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
   context = buildContext(),
 }: {
-  principal: PermissionsPrincipal;
+  principal: PermissionsPrincipalsWithRolesContext;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>

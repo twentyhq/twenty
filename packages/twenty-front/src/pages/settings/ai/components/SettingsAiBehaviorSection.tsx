@@ -13,15 +13,15 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
-import { type SettingsAiAssistantMode } from '~/pages/settings/ai/types/SettingsAiAssistantMode';
+import { type AiChatAssistantMode } from '~/generated-metadata/graphql';
 
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
 type SettingsAiBehaviorSectionProps = {
-  directMessageMode: SettingsAiAssistantMode | null;
-  inboxMode: SettingsAiAssistantMode | null;
-  onDirectMessageModeChange: (value: SettingsAiAssistantMode) => void;
-  onInboxModeChange: (value: SettingsAiAssistantMode) => void;
+  directMessageMode: AiChatAssistantMode | null;
+  inboxMode: AiChatAssistantMode | null;
+  onDirectMessageModeChange: (value: AiChatAssistantMode) => void;
+  onInboxModeChange: (value: AiChatAssistantMode) => void;
   isLoading?: boolean;
   disabled?: boolean;
   errorMessage?: string;
