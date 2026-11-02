@@ -15,7 +15,7 @@ import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
 import { installAppDependenciesOrThrow } from '@/app/install-app-dependencies-or-throw';
 import { promptInTerminal } from '@/input/prompt-in-terminal';
 import { CliError } from '@/output/cli-error';
-import { MetadataWritability } from 'twenty-shared/types';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -424,12 +424,12 @@ export default defineObject({ nameSingular: 'invalid' });`,
 
   it('checks enum imports actually used by generated files', async () => {
     const state = JSON.parse(JSON.stringify(exported));
-    state.manifest.objects[0].writability = MetadataWritability.APPLICATION;
+    state.manifest.objects[0].openRecordIn = ObjectOpenRecordIn.RECORD_PAGE;
     exported = state;
     const result = await runJson();
     expect(result.envelope.error).toMatchObject({
       code: 'SDK_SOURCE_UNSUPPORTED',
-      details: { missingNames: ['MetadataWritability'] },
+      details: { missingNames: ['ObjectOpenRecordIn'] },
     });
   });
 

@@ -9,7 +9,8 @@ import { recordIndexGroupAggregateOperationComponentState } from '@/object-recor
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
-import { Icon123, useIcons } from 'twenty-ui/icon';
+import { Icon123 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type RecordGroupAggregateDropdownFieldsContentProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

@@ -151,7 +151,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 
-jest.mock('twenty-ui/icon', () => ({
+jest.mock('twenty-ui/icon/provider', () => ({
   useIcons: () => ({
     getIcon: mockGetIcon,
   }),

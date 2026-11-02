@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {برای وظیفه انتخاب‌شده دوب
 msgid "{label} (Auto)"
 msgstr "{label} (خودکار)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (پیش‌فرض)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1576,6 +1571,11 @@ msgstr "فرمی برای شخصی که گردش کار را اجرا می‌ک�
 msgid "A new one each time the step runs"
 msgstr "یک مورد جدید در هر بار اجرای مرحله"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr "نسخه جدیدتری وجود دارد. برای ذخیره، آخرین پیش‌نمایش را باز کنید."
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -1704,7 +1704,7 @@ msgid "Access Key ID"
 msgstr "شناسه کلید دسترسی"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "دسترسی به {objectLabelPlural} بر اساس نقش‌ها تنظیم می‌شود، نه رکورد به رکورد."
 
@@ -2362,6 +2362,11 @@ msgstr "افزودن مبدأ"
 msgid "Add Output Field"
 msgstr "افزودن فیلد خروجی"
 
+#. js-lingui-id: ZqKhbh
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
+msgid "Add path"
+msgstr "افزودن مسیر"
+
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
@@ -2511,6 +2516,11 @@ msgstr "سرور راه دور Twenty را با پیوند نصب LM Studio اض
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
 msgstr "این رکوردها را نزد ارائه‌دهنده DNS خود اضافه کنید. Twenty آن‌ها را به‌طور خودکار بررسی می‌کند."
+
+#. js-lingui-id: Bc+ryO
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Add this path"
+msgstr "افزودن این مسیر"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -2912,6 +2922,11 @@ msgstr "عامل‌های هوش مصنوعی"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "AI chat"
 msgstr "گفت‌وگوی هوش مصنوعی"
+
+#. js-lingui-id: IuEC4q
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI chat component builder"
+msgstr "سازنده مؤلفه چت هوش مصنوعی"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3494,6 +3509,7 @@ msgstr "هنگام بارگذاری تصویر خطایی رخ داد."
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3882,6 +3898,7 @@ msgstr "بازبینی تأیید"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "تأیید"
 
@@ -3940,11 +3957,6 @@ msgstr "تنظیمات برگزیده برنامه‌ها"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "ترجیحات برنامه‌ها - تنظیمات"
-
-#. js-lingui-id: aDW39c
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Apps recording"
-msgstr "ضبط برنامه‌ها"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4083,6 +4095,11 @@ msgstr "پیکان بالا"
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
 msgstr "همان‌طور که در فضای کاری نمایش داده خواهد شد"
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr "مطابق با نقشی که دارند"
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4589,6 +4606,7 @@ msgstr "میلیارد"
 #. js-lingui-id: iH8pgl
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -5298,11 +5316,16 @@ msgid "Calls"
 msgstr "تماس‌ها"
 
 #. js-lingui-id: rT2cV+
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "دوربین"
+
+#. js-lingui-id: QIPLcC
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Camera access enabled"
+msgstr ""
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5337,7 +5360,7 @@ msgstr "کانادا"
 #. js-lingui-id: dEgA5A
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5395,6 +5418,11 @@ msgstr "لغو تغییر دوره زمانی"
 msgid "Cancel interval switching?"
 msgstr "تغییر دوره زمانی لغو شود؟"
 
+#. js-lingui-id: ujldpy
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Cancel media request for {ownerName}"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5411,11 +5439,6 @@ msgstr "لغو تغییر طرح"
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Cancel plan switching?"
 msgstr "تغییر طرح لغو شود؟"
-
-#. js-lingui-id: BfJPwg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Cancel recording for {applicationName}"
-msgstr "لغو ضبط برای {applicationName}"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -6291,6 +6314,7 @@ msgstr "کلیپ‌بورد به اتصال امن (HTTPS) نیاز دارد. ب
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -6671,10 +6695,20 @@ msgstr "کارهای تکمیل‌شده برای {completedDuration} و کار�
 msgid "Complexity"
 msgstr "پیچیدگی"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr "رندر مؤلفه ناموفق بود."
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "نام مؤلفه"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Component preview with sample data"
+msgstr "پیش‌نمایش مؤلفه با داده‌های نمونه"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7480,6 +7514,17 @@ msgstr "ایجاد DPA امضاشده انجام نشد. لطفاً دوباره
 msgid "Could not grant media access. Please try again."
 msgstr "امکان اعطای دسترسی به رسانه وجود نداشت. لطفاً دوباره تلاش کنید."
 
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr "پیش‌نمایش بارگیری نشد."
+
+#. js-lingui-id: mrmGIf
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "Could not load related records"
+msgstr "بارگیری رکوردهای مرتبط ممکن نشد"
+
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
@@ -7519,6 +7564,11 @@ msgstr "بازیگاه API باز نشد"
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
 msgstr "واکنش با {emoji} ممکن نشد"
+
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr "نمی‌توان مؤلفه‌ها را تازه‌سازی کرد. برای مشاهده تغییرات ذخیره‌شده، دوباره بارگیری کنید."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7808,6 +7858,11 @@ msgstr "ایجاد یک برنامه"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "عامل‌های هوش مصنوعی را ایجاد و پیکربندی کنید"
+
+#. js-lingui-id: PRUHBf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
+msgstr "پیش از افزودن مؤلفه‌های فرانت‌اند به برنامه Workspace، آن‌ها را در چت هوش مصنوعی ایجاد و پیش‌نمایش کنید."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
@@ -8633,6 +8688,11 @@ msgstr "تیره"
 msgid "Dashboard duplicated successfully"
 msgstr "داشبورد با موفقیت تکثیر شد"
 
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Dashboard widget"
+msgstr "ابزارک داشبورد"
+
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -9251,6 +9311,11 @@ msgstr "حذف رکوردها در همه اشیا"
 msgid "Delete Related {relationObjectLabelSingular}"
 msgstr "حذف {relationObjectLabelSingular} مرتبط"
 
+#. js-lingui-id: CW/kVJ
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Delete related record path"
+msgstr "مسیر رکورد مرتبط را حذف کنید"
+
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "Delete role"
@@ -9642,6 +9707,7 @@ msgid "Direction"
 msgstr "جهت"
 
 #. js-lingui-id: cO9+2L
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
 msgstr "غیرفعال کردن"
@@ -9650,6 +9716,11 @@ msgstr "غیرفعال کردن"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Disable impersonation"
 msgstr "غیرفعال‌سازی جعل هویت"
+
+#. js-lingui-id: QRe0KA
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Disable media access for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10761,10 +10832,25 @@ msgstr "فعال کردن"
 msgid "Enable bypass options"
 msgstr "گزینه‌های دور زدن را فعال کنید"
 
+#. js-lingui-id: +EDob0
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable camera"
+msgstr ""
+
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Enable impersonation"
 msgstr "فعال‌سازی جعل هویت"
+
+#. js-lingui-id: 4Jrl0H
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone"
+msgstr ""
+
+#. js-lingui-id: /RSrNr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone and camera"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -16040,6 +16126,11 @@ msgstr "کوچک‌تر یا مساوی"
 msgid "Let each member decide for themselves"
 msgstr "به هر عضو اجازه دهید خودش تصمیم بگیرد"
 
+#. js-lingui-id: bM+k1O
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let people make a record visible only to its creator and the people it is shared with."
+msgstr "به افراد اجازه دهید یک رکورد را فقط برای ایجادکننده آن و افرادی که با آن‌ها به اشتراک گذاشته شده است قابل مشاهده کنند."
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -16477,6 +16568,11 @@ msgstr "در حال بارگذاری گفت‌وگوهای بیشتر..."
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Loading more..."
 msgstr "بارگیری بیشتر..."
+
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Loading preview…"
+msgstr "در حال بارگیری پیش‌نمایش…"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -17126,6 +17222,16 @@ msgstr "من / {workspaceMemberFieldLabel}"
 msgid "Measure engagement on the campaigns this workspace sends"
 msgstr "میزان تعامل با کمپین‌هایی را که این فضای کاری ارسال می‌کند اندازه‌گیری کنید"
 
+#. js-lingui-id: 62uGRa
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access enabled"
+msgstr ""
+
+#. js-lingui-id: rH8KbL
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access requests"
+msgstr ""
+
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
@@ -17344,11 +17450,16 @@ msgid "Method"
 msgstr "روش"
 
 #. js-lingui-id: 1iY5xv
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "میکروفون"
+
+#. js-lingui-id: eiGwrP
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone access enabled"
+msgstr ""
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -17356,9 +17467,19 @@ msgid "Microphone access is blocked. Allow it in your browser settings to dictat
 msgstr "دسترسی به میکروفون مسدود شده است. برای دیکته کردن، در تنظیمات مرورگر خود اجازه آن را بدهید."
 
 #. js-lingui-id: /XArxJ
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Microphone and camera"
 msgstr "میکروفون و دوربین"
+
+#. js-lingui-id: 0Cq1++
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone and camera access enabled"
+msgstr ""
+
+#. js-lingui-id: yGBwBp
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Microphone or camera in use"
+msgstr ""
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -19031,10 +19152,20 @@ msgstr "هیچ رکوردی مطابق با معیارهای فیلتر یافت
 msgid "No records to review"
 msgstr "رکوردی برای بازبینی وجود ندارد"
 
+#. js-lingui-id: AxHLth
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "No related records follow this object yet"
+msgstr "هنوز هیچ رکورد مرتبطی از این شیء پیروی نمی‌کند"
+
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "No relation to count by"
 msgstr "هیچ رابطه‌ای برای شمارش بر اساس آن وجود ندارد"
+
+#. js-lingui-id: dPgrAv
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "No relations"
+msgstr "بدون رابطه"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -19705,6 +19836,7 @@ msgstr "شیء"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -20001,12 +20133,12 @@ msgid "Only run when one of these fields changes"
 msgstr "فقط وقتی اجرا شود که یکی از این فیلدها تغییر کند"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "فقط ایجادکننده این رکورد و افرادی که دسترسی کامل به آن دارند می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "فقط ایجادکننده این رکورد، افرادی که دسترسی کامل به آن دارند و مدیران می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 
@@ -21526,6 +21658,11 @@ msgstr "سیاست حریم خصوصی"
 msgid "Private"
 msgstr "خصوصی"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "رکوردهای خصوصی"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22176,6 +22313,11 @@ msgstr "برچسب رکورد"
 msgid "Record page"
 msgstr "صفحه رکورد"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Record page widget"
+msgstr "ابزارک صفحه رکورد"
+
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
@@ -22244,11 +22386,6 @@ msgstr "در حال ضبط"
 msgid "Recording Failed"
 msgstr "ضبط ناموفق بود"
 
-#. js-lingui-id: kDQf8q
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Recording requests"
-msgstr "درخواست‌های ضبط"
-
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
@@ -22275,6 +22412,11 @@ msgstr "رکوردها"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Records"
 msgstr "رکوردها"
+
+#. js-lingui-id: CjlKOu
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Records reached through these relations follow access to {objectLabel}."
+msgstr "رکوردهایی که از طریق این روابط به آن‌ها دسترسی پیدا می‌شود، از دسترسی به {objectLabel} پیروی می‌کنند."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22392,6 +22534,7 @@ msgstr "به‌عنوان یک نمونه توسعه ثبت شد. برای ای�
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "رد کردن"
 
@@ -22410,7 +22553,13 @@ msgstr "مسیر رکورد مرتبط"
 msgid "Related record paths"
 msgstr "مسیرهای رکوردهای مرتبط"
 
+#. js-lingui-id: uGfOFe
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Related records"
+msgstr "رکوردهای مرتبط"
+
 #. js-lingui-id: h9AYFD
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"
 msgstr "رابطه"
@@ -22774,6 +22923,11 @@ msgstr "تغییر نام برای همه زبان‌ها"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "تغییر نام گروه"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Rendering preview…"
+msgstr "در حال رندر کردن پیش‌نمایش…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23546,6 +23700,11 @@ msgstr "مقدار یکسان در هر طرف"
 msgid "SAML/OIDC"
 msgstr "سامانه یکپارچه‌سازی نشانه‌گذاری امنیتی/اتصال بازشناسی‌شده"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Sample data"
+msgstr "داده‌های نمونه"
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23609,6 +23768,11 @@ msgstr "ذخیره تنظیمات"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "ابتدا تغییرات خود را ذخیره کنید"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Saved to Workspace app"
+msgstr "در برنامه فضای کاری ذخیره شد"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -24035,6 +24199,12 @@ msgstr "جستجوی رکوردها..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "جستجوی ثبت‌نام‌ها..."
+
+#. js-lingui-id: GHeAhn
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Search relations"
+msgstr "جستجوی روابط"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -26077,9 +26247,14 @@ msgid "Steps of this workflow sharing a key write to the same conversation"
 msgstr "گام‌های این گردش کار که یک کلید مشترک دارند، در همان گفتگو می‌نویسند"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Stop"
 msgstr "توقف"
+
+#. js-lingui-id: gGTNKw
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Stop capture for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -26090,11 +26265,6 @@ msgstr "توقف دیکته"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "توقف ورود به‌جای کاربر"
-
-#. js-lingui-id: 5e5VJg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Stop recording for {applicationName}"
-msgstr "توقف ضبط برای {applicationName}"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
@@ -28674,6 +28844,11 @@ msgstr "بدون تخصیص"
 msgid "Unavailable"
 msgstr "در دسترس نیست"
 
+#. js-lingui-id: HY7voI
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Unavailable object"
+msgstr "شیء در دسترس نیست"
+
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Uncheck the emails you no longer want at {recipientEmailAddress}."
@@ -29397,6 +29572,11 @@ msgstr "به صورت‌حساب سالانه ارتقا می‌دهید؟"
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Upgrade to Organization"
 msgstr "ارتقا به Organization"
+
+#. js-lingui-id: T10DNC
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Upgrade to Organization to change related records"
+msgstr "برای تغییر رکوردهای مرتبط به Organization ارتقا دهید"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -30347,7 +30527,7 @@ msgid "Waiting for output..."
 msgstr "در انتظار خروجی..."
 
 #. js-lingui-id: FZKt6U
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Waiting for permission"
 msgstr "در انتظار مجوز"
 

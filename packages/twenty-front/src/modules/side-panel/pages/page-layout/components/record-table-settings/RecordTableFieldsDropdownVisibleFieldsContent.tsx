@@ -16,7 +16,8 @@ import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { IconEyeOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {

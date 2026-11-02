@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

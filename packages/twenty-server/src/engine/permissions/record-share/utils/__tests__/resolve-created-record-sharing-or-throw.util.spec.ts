@@ -20,53 +20,20 @@ const EVERYONE_AT_DEFAULT = {
   everyone: true,
   accessLevel: RecordShareAccessLevel.READ_WRITE,
 };
-const SHARE_REQUIRED_OBJECT = {
-  isShareable: true,
-  isShareRequired: true,
-  isPrivateByDefault: true,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
-};
 const SHAREABLE_OBJECT = {
   isShareable: true,
-  isShareRequired: false,
   isPrivateByDefault: false,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
-};
-const PRIVATE_BY_DEFAULT_OBJECT = {
-  ...SHAREABLE_OBJECT,
-  isPrivateByDefault: true,
 };
 const ROLE_ONLY_OBJECT = {
   isShareable: false,
-  isShareRequired: false,
   isPrivateByDefault: false,
-  defaultGeneralAccessLevel: null,
+};
+const PRIVATE_BY_DEFAULT_OBJECT = {
+  isShareable: true,
+  isPrivateByDefault: true,
 };
 
 describe('resolveCreatedRecordSharingOrThrow', () => {
-  it('should write every entry, and the creator rows, on an object whose records need a share', () => {
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        objectSharing: SHARE_REQUIRED_OBJECT,
-        shareWith: [ROLE_GRANT, EVERYONE_GRANT],
-      }),
-    ).toEqual({ shareWith: [ROLE_GRANT, EVERYONE_GRANT], isPrivate: false });
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        objectSharing: SHARE_REQUIRED_OBJECT,
-      }),
-    ).toEqual({ shareWith: [], isPrivate: false });
-  });
-
-  it('should leave no everyone row when everyone keeps the default of an object whose records need a share', () => {
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        objectSharing: SHARE_REQUIRED_OBJECT,
-        shareWith: [ROLE_GRANT, EVERYONE_NONE],
-      }),
-    ).toEqual({ shareWith: [ROLE_GRANT], isPrivate: false });
-  });
-
   it('should create private records when everyone gets no access', () => {
     expect(
       resolveCreatedRecordSharingOrThrow({
@@ -124,7 +91,7 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
     ).toBeNull();
   });
 
-  it('should always create a record of a private-by-default object private', () => {
+  it('should create a record of a private-by-default object private unless it is shared with everyone', () => {
     expect(
       resolveCreatedRecordSharingOrThrow({
         objectSharing: PRIVATE_BY_DEFAULT_OBJECT,
@@ -135,6 +102,15 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
       resolveCreatedRecordSharingOrThrow({
         objectSharing: PRIVATE_BY_DEFAULT_OBJECT,
         shareWith: [EVERYONE_AT_DEFAULT],
+      }),
+    ).toBeNull();
+  });
+
+  it('should create a record of a private-by-default object private even without record sharing', () => {
+    expect(
+      resolveCreatedRecordSharingOrThrow({
+        objectSharing: { ...PRIVATE_BY_DEFAULT_OBJECT, isShareable: false },
+        shareWith: [ROLE_GRANT],
       }),
     ).toEqual({ shareWith: [], isPrivate: true });
   });

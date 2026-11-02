@@ -1,3 +1,4 @@
+import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
@@ -71,6 +72,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
+    AiFrontComponentModule,
   ],
   providers: [
     AgentChatActorService,

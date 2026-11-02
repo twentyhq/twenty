@@ -1,4 +1,4 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import {
@@ -8,24 +8,22 @@ import {
   isDefined,
   parseEmailDocument,
 } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNamesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-or-throw.util';
 import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util';
-import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
-  userWorkspaceId: string;
+  rolePermissionConfig: RolePermissionConfig;
   campaignId?: string;
   name?: string;
   subject?: string;
@@ -45,24 +43,13 @@ const DEFAULT_CAMPAIGN_NAME = 'Untitled campaign';
 @Injectable()
 export class MessageCampaignDraftService {
   constructor(
-    private readonly userRoleService: UserRoleService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly campaignVariableService: CampaignVariableService,
   ) {}
 
-  private getRoleScopedRepository<T extends ObjectLiteral>(
-    entity: Type<T>,
-    roleId: string,
-  ) {
-    return this.workspaceOrmManager.getRepository(
-      entity,
-      buildEmailingRolePermissionConfig(roleId),
-    );
-  }
-
   async saveDraft({
     workspaceId,
-    userWorkspaceId,
+    rolePermissionConfig,
     campaignId,
     name,
     subject,
@@ -90,15 +77,10 @@ export class MessageCampaignDraftService {
       );
     }
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = await this.getRoleScopedRepository(
+      const campaignRepository = this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
-        roleId,
+        rolePermissionConfig,
       );
 
       if (!isDefined(campaignId)) {
