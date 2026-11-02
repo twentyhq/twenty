@@ -18,6 +18,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: false,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -32,11 +33,32 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
+  it('does not request a bot when every attributed attendee opted out', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: false,
+          callRecorderPreference: CallRecorderPreference.ON,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'ATTENDEES_OPTED_OUT',
+    });
+  });
+
   it('requires a bot when preference is ON and the event is upcoming', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -56,6 +78,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -75,6 +98,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -94,6 +118,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -113,6 +138,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.OFF,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -132,6 +158,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
@@ -151,6 +178,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: undefined,
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
@@ -170,6 +198,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: BEYOND_HORIZON_STARTS_AT,
@@ -189,6 +218,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -208,6 +238,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          isRecordingRequestedByAttendee: true,
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: '',

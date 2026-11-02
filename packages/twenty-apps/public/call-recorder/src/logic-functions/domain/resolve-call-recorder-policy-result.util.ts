@@ -30,6 +30,10 @@ export const resolveCallRecorderPolicyResult = ({
     return botNotRequired('PREFERENCE_OFF');
   }
 
+  if (!input.isRecordingRequestedByAttendee) {
+    return botNotRequired('ATTENDEES_OPTED_OUT');
+  }
+
   if (!isNonEmptyString(input.conferenceLinkUrl)) {
     return botNotRequired('MISSING_CONFERENCE_LINK');
   }

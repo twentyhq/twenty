@@ -14,6 +14,12 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = async () => ({ myUserApplicationVariables: [] });
+  },
+}));
+
 type CalendarEventNode = {
   id: string;
   title: string;

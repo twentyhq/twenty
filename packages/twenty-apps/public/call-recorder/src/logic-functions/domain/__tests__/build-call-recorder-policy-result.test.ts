@@ -28,12 +28,13 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('requests a bot for the ON wire value', () => {
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      NOW,
-    );
+      optedInWorkspaceMemberIds: new Set(),
+      now: NOW,
+    });
 
     expect(policyResult.callRecorderPreference).toBe('ON');
     expect(policyResult.shouldRequestBot).toBe(true);
@@ -41,12 +42,13 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('does not request a bot for the OFF wire value', () => {
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'OFF',
       }),
-      NOW,
-    );
+      optedInWorkspaceMemberIds: new Set(),
+      now: NOW,
+    });
 
     expect(policyResult.callRecorderPreference).toBe('OFF');
     expect(policyResult.shouldRequestBot).toBe(false);
@@ -57,14 +59,52 @@ describe('buildCallRecorderPolicyResult', () => {
     process.env[CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME] =
       'false';
 
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      NOW,
-    );
+      optedInWorkspaceMemberIds: new Set(),
+      now: NOW,
+    });
 
     expect(policyResult.shouldRequestBot).toBe(false);
     expect(policyResult.reason).toBe('CALENDAR_BOT_SCHEDULING_DISABLED');
+  });
+
+  it('does not request a bot when the attributed attendees all opted out', () => {
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
+        participantWorkspaceMemberIds: ['member-1', 'member-2'],
+      }),
+      optedInWorkspaceMemberIds: new Set(['member-3']),
+      now: NOW,
+    });
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('ATTENDEES_OPTED_OUT');
+  });
+
+  it('requests a bot when at least one attributed attendee is opted in', () => {
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
+        participantWorkspaceMemberIds: ['member-1', 'member-2'],
+      }),
+      optedInWorkspaceMemberIds: new Set(['member-2']),
+      now: NOW,
+    });
+
+    expect(policyResult.shouldRequestBot).toBe(true);
+  });
+
+  it('requests a bot when no attendee matches a workspace member', () => {
+    const policyResult = buildCallRecorderPolicyResult({
+      calendarEvent: buildCalendarEventInput({
+        participantWorkspaceMemberIds: [],
+      }),
+      optedInWorkspaceMemberIds: new Set(),
+      now: NOW,
+    });
+
+    expect(policyResult.shouldRequestBot).toBe(true);
   });
 });

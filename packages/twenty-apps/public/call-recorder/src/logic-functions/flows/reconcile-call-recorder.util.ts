@@ -50,11 +50,13 @@ type ActiveMeetingReconciliation = {
 export const reconcileCallRecorderForCalendarEventIds = async ({
   client,
   calendarEventIds,
+  optedInWorkspaceMemberIds,
   removedOccurrences = [],
   now = new Date(),
 }: {
   client: CoreApiClient;
   calendarEventIds: string[];
+  optedInWorkspaceMemberIds: Set<string>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderReconciliationResult[]> => {
@@ -62,6 +64,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
     await resolveCallRecorderPolicyResultsForMeetings({
       client,
       calendarEventIds,
+      optedInWorkspaceMemberIds,
       removedOccurrences,
       now,
     });
@@ -77,11 +80,13 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
 const resolveCallRecorderPolicyResultsForMeetings = async ({
   client,
   calendarEventIds,
+  optedInWorkspaceMemberIds,
   removedOccurrences = [],
   now = new Date(),
 }: {
   client: CoreApiClient;
   calendarEventIds: string[];
+  optedInWorkspaceMemberIds: Set<string>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderMeetingPolicyResolution> => {
@@ -92,7 +97,12 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
-    (calendarEvent) => buildCallRecorderPolicyResult(calendarEvent, now),
+    (calendarEvent) =>
+      buildCallRecorderPolicyResult({
+        calendarEvent,
+        optedInWorkspaceMemberIds,
+        now,
+      }),
   );
 
   for (const policyResult of changedCalendarEventPolicyResults) {
@@ -135,7 +145,11 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
 
     policyResultsByCalendarEventId.set(
       calendarEvent.id,
-      buildCallRecorderPolicyResult(calendarEvent, now),
+      buildCallRecorderPolicyResult({
+        calendarEvent,
+        optedInWorkspaceMemberIds,
+        now,
+      }),
     );
   }
 

@@ -2,6 +2,7 @@ import { type CallRecorderPreference } from 'src/constants/call-recorder-prefere
 
 export type CallRecorderPolicyInput = {
   isCalendarBotSchedulingEnabled: boolean;
+  isRecordingRequestedByAttendee: boolean;
   callRecorderPreference: CallRecorderPreference | undefined;
   isCanceled: boolean;
   startsAt: string | undefined;

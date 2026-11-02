@@ -15,6 +15,7 @@ import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
+import { fetchOptedInWorkspaceMemberIds } from 'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -56,8 +57,10 @@ const handler = async (
   }
 
   const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
+  const optedInWorkspaceMemberIds = await fetchOptedInWorkspaceMemberIds();
   const calendarEventIds = await resolveCalendarEventIdsToReconcile({
     client,
+    optedInWorkspaceMemberIds,
     changedCalendarEventIds: reconciliationPayload.calendarEventIds,
     echoCandidateCalendarEventIds:
       reconciliationPayload.echoCandidateCalendarEventIds,
@@ -76,6 +79,7 @@ const handler = async (
   const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
     client,
     calendarEventIds,
+    optedInWorkspaceMemberIds,
     removedOccurrences: reconciliationPayload.removedOccurrences,
   });
 
@@ -89,18 +93,21 @@ const handler = async (
 
 const resolveCalendarEventIdsToReconcile = async ({
   client,
+  optedInWorkspaceMemberIds,
   changedCalendarEventIds,
   echoCandidateCalendarEventIds,
 }: {
   client: CoreApiClient;
+  optedInWorkspaceMemberIds: Set<string>;
   changedCalendarEventIds: string[];
   echoCandidateCalendarEventIds: string[];
 }): Promise<string[]> => {
   const calendarEventIdsWithRecordingOnAlreadyHonored =
-    await findCalendarEventIdsWithRecordingOnAlreadyHonored(
+    await findCalendarEventIdsWithRecordingOnAlreadyHonored({
       client,
-      echoCandidateCalendarEventIds,
-    );
+      optedInWorkspaceMemberIds,
+      calendarEventIds: echoCandidateCalendarEventIds,
+    });
 
   return getUniqueSortedIds([
     ...changedCalendarEventIds,
@@ -113,15 +120,26 @@ const resolveCalendarEventIdsToReconcile = async ({
   ]);
 };
 
-const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<string[]> => {
+const findCalendarEventIdsWithRecordingOnAlreadyHonored = async ({
+  client,
+  optedInWorkspaceMemberIds,
+  calendarEventIds,
+}: {
+  client: CoreApiClient;
+  optedInWorkspaceMemberIds: Set<string>;
+  calendarEventIds: string[];
+}): Promise<string[]> => {
   const now = new Date();
   const requestingCalendarEvents = (
     await fetchCalendarEventsByIds(client, calendarEventIds)
   )
-    .map((calendarEvent) => buildCallRecorderPolicyResult(calendarEvent, now))
+    .map((calendarEvent) =>
+      buildCallRecorderPolicyResult({
+        calendarEvent,
+        optedInWorkspaceMemberIds,
+        now,
+      }),
+    )
     .filter((policyResult) => policyResult.shouldRequestBot)
     .map((policyResult) => ({
       calendarEventId: policyResult.calendarEventId,

@@ -2,6 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { fetchOptedInWorkspaceMemberIds } from 'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util';
 import { countReconciliationActions } from 'src/logic-functions/domain/count-reconciliation-actions.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
@@ -32,6 +33,7 @@ export const reconcileUpcomingCalendarEventsHandler = async (
       await reconcileCallRecorderForCalendarEventIds({
         client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
         calendarEventIds,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
       });
 
     return {

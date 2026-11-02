@@ -27,6 +27,7 @@ import {
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { fetchOptedInWorkspaceMemberIds } from 'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util';
 import { followUpCallRecordingRequestHandler } from 'src/logic-functions/follow-up-call-recording-request';
 import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/process-pending-call-recording-requests';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
@@ -1186,6 +1187,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
     const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
       client: reconciliationClient,
+      optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
       calendarEventIds: [calendarEventId],
     });
 
@@ -1886,6 +1888,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -2110,6 +2113,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
       const [callRecording] = await findCallRecordings({
@@ -2137,6 +2141,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -2442,6 +2447,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
       return reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
     };
@@ -2496,6 +2502,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await expect(
         reconcileCallRecorderForCalendarEventIds({
           client,
+          optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
           calendarEventIds: [calendarEventId, activeCalendarEventId],
         }),
       ).rejects.toThrow();
@@ -3263,6 +3270,7 @@ describe('call recorder app lifecycle (integration)', () => {
       recall.failBotCreation = true;
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3299,6 +3307,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
         client: new CoreApiClient(),
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3734,6 +3743,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3756,6 +3766,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3774,6 +3785,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3823,6 +3835,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventIds[0]],
       });
 
@@ -3853,6 +3866,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3873,6 +3887,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const results = await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3894,6 +3909,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3917,6 +3933,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [echoedCalendarEventId],
       });
 
@@ -3966,6 +3983,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds,
       });
 
@@ -4131,6 +4149,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4153,6 +4172,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4281,6 +4301,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4302,6 +4323,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await syncCalendarBotSchedulingHandler();
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4316,6 +4338,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await syncCalendarBotSchedulingHandler();
       await reconcileCallRecorderForCalendarEventIds({
         client,
+        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
         calendarEventIds: [calendarEventId],
       });
 
