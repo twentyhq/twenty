@@ -87,7 +87,7 @@ export class AgentChatSubscriptionResolver {
     await authorize();
 
     const filterVisibleEvent =
-      await this.conversationAccessService.createLiveEventFilter({
+      this.conversationAccessService.createLiveEventFilter({
         workspaceId: workspace.id,
         threadId,
         workspaceMemberId,

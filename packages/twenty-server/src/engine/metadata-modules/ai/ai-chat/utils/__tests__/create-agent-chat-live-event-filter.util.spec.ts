@@ -10,7 +10,7 @@ const toChunkEvent = (
 
 describe('createAgentChatLiveEventFilter', () => {
   it('shows only the text of a reply streamed for another member', async () => {
-    const filterVisibleEvent = await createAgentChatLiveEventFilter({
+    const filterVisibleEvent = createAgentChatLiveEventFilter({
       isStreamingTurnHidden: async () => true,
     });
     const textChunk = toChunkEvent({
@@ -38,7 +38,7 @@ describe('createAgentChatLiveEventFilter', () => {
     const isStreamingTurnHidden = jest
       .fn<Promise<boolean>, []>()
       .mockResolvedValue(false);
-    const filterVisibleEvent = await createAgentChatLiveEventFilter({
+    const filterVisibleEvent = createAgentChatLiveEventFilter({
       isStreamingTurnHidden,
     });
     const reasoningChunk = toChunkEvent({
@@ -47,6 +47,7 @@ describe('createAgentChatLiveEventFilter', () => {
       delta: 'Their notes',
     });
 
+    expect(isStreamingTurnHidden).not.toHaveBeenCalled();
     expect(await filterVisibleEvent(reasoningChunk)).toEqual(reasoningChunk);
 
     isStreamingTurnHidden.mockResolvedValue(true);
