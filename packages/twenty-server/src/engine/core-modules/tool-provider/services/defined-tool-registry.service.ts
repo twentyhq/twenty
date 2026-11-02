@@ -23,8 +23,9 @@ import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principa
 import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
-// Tools are built for agents, and an agent's own role already narrows what its
-// caller is granted, so being an agent never closes a tool on its own
+// withAgent only keeps agent-bound tokens out of HTTP endpoints. A tool is reached once
+// that is settled (through MCP, which admits them, or an in-process agent run), so the
+// endpoint policies tools share must not refuse it again; the agent's role still applies
 const withoutAgent = (
   authPrincipalVariant: AuthPrincipalVariant | undefined,
 ): AuthPrincipalVariant | undefined =>
