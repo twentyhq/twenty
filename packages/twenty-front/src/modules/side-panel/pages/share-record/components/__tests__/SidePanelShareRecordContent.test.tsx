@@ -8,7 +8,6 @@ import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
-  RecordSharingMode,
   type RecordSharingFieldsFragment,
 } from '~/generated-metadata/graphql';
 
@@ -21,7 +20,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const setGeneralAccess = jest.fn();
+const setPrivate = jest.fn();
 const setShare = jest.fn();
 const removeShare = jest.fn();
 const refetch = jest.fn();
@@ -34,7 +33,8 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 type Share = RecordSharingFieldsFragment['shares'][number];
 
 const sharing: RecordSharingFieldsFragment = {
-  sharingMode: RecordSharingMode.PRIVATE,
+  isShareable: true,
+  isPrivate: true,
   canManageSharing: true,
   permissions: {
     canRead: true,
@@ -43,8 +43,6 @@ const sharing: RecordSharingFieldsFragment = {
     canSoftDelete: true,
     __typename: 'RecordPermissionsDTO',
   },
-  generalAccessLevel: RecordShareAccessLevel.NONE,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
   roles: [
     {
@@ -93,7 +91,7 @@ const renderSharing = ({
       objectLabelPlural="Companies"
       sharingState={{
         sharing: { ...sharing, ...sharingOverrides },
-        setGeneralAccess,
+        setPrivate,
         setShare,
         removeShare,
         refetch,
@@ -207,7 +205,7 @@ describe('Share record side panel', () => {
   it('tells viewers of a record open by default who can change its access', async () => {
     renderSharing({
       sharingOverrides: {
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        isPrivate: false,
         canManageSharing: false,
         roles: [],
       },
@@ -224,10 +222,9 @@ describe('Share record side panel', () => {
   it('explains that records of an object without record sharing follow roles', async () => {
     renderSharing({
       sharingOverrides: {
-        sharingMode: RecordSharingMode.ROLE_ONLY,
+        isShareable: false,
         canManageSharing: false,
-        generalAccessLevel: null,
-        defaultGeneralAccessLevel: null,
+        isPrivate: false,
         roles: [],
       },
     });

@@ -110,6 +110,7 @@ export default defineWorkflow({
 * تأخذ معاملات عامل التصفية قيم `ViewFilterOperand`، المُصدَّرة بواسطة `twenty-sdk/define`. تأخذ عوامل مجموعات التصفية قيماً نصية مثل `'AND'` أو `'OR'`.
 * تسمي حقول النموذج من النوع `RECORD` كائنها باستخدام `settings.objectUniversalIdentifier`. توفّر الحقول من النوعين `SELECT` و`MULTI_SELECT` خيارات حقل موجود من النوع نفسه، تمت تسميته باستخدام `settings.selectedFieldUniversalIdentifier`.
 * لتشغيل التعليمات البرمجية الخاصة بك، استخدم خطوة `LOGIC_FUNCTION`. خطوة التعليمات البرمجية في المنشئ غير متاحة.
+* تشغّل خطوات `AI_AGENT` أحد وكلاء تطبيقك، المُسمّى باستخدام `agentUniversalIdentifier`، وتستخدم إعدادات خطوة أداة الإنشاء التالية: `prompt` و`responseFormat` و`humanInputInstructions` و`conversation` و`workspaceMemberId` للعضو الذي تجري محادثة الوكيل معه.
 * لا تعمل خطوات البريد الإلكتروني والتقويم إلا إذا كان دور تطبيقك يتضمن علامة الإذن المطابقة: `SystemPermissionFlag.SEND_EMAIL_TOOL` لـ `SEND_EMAIL` و`DRAFT_EMAIL`، و`SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` لـ `CREATE_CALENDAR_EVENT`. تمنحها مساحة العمل عند تثبيت التطبيق، ويمكن للخطوة بعد ذلك استخدام أي حساب متصل في مساحة العمل، مثل سير عمل تم إنشاؤه في التطبيق.
 * معرّفات الحسابات المتصلة محلية لكل مساحة عمل، لذا لا تضمّن أحدها بصورة ثابتة. سمِّ الحساب بإحدى الطريقتين التاليتين:
 

@@ -1,15 +1,9 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import {
   type ObjectPermissionAction,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -29,9 +23,6 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isAuditLogged?: boolean;
   isUIEditable?: boolean;
   isUICreatable?: boolean;
-  writability?: MetadataWritability;
-  readability?: MetadataReadability;
-  readabilityParentFieldMetadataNames?: AllStandardObjectFieldName<O>[];
   disabledObjectPermissionActions?: ObjectPermissionAction[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
@@ -78,9 +69,6 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged = true,
     isUIEditable = true,
     isUICreatable = true,
-    writability = MetadataWritability.OPEN,
-    readability = MetadataReadability.OPEN,
-    readabilityParentFieldMetadataNames,
     disabledObjectPermissionActions,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
@@ -107,18 +95,6 @@ export const createStandardObjectFlatMetadata = <
         })
       : null;
 
-  const readabilityParentFieldUniversalIdentifiers = isDefined(
-    readabilityParentFieldMetadataNames,
-  )
-    ? readabilityParentFieldMetadataNames.map(
-        (readabilityParentFieldMetadataName) =>
-          getStandardFieldUniversalIdentifier({
-            objectName: nameSingular,
-            fieldName: readabilityParentFieldMetadataName,
-          }),
-      )
-    : null;
-
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -137,11 +113,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged,
     isUIEditable,
     isUICreatable,
-    writability,
-    readability,
-    readabilityParentFieldUniversalIdentifiers,
     disabledObjectPermissionActions: disabledObjectPermissionActions ?? null,
-    sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

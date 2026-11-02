@@ -492,6 +492,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
   universalIdentifier: Scalars['String']['output'];
@@ -730,6 +731,7 @@ export type ApplicationPreferences = {
   __typename?: 'ApplicationPreferences';
   applicationId: Scalars['UUID']['output'];
   connectionProviders: Array<ApplicationConnectionProvider>;
+  hasUserHealthCheck: Scalars['Boolean']['output'];
   settingsMenuItems: Array<SettingsMenuItem>;
   variables: Array<UserApplicationVariableValue>;
 };
@@ -2489,7 +2491,6 @@ export type Field = {
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability?: Maybe<MetadataWritability>;
 };
 
 export type FieldConfiguration = {
@@ -3334,14 +3335,6 @@ export enum MetadataEventAction {
   UPDATED = 'UPDATED'
 }
 
-export enum MetadataReadability {
-  APPLICATION = 'APPLICATION',
-  INHERITED = 'INHERITED',
-  OPEN = 'OPEN',
-  PRIVATE = 'PRIVATE',
-  SYSTEM = 'SYSTEM'
-}
-
 export type MetadataTranslation = {
   __typename?: 'MetadataTranslation';
   canonicalValue: Scalars['String']['output'];
@@ -3373,12 +3366,6 @@ export type MetadataTranslationsInput = {
   locale?: InputMaybe<Scalars['String']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };
-
-export enum MetadataWritability {
-  APPLICATION = 'APPLICATION',
-  OPEN = 'OPEN',
-  SYSTEM = 'SYSTEM'
-}
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
@@ -3605,6 +3592,7 @@ export type Mutation = {
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
+  runMyApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendAppChannelMessage: SendAppChannelMessageOutput;
   sendChatMessage: SendChatMessageResult;
@@ -3615,7 +3603,7 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
-  setRecordGeneralAccess: RecordSharingDto;
+  setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -4622,6 +4610,11 @@ export type MutationRunApplicationHealthCheckArgs = {
 };
 
 
+export type MutationRunMyApplicationHealthCheckArgs = {
+  applicationId: Scalars['UUID']['input'];
+};
+
+
 export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String']['input'];
@@ -4683,8 +4676,8 @@ export type MutationSetEnterpriseKeyArgs = {
 };
 
 
-export type MutationSetRecordGeneralAccessArgs = {
-  accessLevel: RecordShareAccessLevel;
+export type MutationSetRecordPrivateArgs = {
+  isPrivate: Scalars['Boolean']['input'];
   target: RecordTargetInput;
 };
 
@@ -5285,14 +5278,10 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
-  readability: MetadataReadability;
-  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
-  sharingReach: ObjectSharingReach;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability: MetadataWritability;
 };
 
 
@@ -5426,11 +5415,6 @@ export enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
   WEEK = 'WEEK',
   YEAR = 'YEAR'
-}
-
-export enum ObjectSharingReach {
-  ROLE_ACCESS = 'ROLE_ACCESS',
-  WORKSPACE = 'WORKSPACE'
 }
 
 /** Onboarding status */
@@ -6520,13 +6504,12 @@ export enum RecordShareRowCause {
 export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
   canManageSharing: Scalars['Boolean']['output'];
-  defaultGeneralAccessLevel?: Maybe<RecordShareAccessLevel>;
-  generalAccessLevel?: Maybe<RecordShareAccessLevel>;
   hasManagedGeneralAccess: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
+  isShareable: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;
-  sharingMode: RecordSharingMode;
 };
 
 export type RecordSharingGrantDto = {
@@ -6538,14 +6521,6 @@ export type RecordSharingGrantDto = {
   principalType: RecordSharePrincipalType;
   rowCause: RecordShareRowCause;
 };
-
-/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
-export enum RecordSharingMode {
-  INHERITED = 'INHERITED',
-  OPEN_BY_DEFAULT = 'OPEN_BY_DEFAULT',
-  PRIVATE = 'PRIVATE',
-  ROLE_ONLY = 'ROLE_ONLY'
-}
 
 export type RecordSharingRoleDto = {
   __typename?: 'RecordSharingRoleDTO';
@@ -7497,8 +7472,6 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
-  readability?: InputMaybe<MetadataReadability>;
-  sharingReach?: InputMaybe<ObjectSharingReach>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };

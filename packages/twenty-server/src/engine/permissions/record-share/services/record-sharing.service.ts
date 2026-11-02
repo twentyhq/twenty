@@ -2,8 +2,6 @@ import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/uti
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -13,29 +11,24 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { GENERAL_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/permissions/record-share/constants/general-record-share-access-levels.constant';
 import {
   type RecordSharePrincipalInput,
   type RecordSharingDTO,
   type RecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import {
-  RecordShareException,
-  RecordShareExceptionCode,
-} from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
-import { resolveRecordGeneralAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-record-general-access-level.util';
 import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
-import { resolveRecordSharingMode } from 'src/engine/permissions/record-share/utils/resolve-record-sharing-mode.util';
+import { assertPrivateRecordEnabledOrThrow } from 'src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util';
+import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -91,21 +84,11 @@ export class RecordSharingService {
     return this.buildSharingResponse({ args, sharingObject, permissions });
   }
 
-  // On a record open by default, the default level means following the
-  // object again, so no row is kept for it
-  async setGeneralAccess(
-    args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel },
+  async setPrivate(
+    args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
-    if (!GENERAL_RECORD_SHARE_ACCESS_LEVELS.includes(args.accessLevel)) {
-      throw new RecordShareException(
-        `General access level "${args.accessLevel}" must be one of ${GENERAL_RECORD_SHARE_ACCESS_LEVELS.join(', ')}`,
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        { userFriendlyMessage: msg`Invalid access level.` },
-      );
-    }
-
     return this.changeSharing(args, (change) =>
-      this.writeGeneralAccess({ ...change, args }),
+      this.writeRecordPrivacy({ ...change, args }),
     );
   }
 
@@ -248,11 +231,10 @@ export class RecordSharingService {
     // A writer may revoke their own access; the mutation must still succeed with a redacted state.
     if (!permissions.canRead) {
       return {
-        sharingMode: resolveRecordSharingMode(sharingObject),
+        isShareable: sharingObject.isShareable,
+        isPrivate: false,
         canManageSharing: false,
         permissions,
-        generalAccessLevel: null,
-        defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
         hasManagedGeneralAccess: false,
         roles: [],
         shares: [],
@@ -262,50 +244,25 @@ export class RecordSharingService {
     return this.buildSharingResponse({ args, sharingObject, permissions });
   }
 
-  private async writeGeneralAccess({
+  private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingObject: {
-      flatObjectMetadata,
-      isShareRequired,
-      isPrivateByDefault,
-      defaultGeneralAccessLevel,
-    },
+    sharingObject: { flatObjectMetadata },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
-    args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel };
+    args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
-    if (isShareRequired) {
-      await this.recordShareStorageService.setManualShare({
-        workspaceId,
-        transactionScope,
-        enabled: args.accessLevel !== defaultGeneralAccessLevel,
-        share: {
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: args.accessLevel,
-          objectMetadataId: args.objectMetadataId,
-          recordId: args.recordId,
-          sourceId: args.recordId,
-        },
-      });
+    const { isPrivate } = args;
+    const { featureFlagsMap, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+        'flatFieldMetadataMaps',
+      ]);
 
-      return;
+    if (isPrivate) {
+      assertPrivateRecordEnabledOrThrow(featureFlagsMap);
     }
-
-    if (
-      args.accessLevel === RecordShareAccessLevel.READ ||
-      (isPrivateByDefault && args.accessLevel !== RecordShareAccessLevel.NONE)
-    ) {
-      throw new RecordShareException(
-        'A record is either private or follows the roles of its object',
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        { userFriendlyMessage: msg`Invalid access level.` },
-      );
-    }
-
-    const isPrivate = args.accessLevel === RecordShareAccessLevel.NONE;
 
     await this.privateRecordStorageService.setPrivate({
       workspaceId,
@@ -317,6 +274,10 @@ export class RecordSharingService {
 
     // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
+      if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
+        return;
+      }
+
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
@@ -376,8 +337,9 @@ export class RecordSharingService {
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadata } = sharingObject;
-    const { shares, viewerAccessLevel, generalAccessLevel } =
-      await this.getRecordShares({ ...args, sharingObject });
+    const { shares, viewerAccessLevel, isPrivate } = await this.getRecordShares(
+      { ...args, sharingObject },
+    );
     const canManageSharing =
       sharingObject.isShareable &&
       permissions.canUpdate &&
@@ -393,11 +355,10 @@ export class RecordSharingService {
     );
 
     return {
-      sharingMode: resolveRecordSharingMode(sharingObject),
+      isShareable: sharingObject.isShareable,
+      isPrivate,
       canManageSharing,
       permissions,
-      generalAccessLevel,
-      defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
       hasManagedGeneralAccess: shares.some(
         (share) =>
           share.principalType === RecordSharePrincipalType.EVERYONE &&
@@ -500,13 +461,7 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const {
-      flatObjectMetadata,
-      isShareable,
-      isShareRequired,
-      defaultGeneralAccessLevel,
-    } = sharingObject;
-    const canBePrivate = isShareable && !isShareRequired;
+    const { flatObjectMetadata, isShareable } = sharingObject;
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -538,29 +493,22 @@ export class RecordSharingService {
       recordIds: [recordId],
       transactionScope,
     });
-    const privateRecordState = canBePrivate
-      ? await this.findPrivateRecordState({
-          workspaceId,
-          flatObjectMetadata,
-          recordId,
-          transactionScope,
-        })
-      : undefined;
+    const privateRecordState = await this.findPrivateRecordState({
+      workspaceId,
+      flatObjectMetadata,
+      recordId,
+      transactionScope,
+    });
 
     const isPrivate = privateRecordState?.isPrivate ?? false;
     const creatorWorkspaceMemberId =
       privateRecordState?.createdByWorkspaceMemberId ?? undefined;
-    const generalAccessLevel = resolveRecordGeneralAccessLevel({
-      defaultGeneralAccessLevel,
-      recordShares: shares,
-      isPrivate,
-    });
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
       principalIds,
-      implicitAccessLevels: canBePrivate
+      implicitAccessLevels: isShareable
         ? [
-            generalAccessLevel,
+            isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
             creatorWorkspaceMemberId === authContext.workspaceMemberId ||
             (canAccessAllRecords && !isPrivate)
               ? RecordShareAccessLevel.FULL
@@ -572,7 +520,7 @@ export class RecordSharingService {
     return {
       shares,
       viewerAccessLevel,
-      generalAccessLevel,
+      isPrivate,
       creatorWorkspaceMemberId,
     };
   }
