@@ -58,7 +58,7 @@ export class ApplicationRegistrationSeedingService {
       ) {
         throw new ApplicationRegistrationException(
           `The ${values.name} application registration is taken by another owner`,
-          ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+          ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN,
         );
       }
 

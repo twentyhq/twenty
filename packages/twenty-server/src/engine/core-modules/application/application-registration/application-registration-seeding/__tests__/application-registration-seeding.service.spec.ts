@@ -94,7 +94,7 @@ describe('ApplicationRegistrationSeedingService', () => {
       await expect(
         service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
       ).rejects.toMatchObject({
-        code: ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+        code: ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN,
       });
       expect(insertedValues).not.toHaveBeenCalled();
     },
