@@ -47,10 +47,13 @@ export class AgentChatDirectMessageIdentityService {
       workspaceId,
     );
 
-    const existingThreadId = await this.findThreadId({ workspaceId, pair });
+    const existingThread = await this.threadRepository.findOne(workspaceId, {
+      where: pair,
+      select: ['id'],
+    });
 
-    if (isDefined(existingThreadId)) {
-      return existingThreadId;
+    if (isDefined(existingThread)) {
+      return existingThread.id;
     }
 
     const { flatWorkspaceMemberMaps, flatObjectMetadataMaps } =
@@ -103,11 +106,16 @@ export class AgentChatDirectMessageIdentityService {
         { lite: true },
       );
 
-    return (
-      createdThreadId ??
-      (await this.findThreadId({ workspaceId, pair })) ??
-      throwAgentChatThreadNotFound()
-    );
+    if (isDefined(createdThreadId)) {
+      return createdThreadId;
+    }
+
+    const concurrentThread = await this.threadRepository.findOne(workspaceId, {
+      where: pair,
+      select: ['id'],
+    });
+
+    return concurrentThread?.id ?? throwAgentChatThreadNotFound();
   }
 
   private async assertDirectMessageIdentityFeatureFlagEnabledOrThrow(
@@ -128,21 +136,6 @@ export class AgentChatDirectMessageIdentityService {
         AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
       );
     }
-  }
-
-  private async findThreadId({
-    workspaceId,
-    pair,
-  }: {
-    workspaceId: string;
-    pair: DirectMessagePair;
-  }): Promise<string | undefined> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: pair,
-      select: ['id'],
-    });
-
-    return thread?.id;
   }
 
   private assertMembersAvailableOrThrow({
