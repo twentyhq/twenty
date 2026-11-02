@@ -302,7 +302,7 @@ describe('AgentConversationReaderService', () => {
       'tool-find_companies',
       'text',
     ]);
-    expect(memberMessages.map(getPartTypes)[2]).toEqual([
+    expect(memberMessages.map(getPartTypes)[1]).toEqual([
       'tool-find_companies',
       'text',
     ]);

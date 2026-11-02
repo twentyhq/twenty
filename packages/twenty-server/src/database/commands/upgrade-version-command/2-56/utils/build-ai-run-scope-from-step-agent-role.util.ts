@@ -47,7 +47,7 @@ const toScopeFieldPermission = ({
   ...(isDefined(canUpdateFieldValue) ? { canUpdateFieldValue } : {}),
 });
 
-// all-records flags stay out: tools only reached the objects the role granted row by row
+// all-records flags stay out: before 2.56, a step agent's tools only reached the objects its role granted row by row
 export const buildAiRunScopeFromStepAgentRole = (
   role: Pick<
     RolePermissionGrants,

@@ -423,7 +423,8 @@ const { success, text, error } = await ai.generate({
 });
 ```
 
-- `input` is a string, or a list of `{ role, content }` messages.
+- `input` is a string, or a list of `{ role: 'user' | 'assistant', content }`
+  messages.
 - `instructions` (optional) adds the caller's system instructions.
 - `modelId` (optional) picks the model. Without it, the call uses the
   workspace's default model.

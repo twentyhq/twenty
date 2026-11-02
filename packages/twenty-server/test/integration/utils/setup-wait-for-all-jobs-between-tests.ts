@@ -16,6 +16,9 @@ afterEach(async () => {
 
 // runs after each file's own afterAll, so jobs its cleanup started finish before the app shuts down
 afterAll(async () => {
-  await waitForAllJobsToFinish();
-  await closeQueueConnections();
+  try {
+    await waitForAllJobsToFinish();
+  } finally {
+    await closeQueueConnections();
+  }
 }, WAIT_FOR_JOBS_HOOK_TIMEOUT_MS);

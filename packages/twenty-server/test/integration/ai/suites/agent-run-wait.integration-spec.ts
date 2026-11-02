@@ -737,9 +737,13 @@ describe('agent runs that wait (integration)', () => {
         ([jobName]) => jobName === RUN_AGENT_JOB_NAME,
       );
 
-      await getAppProviderByClassName<RedisClientService>('RedisClientService')
-        .getClient()
-        .del(`agent-run-settled:${runId}`);
+      expect(
+        await getAppProviderByClassName<RedisClientService>(
+          'RedisClientService',
+        )
+          .getClient()
+          .del(`agent-run-settled:${runId}`),
+      ).toBe(1);
 
       await aiQueue.add(RUN_AGENT_JOB_NAME, runJobData, runJobOptions);
 
