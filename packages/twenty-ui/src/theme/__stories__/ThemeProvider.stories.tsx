@@ -144,7 +144,7 @@ export const UnresolvedTokens: Story = {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByLabelText('Medium icon size').textContent).toBe(
-      '16',
+      String(THEME_LIGHT.icon.size.md),
     );
     await expect(canvas.getByLabelText('Primary font color')).toHaveTextContent(
       JSON.stringify(themeCssVariables.font.color.primary),
@@ -155,16 +155,19 @@ export const UnresolvedTokens: Story = {
 export const NumericTokens: Story = {
   args: {
     applyToRoot: false,
-    overrides: { '--t-icon-size-md': '16', '--t-icon-size-sm': 'initial' },
+    overrides: {
+      '--t-icon-size-md': String(THEME_LIGHT.icon.size.md),
+      '--t-icon-size-sm': 'initial',
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByLabelText('Medium icon size').textContent).toBe(
-      '16',
+      String(THEME_LIGHT.icon.size.md),
     );
     await expect(canvas.getByLabelText('Small icon size').textContent).toBe(
-      '14',
+      String(THEME_LIGHT.icon.size.sm),
     );
   },
 };

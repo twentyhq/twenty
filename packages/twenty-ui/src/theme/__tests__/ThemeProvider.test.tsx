@@ -27,9 +27,12 @@ const ThemeSizedIcon = () => {
 const expectNumericIconWithHostColor = () => {
   const icon = screen.getByRole('img', { name: 'Info' });
 
-  expect(icon).toHaveAttribute('width', '16');
-  expect(icon).toHaveAttribute('height', '16');
-  expect(icon).toHaveAttribute('stroke-width', '1.6');
+  expect(icon).toHaveAttribute('width', String(THEME_LIGHT.icon.size.md));
+  expect(icon).toHaveAttribute('height', String(THEME_LIGHT.icon.size.md));
+  expect(icon).toHaveAttribute(
+    'stroke-width',
+    String(THEME_LIGHT.icon.stroke.sm),
+  );
   expect(screen.getByLabelText('Font color')).toHaveTextContent(
     themeCssVariables.font.color.primary,
   );

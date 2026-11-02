@@ -3,6 +3,7 @@ import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { themeCssVariables } from '../themeCssVariables';
 import { type ThemeType } from '../themeTypes';
 import { THEME_NUMERIC_VALUE_BY_CSS_VARIABLE } from './ThemeNumericValueByCssVariable';
+import { type ThemeTokenTree } from './ThemeTokenTree';
 
 const resolveTokenValue = ({
   cssVariableName,
@@ -25,13 +26,14 @@ const resolveTokenValue = ({
   return Number.isNaN(numericValue) ? computedValue : numericValue;
 };
 
-export const resolveThemeTokens = (
+export function resolveThemeTokens(
   readCssVariable?: (cssVariableName: string) => string,
-): ThemeType => {
-  const resolve = (
-    tokens: Record<string, unknown>,
-  ): Record<string, unknown> => {
-    const result: Record<string, unknown> = {};
+): ThemeType;
+export function resolveThemeTokens(
+  readCssVariable?: (cssVariableName: string) => string,
+): ThemeTokenTree {
+  const resolve = (tokens: ThemeTokenTree): ThemeTokenTree => {
+    const result: ThemeTokenTree = {};
 
     for (const [key, value] of Object.entries(tokens)) {
       if (isString(value) && value.startsWith('var(')) {
@@ -45,15 +47,11 @@ export const resolveThemeTokens = (
         continue;
       }
 
-      result[key] = isObject(value)
-        ? resolve(value as Record<string, unknown>)
-        : value;
+      result[key] = isObject(value) ? resolve(value) : value;
     }
 
     return result;
   };
 
-  return resolve(
-    themeCssVariables as unknown as Record<string, unknown>,
-  ) as unknown as ThemeType;
-};
+  return resolve(themeCssVariables);
+}
