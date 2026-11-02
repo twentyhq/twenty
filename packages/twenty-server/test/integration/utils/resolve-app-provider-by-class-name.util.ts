@@ -1,9 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type ContainerModule = { providers: Map<unknown, unknown> };
 
 export const resolveAppProviderByClassName = async <T>(
   className: string,
 ): Promise<T> => {
-  if (!global.app) {
+  if (!isDefined(global.app)) {
     throw new Error(
       'global.app is not set: integration test globalSetup has not run',
     );
