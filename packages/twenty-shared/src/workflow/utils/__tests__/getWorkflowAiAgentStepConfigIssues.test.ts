@@ -4,38 +4,24 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
   it('accepts a step running an agent with only a conversation', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'agent',
-        input: {
-          humanInputInstructions: 'Ask before choosing a plan.',
-          conversation: { scope: 'RUN' },
-        },
+        agentId: 'agent-id',
+        humanInputInstructions: 'Ask before choosing a plan.',
+        conversation: { scope: 'RUN' },
       }),
     ).toEqual([]);
   });
 
   it('refuses a step running an agent with its own config', () => {
     expect(
-      getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'agent',
-        input: { scope: {} },
-      }),
+      getWorkflowAiAgentStepConfigIssues({ agentId: 'agent-id', scope: {} }),
     ).toEqual(['AGENT_STEP_HAS_INLINE_CONFIG']);
   });
 
-  it('accepts a response format on a step running a reusable agent', () => {
+  it('accepts a response format on a step running an agent', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'agent',
-        input: { responseFormat: { type: 'text' } },
-      }),
-    ).toEqual([]);
-  });
-
-  it('accepts a response format on a step running its own hidden agent', () => {
-    expect(
-      getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'stepOwnedAgent',
-        input: { responseFormat: { type: 'text' } },
+        agentId: 'agent-id',
+        responseFormat: { type: 'text' },
       }),
     ).toEqual([]);
   });
@@ -43,8 +29,8 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
   it('refuses a step without an agent that keeps a conversation', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'generate',
-        input: { instructions: 'Qualify', conversation: { scope: 'RUN' } },
+        instructions: 'Qualify',
+        conversation: { scope: 'RUN' },
       }),
     ).toEqual(['GENERATE_STEP_HAS_CONVERSATION_CONFIG']);
   });
@@ -52,8 +38,8 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
   it('ignores blank human input instructions on a step without an agent', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'generate',
-        input: { instructions: 'Qualify', humanInputInstructions: '  ' },
+        instructions: 'Qualify',
+        humanInputInstructions: '  ',
       }),
     ).toEqual([]);
   });
@@ -61,8 +47,9 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
   it('ignores blank instructions on a step running an agent', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
-        stepKind: 'agent',
-        input: { instructions: '  ', modelId: '' },
+        agentId: 'agent-id',
+        instructions: '  ',
+        modelId: '',
       }),
     ).toEqual([]);
   });
@@ -98,10 +85,7 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
     'refuses a step without an agent whose permissions repeat $repeated',
     ({ scope }) => {
       expect(
-        getWorkflowAiAgentStepConfigIssues({
-          stepKind: 'generate',
-          input: { instructions: 'Qualify', scope },
-        }),
+        getWorkflowAiAgentStepConfigIssues({ instructions: 'Qualify', scope }),
       ).toEqual(['GENERATE_STEP_SCOPE_HAS_REPEATED_ENTRIES']);
     },
   );
