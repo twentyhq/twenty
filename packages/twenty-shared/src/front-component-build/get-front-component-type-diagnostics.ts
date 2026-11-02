@@ -60,16 +60,17 @@ export const getFrontComponentTypeDiagnostics = ({
     writeFile: () => undefined,
   };
   const program = ts.createProgram([sourcePath, previewPath], options, host);
+  const typeChecker = program.getTypeChecker();
   const sourceFile = program.getSourceFile(sourcePath);
   const sourceSymbol = isDefined(sourceFile)
-    ? program.getTypeChecker().getSymbolAtLocation(sourceFile)
+    ? typeChecker.getSymbolAtLocation(sourceFile)
     : undefined;
-  const componentDeclaration = isDefined(sourceSymbol)
-    ? program
-        .getTypeChecker()
-        .getExportsOfModule(sourceSymbol)
-        .find((symbol) => symbol.name === 'Component')?.declarations?.[0]
-    : undefined;
+  const sourceExports = isDefined(sourceSymbol)
+    ? typeChecker.getExportsOfModule(sourceSymbol)
+    : [];
+  const componentDeclaration = sourceExports.find(
+    (symbol) => symbol.name === 'Component',
+  )?.declarations?.[0];
   const diagnostics = [
     ...program.getOptionsDiagnostics(),
     ...program.getGlobalDiagnostics(),
