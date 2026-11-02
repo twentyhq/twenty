@@ -153,4 +153,34 @@ describe('ApplicationAuthorizationService', () => {
       expect(applicationAuthorizationRepository.update).toHaveBeenCalled();
     });
   });
+
+  describe('backfillAndRevokeMemberAuthorizations', () => {
+    it('should lay down and revoke a row for only the given application id', async () => {
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: USER_WORKSPACE_ID,
+      });
+      applicationRepository.find.mockResolvedValue([{ id: SHARED_INSTALL_ID }]);
+
+      await service.backfillAndRevokeMemberAuthorizations({
+        userId: USER_ID,
+        workspaceId: WORKSPACE_ID,
+        applicationIds: [SHARED_INSTALL_ID],
+      });
+
+      expect(
+        wellKnownOAuthClientInstallService.findFoldedApplicationIds,
+      ).not.toHaveBeenCalled();
+      expect(insertedRows).toEqual([
+        expect.objectContaining({ applicationId: SHARED_INSTALL_ID }),
+      ]);
+      expect(applicationAuthorizationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          userId: USER_ID,
+          applicationId: In([SHARED_INSTALL_ID]),
+        }),
+        expect.objectContaining({ revokedAt: expect.any(Date) }),
+      );
+    });
+  });
 });

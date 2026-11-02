@@ -788,7 +788,7 @@ describe('OAuth well-known clients (integration)', () => {
       });
     });
 
-    // Deleting the row recreates a refresh token minted before the authorization table existed
+    // Deleting the row leaves a live refresh token with no authorization row behind it
     it('should revoke a member refresh token that predates the authorization record', async () => {
       const refreshToken = await connect({
         clientId: claudeClientId,
@@ -818,6 +818,39 @@ describe('OAuth well-known clients (integration)', () => {
       const [authorization] = await dataSource.query(
         `SELECT "revokedAt" FROM core."applicationAuthorization" WHERE "userId" = $1 AND "applicationId" = $2`,
         [USER_DATA_SEED_IDS.JONY, sharedInstall.id],
+      );
+
+      expect(authorization.revokedAt).not.toBeNull();
+    });
+
+    it('should revoke a member refresh token on an older Claude install that has no authorization record', async () => {
+      const { legacyClaudeClientId, legacyRefreshToken } =
+        await connectLegacyAndSharedClaudeMembers();
+      const [legacyInstall] = await findInstalls(legacyClaudeClientId);
+      const [sharedInstall] = await findInstalls(claudeClientId);
+
+      await dataSource.query(
+        `DELETE FROM core."applicationAuthorization" WHERE "userId" = $1 AND "applicationId" = $2`,
+        [USER_DATA_SEED_IDS.JONY, legacyInstall.id],
+      );
+
+      const response = await revokeMemberAccess({
+        applicationId: sharedInstall.id,
+        userId: USER_DATA_SEED_IDS.JONY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const refreshResponse = await refresh({
+        clientId: legacyClaudeClientId,
+        refreshToken: legacyRefreshToken,
+      }).expect(400);
+
+      expect(refreshResponse.body.error).toBe('invalid_grant');
+
+      const [authorization] = await dataSource.query(
+        `SELECT "revokedAt" FROM core."applicationAuthorization" WHERE "userId" = $1 AND "applicationId" = $2`,
+        [USER_DATA_SEED_IDS.JONY, legacyInstall.id],
       );
 
       expect(authorization.revokedAt).not.toBeNull();

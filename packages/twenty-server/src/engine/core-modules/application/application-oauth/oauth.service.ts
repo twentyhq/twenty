@@ -493,11 +493,13 @@ export class OAuthService {
         if (
           application?.applicationRegistrationId === applicationRegistration.id
         ) {
-          await this.revokeUserAuthorization({
-            userId: payload.userId,
-            workspaceId: payload.workspaceId,
-            applicationId: payload.applicationId,
-          });
+          await this.applicationAuthorizationService.backfillAndRevokeMemberAuthorizations(
+            {
+              userId: payload.userId,
+              workspaceId: payload.workspaceId,
+              applicationIds: [payload.applicationId],
+            },
+          );
         }
       }
 
@@ -723,39 +725,6 @@ export class OAuthService {
     );
 
     return null;
-  }
-
-  // Lays a row down first, or the refresh path would backfill a fresh active one for a pre-table token
-  private async revokeUserAuthorization({
-    userId,
-    workspaceId,
-    applicationId,
-  }: {
-    userId: string;
-    workspaceId: string;
-    applicationId: string;
-  }): Promise<void> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId, workspaceId },
-    });
-
-    if (isDefined(userWorkspace)) {
-      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
-        {
-          userId,
-          workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          applicationId,
-        },
-      );
-    }
-
-    await this.applicationAuthorizationService.revokeAuthorizationForApplication(
-      {
-        userId,
-        applicationId,
-      },
-    );
   }
 
   private async isRefreshTokenAuthorized({

@@ -179,63 +179,51 @@ export class ApplicationAuthorizationService {
         applicationId,
       });
 
-    await this.backfillMemberAuthorizations({
-      workspaceId,
+    return await this.backfillAndRevokeMemberAuthorizations({
       userId,
+      workspaceId,
       applicationIds,
     });
+  }
+
+  // Lays rows down first, or the refresh path would backfill a fresh active one for a pre-table token.
+  // Backfills only installs of the workspace, since the application ids can come from caller input.
+  async backfillAndRevokeMemberAuthorizations({
+    userId,
+    workspaceId,
+    applicationIds,
+  }: {
+    userId: string;
+    workspaceId: string;
+    applicationIds: string[];
+  }): Promise<boolean> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (isDefined(userWorkspace)) {
+      const installs = await this.applicationRepository.find(workspaceId, {
+        select: { id: true },
+        where: { id: In(applicationIds) },
+      });
+
+      await Promise.all(
+        installs.map((install) =>
+          this.backfillAuthorizationFromRefreshToken({
+            userId,
+            workspaceId,
+            userWorkspaceId: userWorkspace.id,
+            applicationId: install.id,
+          }),
+        ),
+      );
+    }
 
     return await this.revokeMatching({
       workspaceId,
       userId,
       applicationId: In(applicationIds),
     });
-  }
-
-  async revokeAuthorizationForApplication({
-    userId,
-    applicationId,
-  }: {
-    userId: string;
-    applicationId: string;
-  }): Promise<boolean> {
-    return await this.revokeMatching({ userId, applicationId });
-  }
-
-  // Lays rows down first, or the refresh path would backfill a fresh active one for a pre-table token.
-  // Only for installs of this workspace: the application id is caller input.
-  private async backfillMemberAuthorizations({
-    workspaceId,
-    userId,
-    applicationIds,
-  }: {
-    workspaceId: string;
-    userId: string;
-    applicationIds: string[];
-  }): Promise<void> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId, workspaceId },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return;
-    }
-
-    const installs = await this.applicationRepository.find(workspaceId, {
-      select: { id: true },
-      where: { id: In(applicationIds) },
-    });
-
-    await Promise.all(
-      installs.map((install) =>
-        this.backfillAuthorizationFromRefreshToken({
-          userId,
-          workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          applicationId: install.id,
-        }),
-      ),
-    );
   }
 
   private createActiveAuthorizationsQueryBuilder(workspaceId: string) {
@@ -269,8 +257,7 @@ export class ApplicationAuthorizationService {
           workspaceId: string;
           userId: string;
           applicationId: FindOperator<string>;
-        }
-      | { userId: string; applicationId: string },
+        },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(
       { ...criteria, revokedAt: IsNull() },
