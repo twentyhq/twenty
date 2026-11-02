@@ -1,10 +1,19 @@
+import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { buildRoleExplicitObjectGrants } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-role-explicit-object-grants.util';
+
+const ROLE_WITHOUT_ROLE_WIDE_GRANTS = {
+  id: 'agent-role-id',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+};
 
 describe('buildRoleExplicitObjectGrants', () => {
   it('keeps only the rows of the role, without null values', () => {
     expect(
       buildRoleExplicitObjectGrants({
-        roleId: 'agent-role-id',
+        role: ROLE_WITHOUT_ROLE_WIDE_GRANTS,
         flatObjectPermissionMaps: {
           byUniversalIdentifier: {
             'agent-person': {
@@ -27,6 +36,10 @@ describe('buildRoleExplicitObjectGrants', () => {
         },
       }),
     ).toEqual({
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
       objectPermissions: [
         {
           objectUniversalIdentifier: 'person',
@@ -36,6 +49,36 @@ describe('buildRoleExplicitObjectGrants', () => {
           canDestroyObjectRecords: undefined,
         },
       ],
+    });
+  });
+
+  it('hands an agent whose role reads every object tools to read each of them', () => {
+    const explicitPermissionByObjectId =
+      buildExplicitObjectPermissionByObjectId({
+        explicitObjectGrants: buildRoleExplicitObjectGrants({
+          role: {
+            ...ROLE_WITHOUT_ROLE_WIDE_GRANTS,
+            canReadAllObjectRecords: true,
+          },
+          flatObjectPermissionMaps: { byUniversalIdentifier: {} },
+        }),
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            person: { id: 'person-id', universalIdentifier: 'person' },
+            company: { id: 'company-id', universalIdentifier: 'company' },
+          } as never,
+        },
+      });
+
+    expect([...explicitPermissionByObjectId.keys()]).toEqual([
+      'person-id',
+      'company-id',
+    ]);
+    expect(explicitPermissionByObjectId.get('person-id')).toEqual({
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     });
   });
 });

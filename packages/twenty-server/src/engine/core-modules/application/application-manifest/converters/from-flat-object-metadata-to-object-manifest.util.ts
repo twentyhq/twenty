@@ -31,17 +31,12 @@ export const fromFlatObjectMetadataToObjectManifest = ({
   isSearchable: flatObjectMetadata.isSearchable,
   isUICreatable: flatObjectMetadata.isUICreatable,
   isUIEditable: flatObjectMetadata.isUIEditable,
-  writability: flatObjectMetadata.writability,
-  readability: flatObjectMetadata.readability,
-  readabilityParentFieldUniversalIdentifiers:
-    flatObjectMetadata.readabilityParentFieldUniversalIdentifiers,
   ...(isDefined(flatObjectMetadata.disabledObjectPermissionActions)
     ? {
         disabledObjectPermissionActions:
           flatObjectMetadata.disabledObjectPermissionActions,
       }
     : {}),
-  sharingReach: flatObjectMetadata.sharingReach,
   openRecordIn: flatObjectMetadata.openRecordIn,
   labelIdentifierFieldMetadataUniversalIdentifier,
   imageIdentifierFieldMetadataUniversalIdentifier:

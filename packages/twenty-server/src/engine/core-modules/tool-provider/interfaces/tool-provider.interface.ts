@@ -9,6 +9,9 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export interface ToolProvider {
   readonly category: ToolCategory;
 
+  // true only when every tool it serves authorizes with the caller's config, scope included
+  readonly canRunUnderScope: boolean;
+
   isAvailable(context: ToolProviderContext): Promise<boolean>;
 
   generateDescriptors(

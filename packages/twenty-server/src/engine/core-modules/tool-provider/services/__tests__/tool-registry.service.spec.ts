@@ -11,6 +11,7 @@ const workspaceId = 'workspace-id';
 
 const buildToolRegistryService = () => {
   const generateDescriptors = jest.fn().mockResolvedValue([]);
+  const generateWorkflowDescriptors = jest.fn().mockResolvedValue([]);
   const definedToolRegistryService = {
     getAvailableDescriptors: jest.fn().mockResolvedValue([]),
     findDefinedTool: jest.fn(),
@@ -20,8 +21,16 @@ const buildToolRegistryService = () => {
     [
       {
         category: ToolCategory.DATABASE_CRUD,
+        canRunUnderScope: true,
         isAvailable: jest.fn().mockResolvedValue(true),
         generateDescriptors,
+        executeStaticTool: jest.fn(),
+      },
+      {
+        category: ToolCategory.WORKFLOW,
+        canRunUnderScope: false,
+        isAvailable: jest.fn().mockResolvedValue(true),
+        generateDescriptors: generateWorkflowDescriptors,
         executeStaticTool: jest.fn(),
       },
     ],
@@ -31,7 +40,11 @@ const buildToolRegistryService = () => {
     {} as ExceptionHandlerService,
   );
 
-  return { toolRegistryService, generateDescriptors };
+  return {
+    toolRegistryService,
+    generateDescriptors,
+    generateWorkflowDescriptors,
+  };
 };
 
 describe('ToolRegistryService', () => {
@@ -61,6 +74,43 @@ describe('ToolRegistryService', () => {
         }),
         expect.anything(),
       );
+    });
+  });
+
+  describe('getCatalog under a permission scope', () => {
+    const memberRolePermissionConfig = {
+      intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
+    };
+
+    it('should consult every provider for a caller without a scope', async () => {
+      const { toolRegistryService, generateWorkflowDescriptors } =
+        buildToolRegistryService();
+
+      await toolRegistryService.getCatalog({
+        workspaceId,
+        rolePermissionConfig: memberRolePermissionConfig,
+      });
+
+      expect(generateWorkflowDescriptors).toHaveBeenCalled();
+    });
+
+    it('should skip the providers that do not honour the scope of the caller', async () => {
+      const {
+        toolRegistryService,
+        generateDescriptors,
+        generateWorkflowDescriptors,
+      } = buildToolRegistryService();
+
+      await toolRegistryService.getCatalog({
+        workspaceId,
+        rolePermissionConfig: {
+          ...memberRolePermissionConfig,
+          scope: { objectsPermissions: {}, permissionFlags: {} },
+        },
+      });
+
+      expect(generateDescriptors).toHaveBeenCalled();
+      expect(generateWorkflowDescriptors).not.toHaveBeenCalled();
     });
   });
 });

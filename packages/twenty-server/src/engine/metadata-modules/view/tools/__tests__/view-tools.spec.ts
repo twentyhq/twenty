@@ -5,6 +5,7 @@ import {
   FieldMetadataType,
   OrderByDirection,
   ViewCalendarLayout,
+  ViewSortDirection,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -15,6 +16,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { CreateManyViewSortsTool } from 'src/engine/metadata-modules/view-sort/tools/create-many-view-sorts.tool';
+import { UpdateViewSortTool } from 'src/engine/metadata-modules/view-sort/tools/update-view-sort.tool';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -26,17 +29,21 @@ import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/se
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
+import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
 
 describe('View tools', () => {
   let testingModule: TestingModule;
   let viewService: jest.Mocked<ViewService>;
   let completeViewUpsertService: jest.Mocked<CompleteViewUpsertService>;
   let viewFieldService: jest.Mocked<ViewFieldService>;
+  let viewSortService: jest.Mocked<ViewSortService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
   const mockViewId = 'c1f4b2a0-7d3e-4a8b-9c1d-2e3f4a5b6c7d';
+  const mockOtherUsersViewId = 'b8c1d9e7-4f0a-4b2c-9d3e-0f1a2b3c4d5e';
+  const mockViewSortId = 'a7b0c8d6-3e9f-4a1b-8c2d-9e0f1a2b3c4d';
   const mockObjectMetadataId = 'object-metadata-id';
   const mockObjectNameSingular = 'company';
   const mockCalendarFieldMetadataId = 'f4c7e5d3-0a6b-4dbe-af4a-5b6c7d8e9fa0';
@@ -78,6 +85,20 @@ describe('View tools', () => {
     },
   };
 
+  const mockFlatViewSortMaps = {
+    byUniversalIdentifier: {
+      'view-sort-universal-id': {
+        id: mockViewSortId,
+        viewId: mockViewId,
+        universalIdentifier: 'view-sort-universal-id',
+      },
+    },
+    universalIdentifierById: {
+      [mockViewSortId]: 'view-sort-universal-id',
+    },
+    universalIdentifiersByApplicationId: {},
+  };
+
   const mockView = {
     id: mockViewId,
     name: 'All Companies',
@@ -115,7 +136,10 @@ describe('View tools', () => {
         CreateViewTool,
         UpdateViewTool,
         DeleteViewTool,
+        CreateManyViewSortsTool,
+        UpdateViewSortTool,
         ViewToolAccessService,
+        ViewEntityLookupService,
         ViewToolIdentifierService,
         {
           provide: ViewService,
@@ -155,6 +179,7 @@ describe('View tools', () => {
           provide: ViewSortService,
           useValue: {
             createOne: jest.fn(),
+            updateOne: jest.fn(),
             findByViewId: jest.fn().mockResolvedValue([]),
             deleteOne: jest.fn(),
           },
@@ -171,6 +196,7 @@ describe('View tools', () => {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
               flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
               flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+              flatViewSortMaps: mockFlatViewSortMaps,
             }),
           },
         },
@@ -181,6 +207,7 @@ describe('View tools', () => {
     viewService = module.get(ViewService);
     completeViewUpsertService = module.get(CompleteViewUpsertService);
     viewFieldService = module.get(ViewFieldService);
+    viewSortService = module.get(ViewSortService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
   });
 
@@ -245,6 +272,14 @@ describe('View tools', () => {
       }),
       delete_view: toToolExecutor({
         tool: testingModule.get(DeleteViewTool),
+        context,
+      }),
+      create_many_view_sorts: toToolExecutor({
+        tool: testingModule.get(CreateManyViewSortsTool),
+        context,
+      }),
+      update_view_sort: toToolExecutor({
+        tool: testingModule.get(UpdateViewSortTool),
         context,
       }),
     };
@@ -984,6 +1019,98 @@ describe('View tools', () => {
             id: mockViewId,
           }),
         ).rejects.toThrow('You can only delete your own unlisted views');
+      });
+    });
+
+    describe('view sort tools', () => {
+      it('should update a sort on own unlisted view', async () => {
+        viewService.findById.mockResolvedValue({
+          ...mockView,
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: mockUserWorkspaceId,
+        } as any);
+        viewSortService.updateOne.mockResolvedValue({
+          id: mockViewSortId,
+          viewId: mockViewId,
+          direction: ViewSortDirection.DESC,
+        } as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        const { result } = await tools.update_view_sort.execute({
+          id: mockViewSortId,
+          direction: ViewSortDirection.DESC,
+        });
+
+        expect(viewService.findById).toHaveBeenCalledTimes(1);
+        expect(viewService.findById).toHaveBeenCalledWith(
+          mockViewId,
+          mockWorkspaceId,
+        );
+        expect(viewSortService.updateOne).toHaveBeenCalledTimes(1);
+        expect(viewSortService.updateOne).toHaveBeenCalledWith({
+          updateViewSortInput: {
+            id: mockViewSortId,
+            update: { direction: ViewSortDirection.DESC },
+          },
+          workspaceId: mockWorkspaceId,
+        });
+        expect(result).toMatchObject({ direction: ViewSortDirection.DESC });
+      });
+
+      it('should reject updating a sort on another users unlisted view', async () => {
+        viewService.findById.mockResolvedValue({
+          ...mockView,
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: 'other-user-workspace-id',
+        } as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.update_view_sort.execute({
+            id: mockViewSortId,
+            direction: ViewSortDirection.DESC,
+          }),
+        ).rejects.toThrow('You can only update your own unlisted views');
+        expect(viewSortService.updateOne).not.toHaveBeenCalled();
+      });
+
+      it('should add no sort when one of the views is another users unlisted view', async () => {
+        viewService.findById.mockImplementation(async (viewId) =>
+          viewId === mockViewId
+            ? (mockView as any)
+            : ({
+                ...mockView,
+                id: mockOtherUsersViewId,
+                visibility: ViewVisibility.UNLISTED,
+                createdByUserWorkspaceId: 'other-user-workspace-id',
+              } as any),
+        );
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.create_many_view_sorts.execute({
+            sorts: [
+              { viewId: mockViewId, fieldMetadataId: mockNameFieldMetadataId },
+              {
+                viewId: mockOtherUsersViewId,
+                fieldMetadataId: mockNameFieldMetadataId,
+              },
+            ],
+          }),
+        ).rejects.toThrow('You can only update your own unlisted views');
+        expect(viewSortService.createOne).not.toHaveBeenCalled();
       });
     });
   });

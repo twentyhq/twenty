@@ -6,6 +6,7 @@ export type RoleIdsBySource = {
   apiKeyRoleId?: string | null;
   applicationRoleId?: string | null;
   agentRoleId?: string | null;
+  webhookRoleId?: string | null;
 };
 
 export type RolePermissionConfig =

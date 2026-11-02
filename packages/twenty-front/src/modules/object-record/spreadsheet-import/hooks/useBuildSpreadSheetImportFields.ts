@@ -23,7 +23,7 @@ import {
   getUniqueConstraintsFields,
   isDefined,
 } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const getSourceLocaleAlternateMatches = ({

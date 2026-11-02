@@ -2,8 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
-
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
@@ -11,11 +9,8 @@ import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/co
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
-import {
-  RecordShareException,
-  RecordShareExceptionCode,
-} from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -94,6 +89,7 @@ export class PrivateRecordStorageService {
 
     const objectsWithCreator = flatObjectMetadatas.filter(
       (flatObjectMetadata) =>
+        !isPermissionStorageObject(flatObjectMetadata) &&
         hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
     );
 
@@ -145,17 +141,7 @@ export class PrivateRecordStorageService {
     );
 
     if (!isPrivateRecordEnabled(featureFlagsMap)) {
-      if (!isPrivate) {
-        return;
-      }
-
-      throw new RecordShareException(
-        'Private records are not enabled for this workspace yet',
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        {
-          userFriendlyMessage: msg`Private records are not available in this workspace yet.`,
-        },
-      );
+      return;
     }
 
     await this.withRepository({

@@ -1,3 +1,4 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 import { EventEmitter, once } from 'node:events';
 
@@ -8,6 +9,7 @@ import {
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
@@ -318,6 +320,17 @@ const setShareWithJony = (threadId: string, enabled: boolean) =>
     accessLevel: RecordShareAccessLevel.READ,
     enabled,
   });
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
 
 describe('Chat thread participant state through the authenticated API', () => {
   const createdThreadIds: string[] = [];
