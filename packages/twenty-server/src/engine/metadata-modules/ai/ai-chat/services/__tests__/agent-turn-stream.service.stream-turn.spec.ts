@@ -239,10 +239,6 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     ).rejects.toBe(turnError);
 
     expectFailureRecordedOnce(finish);
-    expect(eventPublisherService.resetStreamState).toHaveBeenCalledTimes(1);
-    expect(eventPublisherService.resetStreamState).toHaveBeenCalledWith(
-      'run-channel-id',
-    );
     expect(eventPublisherService.publish).toHaveBeenCalledTimes(1);
     expect(eventPublisherService.publish).toHaveBeenCalledWith({
       threadId: 'run-channel-id',
@@ -252,6 +248,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
         code: 'STREAM_EXECUTION_FAILED',
         message: 'Provider unavailable',
       },
+      shouldKeepCatchup: false,
     });
   });
 });

@@ -260,11 +260,18 @@ export class AgentTurnStreamService {
           );
 
         if (isDefined(streamChannelId)) {
-          await this.publishStreamError({
-            workspaceId,
-            channelId: streamChannelId,
-            turnError,
-          });
+          await this.eventPublisherService
+            .publish({
+              threadId: streamChannelId,
+              workspaceId,
+              event: { type: 'stream-error', ...turnError },
+              shouldKeepCatchup: false,
+            })
+            .catch((publishError: unknown) =>
+              this.logger.warn(
+                `Could not publish the failure of channel ${streamChannelId} in workspace ${workspaceId}: ${formatErrorWithCause(publishError)}`,
+              ),
+            );
         }
       }
 
@@ -355,6 +362,7 @@ export class AgentTurnStreamService {
                   turnId,
                 }
               : { type: 'run-finished', turnId },
+        shouldKeepCatchup: isDefined(threadId),
       })
       .catch((error: unknown) =>
         this.logger.warn(
@@ -517,6 +525,7 @@ export class AgentTurnStreamService {
           type: 'stream-chunk',
           chunk: chunk as Record<string, unknown>,
         },
+        shouldKeepCatchup: isDefined(claim),
       });
     }
 
@@ -691,32 +700,6 @@ export class AgentTurnStreamService {
     await finishTurn();
 
     return { outcome, isAwaitingAnswer, threadBefore };
-  }
-
-  // drops the chunks kept for catch-up first, as releasing a claim does
-  private async publishStreamError({
-    workspaceId,
-    channelId,
-    turnError,
-  }: {
-    workspaceId: string;
-    channelId: string;
-    turnError: StreamErrorPayload;
-  }): Promise<void> {
-    await this.eventPublisherService
-      .resetStreamState(channelId)
-      .then(() =>
-        this.eventPublisherService.publish({
-          threadId: channelId,
-          workspaceId,
-          event: { type: 'stream-error', ...turnError },
-        }),
-      )
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not publish the failure of channel ${channelId} in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
-        ),
-      );
   }
 
   private logTurnWithoutText({
