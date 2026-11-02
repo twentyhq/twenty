@@ -1041,7 +1041,7 @@ Importa le singole icone da `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Ogni icona nominata è sottoposta a tree-shaking, quindi importarne alcune aggiunge poco al tuo bundle. Evita `IconsProvider` e `useIcons` nei componenti front. I componenti front vengono raggruppati senza code splitting, quindi il catalogo dinamico di icone del provider (l'intero set Tabler, circa 2 MB minificato) finisce nel tuo bundle. Consulta il [riferimento delle icone](/it/ui/icons) per le esportazioni disponibili e le props supportate.
+Ogni icona nominata è sottoposta a tree-shaking, quindi importarne alcune aggiunge poco al tuo bundle. Evita `twenty-ui/icon/provider` (`IconsProvider`, `useIcons` e `Icon` per nome) nei componenti front. I componenti front vengono raggruppati senza code splitting, quindi il catalogo dinamico di icone del provider (l'intero set Tabler, circa 2 MB minificato) finisce nel tuo bundle. Consulta il [riferimento delle icone](/it/ui/icons) per le esportazioni disponibili e le props supportate.
 
 ### Temi e token del tema
 
