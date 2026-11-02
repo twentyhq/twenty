@@ -36,7 +36,7 @@ export const createGetFrontComponentUiDocsTool = () =>
       documentation ??= readFile(
         join(
           ASSET_PATH,
-          'engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json',
+          'engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json',
         ),
         'utf8',
       )

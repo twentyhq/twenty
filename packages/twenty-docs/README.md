@@ -83,7 +83,9 @@ npx nx run twenty-docs:validate
 
 ## UI reference generation
 
-Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens. Run `npx nx check:ui twenty-docs` to check generated references and compile the UI guide examples against the public entry points. Hand-written pages live under `ui/`; generated snippets live under `snippets/ui/generated/`.
+Run `npx nx generate:ui twenty-docs` after changing UI guides, documented component props, theme tokens, or the UI package version. Run `npx nx check:ui twenty-docs` to check generated references and compile the UI guide examples against the public entry points. Hand-written pages live under `ui/`; generated snippets live under `snippets/ui/generated/`.
+
+The same generation and check commands maintain the committed `twenty-server/src/engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json` asset. The AI component documentation tool reads it locally; server builds copy it with the other Nest assets.
 
 Follow the [twenty-ui documentation guidelines](../twenty-ui/README.md#documentation) for story roles, complete usage examples, state ownership, and composition. Run `npx nx check:ui-stories twenty-docs` to validate preview titles, story references, the first `Display`, and the absence of automated interactions in embedded stories.
 

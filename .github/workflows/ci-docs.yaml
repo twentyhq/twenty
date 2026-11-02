@@ -25,6 +25,7 @@ jobs:
         packages/twenty-shared/**
         .github/workflows/ci-docs.yaml
         packages/twenty-docs/**
+        packages/twenty-server/src/engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json
 
   docs-lint:
     needs: changed-files-check

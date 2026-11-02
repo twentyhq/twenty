@@ -1,13 +1,4 @@
-import { execFileSync } from 'child_process';
-import {
-  readFileSync,
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  writeFileSync,
-  symlinkSync,
-} from 'fs';
-import { tmpdir } from 'os';
+import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -23,17 +14,11 @@ const getDocumentation = (names: string[] = []) =>
     ToolCategory.FRONT_COMPONENT,
   );
 
-beforeAll(() => {
-  execFileSync(process.execPath, [
-    resolve(SERVER_ROOT, 'scripts/build-ui-documentation.mjs'),
-  ]);
-});
-
 describe('get_front_component_ui_docs', () => {
   it('reuses documentation across tool instances', async () => {
     const output = resolve(
       SERVER_ROOT,
-      'src/engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json',
+      'src/engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json',
     );
     const content = readFileSync(output);
     await getDocumentation(['Card']);
@@ -45,68 +30,6 @@ describe('get_front_component_ui_docs', () => {
     }
   });
 
-  it('generates available documentation when a component guide is missing', () => {
-    const root = mkdtempSync(resolve(tmpdir(), 'ui-docs-'));
-    try {
-      const server = resolve(root, 'twenty-server');
-      const ui = resolve(root, 'twenty-ui');
-      const docs = resolve(root, 'twenty-docs/ui');
-      mkdirSync(resolve(server, 'scripts'), { recursive: true });
-      mkdirSync(resolve(ui, 'generated'), { recursive: true });
-      mkdirSync(docs, { recursive: true });
-      symlinkSync(
-        resolve(SERVER_ROOT, '../../node_modules'),
-        resolve(root, 'node_modules'),
-      );
-      writeFileSync(
-        resolve(server, 'scripts/build-ui-documentation.mjs'),
-        readFileSync(
-          resolve(SERVER_ROOT, 'scripts/build-ui-documentation.mjs'),
-        ),
-      );
-      writeFileSync(
-        resolve(ui, 'package.json'),
-        JSON.stringify({ version: '1.0.0' }),
-      );
-      writeFileSync(
-        resolve(ui, 'generated/components.docs.json'),
-        JSON.stringify([
-          {
-            name: 'Card',
-            slug: 'card',
-            entryPoint: 'twenty-ui/primitives/surfaces',
-          },
-          {
-            name: 'Missing',
-            slug: 'missing',
-            entryPoint: 'twenty-ui/primitives/surfaces',
-          },
-        ]),
-      );
-      writeFileSync(
-        resolve(docs, 'card.mdx'),
-        'import API from "/snippets/ui/generated/card.mdx";',
-      );
-      execFileSync(
-        process.execPath,
-        [resolve(server, 'scripts/build-ui-documentation.mjs')],
-        { stdio: 'pipe' },
-      );
-      expect(
-        JSON.parse(
-          readFileSync(
-            resolve(
-              server,
-              'src/engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json',
-            ),
-            'utf8',
-          ),
-        ),
-      ).toMatchObject({ pages: [{ name: 'Card' }] });
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
-  });
   it('returns the existing Card guide and generated compound API unchanged', async () => {
     const result = await getDocumentation(['Card']);
     const components = JSON.parse(
