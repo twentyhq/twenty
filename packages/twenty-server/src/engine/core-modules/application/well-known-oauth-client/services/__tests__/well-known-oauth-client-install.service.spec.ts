@@ -16,6 +16,7 @@ const CHATGPT_CALLBACK =
   'https://chatgpt.com/connector_platform_oauth_redirect';
 
 type TestInstall = {
+  id: string;
   universalIdentifier: string;
   applicationRegistration: {
     universalIdentifier: string;
@@ -33,6 +34,7 @@ const buildOAuthOnlyInstall = ({
   universalIdentifier: string;
   oAuthRedirectUris: string[];
 }): TestInstall => ({
+  id: `${universalIdentifier}-id`,
   universalIdentifier,
   applicationRegistration: {
     universalIdentifier,
@@ -68,6 +70,7 @@ const CUSTOM_OAUTH_INSTALL = buildOAuthOnlyInstall({
   oAuthRedirectUris: ['https://example.com/callback'],
 });
 const NPM_INSTALL: TestInstall = {
+  id: 'npm-app-id',
   universalIdentifier: 'npm-app',
   applicationRegistration: {
     universalIdentifier: 'npm-app',
@@ -95,10 +98,13 @@ describe('WellKnownOAuthClientInstallService', () => {
           useValue: {
             findOne: async (
               _workspaceId: string,
-              { where }: { where: { universalIdentifier: string } },
+              {
+                where,
+              }: { where: { id?: string; universalIdentifier?: string } },
             ) =>
               installs.find(
                 (install) =>
+                  install.id === where.id ||
                   install.universalIdentifier === where.universalIdentifier,
               ) ?? null,
             find: async (
@@ -132,6 +138,48 @@ describe('WellKnownOAuthClientInstallService', () => {
     }).compile();
 
     service = module.get(WellKnownOAuthClientInstallService);
+  });
+
+  const findFoldedApplicationIds = (applicationId: string) =>
+    service.findFoldedApplicationIds({
+      workspaceId: WORKSPACE_ID,
+      applicationId,
+    });
+
+  it('folds the shared install and every older per-connection install into one application', async () => {
+    installs = [
+      SHARED_CLAUDE_INSTALL,
+      LEGACY_CLAUDE_INSTALL,
+      OTHER_LEGACY_CLAUDE_INSTALL,
+      SHARED_CHATGPT_INSTALL,
+      CUSTOM_OAUTH_INSTALL,
+    ];
+
+    for (const install of [SHARED_CLAUDE_INSTALL, LEGACY_CLAUDE_INSTALL]) {
+      await expect(findFoldedApplicationIds(install.id)).resolves.toEqual([
+        SHARED_CLAUDE_INSTALL.id,
+        LEGACY_CLAUDE_INSTALL.id,
+        OTHER_LEGACY_CLAUDE_INSTALL.id,
+      ]);
+    }
+  });
+
+  it('keeps any other application, and every install while app preferences are off, on its own', async () => {
+    installs = [
+      CUSTOM_OAUTH_INSTALL,
+      SHARED_CLAUDE_INSTALL,
+      LEGACY_CLAUDE_INSTALL,
+    ];
+
+    await expect(
+      findFoldedApplicationIds(CUSTOM_OAUTH_INSTALL.id),
+    ).resolves.toEqual([CUSTOM_OAUTH_INSTALL.id]);
+
+    isAppPreferencesEnabled = false;
+
+    await expect(
+      findFoldedApplicationIds(SHARED_CLAUDE_INSTALL.id),
+    ).resolves.toEqual([SHARED_CLAUDE_INSTALL.id]);
   });
 
   const findFoldedInstallUniversalIdentifiers = (universalIdentifier: string) =>

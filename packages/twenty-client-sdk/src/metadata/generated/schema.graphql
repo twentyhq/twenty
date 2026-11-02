@@ -3412,7 +3412,7 @@ type Mutation {
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
-  revokeWorkspaceApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
+  revokeWorkspaceApplicationMemberAccess(applicationId: UUID!, userId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult

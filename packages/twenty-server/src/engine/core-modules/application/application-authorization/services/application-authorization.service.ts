@@ -2,22 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { type FindOperator, In, IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
-    @InjectWorkspaceScopedRepository(ApplicationEntity)
-    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
   ) {}
 
   async recordAuthorization({
@@ -32,8 +28,9 @@ export class ApplicationAuthorizationService {
     userWorkspaceId: string;
     applicationId: string;
     scopes: string[];
-  }): Promise<void> {
+  }): Promise<string> {
     const now = new Date();
+    const consentId = v4();
 
     await this.applicationAuthorizationRepository.upsert(
       {
@@ -43,6 +40,7 @@ export class ApplicationAuthorizationService {
         applicationId,
         scopes,
         lastAuthorizedAt: now,
+        consentId,
         lastUsedAt: now,
         revokedAt: null,
       },
@@ -51,6 +49,8 @@ export class ApplicationAuthorizationService {
         skipUpdateIfNoValuesChanged: false,
       },
     );
+
+    return consentId;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
@@ -116,36 +116,20 @@ export class ApplicationAuthorizationService {
     workspaceId: string;
     applicationId: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
-    const application = await this.applicationRepository.findOne(workspaceId, {
-      where: { id: applicationId },
-      relations: ['applicationRegistration'],
-    });
+    const applicationIds =
+      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
+        workspaceId,
+        applicationId,
+      });
 
-    const wellKnownOAuthClient = getWellKnownOAuthClientOfRegistration(
-      application?.applicationRegistration,
-    );
-
-    if (!isDefined(wellKnownOAuthClient)) {
-      return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
-        .andWhere('applicationAuthorization.applicationId = :applicationId', {
-          applicationId,
-        })
-        .getMany();
-    }
-
-    const oAuthOnlyAuthorizations =
-      await this.createActiveAuthorizationsQueryBuilder(workspaceId)
-        .andWhere('applicationRegistration.sourceType = :sourceType', {
-          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        })
-        .getMany();
-
-    return oAuthOnlyAuthorizations.filter(
-      (authorization) =>
-        getWellKnownOAuthClientOfRegistration(
-          authorization.application.applicationRegistration,
-        ) === wellKnownOAuthClient,
-    );
+    return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+      .andWhere(
+        'applicationAuthorization.applicationId IN (:...applicationIds)',
+        {
+          applicationIds,
+        },
+      )
+      .getMany();
   }
 
   async touchLastUsedAt(authorizationId: string): Promise<void> {
@@ -172,14 +156,26 @@ export class ApplicationAuthorizationService {
     });
   }
 
-  async revokeAuthorizationByIdForWorkspace({
-    authorizationId,
+  async revokeMemberAuthorizationsForWorkspaceApplication({
     workspaceId,
+    applicationId,
+    userId,
   }: {
-    authorizationId: string;
     workspaceId: string;
+    applicationId: string;
+    userId: string;
   }): Promise<boolean> {
-    return await this.revokeMatching({ id: authorizationId, workspaceId });
+    const applicationIds =
+      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
+        workspaceId,
+        applicationId,
+      });
+
+    return await this.revokeMatching({
+      workspaceId,
+      userId,
+      applicationId: In(applicationIds),
+    });
   }
 
   async revokeAuthorizationForApplication({
@@ -219,7 +215,11 @@ export class ApplicationAuthorizationService {
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }
-      | { id: string; workspaceId: string }
+      | {
+          workspaceId: string;
+          userId: string;
+          applicationId: FindOperator<string>;
+        }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(

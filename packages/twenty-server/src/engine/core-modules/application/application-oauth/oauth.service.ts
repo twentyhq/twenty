@@ -24,6 +24,7 @@ import { OAuthErrorResponse } from 'src/engine/core-modules/application/applicat
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -251,13 +252,14 @@ export class OAuthService {
       applicationRegistration.oAuthScopes.join(' ');
 
     // Recorded first so a refresh token never exists without a revocable grant
-    await this.applicationAuthorizationService.recordAuthorization({
-      userId: authCodeToken.userId,
-      workspaceId: authCodeToken.workspaceId,
-      userWorkspaceId: userWorkspace.id,
-      applicationId: application.id,
-      scopes: this.parseScopes(grantedScope),
-    });
+    const consentId =
+      await this.applicationAuthorizationService.recordAuthorization({
+        userId: authCodeToken.userId,
+        workspaceId: authCodeToken.workspaceId,
+        userWorkspaceId: userWorkspace.id,
+        applicationId: application.id,
+        scopes: this.parseScopes(grantedScope),
+      });
 
     const { applicationAccessToken, applicationRefreshToken } =
       await this.applicationTokenService.generateApplicationTokenPair({
@@ -265,6 +267,7 @@ export class OAuthService {
         applicationId: application.id,
         userId: authCodeToken.userId,
         userWorkspaceId: userWorkspace.id,
+        consentId,
       });
 
     this.logger.log(
@@ -405,7 +408,7 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
-          refreshTokenIssuedAt: payload.iat,
+          refreshToken: payload,
         });
 
         if (authorizationError) {
@@ -565,7 +568,7 @@ export class OAuthService {
         !(await this.isRefreshTokenAuthorized({
           userId: decoded.userId,
           applicationId: decoded.applicationId,
-          refreshTokenIssuedAt: decoded.iat,
+          refreshToken: decoded,
         }))
       ) {
         return { active: false };
@@ -655,12 +658,12 @@ export class OAuthService {
     userId,
     workspaceId,
     applicationId,
-    refreshTokenIssuedAt,
+    refreshToken,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
-    refreshTokenIssuedAt: number | undefined;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat' | 'consentId'>;
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -672,14 +675,14 @@ export class OAuthService {
       isDefined(authorization) &&
       !isRefreshTokenCoveredByAuthorization({
         authorization,
-        refreshTokenIssuedAt,
+        refreshToken,
       })
     ) {
       return this.errorResponse(
         'invalid_grant',
         isDefined(authorization.revokedAt)
           ? 'The user revoked this application access'
-          : 'Refresh token was issued before the latest authorization',
+          : 'Refresh token was issued for an earlier authorization',
       );
     }
 
@@ -751,11 +754,11 @@ export class OAuthService {
   private async isRefreshTokenAuthorized({
     userId,
     applicationId,
-    refreshTokenIssuedAt,
+    refreshToken,
   }: {
     userId: string;
     applicationId: string;
-    refreshTokenIssuedAt: number | undefined;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat' | 'consentId'>;
   }): Promise<boolean> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -767,7 +770,7 @@ export class OAuthService {
       !isDefined(authorization) ||
       isRefreshTokenCoveredByAuthorization({
         authorization,
-        refreshTokenIssuedAt,
+        refreshToken,
       })
     );
   }

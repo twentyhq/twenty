@@ -63,21 +63,26 @@ export class OAuthClientRegistrationResolverService {
   // Only for a signed-in user's authorization: the public token and consent endpoints would store a row for any hosted URL
   async findOrRegisterByClientId(
     clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
+  ): Promise<
+    | (ResolvedOAuthClient & { registration: ApplicationRegistrationEntity })
+    | null
+  > {
     const resolvedClient = await this.resolveClient(clientId);
 
     if (!isDefined(resolvedClient)) {
       return null;
     }
 
-    if (!isDefined(resolvedClient.clientIdMetadataDocument)) {
-      return resolvedClient.registration;
+    if (resolvedClient.kind !== 'clientIdMetadataDocument') {
+      return resolvedClient;
     }
 
-    return this.upsertClientIdMetadataDocumentRegistration({
+    const registration = await this.upsertClientIdMetadataDocumentRegistration({
       clientIdMetadataDocument: resolvedClient.clientIdMetadataDocument,
       existingRegistration: resolvedClient.registration,
     });
+
+    return isDefined(registration) ? { ...resolvedClient, registration } : null;
   }
 
   async resolveClient(clientId: string): Promise<ResolvedOAuthClient | null> {
@@ -85,7 +90,11 @@ export class OAuthClientRegistrationResolverService {
       const registration = await this.findRegistrationByOAuthClientId(clientId);
 
       return isDefined(registration)
-        ? { registration, clientIdMetadataDocument: null }
+        ? {
+            kind: 'registeredClient',
+            registration,
+            clientIdMetadataDocument: null,
+          }
         : null;
     }
 
@@ -103,15 +112,17 @@ export class OAuthClientRegistrationResolverService {
 
     if (isDefined(wellKnownOAuthClient)) {
       return {
+        kind: 'wellKnownClientIdMetadataDocument',
         registration:
           await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
             wellKnownOAuthClient,
           ),
-        clientIdMetadataDocument: null,
+        clientIdMetadataDocument,
       };
     }
 
     return {
+      kind: 'clientIdMetadataDocument',
       registration: await this.findRegistrationByOAuthClientId(clientId),
       clientIdMetadataDocument,
     };

@@ -8335,10 +8335,14 @@ export default {
                     ]
                 }
             ],
-            "revokeWorkspaceApplicationAuthorization": [
+            "revokeWorkspaceApplicationMemberAccess": [
                 4,
                 {
-                    "applicationAuthorizationId": [
+                    "applicationId": [
+                        525,
+                        "UUID!"
+                    ],
+                    "userId": [
                         525,
                         "UUID!"
                     ]

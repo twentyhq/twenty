@@ -19,10 +19,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import {
-  CurrentUserApplicationAuthorizationsDocument,
-  RevokeApplicationAuthorizationDocument,
-} from '~/generated-metadata/graphql';
+import { RevokeApplicationAuthorizationDocument } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const StyledTableRows = styled.div`
@@ -49,29 +46,34 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const connectLink = useBuiltInMcpClientAppConnectLink(app);
   const [revokeApplicationAuthorization] = useMutation(
     RevokeApplicationAuthorizationDocument,
-    {
-      refetchQueries: [{ query: CurrentUserApplicationAuthorizationsDocument }],
-      awaitRefetchQueries: true,
-    },
   );
 
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
 
-  const [latestAuthorization] = [...authorizations].sort(
-    (first, second) =>
-      new Date(second.lastUsedAt).getTime() -
-      new Date(first.lastUsedAt).getTime(),
-  );
+  const [latestAuthorization] = authorizations;
 
-  const disconnect = () =>
-    Promise.all(
+  const disconnect = async () => {
+    const revokeResults = await Promise.allSettled(
       authorizations.map(({ id }) =>
         revokeApplicationAuthorization({
           variables: { applicationAuthorizationId: id },
         }),
       ),
     );
+
+    const failedRevoke = revokeResults.find(
+      (revokeResult) => revokeResult.status === 'rejected',
+    );
+
+    if (isDefined(failedRevoke)) {
+      await refetch().catch(() => undefined);
+
+      throw failedRevoke.reason;
+    }
+
+    await refetch();
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -133,7 +135,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
             }
             details={
               <SettingsApplicationAuthorizationPermissionsCell
-                authorization={latestAuthorization}
+                authorizations={authorizations}
               />
             }
             detailsAlign="left"

@@ -3593,7 +3593,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
-  revokeWorkspaceApplicationAuthorization: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4600,8 +4600,9 @@ export type MutationRevokeUserSessionArgs = {
 };
 
 
-export type MutationRevokeWorkspaceApplicationAuthorizationArgs = {
-  applicationAuthorizationId: Scalars['UUID']['input'];
+export type MutationRevokeWorkspaceApplicationMemberAccessArgs = {
+  applicationId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
 };
 
 

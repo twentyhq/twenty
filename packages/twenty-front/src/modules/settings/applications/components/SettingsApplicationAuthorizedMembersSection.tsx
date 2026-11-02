@@ -4,6 +4,7 @@ import { SettingsApplicationAuthorizationRowDropdownMenu } from '@/settings/appl
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
+import { groupApplicationAuthorizationsByMember } from '@/settings/applications/utils/groupApplicationAuthorizationsByMember';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,7 +18,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
-  RevokeWorkspaceApplicationAuthorizationDocument,
+  RevokeWorkspaceApplicationMemberAccessDocument,
   WorkspaceApplicationAuthorizationsDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
@@ -45,8 +46,8 @@ export const SettingsApplicationAuthorizedMembersSection = ({
     WorkspaceApplicationAuthorizationsDocument,
     { variables: { applicationId }, fetchPolicy: 'cache-and-network' },
   );
-  const [revokeWorkspaceApplicationAuthorization] = useMutation(
-    RevokeWorkspaceApplicationAuthorizationDocument,
+  const [revokeWorkspaceApplicationMemberAccess] = useMutation(
+    RevokeWorkspaceApplicationMemberAccessDocument,
     {
       refetchQueries: [
         {
@@ -58,7 +59,9 @@ export const SettingsApplicationAuthorizedMembersSection = ({
     },
   );
 
-  const authorizations = data?.workspaceApplicationAuthorizations ?? [];
+  const authorizationsByMember = groupApplicationAuthorizationsByMember(
+    data?.workspaceApplicationAuthorizations ?? [],
+  );
   const workspaceMemberByUserId = new Map(
     currentWorkspaceMembers.map((workspaceMember) => [
       workspaceMember.userId,
@@ -80,7 +83,7 @@ export const SettingsApplicationAuthorizedMembersSection = ({
       );
     }
 
-    if (authorizations.length === 0) {
+    if (authorizationsByMember.length === 0) {
       return null;
     }
 
@@ -95,9 +98,10 @@ export const SettingsApplicationAuthorizedMembersSection = ({
           shouldShowDetailsOnMobile
         />
         <StyledTableRows>
-          {authorizations.map((authorization) => {
+          {authorizationsByMember.map((memberAuthorizations) => {
+            const [latestAuthorization] = memberAuthorizations;
             const workspaceMember = workspaceMemberByUserId.get(
-              authorization.userId,
+              latestAuthorization.userId,
             );
             const memberName = isDefined(workspaceMember)
               ? getWorkspaceMemberNameOrEmail(workspaceMember)
@@ -105,7 +109,7 @@ export const SettingsApplicationAuthorizedMembersSection = ({
 
             return (
               <SettingsApplicationTableRow
-                key={authorization.id}
+                key={latestAuthorization.userId}
                 middleColumn="status"
                 hasActionMenu
                 name={
@@ -121,18 +125,18 @@ export const SettingsApplicationAuthorizedMembersSection = ({
                   </>
                 }
                 middle={beautifyPastDateRelativeToNowShort(
-                  authorization.lastUsedAt,
+                  latestAuthorization.lastUsedAt,
                 )}
                 details={
                   <SettingsApplicationAuthorizationPermissionsCell
-                    authorization={authorization}
+                    authorizations={memberAuthorizations}
                   />
                 }
                 detailsAlign="left"
                 shouldShowDetailsOnMobile
                 action={
                   <SettingsApplicationAuthorizationRowDropdownMenu
-                    applicationAuthorizationId={authorization.id}
+                    applicationAuthorizationId={latestAuthorization.id}
                     revokeLabel={t`Revoke access`}
                     confirmationTitle={t`Revoke ${memberName}'s access?`}
                     confirmationSubtitle={
@@ -142,9 +146,12 @@ export const SettingsApplicationAuthorizedMembersSection = ({
                         expires.
                       </Trans>
                     }
-                    onRevoke={(applicationAuthorizationId) =>
-                      revokeWorkspaceApplicationAuthorization({
-                        variables: { applicationAuthorizationId },
+                    onRevoke={() =>
+                      revokeWorkspaceApplicationMemberAccess({
+                        variables: {
+                          applicationId,
+                          userId: latestAuthorization.userId,
+                        },
                       })
                     }
                   />

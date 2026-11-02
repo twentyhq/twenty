@@ -52,16 +52,15 @@ export class WorkspaceApplicationAuthorizationResolver {
   }
 
   @Mutation(() => Boolean)
-  async revokeWorkspaceApplicationAuthorization(
+  async revokeWorkspaceApplicationMemberAccess(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('applicationAuthorizationId', { type: () => UUIDScalarType })
-    applicationAuthorizationId: string,
+    @Args('applicationId', { type: () => UUIDScalarType })
+    applicationId: string,
+    @Args('userId', { type: () => UUIDScalarType })
+    userId: string,
   ): Promise<boolean> {
-    return await this.applicationAuthorizationService.revokeAuthorizationByIdForWorkspace(
-      {
-        authorizationId: applicationAuthorizationId,
-        workspaceId: workspace.id,
-      },
+    return await this.applicationAuthorizationService.revokeMemberAuthorizationsForWorkspaceApplication(
+      { workspaceId: workspace.id, applicationId, userId },
     );
   }
 }

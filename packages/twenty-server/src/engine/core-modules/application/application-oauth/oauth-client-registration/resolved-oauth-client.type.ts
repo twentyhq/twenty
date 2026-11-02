@@ -3,10 +3,17 @@ import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/appl
 
 export type ResolvedOAuthClient =
   | {
+      kind: 'registeredClient';
       registration: ApplicationRegistrationEntity;
       clientIdMetadataDocument: null;
     }
   | {
+      kind: 'wellKnownClientIdMetadataDocument';
+      registration: ApplicationRegistrationEntity;
+      clientIdMetadataDocument: ClientIdMetadataDocument;
+    }
+  | {
+      kind: 'clientIdMetadataDocument';
       registration: ApplicationRegistrationEntity | null;
       clientIdMetadataDocument: ClientIdMetadataDocument;
     };

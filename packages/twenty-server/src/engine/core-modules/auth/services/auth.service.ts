@@ -53,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
 import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
 import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -555,17 +556,20 @@ export class AuthService {
   }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const applicationRegistration =
+    const resolvedClient =
       await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
         clientId,
       );
 
-    if (!applicationRegistration) {
+    if (!isDefined(resolvedClient)) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
+
+    const { registration: applicationRegistration, clientIdMetadataDocument } =
+      resolvedClient;
 
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
@@ -594,7 +598,12 @@ export class AuthService {
         !isRedirectUriRegisteredForApplicationRegistration({
           applicationRegistration,
           redirectUri: authorizeAppInput.redirectUrl,
-        })
+        }) ||
+        (isDefined(clientIdMetadataDocument) &&
+          !isRedirectUriListedInClientIdMetadataDocument({
+            clientIdMetadataDocument,
+            redirectUri: authorizeAppInput.redirectUrl,
+          }))
       ) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
@@ -662,7 +671,7 @@ export class AuthService {
 
     const authCodeContext = {
       redirectUri: authorizeAppInput.redirectUrl,
-      clientId: applicationRegistration.oAuthClientId,
+      clientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
     };

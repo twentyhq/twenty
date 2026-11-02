@@ -16,18 +16,28 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
 const CODE_VERIFIER = 'integration-verifier';
 const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
+const CHATGPT_PLATFORM_CALLBACK =
+  'https://chatgpt.com/connector_platform_oauth_redirect';
+const CHATGPT_DOCUMENT = {
+  clientId: 'https://chatgpt.com/oauth/integration-test-client.json',
+  clientName: 'ChatGPT',
+  logoUri: null,
+  redirectUris: [CHATGPT_PLATFORM_CALLBACK],
+};
 
 const clearTokenBuckets = async (keyPattern: string) => {
   const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
@@ -84,24 +94,29 @@ describe('OAuth well-known clients (integration)', () => {
   const register = (body: Record<string, unknown>) =>
     request(baseUrl).post('/oauth/register').send(body);
 
-  const authorizeAsMember = async ({
+  const requestAuthorization = ({
     clientId,
     token,
+    redirectUrl = CLAUDE_CALLBACK,
   }: {
     clientId: string;
     token: string;
-  }) => {
-    const response = await makeMetadataApiRequest(
+    redirectUrl?: string;
+  }) =>
+    makeMetadataApiRequest(
       {
         query: authorizeAppMutation,
-        variables: {
-          clientId,
-          redirectUrl: CLAUDE_CALLBACK,
-          codeChallenge,
-        },
+        variables: { clientId, redirectUrl, codeChallenge },
       },
       token,
     );
+
+  const authorizeAsMember = async (params: {
+    clientId: string;
+    token: string;
+    redirectUrl?: string;
+  }) => {
+    const response = await requestAuthorization(params);
 
     return new URL(
       response.body.data.authorizeApp.redirectUrl,
@@ -111,16 +126,18 @@ describe('OAuth well-known clients (integration)', () => {
   const exchangeCode = ({
     clientId,
     code,
+    redirectUri = CLAUDE_CALLBACK,
   }: {
     clientId: string;
     code: string | null;
+    redirectUri?: string;
   }) =>
     request(baseUrl).post('/oauth/token').send({
       grant_type: 'authorization_code',
       code,
       client_id: clientId,
       code_verifier: CODE_VERIFIER,
-      redirect_uri: CLAUDE_CALLBACK,
+      redirect_uri: redirectUri,
     });
 
   const refresh = ({
@@ -183,7 +200,13 @@ describe('OAuth well-known clients (integration)', () => {
 
     await ds.query(
       `DELETE FROM core."appToken" WHERE context->>'redirectUri' = ANY($1)`,
-      [[CLAUDE_CALLBACK, CHATGPT_CONNECTION_CALLBACK]],
+      [
+        [
+          CLAUDE_CALLBACK,
+          CHATGPT_CONNECTION_CALLBACK,
+          CHATGPT_PLATFORM_CALLBACK,
+        ],
+      ],
     );
   });
 
@@ -381,6 +404,65 @@ describe('OAuth well-known clients (integration)', () => {
           [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
         );
       }
+    });
+  });
+
+  describe('Client ID metadata document of a well-known client', () => {
+    let findDocumentSpy: jest.SpyInstance;
+    let isFetchDueSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      const clientIdMetadataDocumentService =
+        getAppProviderByClassName<ClientIdMetadataDocumentService>(
+          'ClientIdMetadataDocumentService',
+        );
+
+      findDocumentSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'findDocument')
+        .mockResolvedValue(CHATGPT_DOCUMENT);
+      isFetchDueSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'isFetchDue')
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      findDocumentSpy.mockRestore();
+      isFetchDueSpy.mockRestore();
+    });
+
+    it('should exchange and refresh with the document URL it authorized with', async () => {
+      const code = await authorizeAsMember({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      const exchangeResponse = await exchangeCode({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        code,
+        redirectUri: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      expect(exchangeResponse.status).toBe(200);
+
+      const refreshResponse = await refresh({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        refreshToken: exchangeResponse.body.refresh_token,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+    });
+
+    it('should reject a vendor callback that the document does not list', async () => {
+      const response = await requestAuthorization({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_CONNECTION_CALLBACK,
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain(
+        'redirectUrl mismatch',
+      );
     });
   });
 
@@ -668,6 +750,48 @@ describe('OAuth well-known clients (integration)', () => {
           { applicationId: sharedInstall.id, wellKnownOAuthClient: 'CLAUDE' },
         ]),
       );
+    });
+
+    it('should revoke every grant of a member across the shared and older Claude installs', async () => {
+      const legacyClaudeClientId = await registerLegacyClaudeClient();
+      const legacyRefreshToken = await connect({
+        clientId: legacyClaudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const sharedRefreshToken = await connect({
+        clientId: claudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const [sharedInstall] = await findInstalls(claudeClientId);
+
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          mutation RevokeWorkspaceApplicationMemberAccess(
+            $applicationId: UUID!
+            $userId: UUID!
+          ) {
+            revokeWorkspaceApplicationMemberAccess(
+              applicationId: $applicationId
+              userId: $userId
+            )
+          }
+        `,
+        variables: {
+          applicationId: sharedInstall.id,
+          userId: USER_DATA_SEED_IDS.JONY,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.revokeWorkspaceApplicationMemberAccess).toBe(
+        true,
+      );
+
+      await expectBothMembersDisconnected({
+        legacyClaudeClientId,
+        legacyRefreshToken,
+        sharedRefreshToken,
+      });
     });
 
     it('should disconnect the members of older per-connection Claude installs too', async () => {

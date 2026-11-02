@@ -36,6 +36,23 @@ export class WellKnownOAuthClientInstallService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  async findFoldedApplicationIds({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<string[]> {
+    const foldedInstalls = await this.findFoldedInstalls({
+      workspaceId,
+      where: { id: applicationId },
+    });
+
+    return isDefined(foldedInstalls)
+      ? foldedInstalls.map(({ id }) => id)
+      : [applicationId];
+  }
+
   async findFoldedInstallUniversalIdentifiers({
     workspaceId,
     universalIdentifier,
@@ -43,6 +60,45 @@ export class WellKnownOAuthClientInstallService {
     workspaceId: string;
     universalIdentifier: string;
   }): Promise<string[]> {
+    const foldedInstalls = await this.findFoldedInstalls({
+      workspaceId,
+      where: { universalIdentifier },
+    });
+
+    if (!isDefined(foldedInstalls)) {
+      return [];
+    }
+
+    const seededInstall = foldedInstalls.find((foldedInstall) =>
+      isDefined(
+        findWellKnownOAuthClientByUniversalIdentifier(
+          foldedInstall.universalIdentifier,
+        ),
+      ),
+    );
+
+    if (
+      isDefined(seededInstall) &&
+      seededInstall.universalIdentifier !== universalIdentifier
+    ) {
+      return [];
+    }
+
+    return foldedInstalls
+      .filter(
+        (foldedInstall) =>
+          foldedInstall.universalIdentifier !== universalIdentifier,
+      )
+      .map((foldedInstall) => foldedInstall.universalIdentifier);
+  }
+
+  private async findFoldedInstalls({
+    workspaceId,
+    where,
+  }: {
+    workspaceId: string;
+    where: { id: string } | { universalIdentifier: string };
+  }): Promise<ApplicationEntity[] | null> {
     const isAppPreferencesEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
@@ -50,12 +106,12 @@ export class WellKnownOAuthClientInstallService {
       );
 
     if (!isAppPreferencesEnabled) {
-      return [];
+      return null;
     }
 
     const install = await this.applicationRepository.findOne(workspaceId, {
       ...INSTALL_WITH_REGISTRATION_FIND_OPTIONS,
-      where: { universalIdentifier },
+      where,
     });
 
     const wellKnownOAuthClient = getWellKnownOAuthClientOfRegistration(
@@ -63,7 +119,7 @@ export class WellKnownOAuthClientInstallService {
     );
 
     if (!isDefined(wellKnownOAuthClient)) {
-      return [];
+      return null;
     }
 
     const oAuthOnlyInstalls = await this.applicationRepository.find(
@@ -78,38 +134,11 @@ export class WellKnownOAuthClientInstallService {
       },
     );
 
-    const wellKnownOAuthClientInstalls = oAuthOnlyInstalls.filter(
+    return oAuthOnlyInstalls.filter(
       (oAuthOnlyInstall) =>
         getWellKnownOAuthClientOfRegistration(
           oAuthOnlyInstall.applicationRegistration,
         ) === wellKnownOAuthClient,
     );
-
-    const seededInstall = wellKnownOAuthClientInstalls.find(
-      (wellKnownOAuthClientInstall) =>
-        isDefined(
-          findWellKnownOAuthClientByUniversalIdentifier(
-            wellKnownOAuthClientInstall.universalIdentifier,
-          ),
-        ),
-    );
-
-    if (
-      isDefined(seededInstall) &&
-      seededInstall.universalIdentifier !== universalIdentifier
-    ) {
-      return [];
-    }
-
-    return wellKnownOAuthClientInstalls
-      .filter(
-        (wellKnownOAuthClientInstall) =>
-          wellKnownOAuthClientInstall.universalIdentifier !==
-          universalIdentifier,
-      )
-      .map(
-        (wellKnownOAuthClientInstall) =>
-          wellKnownOAuthClientInstall.universalIdentifier,
-      );
   }
 }

@@ -114,6 +114,29 @@ describe('OAuthClientRegistrationResolverService', () => {
     expect(insertedValues).not.toHaveBeenCalled();
   });
 
+  it('keeps the document of a well-known client to restrict its callbacks', async () => {
+    const seededRegistration = { id: 'seeded-chatgpt' };
+    const chatGptDocument = {
+      clientId: 'https://chatgpt.com/oauth/client.json',
+      clientName: 'ChatGPT',
+      logoUri: null,
+      redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
+    };
+
+    findDocument.mockResolvedValue(chatGptDocument);
+    findOrCreateRegistration.mockResolvedValue(seededRegistration);
+
+    await expect(
+      service.findOrRegisterByClientId(chatGptDocument.clientId),
+    ).resolves.toEqual({
+      kind: 'wellKnownClientIdMetadataDocument',
+      registration: seededRegistration,
+      clientIdMetadataDocument: chatGptDocument,
+    });
+    expect(insertedValues).not.toHaveBeenCalled();
+    expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
+  });
+
   it('only registers a document client once a user authorizes it', async () => {
     findDocument.mockResolvedValue(CLAUDE_CODE_DOCUMENT);
     applicationRegistrationRepository.findOne.mockResolvedValue(null);
@@ -124,6 +147,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     await expect(
       service.resolveClient(CLAUDE_CODE_DOCUMENT.clientId),
     ).resolves.toEqual({
+      kind: 'clientIdMetadataDocument',
       registration: null,
       clientIdMetadataDocument: CLAUDE_CODE_DOCUMENT,
     });
@@ -140,7 +164,11 @@ describe('OAuthClientRegistrationResolverService', () => {
 
     await expect(
       service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
-    ).resolves.toBe(createdRegistration);
+    ).resolves.toEqual({
+      kind: 'clientIdMetadataDocument',
+      registration: createdRegistration,
+      clientIdMetadataDocument: CLAUDE_CODE_DOCUMENT,
+    });
     expect(insertedValues).toHaveBeenCalledWith(
       expect.objectContaining({
         universalIdentifier: expect.any(String),
@@ -185,15 +213,15 @@ describe('OAuthClientRegistrationResolverService', () => {
       },
     );
 
-    const firstRegistration = await service.findOrRegisterByClientId(
-      CLAUDE_CODE_DOCUMENT.clientId,
-    );
+    const firstRegistration = (
+      await service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId)
+    )?.registration;
 
     storedRegistrations[0].deletedAt = new Date();
 
-    const secondRegistration = await service.findOrRegisterByClientId(
-      CLAUDE_CODE_DOCUMENT.clientId,
-    );
+    const secondRegistration = (
+      await service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId)
+    )?.registration;
 
     expect(secondRegistration).toMatchObject({
       oAuthClientId: CLAUDE_CODE_DOCUMENT.clientId,
@@ -216,7 +244,9 @@ describe('OAuthClientRegistrationResolverService', () => {
 
     await expect(
       service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
-    ).resolves.toMatchObject({ name: 'Claude Code (renamed)' });
+    ).resolves.toMatchObject({
+      registration: { name: 'Claude Code (renamed)' },
+    });
     expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
       'claude-code-registration',
       expect.objectContaining({ name: 'Claude Code (renamed)' }),

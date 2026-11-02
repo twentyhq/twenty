@@ -1065,11 +1065,19 @@ describe('OAuth (integration)', () => {
 
       await revokeRefreshToken(revokedRefreshToken);
 
-      await new Promise((resolve) => setTimeout(resolve, 1100));
-
       const { refreshToken } = await exchangeForTokens();
 
       expect((await findAuthorization()).revokedAt).toBeNull();
+
+      const { iat: revokedRefreshTokenIssuedAt } = JSON.parse(
+        Buffer.from(revokedRefreshToken.split('.')[1], 'base64url').toString(),
+      );
+
+      await ds.query(
+        `UPDATE core."applicationAuthorization" SET "lastAuthorizedAt" = to_timestamp($1)
+         WHERE "userId" = $2 AND "applicationId" = $3`,
+        [revokedRefreshTokenIssuedAt, TEST_USER_ID, testApplication.id],
+      );
 
       await postToken({
         grant_type: 'refresh_token',
@@ -1277,22 +1285,21 @@ describe('OAuth (integration)', () => {
         token,
       );
 
-    const revokeWorkspaceAuthorization = (
-      applicationAuthorizationId: string,
-      token: string,
-    ) =>
+    const revokeWorkspaceMemberAccess = (userId: string, token: string) =>
       makeMetadataApiRequest(
         {
           query: gql`
-            mutation RevokeWorkspaceApplicationAuthorization(
-              $applicationAuthorizationId: UUID!
+            mutation RevokeWorkspaceApplicationMemberAccess(
+              $applicationId: UUID!
+              $userId: UUID!
             ) {
-              revokeWorkspaceApplicationAuthorization(
-                applicationAuthorizationId: $applicationAuthorizationId
+              revokeWorkspaceApplicationMemberAccess(
+                applicationId: $applicationId
+                userId: $userId
               )
             }
           `,
-          variables: { applicationAuthorizationId },
+          variables: { applicationId: testApplication.id, userId },
         },
         token,
       );
@@ -1314,22 +1321,16 @@ describe('OAuth (integration)', () => {
       ]);
     });
 
-    it('should let an admin revoke a member authorization', async () => {
+    it('should let an admin revoke a member access', async () => {
       const { refreshToken } = await exchangeForTokens();
 
-      const listResponse = await listWorkspaceAuthorizations(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
-      const [{ id }] =
-        listResponse.body.data.workspaceApplicationAuthorizations;
-
-      const revokeResponse = await revokeWorkspaceAuthorization(
-        id,
+      const revokeResponse = await revokeWorkspaceMemberAccess(
+        TEST_USER_ID,
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
       );
 
       expect(
-        revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
+        revokeResponse.body.data.revokeWorkspaceApplicationMemberAccess,
       ).toBe(true);
 
       const res = await postToken({
@@ -1351,9 +1352,8 @@ describe('OAuth (integration)', () => {
 
       expect(listResponse.body.errors).toBeDefined();
 
-      const { id } = await findListedAuthorization();
-      const revokeResponse = await revokeWorkspaceAuthorization(
-        id,
+      const revokeResponse = await revokeWorkspaceMemberAccess(
+        TEST_USER_ID,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 

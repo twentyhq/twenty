@@ -435,12 +435,14 @@ export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
 };
 
 const CLAUDE_MEMBER_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000d1';
+const CLAUDE_MEMBER_EARLIER_AUTHORIZATION_ID =
+  '20202020-6a7b-4c3d-8e4f-0000000000d2';
 
-const revokeWorkspaceApplicationAuthorization = fn();
+const revokeWorkspaceApplicationMemberAccess = fn();
 
 export const OAuthOnlyAppListsItsConnectedMembers: Story = {
   beforeEach: () => {
-    revokeWorkspaceApplicationAuthorization.mockClear();
+    revokeWorkspaceApplicationMemberAccess.mockClear();
     seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true });
     jotaiStore.set(currentWorkspaceMembersState.atom, [
       mockedWorkspaceMemberData,
@@ -461,20 +463,29 @@ export const OAuthOnlyAppListsItsConnectedMembers: Story = {
                   __typename: 'ApplicationAuthorization',
                   id: CLAUDE_MEMBER_AUTHORIZATION_ID,
                   userId: mockedWorkspaceMemberData.userId,
-                  scopes: ['api', 'profile'],
+                  scopes: ['profile'],
                   lastUsedAt: new Date().toISOString(),
+                },
+                {
+                  __typename: 'ApplicationAuthorization',
+                  id: CLAUDE_MEMBER_EARLIER_AUTHORIZATION_ID,
+                  userId: mockedWorkspaceMemberData.userId,
+                  scopes: null,
+                  lastUsedAt: new Date(
+                    Date.now() - 3 * 24 * 60 * 60 * 1000,
+                  ).toISOString(),
                 },
               ],
             },
           }),
         ),
         graphql.mutation(
-          'RevokeWorkspaceApplicationAuthorization',
+          'RevokeWorkspaceApplicationMemberAccess',
           ({ variables }) => {
-            revokeWorkspaceApplicationAuthorization(variables);
+            revokeWorkspaceApplicationMemberAccess(variables);
 
             return HttpResponse.json({
-              data: { revokeWorkspaceApplicationAuthorization: true },
+              data: { revokeWorkspaceApplicationMemberAccess: true },
             });
           },
         ),
@@ -500,6 +511,9 @@ export const OAuthOnlyAppListsItsConnectedMembers: Story = {
       }),
     ).toBeVisible();
     expect(await canvas.findByText('Charles Test')).toBeVisible();
+    expect(
+      canvas.getByText('Read your profile, Unknown permissions'),
+    ).toBeVisible();
 
     await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
     await userEvent.click(
@@ -513,9 +527,9 @@ export const OAuthOnlyAppListsItsConnectedMembers: Story = {
     );
 
     await waitFor(() =>
-      expect(revokeWorkspaceApplicationAuthorization).toHaveBeenCalledWith({
-        applicationAuthorizationId: CLAUDE_MEMBER_AUTHORIZATION_ID,
-      }),
+      expect(revokeWorkspaceApplicationMemberAccess).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: mockedWorkspaceMemberData.userId }),
+      ),
     );
   },
 };

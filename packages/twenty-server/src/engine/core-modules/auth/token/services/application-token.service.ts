@@ -128,11 +128,13 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    consentId,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    consentId?: string;
   }): Promise<{
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
@@ -161,6 +163,7 @@ export class ApplicationTokenService {
           applicationId,
           userWorkspaceId,
           userId,
+          consentId,
           tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
           expiresIn: refreshTokenExpiresIn,
         }),
@@ -287,6 +290,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    consentId?: string;
   }): Promise<{
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
@@ -296,6 +300,7 @@ export class ApplicationTokenService {
       applicationId: payload.applicationId,
       userWorkspaceId: payload.userWorkspaceId,
       userId: payload.userId,
+      consentId: payload.consentId,
     });
   }
 
@@ -328,6 +333,7 @@ export class ApplicationTokenService {
     userWorkspaceId,
     userId,
     agentId,
+    consentId,
     tokenType,
     expiresIn,
     workspaceDeletionRequestTimestamp,
@@ -337,6 +343,7 @@ export class ApplicationTokenService {
     userWorkspaceId?: string;
     userId?: string;
     agentId?: string;
+    consentId?: string;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -358,6 +365,7 @@ export class ApplicationTokenService {
       ...(userWorkspaceId ? { userWorkspaceId } : {}),
       ...(userId ? { userId } : {}),
       ...(agentId ? { agentId } : {}),
+      ...(consentId ? { consentId } : {}),
     };
 
     return {

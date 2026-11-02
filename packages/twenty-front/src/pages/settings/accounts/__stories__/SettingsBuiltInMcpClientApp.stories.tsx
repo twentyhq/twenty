@@ -20,10 +20,11 @@ const CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c1';
 const buildClaudeAuthorization = ({
   id = CLAUDE_AUTHORIZATION_ID,
   lastUsedHoursAgo = 2,
-}: { id?: string; lastUsedHoursAgo?: number } = {}) => ({
+  scopes = ['api', 'profile'],
+}: { id?: string; lastUsedHoursAgo?: number; scopes?: string[] } = {}) => ({
   __typename: 'ApplicationAuthorization',
   id,
-  scopes: ['api', 'profile'],
+  scopes,
   wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   lastUsedAt: new Date(
     Date.now() - lastUsedHoursAgo * 60 * 60 * 1000,
@@ -110,11 +111,11 @@ export const ClaudeEarlierConnectionShowsAndDisconnectsAsOne: Story = {
         HttpResponse.json({
           data: {
             currentUserApplicationAuthorizations: [
+              buildClaudeAuthorization({ scopes: ['profile'] }),
               buildClaudeAuthorization({
                 id: EARLIER_CLAUDE_AUTHORIZATION_ID,
                 lastUsedHoursAgo: 72,
               }),
-              buildClaudeAuthorization(),
             ].filter(({ id }) => !revokedAuthorizationIds.has(id)),
           },
         }),
@@ -125,7 +126,10 @@ export const ClaudeEarlierConnectionShowsAndDisconnectsAsOne: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    expect(await canvas.findByText('Last used 2h')).toBeVisible();
+    expect(
+      await canvas.findByText('Read your profile, Access your workspace data'),
+    ).toBeVisible();
+    expect(canvas.getByText('Last used 2h')).toBeVisible();
     expect(canvas.queryByText('Last used 3d')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Add connection' }),
