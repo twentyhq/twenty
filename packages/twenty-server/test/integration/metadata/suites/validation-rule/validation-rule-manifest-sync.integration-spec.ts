@@ -116,10 +116,10 @@ const findValidationRuleIdentifiers = async () => {
   return rows[0];
 };
 
-const findCompanyObjectMetadataId = async () => {
+const findObjectMetadataId = async (objectUniversalIdentifier: string) => {
   const rows: { id: string }[] = await globalThis.testDataSource.query(
     `SELECT id FROM core."objectMetadata" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-    [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
+    [objectUniversalIdentifier, SEED_APPLE_WORKSPACE_ID],
   );
 
   return rows[0].id;
@@ -243,7 +243,9 @@ describe('Validation rules declared in an application manifest', () => {
   }, 60000);
 
   it('should leave the rule off when the workspace deleted a field outside the application', async () => {
-    const companyObjectMetadataId = await findCompanyObjectMetadataId();
+    const companyObjectMetadataId = await findObjectMetadataId(
+      COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
     const { data } = await createOneFieldMetadata({
       input: {
         name: 'validationRuleManifestScore',
@@ -323,10 +325,12 @@ describe('Validation rules declared in an application manifest', () => {
   }, 60000);
 
   it('should leave the rule off when the workspace deactivated a standard field through an override', async () => {
-    const companyObjectMetadataId = await findCompanyObjectMetadataId();
+    const personObjectMetadataId = await findObjectMetadataId(
+      STANDARD_OBJECTS.person.universalIdentifier,
+    );
     const rows: { id: string }[] = await globalThis.testDataSource.query(
-      `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'employees'`,
-      [companyObjectMetadataId],
+      `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'jobTitle'`,
+      [personObjectMetadataId],
     );
     const standardFieldId = rows[0].id;
     const manifest = buildManifest({
@@ -334,8 +338,9 @@ describe('Validation rules declared in an application manifest', () => {
       validationRules: [
         buildValidationRuleManifest({
           universalIdentifier: OUTSIDE_VALIDATION_RULE_ID,
-          objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-          expression: 'employees > 0',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.person.universalIdentifier,
+          expression: 'isNonEmptyString(jobTitle)',
           errorFieldUniversalIdentifier: undefined,
         }),
       ],
