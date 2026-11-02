@@ -8,10 +8,7 @@ import { type EntityManager, IsNull, type Repository } from 'typeorm';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { buildBillingLimitOverrideLockKey } from 'src/engine/core-modules/billing/limit-override/utils/build-billing-limit-override-lock-key.util';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
-import { type UpdateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/update-usage-limit.input';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -32,7 +29,6 @@ export class BillingLimitOverrideService {
     @InjectRepository(BillingArrangementEntity)
     private readonly allWorkspacesBillingArrangementRepository: Repository<BillingArrangementEntity>,
     private readonly usageLimitService: UsageLimitService,
-    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async create({
@@ -58,41 +54,6 @@ export class BillingLimitOverrideService {
     });
   }
 
-  async replace({
-    workspaceId,
-    input,
-    grantedByUserId,
-  }: {
-    workspaceId: string;
-    input: UpdateUsageLimitInput;
-    grantedByUserId: string;
-  }): Promise<UsageLimitEntity> {
-    return this.cacheLockService.withLock(
-      () =>
-        this.usageLimitService.update({
-          workspaceId,
-          input,
-          isOperator: true,
-          writeAlongside: async (entityManager, usageLimit) => {
-            await this.endLimitOverrides({
-              entityManager,
-              workspaceId,
-              usageLimitId: usageLimit.id,
-              revokedByUserId: grantedByUserId,
-            });
-
-            await this.insertLimitOverride({
-              entityManager,
-              workspaceId,
-              usageLimitId: usageLimit.id,
-              grantedByUserId,
-            });
-          },
-        }),
-      buildBillingLimitOverrideLockKey(input.id),
-    );
-  }
-
   async end({
     workspaceId,
     usageLimitId,
@@ -102,22 +63,18 @@ export class BillingLimitOverrideService {
     usageLimitId: string;
     revokedByUserId: string;
   }): Promise<boolean> {
-    return this.cacheLockService.withLock(
-      () =>
-        this.usageLimitService.delete({
+    return this.usageLimitService.delete({
+      workspaceId,
+      usageLimitId,
+      isOperator: true,
+      writeAlongside: (entityManager) =>
+        this.endLimitOverrides({
+          entityManager,
           workspaceId,
           usageLimitId,
-          isOperator: true,
-          writeAlongside: (entityManager) =>
-            this.endLimitOverrides({
-              entityManager,
-              workspaceId,
-              usageLimitId,
-              revokedByUserId,
-            }),
+          revokedByUserId,
         }),
-      buildBillingLimitOverrideLockKey(usageLimitId),
-    );
+    });
   }
 
   async deleteExpiredLimitOverrideRows(): Promise<void> {
@@ -142,14 +99,11 @@ export class BillingLimitOverrideService {
 
     for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
       try {
-        await this.cacheLockService.withLock(
-          () =>
-            this.deleteUsageLimitWithoutActiveLimitOverride({
-              workspaceId,
-              usageLimitId,
-            }),
-          buildBillingLimitOverrideLockKey(usageLimitId),
-        );
+        await this.usageLimitService.delete({
+          workspaceId,
+          usageLimitId,
+          isOperator: true,
+        });
       } catch (error) {
         this.logger.error(
           `Could not delete the expired limit override ${usageLimitId} of workspace ${workspaceId}`,
@@ -157,35 +111,6 @@ export class BillingLimitOverrideService {
         );
       }
     }
-  }
-
-  private async deleteUsageLimitWithoutActiveLimitOverride({
-    workspaceId,
-    usageLimitId,
-  }: {
-    workspaceId: string;
-    usageLimitId: string;
-  }): Promise<void> {
-    const hasActiveLimitOverride = await this.billingArrangementRepository
-      .createScopedQueryBuilder(workspaceId, 'arrangement')
-      .andWhere('"arrangement"."type" = :type', {
-        type: BillingArrangementType.LIMIT_OVERRIDE,
-      })
-      .andWhere('"arrangement"."usageLimitId" = :usageLimitId', {
-        usageLimitId,
-      })
-      .andWhere(`${buildArrangementEndDateSql('arrangement')} > now()`)
-      .getExists();
-
-    if (hasActiveLimitOverride) {
-      return;
-    }
-
-    await this.usageLimitService.delete({
-      workspaceId,
-      usageLimitId,
-      isOperator: true,
-    });
   }
 
   private async insertLimitOverride({

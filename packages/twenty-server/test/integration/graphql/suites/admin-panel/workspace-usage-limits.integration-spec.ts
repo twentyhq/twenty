@@ -53,17 +53,6 @@ const CREATE_WORKSPACE_USAGE_LIMIT = gql`
   }
 `;
 
-const UPDATE_WORKSPACE_USAGE_LIMIT = gql`
-  mutation UpdateWorkspaceUsageLimit(
-    $workspaceId: UUID!
-    $payload: UpdateUsageLimitInput!
-  ) {
-    updateWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
-      id
-    }
-  }
-`;
-
 const DELETE_WORKSPACE_USAGE_LIMIT = gql`
   mutation DeleteWorkspaceUsageLimit(
     $workspaceId: UUID!
@@ -238,30 +227,6 @@ describe('Workspace usage limits from the admin panel', () => {
     ]);
   });
 
-  it('ends the limit override and starts a new one when an operator changes the value', async () => {
-    const usageLimitId = await createWorkspaceUsageLimit(STORAGE_STOCK_PAYLOAD);
-
-    const updateResponse = await makeAdminPanelApiRequest({
-      query: UPDATE_WORKSPACE_USAGE_LIMIT,
-      variables: {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        payload: {
-          id: usageLimitId,
-          payload: { ...STORAGE_STOCK_PAYLOAD, limitValue: 8_000_000 },
-        },
-      },
-    });
-
-    expect(updateResponse.body.errors).toBeUndefined();
-
-    const [endedLimitOverride, activeLimitOverride] =
-      await findLimitOverrides(usageLimitId);
-
-    expect(endedLimitOverride.revokedAt).not.toBeNull();
-    expect(endedLimitOverride.revokedByUserId).toBe(USER_DATA_SEED_IDS.JANE);
-    expect(activeLimitOverride.revokedAt).toBeNull();
-  });
-
   it('lets an operator override the AI credits each member gets per week', async () => {
     const usageLimitId = await createWorkspaceUsageLimit(
       USER_CREDIT_QUOTA_PAYLOAD,
@@ -355,17 +320,6 @@ describe('Workspace usage limits from the admin panel', () => {
         {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           payload: STORAGE_STOCK_PAYLOAD,
-        },
-      ],
-      [
-        'update',
-        UPDATE_WORKSPACE_USAGE_LIMIT,
-        {
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          payload: {
-            id: '3a2f1e5c-6b7d-4e8f-9a0b-1c2d3e4f5a6b',
-            payload: STORAGE_STOCK_PAYLOAD,
-          },
         },
       ],
       [

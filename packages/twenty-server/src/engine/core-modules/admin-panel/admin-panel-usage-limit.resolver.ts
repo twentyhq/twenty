@@ -5,7 +5,6 @@ import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/
 import {
   AdminPanelCreateUsageLimitInput,
   AdminPanelDeleteUsageLimitInput,
-  AdminPanelUpdateUsageLimitInput,
   AdminPanelWorkspaceUsageLimitsInput,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-usage-limit.input';
 import {
@@ -68,20 +67,6 @@ export class AdminPanelUsageLimitResolver {
     @AuthUser() actor: AuthContextUser,
   ): Promise<AdminPanelUsageLimitDTO> {
     const usageLimit = await this.billingLimitOverrideService.create({
-      workspaceId,
-      input: payload,
-      grantedByUserId: actor.id,
-    });
-
-    return fromUsageLimitEntityToDto(usageLimit);
-  }
-
-  @Mutation(() => AdminPanelUsageLimitDTO)
-  async updateWorkspaceUsageLimit(
-    @Args() { workspaceId, payload }: AdminPanelUpdateUsageLimitInput,
-    @AuthUser() actor: AuthContextUser,
-  ): Promise<AdminPanelUsageLimitDTO> {
-    const usageLimit = await this.billingLimitOverrideService.replace({
       workspaceId,
       input: payload,
       grantedByUserId: actor.id,

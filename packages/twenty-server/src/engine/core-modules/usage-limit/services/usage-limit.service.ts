@@ -123,12 +123,10 @@ export class UsageLimitService {
     workspaceId,
     input,
     isOperator,
-    writeAlongside,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
     isOperator: boolean;
-    writeAlongside?: WriteAlongside;
   }): Promise<UsageLimitEntity> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
@@ -162,45 +160,36 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    const updatedUsageLimit = await this.dataSource.transaction(
-      async (entityManager) => {
-        const repository = this.usageLimitRepository.withManager(entityManager);
-
-        const { affected } = await repository.update(
-          workspaceId,
-          {
-            id: usageLimit.id,
-            ...authorizedScope,
-            isInstanceOverride: usageLimit.isInstanceOverride,
-          },
-          {
-            ...scope,
-            limitValue: input.payload.limitValue,
-            burstValue: input.payload.burstValue ?? null,
-            isInstanceOverride: isOperator,
-          },
-        );
-
-        if (!isDefined(affected) || affected === 0) {
-          throw new UsageLimitException(
-            `Usage limit ${input.id} changed while this request was being authorized`,
-            UsageLimitExceptionCode.LIMIT_CONFLICT,
-          );
-        }
-
-        const savedUsageLimit = await repository.findOneOrFail(workspaceId, {
-          where: { id: usageLimit.id },
-        });
-
-        await writeAlongside?.(entityManager, savedUsageLimit);
-
-        return savedUsageLimit;
+    const { affected } = await this.usageLimitRepository.update(
+      workspaceId,
+      {
+        id: usageLimit.id,
+        ...authorizedScope,
+        isInstanceOverride: usageLimit.isInstanceOverride,
+      },
+      {
+        ...scope,
+        limitValue: input.payload.limitValue,
+        burstValue: input.payload.burstValue ?? null,
+        isInstanceOverride: isOperator,
       },
     );
+
+    if (!isDefined(affected) || affected === 0) {
+      throw new UsageLimitException(
+        `Usage limit ${input.id} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
     ]);
+
+    const updatedUsageLimit = await this.usageLimitRepository.findOneOrFail(
+      workspaceId,
+      { where: { id: usageLimit.id } },
+    );
 
     if (
       usageLimit.isInstanceOverride !== isOperator ||

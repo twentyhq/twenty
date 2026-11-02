@@ -6,14 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingLimitOverrideExpiryCronCommand } from 'src/engine/core-modules/billing/limit-override/crons/commands/billing-limit-override-expiry.cron.command';
 import { BillingLimitOverrideService } from 'src/engine/core-modules/billing/limit-override/services/billing-limit-override.service';
-import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([BillingArrangementEntity]),
-    CacheLockModule,
     UsageLimitModule,
   ],
   providers: [

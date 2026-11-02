@@ -679,7 +679,6 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
-  updateWorkspaceUsageLimit: AdminPanelUsageLimit;
 };
 
 
@@ -826,12 +825,6 @@ export type MutationUpdateServerAdminAccessArgs = {
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationUpdateWorkspaceUsageLimitArgs = {
-  payload: UpdateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -1150,11 +1143,6 @@ export type UpdateApplicationRegistrationVariablePayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   resetValue?: InputMaybe<Scalars['Boolean']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateUsageLimitInput = {
-  id: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
 };
 
 export enum UpgradeHealth {

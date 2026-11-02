@@ -5,7 +5,6 @@ import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
-import { UpdateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/update-usage-limit.input';
 
 @ArgsType()
 export class AdminPanelWorkspaceUsageLimitsInput {
@@ -26,19 +25,6 @@ export class AdminPanelCreateUsageLimitInput {
   @Type(() => CreateUsageLimitInput)
   @ValidateNested()
   payload: CreateUsageLimitInput;
-}
-
-@ArgsType()
-export class AdminPanelUpdateUsageLimitInput {
-  @Field(() => UUIDScalarType)
-  @IsNotEmpty()
-  @IsUUID()
-  workspaceId: string;
-
-  @Field(() => UpdateUsageLimitInput)
-  @Type(() => UpdateUsageLimitInput)
-  @ValidateNested()
-  payload: UpdateUsageLimitInput;
 }
 
 @ArgsType()
