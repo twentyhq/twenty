@@ -33,14 +33,14 @@ describe('isPerSpenderDefaultOverride', () => {
     expect(
       isPerSpenderDefaultOverride(
         buildUsageLimitScope({
-          resourceType: UsageResourceType.STORAGE,
-          operationType: UsageOperationType.STORAGE_FILE,
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
           spenderType: 'workspace',
           spenderId: '',
-          limitKind: 'stock',
+          limitKind: 'quota',
           periodCount: 1,
-          periodUnit: 'lifetime',
-          unit: UsageUnit.BYTE,
+          periodUnit: 'day',
+          unit: UsageUnit.INVOCATION,
         }),
       ),
     ).toBe(false);

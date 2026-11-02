@@ -12,12 +12,17 @@ export const computePlanAllowanceMicro = ({
   nowMs,
 }: Pick<
   FlatBillingSubscription,
-  | 'planAllowanceMicro'
-  | 'includedWorkspaceCreditsMicro'
-  | 'workspaceCreditAllowances'
-> & { nowMs: number }): number | null => {
+  'planAllowanceMicro' | 'includedWorkspaceCreditsMicro'
+> &
+  Partial<Pick<FlatBillingSubscription, 'workspaceCreditAllowances'>> & {
+    nowMs: number;
+  }): number | null => {
   const workspaceCreditAllowanceMicro = findActiveWorkspaceCreditAllowanceMicro(
-    { workspaceCreditAllowances, nowMs },
+    {
+      // Entries cached before this field existed lack it until recomputed
+      workspaceCreditAllowances: workspaceCreditAllowances ?? [],
+      nowMs,
+    },
   );
 
   if (!isDefined(workspaceCreditAllowanceMicro)) {

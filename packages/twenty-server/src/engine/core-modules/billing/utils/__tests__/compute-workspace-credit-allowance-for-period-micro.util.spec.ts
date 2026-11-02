@@ -24,7 +24,7 @@ describe('computeWorkspaceCreditAllowanceForPeriodMicro', () => {
     ).toBe(60_000_000);
   });
 
-  it('gives one month of credits during a trial, whatever the interval', () => {
+  it('gives one month of credits during the trial of a yearly subscription', () => {
     expect(
       computeWorkspaceCreditAllowanceForPeriodMicro({
         creditAllowanceMicro: 5_000_000,

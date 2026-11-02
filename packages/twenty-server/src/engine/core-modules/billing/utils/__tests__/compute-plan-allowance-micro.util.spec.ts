@@ -51,6 +51,16 @@ describe('computePlanAllowanceMicro', () => {
     ).toBe(5_000_000);
   });
 
+  it('keeps the plan allowance of a subscription cached before workspace credit allowances existed', () => {
+    expect(
+      computePlanAllowanceMicro({
+        planAllowanceMicro: 30_000_000,
+        includedWorkspaceCreditsMicro: 20_000_000,
+        nowMs: NOW_MS,
+      }),
+    ).toBe(30_000_000);
+  });
+
   it.each([
     ['not started yet', NOW_MS + DAY_MS, null],
     ['already ended', NOW_MS - 2 * DAY_MS, NOW_MS],

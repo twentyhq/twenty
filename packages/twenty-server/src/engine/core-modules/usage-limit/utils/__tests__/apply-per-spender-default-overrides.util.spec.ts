@@ -70,6 +70,29 @@ describe('applyPerSpenderDefaultOverrides', () => {
     });
   });
 
+  it('gives the row value to a per-member default that has no configured value', () => {
+    const overridingLimit = buildLimit({ limitValue: 3_000_000 });
+
+    expect(
+      applyPerSpenderDefaultOverrides({
+        quotaLimitDefaults: [{ ...userCreditDefault, limitValue: null }],
+        limits: [overridingLimit],
+      }),
+    ).toEqual({
+      quotaLimitDefaults: [{ ...userCreditDefault, limitValue: 3_000_000 }],
+      limits: [],
+    });
+  });
+
+  it('drops a default that has no configured value and no overriding row', () => {
+    expect(
+      applyPerSpenderDefaultOverrides({
+        quotaLimitDefaults: [{ ...userCreditDefault, limitValue: null }],
+        limits: [],
+      }),
+    ).toEqual({ quotaLimitDefaults: [], limits: [] });
+  });
+
   it('leaves the default untouched when no row overrides it', () => {
     const otherLimit = buildLimit({ unit: UsageUnit.CREDIT });
 

@@ -3,11 +3,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, type Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, type Repository } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { buildBillingLimitOverrideLockKey } from 'src/engine/core-modules/billing/limit-override/utils/build-billing-limit-override-lock-key.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { type UpdateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/update-usage-limit.input';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
@@ -30,6 +33,7 @@ export class BillingLimitOverrideService {
     @InjectRepository(BillingArrangementEntity)
     private readonly allWorkspacesBillingArrangementRepository: Repository<BillingArrangementEntity>,
     private readonly usageLimitService: UsageLimitService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async create({
@@ -75,25 +79,29 @@ export class BillingLimitOverrideService {
     input: UpdateUsageLimitInput;
     grantedByUserId: string;
   }): Promise<UsageLimitEntity> {
-    const usageLimit = await this.usageLimitService.update({
-      workspaceId,
-      input,
-      isOperator: true,
-    });
+    return this.cacheLockService.withLock(async () => {
+      const usageLimit = await this.usageLimitService.update({
+        workspaceId,
+        input,
+        isOperator: true,
+      });
 
-    await this.endLimitOverrides({
-      workspaceId,
-      usageLimitId: usageLimit.id,
-      revokedByUserId: grantedByUserId,
-    });
+      // Inserting before revoking keeps the row covered, so a failure never hands it to the expiry cron
+      const limitOverride = await this.insertLimitOverride({
+        workspaceId,
+        usageLimitId: usageLimit.id,
+        grantedByUserId,
+      });
 
-    await this.insertLimitOverride({
-      workspaceId,
-      usageLimitId: usageLimit.id,
-      grantedByUserId,
-    });
+      await this.endLimitOverrides({
+        workspaceId,
+        usageLimitId: usageLimit.id,
+        revokedByUserId: grantedByUserId,
+        keptLimitOverrideId: limitOverride.id,
+      });
 
-    return usageLimit;
+      return usageLimit;
+    }, buildBillingLimitOverrideLockKey(input.id));
   }
 
   async end({
@@ -105,19 +113,20 @@ export class BillingLimitOverrideService {
     usageLimitId: string;
     revokedByUserId: string;
   }): Promise<boolean> {
-    const isDeleted = await this.usageLimitService.delete({
-      workspaceId,
-      usageLimitId,
-      isOperator: true,
-    });
+    return this.cacheLockService.withLock(async () => {
+      // Revoking first lets the expiry cron finish the job if the delete fails
+      await this.endLimitOverrides({
+        workspaceId,
+        usageLimitId,
+        revokedByUserId,
+      });
 
-    await this.endLimitOverrides({
-      workspaceId,
-      usageLimitId,
-      revokedByUserId,
-    });
-
-    return isDeleted;
+      return this.usageLimitService.delete({
+        workspaceId,
+        usageLimitId,
+        isOperator: true,
+      });
+    }, buildBillingLimitOverrideLockKey(usageLimitId));
   }
 
   async deleteExpiredLimitOverrideRows(): Promise<void> {
@@ -142,11 +151,14 @@ export class BillingLimitOverrideService {
 
     for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
       try {
-        await this.usageLimitService.delete({
-          workspaceId,
-          usageLimitId,
-          isOperator: true,
-        });
+        await this.cacheLockService.withLock(
+          () =>
+            this.deleteUsageLimitWithoutActiveLimitOverride({
+              workspaceId,
+              usageLimitId,
+            }),
+          buildBillingLimitOverrideLockKey(usageLimitId),
+        );
       } catch (error) {
         this.logger.error(
           `Could not delete the expired limit override ${usageLimitId} of workspace ${workspaceId}`,
@@ -154,6 +166,35 @@ export class BillingLimitOverrideService {
         );
       }
     }
+  }
+
+  private async deleteUsageLimitWithoutActiveLimitOverride({
+    workspaceId,
+    usageLimitId,
+  }: {
+    workspaceId: string;
+    usageLimitId: string;
+  }): Promise<void> {
+    const hasActiveLimitOverride = await this.billingArrangementRepository
+      .createScopedQueryBuilder(workspaceId, 'arrangement')
+      .andWhere('"arrangement"."type" = :type', {
+        type: BillingArrangementType.LIMIT_OVERRIDE,
+      })
+      .andWhere('"arrangement"."usageLimitId" = :usageLimitId', {
+        usageLimitId,
+      })
+      .andWhere(`${buildArrangementEndDateSql('arrangement')} > now()`)
+      .getExists();
+
+    if (hasActiveLimitOverride) {
+      return;
+    }
+
+    await this.usageLimitService.delete({
+      workspaceId,
+      usageLimitId,
+      isOperator: true,
+    });
   }
 
   private async insertLimitOverride({
@@ -164,8 +205,8 @@ export class BillingLimitOverrideService {
     workspaceId: string;
     usageLimitId: string;
     grantedByUserId: string;
-  }): Promise<void> {
-    await this.billingArrangementRepository.insert(workspaceId, {
+  }): Promise<BillingArrangementEntity> {
+    return this.billingArrangementRepository.insertAndReturnOne(workspaceId, {
       workspaceId,
       type: BillingArrangementType.LIMIT_OVERRIDE,
       label: BillingArrangementLabel.OTHER,
@@ -181,10 +222,12 @@ export class BillingLimitOverrideService {
     workspaceId,
     usageLimitId,
     revokedByUserId,
+    keptLimitOverrideId,
   }: {
     workspaceId: string;
     usageLimitId: string;
     revokedByUserId: string;
+    keptLimitOverrideId?: string;
   }): Promise<void> {
     await this.billingArrangementRepository.update(
       workspaceId,
@@ -192,6 +235,9 @@ export class BillingLimitOverrideService {
         type: BillingArrangementType.LIMIT_OVERRIDE,
         usageLimitId,
         revokedAt: IsNull(),
+        ...(isDefined(keptLimitOverrideId)
+          ? { id: Not(keptLimitOverrideId) }
+          : {}),
       },
       { revokedAt: new Date(), revokedByUserId },
     );

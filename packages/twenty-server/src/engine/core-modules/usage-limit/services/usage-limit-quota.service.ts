@@ -28,6 +28,7 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
+import { type ConfiguredQuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/configured-quota-limit-default.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildWorkspaceAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-workspace-allowance-counter-key.util';
@@ -756,7 +757,7 @@ export class UsageLimitQuotaService {
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-  }): Promise<QuotaLimitDefault[]> {
+  }): Promise<ConfiguredQuotaLimitDefault[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }
@@ -766,26 +767,21 @@ export class UsageLimitQuotaService {
       limitKind: 'quota',
     });
 
-    const quotaLimitDefaults = await Promise.all(
+    return Promise.all(
       (definition?.defaults ?? []).map(
         async ({
           limitValueConfigVariable,
           ...quotaLimitDefaultDefinition
-        }) => {
-          const limitValue =
+        }) => ({
+          ...quotaLimitDefaultDefinition,
+          limitValue:
             await this.usageLimitDefaultValueService.findDefaultLimitValue({
               workspaceId,
               limitValueConfigVariable,
-            });
-
-          return isDefined(limitValue)
-            ? [{ ...quotaLimitDefaultDefinition, limitValue }]
-            : [];
-        },
+            }),
+        }),
       ),
     );
-
-    return quotaLimitDefaults.flat();
   }
 
   private async buildWorkspaceAllowanceCounterAdmittingOnFailure(
