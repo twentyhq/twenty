@@ -1064,7 +1064,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       validateRLSPredicatesForRecords({
         records: this.formatResult<ObjectRecord[]>(formattedRecords),
         objectMetadata: this.options.flatObjectMetadata,
-        principal: this.resolvePermissionsPrincipal(),
+        principal: this.resolvePermissionsPrincipalOrThrow(),
         metadataMaps: this.resolvePermissionsMetadataMaps(),
       });
     }
@@ -1747,7 +1747,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    const principal = this.resolvePermissionsPrincipal();
+    const principal = this.resolvePermissionsPrincipalOrThrow();
     const metadataMaps = this.resolvePermissionsMetadataMaps();
 
     if (
@@ -2061,7 +2061,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return buildPermissionsCondition({
-      principal: this.resolvePermissionsPrincipal(),
+      principal: this.resolvePermissionsPrincipalOrThrow(),
       metadataMaps: this.resolvePermissionsMetadataMaps(),
       recordShareTableExpression: this.getRecordShareTableExpression(),
       flatObjectMetadata,
@@ -2255,7 +2255,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       !this.isOperationDisabled({ operationType, flatObjectMetadata }) &&
       isObjectOperationDeniedToPrincipal({
-        principal: this.resolvePermissionsPrincipal(),
+        principal: this.resolvePermissionsPrincipalOrThrow(),
         metadataMaps: this.resolvePermissionsMetadataMaps(),
         flatObjectMetadata,
         operationType,
@@ -2284,14 +2284,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return isObjectOperationDisabledToPrincipal({
-      principal: this.resolvePermissionsPrincipal(),
+      principal: this.resolvePermissionsPrincipalOrThrow(),
       metadataMaps: this.resolvePermissionsMetadataMaps(),
       flatObjectMetadata,
       operationType,
     });
   }
 
-  private resolvePermissionsPrincipal(): PermissionsPrincipalsWithRolesContext {
+  private resolvePermissionsPrincipalOrThrow(): PermissionsPrincipalsWithRolesContext {
     this.permissionsPrincipal ??= buildPermissionsPrincipalsWithRolesFromConfig(
       {
         workspaceId: this.options.internalContext.workspaceId,
