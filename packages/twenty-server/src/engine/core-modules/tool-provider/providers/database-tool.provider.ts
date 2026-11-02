@@ -581,7 +581,10 @@ const buildToolPermissionsPrincipal = ({
   workspaceId,
   rolePermissionConfig,
   authContext,
-}: ToolProviderContext): PermissionsPrincipal | undefined => {
+}: Pick<
+  ToolProviderContext,
+  'workspaceId' | 'rolePermissionConfig' | 'authContext'
+>): PermissionsPrincipal | undefined => {
   if (!('intersectionOf' in rolePermissionConfig)) {
     return undefined;
   }

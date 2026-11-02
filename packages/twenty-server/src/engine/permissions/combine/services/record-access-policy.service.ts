@@ -102,7 +102,9 @@ export class RecordAccessPolicyService {
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<boolean> {
-    const uniqueRecordIds = [...new Set(recordIds)];
+    const uniqueRecordIds = [
+      ...new Set(recordIds.map((recordId) => recordId.toLowerCase())),
+    ];
 
     if (uniqueRecordIds.length === 0) {
       return false;
@@ -184,7 +186,9 @@ export class RecordAccessPolicyService {
         recordSharesByRecordId,
       );
 
-      const uniqueRecordIds = [...new Set(recordIds)];
+      const uniqueRecordIds = [
+        ...new Set(recordIds.map((recordId) => recordId.toLowerCase())),
+      ];
       const missingRecordIds = uniqueRecordIds.filter(
         (recordId) => !recordSharesByRecordId.has(recordId),
       );

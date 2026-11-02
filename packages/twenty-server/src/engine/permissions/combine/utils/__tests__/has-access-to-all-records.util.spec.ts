@@ -46,10 +46,11 @@ const hasAccess = ({
   const request: PermissionsObjectAccessRequest = {
     principal: {
       workspaceId: 'workspace-id',
-      intersectionOf:
-        roleId === READ_ONLY_ROLE_ID
-          ? { userWorkspaceRoleId: roleId }
-          : { applicationRoleId: roleId },
+      intersectionOf: [APPLICATION_ROLE_ID, OTHER_APPLICATION_ROLE_ID].includes(
+        roleId,
+      )
+        ? { applicationRoleId: roleId }
+        : { userWorkspaceRoleId: roleId },
     },
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
