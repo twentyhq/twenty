@@ -3,7 +3,7 @@ import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
-  getWorkflowAiAgentStepKind,
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
@@ -187,15 +187,10 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
-      const stepKind = getWorkflowAiAgentStepKind({
-        input: action.settings.input,
-      });
-
       // defineWorkflow refuses these, so the export would not apply
-      for (const issueCode of getWorkflowAiAgentStepConfigIssues({
-        stepKind,
-        input: action.settings.input,
-      })) {
+      for (const issueCode of getWorkflowAiAgentStepConfigIssues(
+        action.settings.input,
+      )) {
         resolvers.markUnsupported(
           WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
         );
@@ -203,7 +198,7 @@ const fromActionInput = ({
 
       resolvers.checkAiRunScopeReferences(action.settings.input.scope);
 
-      return stepKind === 'generate'
+      return isWorkflowAiAgentGenerateStep(action.settings.input)
         ? rest
         : {
             ...rest,

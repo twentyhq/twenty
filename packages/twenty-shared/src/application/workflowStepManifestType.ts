@@ -262,10 +262,8 @@ const workflowStepManifestOptions = [
       .strict()
       .superRefine((input, context) => {
         for (const issueCode of getWorkflowAiAgentStepConfigIssues({
-          stepKind: isDefined(input.agentUniversalIdentifier)
-            ? 'agent'
-            : 'generate',
-          input,
+          ...input,
+          agentId: input.agentUniversalIdentifier,
         })) {
           context.addIssue({
             code: 'custom',
