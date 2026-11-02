@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { type RowAccessPolicySubject } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 
 export type EventRecordAccessGate = {
   resolveAdmittedRecordIds: (
-    subject: RowAccessPolicySubject,
+    principal: PermissionsPrincipal,
   ) => Promise<Set<string>>;
 };

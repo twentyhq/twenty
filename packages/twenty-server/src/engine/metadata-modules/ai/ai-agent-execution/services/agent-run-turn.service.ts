@@ -22,6 +22,7 @@ import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getAuthContextApplication } from 'src/engine/core-modules/auth/utils/get-auth-context-application.util';
 import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -47,7 +48,6 @@ import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
-import { resolveAgentRunCallingApplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-calling-application.util';
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
@@ -429,7 +429,7 @@ export class AgentRunTurnService {
       workspaceId,
       agentId: persona.agentId ?? undefined,
       authContext,
-      application: resolveAgentRunCallingApplication(authContext),
+      application: getAuthContextApplication(authContext),
       actorContext,
       rolePermissionConfig: grants.rolePermissionConfig,
       ...(isDefined(authContext) && isUserAuthContext(authContext)

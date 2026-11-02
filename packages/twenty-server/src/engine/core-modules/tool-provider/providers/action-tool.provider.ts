@@ -8,12 +8,14 @@ import {
   ACTION_TOOL_LABELS,
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { ACTION_TOOL_CAN_RUN_UNDER_SCOPE } from 'src/engine/core-modules/tool-provider/constants/action-tool-can-run-under-scope.constant';
 import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/types/action-tool-label.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
@@ -37,12 +39,18 @@ import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { isRestrictedByPermissionScope } from 'src/engine/permissions/principal/utils/is-restricted-by-permission-scope.util';
+import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+
+const CAN_ACTION_TOOL_RUN_UNDER_SCOPE_BY_NAME: Partial<
+  Record<string, boolean>
+> = ACTION_TOOL_CAN_RUN_UNDER_SCOPE;
 
 @Injectable()
 export class ActionToolProvider implements ToolProvider {
   readonly category = ToolCategory.ACTION;
+
+  readonly canRunUnderScope = true;
 
   private readonly toolMap: Map<string, Tool>;
 
@@ -235,10 +243,8 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    // the sandbox calls back with a token for the member, which cannot carry a scope
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      !isRestrictedByPermissionScope(context.rolePermissionConfig) &&
       (await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
@@ -256,7 +262,9 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    return descriptors;
+    return descriptors.filter(
+      ({ name }) => !this.isWithheldFromCaller({ toolName: name, context }),
+    );
   }
 
   async executeStaticTool(
@@ -272,6 +280,10 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
+    if (this.isWithheldFromCaller({ toolName, context })) {
+      return buildToolNotAvailableOutput(toolName);
+    }
+
     return tool.execute(args, {
       workspaceId: context.workspaceId,
       userId: context.userId,
@@ -281,6 +293,20 @@ export class ActionToolProvider implements ToolProvider {
       rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+    });
+  }
+
+  private isWithheldFromCaller({
+    toolName,
+    context,
+  }: {
+    toolName: string;
+    context: ToolProviderContext;
+  }): boolean {
+    return isWithheldFromPermissionScope({
+      canRunUnderScope:
+        CAN_ACTION_TOOL_RUN_UNDER_SCOPE_BY_NAME[toolName] ?? false,
+      rolePermissionConfig: context.rolePermissionConfig,
     });
   }
 

@@ -88,7 +88,9 @@ export class AiGenerateService {
             modelId: settings.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             modelConfiguration: null,
             scope: settings.scope ?? null,
-            applicationId: callerApplication?.id ?? null,
+            // a call without an application belongs to the workspace custom application
+            applicationId:
+              callerApplication?.id ?? workspace.workspaceCustomApplicationId,
             promptCacheKey: `ai-generate:${callerApplication?.id ?? workspace.id}`,
           },
           title: 'Generate',

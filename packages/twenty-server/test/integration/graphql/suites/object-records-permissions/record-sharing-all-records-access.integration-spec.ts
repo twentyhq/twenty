@@ -43,15 +43,15 @@ const RESTRICTED_RECORD_ID = randomUUID();
 const SHARED_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const fields =
-  'canManageSharing generalAccessLevel shares { principalId rowCause accessLevel }';
+  'canManageSharing isPrivate shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { ${fields} } }`,
 );
-const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
+const SET_PRIVATE = parse(
+  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { ${fields} } }`,
 );
 
 describe('Access to all records and ownership transfer', () => {
@@ -190,10 +190,10 @@ describe('Access to all records and ownership transfer', () => {
 
       const restricted = await makeMetadataApiRequest(
         {
-          query: SET_GENERAL_ACCESS,
+          query: SET_PRIVATE,
           variables: {
             target: target(recordId),
-            accessLevel: RecordShareAccessLevel.NONE,
+            isPrivate: true,
           },
         },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -296,12 +296,12 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
-  it('should lift restrictions for everyone while record sharing is off', async () => {
+  it('should keep private records private while record sharing is off', async () => {
     await setRecordSharingEnabled(false);
 
     try {
-      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
-        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
+        RESTRICTED_RECORD_ID,
       );
     } finally {
       await setRecordSharingEnabled(true);

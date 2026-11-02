@@ -33,6 +33,14 @@ const CONTEXT: ToolProviderContext = {
   userWorkspaceId: 'user-workspace-id',
 };
 
+const SCOPED_CONTEXT: ToolProviderContext = {
+  ...CONTEXT,
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'role-id' },
+    scope: { objectsPermissions: {}, permissionFlags: {} },
+  },
+};
+
 const buildTool = <TTool>(): TTool =>
   ({
     description: 'description',
@@ -139,21 +147,29 @@ describe('ActionToolProvider', () => {
     expect(await getToolNames(provider)).toContain('code_interpreter');
   });
 
-  it('withholds code_interpreter from a caller narrowed by a scope, even one granting it', async () => {
+  it('withholds the tools that do not honour a scope from a caller narrowed by one, even when granted', async () => {
     const { provider } = buildProvider({
-      isRecordSharingEnabled: false,
+      isRecordSharingEnabled: true,
       arePermissionFlagsGranted: true,
     });
 
-    const toolNames = await getToolNames(provider, {
-      ...CONTEXT,
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: 'role-id' },
-        scope: { objectsPermissions: {}, permissionFlags: {} },
-      },
-    });
+    const toolNames = await getToolNames(provider, SCOPED_CONTEXT);
 
     expect(toolNames).not.toContain('code_interpreter');
+    expect(toolNames).not.toContain('share_record');
     expect(toolNames).toContain('save_campaign');
+    expect(toolNames).toContain('http_request');
+  });
+
+  it('refuses to run a tool that does not honour the scope of its caller', async () => {
+    const { provider, shareRecordTool } = buildProvider({
+      isRecordSharingEnabled: true,
+      arePermissionFlagsGranted: true,
+    });
+
+    expect(
+      await provider.executeStaticTool('share_record', {}, SCOPED_CONTEXT),
+    ).toMatchObject({ success: false });
+    expect(shareRecordTool.execute).not.toHaveBeenCalled();
   });
 });

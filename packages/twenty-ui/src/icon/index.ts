@@ -7,8 +7,6 @@
  *                              |___/
  */
 
-export type { IconProps } from './components/Icon';
-export { Icon } from './components/Icon';
 export { IconAddressBook } from './components/IconAddressBook';
 export { IconBrandAnthropic } from './components/IconBrandAnthropic';
 export { IconBrandGemini } from './components/IconBrandGemini';
@@ -527,6 +525,4 @@ export {
   TWENTY_ICON_DICTIONARY_CATEGORIES,
   TWENTY_ICON_DICTIONARY,
 } from './constants/TwentyIconDictionary';
-export { useIcons } from './hooks/useIcons';
-export { IconsProvider } from './providers/IconsProvider';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';

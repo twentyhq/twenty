@@ -1,3 +1,5 @@
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { parse } from 'graphql';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -47,6 +49,17 @@ const QUESTION = {
 
 // The model is not called here: the resumed stream is only checked for being
 // queued.
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
+
 describe('Sending an inbox message as an application', () => {
   const input = {
     workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],

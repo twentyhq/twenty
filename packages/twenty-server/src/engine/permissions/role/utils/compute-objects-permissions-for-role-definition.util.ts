@@ -29,6 +29,8 @@ type RoleDefinitionForObjectsPermissions = Pick<
   | 'canDestroyAllObjectRecords'
 > & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
+  // an AI run scope leaves system objects readable but not writable unless it grants them
+  areSystemObjectsReadOnlyByDefault?: boolean;
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
@@ -95,6 +97,8 @@ const resolveObjectRecordsAccess = ({
     };
   }
 
+  const isSystemObjectWritableByDefault =
+    isSystem && !roleDefinition.areSystemObjectsReadOnlyByDefault;
   const objectPermissionOverride = objectPermissions.find(
     (objectPermission) =>
       objectPermission.objectMetadataId === objectMetadataId,
@@ -109,17 +113,17 @@ const resolveObjectRecordsAccess = ({
     canUpdate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canUpdateObjectRecords,
       hasAllObjectsPermission: roleDefinition.canUpdateAllObjectRecords,
-      isSystemObject: isSystem,
+      isSystemObject: isSystemObjectWritableByDefault,
     }),
     canSoftDelete: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
       hasAllObjectsPermission: roleDefinition.canSoftDeleteAllObjectRecords,
-      isSystemObject: isSystem,
+      isSystemObject: isSystemObjectWritableByDefault,
     }),
     canDestroy: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canDestroyObjectRecords,
       hasAllObjectsPermission: roleDefinition.canDestroyAllObjectRecords,
-      isSystemObject: isSystem,
+      isSystemObject: isSystemObjectWritableByDefault,
     }),
   };
 };

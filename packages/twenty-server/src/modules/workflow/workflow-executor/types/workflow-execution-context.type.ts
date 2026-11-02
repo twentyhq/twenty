@@ -9,5 +9,5 @@ export type WorkflowExecutionContext = {
   initiator: ActorMetadata;
   rolePermissionConfig: RolePermissionConfig;
   authContext: WorkspaceAuthContext;
-  application: FlatApplication | null;
+  application: FlatApplication;
 };

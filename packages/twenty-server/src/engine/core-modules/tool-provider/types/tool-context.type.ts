@@ -10,6 +10,7 @@ import { type RolePermissionConfig } from 'src/engine/permissions/principal/type
 export type ToolContext = {
   resolveExecutionContext?: () => Promise<ToolContext>;
   workspaceId: string;
+  approvedToolName?: string;
   rolePermissionConfig: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;
