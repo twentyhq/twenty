@@ -5,12 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { type BillingArrangementPeriod } from 'src/engine/core-modules/billing/types/billing-arrangement-period.type';
 import { type StripeCouponDiscount } from 'src/engine/core-modules/billing/types/stripe-coupon-discount.type';
+import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 
-type CouponArrangement = BillingArrangementPeriod &
+type DiscountArrangement = BillingArrangementPeriod &
   Pick<BillingArrangementEntity, 'id' | 'stripeCouponId'>;
 
-export type CouponArrangementSync = {
+type DiscountArrangementSync = {
   arrangementIdsToEnd: string[];
   arrangementEndsAtUpdate: {
     arrangementId: string;
@@ -22,16 +23,23 @@ export type CouponArrangementSync = {
 const isSameDate = (dateA: Date | null, dateB: Date | null): boolean =>
   dateA?.getTime() === dateB?.getTime();
 
-export const computeCouponArrangementSync = ({
-  couponArrangements,
+const getLatestDate = (dates: Date[]): Date | null =>
+  dates.reduce<Date | null>(
+    (latestDate, date) =>
+      !isDefined(latestDate) || date > latestDate ? date : latestDate,
+    null,
+  );
+
+export const computeDiscountArrangementSync = ({
+  discountArrangements,
   stripeCouponDiscounts,
   now,
 }: {
-  couponArrangements: CouponArrangement[];
+  discountArrangements: DiscountArrangement[];
   stripeCouponDiscounts: StripeCouponDiscount[];
   now: Date;
-}): CouponArrangementSync => {
-  const activeArrangements = couponArrangements.filter((arrangement) =>
+}): DiscountArrangementSync => {
+  const activeArrangements = discountArrangements.filter((arrangement) =>
     isBillingArrangementActive({ arrangement, now }),
   );
 
@@ -75,15 +83,26 @@ export const computeCouponArrangementSync = ({
     };
   }
 
-  const shouldStartAfterEndedArrangements =
-    arrangementIdsToEnd.length > 0 && discount.startsAt < now;
+  const latestArrangementEndDate = getLatestDate(
+    discountArrangements
+      .map((arrangement) =>
+        arrangementIdsToEnd.includes(arrangement.id)
+          ? now
+          : getBillingArrangementEndDate(arrangement),
+      )
+      .filter(isDefined),
+  );
 
   return {
     arrangementIdsToEnd,
     arrangementEndsAtUpdate: null,
     discountToRecord: {
       ...discount,
-      startsAt: shouldStartAfterEndedArrangements ? now : discount.startsAt,
+      startsAt:
+        isDefined(latestArrangementEndDate) &&
+        latestArrangementEndDate > discount.startsAt
+          ? latestArrangementEndDate
+          : discount.startsAt,
     },
   };
 };

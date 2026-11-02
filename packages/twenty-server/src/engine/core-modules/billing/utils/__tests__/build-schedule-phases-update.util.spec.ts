@@ -57,6 +57,7 @@ describe('buildSchedulePhasesUpdate', () => {
       toUpdateCurrentPrices: undefined,
       toUpdateNextPrices,
       subscriptionCurrentPeriodEnd: PERIOD_END,
+      subscriptionDiscounts: [],
     });
 
     expect(toUpdateNextPhase.items).toEqual([
@@ -89,6 +90,7 @@ describe('buildSchedulePhasesUpdate', () => {
       toUpdateCurrentPrices: undefined,
       toUpdateNextPrices,
       subscriptionCurrentPeriodEnd: PERIOD_END,
+      subscriptionDiscounts: [],
     });
 
     expect(toUpdateNextPhase.items).toEqual([
@@ -105,6 +107,7 @@ describe('buildSchedulePhasesUpdate', () => {
       toUpdateCurrentPrices: undefined,
       toUpdateNextPrices,
       subscriptionCurrentPeriodEnd: PERIOD_END,
+      subscriptionDiscounts: [],
     });
 
     expect(toUpdateNextPhase.items).toEqual([
@@ -122,9 +125,53 @@ describe('buildSchedulePhasesUpdate', () => {
       toUpdateCurrentPrices: undefined,
       toUpdateNextPrices,
       subscriptionCurrentPeriodEnd: PERIOD_END,
+      subscriptionDiscounts: [],
     });
 
     expect(toUpdateCurrentPhase.end_date).toBe(PERIOD_END);
     expect(toUpdateCurrentPhase.items).toEqual(currentPhase.items);
+  });
+
+  it('reuses the live discounts by id, and drops from the next phase the ones ending before it starts', () => {
+    const { toUpdateCurrentPhase, toUpdateNextPhase } =
+      buildSchedulePhasesUpdate({
+        currentPhase,
+        nextPhase: undefined,
+        productKeyByPriceId,
+        toUpdateCurrentPrices: undefined,
+        toUpdateNextPrices,
+        subscriptionCurrentPeriodEnd: PERIOD_END,
+        subscriptionDiscounts: [
+          { id: 'di_forever', end: null },
+          { id: 'di_three_months', end: PERIOD_END - 1 },
+          { id: 'di_two_years', end: PERIOD_END + 1 },
+        ],
+      });
+
+    expect(toUpdateCurrentPhase.discounts).toEqual([
+      { discount: 'di_forever' },
+      { discount: 'di_three_months' },
+      { discount: 'di_two_years' },
+    ]);
+    expect(toUpdateNextPhase.discounts).toEqual([
+      { discount: 'di_forever' },
+      { discount: 'di_two_years' },
+    ]);
+  });
+
+  it('sets no discounts when the subscription has none, so the customer discount still applies', () => {
+    const { toUpdateCurrentPhase, toUpdateNextPhase } =
+      buildSchedulePhasesUpdate({
+        currentPhase,
+        nextPhase: undefined,
+        productKeyByPriceId,
+        toUpdateCurrentPrices: toUpdateNextPrices,
+        toUpdateNextPrices,
+        subscriptionCurrentPeriodEnd: PERIOD_END,
+        subscriptionDiscounts: [],
+      });
+
+    expect('discounts' in toUpdateCurrentPhase).toBe(false);
+    expect('discounts' in toUpdateNextPhase).toBe(false);
   });
 });

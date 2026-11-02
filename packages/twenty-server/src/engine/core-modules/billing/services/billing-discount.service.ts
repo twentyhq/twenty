@@ -1,13 +1,15 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
-import type Stripe from 'stripe';
-
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
@@ -16,9 +18,10 @@ import { StripeSubscriptionService } from 'src/engine/core-modules/billing/strip
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { type StripeCouponDiscount } from 'src/engine/core-modules/billing/types/stripe-coupon-discount.type';
 import { buildBillingArrangementLockKey } from 'src/engine/core-modules/billing/utils/build-billing-arrangement-lock-key.util';
-import { computeCouponArrangementSync } from 'src/engine/core-modules/billing/utils/compute-coupon-arrangement-sync.util';
+import { computeDiscountArrangementSync } from 'src/engine/core-modules/billing/utils/compute-discount-arrangement-sync.util';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
+import { getExpandedDiscounts } from 'src/engine/core-modules/billing/utils/get-expanded-discounts.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { toStripeCouponDiscount } from 'src/engine/core-modules/billing/utils/to-stripe-coupon-discount.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -26,8 +29,8 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
-export class BillingCouponService {
-  private readonly logger = new Logger(BillingCouponService.name);
+export class BillingDiscountService {
+  private readonly logger = new Logger(BillingDiscountService.name);
 
   constructor(
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
@@ -35,39 +38,49 @@ export class BillingCouponService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly cacheLockService: CacheLockService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  async hasActiveCouponArrangement(workspaceId: string): Promise<boolean> {
+  async hasActiveDiscountArrangement(workspaceId: string): Promise<boolean> {
     const now = new Date();
-    const couponArrangements = await this.findCouponArrangements(workspaceId);
+    const discountArrangements =
+      await this.findDiscountArrangements(workspaceId);
 
-    return couponArrangements.some((arrangement) =>
+    return discountArrangements.some((arrangement) =>
       isBillingArrangementActive({ arrangement, now }),
     );
   }
 
-  async syncCouponArrangement({
+  async syncDiscountArrangement({
     workspaceId,
     stripeCustomerId,
   }: {
     workspaceId: string;
     stripeCustomerId: string;
   }): Promise<void> {
-    const stripeCouponDiscounts =
-      await this.findStripeCouponDiscounts(stripeCustomerId);
+    await this.cacheLockService.withLock(async () => {
+      const stripeCouponDiscounts =
+        await this.findStripeCouponDiscounts(stripeCustomerId);
 
-    await this.cacheLockService.withLock(
-      () =>
-        this.applyCouponArrangementSync({ workspaceId, stripeCouponDiscounts }),
-      buildBillingArrangementLockKey(workspaceId),
-    );
+      if (stripeCouponDiscounts.length > 1) {
+        this.logger.warn(
+          `Workspace ${workspaceId} holds ${stripeCouponDiscounts.length} Stripe discounts, only one is mirrored`,
+        );
+      }
+
+      await this.applyDiscountArrangementSync({
+        workspaceId,
+        stripeCouponDiscounts,
+      });
+    }, buildBillingArrangementLockKey(workspaceId));
   }
 
-  private async findCouponArrangements(
+  private async findDiscountArrangements(
     workspaceId: string,
   ): Promise<BillingArrangementEntity[]> {
     return await this.billingArrangementRepository.find(workspaceId, {
-      where: { type: BillingArrangementType.COUPON },
+      where: { type: BillingArrangementType.DISCOUNT },
     });
   }
 
@@ -81,19 +94,17 @@ export class BillingCouponService {
       this.stripeCustomerService.getCustomerDiscount(stripeCustomerId),
     ]);
 
-    const discounts: Stripe.Discount[] = [
+    return [
       ...subscriptions.flatMap(({ discounts }) =>
-        discounts.filter(
-          (discount): discount is Stripe.Discount => !isString(discount),
-        ),
+        getExpandedDiscounts(discounts),
       ),
       ...(isDefined(customerDiscount) ? [customerDiscount] : []),
-    ];
-
-    return discounts.map(toStripeCouponDiscount).filter(isDefined);
+    ]
+      .map(toStripeCouponDiscount)
+      .filter(isDefined);
   }
 
-  private async applyCouponArrangementSync({
+  private async applyDiscountArrangementSync({
     workspaceId,
     stripeCouponDiscounts,
   }: {
@@ -101,47 +112,58 @@ export class BillingCouponService {
     stripeCouponDiscounts: StripeCouponDiscount[];
   }): Promise<void> {
     const now = new Date();
-    const couponArrangements = await this.findCouponArrangements(workspaceId);
+    const discountArrangements =
+      await this.findDiscountArrangements(workspaceId);
 
     const { arrangementIdsToEnd, arrangementEndsAtUpdate, discountToRecord } =
-      computeCouponArrangementSync({
-        couponArrangements,
+      computeDiscountArrangementSync({
+        discountArrangements,
         stripeCouponDiscounts,
         now,
       });
 
-    if (isNonEmptyArray(arrangementIdsToEnd)) {
-      await this.billingArrangementRepository.update(
-        workspaceId,
-        { id: In(arrangementIdsToEnd) },
-        { endsAt: now },
-      );
-    }
+    const arrangementToRecord = isDefined(discountToRecord)
+      ? this.buildDiscountArrangementOrThrow({
+          workspaceId,
+          discount: discountToRecord,
+          workspaceArrangements: discountArrangements.map((arrangement) =>
+            arrangementIdsToEnd.includes(arrangement.id)
+              ? { ...arrangement, endsAt: now }
+              : arrangement,
+          ),
+        })
+      : null;
 
-    if (isDefined(arrangementEndsAtUpdate)) {
-      await this.billingArrangementRepository.update(
-        workspaceId,
-        { id: arrangementEndsAtUpdate.arrangementId },
-        { endsAt: arrangementEndsAtUpdate.endsAt },
-      );
-    }
+    await this.dataSource.transaction(async (entityManager) => {
+      const billingArrangementRepository =
+        this.billingArrangementRepository.withManager(entityManager);
 
-    if (!isDefined(discountToRecord)) {
-      return;
-    }
+      if (isNonEmptyArray(arrangementIdsToEnd)) {
+        await billingArrangementRepository.update(
+          workspaceId,
+          { id: In(arrangementIdsToEnd) },
+          { endsAt: now },
+        );
+      }
 
-    await this.recordCouponArrangement({
-      workspaceId,
-      discount: discountToRecord,
-      workspaceArrangements: couponArrangements.map((arrangement) =>
-        arrangementIdsToEnd.includes(arrangement.id)
-          ? { ...arrangement, endsAt: now }
-          : arrangement,
-      ),
+      if (isDefined(arrangementEndsAtUpdate)) {
+        await billingArrangementRepository.update(
+          workspaceId,
+          { id: arrangementEndsAtUpdate.arrangementId },
+          { endsAt: arrangementEndsAtUpdate.endsAt },
+        );
+      }
+
+      if (isDefined(arrangementToRecord)) {
+        await billingArrangementRepository.insert(workspaceId, {
+          ...arrangementToRecord,
+          grantedByUserId: null,
+        });
+      }
     });
   }
 
-  private async recordCouponArrangement({
+  private buildDiscountArrangementOrThrow({
     workspaceId,
     discount,
     workspaceArrangements,
@@ -149,9 +171,9 @@ export class BillingCouponService {
     workspaceId: string;
     discount: StripeCouponDiscount;
     workspaceArrangements: BillingArrangementEntity[];
-  }): Promise<void> {
+  }): BillingArrangementDraft {
     const arrangement: BillingArrangementDraft = {
-      type: BillingArrangementType.COUPON,
+      type: BillingArrangementType.DISCOUNT,
       label: BillingArrangementLabel.OTHER,
       comment: null,
       seats: null,
@@ -177,16 +199,12 @@ export class BillingCouponService {
       isNonEmptyArray(validationErrors) ||
       isDefined(overlappingArrangement)
     ) {
-      this.logger.error(
+      throw new BillingException(
         `Could not record Stripe coupon ${discount.stripeCouponId} for workspace ${workspaceId}: ${JSON.stringify({ validationErrors, overlappingArrangementId: overlappingArrangement?.id })}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
       );
-
-      return;
     }
 
-    await this.billingArrangementRepository.insert(workspaceId, {
-      ...arrangement,
-      grantedByUserId: null,
-    });
+    return arrangement;
   }
 }

@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -13,7 +13,8 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingCouponService } from 'src/engine/core-modules/billing/services/billing-coupon.service';
+import { BillingDiscountService } from 'src/engine/core-modules/billing/services/billing-discount.service';
+import { getStripeObjectId } from 'src/engine/core-modules/billing/utils/get-stripe-object-id.util';
 
 @Injectable()
 export class BillingWebhookDiscountService {
@@ -22,7 +23,7 @@ export class BillingWebhookDiscountService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    private readonly billingCouponService: BillingCouponService,
+    private readonly billingDiscountService: BillingDiscountService,
   ) {}
 
   async processStripeEvent(
@@ -31,14 +32,14 @@ export class BillingWebhookDiscountService {
       | Stripe.CustomerDiscountUpdatedEvent.Data
       | Stripe.CustomerDiscountDeletedEvent.Data,
   ) {
-    const { customer } = data.object;
-
-    if (!isString(customer)) {
+    if (!isDefined(data.object.customer)) {
       return {};
     }
 
+    const stripeCustomerId = getStripeObjectId(data.object.customer);
+
     const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { stripeCustomerId: customer },
+      where: { stripeCustomerId },
     });
 
     if (!billingCustomer) {
@@ -48,12 +49,12 @@ export class BillingWebhookDiscountService {
       );
     }
 
-    await this.billingCouponService.syncCouponArrangement({
+    await this.billingDiscountService.syncDiscountArrangement({
       workspaceId: billingCustomer.workspaceId,
-      stripeCustomerId: customer,
+      stripeCustomerId,
     });
 
-    return { stripeCustomerId: customer };
+    return { stripeCustomerId };
   }
 
   async processSubscriptionDeleted({
@@ -64,16 +65,16 @@ export class BillingWebhookDiscountService {
     subscription: Stripe.Subscription;
   }) {
     if (
-      !(await this.billingCouponService.hasActiveCouponArrangement(workspaceId))
+      !(await this.billingDiscountService.hasActiveDiscountArrangement(
+        workspaceId,
+      ))
     ) {
       return;
     }
 
-    await this.billingCouponService.syncCouponArrangement({
+    await this.billingDiscountService.syncDiscountArrangement({
       workspaceId,
-      stripeCustomerId: isString(subscription.customer)
-        ? subscription.customer
-        : subscription.customer.id,
+      stripeCustomerId: getStripeObjectId(subscription.customer),
     });
   }
 }

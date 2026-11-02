@@ -153,37 +153,4 @@ describe('buildPhaseUpdateParamsOrThrow', () => {
     expect(withoutEndDate.end_date).toBeUndefined();
     expect(withEndDate.end_date).toBe(1_800_000_000);
   });
-
-  it('carries the phase discounts into the rebuilt phase', () => {
-    const phase = buildPhaseUpdateParamsOrThrow({
-      currentPhase: {
-        ...buildPhase([
-          { price: BASE_PRICE_ID, quantity: 3 },
-          { price: CREDIT_PRICE_ID, quantity: 1 },
-        ]),
-        discounts: [{ coupon: 'coupon_early' }],
-      },
-      productKeyByPriceId,
-      toUpdatePrices,
-      startDate: NEW_START,
-      endDate: undefined,
-    });
-
-    expect(phase.discounts).toEqual([{ coupon: 'coupon_early' }]);
-  });
-
-  it('omits discounts when the phase carries none', () => {
-    const phase = buildPhaseUpdateParamsOrThrow({
-      currentPhase: buildPhase([
-        { price: BASE_PRICE_ID, quantity: 3 },
-        { price: CREDIT_PRICE_ID, quantity: 1 },
-      ]),
-      productKeyByPriceId,
-      toUpdatePrices,
-      startDate: NEW_START,
-      endDate: undefined,
-    });
-
-    expect('discounts' in phase).toBe(false);
-  });
 });

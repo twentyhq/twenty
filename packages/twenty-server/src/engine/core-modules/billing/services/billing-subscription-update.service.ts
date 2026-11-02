@@ -45,7 +45,8 @@ import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/b
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
+import { getExpandedDiscounts } from 'src/engine/core-modules/billing/utils/get-expanded-discounts.util';
+import { getStripeObjectId } from 'src/engine/core-modules/billing/utils/get-stripe-object-id.util';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
@@ -258,6 +259,10 @@ export class BillingSubscriptionUpdateService {
       subscription.stripeSubscriptionId,
     );
 
+    const subscriptionDiscounts = getExpandedDiscounts(
+      stripeSubscription.discounts,
+    );
+
     const currentPrices = await this.getSubscriptionPricesFromItems(
       stripeSubscription.items.data,
     );
@@ -293,6 +298,7 @@ export class BillingSubscriptionUpdateService {
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
+          subscriptionDiscounts,
         });
       } else {
         assertIsDefinedOrThrow(nextPhase);
@@ -316,6 +322,7 @@ export class BillingSubscriptionUpdateService {
           subscriptionCurrentPeriodEnd: Math.floor(
             subscription.currentPeriodEnd.getTime() / 1000,
           ),
+          subscriptionDiscounts,
         });
       }
     } else {
@@ -360,6 +367,7 @@ export class BillingSubscriptionUpdateService {
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
             Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
+          subscriptionDiscounts,
         });
       }
     }
@@ -470,7 +478,7 @@ export class BillingSubscriptionUpdateService {
     items: { price: string | { id: string }; quantity?: number }[],
   ): Promise<SubscriptionStripePrices> {
     const phaseItemPriceIds = items.map((item) =>
-      normalizePriceRef(item.price),
+      getStripeObjectId(item.price),
     );
 
     const phaseItemPrices = await this.billingPriceRepository.find({
@@ -488,7 +496,7 @@ export class BillingSubscriptionUpdateService {
 
     const basePlanPhaseItem = findOrThrow(
       items,
-      (item) => normalizePriceRef(item.price) === basePlanPrice.stripePriceId,
+      (item) => getStripeObjectId(item.price) === basePlanPrice.stripePriceId,
     );
 
     assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
@@ -559,6 +567,7 @@ export class BillingSubscriptionUpdateService {
     currentPhase,
     nextPhase,
     subscriptionCurrentPeriodEnd,
+    subscriptionDiscounts,
   }: {
     stripeScheduleId: string;
     toUpdateNextPrices: SubscriptionStripePrices;
@@ -566,6 +575,7 @@ export class BillingSubscriptionUpdateService {
     currentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
     nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
     subscriptionCurrentPeriodEnd: number;
+    subscriptionDiscounts: Stripe.Discount[];
   }) {
     const productKeyByPriceId = await this.getProductKeyByPriceId([
       ...new Set(
@@ -583,6 +593,7 @@ export class BillingSubscriptionUpdateService {
         toUpdateCurrentPrices,
         toUpdateNextPrices,
         subscriptionCurrentPeriodEnd,
+        subscriptionDiscounts,
       });
 
     if (isSamePhaseSignature(toUpdateCurrentPhase, toUpdateNextPhase)) {

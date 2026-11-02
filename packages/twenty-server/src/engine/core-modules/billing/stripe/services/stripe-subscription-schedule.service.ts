@@ -66,7 +66,7 @@ export class StripeSubscriptionScheduleService {
 
   async getSubscriptionWithSchedule(stripeSubscriptionId: string) {
     return (await this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
-      expand: ['schedule'],
+      expand: ['schedule', 'discounts'],
     })) as SubscriptionWithSchedule;
   }
 

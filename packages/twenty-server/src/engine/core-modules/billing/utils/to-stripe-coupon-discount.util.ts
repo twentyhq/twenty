@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
-import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
 import { type StripeCouponDiscount } from 'src/engine/core-modules/billing/types/stripe-coupon-discount.type';
+import { getStripeObjectId } from 'src/engine/core-modules/billing/utils/get-stripe-object-id.util';
 
 export const toStripeCouponDiscount = (
   discount: Stripe.Discount,
@@ -17,7 +17,7 @@ export const toStripeCouponDiscount = (
   }
 
   return {
-    stripeCouponId: isString(coupon) ? coupon : coupon.id,
+    stripeCouponId: getStripeObjectId(coupon),
     startsAt: new Date(discount.start * 1000),
     endsAt: isDefined(discount.end) ? new Date(discount.end * 1000) : null,
   };
