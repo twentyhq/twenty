@@ -44,7 +44,7 @@ const buildAccessPolicyService = ({ isGranted = true } = {}) => {
   };
 };
 
-const findCallerRefusal = ({
+const isToolAccessPolicySatisfied = ({
   accessPolicyService,
   authPrincipalVariant = MEMBER,
   isFeatureFlagEnabled = true,
@@ -53,7 +53,7 @@ const findCallerRefusal = ({
   authPrincipalVariant?: AuthPrincipalVariant;
   isFeatureFlagEnabled?: boolean;
 }) =>
-  accessPolicyService.findCallerRefusal({
+  accessPolicyService.isToolAccessPolicySatisfied({
     accessPolicy: ROLE_WRITE_ACCESS_POLICY,
     authPrincipalVariant,
     authContext: MEMBER_AUTH_CONTEXT,
@@ -63,12 +63,14 @@ const findCallerRefusal = ({
   });
 
 describe('AccessPolicyService', () => {
-  describe('findCallerRefusal', () => {
-    it('should find no refusal for a principal the policy accepts once its flags are granted', async () => {
+  describe('isToolAccessPolicySatisfied', () => {
+    it('should accept a principal the policy accepts once its flags are granted', async () => {
       const { accessPolicyService, permissionsService } =
         buildAccessPolicyService();
 
-      expect(await findCallerRefusal({ accessPolicyService })).toBeUndefined();
+      expect(await isToolAccessPolicySatisfied({ accessPolicyService })).toBe(
+        true,
+      );
       expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
         authContext: MEMBER_AUTH_CONTEXT,
         setting: PermissionFlagType.ROLES,
@@ -88,40 +90,38 @@ describe('AccessPolicyService', () => {
           buildAccessPolicyService();
 
         expect(
-          await accessPolicyService.findCallerRefusal({
+          await accessPolicyService.isToolAccessPolicySatisfied({
             accessPolicy: ROLE_WRITE_ACCESS_POLICY,
             authPrincipalVariant,
             authContext: MEMBER_AUTH_CONTEXT,
             featureFlagsMap: {} as FeatureFlagMap,
           }),
-        ).toEqual({ reason: 'authPrincipal' });
+        ).toBe(false);
         expect(permissionsService.hasPermissionFlag).not.toHaveBeenCalled();
       },
     );
 
-    it('should name the required feature flag that is off for the workspace', async () => {
-      const { accessPolicyService } = buildAccessPolicyService();
+    it('should refuse while a required feature flag is off, without checking permission flags', async () => {
+      const { accessPolicyService, permissionsService } =
+        buildAccessPolicyService();
 
       expect(
-        await findCallerRefusal({
+        await isToolAccessPolicySatisfied({
           accessPolicyService,
           isFeatureFlagEnabled: false,
         }),
-      ).toEqual({
-        reason: 'featureFlag',
-        featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      });
+      ).toBe(false);
+      expect(permissionsService.hasPermissionFlag).not.toHaveBeenCalled();
     });
 
-    it('should name the required permission flag that is not granted', async () => {
+    it('should refuse a required permission flag that is not granted', async () => {
       const { accessPolicyService } = buildAccessPolicyService({
         isGranted: false,
       });
 
-      expect(await findCallerRefusal({ accessPolicyService })).toEqual({
-        reason: 'permissionFlag',
-        permissionFlag: PermissionFlagType.ROLES,
-      });
+      expect(await isToolAccessPolicySatisfied({ accessPolicyService })).toBe(
+        false,
+      );
     });
   });
 });

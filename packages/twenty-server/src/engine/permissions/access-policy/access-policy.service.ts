@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { type FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type AccessPolicyRefusal } from 'src/engine/guards/types/access-policy-refusal.type';
+import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
+import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
@@ -26,13 +28,6 @@ type SettingsPermissionRequest = Pick<
   'workspace' | 'userWorkspaceId' | 'apiKey' | 'application' | 'agentId'
 >;
 
-type PermissionFlagGrantee =
-  | { type: 'request'; request: SettingsPermissionRequest }
-  | {
-      type: 'roles';
-      authContext: WorkspaceAuthContext | undefined;
-    };
-
 @Injectable()
 export class AccessPolicyService {
   constructor(
@@ -40,28 +35,50 @@ export class AccessPolicyService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async findRequestRefusal({
+  // Throws what AuthPrincipalGuard, FeatureFlagGuard and SettingsPermissionGuard throw
+  async assertRequestAccessPolicySatisfied({
     accessPolicy,
     request,
   }: {
     accessPolicy: AccessPolicy;
     request: Request;
-  }): Promise<AccessPolicyRefusal | undefined> {
+  }): Promise<void> {
+    if (
+      !this.isAuthPrincipalAccepted({
+        accessPolicy,
+        authPrincipalVariant: classifyAuthPrincipal(request),
+      })
+    ) {
+      throw new AuthPrincipalRefusedException();
+    }
+
     const { workspace } = request;
 
-    return this.findRefusal({
+    const disabledFeatureFlag = this.findDisabledFeatureFlag({
       accessPolicy,
-      authPrincipalVariant: classifyAuthPrincipal(request),
       featureFlagsMap: isDefined(workspace)
         ? await this.featureFlagService.getWorkspaceFeatureFlagsMap(
             workspace.id,
           )
         : undefined,
-      grantee: { type: 'request', request },
     });
+
+    if (isDefined(disabledFeatureFlag)) {
+      throw new ForbiddenException(
+        `Feature flag "${disabledFeatureFlag}" is not enabled for this workspace`,
+      );
+    }
+
+    for (const permissionFlag of accessPolicy.requiredPermissionFlags) {
+      if (
+        !(await this.isSettingsPermissionGranted({ request, permissionFlag }))
+      ) {
+        throw buildPermissionFlagDeniedException();
+      }
+    }
   }
 
-  async findCallerRefusal({
+  async isToolAccessPolicySatisfied({
     accessPolicy,
     authPrincipalVariant,
     authContext,
@@ -71,13 +88,26 @@ export class AccessPolicyService {
     authPrincipalVariant: AuthPrincipalVariant | undefined;
     authContext: WorkspaceAuthContext | undefined;
     featureFlagsMap: FeatureFlagMap;
-  }): Promise<AccessPolicyRefusal | undefined> {
-    return this.findRefusal({
-      accessPolicy,
-      authPrincipalVariant,
-      featureFlagsMap,
-      grantee: { type: 'roles', authContext },
-    });
+  }): Promise<boolean> {
+    if (
+      !this.isAuthPrincipalAccepted({ accessPolicy, authPrincipalVariant }) ||
+      isDefined(this.findDisabledFeatureFlag({ accessPolicy, featureFlagsMap }))
+    ) {
+      return false;
+    }
+
+    for (const permissionFlag of accessPolicy.requiredPermissionFlags) {
+      if (
+        !(await this.permissionsService.hasPermissionFlag({
+          authContext,
+          setting: permissionFlag,
+        }))
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async isSettingsPermissionGranted({
@@ -111,66 +141,35 @@ export class AccessPolicyService {
     });
   }
 
-  private async findRefusal({
-    accessPolicy: {
-      authPrincipals,
-      requiredPermissionFlags,
-      requiredFeatureFlags = [],
-    },
+  private isAuthPrincipalAccepted({
+    accessPolicy,
     authPrincipalVariant,
-    featureFlagsMap,
-    grantee,
   }: {
     accessPolicy: AccessPolicy;
     authPrincipalVariant: AuthPrincipalVariant | undefined;
-    featureFlagsMap: FeatureFlagMap | undefined;
-    grantee: PermissionFlagGrantee;
-  }): Promise<AccessPolicyRefusal | undefined> {
-    if (
-      !isDefined(authPrincipalVariant) ||
-      !isAuthPrincipalVariantAccepted({
-        authPrincipalGuardConfig: authPrincipals,
+  }): boolean {
+    return (
+      isDefined(authPrincipalVariant) &&
+      isAuthPrincipalVariantAccepted({
+        authPrincipalGuardConfig: accessPolicy.authPrincipals,
         authPrincipalVariant,
       })
-    ) {
-      return { reason: 'authPrincipal' };
-    }
+    );
+  }
 
+  private findDisabledFeatureFlag({
+    accessPolicy: { requiredFeatureFlags = [] },
+    featureFlagsMap,
+  }: {
+    accessPolicy: AccessPolicy;
+    featureFlagsMap: FeatureFlagMap | undefined;
+  }): FeatureFlagKey | undefined {
     for (const featureFlag of requiredFeatureFlags) {
       if (featureFlagsMap?.[featureFlag] !== true) {
-        return { reason: 'featureFlag', featureFlag };
-      }
-    }
-
-    for (const permissionFlag of requiredPermissionFlags) {
-      if (!(await this.isPermissionFlagGranted({ permissionFlag, grantee }))) {
-        return { reason: 'permissionFlag', permissionFlag };
+        return featureFlag;
       }
     }
 
     return undefined;
-  }
-
-  private isPermissionFlagGranted({
-    permissionFlag,
-    grantee,
-  }: {
-    permissionFlag: PermissionFlagType;
-    grantee: PermissionFlagGrantee;
-  }): Promise<boolean> {
-    switch (grantee.type) {
-      case 'request':
-        return this.isSettingsPermissionGranted({
-          request: grantee.request,
-          permissionFlag,
-        });
-      case 'roles':
-        return this.permissionsService.hasPermissionFlag({
-          authContext: grantee.authContext,
-          setting: permissionFlag,
-        });
-      default:
-        return assertUnreachable(grantee);
-    }
   }
 }
