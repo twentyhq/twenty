@@ -243,7 +243,7 @@ export class AgentChatResolver {
       channelId: channelId ?? undefined,
       shouldApplyAssistantParticipation: !isAiChatInboxEnabled,
       isAssistantMentioned: isAssistantMentioned ?? false,
-      initialIsAssistantParticipant: isAssistantParticipant ?? true,
+      isInitialAssistantParticipant: isAssistantParticipant ?? true,
       recipientWorkspaceMemberIds: recipientWorkspaceMemberIds ?? [],
       mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
     });
@@ -261,7 +261,7 @@ export class AgentChatResolver {
       shouldAssistantReply: shouldAssistantReply ?? true,
       isAiChatInboxEnabled,
       isAssistantMentioned,
-      initialIsAssistantParticipant: isAssistantParticipant ?? true,
+      isInitialAssistantParticipant: isAssistantParticipant ?? true,
       mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
       recipientWorkspaceMemberIds: recipientWorkspaceMemberIds ?? [],
     });
@@ -294,7 +294,7 @@ export class AgentChatResolver {
     shouldAssistantReply,
     isAiChatInboxEnabled,
     isAssistantMentioned,
-    initialIsAssistantParticipant,
+    isInitialAssistantParticipant,
     mentionedWorkspaceMemberIds,
     recipientWorkspaceMemberIds,
   }: {
@@ -310,7 +310,7 @@ export class AgentChatResolver {
     shouldAssistantReply: boolean;
     isAiChatInboxEnabled: boolean;
     isAssistantMentioned?: boolean | null;
-    initialIsAssistantParticipant: boolean;
+    isInitialAssistantParticipant: boolean;
     mentionedWorkspaceMemberIds: string[];
     recipientWorkspaceMemberIds: string[];
   }): Promise<SendChatMessageResultDTO> {
@@ -325,7 +325,7 @@ export class AgentChatResolver {
           await this.threadService.applyAssistantParticipation({
             ...threadAccess,
             isAssistantMentioned: isAssistantMentioned ?? false,
-            initialIsAssistantParticipant,
+            isInitialAssistantParticipant,
             recipientWorkspaceMemberIds,
             mentionedWorkspaceMemberIds,
           })
@@ -333,7 +333,7 @@ export class AgentChatResolver {
     const participation = isAiChatInboxEnabled
       ? {
           isAssistantMentioned: isAssistantMentioned ?? false,
-          initialIsAssistantParticipant,
+          isInitialAssistantParticipant,
           recipientWorkspaceMemberIds,
           mentionedWorkspaceMemberIds,
         }

@@ -1,6 +1,6 @@
 export type AgentChatAssistantParticipationArgs = {
   isAssistantMentioned?: boolean;
-  initialIsAssistantParticipant?: boolean;
+  isInitialAssistantParticipant?: boolean;
   recipientWorkspaceMemberIds?: string[];
   mentionedWorkspaceMemberIds?: string[];
 };
