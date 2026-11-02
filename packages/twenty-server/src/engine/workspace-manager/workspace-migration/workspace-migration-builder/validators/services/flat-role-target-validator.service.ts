@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatRoleTargetApplicationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util';
 import { validateFlatRoleTargetAssignationAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util';
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 import { validateFlatRoleTargetTargetsOnlyOneEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util';
@@ -70,6 +71,12 @@ export class FlatRoleTargetValidatorService {
         ...validateFlatRoleTargetAssignationAvailability({
           flatRole: referencedRole,
           flatRoleTarget: flatRoleTargetToValidate,
+        }),
+        ...validateFlatRoleTargetApplicationTarget({
+          flatRole: referencedRole,
+          flatRoleTarget: flatRoleTargetToValidate,
+          flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+          buildOptions,
         }),
       );
 
@@ -162,6 +169,17 @@ export class FlatRoleTargetValidatorService {
       ...flatEntityUpdate,
     };
 
+    if (
+      updatedFlatRoleTarget.targetApplicationUniversalIdentifier !==
+      existingRoleTarget.targetApplicationUniversalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
+        message: t`Role target application cannot be changed`,
+        userFriendlyMessage: msg`Role target application cannot be changed`,
+      });
+    }
+
     validationResult.errors.push(
       ...validateFlatRoleTargetTargetsOnlyOneEntity({
         flatRoleTarget: updatedFlatRoleTarget,
@@ -187,6 +205,12 @@ export class FlatRoleTargetValidatorService {
       ...validateFlatRoleTargetAssignationAvailability({
         flatRole: referencedRole,
         flatRoleTarget: updatedFlatRoleTarget,
+      }),
+      ...validateFlatRoleTargetApplicationTarget({
+        flatRole: referencedRole,
+        flatRoleTarget: updatedFlatRoleTarget,
+        flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+        buildOptions,
       }),
     );
 
