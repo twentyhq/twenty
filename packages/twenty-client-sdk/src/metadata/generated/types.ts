@@ -12751,6 +12751,9 @@ export default {
             "scope": [
                 493
             ],
+            "slug": [
+                1
+            ],
             "title": [
                 1
             ],
