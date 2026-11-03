@@ -5,7 +5,6 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -73,11 +72,7 @@ const updateEvent: ObjectRecordUpdateEvent = {
 
 const resolveForApplication = (applicationId: string) =>
   resolveEventsReadableByRole({
-    application: {
-      id: applicationId,
-      defaultRoleId: ROLE_ID,
-      deletedAt: null,
-    } as FlatApplication,
+    application: { id: applicationId, defaultRoleId: ROLE_ID },
     workspaceEventBatch: {
       name: 'invoice.updated',
       workspaceId: 'workspace-id',

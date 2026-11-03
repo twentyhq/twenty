@@ -18,7 +18,7 @@ export const resolveEventsReadableByRole = async <
   eventRecordAccessGate,
   metadataMaps,
 }: {
-  application: FlatApplication;
+  application: Pick<FlatApplication, 'id' | 'defaultRoleId'>;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
   metadataMaps: PermissionsMetadataMaps;
