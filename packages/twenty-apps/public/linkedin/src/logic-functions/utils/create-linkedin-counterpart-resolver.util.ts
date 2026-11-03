@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type LinkedinCounterpartResolver } from 'src/logic-functions/types/linkedin-counterpart-resolver.type';
@@ -10,7 +11,7 @@ export const createLinkedinCounterpartResolver = (
 ): LinkedinCounterpartResolver => {
   const resolvedCounterpartById = new Map<string, UnipileUser>();
 
-  return async (user) => {
+  return async (user, { shouldLookUp } = {}) => {
     const resolvedCounterpart = resolvedCounterpartById.get(user.id);
 
     if (isDefined(resolvedCounterpart)) {
@@ -20,9 +21,16 @@ export const createLinkedinCounterpartResolver = (
     const counterpart = await withLinkedinPublicIdentifier({
       unipileAccountId,
       user,
+      shouldLookUp,
     });
 
-    resolvedCounterpartById.set(user.id, counterpart);
+    // A declined lookup may still be wanted later in the same job.
+    if (
+      !isDefined(shouldLookUp) ||
+      isNonEmptyString(counterpart.public_identifier)
+    ) {
+      resolvedCounterpartById.set(user.id, counterpart);
+    }
 
     return counterpart;
   };

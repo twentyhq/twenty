@@ -9,6 +9,7 @@ import { INGEST_MESSAGES_MAX_BATCH_SIZE } from 'src/constants/ingest-messages-ma
 import { buildLinkedinChatSubject } from 'src/logic-functions/utils/build-linkedin-chat-subject.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
 import { createLinkedinPerson } from 'src/logic-functions/utils/create-linkedin-person.util';
+import { hasPersonNamedLikeLinkedinUser } from 'src/logic-functions/utils/has-person-named-like-linkedin-user.util';
 import { importLinkedinMessageAttachments } from 'src/logic-functions/utils/import-linkedin-message-attachments.util';
 import { isLinkedinContactCreationAllowed } from 'src/logic-functions/utils/is-linkedin-contact-creation-allowed.util';
 import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
@@ -25,25 +26,41 @@ import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 const resolvePersonIdByHandle = async ({
   settings,
   counterparts,
+  resolveCounterpart,
   hasUserSentMessage,
   isGroupChat,
 }: {
   settings: LinkedinSettings;
   counterparts: UnipileUser[];
+  resolveCounterpart: LinkedinCounterpartResolver;
   hasUserSentMessage: boolean;
   isGroupChat: boolean;
 }): Promise<
   | {
+      counterparts: UnipileUser[];
       personIdByHandle: Map<string, string>;
       matchedPersonCount: number;
       createdPersonCount: number;
     }
   | undefined
 > => {
+  const isContactRequired =
+    settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat;
+  // These chats need someone already in Twenty, so a profile lookup only pays
+  // off for a counterpart some Person is named after.
+  const resolvedCounterparts = await Promise.all(
+    counterparts.map((counterpart) =>
+      resolveCounterpart(counterpart, {
+        shouldLookUp: isContactRequired
+          ? () => hasPersonNamedLikeLinkedinUser(counterpart)
+          : undefined,
+      }),
+    ),
+  );
   const personIdByHandle = new Map<string, string>();
   const unmatchedCounterparts: UnipileUser[] = [];
 
-  for (const counterpart of counterparts) {
+  for (const counterpart of resolvedCounterparts) {
     const personId = await matchLinkedinParticipantPersonId({
       user: counterpart,
       isNameMatchingEnabled: settings.isNameMatchingEnabled,
@@ -56,10 +73,7 @@ const resolvePersonIdByHandle = async ({
     }
   }
 
-  if (
-    (settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat) &&
-    personIdByHandle.size === 0
-  ) {
+  if (isContactRequired && personIdByHandle.size === 0) {
     return undefined;
   }
 
@@ -71,10 +85,23 @@ const resolvePersonIdByHandle = async ({
       hasUserSentMessage,
     })
   ) {
-    return { personIdByHandle, matchedPersonCount, createdPersonCount: 0 };
+    return {
+      counterparts: resolvedCounterparts,
+      personIdByHandle,
+      matchedPersonCount,
+      createdPersonCount: 0,
+    };
   }
 
-  for (const counterpart of unmatchedCounterparts) {
+  const creatableCounterparts = await Promise.all(
+    unmatchedCounterparts.map((counterpart) =>
+      isNonEmptyString(counterpart.public_identifier)
+        ? counterpart
+        : resolveCounterpart(counterpart),
+    ),
+  );
+
+  for (const counterpart of creatableCounterparts) {
     const { firstName, lastName } = splitLinkedinUserName(counterpart);
 
     if (
@@ -91,6 +118,12 @@ const resolvePersonIdByHandle = async ({
   }
 
   return {
+    counterparts: resolvedCounterparts.map(
+      (counterpart) =>
+        creatableCounterparts.find(
+          (creatableCounterpart) => creatableCounterpart.id === counterpart.id,
+        ) ?? counterpart,
+    ),
     personIdByHandle,
     matchedPersonCount,
     createdPersonCount: personIdByHandle.size - matchedPersonCount,
@@ -138,13 +171,10 @@ export const ingestLinkedinMessages = async ({
   }
 
   // Each lookup spends LinkedIn's daily profile quota, so skipped chats make none.
-  const resolvedCounterparts = await Promise.all(
-    counterparts.map(resolveCounterpart),
-  );
-
   const resolvedPersons = await resolvePersonIdByHandle({
     settings,
-    counterparts: resolvedCounterparts,
+    counterparts,
+    resolveCounterpart,
     hasUserSentMessage: ingestableMessages.some((message) => message.is_sender),
     isGroupChat,
   });
@@ -153,8 +183,12 @@ export const ingestLinkedinMessages = async ({
     return { ...emptyResult, skippedReason: 'NO_CONTACT' };
   }
 
-  const { personIdByHandle, matchedPersonCount, createdPersonCount } =
-    resolvedPersons;
+  const {
+    counterparts: resolvedCounterparts,
+    personIdByHandle,
+    matchedPersonCount,
+    createdPersonCount,
+  } = resolvedPersons;
 
   const subject = buildLinkedinChatSubject(chat);
   const ingestMessagesInput = ingestableMessages

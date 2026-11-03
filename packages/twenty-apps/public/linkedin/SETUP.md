@@ -40,7 +40,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 | New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when LinkedIn signs the account out |
 | Disconnect, uninstall | `linkedin-on-disconnect`, `linkedin-uninstall` | Deletes the channel and the Unipile account, which Unipile bills per connected account |
 
-Unipile only exposes internal `ACo…` profile ids on messages, so the app looks up each participant's public profile URL once and caches it. LinkedIn limits profile lookups to roughly 100 a day per account.
+Unipile only exposes internal `ACo…` profile ids on messages, so the app looks up each participant's public profile URL once and caches it. LinkedIn limits profile lookups to roughly 100 a day per account, so chats the settings skip make none, and in group chats or with **Contacts only** a participant is only looked up when a Person has the same name.
 
 Everything that talks to Unipile lives in `src/unipile` and depends on nothing else in the app, so it can be shared with other Unipile-backed apps.
 

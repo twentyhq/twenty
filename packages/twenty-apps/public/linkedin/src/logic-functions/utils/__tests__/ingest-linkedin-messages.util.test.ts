@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   createLinkedinPerson: vi.fn(),
   importLinkedinMessageAttachments: vi.fn(),
   resolveCounterpart: vi.fn(),
+  hasPersonNamedLikeLinkedinUser: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -26,6 +27,13 @@ vi.mock(
 vi.mock('src/logic-functions/utils/create-linkedin-person.util', () => ({
   createLinkedinPerson: mocks.createLinkedinPerson,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/has-person-named-like-linkedin-user.util',
+  () => ({
+    hasPersonNamedLikeLinkedinUser: mocks.hasPersonNamedLikeLinkedinUser,
+  }),
+);
 
 vi.mock(
   'src/logic-functions/utils/import-linkedin-message-attachments.util',
@@ -56,6 +64,31 @@ const buildMessage = (isSender: boolean): UnipileMessage => ({
   is_event: false,
   provider: 'linkedin',
 });
+
+const UNRESOLVED_PRIYA = { id: PRIYA.id, display_name: PRIYA.display_name };
+
+const SAM = { id: 'ACoSAM', display_name: 'Sam Okafor' };
+
+const resolveCounterpartsLikeUnipile = (): string[] => {
+  const lookedUpUserIds: string[] = [];
+
+  mocks.resolveCounterpart.mockImplementation(
+    async (
+      user: UnipileUser,
+      { shouldLookUp }: { shouldLookUp?: () => Promise<boolean> } = {},
+    ) => {
+      if (shouldLookUp !== undefined && !(await shouldLookUp())) {
+        return user;
+      }
+
+      lookedUpUserIds.push(user.id);
+
+      return { ...user, public_identifier: user.id.toLowerCase() };
+    },
+  );
+
+  return lookedUpUserIds;
+};
 
 const ONE_TO_ONE_CHAT = {
   id: 'chat-1',
@@ -109,6 +142,73 @@ describe('ingestLinkedinMessages', () => {
     mocks.resolveCounterpart.mockImplementation(
       async (user: UnipileUser) => user,
     );
+    mocks.hasPersonNamedLikeLinkedinUser.mockResolvedValue(false);
+  });
+
+  it('looks up the counterpart of an All chats conversation without checking names', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    await ingest({ counterparts: [UNRESOLVED_PRIYA] });
+
+    expect(lookedUpUserIds).toEqual([PRIYA.id]);
+    expect(mocks.hasPersonNamedLikeLinkedinUser).not.toHaveBeenCalled();
+  });
+
+  it('looks up nobody in a Contacts only chat with someone no Person is named after', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    await expect(
+      ingest({
+        settings: {
+          ...DEFAULT_LINKEDIN_SETTINGS,
+          importPolicy: 'CONTACTS_ONLY',
+        },
+        counterparts: [UNRESOLVED_PRIYA],
+      }),
+    ).resolves.toMatchObject({ skippedReason: 'NO_CONTACT' });
+    expect(lookedUpUserIds).toEqual([]);
+  });
+
+  it('looks up only the group members a Person is named after', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        user.public_identifier === 'acopriya' ? 'priya-id' : undefined,
+    );
+
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        counterparts: [UNRESOLVED_PRIYA, SAM],
+        messages: [buildMessage(false)],
+      }),
+    ).resolves.toMatchObject({ ingestedMessageCount: 1 });
+    expect(lookedUpUserIds).toEqual([PRIYA.id]);
+  });
+
+  it('looks up the other group members to create them once a contact is in the chat', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        user.public_identifier === 'acopriya' ? 'priya-id' : undefined,
+    );
+
+    await ingest({ chat: GROUP_CHAT, counterparts: [UNRESOLVED_PRIYA, SAM] });
+
+    expect(lookedUpUserIds).toEqual([PRIYA.id, SAM.id]);
+    expect(mocks.createLinkedinPerson).toHaveBeenCalledExactlyOnceWith({
+      firstName: 'Sam',
+      lastName: 'Okafor',
+      handle: 'https://www.linkedin.com/in/acosam',
+    });
   });
 
   it('ingests under the public profile URL of the resolved counterpart', async () => {

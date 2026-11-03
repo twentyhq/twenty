@@ -20,6 +20,7 @@
 
 - **Read-only for now.** Messages are imported as they happen; reply from LinkedIn. Marking chats as read on LinkedIn is not available yet.
 - **Only recent history is imported.** LinkedIn allows about 100 profile lookups a day per account, so **Sync now** imports your most recent conversations only: 20 by default, up to 50.
+- **Contacts only and group chats start from names.** There, a participant's LinkedIn profile is only looked up when a Person has the same first and last name, so a contact saved under another name is not recognized until their LinkedIn URL is known.
 - **Namesakes are not guessed.** When several People share a participant's name, nobody is linked: add the LinkedIn URL to the right Person and their messages link to it.
 - **Settings are per member.** Import, visibility, contact auto-creation and people matching live in **Settings → App preferences → LinkedIn → Sync** and apply to your own connection.
 

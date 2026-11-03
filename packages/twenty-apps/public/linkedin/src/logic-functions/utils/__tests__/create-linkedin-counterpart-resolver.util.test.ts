@@ -36,7 +36,29 @@ describe('createLinkedinCounterpartResolver', () => {
     expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledExactlyOnceWith({
       unipileAccountId: 'acc_1',
       user: DELETED_MEMBER,
+      shouldLookUp: undefined,
     });
+  });
+
+  it('looks up a profile whose lookup was declined once it is wanted', async () => {
+    const resolvedMember = { ...DELETED_MEMBER, public_identifier: 'member' };
+
+    mocks.withLinkedinPublicIdentifier
+      .mockResolvedValueOnce(DELETED_MEMBER)
+      .mockResolvedValueOnce(resolvedMember);
+    const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
+
+    await resolveCounterpart(DELETED_MEMBER, {
+      shouldLookUp: async () => false,
+    });
+
+    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+      resolvedMember,
+    );
+    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+      resolvedMember,
+    );
+    expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledTimes(2);
   });
 
   it('looks up a profile again after LinkedIn rate limited it', async () => {
