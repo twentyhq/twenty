@@ -1,6 +1,6 @@
-import { isArray, isNonEmptyString, isString } from '@sniptt/guards';
+import { isArray, isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
 
@@ -10,9 +10,12 @@ type ServerSentEvent =
   | { type: 'event'; event: AgentChatSubscriptionEvent }
   | null;
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  isObject(value) && !isArray(value);
+
 const toErrorMessages = (errors: unknown[]): string[] =>
   errors.map((error) =>
-    isPlainObject(error) && isString(error.message)
+    isRecord(error) && isString(error.message)
       ? error.message
       : JSON.stringify(error),
   );
@@ -21,7 +24,7 @@ const toErrorMessages = (errors: unknown[]): string[] =>
 const isAgentChatSubscriptionEvent = (
   event: unknown,
 ): event is AgentChatSubscriptionEvent =>
-  isPlainObject(event) && isString(event.type);
+  isRecord(event) && isString(event.type);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
 const parseServerSentEventOrThrow = ({
@@ -48,16 +51,17 @@ const parseServerSentEventOrThrow = ({
 
   const result: unknown = JSON.parse(data);
 
-  if (!isPlainObject(result)) {
+  if (!isRecord(result)) {
     throw new Error(`${caller}() failed: unexpected result ${data}`);
   }
 
+  // isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
   if (isArray(result.errors)) {
     return { type: 'errors', messages: toErrorMessages(result.errors) };
   }
 
   const event =
-    isPlainObject(result.data) && isPlainObject(result.data.onAgentChatEvent)
+    isRecord(result.data) && isRecord(result.data.onAgentChatEvent)
       ? result.data.onAgentChatEvent.event
       : undefined;
 
@@ -71,7 +75,7 @@ const parseServerSentEventOrThrow = ({
 const readFailedResponseMessage = async (response: Response) => {
   const body: unknown = await response.json().catch(() => undefined);
 
-  if (isPlainObject(body) && isArray(body.errors)) {
+  if (isRecord(body) && isArray(body.errors)) {
     return toErrorMessages(body.errors).join(', ');
   }
 
