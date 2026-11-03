@@ -15,7 +15,13 @@ const WORKFLOW_PATH = 'src/workflows/greet.workflow.ts';
 const FOLDER_PATH = 'src/workflows/greet';
 const SOURCE = 'export const main = async () => ({});\n';
 
-const readingStep = (universalIdentifier: string, fileName: string) => `{
+const readingStep = ({
+  universalIdentifier,
+  fileName,
+}: {
+  universalIdentifier: string;
+  fileName: string;
+}) => `{
   universalIdentifier: '${universalIdentifier}',
   type: 'CODE',
   input: { code: readFileSync(join(__dirname, 'greet', '${fileName}'), 'utf8') },
@@ -46,10 +52,21 @@ const baseWorkflow = (steps: { universalIdentifier: string; name: string }[]) =>
 describe('findLocalCodeStepFiles', () => {
   let appPath: string;
 
-  const writeAppFile = (relativePath: string, content: string) =>
-    writeFile(join(appPath, relativePath), content);
+  const writeAppFile = ({
+    relativePath,
+    content,
+  }: {
+    relativePath: string;
+    content: string;
+  }) => writeFile(join(appPath, relativePath), content);
 
-  const find = (fileNames: string[], baseEntities: PullEntity[] = []) =>
+  const find = ({
+    fileNames,
+    baseEntities = [],
+  }: {
+    fileNames: string[];
+    baseEntities?: PullEntity[];
+  }) =>
     findLocalCodeStepFiles({
       appPath,
       baseEntities,
@@ -81,20 +98,28 @@ describe('findLocalCodeStepFiles', () => {
   });
 
   it('gives each step the file its workflow reads, even when sources are identical', async () => {
-    await writeAppFile(
-      WORKFLOW_PATH,
-      `export default defineWorkflow({ version: { steps: [
-${readingStep(FIRST_STEP_UID, 'second.code.ts')},
-${readingStep(SECOND_STEP_UID, 'first.code.ts')},
-${readingStep(THIRD_STEP_UID, 'first.code.ts')},
+    await writeAppFile({
+      relativePath: WORKFLOW_PATH,
+      content: `export default defineWorkflow({ version: { steps: [
+${readingStep({ universalIdentifier: FIRST_STEP_UID, fileName: 'second.code.ts' })},
+${readingStep({ universalIdentifier: SECOND_STEP_UID, fileName: 'first.code.ts' })},
+${readingStep({ universalIdentifier: THIRD_STEP_UID, fileName: 'first.code.ts' })},
 ] } });
 `,
-    );
-    await writeAppFile(`${FOLDER_PATH}/first.code.ts`, SOURCE);
-    await writeAppFile(`${FOLDER_PATH}/second.code.ts`, SOURCE);
+    });
+    await writeAppFile({
+      relativePath: `${FOLDER_PATH}/first.code.ts`,
+      content: SOURCE,
+    });
+    await writeAppFile({
+      relativePath: `${FOLDER_PATH}/second.code.ts`,
+      content: SOURCE,
+    });
 
     expect(
-      (await find(['first.code.ts', 'second.code.ts'])).get(WORKFLOW_PATH),
+      (await find({ fileNames: ['first.code.ts', 'second.code.ts'] })).get(
+        WORKFLOW_PATH,
+      ),
     ).toEqual([
       {
         universalIdentifier: FIRST_STEP_UID,
@@ -107,28 +132,54 @@ ${readingStep(THIRD_STEP_UID, 'first.code.ts')},
     ]);
   });
 
+  it('keys each step by its lowercased identifier', async () => {
+    await writeAppFile({
+      relativePath: WORKFLOW_PATH,
+      content: `export default defineWorkflow({ version: { steps: [
+${readingStep({ universalIdentifier: 'ABCDEF44-4444-4444-8444-444444444444', fileName: 'first.code.ts' })},
+] } });
+`,
+    });
+    await writeAppFile({
+      relativePath: `${FOLDER_PATH}/first.code.ts`,
+      content: SOURCE,
+    });
+
+    expect(
+      (await find({ fileNames: ['first.code.ts'] })).get(WORKFLOW_PATH),
+    ).toEqual([
+      {
+        universalIdentifier: 'abcdef44-4444-4444-8444-444444444444',
+        relativePath: `${FOLDER_PATH}/first.code.ts`,
+      },
+    ]);
+  });
+
   it('keeps the unchanged file of a step removed locally, but no other file at its name', async () => {
-    await writeAppFile(
-      WORKFLOW_PATH,
-      'export default defineWorkflow({ version: { steps: [] } });\n',
-    );
-    await writeAppFile(`${FOLDER_PATH}/format-name.code.ts`, SOURCE);
-    await writeAppFile(
-      `${FOLDER_PATH}/shout-name.code.ts`,
-      'export const unrelated = true;\n',
-    );
+    await writeAppFile({
+      relativePath: WORKFLOW_PATH,
+      content: 'export default defineWorkflow({ version: { steps: [] } });\n',
+    });
+    await writeAppFile({
+      relativePath: `${FOLDER_PATH}/format-name.code.ts`,
+      content: SOURCE,
+    });
+    await writeAppFile({
+      relativePath: `${FOLDER_PATH}/shout-name.code.ts`,
+      content: 'export const unrelated = true;\n',
+    });
 
     expect(
       (
-        await find(
-          ['format-name.code.ts', 'shout-name.code.ts'],
-          [
+        await find({
+          fileNames: ['format-name.code.ts', 'shout-name.code.ts'],
+          baseEntities: [
             baseWorkflow([
               { universalIdentifier: FIRST_STEP_UID, name: 'Format name' },
               { universalIdentifier: SECOND_STEP_UID, name: 'Shout name' },
             ]),
           ],
-        )
+        })
       ).get(WORKFLOW_PATH),
     ).toEqual([
       {

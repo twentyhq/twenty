@@ -57,7 +57,7 @@ export const getOverwrittenLocalChanges = async ({
             workflowRelativePath: '',
           }).codeStepFiles.map(
             ({ universalIdentifier, content }) =>
-              [universalIdentifier, content] as const,
+              [universalIdentifier.toLowerCase(), content] as const,
           )
         : [],
     ),
@@ -67,14 +67,16 @@ export const getOverwrittenLocalChanges = async ({
   ].flat();
   const localCodeStepPathByStepIdentifier = new Map(
     localCodeStepFiles.map(({ universalIdentifier, relativePath }) => [
-      universalIdentifier,
+      universalIdentifier.toLowerCase(),
       relativePath,
     ]),
   );
   // Code step files are keyed by step, while base entities are keyed by workflow
   const baseCodeStepContentByRelativePath = new Map(
     localCodeStepFiles.flatMap(({ universalIdentifier, relativePath }) => {
-      const baseCode = baseCodeByStepIdentifier.get(universalIdentifier);
+      const baseCode = baseCodeByStepIdentifier.get(
+        universalIdentifier.toLowerCase(),
+      );
 
       return isDefined(baseCode) ? [[relativePath, baseCode] as const] : [];
     }),

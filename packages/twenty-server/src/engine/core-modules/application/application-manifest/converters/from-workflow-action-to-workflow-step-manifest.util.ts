@@ -1,4 +1,4 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
@@ -250,12 +250,12 @@ const fromActionInput = ({
       };
     }
     case WorkflowActionType.CODE: {
-      const { code, logicFunctionId, logicFunctionInput } = toRecord(input);
+      const { code, logicFunctionInput } = toRecord(input);
 
-      // apply never writes a logic function id, so a step still holding one would not round-trip
-      if (!isString(code) || isNonEmptyString(logicFunctionId)) {
+      // the 2.56 upgrade backfills code but keeps logicFunctionId until 2.57, so the id is dropped here
+      if (!isNonEmptyString(code)) {
         return resolvers.markUnsupported(
-          'code step not yet migrated to inline source; edit it once or run the upgrade',
+          'code step not yet migrated to inline source; edit it once or run the 2.56 upgrade',
         );
       }
 

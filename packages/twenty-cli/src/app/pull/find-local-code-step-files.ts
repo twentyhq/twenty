@@ -15,13 +15,21 @@ import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
 
-const isIdentifierNamed = (node: ts.Node | undefined, name: string) =>
-  isDefined(node) && ts.isIdentifier(node) && node.text === name;
+const isIdentifierNamed = ({
+  node,
+  name,
+}: {
+  node: ts.Node | undefined;
+  name: string;
+}) => isDefined(node) && ts.isIdentifier(node) && node.text === name;
 
-const getPropertyInitializer = (
-  objectLiteral: ts.ObjectLiteralExpression,
-  propertyName: string,
-): ts.Expression | undefined =>
+const getPropertyInitializer = ({
+  objectLiteral,
+  propertyName,
+}: {
+  objectLiteral: ts.ObjectLiteralExpression;
+  propertyName: string;
+}): ts.Expression | undefined =>
   objectLiteral.properties.find(
     (property): property is ts.PropertyAssignment =>
       ts.isPropertyAssignment(property) &&
@@ -35,7 +43,7 @@ const getReadFileSegments = (
   if (
     !isDefined(expression) ||
     !ts.isCallExpression(expression) ||
-    !isIdentifierNamed(expression.expression, 'readFileSync')
+    !isIdentifierNamed({ node: expression.expression, name: 'readFileSync' })
   ) {
     return undefined;
   }
@@ -45,14 +53,14 @@ const getReadFileSegments = (
   if (
     !isDefined(pathExpression) ||
     !ts.isCallExpression(pathExpression) ||
-    !isIdentifierNamed(pathExpression.expression, 'join')
+    !isIdentifierNamed({ node: pathExpression.expression, name: 'join' })
   ) {
     return undefined;
   }
 
   const [directory, ...segments] = pathExpression.arguments;
 
-  return isIdentifierNamed(directory, '__dirname') &&
+  return isIdentifierNamed({ node: directory, name: '__dirname' }) &&
     segments.every(ts.isStringLiteralLike)
     ? segments.map((segment) => segment.text)
     : undefined;
@@ -68,14 +76,22 @@ const readCodeStepPathByStepIdentifier = ({
   const codeStepPathByStepIdentifier = new Map<string, string>();
   const visit = (node: ts.Node) => {
     if (ts.isObjectLiteralExpression(node)) {
-      const universalIdentifier = getPropertyInitializer(
-        node,
-        'universalIdentifier',
-      );
-      const input = getPropertyInitializer(node, 'input');
+      const universalIdentifier = getPropertyInitializer({
+        objectLiteral: node,
+        propertyName: 'universalIdentifier',
+      });
+      const input = getPropertyInitializer({
+        objectLiteral: node,
+        propertyName: 'input',
+      });
       const segments =
         isDefined(input) && ts.isObjectLiteralExpression(input)
-          ? getReadFileSegments(getPropertyInitializer(input, 'code'))
+          ? getReadFileSegments(
+              getPropertyInitializer({
+                objectLiteral: input,
+                propertyName: 'code',
+              }),
+            )
           : undefined;
 
       if (
@@ -84,7 +100,7 @@ const readCodeStepPathByStepIdentifier = ({
         isDefined(segments)
       ) {
         codeStepPathByStepIdentifier.set(
-          universalIdentifier.text,
+          universalIdentifier.text.toLowerCase(),
           posix.join(posix.dirname(workflowPath), ...segments),
         );
       }
@@ -133,11 +149,22 @@ export const findLocalCodeStepFiles = async ({
     const workflowPath = toPosixPath(scannedFile.relativePath);
     const folderPath = `${getWorkflowCodeStepFolderPath(workflowPath)}/`;
     const codeStepPathByStepIdentifier = new Map<string, string>();
+    const ownedRelativePaths = new Set<string>();
     const isUnownedCodeStepFile = (relativePath: string) =>
       relativePath.startsWith(folderPath) &&
       relativePath.endsWith(CODE_STEP_FILE_SUFFIX) &&
       readableRelativePaths.has(relativePath) &&
-      ![...codeStepPathByStepIdentifier.values()].includes(relativePath);
+      !ownedRelativePaths.has(relativePath);
+    const ownCodeStepFile = ({
+      stepIdentifier,
+      relativePath,
+    }: {
+      stepIdentifier: string;
+      relativePath: string;
+    }) => {
+      codeStepPathByStepIdentifier.set(stepIdentifier, relativePath);
+      ownedRelativePaths.add(relativePath);
+    };
 
     for (const [
       stepUniversalIdentifier,
@@ -147,7 +174,10 @@ export const findLocalCodeStepFiles = async ({
       source: await readFile(join(appPath, workflowPath), 'utf8'),
     })) {
       if (isUnownedCodeStepFile(relativePath)) {
-        codeStepPathByStepIdentifier.set(stepUniversalIdentifier, relativePath);
+        ownCodeStepFile({
+          stepIdentifier: stepUniversalIdentifier,
+          relativePath,
+        });
       }
     }
 
@@ -167,12 +197,14 @@ export const findLocalCodeStepFiles = async ({
       relativePath,
       content,
     } of baseCodeStepFiles) {
+      const stepIdentifier = universalIdentifier.toLowerCase();
+
       if (
-        !codeStepPathByStepIdentifier.has(universalIdentifier) &&
+        !codeStepPathByStepIdentifier.has(stepIdentifier) &&
         isUnownedCodeStepFile(relativePath) &&
         (await readFile(join(appPath, relativePath), 'utf8')) === content
       ) {
-        codeStepPathByStepIdentifier.set(universalIdentifier, relativePath);
+        ownCodeStepFile({ stepIdentifier, relativePath });
       }
     }
 

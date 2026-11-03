@@ -10,6 +10,7 @@ import {
   type StandaloneViewFieldManifest,
   type ViewFilterManifest,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
@@ -128,7 +129,7 @@ const buildCodeStepWorkflow = ({
   universalIdentifier: string;
   name: string;
   stepUniversalIdentifier: string;
-}) => ({
+}): WorkflowManifest => ({
   universalIdentifier,
   name,
   version: {
@@ -1462,7 +1463,7 @@ describe('planPullWrites', () => {
             stepUniversalIdentifier: WELCOME_STEP_UID,
           }),
         ],
-      } as unknown as Manifest,
+      },
       baseManifest: null,
       workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [GREET_WORKFLOW_FILE],
@@ -1489,16 +1490,16 @@ describe('planPullWrites', () => {
 
   it.each([
     {
-      ownsPreviousFile: true,
+      hasOwnPreviousFile: true,
       expectedPath: `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format.code.ts`,
     },
     {
-      ownsPreviousFile: false,
+      hasOwnPreviousFile: false,
       expectedPath: `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format-2.code.ts`,
     },
   ])(
-    'should write a code step file only over its own previous file, owned: $ownsPreviousFile',
-    ({ ownsPreviousFile, expectedPath }) => {
+    'should write a code step file only over its own previous file, has own previous file: $hasOwnPreviousFile',
+    ({ hasOwnPreviousFile, expectedPath }) => {
       const previousPath = `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format.code.ts`;
       const plainFile = (relativePath: string): ScannedSourceFile => ({
         relativePath,
@@ -1518,7 +1519,7 @@ describe('planPullWrites', () => {
               stepUniversalIdentifier: GREET_STEP_UID,
             }),
           ],
-        } as unknown as Manifest,
+        },
         baseManifest: null,
         workspaceUniversalIdentifiers: new Set(),
         scannedFiles: [
@@ -1527,7 +1528,7 @@ describe('planPullWrites', () => {
           plainFile(previousPath),
         ],
         localCodeStepFilesByWorkflowPath: new Map(
-          ownsPreviousFile
+          hasOwnPreviousFile
             ? [
                 [
                   GREET_WORKFLOW_PATH,
@@ -1549,7 +1550,7 @@ describe('planPullWrites', () => {
         ),
       ).toMatchObject({
         relativePath: expectedPath,
-        isRegeneration: ownsPreviousFile,
+        isRegeneration: hasOwnPreviousFile,
       });
       expect(plan.codeStepFileDeletions).toEqual([]);
     },

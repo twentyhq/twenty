@@ -31,7 +31,6 @@ export type PullWritePlan = {
   writes: PullWrite[];
   unchanged: PullEntity[];
   deletions: PullDeletion[];
-  // A code step file holds no definition, so it goes even when its step stays under a new name
   codeStepFileDeletions: PullDeletion[];
   localOnlyRelativePaths: string[];
 };
@@ -248,7 +247,7 @@ export const planPullWrites = ({
       : [];
     const previousCodeStepReservationKeyByStep = new Map(
       previousCodeStepFiles.map((codeStepFile) => [
-        codeStepFile.universalIdentifier,
+        codeStepFile.universalIdentifier.toLowerCase(),
         toReservationKey(codeStepFile.relativePath),
       ]),
     );
@@ -263,7 +262,7 @@ export const planPullWrites = ({
           !takenRelativePaths.has(reservationKey) ||
           (!plannedReservationKeys.has(reservationKey) &&
             previousCodeStepReservationKeyByStep.get(
-              stepUniversalIdentifier,
+              stepUniversalIdentifier.toLowerCase(),
             ) === reservationKey)
         );
       },
@@ -321,7 +320,6 @@ export const planPullWrites = ({
       relativePath,
     });
 
-    // An unsupported workflow keeps its file, which still reads its code step files
     if (!workspaceUniversalIdentifiers.has(baseUniversalIdentifier)) {
       staleCodeStepFiles.push(...findLocalCodeStepFiles(relativePath));
     }

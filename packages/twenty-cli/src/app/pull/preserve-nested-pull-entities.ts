@@ -157,7 +157,10 @@ export const preserveNestedPullEntities = ({
   } while (skippedPaths.size !== previousSkippedCount);
 
   // A preserved workflow still reads its own code step files; its folder may hold another workflow's
-  const isPreserved = ({ relativePath, universalIdentifier }: PullDeletion) =>
+  const isPreserved = ({
+    relativePath,
+    universalIdentifier,
+  }: Pick<PullDeletion, 'relativePath' | 'universalIdentifier'>) =>
     skippedPaths.has(relativePath) ||
     skippedWorkflows.some(
       ({ codeStepFolderPath, identifiers }) =>

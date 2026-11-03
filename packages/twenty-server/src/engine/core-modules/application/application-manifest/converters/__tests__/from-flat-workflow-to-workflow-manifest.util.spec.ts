@@ -654,9 +654,9 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
       },
       {
-        stepState: 'a logic function next to its source',
+        stepState: 'a logic function next to empty source',
         input: {
-          code: CODE_STEP_SOURCE,
+          code: '',
           logicFunctionId: 'logic-function-id',
           logicFunctionInput: {},
         },
@@ -671,7 +671,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
       expect(exportWorkflow(synced)).toEqual({
         reason:
-          'code step not yet migrated to inline source; edit it once or run the upgrade',
+          'code step not yet migrated to inline source; edit it once or run the 2.56 upgrade',
       });
     });
 
@@ -1382,6 +1382,29 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
       outputSchema: testedOutputSchema,
       expectedOutputSchema: {},
     });
+  });
+
+  it('exports a code step backfilled with its source while it still holds its logic function', () => {
+    const input = {
+      code: CODE_STEP_SOURCE,
+      logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Code - Serverless Function',
+          type: 'CODE',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: { ...input, logicFunctionId: 'logic-function-id' },
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'CODE', input });
   });
 
   it('exports a step without a position as null', () => {

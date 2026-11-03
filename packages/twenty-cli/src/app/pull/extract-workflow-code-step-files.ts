@@ -114,6 +114,7 @@ export const extractWorkflowCodeStepFiles = ({
   config: unknown;
   workflowRelativePath: string;
   isCodeStepPathAvailable?: IsCodeStepPathAvailable;
+  // keyed by lowercased step universal identifier
   localCodeStepPathByStepIdentifier?: ReadonlyMap<string, string>;
 }): {
   config: unknown;
@@ -145,7 +146,7 @@ export const extractWorkflowCodeStepFiles = ({
     }
 
     const localCodeStepPath = localCodeStepPathByStepIdentifier?.get(
-      step.universalIdentifier,
+      step.universalIdentifier.toLowerCase(),
     );
     const fileName = reserveCodeStepFileName({
       folderPath,

@@ -21,15 +21,24 @@ export const writePullEntityFile = ({
   requiredSdkExports: string[];
   codeStepFiles: WorkflowCodeStepFile[];
 } => {
+  if (entity.kind !== 'workflow') {
+    return {
+      ...writeDefineFile({
+        definer: entity.definer,
+        config: entity.config,
+        enumBindings: entity.enumBindings,
+      }),
+      codeStepFiles: [],
+    };
+  }
+
   const { config, importStatements, codeStepFiles } =
-    entity.kind === 'workflow'
-      ? extractWorkflowCodeStepFiles({
-          config: entity.config,
-          workflowRelativePath: relativePath,
-          isCodeStepPathAvailable,
-          localCodeStepPathByStepIdentifier,
-        })
-      : { config: entity.config, importStatements: [], codeStepFiles: [] };
+    extractWorkflowCodeStepFiles({
+      config: entity.config,
+      workflowRelativePath: relativePath,
+      isCodeStepPathAvailable,
+      localCodeStepPathByStepIdentifier,
+    });
 
   return {
     ...writeDefineFile({
