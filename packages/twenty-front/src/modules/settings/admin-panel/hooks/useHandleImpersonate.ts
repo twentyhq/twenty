@@ -17,6 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useToast } from 'twenty-ui/components/feedback';
 import { ImpersonateFromAdminPanelDocument } from '~/generated-admin/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const useHandleImpersonate = () => {
   const currentUser = useAtomStateValue(currentUserState);
@@ -52,16 +53,14 @@ export const useHandleImpersonate = () => {
         const { loginToken, workspace } = data.impersonateFromAdminPanel;
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
-        // No workspace session to swap here; noopener keeps the customer's page from navigating the console tab.
+        // The console has no workspace session to swap, so the target workspace opens on its own host.
         if (isOnAdminConsole) {
-          window.open(
+          openUrlInNewTab(
             buildWorkspaceUrl(
               getWorkspaceUrl(workspace.workspaceUrls),
               AppPath.Verify,
               { loginToken: loginToken.token, locale: i18n.locale },
             ),
-            '_blank',
-            'noopener,noreferrer',
           );
 
           return;
