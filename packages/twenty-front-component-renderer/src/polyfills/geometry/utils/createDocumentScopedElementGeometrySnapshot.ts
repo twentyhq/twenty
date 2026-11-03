@@ -10,7 +10,9 @@ export const createDocumentScopedElementGeometrySnapshot = ({
   isDocumentElement: boolean;
 }): ElementGeometrySnapshot => ({
   ...EMPTY_ELEMENT_GEOMETRY_SNAPSHOT,
-  computedStyle: viewport.computedStyle,
+  computedStyle: isDocumentElement
+    ? viewport.computedStyle
+    : { ...viewport.computedStyle, contain: 'layout' },
   x: viewport.rootContainerX,
   y: viewport.rootContainerY,
   width: viewport.rootContainerWidth,
