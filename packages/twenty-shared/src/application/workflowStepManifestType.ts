@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
+import { workflowCodeActionSettingsSchema } from '@/workflow/schemas/code-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
@@ -101,6 +102,15 @@ const workflowStepManifestOptions = [
     logicFunctionUniversalIdentifier: z.uuid(),
     input: z.record(z.string(), z.unknown()),
   }),
+  stepSchema(
+    'CODE',
+    workflowCodeActionSettingsSchema.shape.input
+      .omit({ logicFunctionId: true })
+      .extend({
+        code: workflowCodeActionSettingsSchema.shape.input.shape.code.unwrap(),
+      })
+      .strict(),
+  ),
   stepSchema(
     'HTTP_REQUEST',
     workflowHttpRequestActionSettingsSchema.shape.input,

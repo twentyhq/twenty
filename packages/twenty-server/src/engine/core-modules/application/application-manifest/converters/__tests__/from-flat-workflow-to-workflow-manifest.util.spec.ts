@@ -127,8 +127,17 @@ const STEP_FILTERS = {
 
 const RECORD = { objectUniversalIdentifier: OBJECT_ID };
 
+const CODE_STEP_SOURCE = `export const main = async (params: { name: string }) => {
+  return { greeting: \`Hello \${params.name}\` };
+};
+`;
+
 const STEP_INPUTS = {
   LOGIC_FUNCTION: { greeting: 'Hello', nested: { count: 2 } },
+  CODE: {
+    code: CODE_STEP_SOURCE,
+    logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+  },
   CREATE_RECORD: { ...RECORD, objectRecord: { name: 'Ticket' } },
   UPDATE_RECORD: {
     ...RECORD,
@@ -639,14 +648,42 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it('reports a CODE step', () => {
+    it.each([
+      {
+        stepState: 'only a logic function',
+        input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
+      },
+      {
+        stepState: 'a logic function next to its source',
+        input: {
+          code: CODE_STEP_SOURCE,
+          logicFunctionId: 'logic-function-id',
+          logicFunctionInput: {},
+        },
+      },
+    ])('reports a CODE step holding $stepState', ({ input }) => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'CODE' })] }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings, { input });
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          'code step not yet migrated to inline source; edit it once or run the upgrade',
+      });
+    });
+
+    it('reports a step type applications cannot use', () => {
       const synced = syncWorkflow(buildWorkflow({}));
       const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-      Object.assign(step, { type: WorkflowActionType.CODE });
+      Object.assign(step, { type: 'CHAT_WITH_AN_ORACLE' });
 
       expect(exportWorkflow(synced)).toEqual({
-        reason: 'CODE steps are not supported in application workflows',
+        reason:
+          'CHAT_WITH_AN_ORACLE steps are not supported in application workflows',
       });
     });
 
@@ -1317,6 +1354,46 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
+  });
+
+  it('exports a code step with its source and the output schema of its last test', () => {
+    const input = {
+      code: CODE_STEP_SOURCE,
+      logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+    };
+    const testedOutputSchema = {
+      greeting: {
+        isLeaf: true,
+        type: 'string',
+        label: 'greeting',
+        value: 'Hello Jane',
+      },
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Code - Serverless Function',
+          type: 'CODE',
+          settings: {
+            outputSchema: testedOutputSchema,
+            expectedOutputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toEqual({
+      universalIdentifier: STEP_ID,
+      name: 'Code - Serverless Function',
+      type: 'CODE',
+      nextStepIds: [],
+      input,
+      outputSchema: testedOutputSchema,
+      expectedOutputSchema: {},
+    });
   });
 
   it('exports a step without a position as null', () => {
