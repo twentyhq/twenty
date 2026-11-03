@@ -35,7 +35,7 @@ const readOnlyPermissions: ObjectPermissions = {
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: READ_ONLY_ROLE_ID },
+  mainPrincipal: { type: 'role', roleId: READ_ONLY_ROLE_ID },
   applicationPrincipal: { type: 'customApplication' },
 };
 
@@ -111,7 +111,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principals: {
           ...readOnlyPrincipals,
-          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'missing-role' },
+          mainPrincipal: { type: 'role', roleId: 'missing-role' },
           applicationPrincipal: { type: 'customApplication' },
         },
       }),

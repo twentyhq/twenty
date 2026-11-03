@@ -40,10 +40,9 @@ import { type RecordTargetInput } from 'src/engine/permissions/record-permission
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -72,6 +71,7 @@ export class RecordSharingService {
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
   ) {}
 
   async getSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
@@ -456,31 +456,14 @@ export class RecordSharingService {
   }) {
     const workspaceId = authContext.workspace.id;
     const { flatObjectMetadata, isShareable } = sharingObject;
-    const {
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
-      flatWorkspaceMemberMaps,
-      roleIdsWithAllRecordsAccess,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-      'flatApplicationMaps',
-      'flatWorkspaceMemberMaps',
-      'roleIdsWithAllRecordsAccess',
-    ]);
-    const principals = resolvePermissionsPrincipalsWithRoles({
-      authContext,
-      roleMaps: buildPermissionsPrincipalsRoleMaps({
-        flatWorkspaceMemberMaps,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-        flatApplicationMaps,
-      }),
-    });
+    const { roleIdsWithAllRecordsAccess } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'roleIdsWithAllRecordsAccess',
+      ]);
+    const principals =
+      await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+        authContext,
+      );
     const canAccessAllRecords =
       isDefined(principals) &&
       canRolesAccessAllRecords({

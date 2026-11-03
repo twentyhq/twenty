@@ -101,7 +101,7 @@ const fullAccess = {
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: MEMBER_ROLE_ID },
+  mainPrincipal: { type: 'role', roleId: MEMBER_ROLE_ID },
   applicationPrincipal: { type: 'customApplication' },
 };
 
