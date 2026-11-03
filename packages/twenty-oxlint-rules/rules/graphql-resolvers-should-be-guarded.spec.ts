@@ -578,6 +578,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     ...[
       'AccessPolicyGuard({ ...VIEW_WRITE_ACCESS_POLICY })',
+      'AccessPolicyGuard({})',
+      'AccessPolicyGuard({ authPrincipals: {}, requiredPermissionFlags: [] })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false } })',
       'AccessPolicyGuard({ authPrincipals, requiredPermissionFlags: [] })',
       'AccessPolicyGuard({ authPrincipals: { ...USER_SESSIONS_ONLY, apiKey: true }, requiredPermissionFlags: [] })',
       'AccessPolicyGuard({ authPrincipals: { userSession: USER_SESSION_VARIANTS, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [] })',

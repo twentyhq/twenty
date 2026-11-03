@@ -97,7 +97,9 @@ const isInlineAccessPolicy = (node: any): boolean =>
       (getPropertyName(property) === 'authPrincipals'
         ? isInlineAuthPrincipalGuardConfig(property.value)
         : isArrayWithoutSpread(property.value)),
-  );
+  ) &&
+  getPropertyValue(node, 'authPrincipals')?.properties.length > 0 &&
+  getPropertyValue(node, 'requiredPermissionFlags') !== undefined;
 
 const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
   isAccessPolicyGuardCall(node) &&
