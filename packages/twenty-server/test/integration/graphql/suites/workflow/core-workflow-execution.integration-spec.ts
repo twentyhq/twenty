@@ -179,10 +179,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `UPDATE "${schema}"."workflowVersion" SET trigger = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
         [workflowVersionId, JSON.stringify(trigger), JSON.stringify(steps)],
       );
-      await global.testDataSource.query(
-        `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = $2 WHERE id = $1`,
-        [workflowId, workflowVersionId],
-      );
     }
 
     await global.testDataSource.query(
