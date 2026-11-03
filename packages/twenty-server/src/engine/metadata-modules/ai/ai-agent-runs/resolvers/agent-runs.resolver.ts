@@ -7,9 +7,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -55,12 +54,14 @@ export class AgentRunsResolver {
     )
     agentId: string,
     @Args('limit', { type: () => Int, defaultValue: 100 }) limit: number,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentRunDTO[]> {
+    const authContext = getWorkspaceAuthContext();
+    const workspaceId = authContext.workspace.id;
+
     // The application target guard lets unknown ids through, and turns outlive
     // their agent, so a deleted agent's runs would otherwise reach any app
     await this.agentService.findOneAgentById({ id: agentId, workspaceId });
 
-    return this.agentRunsService.findAgentRuns({ workspaceId, agentId, limit });
+    return this.agentRunsService.findAgentRuns({ authContext, agentId, limit });
   }
 }

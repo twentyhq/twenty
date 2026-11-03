@@ -3,6 +3,9 @@ import { In } from 'typeorm';
 
 import { AgentRunsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-runs.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+
+const AUTH_CONTEXT = buildSystemAuthContext('workspace-id');
 
 const buildTurn = (id: string) => ({
   id,
@@ -44,6 +47,7 @@ const buildService = ({
       turnRepository as never,
       messageRepository as never,
       messagePartRepository as never,
+      {} as never,
     ),
     turnRepository,
     messageRepository,
@@ -90,7 +94,7 @@ describe('AgentRunsService', () => {
     });
 
     const runs = await service.findAgentRuns({
-      workspaceId: 'workspace-id',
+      authContext: AUTH_CONTEXT,
       agentId: 'agent-id',
       limit: 10,
     });
@@ -120,7 +124,7 @@ describe('AgentRunsService', () => {
 
     expect(
       await service.findAgentRuns({
-        workspaceId: 'workspace-id',
+        authContext: AUTH_CONTEXT,
         agentId: 'agent-id',
         limit: 10,
       }),

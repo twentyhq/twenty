@@ -14,6 +14,7 @@ import {
   type FileStatus,
 } from 'src/engine/core-modules/file/types/file-status.type';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type AgentRunsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-runs.service';
 import { type RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
@@ -21,7 +22,7 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type DirectMessageFileAccessService } from 'src/engine/permissions/direct-message/services/direct-message-file-access.service';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-describe('Direct message file reuse privacy', () => {
+describe('Direct message file reuse and agent run privacy', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
   let fileAccessService: DirectMessageFileAccessService;
   let authContextService: UserWorkspaceAuthContextService;
@@ -225,5 +226,36 @@ describe('Direct message file reuse privacy', () => {
         authContext: outsiderContext,
       }),
     ).resolves.toBeUndefined();
+  });
+
+  it('fills the requested run limit after hidden DMs using the caller permissions', async () => {
+    const ordinaryThreadId = await context.createThread();
+    const ordinaryMessage = await context.saveMessage({
+      threadId: ordinaryThreadId,
+    });
+    const directMessageThreadId = await createDirectMessage();
+    const hiddenMessage = await context.saveMessage({
+      threadId: directMessageThreadId,
+    });
+    const agentId = randomUUID();
+
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentTurn" SET "agentId" = $1, "createdAt" = $2 WHERE id = $3`,
+      [agentId, '2026-10-05T10:00:00.000Z', ordinaryMessage.turnId],
+    );
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentTurn" SET "agentId" = $1, "createdAt" = $2 WHERE id = $3`,
+      [agentId, '2026-10-05T11:00:00.000Z', hiddenMessage.turnId],
+    );
+    const authContext = await authContextService.resolveWorkspaceMember({
+      workspaceId: context.workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    });
+    const runs = await getAppProviderByClassName<AgentRunsService>(
+      'AgentRunsService',
+    ).findAgentRuns({ authContext, agentId, limit: 1 });
+
+    expect(runs.map(({ id }) => id)).toEqual([ordinaryMessage.turnId]);
+    expect(runs[0].input).toBe('Hello');
   });
 });

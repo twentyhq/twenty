@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { hasDirectMessageThreadIdentity } from 'src/engine/permissions/direct-message/utils/has-direct-message-thread-identity.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { AGENT_RUNS_MAX_LIMIT } from 'src/engine/metadata-modules/ai/ai-agent-runs/constants/agent-runs-max-limit.constant';
 import { type AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
+import { buildAgentRunTurnsWhere } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/build-agent-run-turns-where.util';
 import { mapAgentTurnToAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/map-agent-turn-to-agent-run.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -21,23 +26,24 @@ export class AgentRunsService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   // tool inputs and outputs can be large, so parts are read without them
   async findAgentRuns({
-    workspaceId,
+    authContext,
     agentId,
     limit,
   }: {
-    workspaceId: string;
+    authContext: WorkspaceAuthContext;
     agentId: string;
     limit: number;
   }): Promise<AgentRunDTO[]> {
-    const turns = await this.turnRepository.find(workspaceId, {
-      where: { agentId },
-      order: { createdAt: 'DESC', id: 'DESC' },
-      take: Math.min(Math.max(limit, 1), AGENT_RUNS_MAX_LIMIT),
-      relations: { thread: true },
+    const workspaceId = authContext.workspace.id;
+    const turns = await this.findAuthorizedAgentRunTurns({
+      authContext,
+      agentId,
+      limit: Math.min(Math.max(limit, 1), AGENT_RUNS_MAX_LIMIT),
     });
 
     const messages =
@@ -76,5 +82,80 @@ export class AgentRunsService {
         })),
       }),
     );
+  }
+
+  private async findAuthorizedAgentRunTurns({
+    authContext,
+    agentId,
+    limit,
+  }: {
+    authContext: WorkspaceAuthContext;
+    agentId: string;
+    limit: number;
+  }): Promise<AgentTurnWorkspaceEntity[]> {
+    const workspaceId = authContext.workspace.id;
+    const authorizedTurns: AgentTurnWorkspaceEntity[] = [];
+    let cursor: Pick<AgentTurnWorkspaceEntity, 'createdAt' | 'id'> | undefined;
+
+    while (authorizedTurns.length < limit) {
+      const turns = await this.turnRepository.find(workspaceId, {
+        where: buildAgentRunTurnsWhere({ agentId, cursor }),
+        order: { createdAt: 'DESC', id: 'DESC' },
+        take: limit,
+        relations: { thread: true },
+      });
+
+      if (!isNonEmptyArray(turns)) {
+        return authorizedTurns;
+      }
+
+      const directMessageThreadIds = new Set(
+        turns.flatMap(({ threadId, thread }) =>
+          isDefined(threadId) &&
+          (!isDefined(thread) || hasDirectMessageThreadIdentity(thread))
+            ? [threadId]
+            : [],
+        ),
+      );
+      const readableDirectMessageThreadIds = new Set(
+        directMessageThreadIds.size > 0
+          ? await this.workspaceOrmManager.executeInWorkspaceContext(
+              () =>
+                this.workspaceOrmManager
+                  .getRepository('agentChatThread')
+                  .findRecordIdsAllowedForOperation({
+                    recordIds: [...directMessageThreadIds],
+                    operationType: 'select',
+                    withDeleted: true,
+                  }),
+              authContext,
+            )
+          : [],
+      );
+
+      for (const turn of turns) {
+        if (
+          isDefined(turn.threadId) &&
+          directMessageThreadIds.has(turn.threadId) &&
+          !readableDirectMessageThreadIds.has(turn.threadId)
+        ) {
+          continue;
+        }
+
+        authorizedTurns.push(turn);
+
+        if (authorizedTurns.length === limit) {
+          return authorizedTurns;
+        }
+      }
+
+      if (turns.length < limit) {
+        return authorizedTurns;
+      }
+
+      cursor = turns[turns.length - 1];
+    }
+
+    return authorizedTurns;
   }
 }
