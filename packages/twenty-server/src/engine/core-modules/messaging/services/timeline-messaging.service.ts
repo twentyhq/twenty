@@ -428,7 +428,7 @@ export class TimelineMessagingService {
     const allowedRecordIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(() =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('messageThread')
+          .getRepository('messageThread')
           .findRecordIdsAllowedForOperations({
             recordIds: [messageThreadId],
             operationTypes: ['select'],
@@ -482,6 +482,7 @@ export class TimelineMessagingService {
         .where('messageThread.id = ANY(:messageThreadIds)', {
           messageThreadIds,
         })
+        .orderBy('messageChannelMessageAssociation.messageChannelId')
         .getRawMany<{ id: string; messageChannelId: string | null }>();
 
       const allMessageChannelIds = [
@@ -532,19 +533,25 @@ export class TimelineMessagingService {
         connectedAccounts.map((account) => [account.id, account]),
       );
 
-      const channelById = new Map(
-        messageChannels.map((channel) => {
+      const channelById = new Map<string, TimelineThreadChannelDTO>(
+        messageChannels.flatMap((channel) => {
           const connectedAccount = connectedAccountById.get(
             channel.connectedAccountId,
           );
 
+          if (!isDefined(connectedAccount)) {
+            return [];
+          }
+
           return [
-            channel.id,
-            {
-              type: channel.type,
-              provider: connectedAccount?.provider ?? '',
-              applicationId: connectedAccount?.applicationId ?? null,
-            },
+            [
+              channel.id,
+              {
+                type: channel.type,
+                provider: connectedAccount.provider,
+                applicationId: connectedAccount.applicationId ?? null,
+              },
+            ],
           ];
         }),
       );
@@ -570,17 +577,7 @@ export class TimelineMessagingService {
       const threadChannelByThreadId: Record<string, TimelineThreadChannelDTO> =
         {};
 
-      const sortedThreadChannelRows = [...threadChannelRows].sort(
-        (rowA, rowB) =>
-          (rowA.messageChannelId ?? '').localeCompare(
-            rowB.messageChannelId ?? '',
-          ),
-      );
-
-      for (const {
-        id: threadId,
-        messageChannelId,
-      } of sortedThreadChannelRows) {
+      for (const { id: threadId, messageChannelId } of threadChannelRows) {
         if (!messageChannelId) continue;
 
         const channel = channelById.get(messageChannelId);
