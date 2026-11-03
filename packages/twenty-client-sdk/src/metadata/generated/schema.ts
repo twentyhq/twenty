@@ -1238,6 +1238,7 @@ export interface CollectionHash {
 
 export interface CommandMenuItem {
     applicationId?: Scalars['UUID']
+    availabilityCoreObjectName?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
     availabilityType: CommandMenuItemAvailabilityType
     conditionalAvailabilityExpression?: Scalars['String']
@@ -1536,7 +1537,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORD_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1552,6 +1553,7 @@ export interface Field {
     isNullable?: Scalars['Boolean']
     isSearchable?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
+    isSystemSideEffect?: Scalars['Boolean']
     isUIEditable?: Scalars['Boolean']
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: Scalars['Boolean']
@@ -2632,6 +2634,7 @@ export interface NavigationMenuItem {
     name?: Scalars['String']
     pageLayoutId?: Scalars['UUID']
     position: Scalars['Float']
+    systemPageKey?: Scalars['String']
     targetObjectMetadataId?: Scalars['UUID']
     targetRecordId?: Scalars['UUID']
     targetRecordIdentifier?: RecordIdentifier
@@ -2642,7 +2645,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW'
+export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SYSTEM_PAGE' | 'VIEW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -5617,6 +5620,7 @@ export interface CollectionHashGenqlSelection{
 
 export interface CommandMenuItemGenqlSelection{
     applicationId?: boolean | number
+    availabilityCoreObjectName?: boolean | number
     availabilityObjectMetadataId?: boolean | number
     availabilityType?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
@@ -5732,7 +5736,7 @@ export interface CreateCalendarEventOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {availabilityCoreObjectName?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
 
 export interface CreateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),handle: Scalars['String']}
 
@@ -5759,7 +5763,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),systemPageKey?: (Scalars['String'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -6122,6 +6126,7 @@ export interface FieldGenqlSelection{
     isNullable?: boolean | number
     isSearchable?: boolean | number
     isSystem?: boolean | number
+    isSystemSideEffect?: boolean | number
     isUIEditable?: boolean | number
     /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
@@ -7249,6 +7254,7 @@ export interface NavigationMenuItemGenqlSelection{
     name?: boolean | number
     pageLayoutId?: boolean | number
     position?: boolean | number
+    systemPageKey?: boolean | number
     targetObjectMetadataId?: boolean | number
     targetRecordId?: boolean | number
     targetRecordIdentifier?: RecordIdentifierGenqlSelection
@@ -12611,7 +12617,6 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
-   IS_PRIVATE_RECORD_ENABLED: 'IS_PRIVATE_RECORD_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
@@ -12832,6 +12837,7 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
+   SYSTEM_PAGE: 'SYSTEM_PAGE' as const,
    VIEW: 'VIEW' as const
 }
 

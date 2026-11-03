@@ -18,26 +18,20 @@ describe('isSystemPageNavigationMenuItemActive', () => {
     ).toBe(false);
   });
 
-  it('is active anywhere under the data model settings', () => {
-    const item = { systemPageKey: 'dataModel' };
+  it('is active on the agents index and on an agent', () => {
+    const item = { systemPageKey: 'agents' };
 
     expect(
-      isSystemPageNavigationMenuItemActive({
-        item,
-        pathname: '/settings/objects',
-      }),
+      isSystemPageNavigationMenuItemActive({ item, pathname: '/agents' }),
     ).toBe(true);
     expect(
       isSystemPageNavigationMenuItemActive({
         item,
-        pathname: '/settings/objects/people',
+        pathname: '/agent/2d1c4e8f-6a3b-4c5d-8e9f-0a1b2c3d4e5f',
       }),
     ).toBe(true);
     expect(
-      isSystemPageNavigationMenuItemActive({
-        item,
-        pathname: '/settings/members',
-      }),
+      isSystemPageNavigationMenuItemActive({ item, pathname: '/workflows' }),
     ).toBe(false);
   });
 

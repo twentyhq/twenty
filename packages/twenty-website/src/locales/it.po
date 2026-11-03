@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 16:14\n"
+"PO-Revision-Date: 2026-11-03 14:14\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -649,12 +649,12 @@ msgstr "3 linee di prodotto"
 #. js-lingui-id: P9cEa2
 #: src/sections/affiliate-program/affiliate-program-terms.data.ts
 msgid "30 days"
-msgstr ""
+msgstr "30 giorni"
 
 #. js-lingui-id: f8kF3P
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr ""
+msgstr "30 giorni dopo il clic. Se il visitatore crea il proprio spazio di lavoro entro tale periodo e in seguito diventa un cliente pagante di Cloud Organization o Enterprise, la commissione è tua. Se fa clic sul link di un altro partner prima di creare il proprio spazio di lavoro, il merito va a quel partner."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -1131,12 +1131,12 @@ msgstr "Candidatura al programma di affiliazione"
 #. js-lingui-id: WsWBAA
 #: src/app/[locale]/(site)/affiliate-partners/terms/page.tsx
 msgid "Affiliate Program Terms"
-msgstr ""
+msgstr "Termini del Programma di affiliazione"
 
 #. js-lingui-id: KwiXVB
 #: src/platform/routing/static-website-routes.ts
 msgid "Affiliate Program Terms | Twenty"
-msgstr ""
+msgstr "Termini del programma di affiliazione | Twenty"
 
 #. js-lingui-id: QjSFuI
 #: src/partner-application/data/partner-country-options.ts
@@ -4703,7 +4703,6 @@ msgstr "HTML nelle email dei flussi di lavoro"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4725,7 +4724,7 @@ msgstr "Ungheria 🇭🇺"
 #. js-lingui-id: L6C8J0
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>affiliate program terms</0>"
-msgstr ""
+msgstr "Accetto i <0>termini del programma di affiliazione</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -5553,11 +5552,6 @@ msgstr "Madagascar 🇲🇬"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Main channel (URL)"
 msgstr "Canale principale (URL)"
-
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Il canale principale deve essere un URL completo che inizia con https://"
 
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6423,7 +6417,7 @@ msgstr "Attivazione dell'organizzazione | Twenty"
 #. js-lingui-id: gedycB
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "Organization and Enterprise plans on Twenty Cloud. Pro plans and AI credits are not included."
-msgstr ""
+msgstr "Piani Organization ed Enterprise su Twenty Cloud. I piani Pro e i crediti AI non sono inclusi."
 
 #. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
@@ -6735,6 +6729,11 @@ msgstr "Completa tutti i campi obbligatori prima di continuare."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Inserisci un indirizzo email valido."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr ""
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -8841,7 +8840,7 @@ msgstr "I termini che regolano l'uso di Twenty e dei suoi servizi CRM open sourc
 #. js-lingui-id: GbDTo3
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty."
-msgstr ""
+msgstr "I termini del programma di affiliazione di Twenty: segnalazioni qualificate, commissioni, pagamenti e come puoi promuovere Twenty."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/ReleaseNotes.tsx
@@ -10309,6 +10308,11 @@ msgstr "Il tuo workspace è supportato da una repo git, così puoi creare branch
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, newsletter, LinkedIn, TikTok: chiunque si occupi di strumenti GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

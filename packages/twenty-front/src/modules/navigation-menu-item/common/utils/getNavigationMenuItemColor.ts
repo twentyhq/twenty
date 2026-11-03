@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_PAGE_LAYOUT } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorPageLayout';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSystemPage';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -38,7 +37,7 @@ export const getNavigationMenuItemColor = (
   if (navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE) {
     return isNonEmptyString(navigationMenuItem.color)
       ? (navigationMenuItem.color as ThemeColor)
-      : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE;
+      : DEFAULT_THEME_COLOR_FALLBACK;
   }
 
   if (

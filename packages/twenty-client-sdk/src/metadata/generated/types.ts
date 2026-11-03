@@ -2956,6 +2956,9 @@ export default {
             "applicationId": [
                 538
             ],
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 538
             ],
@@ -3358,6 +3361,9 @@ export default {
             ]
         },
         "CreateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 538
             ],
@@ -3664,6 +3670,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "systemPageKey": [
+                1
             ],
             "targetObjectMetadataId": [
                 538
@@ -4938,6 +4947,9 @@ export default {
                 4
             ],
             "isSystem": [
+                4
+            ],
+            "isSystemSideEffect": [
                 4
             ],
             "isUIEditable": [
@@ -9822,6 +9834,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "systemPageKey": [
+                1
             ],
             "targetObjectMetadataId": [
                 538

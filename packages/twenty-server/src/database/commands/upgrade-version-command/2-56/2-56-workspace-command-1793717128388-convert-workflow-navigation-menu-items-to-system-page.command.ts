@@ -10,6 +10,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
 
+const STANDARD_ALL_WORKFLOWS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
+  '20202020-b008-4b08-8b08-c0aba11c0008';
+
 const WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
   n."workspaceId" = $1
   AND (
@@ -20,6 +23,37 @@ const WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
         SELECT v.id FROM core."view" v WHERE v."objectMetadataId" = o.id
       )
     )
+  )`;
+
+// Every converted item opens the same page, so keep one per member: the
+// standard item first, then workspace-wide items, then the oldest.
+const DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
+  WITH ranked AS (
+    SELECT
+      n.id,
+      n."userWorkspaceId",
+      ROW_NUMBER() OVER (
+        ORDER BY
+          n."universalIdentifier" = $3 DESC,
+          n."userWorkspaceId" IS NULL DESC,
+          n."createdAt",
+          n.id
+      ) AS rank
+    FROM core."navigationMenuItem" n
+    JOIN core."objectMetadata" o
+      ON o."workspaceId" = $1 AND o."universalIdentifier" = $2
+    WHERE ${WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}
+  )
+  SELECT duplicate.id
+  FROM ranked duplicate
+  WHERE EXISTS (
+    SELECT 1
+    FROM ranked kept
+    WHERE kept.rank < duplicate.rank
+      AND (
+        kept."userWorkspaceId" IS NULL
+        OR kept."userWorkspaceId" = duplicate."userWorkspaceId"
+      )
   )`;
 
 @RegisteredWorkspaceCommand('2.56.0', 1793717128388)
@@ -46,6 +80,10 @@ export class ConvertWorkflowNavigationMenuItemsToSystemPageCommand extends Provi
     }
 
     const parameters = [workspaceId, WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER];
+    const duplicateParameters = [
+      ...parameters,
+      STANDARD_ALL_WORKFLOWS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+    ];
 
     if (options.dryRun) {
       const [{ count }]: { count: string }[] = await dataSource.query(
@@ -56,13 +94,23 @@ export class ConvertWorkflowNavigationMenuItemsToSystemPageCommand extends Provi
          WHERE ${WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}`,
         parameters,
       );
+      const duplicates: { id: string }[] = await dataSource.query(
+        DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY,
+        duplicateParameters,
+      );
 
       this.logger.log(
-        `[DRY RUN] Would convert ${count} workflow navigation menu item(s) to the Workflows system page for workspace ${workspaceId}`,
+        `[DRY RUN] Would delete ${duplicates.length} duplicate and convert ${Number(count) - duplicates.length} workflow navigation menu item(s) to the Workflows system page for workspace ${workspaceId}`,
       );
 
       return;
     }
+
+    const [, deletedCount]: [unknown[], number] = await dataSource.query(
+      `DELETE FROM core."navigationMenuItem"
+       WHERE id IN (${DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY})`,
+      duplicateParameters,
+    );
 
     const [, convertedCount]: [unknown[], number] = await dataSource.query(
       `UPDATE core."navigationMenuItem" n
@@ -78,7 +126,7 @@ export class ConvertWorkflowNavigationMenuItemsToSystemPageCommand extends Provi
       parameters,
     );
 
-    if (convertedCount === 0) {
+    if (deletedCount === 0 && convertedCount === 0) {
       return;
     }
 
@@ -87,7 +135,7 @@ export class ConvertWorkflowNavigationMenuItemsToSystemPageCommand extends Provi
     ]);
 
     this.logger.log(
-      `Converted ${convertedCount} workflow navigation menu item(s) to the Workflows system page for workspace ${workspaceId}`,
+      `Deleted ${deletedCount} duplicate and converted ${convertedCount} workflow navigation menu item(s) to the Workflows system page for workspace ${workspaceId}`,
     );
   }
 }

@@ -1,4 +1,5 @@
 import { type SystemPageKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
@@ -60,6 +61,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
 export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
+  systemPageKey,
   folderId,
   folderUniversalIdentifier,
   position,
@@ -70,7 +72,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   now,
 }: {
   universalIdentifier: string;
-  viewUniversalIdentifier: string;
+  viewUniversalIdentifier?: string;
+  systemPageKey?: SystemPageKey;
   folderId: string;
   folderUniversalIdentifier: string;
   position: number;
@@ -82,12 +85,14 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   };
   now: string;
 }): FlatNavigationMenuItem => {
-  const flatView = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatViewMaps,
-    universalIdentifier: viewUniversalIdentifier,
-  });
+  const flatView = isDefined(viewUniversalIdentifier)
+    ? findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatViewMaps,
+        universalIdentifier: viewUniversalIdentifier,
+      })
+    : undefined;
 
-  if (!flatView) {
+  if (!isDefined(systemPageKey) && !isDefined(flatView)) {
     throw new Error(
       `View not found for universal identifier ${viewUniversalIdentifier}`,
     );
@@ -95,7 +100,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
-    type: NavigationMenuItemType.OBJECT,
+    type: isDefined(systemPageKey)
+      ? NavigationMenuItemType.SYSTEM_PAGE
+      : NavigationMenuItemType.OBJECT,
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -103,9 +110,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,
-    targetObjectMetadataId: flatView.objectMetadataId,
+    targetObjectMetadataId: flatView?.objectMetadataId ?? null,
     targetObjectMetadataUniversalIdentifier:
-      flatView.objectMetadataUniversalIdentifier,
+      flatView?.objectMetadataUniversalIdentifier ?? null,
     viewId: null,
     viewUniversalIdentifier: null,
     folderId,
@@ -116,62 +123,11 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     agentChatChannelUniversalIdentifier: null,
     name: null,
     link: null,
-    systemPageKey: null,
+    systemPageKey: systemPageKey ?? null,
     icon: null,
-    color: 'gray',
+    color: isDefined(systemPageKey) ? null : 'gray',
     position,
     createdAt: now,
     updatedAt: now,
   };
 };
-
-export const createStandardNavigationMenuItemFolderSystemPageItemFlatMetadata =
-  ({
-    universalIdentifier,
-    systemPageKey,
-    folderId,
-    folderUniversalIdentifier,
-    position,
-    navigationMenuItemId,
-    workspaceId,
-    twentyStandardApplicationId,
-    now,
-  }: {
-    universalIdentifier: string;
-    systemPageKey: SystemPageKey;
-    folderId: string;
-    folderUniversalIdentifier: string;
-    position: number;
-    navigationMenuItemId: string;
-    workspaceId: string;
-    twentyStandardApplicationId: string;
-    now: string;
-  }): FlatNavigationMenuItem => ({
-    id: navigationMenuItemId,
-    type: NavigationMenuItemType.SYSTEM_PAGE,
-    universalIdentifier,
-    applicationId: twentyStandardApplicationId,
-    applicationUniversalIdentifier:
-      TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    workspaceId,
-    userWorkspaceId: null,
-    targetRecordId: null,
-    targetObjectMetadataId: null,
-    targetObjectMetadataUniversalIdentifier: null,
-    viewId: null,
-    viewUniversalIdentifier: null,
-    folderId,
-    folderUniversalIdentifier,
-    pageLayoutId: null,
-    pageLayoutUniversalIdentifier: null,
-    agentChatChannelId: null,
-    agentChatChannelUniversalIdentifier: null,
-    name: null,
-    link: null,
-    systemPageKey,
-    icon: null,
-    color: 'gray',
-    position,
-    createdAt: now,
-    updatedAt: now,
-  });

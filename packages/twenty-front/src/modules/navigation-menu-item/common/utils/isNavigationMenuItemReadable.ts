@@ -42,7 +42,7 @@ export const isNavigationMenuItemReadable = ({
 
     return (
       !isDefined(requiredPermissionFlag) ||
-      permissionFlagMap[requiredPermissionFlag] === true
+      (permissionFlagMap[requiredPermissionFlag] ?? false)
     );
   }
 

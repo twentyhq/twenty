@@ -99,14 +99,14 @@ const fullAccess = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
+const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: MEMBER_ROLE_ID },
+  mainPrincipal: { type: 'role', roleId: MEMBER_ROLE_ID },
   applicationPrincipal: { type: 'customApplication' },
 };
 
-const memberPrincipal: PermissionsPrincipalsWithRolesContext = {
-  ...rolePrincipal,
+const memberPrincipals: PermissionsPrincipalsWithRolesContext = {
+  ...rolePrincipals,
   mainPrincipal: {
     type: 'workspaceMember',
     roleId: MEMBER_ROLE_ID,
@@ -115,8 +115,8 @@ const memberPrincipal: PermissionsPrincipalsWithRolesContext = {
   applicationPrincipal: { type: 'customApplication' },
 };
 
-const deniedPrincipal: PermissionsPrincipalsWithRolesContext = {
-  ...memberPrincipal,
+const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
+  ...memberPrincipals,
   mainPrincipal: {
     type: 'workspaceMember',
     roleId: 'missing-role',
@@ -141,16 +141,16 @@ const buildContext = (): RowAccessEvaluationContext => ({
 });
 
 const findAdmitted = ({
-  principal,
-  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
+  principals,
+  featureFlagKeys = [],
   context = buildContext(),
 }: {
-  principal: PermissionsPrincipalsWithRolesContext;
+  principals: PermissionsPrincipalsWithRolesContext;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>
   findPermissionsAdmittedRecordIds({
-    principal,
+    principals,
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
@@ -176,13 +176,13 @@ describe('findPermissionsAdmittedRecordIds', () => {
   });
 
   it('admits no record to a role without access', async () => {
-    expect(await findAdmitted({ principal: deniedPrincipal })).toEqual(
+    expect(await findAdmitted({ principals: deniedPrincipals })).toEqual(
       new Set(),
     );
   });
 
   it('keeps the role to public records, treating a record it cannot find as public', async () => {
-    expect(await findAdmitted({ principal: rolePrincipal })).toEqual(
+    expect(await findAdmitted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared', 'archived-shared']),
     );
   });
@@ -190,30 +190,30 @@ describe('findPermissionsAdmittedRecordIds', () => {
   it('matches the role filter on public record values', async () => {
     filterByStatus('active');
 
-    expect(await findAdmitted({ principal: rolePrincipal })).toEqual(
+    expect(await findAdmitted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared']),
     );
   });
 
-  it('admits records shared with the member beyond the role, ignoring shares with everyone', async () => {
+  it('admits records shared with or created by the member beyond the role', async () => {
     expect(
       await findAdmitted({
-        principal: deniedPrincipal,
+        principals: deniedPrincipals,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
-    ).toEqual(new Set(['active-shared', 'archived-shared']));
+    ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
   it('admits private records to their creator within the role filter', async () => {
     filterByStatus('none');
 
-    expect(await findAdmitted({ principal: memberPrincipal })).toEqual(
+    expect(await findAdmitted({ principals: memberPrincipals })).toEqual(
       new Set(),
     );
 
     filterByStatus('active');
 
-    expect(await findAdmitted({ principal: memberPrincipal })).toEqual(
+    expect(await findAdmitted({ principals: memberPrincipals })).toEqual(
       new Set(['active-shared', 'active-private']),
     );
   });
@@ -225,15 +225,14 @@ describe('findPermissionsAdmittedRecordIds', () => {
 
     expect(
       await findAdmitted({
-        principal: memberPrincipal,
+        principals: memberPrincipals,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
         context,
       }),
     ).toEqual(new Set(records.map((record) => record.id)));
-    expect(context.findPrivateRecordStates).not.toHaveBeenCalled();
     expect(context.fetchRecordShares).toHaveBeenCalledWith({
       objectMetadataId: flatObjectMetadata.id,
-      recordIds: ['archived-shared'],
+      recordIds: ['active-private', 'archived-shared'],
     });
   });
 });
