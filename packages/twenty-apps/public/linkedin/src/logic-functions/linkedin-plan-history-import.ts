@@ -272,6 +272,8 @@ const planHistoryImport = async ({
         accountId: unipileAccountId,
         inboxIds,
         limit: conversationLimit,
+        deadlineAtMs:
+          startedAt + LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS,
       }),
     );
 

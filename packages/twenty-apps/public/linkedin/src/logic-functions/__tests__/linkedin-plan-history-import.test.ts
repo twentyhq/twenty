@@ -295,8 +295,23 @@ describe('linkedinPlanHistoryImportHandler', () => {
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
+    expect(
+      mocks.listUnipileChats.mock.calls.map(([input]) => input.inboxId),
+    ).toEqual(['inbox-1', 'inbox-2']);
     expect(getStoredChatIds(0)).toEqual(
       Array.from({ length: 10 }, (_, index) => `inbox-2-chat-${index}`),
+    );
+  });
+
+  it('stops waiting on Unipile before the planning job runs out of time', async () => {
+    vi.useFakeTimers({ now: 0 });
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, conversationLimit: 20 });
+    mockChatPages([5]);
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(mocks.listUnipileChats).toHaveBeenCalledWith(
+      expect.objectContaining({ deadlineAtMs: 10 * 60 * 1000 }),
     );
   });
 

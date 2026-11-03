@@ -95,7 +95,7 @@ describe('linkedinUpdateSettingsHandler', () => {
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
-  it.each([0, 10, 50])(
+  it.each([0, 10, 20, 50])(
     'saves %i past conversations to import',
     async (historyConversationLimit) => {
       const view = await updateSettings({ historyConversationLimit });
