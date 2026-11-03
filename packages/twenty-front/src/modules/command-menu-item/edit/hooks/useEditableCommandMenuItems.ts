@@ -1,6 +1,7 @@
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
-import { doesCommandMenuItemMatchAvailabilityTarget } from '@/command-menu-item/utils/doesCommandMenuItemMatchAvailabilityTarget';
+import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
@@ -22,10 +23,12 @@ export const useEditableCommandMenuItems = () => {
 
     return (commandMenuItemsDraft ?? [])
       .filter(
-        doesCommandMenuItemMatchAvailabilityTarget({
-          objectMetadataItemId: currentObjectMetadataItemId,
-          coreObjectName: commandMenuContextApi.coreObjectName,
-        }),
+        doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+      )
+      .filter(
+        doesCommandMenuItemMatchCoreObjectName(
+          commandMenuContextApi.coreObjectName,
+        ),
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))

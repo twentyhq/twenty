@@ -36,6 +36,22 @@ const buildContext = (
 });
 
 describe('evaluateConditionalAvailabilityExpression', () => {
+  describe('coreObjectName', () => {
+    it('should expose the current core object to expressions', () => {
+      const expression = 'coreObjectName == "workflow"';
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({ coreObjectName: 'workflow' }),
+        ),
+      ).toBe(true);
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+      ).toBe(false);
+    });
+  });
+
   describe('arrayLength for favoriteRecordIds', () => {
     it('should evaluate arrayLength(favoriteRecordIds) < numberOfSelectedRecords when some selected are not favorites', () => {
       const expression =

@@ -7,7 +7,8 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
-import { doesCommandMenuItemMatchAvailabilityTarget } from '@/command-menu-item/utils/doesCommandMenuItemMatchAvailabilityTarget';
+import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -85,12 +86,8 @@ export const StandalonePageCommandMenu = () => {
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )
-      .filter(
-        doesCommandMenuItemMatchAvailabilityTarget({
-          objectMetadataItemId: undefined,
-          coreObjectName: null,
-        }),
-      )
+      .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
+      .filter(doesCommandMenuItemMatchCoreObjectName(null))
       .filter(
         (item) =>
           item.availabilityType !==
