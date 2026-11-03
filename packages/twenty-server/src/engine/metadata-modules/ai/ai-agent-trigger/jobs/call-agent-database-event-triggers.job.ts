@@ -80,7 +80,6 @@ export class CallAgentDatabaseEventTriggersJob {
         continue;
       }
 
-      // The agent receives what it could read when running: its role within its application
       const agentAuthContext = buildApplicationAuthContext({
         workspace: { id: workspaceId } as FlatWorkspace,
         application,

@@ -84,13 +84,14 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const { authContext } = context;
-    const objectPermissions = isDefined(authContext)
-      ? await this.recordAccessPolicyService.findObjectsPermissions(authContext)
+    const recordAccessPolicy = isDefined(context.authContext)
+      ? this.recordAccessPolicyService.forAuthContext(context.authContext)
       : undefined;
+    const objectPermissions =
+      await recordAccessPolicy?.findObjectsPermissions();
 
     if (
-      !isDefined(authContext) ||
+      !isDefined(recordAccessPolicy) ||
       !isDefined(objectPermissions) ||
       Object.keys(objectPermissions).length === 0
     ) {
@@ -146,8 +147,7 @@ export class DatabaseToolProvider implements ToolProvider {
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>
-        this.recordAccessPolicyService.hasAccessToSomeRecords({
-          authContext,
+        recordAccessPolicy.hasAccessToSomeRecords({
           flatObjectMetadata: flatObject,
           operationType,
         });

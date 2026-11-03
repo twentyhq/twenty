@@ -121,7 +121,7 @@ describe('DatabaseToolProvider', () => {
       ...allObjectPermissions,
       ...options?.composedObjectPermissions,
     };
-    const recordAccessPolicyService = {
+    const scopedRecordAccessPolicy = {
       findObjectsPermissions: jest
         .fn()
         .mockResolvedValue(composedObjectPermissionsByObjectId),
@@ -136,6 +136,9 @@ describe('DatabaseToolProvider', () => {
           );
         },
       ),
+    };
+    const recordAccessPolicyService = {
+      forAuthContext: jest.fn(() => scopedRecordAccessPolicy),
     } as unknown as RecordAccessPolicyService;
 
     const provider = new DatabaseToolProvider(

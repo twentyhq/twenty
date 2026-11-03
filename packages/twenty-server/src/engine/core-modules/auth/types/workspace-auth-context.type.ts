@@ -48,7 +48,6 @@ export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContex
   permissionScope?: PermissionScope;
 }
 
-// A webhook only reads: it receives the events its role lets it see
 export interface WebhookWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'webhook';
   webhook: FlatWebhook;

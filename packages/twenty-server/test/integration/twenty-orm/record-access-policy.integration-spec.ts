@@ -23,7 +23,6 @@ describe('RecordAccessPolicyService', () => {
   let adminAuthContext: WorkspaceAuthContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
   let recordAccessPolicyService: RecordAccessPolicyService;
-  // An API key that holds no role
   const missingRoleAuthContext = {
     type: 'apiKey',
     workspace: { id: SEED_APPLE_WORKSPACE_ID },
@@ -63,10 +62,9 @@ describe('RecordAccessPolicyService', () => {
         'RecordAccessPolicyService',
       );
 
-    // Tim is the seeded admin
     adminAuthContext = await resolveWorkspaceMemberAuthContext({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     });
   });
 

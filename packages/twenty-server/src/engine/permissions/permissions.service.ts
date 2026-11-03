@@ -30,6 +30,7 @@ import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/princi
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -214,6 +215,10 @@ export class PermissionsService {
   private async findPrincipalWithRoles(
     authContext: WorkspaceAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    if (!canAuthContextHoldRoles(authContext)) {
+      return undefined;
+    }
+
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,

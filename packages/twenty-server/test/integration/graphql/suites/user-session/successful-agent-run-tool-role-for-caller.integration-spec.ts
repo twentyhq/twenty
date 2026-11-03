@@ -126,6 +126,7 @@ describe('Agent run tools should be limited to the caller role', () => {
 
       expect(executionContext.authContext).toMatchObject({
         ...context.expectedCaller,
+        workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
         agentId: application.agentId,
         application: expect.objectContaining({ id: application.id }),
       });
@@ -140,6 +141,7 @@ describe('Agent run tools should be limited to the caller role', () => {
 
     expect(executionContext.authContext).toMatchObject({
       type: 'application',
+      workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
       agentId: application.agentId,
       application: expect.objectContaining({ id: application.id }),
     });

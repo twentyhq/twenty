@@ -38,10 +38,11 @@ export class CommonSelectFieldsBuilder {
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
+    const recordAccessPolicy =
+      this.recordAccessPolicyService.forAuthContext(authContext);
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((flatObjectMetadata) =>
-        this.recordAccessPolicyService.hasAccessToSomeRecords({
-          authContext,
+        recordAccessPolicy.hasAccessToSomeRecords({
           flatObjectMetadata,
           operationType: 'select',
         }),

@@ -187,7 +187,6 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    // A subscriber who can no longer act in the workspace receives nothing
     const authContext = await this.findSubscriberAuthContext({
       subscriberAuthContexts,
       workspaceId: workspaceEventBatch.workspaceId,
@@ -393,7 +392,6 @@ export class ObjectRecordEventPublisher {
   }
 
   // Streams of one member share their auth context within a batch; null keeps the writer's application out
-  // Streams are processed one by one, so membership is looked up ahead, a few subscribers at a time
   private async prefetchSubscriberAuthContexts({
     streamsData,
     workspaceEventBatch,

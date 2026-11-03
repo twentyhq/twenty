@@ -183,7 +183,6 @@ const toLimitingPrincipal = (
 ): PermissionsLimitingPrincipal | undefined =>
   isDefined(agentId) ? { type: 'agent', agentId } : undefined;
 
-// The actor is the main principal, bounded by its application and by the agent it runs
 const getPermissionsIdentitiesFromAuthContext = (
   authContext: WorkspaceAuthContext,
 ): PermissionsIdentities | undefined => {
