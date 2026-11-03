@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useRef } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,9 +8,12 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
+import { FrontComponentWidgetPreventPageZoomEffect } from '@/page-layout/widgets/front-component/components/FrontComponentWidgetPreventPageZoomEffect';
 import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{
   isInEditMode: boolean;
@@ -40,8 +43,9 @@ export const FrontComponentWidgetRenderer = ({
   widget,
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const { presentation } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const configuration = widget.configuration;
 
@@ -63,12 +67,25 @@ export const FrontComponentWidgetRenderer = ({
   const loadingFallback = isFullPageFrontComponent ? null : (
     <FrontComponentSkeletonLoader />
   );
+  const shouldPreventPageZoom =
+    !isPageLayoutInEditMode &&
+    (isFullPageFrontComponent ||
+      (layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+        isViewportFillingWidget(widget)) ||
+      (layoutMode === PageLayoutTabLayoutMode.CANVAS &&
+        presentation === 'solo'));
 
   return (
     <StyledContainer
+      ref={containerRef}
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >
+      {shouldPreventPageZoom && (
+        <FrontComponentWidgetPreventPageZoomEffect
+          containerRef={containerRef}
+        />
+      )}
       <Suspense fallback={loadingFallback}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}

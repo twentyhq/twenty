@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -46,6 +46,7 @@ import {
   GraphOrderBy,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  PageLayoutWidgetVerticalListHeightBehavior,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -277,6 +278,16 @@ const FRONT_COMPONENT_WIDGET: PageLayoutWidget = {
   },
 };
 
+const FULL_HEIGHT_FRONT_COMPONENT_WIDGET: PageLayoutWidget = {
+  ...FRONT_COMPONENT_WIDGET,
+  position: {
+    __typename: 'PageLayoutWidgetVerticalListPosition',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 0,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
+};
+
 const NUMBER_CHART_WIDGET: PageLayoutWidget = {
   ...makeWidget(WIDGET_ID_NUMBER_CHART, 0, TAB_ID_OVERVIEW),
   type: WidgetType.GRAPH,
@@ -296,11 +307,13 @@ const renderWidgetOnPage = ({
   pageLayoutType,
   presentation,
   isInEditMode = false,
+  layoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
 }: {
   widget: PageLayoutWidget;
   pageLayoutType: PageLayoutType;
   presentation: TabPresentation;
   isInEditMode?: boolean;
+  layoutMode?: PageLayoutTabLayoutMode;
 }): Story['render'] => {
   return () => {
     const pageLayoutData = createPageLayoutWithWidget(widget, pageLayoutType);
@@ -336,7 +349,7 @@ const renderWidgetOnPage = ({
             <PageLayoutTestWrapper store={jotaiStore}>
               <PageLayoutContentProvider
                 value={{
-                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  layoutMode,
                   presentation,
                   tabId: TAB_ID_OVERVIEW,
                 }}
@@ -387,6 +400,73 @@ const expectLoadingFrontComponentFrame = async ({
   );
 };
 
+const expectFrontComponentZoomRouting = async ({
+  canvasElement,
+  shouldPreventPageZoom,
+}: {
+  canvasElement: HTMLElement;
+  shouldPreventPageZoom: boolean;
+}) => {
+  const card = await within(canvasElement).findByTestId(
+    WIDGET_ID_FRONT_COMPONENT,
+  );
+  const frontComponentContainer = card.querySelector<HTMLElement>(
+    ':scope > div:last-child > div',
+  );
+
+  if (!isDefined(frontComponentContainer)) {
+    throw new Error('Front component container is missing');
+  }
+
+  const eventTarget = canvasElement.ownerDocument.createElement('div');
+  const handleWheel = fn();
+
+  eventTarget.addEventListener('wheel', handleWheel);
+  frontComponentContainer.append(eventTarget);
+
+  try {
+    for (const modifier of [{ ctrlKey: true }, { metaKey: true }]) {
+      const zoomEvent = new WheelEvent('wheel', {
+        ...modifier,
+        bubbles: true,
+        cancelable: true,
+        deltaY: -100,
+      });
+
+      eventTarget.dispatchEvent(zoomEvent);
+
+      expect(zoomEvent.defaultPrevented).toBe(shouldPreventPageZoom);
+      expect(handleWheel).toHaveBeenLastCalledWith(zoomEvent);
+    }
+
+    const scrollEvent = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 100,
+    });
+
+    eventTarget.dispatchEvent(scrollEvent);
+
+    expect(scrollEvent.defaultPrevented).toBe(false);
+    expect(handleWheel).toHaveBeenLastCalledWith(scrollEvent);
+    expect(handleWheel).toHaveBeenCalledTimes(3);
+
+    const outsideZoomEvent = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      ctrlKey: true,
+      deltaY: -100,
+    });
+
+    canvasElement.dispatchEvent(outsideZoomEvent);
+
+    expect(outsideZoomEvent.defaultPrevented).toBe(false);
+  } finally {
+    eventTarget.removeEventListener('wheel', handleWheel);
+    eventTarget.remove();
+  }
+};
+
 export const StandaloneFrontComponentLoading: Story = {
   render: renderWidgetOnPage({
     widget: FRONT_COMPONENT_WIDGET,
@@ -407,6 +487,11 @@ export const StandaloneFrontComponentLoading: Story = {
       expect(style.borderRadius).toBe('0px');
       expect(style.padding).toBe('0px');
     }
+
+    await expectFrontComponentZoomRouting({
+      canvasElement,
+      shouldPreventPageZoom: true,
+    });
   },
 };
 
@@ -420,6 +505,11 @@ export const StackedFrontComponentLoading: Story = {
     await expectLoadingFrontComponentFrame({
       canvasElement,
       outerFrame: true,
+    });
+
+    await expectFrontComponentZoomRouting({
+      canvasElement,
+      shouldPreventPageZoom: false,
     });
   },
 };
@@ -435,7 +525,7 @@ export const DashboardFrontComponentLoading: Story = {
 
 export const EditingFrontComponentLoading: Story = {
   render: renderWidgetOnPage({
-    widget: FRONT_COMPONENT_WIDGET,
+    widget: FULL_HEIGHT_FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.DASHBOARD,
     presentation: 'solo',
     isInEditMode: true,
@@ -454,7 +544,40 @@ export const RecordFrontComponentLoading: Story = {
       canvasElement,
       outerFrame: false,
     });
+
+    await expectFrontComponentZoomRouting({
+      canvasElement,
+      shouldPreventPageZoom: false,
+    });
   },
+};
+
+export const FullHeightFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FULL_HEIGHT_FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    presentation: 'stack',
+  }),
+  play: async ({ canvasElement }) => {
+    await expectLoadingFrontComponentFrame({
+      canvasElement,
+      outerFrame: false,
+    });
+    await expectFrontComponentZoomRouting({
+      canvasElement,
+      shouldPreventPageZoom: true,
+    });
+  },
+};
+
+export const LegacyCanvasFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    presentation: 'solo',
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  }),
+  play: FullHeightFrontComponentLoading.play,
 };
 
 export const StandaloneChart: Story = {
