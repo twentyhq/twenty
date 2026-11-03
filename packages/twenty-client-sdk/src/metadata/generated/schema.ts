@@ -366,7 +366,7 @@ export interface Application {
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     requestedIframeMediaPermissions: IframeMediaPermission[]
-    runOnUserPreferences: Scalars['Boolean']
+    runHealthCheckOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
     universalIdentifier: Scalars['String']
@@ -585,7 +585,6 @@ export interface ApplicationMonitoringVersion {
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
     connectionProviders: ApplicationConnectionProvider[]
-    hasUserHealthCheck: Scalars['Boolean']
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -4692,7 +4691,7 @@ export interface ApplicationGenqlSelection{
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
-    runOnUserPreferences?: boolean | number
+    runHealthCheckOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     universalIdentifier?: boolean | number
@@ -4931,7 +4930,6 @@ export interface ApplicationMonitoringVersionGenqlSelection{
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
     connectionProviders?: ApplicationConnectionProviderGenqlSelection
-    hasUserHealthCheck?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number

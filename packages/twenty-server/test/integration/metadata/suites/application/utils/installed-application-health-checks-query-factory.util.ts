@@ -7,7 +7,7 @@ export const installedApplicationHealthChecksQueryFactory = () => ({
         currentWorkspace {
           installedApplications {
             id
-            runOnUserPreferences
+            runHealthCheckOnUserPreferences
           }
         }
       }

@@ -172,21 +172,19 @@ describe('Run my application health check should succeed', () => {
   it('should list applications that enable member execution, even without other preferences', async () => {
     const { data } = await myApplicationPreferences({
       input: {},
-      gqlFields: 'applicationId hasUserHealthCheck',
+      gqlFields: 'applicationId',
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       expectToFail: false,
     });
 
     expect(data.myApplicationPreferences).toEqual(
       expect.arrayContaining([
-        { applicationId, hasUserHealthCheck: true },
+        { applicationId },
         {
           applicationId: healthCheckOnlyApplication.id,
-          hasUserHealthCheck: true,
         },
         {
           applicationId: applicationWithoutHealthCheck.id,
-          hasUserHealthCheck: false,
         },
       ]),
     );
@@ -202,9 +200,15 @@ describe('Run my application health check should succeed', () => {
       response.body.data.currentUser.currentWorkspace.installedApplications,
     ).toEqual(
       expect.arrayContaining([
-        { id: applicationId, runOnUserPreferences: true },
-        { id: healthCheckOnlyApplication.id, runOnUserPreferences: true },
-        { id: applicationWithoutHealthCheck.id, runOnUserPreferences: false },
+        { id: applicationId, runHealthCheckOnUserPreferences: true },
+        {
+          id: healthCheckOnlyApplication.id,
+          runHealthCheckOnUserPreferences: true,
+        },
+        {
+          id: applicationWithoutHealthCheck.id,
+          runHealthCheckOnUserPreferences: false,
+        },
       ]),
     );
   });
@@ -257,11 +261,13 @@ describe('Run my application health check should succeed', () => {
   it('should not run a member-only handler from the workspace application page', async () => {
     const { data: applicationData } = await findOneApplication({
       input: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-      gqlFields: 'id runOnUserPreferences',
+      gqlFields: 'id runHealthCheckOnUserPreferences',
       expectToFail: false,
     });
 
-    expect(applicationData.findOneApplication.runOnUserPreferences).toBe(true);
+    expect(
+      applicationData.findOneApplication.runHealthCheckOnUserPreferences,
+    ).toBe(true);
 
     const { data } = await runApplicationHealthCheck({
       input: { applicationId },
@@ -312,13 +318,13 @@ describe('Run my application health check should succeed', () => {
 
       const { data: applicationData } = await findOneApplication({
         input: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-        gqlFields: 'id runOnUserPreferences',
+        gqlFields: 'id runHealthCheckOnUserPreferences',
         expectToFail: false,
       });
 
-      expect(applicationData.findOneApplication.runOnUserPreferences).toBe(
-        false,
-      );
+      expect(
+        applicationData.findOneApplication.runHealthCheckOnUserPreferences,
+      ).toBe(false);
 
       const { data: workspaceData } = await runApplicationHealthCheck({
         input: { applicationId },
@@ -332,7 +338,7 @@ describe('Run my application health check should succeed', () => {
 
       const { data: preferencesData } = await myApplicationPreferences({
         input: {},
-        gqlFields: 'applicationId hasUserHealthCheck',
+        gqlFields: 'applicationId',
         token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         expectToFail: false,
       });

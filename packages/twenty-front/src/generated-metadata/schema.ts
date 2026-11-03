@@ -506,7 +506,7 @@ export type Application = {
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
   requestedIframeMediaPermissions: Array<IframeMediaPermission>;
-  runOnUserPreferences: Scalars['Boolean']['output'];
+  runHealthCheckOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
   universalIdentifier: Scalars['String']['output'];
@@ -745,7 +745,6 @@ export type ApplicationPreferences = {
   __typename?: 'ApplicationPreferences';
   applicationId: Scalars['UUID']['output'];
   connectionProviders: Array<ApplicationConnectionProvider>;
-  hasUserHealthCheck: Scalars['Boolean']['output'];
   settingsMenuItems: Array<SettingsMenuItem>;
   variables: Array<UserApplicationVariableValue>;
 };

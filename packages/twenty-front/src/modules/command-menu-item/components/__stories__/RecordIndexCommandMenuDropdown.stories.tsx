@@ -42,6 +42,7 @@ const THIRD_PARTY_APPLICATION = {
   universalIdentifier: 'acme-sync-application',
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
