@@ -215,6 +215,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     isDashboardPageLayoutInEditMode: isDashboardInEditMode,
     isLayoutCustomizationModeEnabled,
     favoriteRecordIds,
+    areAllSelectedRecordsFavorites:
+      favoriteRecordIds.length === contextStoreNumberOfSelectedRecords,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,

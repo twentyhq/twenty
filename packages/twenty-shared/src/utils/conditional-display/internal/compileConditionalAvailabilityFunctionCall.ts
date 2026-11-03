@@ -62,7 +62,7 @@ export const compileConditionalAvailabilityFunctionCall = ({
             ViewFilterOperand.IS_NOT_EMPTY,
           )
         : fail(
-            `${unsupportedCall}: isNonEmptyString accepts a text context value (pageType, objectMetadataItem.nameSingular or objectMetadataLabel); use isDefined(...) for other context values and someNonEmptyString(selectedRecords, "path") for record fields`,
+            `${unsupportedCall}: isNonEmptyString accepts a text context value (pageType, objectMetadataItem.nameSingular or objectMetadataLabel); use someNonEmptyString(selectedRecords, "path") for record fields`,
           );
     case 'includes': {
       const subject =
@@ -85,7 +85,7 @@ export const compileConditionalAvailabilityFunctionCall = ({
             JSON.stringify(values),
           )
         : fail(
-            `${unsupportedCall}: includes accepts a list of values followed by a text context value, e.g. includes(["INDEX_PAGE", "RECORD_PAGE"], pageType); use someEquals or includesSome(selectedRecords, "path", value) for record fields`,
+            `${unsupportedCall}: includes accepts a list of values followed by pageType or objectMetadataItem.nameSingular, e.g. includes(["INDEX_PAGE", "RECORD_PAGE"], pageType); use someEquals or includesSome(selectedRecords, "path", value) for record fields`,
           );
     }
     case 'isDefined':

@@ -13,6 +13,9 @@ describe('compileConditionalAvailabilityExpression', () => {
     DISTINCT_CORPUS_EXPRESSIONS.forEach((expression) => {
       const conditionalDisplay =
         compileConditionalAvailabilityExpression(expression);
+
+      expect(conditionalDisplay).not.toBeNull();
+
       const { recordFilters = [], recordFilterGroups = [] } =
         conditionalDisplay ?? {};
       const ids = [...recordFilters, ...recordFilterGroups].map(({ id }) => id);
@@ -384,11 +387,11 @@ describe('compileConditionalAvailabilityExpression', () => {
   it.each([
     [
       'isNonEmptyString(isSelectAll)',
-      'isNonEmptyString accepts a text context value (pageType, objectMetadataItem.nameSingular or objectMetadataLabel); use isDefined(...) for other context values and someNonEmptyString(selectedRecords, "path") for record fields',
+      'isNonEmptyString accepts a text context value (pageType, objectMetadataItem.nameSingular or objectMetadataLabel); use someNonEmptyString(selectedRecords, "path") for record fields',
     ],
     [
       'includes(favoriteRecordIds, "record-id")',
-      'includes accepts a list of values followed by a text context value, e.g. includes(["INDEX_PAGE", "RECORD_PAGE"], pageType); use someEquals or includesSome(selectedRecords, "path", value) for record fields',
+      'includes accepts a list of values followed by pageType or objectMetadataItem.nameSingular, e.g. includes(["INDEX_PAGE", "RECORD_PAGE"], pageType); use someEquals or includesSome(selectedRecords, "path", value) for record fields',
     ],
     [
       'objectMetadataLabel == "Companies"',

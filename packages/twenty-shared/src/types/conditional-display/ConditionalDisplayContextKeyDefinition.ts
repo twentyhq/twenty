@@ -8,6 +8,6 @@ export type ConditionalDisplayContextKeyDefinition =
     }
   | {
       owner: 'engine';
-      surfaces: ConditionalDisplaySurface[];
+      surfaces: readonly ConditionalDisplaySurface[];
       subject: ConditionalDisplayContextKeySubject;
     };

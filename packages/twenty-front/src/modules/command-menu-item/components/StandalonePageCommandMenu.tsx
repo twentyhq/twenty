@@ -52,6 +52,7 @@ export const StandalonePageCommandMenu = () => {
       isDashboardPageLayoutInEditMode: false,
       isLayoutCustomizationModeEnabled,
       favoriteRecordIds: [],
+      areAllSelectedRecordsFavorites: false,
       isSelectAll: false,
       hasAnySoftDeleteFilterOnView: false,
       numberOfSelectedRecords: 0,

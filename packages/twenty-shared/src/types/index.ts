@@ -226,6 +226,7 @@ export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfi
 export type { GridPosition } from './page-layout/GridPosition';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export { PageLayoutType } from './page-layout/PageLayoutType';
+export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type {
   AggregateChartConfiguration,
   PieChartConfiguration,
