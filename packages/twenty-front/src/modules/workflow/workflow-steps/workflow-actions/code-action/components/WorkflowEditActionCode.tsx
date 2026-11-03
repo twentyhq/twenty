@@ -137,7 +137,7 @@ export const WorkflowEditActionCode = ({
     logicFunctionInput: WorkflowCodeAction['settings']['input']['logicFunctionInput'],
   ): WorkflowCodeAction['settings']['input'] =>
     isDefined(code)
-      ? { code, logicFunctionInput }
+      ? { ...action.settings.input, code, logicFunctionInput }
       : { ...action.settings.input, logicFunctionInput };
 
   const {
@@ -198,7 +198,12 @@ export const WorkflowEditActionCode = ({
       ...latestAction,
       settings: {
         ...latestAction.settings,
-        input: { code: newCode, logicFunctionInput: newMergedInput },
+        // keeps a legacy logicFunctionId so the 2.57 upgrade still finds and deletes that function
+        input: {
+          ...latestAction.settings.input,
+          code: newCode,
+          logicFunctionInput: newMergedInput,
+        },
       },
     });
   }, 500);
