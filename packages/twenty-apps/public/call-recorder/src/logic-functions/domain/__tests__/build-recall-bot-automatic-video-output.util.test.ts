@@ -36,7 +36,6 @@ const requestedAssetPaths = () =>
 const decodeFrame = (base64: string) =>
   sharp(Buffer.from(base64, 'base64')).metadata();
 
-// Each test imports a fresh module graph so cached assets do not leak between tests.
 const buildOutput = async () => {
   const { buildRecallBotAutomaticVideoOutput } = await import(
     'src/logic-functions/domain/build-recall-bot-automatic-video-output.util'

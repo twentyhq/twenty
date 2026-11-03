@@ -18,7 +18,6 @@ const downloadPublicAsset = async (path: string): Promise<Buffer> => {
   return Buffer.from(await response.arrayBuffer());
 };
 
-// Cached per warm runtime: a calendar sweep schedules many bots in one run.
 export const fetchPublicAsset = (path: string): Promise<Buffer> => {
   const cachedAsset = publicAssetCache.get(path);
 

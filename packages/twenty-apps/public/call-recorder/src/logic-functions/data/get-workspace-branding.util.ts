@@ -9,7 +9,6 @@ export type WorkspaceBranding = {
   displayName: string | undefined;
 };
 
-// `currentWorkspace.logo` resolves to a signed, expiring file URL that we then download.
 const downloadLogo = async (logoUrl: string): Promise<Buffer | undefined> => {
   const response = await fetch(logoUrl, {
     signal: AbortSignal.timeout(LOGO_DOWNLOAD_TIMEOUT_MS),

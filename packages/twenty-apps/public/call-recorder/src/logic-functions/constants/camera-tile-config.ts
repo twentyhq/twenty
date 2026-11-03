@@ -1,5 +1,3 @@
-// Positions are in the 1280x720 frame; the bundled backgrounds leave the plate
-// area at PLATE_TOP free and keep their pattern behind it.
 export const CAMERA_TILE_BACKGROUND_COLOR = '#1d1d1d';
 export const CAMERA_TILE_TEXT_COLOR = '#ffffff';
 export const CAMERA_TILE_SECONDARY_TEXT_OPACITY = 0.6;

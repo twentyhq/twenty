@@ -45,7 +45,6 @@ export const renderCameraTileText = async ({
 
   let { data, info } = await render();
 
-  // Sharp scales the text down to fit when given a box.
   if (maxWidth !== undefined && info.width > maxWidth) {
     ({ data, info } = await render({ width: maxWidth, height: info.height }));
   }

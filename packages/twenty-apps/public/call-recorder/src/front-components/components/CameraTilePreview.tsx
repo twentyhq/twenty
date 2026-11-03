@@ -40,11 +40,9 @@ import { RECALL_BOT_IMAGE_WIDTH } from 'src/logic-functions/constants/recall-bot
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 import { canRenderWithCameraTileFont } from 'src/logic-functions/utils/can-render-with-camera-tile-font.util';
 
-// Meeting apps draw their own placeholder when the bot sends no image.
 const MEETING_PLACEHOLDER_BACKGROUND_COLOR = '#25272b';
 const MEETING_PLACEHOLDER_AVATAR_COLOR = '#5b5f66';
 
-// Sizes come from the server layout in 1280px frame pixels and scale with the preview width.
 const toTileUnits = (pixels: number) =>
   `${((pixels / RECALL_BOT_IMAGE_WIDTH) * 100).toFixed(3)}cqw`;
 

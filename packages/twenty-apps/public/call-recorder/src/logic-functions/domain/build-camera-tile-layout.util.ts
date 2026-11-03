@@ -71,7 +71,6 @@ const centerHorizontally = (
   top: Math.round(top),
 });
 
-// A soft patch of background colour keeps text readable over the pattern.
 const buildScrimSvg = ({
   centerY,
   radiusX,
@@ -159,7 +158,6 @@ const renderLogo = async (
   logo: Buffer,
 ): Promise<OverlayOptions | undefined> => {
   try {
-    // Animated sources collapse to their first frame, which is the intended tile.
     const { data, info } = await sharp(logo)
       .resize(CAMERA_TILE_LOGO_BOX_SIZE, CAMERA_TILE_LOGO_BOX_SIZE, {
         fit: 'inside',

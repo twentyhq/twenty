@@ -9,8 +9,6 @@ const FONT_FILE_PATH = join(tmpdir(), 'call-recorder-inter-semibold.ttf');
 
 let fontFilePath: Promise<string> | undefined;
 
-// The runtime ships no fonts and sharp's text renderer only loads font files
-// from disk, so the bundled font is written to the temp directory once.
 export const getCameraTileFontFilePath = (): Promise<string> => {
   fontFilePath ??= fetchPublicAsset(CAMERA_TILE_FONT_ASSET_PATH)
     .then(async (font) => {

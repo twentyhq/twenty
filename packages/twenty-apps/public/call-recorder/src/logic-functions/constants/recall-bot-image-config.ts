@@ -1,4 +1,3 @@
-// Meeting platforms cap the bot's camera output at 1280x720.
 export const RECALL_BOT_IMAGE_WIDTH = 1280;
 export const RECALL_BOT_IMAGE_HEIGHT = 720;
 export const RECALL_BOT_IMAGE_JPEG_QUALITY = 90;
