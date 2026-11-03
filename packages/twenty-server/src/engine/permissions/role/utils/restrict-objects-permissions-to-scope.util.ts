@@ -20,8 +20,8 @@ export const restrictObjectsPermissionsToScope = ({
     Object.entries(objectsPermissions).map(
       ([objectMetadataId, objectPermissions]) => {
         const scopeRestrictedFields =
-          aiRunScope.objectsPermissions[objectMetadataId]
-            ?.restrictedFields ?? {};
+          aiRunScope.objectsPermissions[objectMetadataId]?.restrictedFields ??
+          {};
 
         return [
           objectMetadataId,
@@ -30,8 +30,7 @@ export const restrictObjectsPermissionsToScope = ({
             rowLevelPermissionPredicates:
               objectPermissions.rowLevelPermissionPredicates.filter(
                 ({ fieldMetadataId }) =>
-                  scopeRestrictedFields[fieldMetadataId]?.canUpdate !==
-                  false,
+                  scopeRestrictedFields[fieldMetadataId]?.canUpdate !== false,
               ),
             rowLevelPermissionPredicateGroups:
               objectPermissions.rowLevelPermissionPredicateGroups,
