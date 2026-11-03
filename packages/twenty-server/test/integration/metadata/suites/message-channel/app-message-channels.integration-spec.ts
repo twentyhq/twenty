@@ -6,6 +6,16 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { type Manifest } from 'twenty-shared/application';
 import {
   ConnectedAccountProvider,
@@ -19,6 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { INGEST_APP_MESSAGES_MAX_BATCH_SIZE } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 const OWNING_APP_ID = uuidv4();
@@ -43,6 +54,39 @@ const CREATE_CHANNEL_MUTATION = gql`
       visibility
       isSyncEnabled
       connectedAccountId
+    }
+  }
+`;
+
+const GET_MESSAGE_THREAD_CHANNEL_QUERY = gql`
+  query GetMessageThreadChannel($messageThreadId: UUID!) {
+    getMessageThreadChannel(messageThreadId: $messageThreadId) {
+      type
+      provider
+      applicationId
+    }
+  }
+`;
+
+const GET_TIMELINE_THREADS_QUERY = gql`
+  query GetTimelineThreadsFromObjectRecord(
+    $objectNameSingular: String!
+    $recordId: UUID!
+  ) {
+    getTimelineThreadsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      page: 1
+      pageSize: 50
+    ) {
+      timelineThreads {
+        id
+        channel {
+          type
+          provider
+          applicationId
+        }
+      }
     }
   }
 `;
@@ -782,6 +826,185 @@ describe('app message channels API (e2e)', () => {
         subject: 'Interested in the role',
         text: 'Hi there',
       });
+    });
+
+    it('exposes the app channel on the timeline threads of the matched person', async () => {
+      const channel = await createChannelOrThrow();
+      const personId = uuidv4();
+
+      await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          data: { id: personId },
+        }),
+      );
+
+      try {
+        const ingestResponse = await ingest({
+          messageChannelId: channel.id,
+          messages: [
+            buildMessage({
+              externalId: 'msg-1',
+              threadExternalId: `thread-${uuidv4()}`,
+              senderHandle: 'candidate@linkedin.test',
+              personId,
+            }),
+          ],
+        });
+
+        expect(ingestResponse.body.errors).toBeUndefined();
+
+        const [{ messageThreadId }] =
+          ingestResponse.body.data.ingestAppMessages.messages;
+
+        const timelineResponse = await makeGraphqlApiRequest({
+          query: GET_TIMELINE_THREADS_QUERY,
+          variables: { objectNameSingular: 'person', recordId: personId },
+        });
+
+        expect(timelineResponse.body.errors).toBeUndefined();
+        expect(
+          timelineResponse.body.data.getTimelineThreadsFromObjectRecord
+            .timelineThreads,
+        ).toEqual([
+          {
+            id: messageThreadId,
+            channel: {
+              type: MessageChannelType.APP,
+              provider: ConnectedAccountProvider.APP,
+              applicationId: owningApplicationDbId,
+            },
+          },
+        ]);
+
+        const threadChannelResponse = await makeGraphqlApiRequest({
+          query: GET_MESSAGE_THREAD_CHANNEL_QUERY,
+          variables: { messageThreadId },
+        });
+
+        expect(threadChannelResponse.body.errors).toBeUndefined();
+        expect(threadChannelResponse.body.data.getMessageThreadChannel).toEqual(
+          {
+            type: MessageChannelType.APP,
+            provider: ConnectedAccountProvider.APP,
+            applicationId: owningApplicationDbId,
+          },
+        );
+      } finally {
+        await makeGraphqlApiRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: personId,
+          }),
+        );
+      }
+    });
+
+    it('returns no channel for a message thread the user cannot read', async () => {
+      const channel = await createChannelOrThrow();
+
+      const ingestResponse = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          buildMessage({
+            externalId: 'msg-1',
+            threadExternalId: `thread-${uuidv4()}`,
+            senderHandle: 'candidate@linkedin.test',
+          }),
+        ],
+      });
+
+      expect(ingestResponse.body.errors).toBeUndefined();
+
+      const [{ messageThreadId }] =
+        ingestResponse.body.data.ingestAppMessages.messages;
+
+      const queryThreadChannelAsJony = () =>
+        makeGraphqlApiRequest(
+          {
+            query: GET_MESSAGE_THREAD_CHANNEL_QUERY,
+            variables: { messageThreadId },
+          },
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+
+      const readableResponse = await queryThreadChannelAsJony();
+
+      expect(readableResponse.body.errors).toBeUndefined();
+      expect(readableResponse.body.data.getMessageThreadChannel).not.toBeNull();
+
+      const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+      const { objects } = await findManyObjectMetadata({
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id nameSingular',
+      });
+
+      const messageThreadObjectMetadataId = objects.find(
+        (objectMetadata) => objectMetadata.nameSingular === 'messageThread',
+      )?.id;
+
+      jestExpectToBeDefined(messageThreadObjectMetadataId);
+
+      const { data: roleData } = await createOneRole({
+        expectToFail: false,
+        input: {
+          label: 'Message thread unreadable role',
+          canUpdateAllSettings: false,
+          canAccessAllTools: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        },
+      });
+
+      const restrictedRoleId = roleData.createOneRole.id;
+
+      try {
+        await upsertObjectPermissions({
+          expectToFail: false,
+          input: {
+            roleId: restrictedRoleId,
+            objectPermissions: [
+              {
+                objectMetadataId: messageThreadObjectMetadataId,
+                canReadObjectRecords: false,
+                canUpdateObjectRecords: false,
+                canSoftDeleteObjectRecords: false,
+                canDestroyObjectRecords: false,
+              },
+            ],
+          },
+        });
+
+        await updateWorkspaceMemberRole({
+          expectToFail: false,
+          input: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            roleId: restrictedRoleId,
+          },
+        });
+
+        const restrictedResponse = await queryThreadChannelAsJony();
+
+        expect(restrictedResponse.body.errors).toBeUndefined();
+        expect(restrictedResponse.body.data.getMessageThreadChannel).toBeNull();
+      } finally {
+        await updateWorkspaceMemberRole({
+          expectToFail: false,
+          input: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            roleId: memberRoleId,
+          },
+        });
+        await deleteOneRole({
+          expectToFail: false,
+          input: { idToDelete: restrictedRoleId },
+        });
+      }
     });
 
     it('returns the same ids when a provider redelivers the same message', async () => {

@@ -34,4 +34,18 @@ describe('limitToDocumentIframeMediaPermissions', () => {
       PERMISSIONS[0],
     ]);
   });
+
+  it('keeps only capabilities allowed when the document was served', () => {
+    const documentPermission = { ...PERMISSIONS[1], camera: false };
+    const element = document.createElement('script');
+
+    element.id = IFRAME_MEDIA_PERMISSIONS_BOOTSTRAP_ELEMENT_ID;
+    element.type = 'application/json';
+    element.textContent = JSON.stringify([documentPermission]);
+    document.head.append(element);
+
+    expect(limitToDocumentIframeMediaPermissions(PERMISSIONS)).toEqual([
+      documentPermission,
+    ]);
+  });
 });

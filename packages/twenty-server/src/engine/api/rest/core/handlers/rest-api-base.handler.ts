@@ -27,15 +27,9 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -78,25 +72,6 @@ export abstract class RestApiBaseHandler {
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
 
-  private getPermissionsContext = async (authContext: WorkspaceAuthContext) => {
-    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
-
-    if (!isDefined(principals)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
-    return {
-      principals,
-      objectsPermissions:
-        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
-          principals,
-        ),
-    };
-  };
-
   async computeSelectedFields({
     authContext,
     depth,
@@ -110,14 +85,16 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
-    const { principals, objectsPermissions } =
-      await this.getPermissionsContext(authContext);
+    const objectsPermissions =
+      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+        authContext,
+      );
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
-          principals,
+          authContext,
           flatObjectMetadataMaps,
           depth,
         }),
@@ -147,14 +124,16 @@ export abstract class RestApiBaseHandler {
   }): Promise<{
     selectedFields: CommonSelectedFields;
   }> {
-    const { principals, objectsPermissions } =
-      await this.getPermissionsContext(authContext);
+    const objectsPermissions =
+      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+        authContext,
+      );
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
-          principals,
+          authContext,
           flatObjectMetadataMaps,
           depth,
         }),
@@ -168,7 +147,7 @@ export abstract class RestApiBaseHandler {
   }
 
   private async findRelationReadableObjectMetadataIds({
-    principals,
+    authContext,
     flatObjectMetadataMaps,
     depth,
   }: Parameters<
@@ -181,7 +160,7 @@ export abstract class RestApiBaseHandler {
     }
 
     return this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-      principals,
+      authContext,
       flatObjectMetadataMaps,
     });
   }

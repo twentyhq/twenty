@@ -43,7 +43,6 @@ import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/princ
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -483,19 +482,16 @@ export class RecordSharingService {
         userWorkspaceRoleMap,
         apiKeyRoleMap,
       }) ?? [];
-    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
-    const principal = isDefined(principals)
-      ? resolvePermissionsPrincipalsWithRoles({
-          principalsContext: principals,
-          roleMaps: buildPermissionsPrincipalRoleMaps({
-            flatWorkspaceMemberMaps,
-            userWorkspaceRoleMap,
-            apiKeyRoleMap,
-            flatRoleTargetByAgentIdMaps,
-            flatApplicationMaps,
-          }),
-        })
-      : undefined;
+    const principal = resolvePermissionsPrincipalsWithRoles({
+      authContext,
+      roleMaps: buildPermissionsPrincipalRoleMaps({
+        flatWorkspaceMemberMaps,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+        flatApplicationMaps,
+      }),
+    });
     const canAccessAllRecords =
       isDefined(principal) &&
       canRolesAccessAllRecords({

@@ -36,7 +36,6 @@ import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -85,15 +84,14 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const principals = isDefined(context.authContext)
-      ? getPermissionsPrincipalsFromAuthContext(context.authContext)
+    const recordAccessPolicy = isDefined(context.authContext)
+      ? this.recordAccessPolicyService.forAuthContext(context.authContext)
       : undefined;
-    const objectPermissions = isDefined(principals)
-      ? await this.recordAccessPolicyService.findObjectsPermissions(principals)
-      : undefined;
+    const objectPermissions =
+      await recordAccessPolicy?.findObjectsPermissions();
 
     if (
-      !isDefined(principals) ||
+      !isDefined(recordAccessPolicy) ||
       !isDefined(objectPermissions) ||
       Object.keys(objectPermissions).length === 0
     ) {
@@ -149,8 +147,7 @@ export class DatabaseToolProvider implements ToolProvider {
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>
-        this.recordAccessPolicyService.hasAccessToSomeRecords({
-          principals,
+        recordAccessPolicy.hasAccessToSomeRecords({
           flatObjectMetadata: flatObject,
           operationType,
         });
