@@ -4,7 +4,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ConditionalDisplay } from 'twenty-shared/types';
 
 export const mapConditionalDisplayToPersistedRecordFilters = (
-  conditionalDisplay: ConditionalDisplay | null | undefined,
+  conditionalDisplay:
+    | Pick<ConditionalDisplay, 'recordFilters'>
+    | null
+    | undefined,
 ): PersistedRecordFilter[] =>
   (conditionalDisplay?.recordFilters ?? []).map((recordFilter) => ({
     id: recordFilter.id,
