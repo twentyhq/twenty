@@ -1,7 +1,7 @@
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 let mockObjectNamePlural = 'people';
 let mockCurrentObjectMetadataItemId = 'person-object-metadata-id';
@@ -68,6 +68,16 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => ({}),
 }));
 
+const LocationProbe = () => {
+  const location = useLocation();
+
+  return (
+    <div data-testid="workflows-page">
+      {location.pathname + location.search}
+    </div>
+  );
+};
+
 describe('RecordIndexPage workspace surface composition', () => {
   beforeEach(() => {
     mockObjectNamePlural = 'people';
@@ -75,7 +85,11 @@ describe('RecordIndexPage workspace surface composition', () => {
   });
 
   it('keeps the main page container', () => {
-    render(<RecordIndexPage />);
+    render(
+      <MemoryRouter>
+        <RecordIndexPage />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByTestId('page-container')).toBeInTheDocument();
     expect(screen.getByTestId('record-index-gater')).toBeInTheDocument();
@@ -86,21 +100,20 @@ describe('RecordIndexPage workspace surface composition', () => {
     mockCurrentObjectMetadataItemId = 'workflow-object-metadata-id';
 
     render(
-      <MemoryRouter initialEntries={['/objects/workflows']}>
+      <MemoryRouter initialEntries={['/objects/workflows?panel=%2Fagents']}>
         <Routes>
           <Route
             path="/objects/:objectNamePlural"
             element={<RecordIndexPage />}
           />
-          <Route
-            path="/workflows"
-            element={<div data-testid="workflows-page" />}
-          />
+          <Route path="/workflows" element={<LocationProbe />} />
         </Routes>
       </MemoryRouter>,
     );
 
-    expect(screen.getByTestId('workflows-page')).toBeInTheDocument();
+    expect(screen.getByTestId('workflows-page')).toHaveTextContent(
+      '/workflows?panel=%2Fagents',
+    );
     expect(screen.queryByTestId('record-index-gater')).not.toBeInTheDocument();
   });
 
@@ -115,7 +128,9 @@ describe('RecordIndexPage workspace surface composition', () => {
           ownsRouteLocation: true,
         }}
       >
-        <RecordIndexPage />
+        <MemoryRouter>
+          <RecordIndexPage />
+        </MemoryRouter>
       </WorkspaceSurfaceContext.Provider>,
     );
 

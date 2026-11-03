@@ -18,4 +18,13 @@ describe('getSystemPageNavigationMenuItemLabel', () => {
       }),
     ).toBe('Automations');
   });
+
+  it('falls back to the system page name for a blank custom name', () => {
+    expect(
+      getSystemPageNavigationMenuItemLabel({
+        name: '   ',
+        systemPageKey: 'dataModel',
+      }),
+    ).toBe('Data model');
+  });
 });

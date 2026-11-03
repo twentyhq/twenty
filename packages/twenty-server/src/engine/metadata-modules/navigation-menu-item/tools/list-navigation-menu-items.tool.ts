@@ -24,7 +24,7 @@ const listNavigationMenuItemsInputSchema = z.object({
   type: navigationMenuItemTypeSchema
     .optional()
     .describe(
-      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).',
+      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, SYSTEM_PAGE).',
     ),
   limit: z
     .number()

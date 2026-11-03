@@ -8,8 +8,10 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const getSystemPageNavigationMenuItemLabel = (
   item: Pick<NavigationMenuItem, 'name' | 'systemPageKey'>,
 ): string => {
-  if (isNonEmptyString(item.name)) {
-    return item.name;
+  const trimmedName = item.name?.trim();
+
+  if (isNonEmptyString(trimmedName)) {
+    return trimmedName;
   }
 
   const config = getSystemPageNavigationMenuItemConfig(item);

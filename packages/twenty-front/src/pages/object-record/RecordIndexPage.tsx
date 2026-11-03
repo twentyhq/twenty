@@ -11,13 +11,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isUndefined } from '@sniptt/guards';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 export const RecordIndexPage = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { objectNamePlural } = useParams<{ objectNamePlural: string }>();
+  const location = useLocation();
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -34,7 +35,16 @@ export const RecordIndexPage = () => {
   );
 
   if (objectNamePlural === CoreObjectNamePlural.Workflow) {
-    return <Navigate to={getAppPath(AppPath.WorkflowIndexPage)} replace />;
+    return (
+      <Navigate
+        to={{
+          pathname: getAppPath(AppPath.WorkflowIndexPage),
+          search: location.search,
+          hash: location.hash,
+        }}
+        replace
+      />
+    );
   }
 
   if (
