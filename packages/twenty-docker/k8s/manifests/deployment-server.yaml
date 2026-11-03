@@ -21,6 +21,7 @@ spec:
       labels:
         app: twentycrm-server
     spec:
+      terminationGracePeriodSeconds: 120
       volumes:
         - name: twentycrm-server-data
           persistentVolumeClaim:

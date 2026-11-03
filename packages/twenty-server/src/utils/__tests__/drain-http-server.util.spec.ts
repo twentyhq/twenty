@@ -1,14 +1,24 @@
 import { once } from 'events';
 import { createServer, type Server, type ServerResponse } from 'http';
-import { type AddressInfo } from 'net';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { drainHttpServer } from 'src/utils/drain-http-server.util';
 
+const servers: Server[] = [];
+
 const listen = async (server: Server): Promise<string> => {
+  servers.push(server);
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
 
-  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const address = server.address();
+
+  if (!isDefined(address) || typeof address === 'string') {
+    throw new Error('Expected an HTTP server listening on a TCP port');
+  }
+
+  return `http://127.0.0.1:${address.port}`;
 };
 
 describe('drainHttpServer', () => {
@@ -18,6 +28,13 @@ describe('drainHttpServer', () => {
 
   afterAll(() => {
     jest.useFakeTimers();
+  });
+
+  afterEach(async () => {
+    for (const server of servers.splice(0)) {
+      server.closeAllConnections();
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
   });
 
   it('lets an in-flight request finish without waiting for keep-alive to expire', async () => {
@@ -32,7 +49,7 @@ describe('drainHttpServer', () => {
     const url = await listen(server);
     const request = fetch(url, { method: 'POST', body: 'in-flight write' });
     const response = await responseReady;
-    const drained = drainHttpServer(server, 30_000);
+    const drained = drainHttpServer({ server, drainTimeoutMs: 30_000 });
 
     await expect(fetch(url)).rejects.toThrow();
 
@@ -50,7 +67,7 @@ describe('drainHttpServer', () => {
     const response = await fetch(await listen(server));
     const bodyRejected = expect(response.text()).rejects.toThrow();
 
-    await drainHttpServer(server, 50);
+    await drainHttpServer({ server, drainTimeoutMs: 50 });
     await bodyRejected;
   });
 });

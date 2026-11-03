@@ -119,7 +119,7 @@ const bootstrap = async () => {
   );
 
   const shutdown = () =>
-    (shutdownPromise ??= drainHttpServer(httpServer)
+    (shutdownPromise ??= drainHttpServer({ server: httpServer })
       // Recorder hooks can otherwise run after their storage has been destroyed.
       .then(() =>
         Promise.allSettled([

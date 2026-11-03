@@ -31,6 +31,8 @@ resource "kubernetes_deployment" "twentycrm_server" {
       }
 
       spec {
+        termination_grace_period_seconds = 120
+
         container {
           image = var.twentycrm_server_image
           name  = var.twentycrm_app_name
