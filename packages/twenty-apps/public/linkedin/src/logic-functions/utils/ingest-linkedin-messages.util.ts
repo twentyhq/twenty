@@ -48,7 +48,8 @@ const resolvePersonIdByHandle = async ({
     settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat;
   const resolvedCounterparts = await Promise.all(
     counterparts.map((counterpart) =>
-      resolveCounterpart(counterpart, {
+      resolveCounterpart({
+        user: counterpart,
         shouldLookUp: isContactRequired
           ? () => hasPersonNamedLikeLinkedinUser(counterpart)
           : undefined,
@@ -95,7 +96,7 @@ const resolvePersonIdByHandle = async ({
     unmatchedCounterparts.map((counterpart) =>
       isNonEmptyString(counterpart.public_identifier)
         ? counterpart
-        : resolveCounterpart(counterpart),
+        : resolveCounterpart({ user: counterpart }),
     ),
   );
 

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_LINKEDIN_SETTINGS } from 'src/constants/default-linkedin-settings.constant';
@@ -73,11 +74,14 @@ const resolveCounterpartsLikeUnipile = (): string[] => {
   const lookedUpUserIds: string[] = [];
 
   mocks.resolveCounterpart.mockImplementation(
-    async (
-      user: UnipileUser,
-      { shouldLookUp }: { shouldLookUp?: () => Promise<boolean> } = {},
-    ) => {
-      if (shouldLookUp !== undefined && !(await shouldLookUp())) {
+    async ({
+      user,
+      shouldLookUp,
+    }: {
+      user: UnipileUser;
+      shouldLookUp?: () => Promise<boolean>;
+    }) => {
+      if (isDefined(shouldLookUp) && !(await shouldLookUp())) {
         return user;
       }
 
@@ -140,7 +144,7 @@ describe('ingestLinkedinMessages', () => {
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
     mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
     mocks.resolveCounterpart.mockImplementation(
-      async (user: UnipileUser) => user,
+      async ({ user }: { user: UnipileUser }) => user,
     );
     mocks.hasPersonNamedLikeLinkedinUser.mockResolvedValue(false);
   });

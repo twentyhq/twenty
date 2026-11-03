@@ -36,9 +36,9 @@ describe('createLinkedinCounterpartResolver', () => {
     mocks.withLinkedinPublicIdentifier.mockResolvedValue(DELETED_MEMBER);
     const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
 
-    await resolveCounterpart(DELETED_MEMBER);
+    await resolveCounterpart({ user: DELETED_MEMBER });
 
-    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+    await expect(resolveCounterpart({ user: DELETED_MEMBER })).resolves.toEqual(
       DELETED_MEMBER,
     );
     expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledExactlyOnceWith({
@@ -56,14 +56,15 @@ describe('createLinkedinCounterpartResolver', () => {
       .mockResolvedValueOnce(resolvedMember);
     const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
 
-    await resolveCounterpart(DELETED_MEMBER, {
+    await resolveCounterpart({
+      user: DELETED_MEMBER,
       shouldLookUp: async () => false,
     });
 
-    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+    await expect(resolveCounterpart({ user: DELETED_MEMBER })).resolves.toEqual(
       resolvedMember,
     );
-    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+    await expect(resolveCounterpart({ user: DELETED_MEMBER })).resolves.toEqual(
       resolvedMember,
     );
     expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledTimes(2);
@@ -75,10 +76,12 @@ describe('createLinkedinCounterpartResolver', () => {
     );
     const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
 
-    await resolveCounterpart(DELETED_MEMBER, {
+    await resolveCounterpart({
+      user: DELETED_MEMBER,
       shouldLookUp: async () => true,
     });
-    await resolveCounterpart(DELETED_MEMBER, {
+    await resolveCounterpart({
+      user: DELETED_MEMBER,
       shouldLookUp: async () => true,
     });
 
@@ -93,10 +96,10 @@ describe('createLinkedinCounterpartResolver', () => {
       .mockResolvedValueOnce(DELETED_MEMBER);
     const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
 
-    await expect(resolveCounterpart(DELETED_MEMBER)).rejects.toThrow(
+    await expect(resolveCounterpart({ user: DELETED_MEMBER })).rejects.toThrow(
       'Retry in 1 hour.',
     );
-    await expect(resolveCounterpart(DELETED_MEMBER)).resolves.toEqual(
+    await expect(resolveCounterpart({ user: DELETED_MEMBER })).resolves.toEqual(
       DELETED_MEMBER,
     );
   });

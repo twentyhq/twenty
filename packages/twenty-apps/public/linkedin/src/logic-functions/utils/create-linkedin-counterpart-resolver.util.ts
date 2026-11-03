@@ -9,7 +9,7 @@ export const createLinkedinCounterpartResolver = (
 ): LinkedinCounterpartResolver => {
   const resolvedCounterpartById = new Map<string, UnipileUser>();
 
-  return async (user, { shouldLookUp } = {}) => {
+  return async ({ user, shouldLookUp }) => {
     const resolvedCounterpart = resolvedCounterpartById.get(user.id);
 
     if (isDefined(resolvedCounterpart)) {
