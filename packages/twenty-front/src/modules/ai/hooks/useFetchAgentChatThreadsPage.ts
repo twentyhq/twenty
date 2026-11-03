@@ -20,6 +20,7 @@ import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/t
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
+import { logError } from '~/utils/logError';
 
 export const useFetchAgentChatThreadsPage = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -70,7 +71,11 @@ export const useFetchAgentChatThreadsPage = () => {
           },
           fetchPolicy: 'network-only',
         })
-        .catch(() => undefined);
+        .catch((error) => {
+          logError(error);
+
+          return undefined;
+        });
 
       const connection = result?.data?.[chatObjectMetadataItem.namePlural];
 

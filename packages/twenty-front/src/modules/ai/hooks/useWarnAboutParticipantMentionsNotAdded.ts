@@ -6,6 +6,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
 import { getAgentChatParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
+import { logError } from '~/utils/logError';
 
 export const useWarnAboutParticipantMentionsNotAdded = () => {
   const { enqueueToast } = useToast();
@@ -40,7 +41,11 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         const page = await fetchAgentChatThreadsPage({
           lastCursor: null,
           threadIdFilter: { id: { eq: threadId } },
-        }).catch(() => undefined);
+        }).catch((error) => {
+          logError(error);
+
+          return undefined;
+        });
 
         return page?.threads.find(({ id }) => id === threadId)
           ?.writerWorkspaceMemberIds;
