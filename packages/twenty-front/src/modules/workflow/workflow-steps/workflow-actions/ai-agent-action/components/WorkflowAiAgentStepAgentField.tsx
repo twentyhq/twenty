@@ -1,15 +1,17 @@
-import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
+import { CoreAgentAvatar } from '@/object-core/agents/components/CoreAgentAvatar';
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useLingui } from '@lingui/react/macro';
-import { useIcons } from 'twenty-ui/icon/provider';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
 
 type WorkflowAiAgentStepAgentFieldProps = {
-  agent: Pick<FlatAgent, 'id' | 'label' | 'icon'>;
+  agent: Pick<
+    FlatAgent,
+    'id' | 'label' | 'icon' | 'avatarColor' | 'avatarShape'
+  >;
 };
 
 export const WorkflowAiAgentStepAgentField = ({
@@ -17,8 +19,6 @@ export const WorkflowAiAgentStepAgentField = ({
 }: WorkflowAiAgentStepAgentFieldProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { getIcon } = useIcons();
-  const Icon = getIcon(getAgentIcon(agent.icon));
 
   return (
     <FormFieldInputContainer>
@@ -28,7 +28,7 @@ export const WorkflowAiAgentStepAgentField = ({
           to={getCoreAgentLink(agent.id)}
           variant="soft"
           startElement={
-            <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+            <CoreAgentAvatar agent={agent} size={theme.icon.size.sm} />
           }
         >
           {agent.label}

@@ -1,11 +1,10 @@
-import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { IconPicker } from '@/ui/input/components/IconPicker';
+import { CoreAgentAvatarPicker } from '@/object-core/agents/components/CoreAgentAvatarPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -78,13 +77,9 @@ export const CoreAgentSettingsTab = ({
     <StyledFormContainer>
       <StyledFormContainer>
         <StyledIconNameRow>
-          <IconPicker
-            selectedIconKey={getAgentIcon(formValues.icon)}
-            onChange={({ iconKey }) => {
-              onFieldChange('icon', iconKey);
-            }}
-            disabled={disabled}
-          />
+          {isDefined(agent) && (
+            <CoreAgentAvatarPicker agent={agent} disabled={disabled} />
+          )}
 
           <StyledNameContainer>
             <SettingsTextInput

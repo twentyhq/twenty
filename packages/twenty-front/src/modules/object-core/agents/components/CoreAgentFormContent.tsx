@@ -1,11 +1,10 @@
-import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
+import { CoreAgentAvatar } from '@/object-core/agents/components/CoreAgentAvatar';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
-import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -53,7 +52,6 @@ type CoreAgentFormContentProps = {
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -139,7 +137,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   ];
 
   const title = agent.label;
-  const AgentIcon = getIcon(getAgentIcon(formValues.icon));
 
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
@@ -166,9 +163,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       )}
       <SettingsPageLayout
         title={title}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
+        icon={<CoreAgentAvatar agent={agent} size={theme.icon.size.md} />}
         links={getCoreAgentBreadcrumbLinks([{ children: title }])}
         secondaryBar={
           <SettingsTabBar

@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLego } from 'twenty-ui/icon';
+import { CoreAgentsIcon } from '@/object-core/agents/components/CoreAgentsIcon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CoreAgentsFilterButton } from '@/object-core/agents/components/CoreAgentsFilterButton';
@@ -54,9 +54,7 @@ export const AgentCoreIndexPage = () => {
   return (
     <CoreObjectIndexPageLayout
       labelPlural={t`Agents`}
-      icon={
-        <IconLego size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-      }
+      icon={<CoreAgentsIcon size={theme.icon.size.md} />}
       actionButton={
         <>
           <CoreAgentsFilterButton isFilterActive={hasAppliedFilters} />
