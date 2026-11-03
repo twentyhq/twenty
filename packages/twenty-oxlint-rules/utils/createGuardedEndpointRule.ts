@@ -16,7 +16,8 @@ const AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID =
 const AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID = 'authPrincipalGuardNotFirst';
 const ACCESS_POLICY_GUARD_WITHOUT_POLICY_CONSTANT_MESSAGE_ID =
   'accessPolicyGuardWithoutPolicyConstant';
-const ACCESS_POLICY_GUARD_ON_CLASS_MESSAGE_ID = 'accessPolicyGuardOnClass';
+const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
+  'accessPolicyGuardOnClassAndMethod';
 
 const findClassDeclaration = (node: any): any | null => {
   if (node.type === 'ClassDeclaration') return node;
@@ -65,8 +66,8 @@ export const createGuardedEndpointRule = ({
           'AuthPrincipalGuard and AccessPolicyGuard must come first in their @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after them only run once the principal is known.',
         [ACCESS_POLICY_GUARD_WITHOUT_POLICY_CONSTANT_MESSAGE_ID]:
           'AccessPolicyGuard takes an imported *_ACCESS_POLICY constant, so the GraphQL, REST and tool entry points of an operation share one policy.',
-        [ACCESS_POLICY_GUARD_ON_CLASS_MESSAGE_ID]:
-          'Declare AccessPolicyGuard on each endpoint method, so every operation names its own access policy.',
+        [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
+          'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
       },
       schema: [],
       hasSuggestions: false,
@@ -142,6 +143,24 @@ export const createGuardedEndpointRule = ({
         }
       };
 
+      const reportAccessPolicyGuardOnClassAndMethod = (node: any): void => {
+        const classNode = findClassDeclaration(node);
+
+        if (
+          !classNode ||
+          typedTokenHelpers.getAccessPolicyGuards(classNode).length === 0
+        ) {
+          return;
+        }
+
+        for (const guard of typedTokenHelpers.getAccessPolicyGuards(node)) {
+          context.report({
+            node: guard,
+            messageId: ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID,
+          });
+        }
+      };
+
       return {
         ClassDeclaration: (node: any): void => {
           const hasEndpoint = node.body.body.some(
@@ -155,13 +174,6 @@ export const createGuardedEndpointRule = ({
 
           if (hasEndpoint) {
             reportAuthPrincipalGuardUsage(node);
-
-            for (const guard of typedTokenHelpers.getAccessPolicyGuards(node)) {
-              context.report({
-                node: guard,
-                messageId: ACCESS_POLICY_GUARD_ON_CLASS_MESSAGE_ID,
-              });
-            }
           }
         },
         MethodDefinition: (node: any): void => {
@@ -173,6 +185,7 @@ export const createGuardedEndpointRule = ({
 
           reportAuthPrincipalGuardUsage(node);
           reportMethodGuardWiderThanClassGuard(node);
+          reportAccessPolicyGuardOnClassAndMethod(node);
 
           if (isMissingGuards(node, triggerDecorators)) {
             context.report({ node, messageId });

@@ -24,6 +24,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         class TestResolver {
           @Query()
           @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
@@ -574,11 +584,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
         class TestResolver {
-          @Query()
-          testQuery() {}
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
         }
       `,
-      errors: [{ messageId: 'accessPolicyGuardOnClass' }],
+      errors: [{ messageId: 'accessPolicyGuardOnClassAndMethod' }],
       filename: 'test.tsx',
     },
     {
