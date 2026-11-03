@@ -45,9 +45,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
 
   const reset = async (options: SettingsAiIntegrationStoryOptions) => {
     resetGeneration += 1;
-    releaseBehaviorSave?.();
-    pendingBehaviorSave = undefined;
-    releaseBehaviorSave = undefined;
+    resumeBehaviorSave();
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
     saveBehavior.mockClear();
