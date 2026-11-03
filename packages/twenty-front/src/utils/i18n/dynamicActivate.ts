@@ -11,6 +11,12 @@ export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
     console.warn(`Invalid locale "${locale}", defaulting to "en"`);
     locale = SOURCE_LOCALE;
   }
+
+  // load() and activate() always emit "change", which hands every useLingui consumer a new t
+  if (i18n.locale === locale) {
+    return;
+  }
+
   const { messages } = await import(`../../locales/generated/${locale}.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);

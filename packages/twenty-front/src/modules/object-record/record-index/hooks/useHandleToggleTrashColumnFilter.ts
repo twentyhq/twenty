@@ -7,11 +7,11 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 import { useStore } from 'jotai';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { useLingui } from '@lingui/react/macro';
 
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;
@@ -24,7 +24,6 @@ export const useHandleToggleTrashColumnFilter = ({
   objectNameSingular,
   recordFiltersInstanceId,
 }: UseHandleToggleTrashColumnFilterProps) => {
-  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -69,7 +68,7 @@ export const useHandleToggleTrashColumnFilter = ({
     };
 
     upsertRecordFilter(newFilter);
-  }, [columnDefinitions, objectMetadataItem, upsertRecordFilter, t]);
+  }, [columnDefinitions, objectMetadataItem, upsertRecordFilter]);
 
   const store = useStore();
 

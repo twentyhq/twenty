@@ -11,13 +11,13 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-import { useLingui } from '@lingui/react/macro';
 
 type PendingRecordCreation = {
   requestId: string;
@@ -33,7 +33,6 @@ type RecordCreationFormProviderProps = {
 export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
-  const { t } = useLingui();
   const store = useStore();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
@@ -173,7 +172,7 @@ export const RecordCreationFormProvider = ({
         });
       });
     },
-    [closeAnyOpenDropdown, navigateSidePanelMenu, store, t],
+    [closeAnyOpenDropdown, navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordCreation = useCallback(

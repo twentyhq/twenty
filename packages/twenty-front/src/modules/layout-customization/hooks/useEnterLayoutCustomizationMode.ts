@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -20,10 +21,8 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const useEnterLayoutCustomizationMode = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueToast } = useToast();
@@ -94,7 +93,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [enqueueToast, hasLayoutsPermission, navigateSidePanel, store, t]);
+  }, [enqueueToast, hasLayoutsPermission, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

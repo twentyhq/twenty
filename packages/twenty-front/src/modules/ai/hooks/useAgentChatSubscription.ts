@@ -9,6 +9,8 @@ import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThread
 import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
+import { t } from '@lingui/core/macro';
+
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
 import { print, type ExecutionResult } from 'graphql';
 import { useStore } from 'jotai';
@@ -49,14 +51,12 @@ import {
   OnAgentChatEventDocument,
   type OnAgentChatEventSubscription,
 } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
 
 export const useAgentChatSubscription = (threadId: string | null) => {
-  const { t } = useLingui();
   const store = useStore();
   // Only a resubscribe trigger: an access denial ends the subscription until the member's permissions change
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
@@ -500,6 +500,5 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     refreshAiChatUsage,
     applyAgentChatThreadUpdate,
     currentUserWorkspace,
-    t,
   ]);
 };

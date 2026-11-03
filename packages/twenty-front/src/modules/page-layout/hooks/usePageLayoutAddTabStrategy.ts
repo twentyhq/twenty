@@ -8,11 +8,11 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const usePageLayoutAddTabStrategy = ({
   pageLayoutId,
@@ -21,7 +21,6 @@ export const usePageLayoutAddTabStrategy = ({
   pageLayoutId: string;
   tabListInstanceId: string;
 }): PageLayoutAddTabStrategy | undefined => {
-  const { t } = useLingui();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
@@ -58,7 +57,6 @@ export const usePageLayoutAddTabStrategy = ({
     navigate,
     setPageLayoutTabSettingsOpenTabId,
     navigatePageLayoutSidePanel,
-    t,
   ]);
 
   const isEnabled =

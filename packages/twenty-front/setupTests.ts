@@ -18,14 +18,14 @@ jest.mock('@lingui/react', () => {
   const actual = jest.requireActual('@lingui/react');
   const { useContext } = jest.requireActual('react');
   const { i18n: globalI18n } = jest.requireActual('@lingui/core');
+  const fallbackContext = {
+    i18n: globalI18n,
+    _: globalI18n.t.bind(globalI18n),
+  };
 
   return {
     ...actual,
-    useLingui: () =>
-      useContext(actual.LinguiContext) ?? {
-        i18n: globalI18n,
-        _: globalI18n.t.bind(globalI18n),
-      },
+    useLingui: () => useContext(actual.LinguiContext) ?? fallbackContext,
   };
 });
 

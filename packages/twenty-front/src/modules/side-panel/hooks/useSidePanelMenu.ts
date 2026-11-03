@@ -11,14 +11,13 @@ import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyO
 import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
 import { waitForSidePanelClose } from '@/ui/layout/side-panel/utils/waitForSidePanelClose';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { useLingui } from '@lingui/react/macro';
 
 export const useSidePanelMenu = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
@@ -71,7 +70,7 @@ export const useSidePanelMenu = () => {
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });
-  }, [closeAnyOpenDropdown, navigateSidePanel, store, t]);
+  }, [closeAnyOpenDropdown, navigateSidePanel, store]);
 
   const navigateSidePanelMenu = navigateSidePanel;
 

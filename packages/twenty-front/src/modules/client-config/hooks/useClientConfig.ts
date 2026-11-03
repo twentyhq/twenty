@@ -42,7 +42,7 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -53,7 +53,6 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const { t } = useLingui();
   const setIsAnalyticsEnabled = useSetAtomState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetAtomState(domainConfigurationState);
   const setAuthProviders = useSetAtomState(authProvidersState);
@@ -314,7 +313,6 @@ export const useClientConfig = (): UseClientConfigResult => {
       setSentryConfig,
       setSupportChat,
       setAllowRequestsToTwentyIcons,
-      t,
     ],
   );
 

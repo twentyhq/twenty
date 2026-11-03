@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloClient } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -51,10 +52,8 @@ import {
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
 } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const useAgentChat = () => {
-  const { t } = useLingui();
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
@@ -317,7 +316,6 @@ export const useAgentChat = () => {
     applyOptimisticRestore,
     attachChatThreadToRecord,
     warnAboutParticipantMentionsNotAdded,
-    t,
   ]);
 
   useListenToBrowserEvent({

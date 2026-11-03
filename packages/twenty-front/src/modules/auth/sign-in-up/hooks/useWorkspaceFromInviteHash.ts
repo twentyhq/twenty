@@ -8,14 +8,13 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { GetWorkspaceFromInviteHashDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useLingui } from '@lingui/react/macro';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
@@ -68,7 +67,6 @@ export const useWorkspaceFromInviteHash = () => {
     initiallyLoggedIn,
     enqueueToast,
     navigate,
-    t,
   ]);
   return {
     workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
@@ -9,10 +10,8 @@ import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { addToMessageListPersonFilterComponentState } from '@/side-panel/pages/add-to-message-list/states/addToMessageListPersonFilterComponentState';
-import { useLingui } from '@lingui/react/macro';
 
 export const useOpenAddToMessageListInSidePanel = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -34,7 +33,7 @@ export const useOpenAddToMessageListInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store, t],
+    [navigateSidePanelMenu, store],
   );
 
   return { openAddToMessageListInSidePanel };

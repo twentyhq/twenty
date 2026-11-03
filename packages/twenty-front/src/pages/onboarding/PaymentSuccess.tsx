@@ -82,7 +82,7 @@ export const PaymentSuccess = () => {
       }
     };
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmationRunIndex, t]);
+  }, [confirmationRunIndex]);
 
   const handleRetry = () => {
     setHasTimedOut(false);

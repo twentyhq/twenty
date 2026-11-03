@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -6,10 +7,8 @@ import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sendCampaignCampaignIdComponentState } from '@/side-panel/pages/send-campaign/states/sendCampaignCampaignIdComponentState';
-import { useLingui } from '@lingui/react/macro';
 
 export const useOpenSendCampaignInSidePanel = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -31,7 +30,7 @@ export const useOpenSendCampaignInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store, t],
+    [navigateSidePanelMenu, store],
   );
 
   return { openSendCampaignInSidePanel };

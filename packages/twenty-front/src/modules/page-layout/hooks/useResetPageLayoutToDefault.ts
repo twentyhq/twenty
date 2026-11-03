@@ -1,5 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -10,10 +11,8 @@ import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidate
 import { RESET_PAGE_LAYOUT_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutToDefault';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { useToast } from 'twenty-ui/components/feedback';
-import { useLingui } from '@lingui/react/macro';
 
 export const useResetPageLayoutToDefault = () => {
-  const { t } = useLingui();
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TO_DEFAULT);
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueToast } = useToast();
@@ -52,7 +51,6 @@ export const useResetPageLayoutToDefault = () => {
       invalidateMetadataStore,
       handleMetadataError,
       enqueueToast,
-      t,
     ],
   );
 

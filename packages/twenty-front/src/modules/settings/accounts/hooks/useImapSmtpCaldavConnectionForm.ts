@@ -6,6 +6,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -65,7 +66,6 @@ export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
-  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { i18n } = useLingui();
 
@@ -214,7 +214,6 @@ export const useImapSmtpCaldavConnectionForm = ({
       connectedAccountId,
       enqueueToast,
       navigate,
-      t,
     ],
   );
 

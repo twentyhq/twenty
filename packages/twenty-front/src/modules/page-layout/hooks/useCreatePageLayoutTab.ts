@@ -8,11 +8,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 export const useCreatePageLayoutTab = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -21,7 +21,6 @@ export const useCreatePageLayoutTab = ({
   pageLayoutId: string;
   tabListInstanceId: string;
 }) => {
-  const { t } = useLingui();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -95,7 +94,6 @@ export const useCreatePageLayoutTab = ({
       pageLayoutId,
       setActiveTabId,
       store,
-      t,
     ],
   );
 

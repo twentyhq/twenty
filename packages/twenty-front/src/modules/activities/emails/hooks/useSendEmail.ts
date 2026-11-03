@@ -6,12 +6,12 @@ import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   type SendEmailMutation,
   type SendEmailMutationVariables,
 } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 type SendEmailResult = {
   success: boolean;
@@ -33,7 +33,6 @@ type SendEmailParams = {
 };
 
 export const useSendEmail = () => {
-  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
 
   const [sendEmailMutation, { loading }] = useMutation<
@@ -97,7 +96,7 @@ export const useSendEmail = () => {
         return { success: false, messageThreadId: null };
       }
     },
-    [sendEmailMutation, enqueueToast, apolloCoreClient, t],
+    [sendEmailMutation, enqueueToast, apolloCoreClient],
   );
 
   return { sendEmail, loading };

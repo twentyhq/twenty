@@ -1,15 +1,14 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { createRelatedRecordTargetComponentState } from '@/side-panel/pages/create-related-record/states/createRelatedRecordTargetComponentState';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-import { useLingui } from '@lingui/react/macro';
 
 export const useOpenCreateRelatedRecordInSidePanel = () => {
-  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -31,7 +30,7 @@ export const useOpenCreateRelatedRecordInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store, t],
+    [navigateSidePanelMenu, store],
   );
 
   return { openCreateRelatedRecordInSidePanel };

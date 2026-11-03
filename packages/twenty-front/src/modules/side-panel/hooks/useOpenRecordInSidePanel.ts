@@ -9,16 +9,15 @@ import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiv
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInSidePanelEffects';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useLingui } from '@lingui/react/macro';
 
 export const useOpenRecordInSidePanel = () => {
-  const { t } = useLingui();
   const store = useStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -174,7 +173,6 @@ export const useOpenRecordInSidePanel = () => {
       openRoutedPageInSidePanel,
       runWorkflowRunOpeningInSidePanelEffects,
       store,
-      t,
     ],
   );
 

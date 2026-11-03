@@ -1,12 +1,11 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { useLingui } from '@lingui/react/macro';
 
 export const useWarnAboutParticipantMentionsNotAdded = () => {
-  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const warnAboutParticipantMentionsNotAdded = useCallback(
@@ -32,7 +31,7 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         });
       }
     },
-    [enqueueToast, t],
+    [enqueueToast],
   );
 
   return { warnAboutParticipantMentionsNotAdded };
