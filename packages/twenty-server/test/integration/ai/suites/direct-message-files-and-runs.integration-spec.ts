@@ -5,13 +5,19 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
+import {
+  FILE_STATUS,
+  type FileStatus,
+} from 'src/engine/core-modules/file/types/file-status.type';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type DirectMessageFileAccessService } from 'src/engine/permissions/direct-message/services/direct-message-file-access.service';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -94,7 +100,7 @@ describe('Direct message file reuse privacy', () => {
     return message;
   };
 
-  const createFile = async () => {
+  const createFile = async (status: FileStatus = FILE_STATUS.PENDING) => {
     const fileId = randomUUID();
 
     fileIds.add(fileId);
@@ -102,7 +108,7 @@ describe('Direct message file reuse privacy', () => {
       id: fileId,
       workspaceId: context.workspaceId,
       path: `agent-chat/${fileId}.pdf`,
-      status: FILE_STATUS.PENDING,
+      status,
       mimeType: 'application/octet-stream',
       size: 1234,
     });
@@ -154,15 +160,34 @@ describe('Direct message file reuse privacy', () => {
     ).toEqual(new Set());
   });
 
-  it('allows a DM member, rejects an outsider queueing the attachment, and allows an independently readable ordinary reference while preserving unreferenced uploads', async () => {
+  it('allows a DM member, rejects an outsider queueing or running the attachment, and allows an independently readable ordinary reference while preserving unreferenced uploads', async () => {
     const threadId = await createDirectMessage();
-    const fileId = await createFile();
+    const fileId = await createFile(FILE_STATUS.UPLOADED);
 
     await attachFile({ threadId, fileId });
     const memberContext = await authContextService.resolveWorkspaceMember({
       workspaceId: context.workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
+    const outsiderContext = await authContextService.resolveWorkspaceMember({
+      workspaceId: context.workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    });
+    const buildRunMessages = (authContext: WorkspaceAuthContext) =>
+      getAppProviderByClassName<RunAgentAttachmentService>(
+        'RunAgentAttachmentService',
+      ).buildModelMessagesOrThrow({
+        messages: [
+          {
+            role: 'user',
+            content: 'Summarize the brief',
+            attachments: [{ fileId, filename: 'brief.pdf' }],
+          },
+        ],
+        workspaceId: context.workspaceId,
+        modalities: undefined,
+        authContext,
+      });
 
     await expect(
       fileAccessService.assertFilesReadableOrThrow({
@@ -171,6 +196,10 @@ describe('Direct message file reuse privacy', () => {
         authContext: memberContext,
       }),
     ).resolves.toBeUndefined();
+    await expect(buildRunMessages(memberContext)).resolves.toHaveLength(1);
+    await expect(buildRunMessages(outsiderContext)).rejects.toMatchObject({
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
+    });
 
     const ordinaryThreadId = await context.createThread();
 
@@ -188,10 +217,6 @@ describe('Direct message file reuse privacy', () => {
     ).rejects.toMatchObject({ extensions: { code: ErrorCode.NOT_FOUND } });
 
     await attachFile({ threadId: ordinaryThreadId, fileId });
-    const outsiderContext = await authContextService.resolveWorkspaceMember({
-      workspaceId: context.workspaceId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    });
 
     await expect(
       fileAccessService.assertFilesReadableOrThrow({

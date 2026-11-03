@@ -198,6 +198,7 @@ export class AgentRunTurnService {
             messages,
             workspaceId,
             modalities: modelConfig.modalities,
+            authContext: executionContext.authContext,
           })),
         ],
       }),
