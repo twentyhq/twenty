@@ -444,6 +444,12 @@ export class AgentChatThreadService {
       return participantMemberIds;
     }
 
+    await this.participantService.moveMembersToInbox({
+      ...args,
+      participantWorkspaceMemberIds: participantMemberIds,
+      isMention,
+    });
+
     await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
       manager.query(
         `UPDATE ${table('agentChatThread')}
@@ -457,12 +463,6 @@ export class AgentChatThreadService {
         [args.threadId, participantMemberIds],
       ),
     );
-
-    await this.participantService.moveMembersToInbox({
-      ...args,
-      participantWorkspaceMemberIds: participantMemberIds,
-      isMention,
-    });
 
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId: args.workspaceId,
