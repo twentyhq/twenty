@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -18,10 +16,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([RoleEntity, RoleTargetEntity, ApiKeyEntity]),
     WorkspaceCacheModule,
     RoleTargetModule,
-    FeatureFlagModule,
   ],
   providers: [
-    AccessPolicyService,
     ApiKeyRoleService,
     PermissionsService,
     PermissionsPrincipalsService,
@@ -30,7 +26,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
-    AccessPolicyService,
     PermissionsService,
     PermissionsPrincipalsService,
     ApiKeyRoleService,
