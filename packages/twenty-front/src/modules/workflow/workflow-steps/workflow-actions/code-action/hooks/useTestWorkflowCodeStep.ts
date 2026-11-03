@@ -90,6 +90,26 @@ export const useTestWorkflowCodeStep = ({
             : undefined,
         },
       }));
+    } catch (error) {
+      setLogicFunctionTestData((previousTestData) => ({
+        ...previousTestData,
+        language: 'json',
+        output: {
+          data: undefined,
+          logs: '',
+          duration: undefined,
+          status: LogicFunctionExecutionStatus.ERROR,
+          error: JSON.stringify(
+            {
+              errorType: error instanceof Error ? error.name : 'Error',
+              errorMessage:
+                error instanceof Error ? error.message : String(error),
+            },
+            null,
+            4,
+          ),
+        },
+      }));
     } finally {
       setIsTesting(false);
     }

@@ -8,13 +8,19 @@ export const useWorkflowCodeStepAvailablePackages = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data } = useQuery(WorkflowCodeStepAvailablePackagesDocument, {
-    client: apolloCoreClient,
-    variables: { workflowVersionId: workflowVersionId ?? '' },
-    skip: !isDefined(workflowVersionId),
-  });
+  const { data, previousData, loading } = useQuery(
+    WorkflowCodeStepAvailablePackagesDocument,
+    {
+      client: apolloCoreClient,
+      variables: { workflowVersionId: workflowVersionId ?? '' },
+      skip: !isDefined(workflowVersionId),
+    },
+  );
 
   return {
-    availablePackages: data?.workflowCodeStepAvailablePackages ?? null,
+    availablePackages:
+      (data ?? previousData)?.workflowCodeStepAvailablePackages ?? null,
+    // First load only: a draft created mid-edit changes the version and must not remount the editor
+    isAvailablePackagesInitialLoading: loading && !isDefined(previousData),
   };
 };

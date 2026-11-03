@@ -11,7 +11,8 @@ export const keepServerStepResourceIds = ({
 }): WorkflowAction =>
   localStep.type === 'CODE' &&
   serverStep.type === 'CODE' &&
-  !isDefined(localStep.settings.input.code)
+  !isDefined(localStep.settings.input.code) &&
+  !isDefined(serverStep.settings.input.code)
     ? {
         ...localStep,
         settings: {

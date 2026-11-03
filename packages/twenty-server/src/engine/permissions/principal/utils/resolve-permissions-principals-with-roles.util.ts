@@ -9,7 +9,7 @@ import {
   type PermissionsLimitingPrincipal,
   type PermissionsMainPrincipal,
 } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,
@@ -168,7 +168,7 @@ type PermissionsIdentities = {
   mainPrincipal: PermissionsMainPrincipal;
   limitingPrincipal?: PermissionsLimitingPrincipal;
   applicationPrincipal: PermissionsApplicationPrincipal;
-  scope?: PermissionScope;
+  aiRunScope?: AiRunPermissionScope;
 };
 
 const toApplicationPrincipal = (
@@ -197,7 +197,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'apiKey':
       return {
@@ -206,7 +206,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'application':
       return {
@@ -216,7 +216,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        scope: authContext.permissionScope,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'webhook':
       return {
@@ -281,6 +281,8 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
-    ...(isDefined(identities.scope) ? { scope: identities.scope } : {}),
+    ...(isDefined(identities.aiRunScope)
+      ? { aiRunScope: identities.aiRunScope }
+      : {}),
   };
 };

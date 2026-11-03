@@ -22,7 +22,10 @@ export const buildWorkflowCodeStepFlatLogicFunction = ({
   flatApplication,
   builtHandlerPath,
 }: {
-  flatApplication: FlatApplication;
+  flatApplication: Pick<
+    FlatApplication,
+    'id' | 'workspaceId' | 'universalIdentifier'
+  >;
   builtHandlerPath: string;
 }): FlatLogicFunction => {
   const id = getWorkflowCodeStepLogicFunctionId(flatApplication.id);

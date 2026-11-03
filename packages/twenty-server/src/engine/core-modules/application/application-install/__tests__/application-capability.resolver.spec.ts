@@ -15,12 +15,14 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
@@ -100,6 +102,8 @@ describe('ApplicationCapabilityResolver', () => {
         ApplicationCapabilityResolver,
         { provide: ApplicationService, useValue: applicationService },
         { provide: PermissionsService, useValue: permissionsService },
+        { provide: FeatureFlagService, useValue: {} },
+        AccessPolicyService,
       ],
     }).compile();
 
