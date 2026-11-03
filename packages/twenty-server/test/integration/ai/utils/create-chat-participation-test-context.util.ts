@@ -16,6 +16,7 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -60,6 +61,10 @@ export const createChatParticipationTestContext = async () => {
   const threadService = getAppProviderByClassName<AgentChatThreadService>(
     'AgentChatThreadService',
   );
+  const inboxDeliveryService =
+    getAppProviderByClassName<AgentChatInboxDeliveryService>(
+      'AgentChatInboxDeliveryService',
+    );
   const chatService =
     getAppProviderByClassName<AgentChatService>('AgentChatService');
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
@@ -230,6 +235,7 @@ export const createChatParticipationTestContext = async () => {
     userWorkspaceId,
     schema,
     threadService,
+    inboxDeliveryService,
     chatService,
     sharingService,
     featureFlagService,

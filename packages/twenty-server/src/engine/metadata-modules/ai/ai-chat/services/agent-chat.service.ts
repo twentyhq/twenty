@@ -1,9 +1,9 @@
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
@@ -23,8 +23,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
-import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
-import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
@@ -42,20 +40,29 @@ type AddMessageArgs = {
 
 @Injectable()
 export class AgentChatService {
-  constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    private readonly titleGenerationService: AgentTitleGenerationService,
-    private readonly sharingService: AgentChatSharingService,
-    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
-    private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly threadService: AgentChatThreadService,
-    private readonly participationService: AgentChatParticipationService,
-  ) {}
+  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
+  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
+
+  @Inject(getAgentHistoryRepositoryToken('agentTurn'))
+  private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>;
+
+  @Inject(getAgentHistoryRepositoryToken('agentMessage'))
+  private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>;
+
+  @Inject(AgentTitleGenerationService)
+  private readonly titleGenerationService: AgentTitleGenerationService;
+
+  @Inject(AgentChatSharingService)
+  private readonly sharingService: AgentChatSharingService;
+
+  @Inject(AgentChatThreadRecordEventService)
+  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
+
+  @Inject(AgentConversationWriterService)
+  private readonly conversationWriterService: AgentConversationWriterService;
+
+  @Inject(AgentChatThreadService)
+  private readonly threadService: AgentChatThreadService;
 
   private getMessageSenderValues({
     workspaceId,
@@ -137,23 +144,6 @@ export class AgentChatService {
       processedAt: processedAt.toISOString(),
       ...senderValues,
     };
-  }
-
-  async addMessageAndResolveMention({
-    workspaceMemberId,
-    participation,
-    ...message
-  }: AddMessageArgs & {
-    workspaceMemberId: string;
-    participation?: AgentChatAssistantParticipationArgs;
-  }) {
-    return this.participationService.persistMessage({
-      workspaceId: message.workspaceId,
-      threadId: message.threadId,
-      workspaceMemberId,
-      participation,
-      persistMessage: (scope) => this.addMessage({ ...message, scope }),
-    });
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them
