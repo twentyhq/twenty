@@ -34,6 +34,12 @@ export class BillingWorkspaceCreditAllowanceService {
     ]);
   }
 
+  async findAllWorkspaceCreditAllowances(
+    workspaceId: string,
+  ): Promise<WorkspaceCreditAllowanceWindow[]> {
+    return this.findWorkspaceCreditAllowances(workspaceId, [{}]);
+  }
+
   async findActiveWorkspaceCreditAllowanceMicro({
     workspaceId,
     nowMs,
@@ -46,10 +52,8 @@ export class BillingWorkspaceCreditAllowanceService {
     isTrialing: boolean;
   }): Promise<number | null> {
     return findActiveWorkspaceCreditAllowanceMicro({
-      workspaceCreditAllowances: await this.findWorkspaceCreditAllowances(
-        workspaceId,
-        [{}],
-      ),
+      workspaceCreditAllowances:
+        await this.findAllWorkspaceCreditAllowances(workspaceId),
       nowMs,
       interval,
       isTrialing,
