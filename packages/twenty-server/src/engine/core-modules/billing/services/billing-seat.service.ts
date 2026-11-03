@@ -2,10 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-
-import type Stripe from 'stripe';
 
 import {
   BillingException,
@@ -14,13 +11,9 @@ import {
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { type SeatSyncPlan } from 'src/engine/core-modules/billing/types/seat-sync-plan.type';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
-import { computeSeatSyncPlan } from 'src/engine/core-modules/billing/utils/compute-seat-sync-plan.util';
+import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
+import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { isSeatLimitReached } from 'src/engine/core-modules/billing/utils/is-seat-limit-reached.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -37,9 +30,6 @@ export class BillingSeatService {
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly billingPriceService: BillingPriceService,
-    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -68,61 +58,20 @@ export class BillingSeatService {
     });
   }
 
-  async computeCurrentSeatSyncPlan(workspaceId: string): Promise<{
-    billingSubscriptionId: string;
-    seatSyncPlan: SeatSyncPlan;
-  } | null> {
-    const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
-
-    const stripeSubscription =
-      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-        billingSubscription.stripeSubscriptionId,
-      );
-
-    const seatSyncPlan = await this.computeSeatSyncPlan({
-      workspaceId,
-      stripeSubscription,
-      currentSeats: (
-        await this.billingPriceService.getSubscriptionPricesFromItems(
-          stripeSubscription.items.data,
-        )
-      ).seats,
-    });
-
-    return isDefined(seatSyncPlan)
-      ? { billingSubscriptionId: billingSubscription.id, seatSyncPlan }
-      : null;
-  }
-
-  async computeSeatSyncPlan({
-    workspaceId,
-    stripeSubscription,
-    currentSeats,
-  }: {
-    workspaceId: string;
-    stripeSubscription: Stripe.Subscription;
-    currentSeats: number;
-  }): Promise<SeatSyncPlan | null> {
+  async computeCurrentBilledSeats(workspaceId: string): Promise<number | null> {
     const memberCount = await this.countWorkspaceMembers(workspaceId);
 
     if (memberCount <= 0) {
       return null;
     }
 
-    const { current_period_start, current_period_end } =
-      stripeSubscription.items.data[0];
+    const now = new Date();
 
-    return computeSeatSyncPlan({
+    return computeBilledSeats({
       memberCount,
-      currentSeats,
-      seatArrangements: await this.findSeatArrangements(workspaceId),
-      now: new Date(),
-      currentPeriodStart: new Date(current_period_start * 1000),
-      currentPeriodEnd: new Date(current_period_end * 1000),
-      isTrialing: stripeSubscription.status === SubscriptionStatus.Trialing,
+      seatArrangements: (await this.findSeatArrangements(workspaceId)).filter(
+        (arrangement) => isBillingArrangementActive({ arrangement, now }),
+      ),
     });
   }
 

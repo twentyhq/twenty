@@ -218,30 +218,22 @@ export class BillingSubscriptionUpdateService {
   }
 
   async syncSeats(workspaceId: string) {
-    const currentSeatSyncPlan =
-      await this.billingSeatService.computeCurrentSeatSyncPlan(workspaceId);
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
+      );
 
-    if (!isDefined(currentSeatSyncPlan)) {
+    const billedSeats =
+      await this.billingSeatService.computeCurrentBilledSeats(workspaceId);
+
+    if (!isDefined(billedSeats)) {
       return;
     }
 
-    const {
-      billingSubscriptionId,
-      seatSyncPlan: { currentPeriodSeats, nextPeriodSeats },
-    } = currentSeatSyncPlan;
-
-    await this.updateSubscription(workspaceId, billingSubscriptionId, {
+    await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.SEATS,
-      newSeats: currentPeriodSeats,
+      newSeats: billedSeats,
     });
-
-    if (isDefined(nextPeriodSeats) && nextPeriodSeats !== currentPeriodSeats) {
-      await this.updateSubscription(workspaceId, billingSubscriptionId, {
-        type: SubscriptionUpdateType.SEATS,
-        newSeats: nextPeriodSeats,
-        shouldUpdateAtPeriodEnd: true,
-      });
-    }
   }
 
   async updateSubscription(
@@ -277,13 +269,9 @@ export class BillingSubscriptionUpdateService {
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
         ? subscriptionUpdate.newSeats
-        : ((
-            await this.billingSeatService.computeSeatSyncPlan({
-              workspaceId,
-              stripeSubscription,
-              currentSeats: currentPrices.seats,
-            })
-          )?.currentPeriodSeats ?? currentPrices.seats);
+        : ((await this.billingSeatService.computeCurrentBilledSeats(
+            workspaceId,
+          )) ?? currentPrices.seats);
 
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
@@ -624,7 +612,7 @@ export class BillingSubscriptionUpdateService {
         return isDowngrade;
       }
       case SubscriptionUpdateType.SEATS:
-        return update.shouldUpdateAtPeriodEnd ?? false;
+        return false;
       case SubscriptionUpdateType.INTERVAL: {
         const currentInterval = subscription.interval;
         const isDowngrade =

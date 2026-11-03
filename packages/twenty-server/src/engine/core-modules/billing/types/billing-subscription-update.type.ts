@@ -20,7 +20,6 @@ export type SubscriptionUpdate =
   | {
       type: SubscriptionUpdateType.SEATS;
       newSeats: number;
-      shouldUpdateAtPeriodEnd?: boolean;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;
