@@ -10,7 +10,6 @@ export const hasPersonNamedLikeLinkedinUser = async (
 ): Promise<boolean> => {
   const { firstName, lastName } = splitLinkedinUserName(user);
 
-  // Without a first and last name, no Person can be ruled out.
   if (!isNonEmptyString(firstName) || !isNonEmptyString(lastName)) {
     return true;
   }

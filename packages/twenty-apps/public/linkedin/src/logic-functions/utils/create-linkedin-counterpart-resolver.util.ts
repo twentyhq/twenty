@@ -5,7 +5,6 @@ import { type LinkedinCounterpartResolver } from 'src/logic-functions/types/link
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
-// Remembers profiles LinkedIn could not resolve too, which the kv cache does not.
 export const createLinkedinCounterpartResolver = (
   unipileAccountId: string,
 ): LinkedinCounterpartResolver => {
@@ -24,7 +23,6 @@ export const createLinkedinCounterpartResolver = (
       shouldLookUp,
     });
 
-    // A declined lookup may still be wanted later in the same job.
     if (
       !isDefined(shouldLookUp) ||
       isNonEmptyString(counterpart.public_identifier)

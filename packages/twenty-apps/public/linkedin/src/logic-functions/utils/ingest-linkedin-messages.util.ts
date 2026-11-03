@@ -46,8 +46,6 @@ const resolvePersonIdByHandle = async ({
 > => {
   const isContactRequired =
     settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat;
-  // These chats need someone already in Twenty, so a profile lookup only pays
-  // off for a counterpart some Person is named after.
   const resolvedCounterparts = await Promise.all(
     counterparts.map((counterpart) =>
       resolveCounterpart(counterpart, {
@@ -170,7 +168,6 @@ export const ingestLinkedinMessages = async ({
     return { ...emptyResult, skippedReason: 'NO_MESSAGES' };
   }
 
-  // Each lookup spends LinkedIn's daily profile quota, so skipped chats make none.
   const resolvedPersons = await resolvePersonIdByHandle({
     settings,
     counterparts,
