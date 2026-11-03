@@ -26,7 +26,10 @@ export const computeObjectsPermissionsForRoles = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsWithRolesContext,
-    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal' | 'scope'
+    | 'mainPrincipal'
+    | 'limitingPrincipal'
+    | 'applicationPrincipal'
+    | 'aiRunScope'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -70,10 +73,10 @@ export const computeObjectsPermissionsForRoles = ({
 
   const objectsPermissions = computePermissionIntersection(permissionsPerRole);
 
-  return isDefined(principal.scope)
+  return isDefined(principal.aiRunScope)
     ? restrictObjectsPermissionsToScope({
         objectsPermissions,
-        scope: principal.scope,
+        aiRunScope: principal.aiRunScope,
       })
     : objectsPermissions;
 };

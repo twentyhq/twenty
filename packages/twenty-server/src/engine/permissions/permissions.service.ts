@@ -188,10 +188,11 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { scope } = principal;
+    const { aiRunScope } = principal;
 
     return (
-      (!isDefined(scope) || (scope.permissionFlags[setting] ?? false)) &&
+      (!isDefined(aiRunScope) ||
+        (aiRunScope.permissionFlags[setting] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalRoleIds(principal),
         setting,
