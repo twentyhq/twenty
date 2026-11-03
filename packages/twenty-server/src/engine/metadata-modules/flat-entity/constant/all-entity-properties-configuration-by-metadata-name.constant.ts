@@ -2498,6 +2498,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   agentChatChannel: {
+    retainedApplicationId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    retainedApplicationUniversalIdentifier: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     name: {
       toCompare: true,
       toStringify: false,

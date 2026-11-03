@@ -290,6 +290,8 @@ import { AddWorkspaceAssistantProfileSlowInstanceCommand } from 'src/database/co
 import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793814954654-add-field-metadata-option-table';
 import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793898855453-make-field-metadata-option-value-unique-deferred';
 import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
+import { AddRetainedApplicationToAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793964072798-add-retained-application-to-agent-chat-channel';
+import { AddRetainedApplicationIdToAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793964072799-add-retained-application-id-to-agent-chat-channel';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -582,4 +584,6 @@ export const INSTANCE_COMMANDS = [
   AddFieldMetadataOptionTableFastInstanceCommand,
   MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand,
   AddAiDataPolicyToWorkspaceSlowInstanceCommand,
+  AddRetainedApplicationToAgentChatChannelFastInstanceCommand,
+  AddRetainedApplicationIdToAgentChatChannelFastInstanceCommand,
 ];

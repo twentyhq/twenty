@@ -608,6 +608,7 @@ export class ApplicationInstallService {
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
           shouldRunUninstallHook: false,
+          shouldKeepAgentChatChannels: false,
         });
       }
 

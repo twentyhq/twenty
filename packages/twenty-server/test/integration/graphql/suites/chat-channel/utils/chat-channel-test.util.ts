@@ -58,7 +58,7 @@ export const CHANNEL_ROLES = parse(
 );
 
 const CHANNELS = parse(
-  `query Channels { agentChatChannels { id name applicationId isCustom isAccessible } }`,
+  `query Channels { agentChatChannels { id name applicationId isCustom isAccessible roleIds } }`,
 );
 
 export const CREATE_THREAD = parse(
@@ -214,6 +214,7 @@ export const listChannels = async (
     applicationId: string;
     isCustom: boolean;
     isAccessible: boolean;
+    roleIds: string[];
   }[]
 > => {
   const response = await makeMetadataApiRequest({ query: CHANNELS }, token);
@@ -240,7 +241,8 @@ export const readChannelGrantRoleIds = async (
     await global.testDataSource.query(
       `SELECT "principalId" FROM ${SCHEMA}."recordShare"
        WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
-         AND "principalType" = 'ROLE'`,
+         AND "principalType" = 'ROLE'
+       ORDER BY "principalId"`,
       [threadId],
     )
   ).map(({ principalId }: { principalId: string }) => principalId);

@@ -137,6 +137,8 @@ const AGENT_CHAT_CHANNEL: FlatAgentChatChannel = {
   ...SYNCABLE,
   id: 'agent-chat-channel-id',
   universalIdentifier: 'agent-chat-channel-universal-identifier',
+  retainedApplicationId: null,
+  retainedApplicationUniversalIdentifier: null,
   name: 'App channel',
   icon: null,
   color: null,

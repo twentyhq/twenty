@@ -87,7 +87,35 @@ export class AgentChatChannelService {
       throwAgentChatChannelsUnavailable();
     }
 
-    return this.channelMetadataService.createChannel(args);
+    const channel = await this.channelMetadataService.createChannel(args);
+
+    await this.rewriteChannelGrants({
+      workspaceId: args.workspaceId,
+      channelIds: [channel.id],
+    });
+
+    return channel;
+  }
+
+  async rewriteChannelGrants({
+    workspaceId,
+    channelIds,
+  }: {
+    workspaceId: string;
+    channelIds: string[];
+  }): Promise<void> {
+    for (const channelId of channelIds) {
+      await this.channelGrantService
+        .rewriteChannelGrants({ workspaceId, channelId })
+        .catch(async (error: unknown) => {
+          await this.channelGrantService.enqueueChannelGrantsRewrite({
+            workspaceId,
+            channelId,
+          });
+
+          throw error;
+        });
+    }
   }
 
   async updateChannel({

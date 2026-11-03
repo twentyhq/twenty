@@ -20,8 +20,8 @@ import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-module
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
+import { buildApplicationUninstallOperations } from 'src/engine/core-modules/application/application-manifest/utils/build-application-uninstall-operations.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
-import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -35,8 +35,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
-import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -58,6 +58,7 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly agentChatChannelMetadataService: AgentChatChannelMetadataService,
     private readonly agentChatChannelService: AgentChatChannelService,
   ) {}
 
@@ -346,6 +347,7 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
+    shouldKeepAgentChatChannels = true,
     progressReporter = createApplicationLifecycleProgressReporter({
       steps: APPLICATION_UNINSTALL_STEPS,
     }),
@@ -353,6 +355,7 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
+    shouldKeepAgentChatChannels?: boolean;
     progressReporter?: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     const application =
@@ -373,6 +376,7 @@ export class ApplicationSyncService {
       workspaceId,
       applicationUniversalIdentifier,
       shouldRunUninstallHook,
+      shouldKeepAgentChatChannels,
       progressReporter,
     });
   }
@@ -382,12 +386,14 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook,
+    shouldKeepAgentChatChannels,
     progressReporter,
   }: {
     application: ApplicationEntity;
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook: boolean;
+    shouldKeepAgentChatChannels: boolean;
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
@@ -409,29 +415,13 @@ export class ApplicationSyncService {
         flatEntityMapsCacheKeys,
       );
 
-    const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
-      {
-        applicationIds: [application.id],
+    const allFlatEntityOperationRecordByMetadataName =
+      buildApplicationUninstallOperations({
+        applicationId: application.id,
+        applicationUniversalIdentifier: application.universalIdentifier,
         fromAllFlatEntityMaps,
-      },
-    );
-
-    // Unlike manifest omission, uninstall also removes engine-owned and workspace-local metadata, so expand the deletions
-    // to dependents owned by other applications
-    const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
-      Object.fromEntries(
-        Object.values(ALL_METADATA_NAME).map((metadataName) => [
-          metadataName,
-          {
-            flatEntityToCreate: {},
-            flatEntityToUpdate: {},
-            flatEntityToDelete:
-              applicationFromAllFlatEntityMaps[
-                getMetadataFlatEntityMapsKey(metadataName)
-              ].byUniversalIdentifier,
-          },
-        ]),
-      );
+        shouldKeepAgentChatChannels,
+      });
 
     await progressReporter.reportStepCompleted('COMPUTE_METADATA_TO_DELETE');
 
@@ -465,6 +455,20 @@ export class ApplicationSyncService {
         'Validation errors occurred while uninstalling application',
       );
     }
+
+    const transferredChannelIds =
+      await this.agentChatChannelMetadataService.transferApplicationChannelsToWorkspace(
+        {
+          workspaceId,
+          applicationId: application.id,
+          applicationUniversalIdentifier: application.universalIdentifier,
+        },
+      );
+
+    await this.agentChatChannelService.rewriteChannelGrants({
+      workspaceId,
+      channelIds: transferredChannelIds,
+    });
 
     await progressReporter.reportStepCompleted('RUN_WORKSPACE_MIGRATION');
 
