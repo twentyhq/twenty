@@ -9838,6 +9838,11 @@ msgstr "Een of meer aangevraagde scopes zijn ongeldig."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Alleen een concept- of geplande campagne kan worden verzonden."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr ""
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9893,6 +9898,11 @@ msgstr "Alleen de applicatie die eigenaar is van deze agent kan de triggers erva
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Alleen de persoon die deze workflow heeft gemaakt, kan wijzigen wie deze kan zien"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr ""
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

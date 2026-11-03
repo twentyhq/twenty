@@ -9838,6 +9838,11 @@ msgstr "Ett eller flere forespurte omfang er ugyldige."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Bare en kampanje som er et utkast eller planlagt, kan sendes."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr ""
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9893,6 +9898,11 @@ msgstr "Bare applikasjonen som eier denne agenten, kan endre utløserne dens"
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bare personen som opprettet denne arbeidsflyten, kan endre hvem som kan se den"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr ""
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

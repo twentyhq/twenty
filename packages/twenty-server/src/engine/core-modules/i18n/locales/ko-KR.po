@@ -9838,6 +9838,11 @@ msgstr "요청된 스코프 중 하나 이상이 유효하지 않음."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "초안 또는 예약된 캠페인만 보낼 수 있습니다."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr ""
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9893,6 +9898,11 @@ msgstr "이 에이전트를 소유한 애플리케이션만 트리거를 변경�
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 수 있습니다"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr ""
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
