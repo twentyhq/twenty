@@ -9,7 +9,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -69,10 +69,10 @@ const LoadingSkeleton = () => {
 const isActivityObject = (
   objectNameSingular: string,
 ): objectNameSingular is
-  | CoreObjectNameSingular.Note
-  | CoreObjectNameSingular.Task =>
-  objectNameSingular === CoreObjectNameSingular.Note ||
-  objectNameSingular === CoreObjectNameSingular.Task;
+  | StandardObjectNameSingular.Note
+  | StandardObjectNameSingular.Task =>
+  objectNameSingular === StandardObjectNameSingular.Note ||
+  objectNameSingular === StandardObjectNameSingular.Task;
 
 export const RichTextFieldInput = () => {
   const { t } = useLingui();

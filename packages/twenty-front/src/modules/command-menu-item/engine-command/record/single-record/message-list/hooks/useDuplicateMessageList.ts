@@ -2,7 +2,10 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useAddDuplicatedRecordToCache } from '@/object-record/cache/hooks/useAddDuplicatedRecordToCache';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  CrudOperationType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { DuplicateMessageListDocument } from '~/generated-metadata/graphql';
@@ -11,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 export const useDuplicateMessageList = () => {
   const { t } = useLingui();
   const { addDuplicatedRecordToCache } = useAddDuplicatedRecordToCache({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
   });
 
   const [mutate] = useMutation(DuplicateMessageListDocument);

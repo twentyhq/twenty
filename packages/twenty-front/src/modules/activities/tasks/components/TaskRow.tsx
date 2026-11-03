@@ -16,7 +16,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { getRichTextFieldTextLines } from '@/object-record/record-field/ui/utils/getRichTextFieldTextLines';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCalendar } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
@@ -105,7 +105,7 @@ export const TaskRow = ({
   const { completeTask } = useCompleteTask(task);
 
   const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    objectNameSingular: StandardObjectNameSingular.Task,
   }).junctionField.name;
 
   const instanceIdPrefix =
@@ -123,7 +123,7 @@ export const TaskRow = ({
       onClick={() => {
         openRecordInSidePanel({
           recordId: task.id,
-          objectNameSingular: CoreObjectNameSingular.Task,
+          objectNameSingular: StandardObjectNameSingular.Task,
         });
       }}
     >
@@ -160,7 +160,7 @@ export const TaskRow = ({
         {
           <Card.Control render={<StyledActivityTargetsContainer />}>
             <FieldContextProvider
-              objectNameSingular={CoreObjectNameSingular.Task}
+              objectNameSingular={StandardObjectNameSingular.Task}
               objectRecordId={task.id}
               fieldMetadataName={junctionFieldName}
               fieldPosition={0}

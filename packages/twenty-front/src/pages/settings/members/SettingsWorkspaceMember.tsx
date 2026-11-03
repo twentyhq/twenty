@@ -13,7 +13,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
+import { StandardObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
@@ -68,7 +68,7 @@ export const SettingsWorkspaceMember = () => {
   } = useWorkspaceMemberRoles(workspaceMemberId);
 
   const { record: member, loading } = useFindOneRecord<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     objectRecordId: workspaceMemberId,
     recordGqlFields: {
       id: true,
@@ -102,7 +102,7 @@ export const SettingsWorkspaceMember = () => {
       }
       try {
         await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
           idToUpdate: member.id,
           updateOneRecordInput: {
             name: { firstName, lastName },

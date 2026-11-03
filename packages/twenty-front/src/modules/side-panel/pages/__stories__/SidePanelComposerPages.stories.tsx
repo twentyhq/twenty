@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
@@ -108,7 +108,7 @@ const useInitializeSidePanelComposerStory = ({
         {
           connectedAccountId: GOOGLE_ACCOUNT_ID,
           contextRecord: {
-            objectNameSingular: CoreObjectNameSingular.Person,
+            objectNameSingular: StandardObjectNameSingular.Person,
             recordId: KIMBERLY_PERSON_ID,
           },
           defaultAttendees: 'Kimberly Gordon <kimberly.gordon@apple.dev>',

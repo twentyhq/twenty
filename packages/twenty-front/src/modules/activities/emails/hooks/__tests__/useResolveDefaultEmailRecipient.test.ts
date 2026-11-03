@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 const mockUseFindOneRecord = jest.fn();
 const mockUseFindManyRecords = jest.fn();
@@ -31,7 +31,7 @@ describe('useResolveDefaultEmailRecipient', () => {
   it('should return the person primary email for a Person record', () => {
     mockUseFindOneRecord.mockImplementation(
       (args: { objectNameSingular: string }) => {
-        if (args.objectNameSingular === CoreObjectNameSingular.Person) {
+        if (args.objectNameSingular === StandardObjectNameSingular.Person) {
           return {
             record: {
               id: 'person-id',
@@ -47,7 +47,7 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     const { result } = renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Person,
+        objectNameSingular: StandardObjectNameSingular.Person,
         recordId: 'person-id',
       }),
     );
@@ -70,7 +70,7 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     const { result } = renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         recordId: 'company-id',
       }),
     );
@@ -82,7 +82,9 @@ describe('useResolveDefaultEmailRecipient', () => {
   it('should return the opportunity point of contact email', () => {
     mockUseFindOneRecord.mockImplementation(
       (args: { objectNameSingular: string }) => {
-        if (args.objectNameSingular === CoreObjectNameSingular.Opportunity) {
+        if (
+          args.objectNameSingular === StandardObjectNameSingular.Opportunity
+        ) {
           return {
             record: {
               pointOfContact: {
@@ -100,7 +102,7 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     const { result } = renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Opportunity,
+        objectNameSingular: StandardObjectNameSingular.Opportunity,
         recordId: 'opp-id',
       }),
     );
@@ -124,7 +126,7 @@ describe('useResolveDefaultEmailRecipient', () => {
   it('should return empty string when recordId is null', () => {
     const { result } = renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Person,
+        objectNameSingular: StandardObjectNameSingular.Person,
         recordId: null,
       }),
     );
@@ -135,7 +137,7 @@ describe('useResolveDefaultEmailRecipient', () => {
   it('should report loading when the relevant query is in flight', () => {
     mockUseFindOneRecord.mockImplementation(
       (args: { objectNameSingular: string }) => {
-        if (args.objectNameSingular === CoreObjectNameSingular.Person) {
+        if (args.objectNameSingular === StandardObjectNameSingular.Person) {
           return { record: null, loading: true };
         }
 
@@ -145,7 +147,7 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     const { result } = renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Person,
+        objectNameSingular: StandardObjectNameSingular.Person,
         recordId: 'person-id',
       }),
     );
@@ -156,21 +158,21 @@ describe('useResolveDefaultEmailRecipient', () => {
   it('should pass skip=true to queries for non-matching object types', () => {
     renderHook(() =>
       useResolveDefaultEmailRecipient({
-        objectNameSingular: CoreObjectNameSingular.Person,
+        objectNameSingular: StandardObjectNameSingular.Person,
         recordId: 'person-id',
       }),
     );
 
     const personCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
-        call[0].objectNameSingular === CoreObjectNameSingular.Person,
+        call[0].objectNameSingular === StandardObjectNameSingular.Person,
     );
 
     expect(personCall?.[0].skip).toBe(false);
 
     const oppCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
-        call[0].objectNameSingular === CoreObjectNameSingular.Opportunity,
+        call[0].objectNameSingular === StandardObjectNameSingular.Opportunity,
     );
 
     expect(oppCall?.[0].skip).toBe(true);

@@ -10,7 +10,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowBackUp,
@@ -46,7 +46,7 @@ export const EmailThreadComposer = ({
       if (isDefined(messageThreadId)) {
         openRecordInSidePanel({
           recordId: messageThreadId,
-          objectNameSingular: CoreObjectNameSingular.MessageThread,
+          objectNameSingular: StandardObjectNameSingular.MessageThread,
         });
       }
     },
