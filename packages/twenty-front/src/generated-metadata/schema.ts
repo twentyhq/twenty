@@ -2489,6 +2489,7 @@ export type Field = {
   isNullable?: Maybe<Scalars['Boolean']['output']>;
   isSearchable?: Maybe<Scalars['Boolean']['output']>;
   isSystem?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect?: Maybe<Scalars['Boolean']['output']>;
   isUIEditable?: Maybe<Scalars['Boolean']['output']>;
   /** @deprecated Use isUIEditable */
   isUIReadOnly?: Maybe<Scalars['Boolean']['output']>;

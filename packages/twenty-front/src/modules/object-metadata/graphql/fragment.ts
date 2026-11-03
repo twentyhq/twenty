@@ -65,6 +65,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       isActive
       isSystem
       isUIEditable
+      isSystemSideEffect
       isNullable
       isUnique
       isSearchable
