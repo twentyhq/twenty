@@ -34,7 +34,14 @@ type OneToManyMetadataRelationsProperties = {
 };
 
 export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
-  agent: {},
+  agent: {
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
+    },
+  },
   skill: {},
   commandMenuItem: {},
   navigationMenuItem: {},
@@ -316,7 +323,14 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   settingsMenuItem: {},
   relatedRecordPath: {},
   validationRule: {},
-  workflow: {},
+  workflow: {
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
+    },
+  },
   workflowVersion: {},
   agentChatChannel: {
     channelRoles: {

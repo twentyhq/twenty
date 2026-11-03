@@ -76,6 +76,16 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   agentChatChannelId?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  agentId?: string | null;
+
   @IsNumber()
   @IsNotEmpty()
   @Field()

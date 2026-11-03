@@ -12,6 +12,8 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
+import { NavigationMenuItemAgentIcon } from '@/navigation-menu-item/display/automation/components/NavigationMenuItemAgentIcon';
+import { NavigationMenuItemWorkflowIcon } from '@/navigation-menu-item/display/automation/components/NavigationMenuItemWorkflowIcon';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
@@ -103,6 +105,18 @@ export const NavigationMenuItemIcon = ({
       </NavigationMenuItemIconWithOverlay>
     ) : (
       pageIcon
+    );
+  }
+
+  if (navigationMenuItem.type === NavigationMenuItemType.WORKFLOW) {
+    return (
+      <NavigationMenuItemWorkflowIcon navigationMenuItem={navigationMenuItem} />
+    );
+  }
+
+  if (navigationMenuItem.type === NavigationMenuItemType.AGENT) {
+    return (
+      <NavigationMenuItemAgentIcon navigationMenuItem={navigationMenuItem} />
     );
   }
 

@@ -973,6 +973,18 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    avatarColor: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    avatarShape: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     description: {
       toCompare: true,
       toStringify: false,
@@ -1463,6 +1475,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'agentChatChannelUniversalIdentifier',
+    },
+    workflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'workflowUniversalIdentifier',
+    },
+    agentId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'agentUniversalIdentifier',
     },
   },
   rolePermissionFlag: {

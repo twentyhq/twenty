@@ -28,6 +28,7 @@ export const WorkflowAiAgentGenerateStepPromptTab = ({
       <AiModelPicker
         modelId={selectedModelId}
         onModelIdChange={(modelId) => onInputChange({ modelId })}
+        label={t`Model`}
         disabled={readonly}
       />
 

@@ -68,6 +68,8 @@ const buildFlatNavigationMenuItem = ({
   targetObjectMetadataId: null,
   pageLayoutId: null,
   agentChatChannelId: null,
+  workflowId: null,
+  agentId: null,
   ...flatNavigationMenuItemProperties,
 });
 

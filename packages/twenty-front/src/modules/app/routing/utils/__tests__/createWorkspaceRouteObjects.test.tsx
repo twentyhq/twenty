@@ -42,6 +42,7 @@ describe('workspace route objects', () => {
     );
 
     expect(panelRoutes.map(({ path }) => path)).toEqual([
+      AppPath.WorkflowCoreIndexPage,
       AppPath.WorkflowCoreShowPage,
       AppPath.RecordIndexPage,
       AppPath.RecordShowPage,

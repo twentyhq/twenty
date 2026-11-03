@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PinnableAiModel } from '@/ai/types/PinnableAiModel';
@@ -12,8 +13,8 @@ export const getAiModelPinOptions = ({
 }: {
   aiModels: PinnableAiModel[];
   keepModelId?: string;
-}) =>
-  aiModels
+}) => {
+  const options = aiModels
     .filter(
       (model) =>
         !isDefined(model.effort) &&
@@ -31,5 +32,16 @@ export const getAiModelPinOptions = ({
         contextualText: model.providerLabel ?? model.providerName ?? undefined,
         Icon: getModelIcon(model.modelFamily, model.providerName),
       };
-    })
-    .sort((first, second) => first.label.localeCompare(second.label));
+    });
+
+  const isKeptModelUnavailable =
+    isNonEmptyString(keepModelId) &&
+    !aiModels.some((model) => model.modelId === keepModelId);
+
+  return [
+    ...options,
+    ...(isKeptModelUnavailable
+      ? [{ value: keepModelId, label: t`${keepModelId} (unavailable)` }]
+      : []),
+  ].sort((first, second) => first.label.localeCompare(second.label));
+};

@@ -7,6 +7,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { type AgentAvatarColor, type AgentAvatarShape } from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -32,6 +33,14 @@ export class AgentDTO {
   @IsString()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  avatarColor?: AgentAvatarColor;
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  avatarShape?: AgentAvatarShape;
 
   @IsString()
   @Field({ nullable: true })

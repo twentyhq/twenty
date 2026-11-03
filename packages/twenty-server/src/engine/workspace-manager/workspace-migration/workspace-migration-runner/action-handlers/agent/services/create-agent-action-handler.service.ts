@@ -40,6 +40,7 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        navigationMenuItemIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };

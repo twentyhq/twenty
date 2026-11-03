@@ -54,6 +54,8 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
+    workflowUniversalIdentifier,
+    agentUniversalIdentifier,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -127,6 +129,22 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         message: t`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
         userFriendlyMessage: msg`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
       });
+    }
+    case NavigationMenuItemType.WORKFLOW: {
+      return validateUuidProperty({
+        value: workflowUniversalIdentifier,
+        message: t`A valid workflowUniversalIdentifier is required for WORKFLOW type`,
+        userFriendlyMessage: msg`A valid workflowUniversalIdentifier is required for WORKFLOW type`,
+      });
+    }
+    case NavigationMenuItemType.AGENT: {
+      return isDefined(agentUniversalIdentifier)
+        ? validateUuidProperty({
+            value: agentUniversalIdentifier,
+            message: t`agentUniversalIdentifier must be a valid UUID for AGENT type`,
+            userFriendlyMessage: msg`agentUniversalIdentifier must be a valid UUID for AGENT type`,
+          })
+        : [];
     }
     default: {
       // oxlint-disable-next-line unused-imports/no-unused-vars

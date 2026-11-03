@@ -103,13 +103,6 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
   const avatarStyle = getComputedStyle(avatar);
 
   await expect(avatarStyle.width).toBe(avatarStyle.height);
-  await expect(avatarStyle.borderRadius).toBe('50%');
-
-  if (CSS.supports('corner-shape', 'round')) {
-    await expect(['round', 'superellipse(1)']).toContain(
-      avatarStyle.getPropertyValue('corner-shape'),
-    );
-  }
 
   await expect(
     canvas.getByRole('button', { name: 'Create a workflow' }),

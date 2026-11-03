@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `
+[
+  "navigationMenuItem",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannel 1`] = `
 [
@@ -74,6 +78,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "view",
   "pageLayout",
   "agentChatChannel",
+  "workflow",
+  "agent",
 ]
 `;
 
@@ -262,6 +268,10 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `
+[
+  "navigationMenuItem",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `[]`;

@@ -1,5 +1,9 @@
 import { isBoolean, isNonEmptyString } from '@sniptt/guards';
-import { type ModelConfiguration } from 'twenty-shared/ai';
+import {
+  AGENT_AVATAR_COLORS,
+  AGENT_AVATAR_SHAPES,
+  type ModelConfiguration,
+} from 'twenty-shared/ai';
 import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
@@ -48,6 +52,24 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
 
   if (isDefined(config.isSystem) && !isBoolean(config.isSystem)) {
     errors.push(`Agent '${config.name}' isSystem must be a boolean`);
+  }
+
+  if (
+    isDefined(config.avatarColor) &&
+    !AGENT_AVATAR_COLORS.includes(config.avatarColor)
+  ) {
+    errors.push(
+      `Agent '${config.name}' avatarColor must be one of: ${AGENT_AVATAR_COLORS.join(', ')}`,
+    );
+  }
+
+  if (
+    isDefined(config.avatarShape) &&
+    !AGENT_AVATAR_SHAPES.includes(config.avatarShape)
+  ) {
+    errors.push(
+      `Agent '${config.name}' avatarShape must be one of: ${AGENT_AVATAR_SHAPES.join(', ')}`,
+    );
   }
 
   if (
