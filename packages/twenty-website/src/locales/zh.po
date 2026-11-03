@@ -4705,7 +4705,6 @@ msgstr "工作流电子邮件中的 HTML"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -5555,11 +5554,6 @@ msgstr "马达加斯加 🇲🇬"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Main channel (URL)"
 msgstr "主要渠道（URL）"
-
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "主要渠道必须是以 https:// 开头的完整 URL"
 
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6737,6 +6731,11 @@ msgstr "在继续之前，请填写所有必填字段。"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "请输入有效的电子邮箱地址。"
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr ""
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -10311,6 +10310,11 @@ msgstr "你的工作区由一个 git 仓库支撑，因此你可以像交付代�
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube、新闻简报、LinkedIn、TikTok：所有介绍 GTM 工具的人士。"
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

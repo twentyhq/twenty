@@ -152,7 +152,7 @@ function buildRequestBody(state: FormState) {
     name: state.name.trim(),
     email: state.email.trim(),
     partnerType: state.partnerType,
-    ...(isNonEmptyString(trimmedChannel) && { mainChannel: trimmedChannel }),
+    mainChannel: trimmedChannel,
     ...(isNonEmptyString(trimmedAudience) && { audienceSize: trimmedAudience }),
     ...(isNonEmptyString(trimmedCountry) && { country: trimmedCountry }),
     ...(isNonEmptyString(trimmedPlan) && { promotionPlan: trimmedPlan }),

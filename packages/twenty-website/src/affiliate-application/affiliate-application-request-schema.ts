@@ -9,13 +9,23 @@ const partnerTypeValues = AFFILIATE_PARTNER_TYPE_OPTIONS.map(
   (option) => option.value,
 );
 
+const URL_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:\/\//i;
+
+// Applicants often type "youtube.com/@name": add the scheme instead of refusing it.
+const withHttpsScheme = (value: unknown) =>
+  typeof value === 'string' &&
+  value.trim() !== '' &&
+  !URL_SCHEME_PATTERN.test(value.trim())
+    ? `https://${value.trim()}`
+    : value;
+
 export const affiliateApplicationRequestSchema = z.strictObject({
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
   partnerType: z.enum(partnerTypeValues, {
     error: 'Partner type is required.',
   }),
-  mainChannel: httpUrlFieldSchema.optional(),
+  mainChannel: z.preprocess(withHttpsScheme, httpUrlFieldSchema),
   audienceSize: z.string().trim().max(200).optional(),
   country: z.string().trim().max(100).optional(),
   promotionPlan: z.string().trim().max(2000).optional(),

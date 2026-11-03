@@ -4705,7 +4705,6 @@ msgstr "HTML في رسائل البريد الإلكتروني لسير العم
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -5555,11 +5554,6 @@ msgstr "مدغشقر 🇲🇬"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Main channel (URL)"
 msgstr "القناة الرئيسية (URL)"
-
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "يجب أن تكون القناة الرئيسية عنوان URL كاملًا يبدأ بـ https://"
 
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6737,6 +6731,11 @@ msgstr "يرجى إكمال كل الحقول المطلوبة قبل المتا
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "يُرجى إدخال عنوان بريد إلكتروني صالح."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr ""
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -10311,6 +10310,11 @@ msgstr "يستند دعم مساحة العمل الخاصة بك إلى مست�
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube والنشرات الإخبارية وLinkedIn وTikTok: كل من يغطي أدوات GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
