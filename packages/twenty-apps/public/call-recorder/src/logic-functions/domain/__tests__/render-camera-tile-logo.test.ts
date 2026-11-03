@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 
 import {
   CAMERA_TILE_PLATE_SIZE,
@@ -26,6 +26,10 @@ const readPixel = async ({
 };
 
 describe('renderCameraTileLogo', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('fills the plate with a wide logo and clips it to the rounded corners', async () => {
     const wideLogo = await sharp({
       create: { width: 400, height: 150, channels: 3, background: '#000' },
@@ -34,7 +38,9 @@ describe('renderCameraTileLogo', () => {
       .toBuffer();
 
     const overlay = await renderCameraTileLogo({ sharp, logo: wideLogo });
-    const image = overlay?.input as Buffer;
+    const image = overlay?.input;
+
+    assert(Buffer.isBuffer(image));
 
     expect(overlay).toMatchObject({
       left: (RECALL_BOT_IMAGE_WIDTH - CAMERA_TILE_PLATE_SIZE) / 2,
