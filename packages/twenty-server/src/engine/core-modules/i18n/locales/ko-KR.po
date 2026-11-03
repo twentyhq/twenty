@@ -5916,7 +5916,7 @@ msgstr "연결된 계정 찾기"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "First direct message member ID"
-msgstr ""
+msgstr "첫 번째 다이렉트 메시지 멤버 ID"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12147,7 +12147,7 @@ msgstr "검색 벡터 필드를 찾을 수 없습니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Second direct message member ID"
-msgstr ""
+msgstr "두 번째 다이렉트 메시지 멤버 ID"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -13772,7 +13772,7 @@ msgstr "파일 업로드가 완료되지 않았습니다. 다시 업로드해 �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The first member in the fixed direct message pair"
-msgstr ""
+msgstr "고정된 다이렉트 메시지 쌍의 첫 번째 멤버"
 
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -14033,7 +14033,7 @@ msgstr "저장된 컴포넌트가 이 초안과 다릅니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The second member in the fixed direct message pair"
-msgstr ""
+msgstr "고정된 다이렉트 메시지 쌍의 두 번째 멤버"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

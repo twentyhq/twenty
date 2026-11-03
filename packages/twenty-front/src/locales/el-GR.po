@@ -9797,7 +9797,7 @@ msgstr "Η υπαγόρευση δεν υποστηρίζεται σε αυτό 
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Ταυτότητα ζεύγους άμεσων μηνυμάτων"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Επιστρέφει έναν πίνακα εγγραφών"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Επαναχρησιμοποίηση της ίδιας συνομιλίας όταν τα ίδια δύο μέλη του χώρου εργασίας ξεκινούν ένα άμεσο μήνυμα. Ενεργοποιείται μετά την ολοκλήρωση της αναβάθμισης του χώρου εργασίας."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

@@ -9797,7 +9797,7 @@ msgstr "Dikte bu tarayıcıda desteklenmiyor."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Doğrudan mesaj çifti kimliği"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Bir kayıt dizisi döndürür"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Aynı iki çalışma alanı üyesi doğrudan mesaj başlattığında aynı konuşmayı yeniden kullanın. Çalışma alanı yükseltmesi tamamlandıktan sonra etkinleştirilir."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

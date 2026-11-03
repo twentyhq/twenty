@@ -5916,7 +5916,7 @@ msgstr "查找已连接账户"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "First direct message member ID"
-msgstr ""
+msgstr "第一个私信成员 ID"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12147,7 +12147,7 @@ msgstr "未找到搜索向量字段"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Second direct message member ID"
-msgstr ""
+msgstr "第二个私信成员 ID"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -13772,7 +13772,7 @@ msgstr "文件上传尚未完成。请重试上传。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The first member in the fixed direct message pair"
-msgstr ""
+msgstr "固定私信配对中的第一个成员"
 
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -14033,7 +14033,7 @@ msgstr "已保存的组件与此草稿不同。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The second member in the fixed direct message pair"
-msgstr ""
+msgstr "固定私信配对中的第二个成员"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

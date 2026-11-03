@@ -9797,7 +9797,7 @@ msgstr "El dictado no es compatible con este navegador."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Identidad de pares de mensajes directos"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Devuelve una matriz de registros"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Reutiliza la misma conversación cuando los mismos dos miembros del espacio de trabajo inician un mensaje directo. Se activa después de que se complete la actualización del espacio de trabajo."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

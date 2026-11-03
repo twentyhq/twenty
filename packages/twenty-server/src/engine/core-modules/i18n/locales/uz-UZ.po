@@ -5916,7 +5916,7 @@ msgstr "Ulangan akkauntlarni topish"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "First direct message member ID"
-msgstr ""
+msgstr "Birinchi to‘g‘ridan-to‘g‘ri xabar a’zosi IDsi"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12147,7 +12147,7 @@ msgstr "Qidiruv vektori maydoni topilmadi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Second direct message member ID"
-msgstr ""
+msgstr "Ikkinchi to‘g‘ridan-to‘g‘ri xabar a’zosi IDsi"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -13772,7 +13772,7 @@ msgstr "Faylni yuklash yakunlanmadi. Iltimos, qayta yuklab ko‘ring."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The first member in the fixed direct message pair"
-msgstr ""
+msgstr "Belgilangan to‘g‘ridan-to‘g‘ri xabar juftligidagi birinchi a’zo"
 
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -14033,7 +14033,7 @@ msgstr "Saqlangan komponent ushbu qoralamadan farq qiladi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The second member in the fixed direct message pair"
-msgstr ""
+msgstr "Belgilangan to‘g‘ridan-to‘g‘ri xabar juftligidagi ikkinchi a’zo"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

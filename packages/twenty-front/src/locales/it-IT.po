@@ -9797,7 +9797,7 @@ msgstr "La dettatura non è supportata in questo browser."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Identità della coppia nei messaggi diretti"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Restituisce un array di record"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Riutilizza la stessa conversazione quando gli stessi due membri dello spazio di lavoro avviano un messaggio diretto. Abilitato al completamento dell'aggiornamento dello spazio di lavoro."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

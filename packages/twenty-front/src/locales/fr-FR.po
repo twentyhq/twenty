@@ -9797,7 +9797,7 @@ msgstr "La dictée n'est pas prise en charge dans ce navigateur."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Identité de la paire de messages directs"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Renvoie un tableau d'enregistrements"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Réutiliser la même conversation lorsque les deux mêmes membres de l'espace de travail commencent un message direct. Activé une fois la mise à niveau de l'espace de travail terminée."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

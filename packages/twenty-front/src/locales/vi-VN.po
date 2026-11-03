@@ -9797,7 +9797,7 @@ msgstr "Đọc chính tả không được hỗ trợ trong trình duyệt này.
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "Danh tính cặp tin nhắn trực tiếp"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "Trả về một mảng bản ghi"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "Sử dụng lại cùng một cuộc trò chuyện khi cùng hai thành viên trong không gian làm việc bắt đầu một tin nhắn trực tiếp. Được bật sau khi quá trình nâng cấp không gian làm việc hoàn tất."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

@@ -9797,7 +9797,7 @@ msgstr "دیکته در این مرورگر پشتیبانی نمی‌شود."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "هویت جفت پیام مستقیم"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "یک آرایه از رکوردها را برمی‌گرداند"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "وقتی همان دو عضو فضای کاری یک پیام مستقیم را آغاز می‌کنند، از همان گفت‌وگو دوباره استفاده کنید. پس از تکمیل ارتقای فضای کاری فعال می‌شود."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

@@ -5916,7 +5916,7 @@ msgstr "接続アカウントを検索"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "First direct message member ID"
-msgstr ""
+msgstr "最初のダイレクトメッセージメンバーID"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12147,7 +12147,7 @@ msgstr "検索ベクターフィールドが見つかりません"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Second direct message member ID"
-msgstr ""
+msgstr "ダイレクトメッセージのもう一方のメンバーID"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -13772,7 +13772,7 @@ msgstr "ファイルのアップロードは完了していません。もう一
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The first member in the fixed direct message pair"
-msgstr ""
+msgstr "固定されたダイレクトメッセージペアの最初のメンバー"
 
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -14033,7 +14033,7 @@ msgstr "保存済みのコンポーネントはこの下書きと異なります
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The second member in the fixed direct message pair"
-msgstr ""
+msgstr "固定されたダイレクトメッセージペアのもう一方のメンバー"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

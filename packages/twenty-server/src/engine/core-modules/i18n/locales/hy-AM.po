@@ -5916,7 +5916,7 @@ msgstr "Գտնել միացված հաշիվները"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "First direct message member ID"
-msgstr ""
+msgstr "Առաջին ուղիղ հաղորդագրության անդամի ID"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12147,7 +12147,7 @@ msgstr "Որոնման վեկտոր դաշտը չի գտնվել"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Second direct message member ID"
-msgstr ""
+msgstr "Երկրորդ ուղիղ հաղորդագրության անդամի ID"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -13772,7 +13772,7 @@ msgstr "Ֆայլի վերբեռնումը չի ավարտվել։ Խնդրում
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The first member in the fixed direct message pair"
-msgstr ""
+msgstr "Ֆիքսված ուղիղ հաղորդագրության զույգի առաջին անդամը"
 
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -14033,7 +14033,7 @@ msgstr "Պահպանված բաղադրիչը տարբերվում է այս ս�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The second member in the fixed direct message pair"
-msgstr ""
+msgstr "Ֆիքսված ուղիղ հաղորդագրության զույգի երկրորդ անդամը"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

@@ -9797,7 +9797,7 @@ msgstr "이 브라우저는 받아쓰기를 지원하지 않습니다."
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
-msgstr ""
+msgstr "다이렉트 메시지 쌍 식별자"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -23580,7 +23580,7 @@ msgstr "레코드 배열을 반환합니다"
 #. js-lingui-id: dMc2/b
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
-msgstr ""
+msgstr "동일한 두 워크스페이스 구성원이 다이렉트 메시지를 시작할 때 같은 대화를 재사용합니다. 워크스페이스 업그레이드가 완료된 후 활성화됩니다."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
