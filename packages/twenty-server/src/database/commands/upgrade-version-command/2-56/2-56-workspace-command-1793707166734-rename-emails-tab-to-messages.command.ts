@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -10,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.56.0', 1793639013340)
+@RegisteredWorkspaceCommand('2.56.0', 1793707166734)
 @Command({
   name: 'upgrade:2-56:rename-emails-tab-to-messages',
   description: 'Rename the standard Emails record tab and widget to Messages',
@@ -44,8 +45,8 @@ export class RenameEmailsTabToMessagesCommand extends ProvisionedWorkspaceComman
       });
 
     if (
-      pageLayoutTabsToUpdate.length === 0 &&
-      pageLayoutWidgetsToUpdate.length === 0
+      !isNonEmptyArray(pageLayoutTabsToUpdate) &&
+      !isNonEmptyArray(pageLayoutWidgetsToUpdate)
     ) {
       return;
     }

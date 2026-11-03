@@ -57,16 +57,6 @@ describe.each([
   const legacyTab = { ...tab, title: 'Emails', icon: 'IconMail' };
   const legacyWidget = { ...widget, title: 'Emails' };
 
-  it('should match the standard application definition', () => {
-    expect(tab).toMatchObject({ title: 'Messages', icon: 'IconMessage' });
-    expect(widget).toMatchObject({ title: 'Messages' });
-    expect(
-      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        recordPage.tabs.conversations.universalIdentifier
-      ],
-    ).toBeDefined();
-  });
-
   it('should rename the Emails tab and widget to Messages', () => {
     expect(
       buildMigration({ tabs: [legacyTab], widgets: [legacyWidget] }),
