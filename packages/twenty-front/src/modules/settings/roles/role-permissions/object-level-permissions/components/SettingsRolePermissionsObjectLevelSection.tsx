@@ -2,20 +2,19 @@ import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useRolePermissionSettingsNavigation } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useRolePermissionSettingsNavigation';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -33,7 +32,10 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   fromAgentId,
   isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const navigateSettings = useNavigateSettings();
+  const { navigateToRolePermission } = useRolePermissionSettingsNavigation({
+    roleId,
+    fromAgentId,
+  });
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -56,14 +58,6 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   const allObjectsHaveSetPermission =
     objectMetadataItemsWithPermissionOverride.length ===
     objectMetadataItemsThatCanHavePermission.length;
-
-  const handleAddRule = () => {
-    navigateSettings(
-      SettingsPath.RoleAddObjectLevel,
-      { roleId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
-    );
-  };
 
   const hasObjectPermissions =
     isDefined(objectMetadataItemsWithPermissionOverride) &&
@@ -103,7 +97,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
             disabled={
               !settingsDraftRole.isEditable || allObjectsHaveSetPermission
             }
-            onClick={handleAddRule}
+            onClick={navigateToRolePermission}
             variant="outline"
           >{t`Add rule`}</Button>
         </TableFooter>

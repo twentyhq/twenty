@@ -2,6 +2,7 @@ import { useResetObjectPermission } from '@/settings/roles/role-permissions/obje
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
+import { type MouseEventHandler } from 'react';
 import { Link } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -11,6 +12,7 @@ type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
   objectMetadataId: string;
   objectPermissionDetailUrl: string;
+  onNavigate: MouseEventHandler<HTMLAnchorElement>;
   isEditable: boolean;
 };
 
@@ -18,6 +20,7 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
   roleId,
   objectMetadataId,
   objectPermissionDetailUrl,
+  onNavigate,
   isEditable,
 }: SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps) => {
   const dropdownId = `settings-role-object-level-options-${objectMetadataId}`;
@@ -42,7 +45,9 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
           {isEditable && (
             <Dropdown.ActionItem
               startIcon={<IconPencil />}
-              render={<Link to={objectPermissionDetailUrl} />}
+              render={
+                <Link to={objectPermissionDetailUrl} onClick={onNavigate} />
+              }
             >{t`Edit`}</Dropdown.ActionItem>
           )}
           <Dropdown.ActionItem
