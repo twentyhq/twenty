@@ -25,7 +25,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
@@ -167,7 +166,7 @@ export class ViewResolver {
   }
 
   @Query(() => ViewDTO, { nullable: true })
-  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
   async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

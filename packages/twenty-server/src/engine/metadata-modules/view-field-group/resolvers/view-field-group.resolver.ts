@@ -17,7 +17,6 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/view-child-entity-permission.guard';
 import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
@@ -88,10 +87,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Query(() => [ViewFieldGroupDTO])
-  @UseGuards(
-    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY))
   async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -100,10 +96,7 @@ export class ViewFieldGroupResolver {
   }
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
-  @UseGuards(
-    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY))
   async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

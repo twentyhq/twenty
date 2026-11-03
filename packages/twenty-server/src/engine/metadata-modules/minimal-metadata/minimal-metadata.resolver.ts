@@ -7,7 +7,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalMetadataService } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -28,7 +27,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 export class MinimalMetadataResolver {
   constructor(

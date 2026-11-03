@@ -21,7 +21,6 @@ import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/pa
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
@@ -56,10 +55,7 @@ export class PageLayoutTabController {
   ) {}
 
   @Get()
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY))
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -95,10 +91,7 @@ export class PageLayoutTabController {
   }
 
   @Get(':id')
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY))
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

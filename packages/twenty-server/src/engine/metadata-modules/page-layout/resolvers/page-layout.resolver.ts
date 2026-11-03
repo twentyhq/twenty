@@ -19,7 +19,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
@@ -78,10 +77,7 @@ export class PageLayoutResolver {
   }
 
   @Query(() => [PageLayoutDTO])
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async getPageLayouts(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -104,10 +100,7 @@ export class PageLayoutResolver {
   }
 
   @Query(() => PageLayoutDTO, { nullable: true })
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY))
   async getPageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -23,8 +23,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
 import { UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
@@ -106,7 +104,6 @@ export class TimelineActivityTypeResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async timelineActivityTypes(
     @AuthWorkspace() workspace: WorkspaceEntity,

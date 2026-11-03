@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -27,7 +26,6 @@ export class ViewFilterGroupResolver {
   ) {}
 
   @Query(() => [ViewFilterGroupDTO])
-  @UseGuards(NoPermissionGuard)
   async getViewFilterGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -41,7 +39,6 @@ export class ViewFilterGroupResolver {
   }
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

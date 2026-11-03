@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -53,7 +52,6 @@ export class ViewSortController {
   constructor(private readonly viewSortService: ViewSortService) {}
 
   @Get()
-  @UseGuards(NoPermissionGuard)
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -67,7 +65,6 @@ export class ViewSortController {
   }
 
   @Get(':id')
-  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

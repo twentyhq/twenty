@@ -13,7 +13,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/create-validation-rule.input';
 import { ValidationRuleGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/validation-rule/filters/validation-rule-graphql-api-exception.filter';
 import { UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
@@ -50,10 +49,7 @@ export class ValidationRuleResolver {
   constructor(private readonly validationRuleService: ValidationRuleService) {}
 
   @Query(() => [ValidationRuleDTO])
-  @UseGuards(
-    AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY))
   async validationRules(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
     objectMetadataId: string,
@@ -66,10 +62,7 @@ export class ValidationRuleResolver {
   }
 
   @Query(() => [ValidationRuleDTO])
-  @UseGuards(
-    AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY))
   async validationRulesReadingField(
     @Args('fieldMetadataId', { type: () => UUIDScalarType })
     fieldMetadataId: string,

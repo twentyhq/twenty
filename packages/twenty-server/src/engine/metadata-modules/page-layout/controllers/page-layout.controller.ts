@@ -19,7 +19,6 @@ import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
@@ -49,10 +48,7 @@ export class PageLayoutController {
   ) {}
 
   @Get()
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY))
   async findMany(
     @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
@@ -82,10 +78,7 @@ export class PageLayoutController {
   }
 
   @Get(':id')
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_READ_ACCESS_POLICY))
   async findOne(
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,

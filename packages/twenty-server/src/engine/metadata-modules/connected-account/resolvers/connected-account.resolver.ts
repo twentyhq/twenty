@@ -14,7 +14,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
@@ -50,10 +49,7 @@ export class ConnectedAccountResolver {
   ) {}
 
   @Query(() => [ConnectedAccountPublicDTO])
-  @UseGuards(
-    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async myConnectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,

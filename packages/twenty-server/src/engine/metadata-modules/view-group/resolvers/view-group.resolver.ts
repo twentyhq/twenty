@@ -4,7 +4,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
@@ -25,7 +24,6 @@ export class ViewGroupResolver {
   constructor(private readonly viewGroupService: ViewGroupService) {}
 
   @Query(() => [ViewGroupDTO])
-  @UseGuards(NoPermissionGuard)
   async getViewGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -39,7 +37,6 @@ export class ViewGroupResolver {
   }
 
   @Query(() => ViewGroupDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getViewGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

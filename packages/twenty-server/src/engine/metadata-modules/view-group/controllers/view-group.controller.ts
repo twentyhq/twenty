@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
@@ -54,7 +53,6 @@ export class ViewGroupController {
   constructor(private readonly viewGroupService: ViewGroupService) {}
 
   @Get()
-  @UseGuards(NoPermissionGuard)
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -68,7 +66,6 @@ export class ViewGroupController {
   }
 
   @Get(':id')
-  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

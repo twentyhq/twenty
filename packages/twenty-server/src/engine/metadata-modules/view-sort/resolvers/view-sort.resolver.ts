@@ -6,7 +6,6 @@ import { isDefined } from 'class-validator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
@@ -27,7 +26,6 @@ export class ViewSortResolver {
   constructor(private readonly viewSortService: ViewSortService) {}
 
   @Query(() => [ViewSortDTO])
-  @UseGuards(NoPermissionGuard)
   async getViewSorts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -41,7 +39,6 @@ export class ViewSortResolver {
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

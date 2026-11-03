@@ -23,7 +23,6 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -50,7 +49,6 @@ export class AiFrontComponentController {
 
   @Get('drafts/:draftId')
   @Header('Cache-Control', 'no-store')
-  @UseGuards(NoPermissionGuard)
   getPreview(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -63,7 +61,6 @@ export class AiFrontComponentController {
   }
 
   @Post('drafts/:draftId/preview-error')
-  @UseGuards(NoPermissionGuard)
   reportPreviewError(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

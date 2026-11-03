@@ -34,7 +34,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
@@ -160,10 +159,7 @@ export class FrontComponentResolver {
   }
 
   @Query(() => [FrontComponentDTO])
-  @UseGuards(
-    AccessPolicyGuard(FRONT_COMPONENT_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(FRONT_COMPONENT_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async frontComponents(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -185,10 +181,7 @@ export class FrontComponentResolver {
   }
 
   @Query(() => FrontComponentDTO, { nullable: true })
-  @UseGuards(
-    AccessPolicyGuard(FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY))
   async frontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -230,10 +223,7 @@ export class FrontComponentResolver {
   }
 
   @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(
-    AccessPolicyGuard(FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY))
   @UseFilters(ApplicationExceptionFilter)
   async generateFrontComponentApplicationTokenPair(
     @Args('applicationId', { type: () => UUIDScalarType })

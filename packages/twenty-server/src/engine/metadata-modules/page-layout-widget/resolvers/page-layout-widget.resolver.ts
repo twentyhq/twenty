@@ -23,7 +23,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
@@ -112,10 +111,7 @@ export class PageLayoutWidgetResolver {
   }
 
   @Query(() => [PageLayoutWidgetDTO])
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY))
   async getPageLayoutWidgets(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('pageLayoutTabId', { type: () => String }) pageLayoutTabId: string,
@@ -127,10 +123,7 @@ export class PageLayoutWidgetResolver {
   }
 
   @Query(() => PageLayoutWidgetDTO)
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY))
   async getPageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

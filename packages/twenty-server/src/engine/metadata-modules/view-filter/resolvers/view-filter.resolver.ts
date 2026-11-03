@@ -4,7 +4,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -25,7 +24,6 @@ export class ViewFilterResolver {
   constructor(private readonly viewFilterService: ViewFilterService) {}
 
   @Query(() => [ViewFilterDTO])
-  @UseGuards(NoPermissionGuard)
   async getViewFilters(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -39,7 +37,6 @@ export class ViewFilterResolver {
   }
 
   @Query(() => ViewFilterDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

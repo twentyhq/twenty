@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldFilterInput } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -94,10 +93,7 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
-  @UseGuards(
-    AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
   @Query(() => ObjectConnectionDTO)
   @AllowSuspendedWorkspace()
   async objects(
@@ -141,10 +137,7 @@ export class ObjectMetadataResolver {
     };
   }
 
-  @UseGuards(
-    AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
   @Query(() => ObjectMetadataDTO)
   async object(
     @Args('id', {

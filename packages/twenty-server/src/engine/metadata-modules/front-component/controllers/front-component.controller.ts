@@ -24,7 +24,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import {
@@ -54,7 +53,7 @@ export class FrontComponentController {
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
   @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async getBuiltJs(
     @Res() res: Response,
     @ApplicationTargetParam('frontComponentId', {

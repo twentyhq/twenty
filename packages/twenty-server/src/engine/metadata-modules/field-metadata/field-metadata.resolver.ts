@@ -21,7 +21,6 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
@@ -90,10 +89,7 @@ export class FieldMetadataResolver {
     private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
   ) {}
 
-  @UseGuards(
-    AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY))
   @Query(() => FieldConnectionDTO)
   async fields(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -141,10 +137,7 @@ export class FieldMetadataResolver {
     };
   }
 
-  @UseGuards(
-    AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY))
   @Query(() => FieldMetadataDTO)
   async field(
     @Args('id', {

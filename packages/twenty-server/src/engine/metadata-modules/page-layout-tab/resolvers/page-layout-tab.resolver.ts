@@ -18,7 +18,6 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
@@ -68,10 +67,7 @@ export class PageLayoutTabResolver {
   }
 
   @Query(() => [PageLayoutTabDTO])
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY))
   async getPageLayoutTabs(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('pageLayoutId', { type: () => String }) pageLayoutId: string,
@@ -83,10 +79,7 @@ export class PageLayoutTabResolver {
   }
 
   @Query(() => PageLayoutTabDTO)
-  @UseGuards(
-    AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_TAB_READ_ACCESS_POLICY))
   async getPageLayoutTab(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

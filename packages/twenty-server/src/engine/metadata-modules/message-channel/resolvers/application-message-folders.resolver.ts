@@ -14,7 +14,6 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ListAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/list-app-message-folders.input';
 import { SyncAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/sync-app-message-folders.input';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
@@ -32,7 +31,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)

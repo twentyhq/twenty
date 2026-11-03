@@ -26,7 +26,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -99,7 +98,7 @@ export class ViewController {
   }
 
   @Get(':id')
-  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
   async findOne(
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,

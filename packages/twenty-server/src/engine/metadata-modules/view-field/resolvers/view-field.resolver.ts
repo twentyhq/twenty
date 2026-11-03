@@ -4,7 +4,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -25,7 +24,6 @@ export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
   @Query(() => [ViewFieldDTO])
-  @UseGuards(NoPermissionGuard)
   async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -34,7 +32,6 @@ export class ViewFieldResolver {
   }
 
   @Query(() => ViewFieldDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
