@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, SettingsPath, type SystemPageKey } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -21,6 +22,7 @@ export const SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
       AppPath.WorkflowIndexPage,
       AppPath.WorkflowCoreShowPage,
     ],
+    requiredPermissionFlag: PermissionFlagType.WORKFLOWS,
   },
   agents: {
     label: msg`Agents`,
@@ -33,5 +35,6 @@ export const SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
     Icon: IconHierarchy,
     path: getSettingsPath(SettingsPath.Objects),
     activePathPatterns: [`${getSettingsPath(SettingsPath.Objects)}/*`],
+    requiredPermissionFlag: PermissionFlagType.DATA_MODEL,
   },
 };

@@ -10,7 +10,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
 
-// Items pinning the workflow object or its views, kept as the Workflows page once that object is deleted.
 const WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
   n."workspaceId" = $1
   AND (

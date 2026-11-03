@@ -1,3 +1,4 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
@@ -13,6 +14,41 @@ describe('isNavigationMenuItemReadable', () => {
           systemPageKey: 'workflows',
           position: 0,
         } as NavigationMenuItem,
+        permissionFlagMap: { [PermissionFlagType.WORKFLOWS]: true },
+        objectMetadataItems: [],
+        views: [],
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toBe(true);
+  });
+
+  it('hides a system page item from members without its permission', () => {
+    expect(
+      isNavigationMenuItemReadable({
+        item: {
+          id: 'data-model-system-page-id',
+          type: NavigationMenuItemType.SYSTEM_PAGE,
+          systemPageKey: 'dataModel',
+          position: 0,
+        } as NavigationMenuItem,
+        permissionFlagMap: { [PermissionFlagType.DATA_MODEL]: false },
+        objectMetadataItems: [],
+        views: [],
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toBe(false);
+  });
+
+  it('shows a system page item that needs no permission', () => {
+    expect(
+      isNavigationMenuItemReadable({
+        item: {
+          id: 'agents-system-page-id',
+          type: NavigationMenuItemType.SYSTEM_PAGE,
+          systemPageKey: 'agents',
+          position: 0,
+        } as NavigationMenuItem,
+        permissionFlagMap: {},
         objectMetadataItems: [],
         views: [],
         objectPermissionsByObjectMetadataId: {},
@@ -29,6 +65,7 @@ describe('isNavigationMenuItemReadable', () => {
           targetObjectMetadataId: 'missing-object-id',
           position: 0,
         } as NavigationMenuItem,
+        permissionFlagMap: {},
         objectMetadataItems: [],
         views: [],
         objectPermissionsByObjectMetadataId: {},
