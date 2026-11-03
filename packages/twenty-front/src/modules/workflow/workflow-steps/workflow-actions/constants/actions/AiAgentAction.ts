@@ -7,7 +7,7 @@ export const AI_AGENT_ACTION: {
   type: Extract<WorkflowActionType, 'AI_AGENT'>;
   icon: string;
 } = {
-  defaultLabel: msg`Agent`,
+  defaultLabel: msg`Generate`,
   type: 'AI_AGENT',
-  icon: 'IconLego',
+  icon: 'IconSparkles',
 };

@@ -3,6 +3,7 @@ import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delet
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 
 const HOT_COMPANY_ID = '20202020-ffff-4000-8000-000000000001';
@@ -110,6 +111,8 @@ describe('Nested relation per-parent limit (e2e)', () => {
     });
 
     await makeGraphqlApiRequest(destroyCompanies);
+    // a shard's last suite has no next suite to drain the jobs its cleanup starts
+    await waitForAllJobsToFinish();
   });
 
   it('caps a hot parent at the per-parent limit without starving siblings', async () => {

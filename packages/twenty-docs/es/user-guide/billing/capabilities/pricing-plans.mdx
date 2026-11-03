@@ -7,30 +7,45 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Resumen
 
-Twenty ofrece precios flexibles para adaptarse a equipos de todos los tamaños, tanto si prefieres alojamiento en la nube como autoalojamiento.
+Twenty ofrece precios flexibles para adaptarse a equipos de todos los tamaños, tanto si prefieres alojamiento en la nube como autoalojamiento. Consulta los precios actuales en [twenty.com/pricing](https://twenty.com/pricing).
 
 ## Planes en la nube
 
 ### Pro (Nube)
 
-Para equipos listos para escalar:
+Para un equipo:
 
 * Todas las funciones principales de CRM
 * Sincronización de correo electrónico y calendario
 * Flujos de trabajo y automatizaciones
-* Soporte estándar
+* Roles de **Administrador** y **Miembro**
+* Uso personal de IA: aproximadamente 100 tareas de IA por miembro a la semana
+* 1 crédito de espacio de trabajo por usuario al mes
+* Soporte por correo electrónico y chat
 
 <Note>
-Las funciones Premium (SSO, permisos a nivel de registro, datos de uso de IA y más) no están incluidas en el plan Pro.
+Las funciones Premium (roles personalizados, permisos a nivel de registro, SSO y más) no están incluidas en el plan Pro.
 </Note>
 
 ### Organización (Nube)
 
-Para equipos más grandes con necesidades avanzadas:
+Para varios equipos que necesitan más IA y control:
 
 * Todo lo de Pro
-* **Funciones Premium**: integración con SSO, permisos a nivel de registro, datos de uso de IA y más
+* 5 veces más uso personal de IA: aproximadamente 500 tareas de IA por miembro a la semana
+* 4 créditos de espacio de trabajo por usuario al mes
+* **Funciones Premium**: roles personalizados, permisos a nivel de registro, SSO y más
 * Soporte prioritario
+
+Consulta [Créditos](/es/user-guide/billing/capabilities/credits) para saber cómo funcionan el uso personal de IA y los créditos de espacio de trabajo.
+
+### Planes de Cloud Early
+
+Las suscripciones que comenzaron antes de los planes actuales conservan su precio y condiciones mientras sigan en ellos. La página Planes etiqueta estos planes como **Early**. Una vez que cambies de uno, no podrás volver a elegirlo.
+
+* **Pro (Early)**: roles personalizados con permisos a nivel de campo, soporte por correo electrónico y chat
+* **Organization (Early)**: todo lo incluido en Pro (Early), además de las funciones Premium y soporte prioritario
+* Ambos incluyen 5 créditos de espacio de trabajo al mes (50 al año con facturación anual) y ningún uso personal de IA
 
 ## Planes de autoalojamiento
 
@@ -38,7 +53,8 @@ Para equipos más grandes con necesidades avanzadas:
 
 Aloja Twenty en tu propia infraestructura sin costo:
 
-* Incluye todas las funciones de Pro
+* Todas las funciones de Pro CRM, además de roles personalizados
+* La IA se ejecuta con tus propias claves de proveedor de IA, sin uso personal de IA ni créditos de espacio de trabajo
 * Soporte de la comunidad a través de Discord
 * Control total sobre tus datos
 
@@ -46,8 +62,8 @@ Aloja Twenty en tu propia infraestructura sin costo:
 
 Para equipos que necesitan funciones premium mientras se autoalojan:
 
-* Todas las funciones de Pro
-* **Funciones Premium**: integración con SSO, permisos a nivel de registro, datos de uso de IA y más
+* Todo lo incluido en Free
+* **Funciones Premium**: permisos a nivel de registro, SSO y más
 * Soporte del equipo de Twenty
 * No es obligatorio publicar el código personalizado como código abierto antes de distribuirlo
 
@@ -55,11 +71,12 @@ Para equipos que necesitan funciones premium mientras se autoalojan:
 
 Las funciones premium solo están disponibles en los planes de Organización (Nube o Autoalojado):
 
-* **Integración de SSO**: inicio de sesión único con tu proveedor de identidad
+* **Roles personalizados**: roles adicionales a Administrador y Miembro, con permisos de objetos y campos (en Cloud, Pro (Early) también los conserva; las instancias autohospedadas los incluyen en todos los planes)
 * **Permisos a nivel de fila**: control de acceso granular a nivel de registro
-* **Datos de uso de IA**: Realice un seguimiento del consumo de IA en su espacio de trabajo
+* **Integración de SSO**: inicio de sesión único con tu proveedor de identidad
 * **Registros de auditoría**: comprueba qué ha estado haciendo cada miembro del espacio de trabajo
-* **Campañas de correo electrónico**: planifica qué correos electrónicos se deben enviar (disponible pronto)
+* **Límites de uso para miembros, claves de API y aplicaciones**: limita lo que puede gastar cada uno
+* **Dominio personalizado**: sirve tu espacio de trabajo desde tu propio dominio (también disponible en instancias autohospedadas)
 * **Espacios de trabajo ilimitados**: Crea tantos espacios de trabajo como quieras (solo para instalaciones autoalojadas)
 * **Código fuente privado**: No es obligatorio publicar los cambios en un repositorio público (solo para instalaciones autoalojadas)
 
@@ -68,7 +85,7 @@ Las funciones premium solo están disponibles en los planes de Organización (Nu
 ### Actualizar a Organización
 
 1. Ir a **Ajustes → Facturación → Planes**
-2. Haz clic en **Cambiar a Organización**
+2. Haz clic en **Cambiar a Organization**
 3. Confirma tu actualización
 
 ### Reducir a Pro

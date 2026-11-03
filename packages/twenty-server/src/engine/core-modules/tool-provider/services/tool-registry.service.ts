@@ -421,14 +421,21 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, compactOutput, spillLargeOutput } =
-      options;
-
-    const descriptors = await this.getCatalog(context, {
+    const {
       categories,
       excludeTools,
-      includeSchemas: true,
-    });
+      isToolOffered = () => true,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
+
+    const descriptors = (
+      await this.getCatalog(context, {
+        categories,
+        excludeTools,
+        includeSchemas: true,
+      })
+    ).filter(isToolOffered);
 
     const toolSet = this.hydrateToolSet(descriptors, context, {
       compactOutput,
@@ -523,7 +530,7 @@ export class ToolRegistryService {
 
     return {
       ...(await context.resolveExecutionContext()),
-      explicitObjectGrantsRoleId: context.explicitObjectGrantsRoleId,
+      explicitObjectGrants: context.explicitObjectGrants,
     };
   }
 

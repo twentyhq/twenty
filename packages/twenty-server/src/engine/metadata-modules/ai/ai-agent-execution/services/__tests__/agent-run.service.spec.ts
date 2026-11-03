@@ -1,5 +1,6 @@
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 
+import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import {
   AiException,
@@ -63,7 +64,11 @@ const buildService = (overrides: Record<string, unknown>) => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
+    new AgentRunCallerContextService(
+      agentActorContextService as never,
+      {} as never,
+      {} as never,
+    ),
     {} as never,
     applicationLookupService as never,
     agentRepository as never,
@@ -86,6 +91,35 @@ const runAgent = (service: AgentRunService) =>
   });
 
 describe('AgentRunService', () => {
+  describe('buildExecutionContext', () => {
+    it('reads the thread as the calling application when a run resumes', async () => {
+      const { service } = buildService({});
+
+      const executionContext = await service.buildExecutionContext({
+        workspaceId: WORKSPACE_ID,
+        caller: {
+          type: 'AGENT_API_RUN',
+          ref: {
+            agentId: AGENT_ID,
+            runAsWorkspaceMemberId: null,
+            requestUserWorkspaceId: null,
+            createdBy: {
+              source: 'APPLICATION',
+              name: APPLICATION.name,
+              workspaceMemberId: null,
+              context: { applicationId: APPLICATION_ID },
+            },
+          },
+        },
+      });
+
+      expect(executionContext.conversationViewer).toEqual({
+        workspaceMemberId: undefined,
+        applicationId: APPLICATION_ID,
+      });
+    });
+  });
+
   describe('run', () => {
     it('runs with the overridden label and response format', async () => {
       const { service, agentRunnerService } = buildService({
@@ -101,6 +135,18 @@ describe('AgentRunService', () => {
             agentId: AGENT_ID,
             title: 'Market researcher',
           }),
+        }),
+      );
+    });
+
+    it('returns the id of the turn the run opens', async () => {
+      const { service, agentRunnerService } = buildService({});
+
+      const { runId } = await runAgent(service);
+
+      expect(agentRunnerService.start).toHaveBeenCalledWith(
+        expect.objectContaining({
+          turnId: runId,
         }),
       );
     });

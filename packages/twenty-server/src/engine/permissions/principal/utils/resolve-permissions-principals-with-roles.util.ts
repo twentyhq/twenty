@@ -47,6 +47,27 @@ type PermissionsPrincipalRoleMaps = {
   flatRoleTargetMaps?: AllFlatEntityMaps['flatRoleTargetMaps'];
 };
 
+const findWorkspaceMemberRoleId = ({
+  workspaceMemberId,
+  roleMaps,
+}: {
+  workspaceMemberId: string;
+  roleMaps: Pick<
+    PermissionsPrincipalRoleMaps,
+    'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap'
+  >;
+}): string | undefined => {
+  const userId =
+    roleMaps.flatWorkspaceMemberMaps.byId[workspaceMemberId]?.userId;
+  const userWorkspaceId = isDefined(userId)
+    ? roleMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId]
+    : undefined;
+
+  return isDefined(userWorkspaceId)
+    ? roleMaps.userWorkspaceRoleMap[userWorkspaceId]
+    : undefined;
+};
+
 const findMainPrincipalRoleId = ({
   mainPrincipal,
   roleMaps,
@@ -54,49 +75,36 @@ const findMainPrincipalRoleId = ({
   mainPrincipal: PermissionsMainPrincipal;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): string | undefined => {
-  if ('isDeprecatedRoleOnly' in mainPrincipal) {
-    return mainPrincipal.roleId;
+  switch (mainPrincipal.type) {
+    case 'deprecatedRoleOnly':
+      return mainPrincipal.roleId;
+    case 'workspaceMember':
+      return findWorkspaceMemberRoleId({
+        workspaceMemberId: mainPrincipal.workspaceMemberId,
+        roleMaps,
+      });
+    case 'apiKey':
+      return roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId];
+    case 'agent':
+      return roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]
+        ?.roleId;
+    case 'application': {
+      const flatApplication =
+        roleMaps.flatApplicationMaps.byId[mainPrincipal.applicationId];
+
+      return isDefined(flatApplication) && !isDefined(flatApplication.deletedAt)
+        ? (flatApplication.defaultRoleId ?? undefined)
+        : undefined;
+    }
+    case 'webhook':
+      return isDefined(roleMaps.flatRoleTargetMaps)
+        ? findFlatRoleTargetFromForeignKey({
+            flatRoleTargetMaps: roleMaps.flatRoleTargetMaps,
+            targetMetadataForeignKey: 'webhookId',
+            targetId: mainPrincipal.webhookId,
+          })?.roleId
+        : undefined;
   }
-
-  if ('workspaceMemberId' in mainPrincipal) {
-    const userId =
-      roleMaps.flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
-        ?.userId;
-    const userWorkspaceId = isDefined(userId)
-      ? roleMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId]
-      : undefined;
-
-    return isDefined(userWorkspaceId)
-      ? roleMaps.userWorkspaceRoleMap[userWorkspaceId]
-      : undefined;
-  }
-
-  if ('apiKeyId' in mainPrincipal) {
-    return roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId];
-  }
-
-  if ('agentId' in mainPrincipal) {
-    return roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]?.roleId;
-  }
-
-  if ('applicationId' in mainPrincipal) {
-    const flatApplication =
-      roleMaps.flatApplicationMaps.byId[mainPrincipal.applicationId];
-
-    return isDefined(flatApplication) && !isDefined(flatApplication.deletedAt)
-      ? (flatApplication.defaultRoleId ?? undefined)
-      : undefined;
-  }
-
-  if (!isDefined(roleMaps.flatRoleTargetMaps)) {
-    return undefined;
-  }
-
-  return findFlatRoleTargetFromForeignKey({
-    flatRoleTargetMaps: roleMaps.flatRoleTargetMaps,
-    targetMetadataForeignKey: 'webhookId',
-    targetId: mainPrincipal.webhookId,
-  })?.roleId;
 };
 
 // TODO(@charlesBochet): an agent or application always needs a role; until then one without counts as the custom app
@@ -109,7 +117,7 @@ const resolveLimitingPrincipal = ({
 }): PermissionsLimitingPrincipalWithRole | undefined => {
   if (
     !isDefined(limitingPrincipal) ||
-    'isDeprecatedRoleOnly' in limitingPrincipal
+    limitingPrincipal.type === 'deprecatedRoleOnly'
   ) {
     return limitingPrincipal;
   }
@@ -118,7 +126,7 @@ const resolveLimitingPrincipal = ({
     roleMaps.flatRoleTargetByAgentIdMaps[limitingPrincipal.agentId]?.roleId;
 
   return isDefined(roleId)
-    ? { roleId, agentId: limitingPrincipal.agentId }
+    ? { type: 'agent', roleId, agentId: limitingPrincipal.agentId }
     : undefined;
 };
 
@@ -131,7 +139,7 @@ const resolveApplicationPrincipal = ({
   mainPrincipal: PermissionsMainPrincipalWithRole;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): PermissionsApplicationPrincipalWithRole | undefined => {
-  if (!('applicationId' in applicationPrincipal)) {
+  if (applicationPrincipal.type !== 'application') {
     return applicationPrincipal;
   }
 
@@ -145,15 +153,18 @@ const resolveApplicationPrincipal = ({
   const { applicationRoleId } = resolveApplicationRoleId({
     application: flatApplication,
     userRoleId:
-      'workspaceMemberId' in mainPrincipal ? mainPrincipal.roleId : undefined,
+      mainPrincipal.type === 'workspaceMember'
+        ? mainPrincipal.roleId
+        : undefined,
   });
 
   return isDefined(applicationRoleId)
     ? {
+        type: 'application',
         roleId: applicationRoleId,
         applicationId: applicationPrincipal.applicationId,
       }
-    : { isCustomApp: true };
+    : { type: 'customApplication' };
 };
 
 export const resolvePermissionsPrincipalsWithRoles = ({

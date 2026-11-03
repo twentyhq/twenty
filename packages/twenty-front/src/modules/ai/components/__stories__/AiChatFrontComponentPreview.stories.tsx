@@ -57,6 +57,45 @@ export const InteractivePreview: Story = {
   },
 };
 
+export const CompanySampleRecords: Story = {
+  args: { draftId: 'companies' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByText(
+        '3 companies listed, 2 ideal customer profiles',
+        {},
+        { timeout: 30000 },
+      ),
+    ).toBeVisible();
+    const companyNames = () =>
+      canvas.getAllByRole('listitem').map((item) => item.textContent);
+    await expect(companyNames()).toEqual([
+      'Nova: 220 employees',
+      'Acme: 50 employees',
+      'Orbit: 10 employees',
+    ]);
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort by name' }));
+    await waitFor(() =>
+      expect(companyNames()).toEqual([
+        'Acme: 50 employees',
+        'Nova: 220 employees',
+        'Orbit: 10 employees',
+      ]),
+    );
+    const search = canvas.getByRole('textbox', { name: 'Search companies' });
+    await userEvent.type(search, 'AC');
+    await expect(
+      await canvas.findByText('1 companies listed, 1 ideal customer profiles'),
+    ).toBeVisible();
+    await expect(companyNames()).toEqual(['Acme: 50 employees']);
+    await userEvent.clear(search);
+    await expect(
+      await canvas.findByText('3 companies listed, 2 ideal customer profiles'),
+    ).toBeVisible();
+  },
+};
+
 export const RecordPage: Story = {
   args: { draftId: 'record-page' },
   play: async ({ canvasElement }) => {
