@@ -9,7 +9,7 @@ import {
   type PermissionsLimitingPrincipal,
   type PermissionsMainPrincipal,
 } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { type PermissionsEphemeralRole } from 'src/engine/permissions/principal/types/permissions-ephemeral-role.type';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,
@@ -168,7 +168,7 @@ type PermissionsIdentities = {
   mainPrincipal: PermissionsMainPrincipal;
   limitingPrincipal?: PermissionsLimitingPrincipal;
   applicationPrincipal: PermissionsApplicationPrincipal;
-  ephemeralRole?: PermissionsEphemeralRole;
+  aiRunScope?: AiRunPermissionScope;
 };
 
 const toApplicationPrincipal = (
@@ -197,7 +197,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        ephemeralRole: authContext.ephemeralRole,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'apiKey':
       return {
@@ -206,7 +206,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        ephemeralRole: authContext.ephemeralRole,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'application':
       return {
@@ -216,7 +216,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        ephemeralRole: authContext.ephemeralRole,
+        aiRunScope: authContext.aiRunScope,
       };
     case 'webhook':
       return {
@@ -281,8 +281,8 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
-    ...(isDefined(identities.ephemeralRole)
-      ? { ephemeralRole: identities.ephemeralRole }
+    ...(isDefined(identities.aiRunScope)
+      ? { aiRunScope: identities.aiRunScope }
       : {}),
   };
 };

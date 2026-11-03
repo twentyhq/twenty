@@ -161,7 +161,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipal,
-      ephemeralRole: {
+      aiRunScope: {
         objectsPermissions: {
           [flatObjectMetadata.id]: {
             ...readOnlyPermissions,

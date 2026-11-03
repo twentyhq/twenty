@@ -6,7 +6,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveAiRunEphemeralRole } from 'src/engine/permissions/role/utils/resolve-ai-run-ephemeral-role.util';
+import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -55,9 +55,9 @@ flatFieldMetadataMaps.byUniversalIdentifier.email = getFlatFieldMetadataMock({
 flatFieldMetadataMaps.universalIdentifierById[EMAIL_FIELD_ID] = 'email';
 
 const resolve = (
-  scope: Parameters<typeof resolveAiRunEphemeralRole>[0]['scope'],
+  scope: Parameters<typeof resolveAiRunPermissionScope>[0]['scope'],
 ) => {
-  const { objectsPermissions, permissionFlags } = resolveAiRunEphemeralRole({
+  const { objectsPermissions, permissionFlags } = resolveAiRunPermissionScope({
     scope,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -71,7 +71,7 @@ const resolve = (
   };
 };
 
-describe('resolveAiRunEphemeralRole', () => {
+describe('resolveAiRunPermissionScope', () => {
   it('denies everything an empty scope leaves out', () => {
     const { objectsPermissions, grantedPermissionFlags } = resolve({});
 
@@ -272,7 +272,7 @@ describe('resolveAiRunEphemeralRole', () => {
 
     it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
       const isInsertDenied = (
-        ephemeralRole?: PermissionsPrincipalsWithRolesContext['ephemeralRole'],
+        aiRunScope?: PermissionsPrincipalsWithRolesContext['aiRunScope'],
       ) =>
         isObjectOperationDeniedToPrincipal({
           principal: {
@@ -283,7 +283,7 @@ describe('resolveAiRunEphemeralRole', () => {
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },
-            ...(isDefined(ephemeralRole) ? { ephemeralRole } : {}),
+            ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
           },
           metadataMaps: {
             flatObjectMetadataMaps,
@@ -315,7 +315,7 @@ describe('resolveAiRunEphemeralRole', () => {
       expect(isInsertDenied()).toBe(false);
       expect(
         isInsertDenied(
-          resolveAiRunEphemeralRole({
+          resolveAiRunPermissionScope({
             scope: {},
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,

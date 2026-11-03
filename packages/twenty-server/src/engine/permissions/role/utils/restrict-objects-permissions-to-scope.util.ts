@@ -1,26 +1,26 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 
-import { type PermissionsEphemeralRole } from 'src/engine/permissions/principal/types/permissions-ephemeral-role.type';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 
-// the roles' predicates keep their insert-guard field exemption, except on fields the ephemeral role denies writing
-export const restrictObjectsPermissionsToEphemeralRole = ({
+// the roles' predicates keep their insert-guard field exemption, except on fields the scope denies writing
+export const restrictObjectsPermissionsToScope = ({
   objectsPermissions,
-  ephemeralRole,
+  aiRunScope,
 }: {
   objectsPermissions: ObjectsPermissions;
-  ephemeralRole: Pick<PermissionsEphemeralRole, 'objectsPermissions'>;
+  aiRunScope: Pick<AiRunPermissionScope, 'objectsPermissions'>;
 }): ObjectsPermissions => {
   const intersectedObjectsPermissions = computePermissionIntersection([
     objectsPermissions,
-    ephemeralRole.objectsPermissions,
+    aiRunScope.objectsPermissions,
   ]);
 
   return Object.fromEntries(
     Object.entries(objectsPermissions).map(
       ([objectMetadataId, objectPermissions]) => {
-        const ephemeralRoleRestrictedFields =
-          ephemeralRole.objectsPermissions[objectMetadataId]
+        const scopeRestrictedFields =
+          aiRunScope.objectsPermissions[objectMetadataId]
             ?.restrictedFields ?? {};
 
         return [
@@ -30,7 +30,7 @@ export const restrictObjectsPermissionsToEphemeralRole = ({
             rowLevelPermissionPredicates:
               objectPermissions.rowLevelPermissionPredicates.filter(
                 ({ fieldMetadataId }) =>
-                  ephemeralRoleRestrictedFields[fieldMetadataId]?.canUpdate !==
+                  scopeRestrictedFields[fieldMetadataId]?.canUpdate !==
                   false,
               ),
             rowLevelPermissionPredicateGroups:

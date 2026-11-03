@@ -188,11 +188,11 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { ephemeralRole } = principal;
+    const { aiRunScope } = principal;
 
     return (
-      (!isDefined(ephemeralRole) ||
-        (ephemeralRole.permissionFlags[setting] ?? false)) &&
+      (!isDefined(aiRunScope) ||
+        (aiRunScope.permissionFlags[setting] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalRoleIds(principal),
         setting,

@@ -15,7 +15,7 @@ import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissio
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
-import { restrictObjectsPermissionsToEphemeralRole } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-ephemeral-role.util';
+import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
 
 export const computeObjectsPermissionsForRoles = ({
   principal,
@@ -29,7 +29,7 @@ export const computeObjectsPermissionsForRoles = ({
     | 'mainPrincipal'
     | 'limitingPrincipal'
     | 'applicationPrincipal'
-    | 'ephemeralRole'
+    | 'aiRunScope'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -73,10 +73,10 @@ export const computeObjectsPermissionsForRoles = ({
 
   const objectsPermissions = computePermissionIntersection(permissionsPerRole);
 
-  return isDefined(principal.ephemeralRole)
-    ? restrictObjectsPermissionsToEphemeralRole({
+  return isDefined(principal.aiRunScope)
+    ? restrictObjectsPermissionsToScope({
         objectsPermissions,
-        ephemeralRole: principal.ephemeralRole,
+        aiRunScope: principal.aiRunScope,
       })
     : objectsPermissions;
 };
