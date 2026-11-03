@@ -1,5 +1,4 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-
+import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
 import { type IngestMessageAttachment } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
@@ -52,7 +51,7 @@ export const uploadMessageAttachment = async ({
       filename,
       size: content.byteLength,
       fieldMetadataUniversalIdentifier:
-        STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+        MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER,
     },
     caller: 'uploadMessageAttachment',
     signal,

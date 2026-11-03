@@ -9,12 +9,21 @@ import {
   type MockInstance,
 } from 'vitest';
 
+import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
 import { uploadMessageAttachment } from '@/sdk/logic-function/messaging/upload-message-attachment';
 
 const UPLOAD_URL = 'https://storage.test/upload/pending-file';
 
 const toGraphqlResponse = (data: Record<string, unknown>) =>
   new Response(JSON.stringify({ data }), { status: 200 });
+
+describe('MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER', () => {
+  it('matches the standard message attachments field', () => {
+    expect(MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER).toBe(
+      STANDARD_OBJECTS.message.fields.attachments.universalIdentifier,
+    );
+  });
+});
 
 describe('uploadMessageAttachment', () => {
   let fetchSpy: MockInstance<typeof fetch>;
