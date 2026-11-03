@@ -6,7 +6,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-export const resolveAgentChatMessageWorkspaceMemberId = ({
+export const resolveAgentChatMessageWorkspaceMemberIdOrThrow = ({
   message,
   ownerWorkspaceMemberId,
 }: {

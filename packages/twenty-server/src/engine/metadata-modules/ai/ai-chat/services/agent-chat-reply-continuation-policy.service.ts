@@ -5,7 +5,7 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { resolveAgentChatMessageWorkspaceMemberId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id.util';
+import { resolveAgentChatMessageWorkspaceMemberIdOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id-or-throw.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -123,10 +123,12 @@ export class AgentChatReplyContinuationPolicyService {
     ownerWorkspaceMemberId: string | null;
   }): Promise<boolean> {
     try {
-      const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberId({
-        message,
-        ownerWorkspaceMemberId,
-      });
+      const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberIdOrThrow(
+        {
+          message,
+          ownerWorkspaceMemberId,
+        },
+      );
       const { userWorkspaceId } =
         await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
           workspaceId,

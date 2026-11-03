@@ -17,7 +17,7 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
-import { resolveAgentChatMessageWorkspaceMemberId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id.util';
+import { resolveAgentChatMessageWorkspaceMemberIdOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id-or-throw.util';
 import {
   AiException,
   AiExceptionCode,
@@ -69,17 +69,12 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    const shouldLoadThreadOwner =
-      !isDefined(message?.senderWorkspaceMemberId) &&
-      (!isDefined(message) || isDefined(message.senderApplicationId));
-    const ownerWorkspaceMemberId = shouldLoadThreadOwner
-      ? (
-          await this.threads.findOneOrFail(workspaceId, {
-            where: { id: threadId },
-          })
-        ).workspaceMemberId
-      : null;
-    const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberId({
+    const ownerWorkspaceMemberId = await this.loadThreadOwnerWorkspaceMemberId({
+      workspaceId,
+      threadId,
+      message,
+    });
+    const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberIdOrThrow({
       message,
       ownerWorkspaceMemberId,
     });
@@ -93,6 +88,33 @@ export class AgentChatActorService {
       applicationId: message?.senderApplicationId ?? null,
     };
     return { message, sender };
+  }
+
+  private async loadThreadOwnerWorkspaceMemberId({
+    workspaceId,
+    threadId,
+    message,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    message: Pick<
+      AgentMessageWorkspaceEntity,
+      'senderWorkspaceMemberId' | 'senderApplicationId'
+    > | null;
+  }): Promise<string | null> {
+    if (isDefined(message?.senderWorkspaceMemberId)) {
+      return null;
+    }
+
+    if (isDefined(message) && !isDefined(message.senderApplicationId)) {
+      return null;
+    }
+
+    const thread = await this.threads.findOneOrFail(workspaceId, {
+      where: { id: threadId },
+    });
+
+    return thread.workspaceMemberId;
   }
 
   async authorize({
