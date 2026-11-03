@@ -7,7 +7,7 @@ const CUSTOM_APPLICATION = 'custom-application';
 
 const rescope = (row: {
   availabilityObjectMetadataId: string | null;
-  overrides: unknown;
+  overrides: Record<string, unknown> | null;
 }) =>
   rescopeWorkflowCommandMenuItem({
     row: { ...row, availabilityCoreObjectName: null },
@@ -49,10 +49,11 @@ describe('rescopeWorkflowCommandMenuItem', () => {
       }),
     ).toEqual({
       availabilityObjectMetadataId: null,
-      availabilityCoreObjectName: null,
+      availabilityCoreObjectName: 'workflow',
       overrides: {
         [CUSTOM_APPLICATION]: {
           availabilityObjectMetadataId: COMPANY_OBJECT_METADATA_ID,
+          availabilityCoreObjectName: null,
         },
       },
     });
@@ -66,10 +67,19 @@ describe('rescopeWorkflowCommandMenuItem', () => {
           [CUSTOM_APPLICATION]: { availabilityObjectMetadataId: null },
         },
       }),
-    ).toMatchObject({ availabilityCoreObjectName: null });
+    ).toEqual({
+      availabilityObjectMetadataId: null,
+      availabilityCoreObjectName: 'workflow',
+      overrides: {
+        [CUSTOM_APPLICATION]: {
+          availabilityObjectMetadataId: null,
+          availabilityCoreObjectName: null,
+        },
+      },
+    });
   });
 
-  it('strips workflow targets from every author entry and drops emptied entries', () => {
+  it('drops redundant workflow targets from every author entry', () => {
     expect(
       rescope({
         availabilityObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
@@ -90,7 +100,7 @@ describe('rescopeWorkflowCommandMenuItem', () => {
     });
   });
 
-  it('strips a workflow target from a legacy flat override', () => {
+  it('drops a redundant workflow target from a legacy flat override', () => {
     expect(
       rescope({
         availabilityObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
@@ -106,7 +116,7 @@ describe('rescopeWorkflowCommandMenuItem', () => {
     });
   });
 
-  it('drops an override pointing at the workflow object from an item scoped elsewhere', () => {
+  it('moves an author override targeting the workflow object to the workflow core object', () => {
     expect(
       rescope({
         availabilityObjectMetadataId: COMPANY_OBJECT_METADATA_ID,
@@ -119,7 +129,12 @@ describe('rescopeWorkflowCommandMenuItem', () => {
     ).toEqual({
       availabilityObjectMetadataId: COMPANY_OBJECT_METADATA_ID,
       availabilityCoreObjectName: null,
-      overrides: null,
+      overrides: {
+        [CUSTOM_APPLICATION]: {
+          availabilityObjectMetadataId: null,
+          availabilityCoreObjectName: 'workflow',
+        },
+      },
     });
   });
 });

@@ -1,6 +1,8 @@
 import { isPlainObject } from 'twenty-shared/utils';
 
 const AVAILABILITY_OBJECT_METADATA_ID_KEY = 'availabilityObjectMetadataId';
+const AVAILABILITY_CORE_OBJECT_NAME_KEY = 'availabilityCoreObjectName';
+const WORKFLOW_CORE_OBJECT_NAME = 'workflow';
 
 type CommandMenuItemAvailabilityRow = {
   availabilityObjectMetadataId: string | null;
@@ -8,73 +10,85 @@ type CommandMenuItemAvailabilityRow = {
   overrides: unknown;
 };
 
-type OverrideEntryRewrite = {
+const rescopeOverrideEntry = ({
+  entry,
+  workflowObjectMetadataId,
+  isBaseTargetingWorkflow,
+}: {
   entry: Record<string, unknown>;
-  hasRemainingAvailabilityOverride: boolean;
-};
-
-const removeWorkflowAvailabilityOverride = (
-  entry: Record<string, unknown>,
-  workflowObjectMetadataId: string,
-): OverrideEntryRewrite => {
-  if (entry[AVAILABILITY_OBJECT_METADATA_ID_KEY] !== workflowObjectMetadataId) {
-    return {
-      entry,
-      hasRemainingAvailabilityOverride:
-        AVAILABILITY_OBJECT_METADATA_ID_KEY in entry,
-    };
+  workflowObjectMetadataId: string;
+  isBaseTargetingWorkflow: boolean;
+}): Record<string, unknown> => {
+  if (!(AVAILABILITY_OBJECT_METADATA_ID_KEY in entry)) {
+    return entry;
   }
 
-  const { [AVAILABILITY_OBJECT_METADATA_ID_KEY]: _removed, ...rest } = entry;
+  const {
+    [AVAILABILITY_OBJECT_METADATA_ID_KEY]: availabilityObjectMetadataId,
+    ...rest
+  } = entry;
 
-  return { entry: rest, hasRemainingAvailabilityOverride: false };
+  if (availabilityObjectMetadataId === workflowObjectMetadataId) {
+    return isBaseTargetingWorkflow
+      ? rest
+      : {
+          ...rest,
+          [AVAILABILITY_OBJECT_METADATA_ID_KEY]: null,
+          [AVAILABILITY_CORE_OBJECT_NAME_KEY]: WORKFLOW_CORE_OBJECT_NAME,
+        };
+  }
+
+  // The base moves to the workflow core object, which this author's target must still win over.
+  return isBaseTargetingWorkflow
+    ? { ...entry, [AVAILABILITY_CORE_OBJECT_NAME_KEY]: null }
+    : entry;
 };
 
 // Overrides are either one legacy flat entry or one entry per authoring application.
-const rewriteOverrides = (
-  overrides: unknown,
-  workflowObjectMetadataId: string,
-): { overrides: unknown; hasRemainingAvailabilityOverride: boolean } => {
+const rescopeOverrides = ({
+  overrides,
+  workflowObjectMetadataId,
+  isBaseTargetingWorkflow,
+}: {
+  overrides: unknown;
+  workflowObjectMetadataId: string;
+  isBaseTargetingWorkflow: boolean;
+}): unknown => {
   if (!isPlainObject(overrides)) {
-    return { overrides, hasRemainingAvailabilityOverride: false };
+    return overrides;
   }
 
   if (AVAILABILITY_OBJECT_METADATA_ID_KEY in overrides) {
-    const { entry, hasRemainingAvailabilityOverride } =
-      removeWorkflowAvailabilityOverride(overrides, workflowObjectMetadataId);
+    const entry = rescopeOverrideEntry({
+      entry: overrides,
+      workflowObjectMetadataId,
+      isBaseTargetingWorkflow,
+    });
 
-    return {
-      overrides: Object.keys(entry).length > 0 ? entry : null,
-      hasRemainingAvailabilityOverride,
-    };
+    return Object.keys(entry).length > 0 ? entry : null;
   }
 
-  let hasRemainingAvailabilityOverride = false;
-  const rewrittenEntries = Object.entries(overrides).flatMap(
+  const rescopedEntries = Object.entries(overrides).flatMap(
     ([author, entry]) => {
       if (!isPlainObject(entry)) {
         return [[author, entry] as const];
       }
 
-      const rewrite = removeWorkflowAvailabilityOverride(
+      const rescopedEntry = rescopeOverrideEntry({
         entry,
         workflowObjectMetadataId,
-      );
+        isBaseTargetingWorkflow,
+      });
 
-      hasRemainingAvailabilityOverride ||=
-        rewrite.hasRemainingAvailabilityOverride;
-
-      return Object.keys(rewrite.entry).length > 0
-        ? [[author, rewrite.entry] as const]
+      return Object.keys(rescopedEntry).length > 0
+        ? [[author, rescopedEntry] as const]
         : [];
     },
   );
 
-  return {
-    overrides:
-      rewrittenEntries.length > 0 ? Object.fromEntries(rewrittenEntries) : null,
-    hasRemainingAvailabilityOverride,
-  };
+  return rescopedEntries.length > 0
+    ? Object.fromEntries(rescopedEntries)
+    : null;
 };
 
 // Returns null when the row does not reference the workflow object.
@@ -85,12 +99,13 @@ export const rescopeWorkflowCommandMenuItem = ({
   row: CommandMenuItemAvailabilityRow;
   workflowObjectMetadataId: string;
 }): CommandMenuItemAvailabilityRow | null => {
-  const { overrides, hasRemainingAvailabilityOverride } = rewriteOverrides(
-    row.overrides,
-    workflowObjectMetadataId,
-  );
   const isBaseTargetingWorkflow =
     row.availabilityObjectMetadataId === workflowObjectMetadataId;
+  const overrides = rescopeOverrides({
+    overrides: row.overrides,
+    workflowObjectMetadataId,
+    isBaseTargetingWorkflow,
+  });
 
   if (
     !isBaseTargetingWorkflow &&
@@ -99,16 +114,11 @@ export const rescopeWorkflowCommandMenuItem = ({
     return null;
   }
 
-  if (!isBaseTargetingWorkflow) {
-    return { ...row, overrides };
-  }
-
-  // An author who re-targeted the item keeps their choice; only the base scope moves.
-  return {
-    availabilityObjectMetadataId: null,
-    availabilityCoreObjectName: hasRemainingAvailabilityOverride
-      ? row.availabilityCoreObjectName
-      : 'workflow',
-    overrides,
-  };
+  return isBaseTargetingWorkflow
+    ? {
+        availabilityObjectMetadataId: null,
+        availabilityCoreObjectName: WORKFLOW_CORE_OBJECT_NAME,
+        overrides,
+      }
+    : { ...row, overrides };
 };
