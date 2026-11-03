@@ -151,6 +151,14 @@ export const WorkflowEditActionCode = ({
   // oxlint-disable-next-line twenty/no-state-useref
   const codeEditGenerationRef = useRef(0);
 
+  // Async continuations write on top of input edits made while they were pending
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestActionRef = useRef(action);
+  latestActionRef.current = action;
+
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestFunctionInputRef = useRef(functionInput);
+
   const persistCode = useDebouncedCallback(async (newCode: string) => {
     if (actionOptions.readonly === true) {
       return;
@@ -171,7 +179,7 @@ export const WorkflowEditActionCode = ({
 
     const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
       newInput: newFunctionInput,
-      oldInput: functionInput,
+      oldInput: latestFunctionInputRef.current,
     });
 
     const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
@@ -179,22 +187,30 @@ export const WorkflowEditActionCode = ({
       oldInput: logicFunctionTestData.input,
     });
 
+    latestFunctionInputRef.current = newMergedInput;
     setFunctionInput(newMergedInput);
 
     updateLogicFunctionTestInput(newMergedTestInput);
 
+    const latestAction = latestActionRef.current;
+
     actionOptions.onActionUpdate({
-      ...action,
+      ...latestAction,
       settings: {
-        ...action.settings,
+        ...latestAction.settings,
         input: { code: newCode, logicFunctionInput: newMergedInput },
       },
     });
   }, 500);
 
   const handleInputChange = async (value: any, path: string[]) => {
-    const updatedFunctionInput = setNestedValue(functionInput, path, value);
+    const updatedFunctionInput = setNestedValue(
+      latestFunctionInputRef.current,
+      path,
+      value,
+    );
 
+    latestFunctionInputRef.current = updatedFunctionInput;
     setFunctionInput(updatedFunctionInput);
 
     updateAction({
@@ -253,11 +269,13 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
+    const latestAction = latestActionRef.current;
+
     updateAction({
-      ...action,
+      ...latestAction,
       settings: {
-        ...action.settings,
-        input: buildStepInput(functionInput),
+        ...latestAction.settings,
+        input: buildStepInput(latestFunctionInputRef.current),
         outputSchema: getOutputSchemaFromValue(testResult),
       },
     });
