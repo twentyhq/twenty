@@ -175,3 +175,29 @@ export const Disabled: Story = {
     await expect(args.onConfigurationChange).not.toHaveBeenCalled();
   },
 };
+
+export const UnavailableReasoningEffort: Story = {
+  args: { initialModelId: 'story/reasoning-two@low' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Low (unavailable)' }),
+    );
+    const retiredEffort = await body.findByRole('option', {
+      name: 'Low (unavailable)',
+    });
+    await expect(retiredEffort).toBeDisabled();
+    await userEvent.click(retiredEffort);
+    await expect(args.onModelIdChange).not.toHaveBeenCalled();
+    await expect(
+      canvas.getByText('Selected model: story/reasoning-two@low'),
+    ).toBeVisible();
+    await userEvent.click(body.getByRole('option', { name: 'High' }));
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(1);
+    await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
+      'story/reasoning-two@high',
+    );
+    await expect(canvas.getByRole('button', { name: 'High' })).toBeVisible();
+  },
+};

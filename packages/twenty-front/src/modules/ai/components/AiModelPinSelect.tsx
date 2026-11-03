@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ComponentProps } from 'react';
 import { isAiModelEffort, parseAiModelVariantId } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconWand } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -64,6 +64,8 @@ export const AiModelPinSelect = ({
   );
   const baseModel = aiModels.find((model) => model.modelId === baseModelId);
   const efforts = (baseModel?.efforts ?? []).filter(isAiModelEffort);
+  const hasUnavailableEffort = isDefined(effort) && !efforts.includes(effort);
+  const hasEffortSelect = isNonEmptyArray(efforts) || hasUnavailableEffort;
   const selectedModelValue =
     automaticOption?.value ??
     (isNonEmptyString(baseModelId) ? baseModelId : AUTOMATIC_MODEL_PIN);
@@ -95,7 +97,7 @@ export const AiModelPinSelect = ({
   };
 
   return (
-    <StyledRow hasEffortSelect={efforts.length > 0}>
+    <StyledRow hasEffortSelect={hasEffortSelect}>
       <Select
         dropdownId={dropdownId}
         label={label}
@@ -125,7 +127,7 @@ export const AiModelPinSelect = ({
         selectSizeVariant={selectSizeVariant}
         dropdownWidth={dropdownWidth}
       />
-      {efforts.length > 0 && (
+      {hasEffortSelect && (
         <Select
           dropdownId={`${dropdownId}-effort`}
           value={effort ?? DEFAULT_EFFORT}
@@ -136,6 +138,16 @@ export const AiModelPinSelect = ({
               label: t`Default`,
               fullLabel: t`Reasoning: Default`,
             },
+            ...(hasUnavailableEffort
+              ? [
+                  {
+                    value: effort,
+                    label: t`${getAiModelEffortLabel(effort)} (unavailable)`,
+                    fullLabel: t`Reasoning: ${getAiModelEffortLabel(effort)} (unavailable)`,
+                    disabled: true,
+                  },
+                ]
+              : []),
             ...efforts.map((availableEffort) => ({
               value: availableEffort,
               label: getAiModelEffortLabel(availableEffort),
