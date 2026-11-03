@@ -15,6 +15,7 @@ import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissio
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
+import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
 
 export const computeObjectsPermissionsForRoles = ({
   principal,
@@ -25,7 +26,7 @@ export const computeObjectsPermissionsForRoles = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsWithRolesContext,
-    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal' | 'scope'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -67,5 +68,12 @@ export const computeObjectsPermissionsForRoles = ({
     return {};
   }
 
-  return computePermissionIntersection(permissionsPerRole);
+  const objectsPermissions = computePermissionIntersection(permissionsPerRole);
+
+  return isDefined(principal.scope)
+    ? restrictObjectsPermissionsToScope({
+        objectsPermissions,
+        scope: principal.scope,
+      })
+    : objectsPermissions;
 };

@@ -9,7 +9,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
-import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
@@ -43,18 +42,11 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
-  const rolesObjectsPermissions = computeObjectsPermissionsForRoles({
-    principal: principalRoles,
+  return computeObjectsPermissionsForRoles({
+    principal: { ...principalRoles, scope },
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatApplicationMaps,
   });
-
-  return isDefined(scope)
-    ? restrictObjectsPermissionsToScope({
-        objectsPermissions: rolesObjectsPermissions,
-        scope,
-      })
-    : rolesObjectsPermissions;
 };

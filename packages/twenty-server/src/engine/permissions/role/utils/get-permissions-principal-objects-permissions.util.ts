@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
-import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
 
 const objectsPermissionsByMetadataMapsByPrincipal = new WeakMap<
   PermissionsPrincipalsWithRolesContext,
@@ -36,19 +35,13 @@ export const getPermissionsPrincipalObjectsPermissions = ({
     return cachedObjectsPermissions;
   }
 
-  const rolesObjectsPermissions = computeObjectsPermissionsForRoles({
+  const objectsPermissions = computeObjectsPermissionsForRoles({
     principal,
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatApplicationMaps: metadataMaps.flatApplicationMaps,
   });
-  const objectsPermissions = isDefined(principal.scope)
-    ? restrictObjectsPermissionsToScope({
-        objectsPermissions: rolesObjectsPermissions,
-        scope: principal.scope,
-      })
-    : rolesObjectsPermissions;
 
   objectsPermissionsByMetadataMaps.set(metadataMaps, objectsPermissions);
 
