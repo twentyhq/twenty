@@ -4,9 +4,9 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
-import { type AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-reason.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
@@ -160,7 +160,8 @@ export class AgentChatInboxParticipantWriterService {
           !existingParticipantWorkspaceMemberIds.has(workspaceMemberId),
       );
     const insertedParticipantIds = new Set<string>();
-    const shouldMarkAsMentioned = reason === 'mention';
+    const shouldMarkAsMentioned =
+      reason === AgentChatInboxDeliveryReason.MENTION;
 
     if (isNonEmptyArray(missingParticipantWorkspaceMemberIds)) {
       const lastMentionedAt = shouldMarkAsMentioned

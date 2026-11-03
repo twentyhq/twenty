@@ -470,7 +470,7 @@ export class AgentChatStreamingService {
     const uiMessages = await Promise.all(
       sentMessages.map(async (message) => ({
         id: message.id,
-        role: message.role as 'user' | 'assistant' | 'system',
+        role: message.role,
         parts: await this.conversationReaderService.signFileParts({
           workspaceId,
           parts: mapDBPartsToUIMessageParts(message.parts ?? []),

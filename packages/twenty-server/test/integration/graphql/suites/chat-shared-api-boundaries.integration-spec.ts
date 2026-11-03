@@ -1,3 +1,4 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 
@@ -172,7 +173,7 @@ describe('Shared conversation API boundaries', () => {
           threadId,
         }),
         message: { text: 'An existing queued message' },
-        placement: 'queued',
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
     const streamId = randomUUID();
 
