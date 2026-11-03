@@ -38,11 +38,16 @@ export const SSEStaleRecordQueriesEvictionEffect = () => {
         return;
       }
 
-      apolloCoreClient.cache.evict({
-        id: 'ROOT_QUERY',
-        fieldName: objectMetadataItem.namePlural,
-        broadcast: false,
-      });
+      for (const fieldName of [
+        objectMetadataItem.namePlural,
+        `${objectMetadataItem.namePlural}GroupBy`,
+      ]) {
+        apolloCoreClient.cache.evict({
+          id: 'ROOT_QUERY',
+          fieldName,
+          broadcast: false,
+        });
+      }
     },
   });
 
