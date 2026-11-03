@@ -2,26 +2,8 @@ import ts from 'typescript';
 
 import { ARRAY_LENGTH_VARIABLE_NAMES } from '@/app/source/constants/array-length-variable-names.constant';
 import { getConditionalAvailabilityExpressionTokenText } from '@/app/source/get-conditional-availability-expression-token-text';
+import { isConditionalAvailabilityExpressionTrailingComma } from '@/app/source/is-conditional-availability-expression-trailing-comma';
 import { scanConditionalAvailabilityExpressionTokens } from '@/app/source/scan-conditional-availability-expression-tokens';
-
-const isTrailingCommaToken = ({
-  tokens,
-  index,
-}: {
-  tokens: ReturnType<typeof scanConditionalAvailabilityExpressionTokens>;
-  index: number;
-}): boolean => {
-  let nextIndex = index + 1;
-
-  while (
-    tokens[nextIndex]?.kind === ts.SyntaxKind.WhitespaceTrivia ||
-    tokens[nextIndex]?.kind === ts.SyntaxKind.NewLineTrivia
-  ) {
-    nextIndex++;
-  }
-
-  return tokens[nextIndex]?.kind === ts.SyntaxKind.CloseParenToken;
-};
 
 export const toConditionalAvailabilityExpressionString = (
   expressionText: string,
@@ -45,7 +27,7 @@ export const toConditionalAvailabilityExpressionString = (
 
     if (
       token.kind === ts.SyntaxKind.CommaToken &&
-      isTrailingCommaToken({ tokens, index })
+      isConditionalAvailabilityExpressionTrailingComma({ tokens, index })
     ) {
       continue;
     }
