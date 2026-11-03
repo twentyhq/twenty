@@ -11,7 +11,7 @@ import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/role
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/rls/utils/resolve-permissions-row-level-permission-filter.util';
 
-export const buildPermissionsObjectCondition = (
+export const buildPermissionsAllRecordsCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SqlCondition | boolean => {
   if (
