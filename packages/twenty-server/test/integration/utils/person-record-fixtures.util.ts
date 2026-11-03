@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
+import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -90,5 +90,25 @@ export const findPersonRecordStates = async (
   });
 };
 
-export const deletePersonRecords = () =>
-  deleteRecordsByIds('person', personRecordIds.splice(0));
+export const deletePersonRecords = async () => {
+  const destroyResponse = await makeGraphqlApiRequest(
+    destroyManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: 'id',
+      filter: {
+        and: [
+          { id: { in: personRecordIds.splice(0) } },
+          {
+            or: [
+              { deletedAt: { is: 'NULL' } },
+              { deletedAt: { is: 'NOT_NULL' } },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+
+  expect(destroyResponse.body.errors).toBeUndefined();
+};
