@@ -857,6 +857,11 @@ msgstr "{jobCount, plural, one {این مورد به‌طور دائمی از ص
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {برای وظیفه انتخاب‌شده دوباره تلاش خواهد شد. از ابتدا دوباره اجرا خواهد شد.} other {برای وظایف انتخاب‌شده دوباره تلاش خواهد شد. از ابتدا دوباره اجرا خواهند شد.}}"
 
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr ""
+
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "مدیران"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "ارتقای خودکار"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "خودکار"
@@ -13340,11 +13343,6 @@ msgstr "ما را در X دنبال کنید"
 msgid "Following"
 msgstr "دنبال‌کردن"
 
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "از پیش‌فرض فضای کاری برای عامل‌ها پیروی می‌کند."
-
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
@@ -17833,6 +17831,7 @@ msgid "Mode"
 msgstr "حالت"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -21017,11 +21016,6 @@ msgstr "لغو تنظیمات"
 msgid "Override Draft"
 msgstr "بازنویسی پیش‌نویس"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "تا زمانی که به خودکار بازگردید، حالت بالا را لغو می‌کند"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21543,11 +21537,6 @@ msgstr "نمودار دایره‌ای"
 msgid "Pin"
 msgstr "سنجاق کردن"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "یک مدل مشخص را ثابت کنید"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21570,11 +21559,6 @@ msgstr "سنجاق‌شده"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "زبانه سنجاق‌شده، همیشه در سمت چپ نمایش داده می‌شود"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "به یک مدل مشخص ثابت شده است"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -25465,11 +25449,6 @@ msgstr "نمایانی ایمیل را تنظیم کنید، فهرست مسدو
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "فیلدهایی را که در آینده ایجاد می‌شوند، به‌عنوان \"قابل مشاهده\" تنظیم کنید"
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "فقط برای این عامل تنظیم شود"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31677,6 +31656,11 @@ msgstr "اعتبارهای فضای کاری"
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
 msgstr "پیش‌فرض فضای کاری"
+
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

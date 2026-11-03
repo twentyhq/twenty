@@ -857,6 +857,11 @@ msgstr "{jobCount, plural, one {Bunu sıradan kalıcı olarak kaldıracak. Bu i�
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Seçilen iş yeniden denenecek. Başından başlayarak yeniden yürütülecek.} other {Seçilen işler yeniden denenecek. Başından başlayarak yeniden yürütülecek.}}"
 
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr ""
+
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "Yöneticiler"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "Otomatik yükseltme"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "Otomatik"
@@ -13340,11 +13343,6 @@ msgstr "Bizi X'te takip edin"
 msgid "Following"
 msgstr "Takip ediliyor"
 
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "Temsilciler için çalışma alanı varsayılanını izler"
-
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
@@ -17833,6 +17831,7 @@ msgid "Mode"
 msgstr "Mod"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -21017,11 +21016,6 @@ msgstr "Geçersiz kıl"
 msgid "Override Draft"
 msgstr "Taslağı Geçersiz Kıl"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "Otomatiğe geri dönene kadar yukarıdaki modun yerine geçer"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21543,11 +21537,6 @@ msgstr "Pasta Grafiği"
 msgid "Pin"
 msgstr "Sabitle"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "Belirli bir modeli sabitle"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21570,11 +21559,6 @@ msgstr "Sabitlenmiş"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Sabitlenmiş sekme, her zaman solda gösterilir"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "Belirli bir modele sabitlendi"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -25465,11 +25449,6 @@ msgstr "E-posta görünürlüğünü ayarlayın, engel listenizi yönetin ve dah
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Bundan sonra oluşturulacak alanları \"görünür\" olarak ayarla"
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "Yalnızca bu temsilci için ayarla"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31677,6 +31656,11 @@ msgstr "Çalışma alanı kredileri"
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
 msgstr "Çalışma alanı varsayılanı"
+
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

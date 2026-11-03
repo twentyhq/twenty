@@ -857,6 +857,11 @@ msgstr "{jobCount, plural, other {這將從隊列中永久移除它們。此操�
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, other {這將重試選定的工作。它們將從頭開始重新執行。}}"
 
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr ""
+
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "管理員"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "自動升級"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "自動"
@@ -13340,11 +13343,6 @@ msgstr "在 X 上追蹤我們"
 msgid "Following"
 msgstr "追蹤中"
 
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "遵循工作區的代理預設值"
-
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
@@ -17833,6 +17831,7 @@ msgid "Mode"
 msgstr "模式"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -21017,11 +21016,6 @@ msgstr "覆寫"
 msgid "Override Draft"
 msgstr "覆寫草稿"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "覆寫上方模式，直到您切回自動模式"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21543,11 +21537,6 @@ msgstr "餅圖"
 msgid "Pin"
 msgstr "釘選"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "釘選特定模型"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21570,11 +21559,6 @@ msgstr "已釘選"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "釘選分頁，一律顯示於左側"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "已釘選至特定模型"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -25465,11 +25449,6 @@ msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "將未來建立的欄位設為 \"可見\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "僅為此代理設定"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31677,6 +31656,11 @@ msgstr "工作區積分"
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
 msgstr "工作區預設值"
+
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

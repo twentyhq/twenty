@@ -857,6 +857,11 @@ msgstr "{jobCount, plural, one {Dit zal het permanent uit de wachtrij verwijdere
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Dit zal de geselecteerde taak opnieuw proberen. Het wordt opnieuw uitgevoerd vanaf het begin.} other {Dit zal de geselecteerde taken opnieuw proberen. Ze worden opnieuw uitgevoerd vanaf het begin.}}"
 
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr ""
+
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "Beheerders"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "Automatisch upgraden"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "Automatisch"
@@ -13340,11 +13343,6 @@ msgstr "Volg ons op X"
 msgid "Following"
 msgstr "Volgend"
 
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "Volgt de werkruimtestandaard voor agents"
-
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
 msgid "Font size"
@@ -17833,6 +17831,7 @@ msgid "Mode"
 msgstr "Modus"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -21017,11 +21016,6 @@ msgstr "Overschrijven"
 msgid "Override Draft"
 msgstr "Concept overschrijven"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "Overschrijft de bovenstaande modus totdat je terugschakelt naar automatisch"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21543,11 +21537,6 @@ msgstr "Cirkeldiagram"
 msgid "Pin"
 msgstr "Vastmaken"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "Een specifiek model vastzetten"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21570,11 +21559,6 @@ msgstr "Vastgezet"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Vastgezet tabblad, altijd links weergegeven"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "Vastgezet op een specifiek model"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -25465,11 +25449,6 @@ msgstr "Instellen e-mail zichtbaarheid, beheer je blokkeerlijst en meer."
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Stel in de toekomst aangemaakte velden in op \"zichtbaar\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "Alleen voor deze agent instellen"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31679,6 +31658,11 @@ msgstr "Werkruimtecredits"
 #: src/modules/object-core/agents/components/CoreAgentModelCell.tsx
 msgid "Workspace default"
 msgstr "Standaardinstelling van werkruimte"
+
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr ""
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
