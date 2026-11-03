@@ -50,25 +50,25 @@ export const loadPermissionsPrincipalRoleMaps = async ({
   workspaceCacheService: WorkspaceCacheService;
   authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>;
 }): Promise<PermissionsPrincipalRoleMaps> => {
-  const [
-    {
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
-    },
-    flatWorkspaceMemberMaps,
-    flatRoleTargetMaps,
-  ] = await Promise.all([
-    workspaceCacheService.getOrRecompute(authContext.workspace.id, [
-      'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-      'flatApplicationMaps',
-    ]),
-    loadFlatWorkspaceMemberMaps({ workspaceCacheService, authContext }),
-    loadFlatRoleTargetMaps({ workspaceCacheService, authContext }),
+  const {
+    userWorkspaceRoleMap,
+    apiKeyRoleMap,
+    flatRoleTargetByAgentIdMaps,
+    flatApplicationMaps,
+  } = await workspaceCacheService.getOrRecompute(authContext.workspace.id, [
+    'userWorkspaceRoleMap',
+    'apiKeyRoleMap',
+    'flatRoleTargetByAgentIdMaps',
+    'flatApplicationMaps',
   ]);
+  const flatWorkspaceMemberMaps = await loadFlatWorkspaceMemberMaps({
+    workspaceCacheService,
+    authContext,
+  });
+  const flatRoleTargetMaps = await loadFlatRoleTargetMaps({
+    workspaceCacheService,
+    authContext,
+  });
 
   return {
     ...buildPermissionsPrincipalRoleMaps({
