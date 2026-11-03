@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.55.0', 1793371022994)
+@RegisteredInstanceCommand('2.56.0', 1793700975254)
 export class AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand
   implements FastInstanceCommand
 {
