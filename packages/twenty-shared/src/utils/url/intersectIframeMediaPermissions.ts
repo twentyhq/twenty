@@ -1,5 +1,5 @@
-import { type IframeMediaPermission } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type IframeMediaPermission } from '../../types/IframeMediaPermission';
+import { isDefined } from '../validation';
 
 export const intersectIframeMediaPermissions = ({
   permissions,
