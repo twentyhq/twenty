@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -10,6 +9,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { resolveAgentChatMessageWorkspaceMemberId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -77,16 +77,6 @@ export class AgentChatReplyContinuationPolicyService {
     let hasCancelledMessage = false;
 
     for (const message of queuedMessages) {
-      const isStillQueued = await this.messageRepository.existsBy(workspaceId, {
-        id: message.id,
-        threadId,
-        status: AgentMessageStatus.QUEUED,
-      });
-
-      if (!isStillQueued) {
-        continue;
-      }
-
       const isExecutionAllowed = await this.shouldExecuteMessage({
         workspace,
         threadId,
@@ -134,15 +124,22 @@ export class AgentChatReplyContinuationPolicyService {
   }: {
     workspace: WorkspaceEntity;
     threadId: string;
-    message: AgentMessageWorkspaceEntity;
+    message: Pick<
+      AgentMessageWorkspaceEntity,
+      'id' | 'senderWorkspaceMemberId' | 'senderApplicationId'
+    >;
     ownerWorkspaceMemberId: string | null;
   }): Promise<boolean> {
     try {
-      const userWorkspaceId = await this.resolveMessageUserWorkspaceId({
-        workspaceId: workspace.id,
+      const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberId({
         message,
         ownerWorkspaceMemberId,
       });
+      const { userWorkspaceId } =
+        await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
+          workspaceId: workspace.id,
+          workspaceMemberId,
+        });
 
       return await this.replyExecutionPolicyService.shouldExecute({
         workspace,
@@ -162,44 +159,6 @@ export class AgentChatReplyContinuationPolicyService {
 
       throw error;
     }
-  }
-
-  private async resolveMessageUserWorkspaceId({
-    workspaceId,
-    message,
-    ownerWorkspaceMemberId,
-  }: {
-    workspaceId: string;
-    message: AgentMessageWorkspaceEntity;
-    ownerWorkspaceMemberId: string | null;
-  }): Promise<string> {
-    if (
-      !isDefined(message.senderWorkspaceMemberId) &&
-      !isDefined(message.senderApplicationId)
-    ) {
-      throw new AiException(
-        'Message sender is no longer a workspace member',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
-
-    const workspaceMemberId =
-      message.senderWorkspaceMemberId ?? ownerWorkspaceMemberId;
-
-    if (!isDefined(workspaceMemberId)) {
-      throw new AiException(
-        'Message has no sender or workspace member owner',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
-
-    const { userWorkspaceId } =
-      await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
-        workspaceId,
-        workspaceMemberId,
-      });
-
-    return userWorkspaceId;
   }
 
   private async cancelQueuedReply({
