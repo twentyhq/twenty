@@ -36,7 +36,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793638670435-inline-workflow-step-agents.command';
+import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
 import {
   type AiModelRegistryService,
   type RegisteredAiModel,

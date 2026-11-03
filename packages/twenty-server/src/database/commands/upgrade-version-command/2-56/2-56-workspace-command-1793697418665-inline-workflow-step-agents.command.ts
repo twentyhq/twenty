@@ -53,7 +53,7 @@ type StepAgents = {
 
 // in-flight runs keep their agent, which the runtime still runs by agentId,
 // so the later deletion command must skip agents still referenced by runnable runs
-@RegisteredWorkspaceCommand('2.56.0', 1793638670435)
+@RegisteredWorkspaceCommand('2.56.0', 1793697418665)
 @Command({
   name: 'upgrade:2-56:inline-workflow-step-agents',
   description:
