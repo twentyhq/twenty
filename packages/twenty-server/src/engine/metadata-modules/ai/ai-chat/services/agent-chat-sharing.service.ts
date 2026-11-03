@@ -328,6 +328,7 @@ export class AgentChatSharingService {
               .resolveWorkspaceMember({
                 workspaceId,
                 workspaceMemberId: memberId,
+                applicationId: null,
               })
               .catch((error) => {
                 if (error instanceof AuthException) {

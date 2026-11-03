@@ -236,15 +236,26 @@ export class PermissionsService {
       ],
     );
 
+    const { flatRoleTargetMaps } =
+      authContext.type === 'webhook'
+        ? await this.workspaceCacheService.getOrRecompute(
+            authContext.workspace.id,
+            ['flatRoleTargetMaps'],
+          )
+        : { flatRoleTargetMaps: undefined };
+
     return resolvePermissionsPrincipalsWithRoles({
       authContext,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
-        flatWorkspaceMemberMaps,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-        flatApplicationMaps,
-      }),
+      roleMaps: {
+        ...buildPermissionsPrincipalRoleMaps({
+          flatWorkspaceMemberMaps,
+          userWorkspaceRoleMap,
+          apiKeyRoleMap,
+          flatRoleTargetByAgentIdMaps,
+          flatApplicationMaps,
+        }),
+        flatRoleTargetMaps,
+      },
     });
   }
 

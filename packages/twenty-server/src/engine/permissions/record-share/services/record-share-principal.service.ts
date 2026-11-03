@@ -160,6 +160,7 @@ export class RecordSharePrincipalService {
         .resolveWorkspaceMember({
           workspaceId,
           workspaceMemberId: principal.principalId,
+          applicationId: null,
         })
         .catch((error) => {
           if (error instanceof AuthException) {
