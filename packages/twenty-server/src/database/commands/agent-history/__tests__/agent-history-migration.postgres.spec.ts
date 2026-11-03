@@ -239,6 +239,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       chatThreadService,
       { resolveMentionInTransaction: jest.fn() } as never,
       conversationWriter,
+      { withLock: (work: () => Promise<unknown>) => work() } as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>

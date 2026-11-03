@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { EventEmitter, once } from 'node:events';
 
 import { isArray } from '@sniptt/guards';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
@@ -9,6 +10,7 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -291,6 +293,79 @@ describe('Chat message participation with real storage', () => {
           : [DatabaseEventAction.CREATED],
       );
     }
+  });
+
+  it('keeps Ada out when a send overlaps the mention delivery of the first message', async () => {
+    const threadId = await context.createThread();
+    const cacheLockService =
+      getAppProviderByClassName<CacheLockService>('CacheLockService');
+    const withLock = cacheLockService.withLock.bind(cacheLockService);
+    const mentionParticipants = context.threadService.mentionParticipants.bind(
+      context.threadService,
+    );
+    const sendEvents = new EventEmitter();
+    const deliveryStarted = once(sendEvents, 'delivery-started');
+    const deliveryResumed = once(sendEvents, 'delivery-resumed');
+    const secondSendReachedLock = once(sendEvents, 'second-send-reached-lock');
+    let threadLockCount = 0;
+
+    jest
+      .spyOn(cacheLockService, 'withLock')
+      .mockImplementation((work, key, options) => {
+        if (key.endsWith(threadId)) {
+          threadLockCount += 1;
+
+          if (threadLockCount === 2) {
+            sendEvents.emit('second-send-reached-lock');
+          }
+        }
+
+        return withLock(work, key, options);
+      });
+    jest
+      .spyOn(context.threadService, 'mentionParticipants')
+      .mockImplementation(async (delivery) => {
+        sendEvents.emit('delivery-started');
+        await deliveryResumed;
+
+        return mentionParticipants(delivery);
+      });
+
+    const firstSend = sendChatParticipationMessage({
+      threadId,
+      isAssistantParticipant: false,
+      shouldAssistantReply: false,
+      mentionedWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    }).then((response) => response);
+
+    await Promise.race([
+      deliveryStarted,
+      firstSend.then(() => {
+        throw new Error('The first send finished before its mention delivery');
+      }),
+    ]);
+
+    const secondSend = sendChatParticipationMessage({
+      threadId,
+      shouldAssistantReply: false,
+    }).then((response) => response);
+
+    try {
+      await Promise.race([secondSendReachedLock, secondSend]);
+    } finally {
+      sendEvents.emit('delivery-resumed');
+    }
+
+    const [firstResponse, secondResponse] = await Promise.all([
+      firstSend,
+      secondSend,
+    ]);
+
+    expect(firstResponse.body.errors).toBeUndefined();
+    expect(secondResponse.body.errors).toBeUndefined();
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      false,
+    );
   });
 
   it('applies Never on a later accepted message without removing earlier messages', async () => {
