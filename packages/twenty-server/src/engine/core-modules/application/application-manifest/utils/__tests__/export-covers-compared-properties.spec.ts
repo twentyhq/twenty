@@ -326,10 +326,6 @@ const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicate
     parentPredicateGroupUniversalIdentifier:
       PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
     position: 1,
-    canReadRecords: true,
-    canUpdateRecords: true,
-    canSoftDeleteRecords: true,
-    canDestroyRecords: true,
   };
 
 const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManifest =
@@ -813,7 +809,17 @@ const EXPORTED_KINDS: ExportedKind[] = [
       positionInRowLevelPermissionPredicateGroup: 'position',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      canReadRecords:
+        'not in app manifests until the engine reads predicate group operations',
+      canUpdateRecords:
+        'not in app manifests until the engine reads predicate group operations',
+      canSoftDeleteRecords:
+        'not in app manifests until the engine reads predicate group operations',
+      canDestroyRecords:
+        'not in app manifests until the engine reads predicate group operations',
+    },
   },
   {
     metadataName: 'rowLevelPermissionPredicate',

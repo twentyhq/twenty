@@ -20,10 +20,6 @@ const PREDICATE_GROUP_MANIFEST: Required<RowLevelPermissionPredicateGroupManifes
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
     parentPredicateGroupUniversalIdentifier: PARENT_PREDICATE_GROUP_UID,
     position: 0,
-    canReadRecords: true,
-    canUpdateRecords: true,
-    canSoftDeleteRecords: true,
-    canDestroyRecords: true,
   };
 
 const forward = (
@@ -49,31 +45,6 @@ describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateG
         },
       ),
     ).toEqual(PREDICATE_GROUP_MANIFEST);
-  });
-
-  it('should store omitted operations as false and omit them again on export', () => {
-    const {
-      canReadRecords: _canReadRecords,
-      canUpdateRecords: _canUpdateRecords,
-      canSoftDeleteRecords: _canSoftDeleteRecords,
-      canDestroyRecords: _canDestroyRecords,
-      ...manifestWithoutOperations
-    } = PREDICATE_GROUP_MANIFEST;
-    const flatRowLevelPermissionPredicateGroup = forward(
-      manifestWithoutOperations,
-    );
-
-    expect(flatRowLevelPermissionPredicateGroup).toMatchObject({
-      canReadRecords: false,
-      canUpdateRecords: false,
-      canSoftDeleteRecords: false,
-      canDestroyRecords: false,
-    });
-    expect(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
-        { flatRowLevelPermissionPredicateGroup },
-      ),
-    ).toEqual(manifestWithoutOperations);
   });
 
   it('should reproduce the flat entity after an inverse then a forward conversion', () => {

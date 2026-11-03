@@ -27,14 +27,10 @@ export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevel
         null,
       positionInRowLevelPermissionPredicateGroup:
         rowLevelPermissionPredicateGroupManifest.position ?? null,
-      canReadRecords:
-        rowLevelPermissionPredicateGroupManifest.canReadRecords ?? false,
-      canUpdateRecords:
-        rowLevelPermissionPredicateGroupManifest.canUpdateRecords ?? false,
-      canSoftDeleteRecords:
-        rowLevelPermissionPredicateGroupManifest.canSoftDeleteRecords ?? false,
-      canDestroyRecords:
-        rowLevelPermissionPredicateGroupManifest.canDestroyRecords ?? false,
+      canReadRecords: false,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
       childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
       rowLevelPermissionPredicateUniversalIdentifiers: [],
       createdAt: now,

@@ -21,10 +21,6 @@ export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   parentPredicateGroupUniversalIdentifier?: string | null;
   position?: number | null;
-  canReadRecords?: boolean;
-  canUpdateRecords?: boolean;
-  canSoftDeleteRecords?: boolean;
-  canDestroyRecords?: boolean;
 };
 
 export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
