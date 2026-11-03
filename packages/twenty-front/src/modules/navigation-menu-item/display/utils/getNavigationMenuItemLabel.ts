@@ -1,6 +1,7 @@
 import { getFolderNavigationMenuItemLabel } from '@/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import { getObjectNavigationMenuItemLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemLabel';
+import { getSystemPageNavigationMenuItemLabel } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemLabel';
 import { getRecordNavigationMenuItemLabel } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemLabel';
 import { getViewNavigationMenuItemLabel } from '@/navigation-menu-item/display/view/utils/getViewNavigationMenuItemLabel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -27,6 +28,8 @@ export const getNavigationMenuItemLabel = (
       return getRecordNavigationMenuItemLabel(item);
     case NavigationMenuItemType.FOLDER:
       return getFolderNavigationMenuItemLabel(item);
+    case NavigationMenuItemType.SYSTEM_PAGE:
+      return getSystemPageNavigationMenuItemLabel(item);
     default:
       return item.name ?? '';
   }

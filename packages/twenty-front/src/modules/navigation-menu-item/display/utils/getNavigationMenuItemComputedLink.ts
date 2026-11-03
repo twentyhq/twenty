@@ -2,6 +2,7 @@ import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/co
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
 import { getRecordNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemComputedLink';
+import { getSystemPageNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemComputedLink';
 import { getViewNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/view/utils/getViewNavigationMenuItemComputedLink';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
@@ -45,6 +46,8 @@ export const getNavigationMenuItemComputedLink = ({
       return getRecordNavigationMenuItemComputedLink(item, objectMetadataItems);
     case NavigationMenuItemType.PAGE_LAYOUT:
       return getPageLayoutNavigationMenuItemComputedLink(item);
+    case NavigationMenuItemType.SYSTEM_PAGE:
+      return getSystemPageNavigationMenuItemComputedLink(item);
     default:
       return '';
   }

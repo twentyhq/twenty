@@ -99,6 +99,7 @@ export const NavigationMenuItemFolderSubItem = ({
   const isEditable =
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.type === NavigationMenuItemType.LINK ||
+      navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE ||
       isDefined(objectMetadataItem));
 
   const handleClick =
@@ -128,9 +129,11 @@ export const NavigationMenuItemFolderSubItem = ({
         })
       : undefined;
 
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : viewSecondaryLabel;
+  const secondaryLabel =
+    isCoreWorkflowsIndexItem ||
+    navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE
+      ? t`System`
+      : viewSecondaryLabel;
 
   return (
     <NavigationMenuItemEditable item={navigationMenuItem}>

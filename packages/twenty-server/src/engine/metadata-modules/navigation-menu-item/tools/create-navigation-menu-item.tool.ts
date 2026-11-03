@@ -1,5 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, SYSTEM_PAGE_KEYS } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -90,6 +90,15 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     name: requiredNameField,
     ...commonOptionalFields,
   }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SYSTEM_PAGE),
+    scope: navigationMenuItemScopeSchema,
+    systemPageKey: z
+      .enum(SYSTEM_PAGE_KEYS)
+      .describe('Built-in page to pin: workflows, agents or dataModel'),
+    name: derivedNameField,
+    ...commonOptionalFields,
+  }),
 ]);
 
 type CreateNavigationMenuItemParams = z.infer<
@@ -137,6 +146,12 @@ const toServiceInput = (
         name: params.name,
         pageLayoutId: params.pageLayoutId,
       };
+    case NavigationMenuItemType.SYSTEM_PAGE:
+      return {
+        ...base,
+        name: params.name,
+        systemPageKey: params.systemPageKey,
+      };
   }
 };
 
@@ -153,6 +168,7 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+- SYSTEM_PAGE: pins a built-in page such as Workflows, Agents or the Data model (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
 })

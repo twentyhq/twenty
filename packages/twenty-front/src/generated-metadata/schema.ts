@@ -1775,6 +1775,7 @@ export type CreateNavigationMenuItemInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  systemPageKey?: InputMaybe<Scalars['String']['input']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   targetRecordId?: InputMaybe<Scalars['UUID']['input']>;
   type: NavigationMenuItemType;
@@ -5354,6 +5355,7 @@ export type NavigationMenuItem = {
   name?: Maybe<Scalars['String']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
+  systemPageKey?: Maybe<Scalars['String']['output']>;
   targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   targetRecordId?: Maybe<Scalars['UUID']['output']>;
   targetRecordIdentifier?: Maybe<RecordIdentifier>;
@@ -5370,6 +5372,7 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
+  SYSTEM_PAGE = 'SYSTEM_PAGE',
   VIEW = 'VIEW'
 }
 

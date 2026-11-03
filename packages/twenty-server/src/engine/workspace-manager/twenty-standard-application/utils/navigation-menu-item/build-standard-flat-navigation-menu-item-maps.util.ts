@@ -13,6 +13,7 @@ import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspa
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
+  createStandardNavigationMenuItemFolderSystemPageItemFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
@@ -107,23 +108,36 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
       const folderItemDefinition =
         STANDARD_NAVIGATION_MENU_ITEMS[folderItemName];
 
-      const folderItem = createStandardNavigationMenuItemFolderItemFlatMetadata(
-        {
-          universalIdentifier: folderItemDefinition.universalIdentifier,
-          viewUniversalIdentifier: folderItemDefinition.viewUniversalIdentifier,
-          folderId,
-          folderUniversalIdentifier:
-            folderItemDefinition.folderUniversalIdentifier,
-          position: folderItemDefinition.position,
-          navigationMenuItemId: v4(),
-          workspaceId,
-          twentyStandardApplicationId,
-          dependencyFlatEntityMaps: {
-            flatViewMaps,
-          },
-          now,
-        },
-      );
+      const folderItem =
+        'systemPageKey' in folderItemDefinition
+          ? createStandardNavigationMenuItemFolderSystemPageItemFlatMetadata({
+              universalIdentifier: folderItemDefinition.universalIdentifier,
+              systemPageKey: folderItemDefinition.systemPageKey,
+              folderId,
+              folderUniversalIdentifier:
+                folderItemDefinition.folderUniversalIdentifier,
+              position: folderItemDefinition.position,
+              navigationMenuItemId: v4(),
+              workspaceId,
+              twentyStandardApplicationId,
+              now,
+            })
+          : createStandardNavigationMenuItemFolderItemFlatMetadata({
+              universalIdentifier: folderItemDefinition.universalIdentifier,
+              viewUniversalIdentifier:
+                folderItemDefinition.viewUniversalIdentifier,
+              folderId,
+              folderUniversalIdentifier:
+                folderItemDefinition.folderUniversalIdentifier,
+              position: folderItemDefinition.position,
+              navigationMenuItemId: v4(),
+              workspaceId,
+              twentyStandardApplicationId,
+              dependencyFlatEntityMaps: {
+                flatViewMaps,
+              },
+              now,
+            });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
         flatNavigationMenuItem: folderItem,

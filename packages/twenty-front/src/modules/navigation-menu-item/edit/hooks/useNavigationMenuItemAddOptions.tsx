@@ -1,11 +1,12 @@
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, SYSTEM_PAGE_KEYS } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
   IconBox,
+  IconCompass,
   IconFolder,
   IconLink,
   IconPerspective,
@@ -21,8 +22,10 @@ import {
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSystemPage';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/system-page/constants/SystemPageNavigationMenuItemConfigs';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
@@ -188,7 +191,47 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
+        {
+          id: 'systemPage',
+          label: t`System page`,
+          icon: (
+            <TintedIconTile icon={<IconCompass size={theme.icon.size.md} />} />
+          ),
+          onClick: () => navigateToStep('systemPage'),
+          hasSubMenu: true,
+        },
       ];
+    }
+    if (targetStep === 'systemPage') {
+      const systemPageKeysAlreadyAdded = new Set(
+        currentItems.map((item) => item.systemPageKey),
+      );
+
+      return SYSTEM_PAGE_KEYS.map((systemPageKey) => {
+        const { label, Icon } =
+          SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS[systemPageKey];
+        const isAlreadyInSidebar =
+          systemPageKeysAlreadyAdded.has(systemPageKey);
+
+        return {
+          id: systemPageKey,
+          label: t(label),
+          icon: (
+            <ColoredIcon
+              Icon={Icon}
+              color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE}
+            />
+          ),
+          isDisabled: isAlreadyInSidebar,
+          isAlreadyInSidebar,
+          onClick: () =>
+            addItem({
+              type: NavigationMenuItemType.SYSTEM_PAGE,
+              systemPageKey,
+              color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE,
+            }),
+        };
+      });
     }
     if (
       targetStep === 'object' ||

@@ -4,7 +4,12 @@ import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components/data-display';
-import { IconLink, IconPerspective, IconWorld } from 'twenty-ui/icon';
+import {
+  IconCompass,
+  IconLink,
+  IconPerspective,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -14,6 +19,7 @@ import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -103,6 +109,22 @@ export const NavigationMenuItemIcon = ({
       </NavigationMenuItemIconWithOverlay>
     ) : (
       pageIcon
+    );
+  }
+
+  if (navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE) {
+    const systemPageConfig =
+      getSystemPageNavigationMenuItemConfig(navigationMenuItem);
+
+    return (
+      <ColoredIcon
+        Icon={
+          isDefined(navigationMenuItem.icon)
+            ? getIcon(navigationMenuItem.icon)
+            : (systemPageConfig?.Icon ?? IconCompass)
+        }
+        color={getNavigationMenuItemColor(navigationMenuItem)}
+      />
     );
   }
 

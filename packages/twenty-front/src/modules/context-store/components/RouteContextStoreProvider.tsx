@@ -48,10 +48,13 @@ const getViewId = ({
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const routeObjects = useWorkspaceRouteObjects();
-  const isRecordIndexPage = isMatchingLocation(
+  const isCoreWorkflowIndexPage = isMatchingLocation(
     location,
-    AppPath.RecordIndexPage,
+    AppPath.WorkflowIndexPage,
   );
+  const isRecordIndexPage =
+    isCoreWorkflowIndexPage ||
+    isMatchingLocation(location, AppPath.RecordIndexPage);
   const isCoreWorkflowShowPage = isMatchingLocation(
     location,
     AppPath.WorkflowCoreShowPage,
@@ -70,11 +73,12 @@ export const RouteContextStoreProvider = () => {
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = isCoreWorkflowShowPage
-    ? CoreObjectNameSingular.Workflow
-    : isAiChatPage
-      ? CoreObjectNameSingular.AgentChatThread
-      : routeParams?.objectNameSingular;
+  const objectNameSingular =
+    isCoreWorkflowIndexPage || isCoreWorkflowShowPage
+      ? CoreObjectNameSingular.Workflow
+      : isAiChatPage
+        ? CoreObjectNameSingular.AgentChatThread
+        : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');

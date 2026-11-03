@@ -23,6 +23,7 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
+      systemPageKey: navigationMenuItemManifest.systemPageKey ?? null,
       folderUniversalIdentifier:
         navigationMenuItemManifest.folderUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:

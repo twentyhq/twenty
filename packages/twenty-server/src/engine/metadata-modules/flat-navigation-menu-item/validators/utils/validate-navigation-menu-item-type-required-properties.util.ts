@@ -7,6 +7,7 @@ import {
 import {
   isDefined,
   isSafeInternalPath,
+  isSystemPageKey,
   isValidUrl,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -54,6 +55,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
+    systemPageKey,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -127,6 +129,16 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         message: t`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
         userFriendlyMessage: msg`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
       });
+    }
+    case NavigationMenuItemType.SYSTEM_PAGE: {
+      return isSystemPageKey(systemPageKey)
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A valid systemPageKey is required for SYSTEM_PAGE type`,
+              msg`A valid systemPageKey is required for SYSTEM_PAGE type`,
+            ),
+          ];
     }
     default: {
       // oxlint-disable-next-line unused-imports/no-unused-vars

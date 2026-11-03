@@ -1,3 +1,5 @@
+import { type SystemPageKey } from 'twenty-shared/types';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -47,6 +49,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   agentChatChannelUniversalIdentifier: null,
   name,
   link: null,
+  systemPageKey: null,
   icon: icon ?? null,
   color,
   position,
@@ -113,6 +116,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     agentChatChannelUniversalIdentifier: null,
     name: null,
     link: null,
+    systemPageKey: null,
     icon: null,
     color: 'gray',
     position,
@@ -120,3 +124,54 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     updatedAt: now,
   };
 };
+
+export const createStandardNavigationMenuItemFolderSystemPageItemFlatMetadata =
+  ({
+    universalIdentifier,
+    systemPageKey,
+    folderId,
+    folderUniversalIdentifier,
+    position,
+    navigationMenuItemId,
+    workspaceId,
+    twentyStandardApplicationId,
+    now,
+  }: {
+    universalIdentifier: string;
+    systemPageKey: SystemPageKey;
+    folderId: string;
+    folderUniversalIdentifier: string;
+    position: number;
+    navigationMenuItemId: string;
+    workspaceId: string;
+    twentyStandardApplicationId: string;
+    now: string;
+  }): FlatNavigationMenuItem => ({
+    id: navigationMenuItemId,
+    type: NavigationMenuItemType.SYSTEM_PAGE,
+    universalIdentifier,
+    applicationId: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    workspaceId,
+    userWorkspaceId: null,
+    targetRecordId: null,
+    targetObjectMetadataId: null,
+    targetObjectMetadataUniversalIdentifier: null,
+    viewId: null,
+    viewUniversalIdentifier: null,
+    folderId,
+    folderUniversalIdentifier,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
+    agentChatChannelId: null,
+    agentChatChannelUniversalIdentifier: null,
+    name: null,
+    link: null,
+    systemPageKey,
+    icon: null,
+    color: 'gray',
+    position,
+    createdAt: now,
+    updatedAt: now,
+  });

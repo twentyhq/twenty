@@ -334,6 +334,8 @@ export type {
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
+export type { SystemPageKey } from './SystemPageKey';
+export { SYSTEM_PAGE_KEYS } from './SystemPageKey';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';

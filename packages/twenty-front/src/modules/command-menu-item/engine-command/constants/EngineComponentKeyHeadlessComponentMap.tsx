@@ -199,10 +199,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.GO_TO_WORKFLOWS]: (
-    <HeadlessNavigateEngineCommand
-      to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
-    />
+    <HeadlessNavigateEngineCommand to={AppPath.WorkflowIndexPage} />
   ),
   [EngineComponentKey.GO_TO_RUNS]: (
     <HeadlessNavigateEngineCommand

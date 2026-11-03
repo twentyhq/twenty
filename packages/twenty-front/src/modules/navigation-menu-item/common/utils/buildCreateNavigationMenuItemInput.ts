@@ -33,6 +33,9 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;
+  } else if (isDefined(draftItem.systemPageKey)) {
+    input.systemPageKey = draftItem.systemPageKey;
+    input.name = draftItem.name ?? undefined;
   } else if (isDefined(draftItem.pageLayoutId)) {
     input.pageLayoutId = draftItem.pageLayoutId;
     input.name = draftItem.name ?? undefined;
