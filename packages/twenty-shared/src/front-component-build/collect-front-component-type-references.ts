@@ -52,5 +52,37 @@ export const collectFrontComponentTypeReferences = ({
 
   ts.createProgram([entryPath], options, host).getTypeChecker();
 
+  for (const specifier of dependencies) {
+    const { resolvedModule } = ts.resolveModuleName(
+      specifier,
+      entryPath,
+      options,
+      host,
+    );
+    if (
+      !isDefined(resolvedModule) ||
+      ![
+        ts.Extension.Js,
+        ts.Extension.Jsx,
+        ts.Extension.Mjs,
+        ts.Extension.Cjs,
+      ].some((extension) => extension === resolvedModule.extension)
+    ) {
+      continue;
+    }
+    const normalizedPath = posix.normalize(
+      resolvedModule.resolvedFileName.replace(/\\/g, '/'),
+    );
+    const nodeModulesPathIndex = normalizedPath.indexOf('/node_modules/');
+    if (nodeModulesPathIndex === -1) {
+      continue;
+    }
+    const declarationPath = normalizedPath
+      .slice(nodeModulesPathIndex)
+      .replace(/\.([cm]?)jsx?$/, '.d.$1ts');
+    files[declarationPath] =
+      `${files[declarationPath] ?? ''}declare module ${JSON.stringify(specifier)};\n`;
+  }
+
   return files;
 };

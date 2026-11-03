@@ -184,3 +184,88 @@ it('rejects oversized type references before compressing or uploading them', () 
     }),
   ).toThrow('type references exceed the 32 MiB limit');
 });
+
+it.each(['js', 'mjs', 'cjs', 'jsx'])(
+  'keeps an untyped %s dependency usable after its install directory is removed',
+  async (extension) => {
+    await writeFile(
+      join(directory, 'node_modules/fixture-ui/package.json'),
+      JSON.stringify({
+        name: 'fixture-ui',
+        exports: { './card': `./card.${extension}` },
+      }),
+    );
+    await writeFile(
+      join(directory, `node_modules/fixture-ui/card.${extension}`),
+      'throw new Error("Do not execute dependencies when reading types");',
+    );
+    const files = decodeFrontComponentTypeReferences(
+      encodeFrontComponentTypeReferencesOrThrow(
+        collectFrontComponentTypeReferences({
+          directory,
+          dependencies: ['fixture-ui/card'],
+        }),
+      ),
+    );
+    await rm(directory, { recursive: true });
+    expect(check({ files, jsx: '<Card arbitraryProp="works" />' })).toEqual([]);
+    expect(Object.keys(files).some((path) => /\.[cm]?jsx?$/.test(path))).toBe(
+      false,
+    );
+  },
+);
+
+it('keeps both untyped entry points when they share a JavaScript file', async () => {
+  await writeFile(
+    join(directory, 'node_modules/fixture-ui/package.json'),
+    JSON.stringify({
+      name: 'fixture-ui',
+      exports: { './card': './card.js', './alias': './card.js' },
+    }),
+  );
+  const files = collectFrontComponentTypeReferences({
+    directory,
+    dependencies: ['fixture-ui/card', 'fixture-ui/alias'],
+  });
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files: { ...platform, ...files },
+      source: `import { Card } from 'fixture-ui/card'; import Alias from 'fixture-ui/alias'; export const Component = () => <><Card /><Alias /></>;`,
+    }),
+  ).toEqual([]);
+});
+
+it('uses installed @types declarations instead of the untyped fallback', async () => {
+  await mkdir(join(directory, 'node_modules/@types/fixture-ui'), {
+    recursive: true,
+  });
+  await writeFile(
+    join(directory, 'node_modules/@types/fixture-ui/card.d.ts'),
+    `export declare const Card: (props: { count: number }) => import('react').ReactNode;`,
+  );
+  const files = collectFrontComponentTypeReferences({
+    directory,
+    dependencies: ['fixture-ui/card'],
+  });
+  expect(check({ files, jsx: '<Card count="invalid" />' })).toEqual(
+    expect.arrayContaining([expect.stringContaining('not assignable')]),
+  );
+});
+
+it('does not synthesize declarations for missing dependencies or subpaths', () => {
+  const files = collectFrontComponentTypeReferences({
+    directory,
+    dependencies: ['fixture-ui/card', 'fixture-ui/missing', 'missing-package'],
+  });
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files: { ...platform, ...files },
+      source: `import Missing from 'missing-package'; import Other from 'fixture-ui/missing'; export const Component = () => <><Missing /><Other /></>;`,
+    }),
+  ).toEqual(
+    expect.arrayContaining([
+      expect.stringContaining("Cannot find module 'missing-package'"),
+      expect.stringContaining("Cannot find module 'fixture-ui/missing'"),
+    ]),
+  );
+});
