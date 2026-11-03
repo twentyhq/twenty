@@ -1,4 +1,3 @@
-import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
@@ -104,17 +103,7 @@ export const WorkflowEditActionCode = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
   const workflowVersionId = workflow?.currentVersion.id;
 
-  // Steps created before inline code keep their source in a logic function until their first edit
-  const legacyLogicFunctionId = isDefined(action.settings.input.code)
-    ? undefined
-    : action.settings.input.logicFunctionId;
-
-  const { sourceHandlerCode: legacySourceCode, loading } =
-    useGetLogicFunctionSourceCode({
-      logicFunctionId: legacyLogicFunctionId ?? '',
-    });
-
-  const savedCode = action.settings.input.code ?? legacySourceCode ?? undefined;
+  const savedCode = action.settings.input.code;
 
   const [editedCode, setEditedCode] = useState<string>();
 
@@ -400,99 +389,98 @@ export const WorkflowEditActionCode = ({
   );
 
   // AutoTypings only reads the package versions when the editor mounts
-  const isInitialLoading =
-    (loading && !isDefined(code)) || isAvailablePackagesInitialLoading;
+  if (isAvailablePackagesInitialLoading) {
+    return null;
+  }
 
   return (
-    !isInitialLoading && (
-      <TabListRoot
-        componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-      >
-        <StyledTabListContainer>
-          <TabList
-            aria-label={t`Code step`}
-            tabs={tabs}
-            behaveAsLinks={false}
-            componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-          />
-        </StyledTabListContainer>
-        <WorkflowStepTabPanel value={activeTabId ?? ''}>
-          <WorkflowStepBody>
-            {activeTabId === WorkflowLogicFunctionTabId.CODE && (
-              <>
-                <WorkflowEditActionCodeFields
-                  functionInput={functionInput}
-                  inputSchema={inputSchema}
-                  VariablePicker={WorkflowVariablePicker}
-                  onInputChange={handleInputChange}
-                  readonly={actionOptions.readonly}
+    <TabListRoot
+      componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+    >
+      <StyledTabListContainer>
+        <TabList
+          aria-label={t`Code step`}
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+        />
+      </StyledTabListContainer>
+      <WorkflowStepTabPanel value={activeTabId ?? ''}>
+        <WorkflowStepBody>
+          {activeTabId === WorkflowLogicFunctionTabId.CODE && (
+            <>
+              <WorkflowEditActionCodeFields
+                functionInput={functionInput}
+                inputSchema={inputSchema}
+                VariablePicker={WorkflowVariablePicker}
+                onInputChange={handleInputChange}
+                readonly={actionOptions.readonly}
+              />
+              <WorkflowCodeEditor
+                value={code}
+                onChange={handleCodeChange}
+                onMount={handleEditorDidMount}
+                options={{
+                  readOnly: actionOptions.readonly,
+                  domReadOnly: actionOptions.readonly,
+                  scrollBeyondLastLine: false,
+                  lineNumbersMinChars: 2,
+                  fixedOverflowWidgets: true,
+                }}
+                readonly={actionOptions.readonly}
+                onEnterFullScreen={handleEnterFullScreen}
+              />
+              <WorkflowExpectedOutputBodyInput
+                defaultValue={action.settings.expectedOutputSchema}
+                onChange={handleExpectedOutputBodyChange}
+                readonly={actionOptions.readonly}
+              />
+            </>
+          )}
+          {activeTabId === WorkflowLogicFunctionTabId.TEST && (
+            <>
+              <WorkflowEditActionCodeFields
+                functionInput={logicFunctionTestData.input}
+                inputSchema={inputSchema}
+                onInputChange={handleTestInputChange}
+                readonly={actionOptions.readonly}
+              />
+              <StyledCodeEditorContainer>
+                <InputLabel>{t`Result`}</InputLabel>
+                <LogicFunctionExecutionResult
+                  logicFunctionTestData={logicFunctionTestData}
+                  isTesting={isTesting}
                 />
-                <WorkflowCodeEditor
-                  value={code}
-                  onChange={handleCodeChange}
-                  onMount={handleEditorDidMount}
-                  options={{
-                    readOnly: actionOptions.readonly,
-                    domReadOnly: actionOptions.readonly,
-                    scrollBeyondLastLine: false,
-                    lineNumbersMinChars: 2,
-                    fixedOverflowWidgets: true,
-                  }}
-                  readonly={actionOptions.readonly}
-                  onEnterFullScreen={handleEnterFullScreen}
-                />
-                <WorkflowExpectedOutputBodyInput
-                  defaultValue={action.settings.expectedOutputSchema}
-                  onChange={handleExpectedOutputBodyChange}
-                  readonly={actionOptions.readonly}
-                />
-              </>
-            )}
-            {activeTabId === WorkflowLogicFunctionTabId.TEST && (
-              <>
-                <WorkflowEditActionCodeFields
-                  functionInput={logicFunctionTestData.input}
-                  inputSchema={inputSchema}
-                  onInputChange={handleTestInputChange}
-                  readonly={actionOptions.readonly}
-                />
+              </StyledCodeEditorContainer>
+              {logicFunctionTestData.output.logs.length > 0 && (
                 <StyledCodeEditorContainer>
-                  <InputLabel>{t`Result`}</InputLabel>
-                  <LogicFunctionExecutionResult
-                    logicFunctionTestData={logicFunctionTestData}
-                    isTesting={isTesting}
+                  <LogicFunctionLogs
+                    componentInstanceId={`workflow-edit-action-logs-${action.id}`}
+                    value={isTesting ? '' : logicFunctionTestData.output.logs}
                   />
                 </StyledCodeEditorContainer>
-                {logicFunctionTestData.output.logs.length > 0 && (
-                  <StyledCodeEditorContainer>
-                    <LogicFunctionLogs
-                      componentInstanceId={`workflow-edit-action-logs-${action.id}`}
-                      value={isTesting ? '' : logicFunctionTestData.output.logs}
-                    />
-                  </StyledCodeEditorContainer>
-                )}
-              </>
-            )}
-          </WorkflowStepBody>
-        </WorkflowStepTabPanel>
-        {!actionOptions.readonly && (
-          <WorkflowStepFooter
-            stepId={action.id}
-            additionalActions={
-              activeTabId === WorkflowLogicFunctionTabId.TEST
-                ? [
-                    <WorkflowStepCmdEnterButton
-                      title={t`Test`}
-                      onClick={handleTestFunction}
-                      disabled={isTesting}
-                    />,
-                  ]
-                : []
-            }
-          />
-        )}
-        {fullScreenOverlay}
-      </TabListRoot>
-    )
+              )}
+            </>
+          )}
+        </WorkflowStepBody>
+      </WorkflowStepTabPanel>
+      {!actionOptions.readonly && (
+        <WorkflowStepFooter
+          stepId={action.id}
+          additionalActions={
+            activeTabId === WorkflowLogicFunctionTabId.TEST
+              ? [
+                  <WorkflowStepCmdEnterButton
+                    title={t`Test`}
+                    onClick={handleTestFunction}
+                    disabled={isTesting}
+                  />,
+                ]
+              : []
+          }
+        />
+      )}
+      {fullScreenOverlay}
+    </TabListRoot>
   );
 };
