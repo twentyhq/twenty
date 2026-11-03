@@ -5,6 +5,7 @@ import { forwardedBubblingHostEvents } from '@/host/events/states/forwardedBubbl
 import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
+import { isHostUiEvent } from '@/host/events/utils/isHostUiEvent';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
@@ -27,6 +28,10 @@ export const wrapEventHandler =
     }
 
     const nativeHostEvent = resolveNativeHostEvent(hostEvent);
+
+    if (isHostUiEvent(nativeHostEvent)) {
+      return;
+    }
 
     if (
       isDefined(claimPointerEventForwarding) &&

@@ -354,6 +354,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
     isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']
@@ -364,6 +365,7 @@ export interface Application {
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
+    requestedIframeMediaPermissions: IframeMediaPermission[]
     runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
@@ -1676,6 +1678,7 @@ export interface FormFieldConfiguration {
 
 export interface FrontComponent {
     applicationGrantedCapabilities?: Scalars['String'][]
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermission[]
     applicationId: Scalars['UUID']
     applicationName?: Scalars['String']
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
@@ -2074,6 +2077,7 @@ export interface MarketplaceAppDetail {
     objects?: MarketplaceAppObject[]
     pricingDescription?: Scalars['String']
     requestedCapabilities: Scalars['String'][]
+    requestedIframeMediaPermissions: IframeMediaPermission[]
     roles?: MarketplaceAppRole[]
     /** @deprecated Use galleryImages instead */
     screenshots: Scalars['String'][]
@@ -2304,6 +2308,7 @@ export interface Mutation {
     activateWorkspace: Workspace
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
     addQueryToEventStream: Scalars['Boolean']
+    approveApplicationIframeMediaPermissions: Application
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
@@ -2841,7 +2846,9 @@ export type PageLayoutTabLayoutMode = 'CANVAS' | 'GRID' | 'VERTICAL_LIST'
 export type PageLayoutType = 'DASHBOARD' | 'RECORD_FORM' | 'RECORD_INDEX' | 'RECORD_PAGE' | 'STANDALONE_PAGE'
 
 export interface PageLayoutWidget {
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermission[]
     applicationId: Scalars['UUID']
+    applicationName?: Scalars['String']
     conditionalAvailabilityExpression?: Scalars['String']
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
@@ -4673,6 +4680,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
     isUninstallBlockedByOtherWorkspaceInstallations?: boolean | number
@@ -4683,6 +4691,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
+    requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
@@ -6250,6 +6259,7 @@ export interface FormFieldConfigurationGenqlSelection{
 
 export interface FrontComponentGenqlSelection{
     applicationGrantedCapabilities?: boolean | number
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     applicationId?: boolean | number
     applicationName?: boolean | number
     /** @deprecated Use generateFrontComponentApplicationTokenPair */
@@ -6399,6 +6409,8 @@ export interface IframeMediaPermissionGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface IframeMediaPermissionInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
 export interface ImapSmtpCaldavConnectionSuccessGenqlSelection{
     connectedAccountId?: boolean | number
@@ -6690,6 +6702,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     objects?: MarketplaceAppObjectGenqlSelection
     pricingDescription?: boolean | number
     requestedCapabilities?: boolean | number
+    requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     roles?: MarketplaceAppRoleGenqlSelection
     /** @deprecated Use galleryImages instead */
     screenshots?: boolean | number
@@ -6910,6 +6923,7 @@ export interface MutationGenqlSelection{
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
+    approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -7461,7 +7475,9 @@ export interface PageLayoutTabGenqlSelection{
 }
 
 export interface PageLayoutWidgetGenqlSelection{
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     applicationId?: boolean | number
+    applicationName?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection

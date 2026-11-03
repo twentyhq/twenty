@@ -494,6 +494,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
   isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']['output'];
@@ -504,6 +505,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
@@ -2692,6 +2694,7 @@ export type FormFieldConfiguration = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use generateFrontComponentApplicationTokenPair */
@@ -2871,6 +2874,12 @@ export type IframeMediaPermission = {
   camera: Scalars['Boolean']['output'];
   microphone: Scalars['Boolean']['output'];
   origin: Scalars['String']['output'];
+};
+
+export type IframeMediaPermissionInput = {
+  camera: Scalars['Boolean']['input'];
+  microphone: Scalars['Boolean']['input'];
+  origin: Scalars['String']['input'];
 };
 
 export type ImapSmtpCaldavConnectionSuccess = {
@@ -3199,6 +3208,7 @@ export type MarketplaceAppDetail = {
   objects?: Maybe<Array<MarketplaceAppObject>>;
   pricingDescription?: Maybe<Scalars['String']['output']>;
   requestedCapabilities: Array<Scalars['String']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   roles?: Maybe<Array<MarketplaceAppRole>>;
   /** @deprecated Use galleryImages instead */
   screenshots: Array<Scalars['String']['output']>;
@@ -3506,6 +3516,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
+  approveApplicationIframeMediaPermissions: Application;
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3829,6 +3840,12 @@ export type MutationAddAgentChatMessageReactionArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
+};
+
+
+export type MutationApproveApplicationIframeMediaPermissionsArgs = {
+  applicationId: Scalars['UUID']['input'];
+  approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
 };
 
 
@@ -5627,7 +5644,9 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
+  applicationName?: Maybe<Scalars['String']['output']>;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;

@@ -18,14 +18,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -34,7 +27,6 @@ export type CommonApiContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectsPermissions: ObjectsPermissions;
-  principals: PermissionsPrincipalsContext;
 };
 
 @Injectable()
@@ -96,8 +88,10 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { objectsPermissions, principals } =
-      await this.getPermissionsContext(authContext);
+    const objectsPermissions =
+      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+        authContext,
+      );
 
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
@@ -125,31 +119,6 @@ export class CommonApiContextBuilderService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectsPermissions,
-      principals,
-    };
-  }
-
-  private async getPermissionsContext(
-    authContext: WorkspaceAuthContext,
-  ): Promise<{
-    objectsPermissions: ObjectsPermissions;
-    principals: PermissionsPrincipalsContext;
-  }> {
-    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
-
-    if (!isDefined(principals)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
-    return {
-      objectsPermissions:
-        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
-          principals,
-        ),
-      principals,
     };
   }
 }
