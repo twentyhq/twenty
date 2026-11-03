@@ -9,10 +9,16 @@ import { CLOUDFLARE_ACCESS_ASSERTION_HEADER_NAME } from 'src/engine/core-modules
 import { verifyCloudflareAccessAssertion } from 'src/engine/core-modules/server-admin-access/utils/verify-cloudflare-access-assertion.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+type EnabledCloudflareAccessConfiguration = {
+  status: 'enabled';
+  teamDomain: string;
+  audience: string;
+};
+
 type CloudflareAccessConfiguration =
   | { status: 'disabled' }
   | { status: 'incomplete' }
-  | { status: 'enabled'; teamDomain: string; audience: string };
+  | EnabledCloudflareAccessConfiguration;
 
 // Custom hostnames bypass Access at the edge, so the origin checks the host and the assertion itself.
 @Injectable()
@@ -122,7 +128,10 @@ export class ServerAdminAccessService {
 
   private getVerifiedAccessEmail(
     request: Request,
-    { teamDomain, audience }: { teamDomain: string; audience: string },
+    {
+      teamDomain,
+      audience,
+    }: Pick<EnabledCloudflareAccessConfiguration, 'teamDomain' | 'audience'>,
   ): Promise<string | undefined> {
     const cachedVerification = this.verifiedAccessEmailByRequest.get(request);
 
