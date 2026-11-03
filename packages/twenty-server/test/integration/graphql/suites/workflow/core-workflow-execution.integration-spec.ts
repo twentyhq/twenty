@@ -270,7 +270,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         await deleteCoreWorkflows({
           coreWorkflowIds: [fixture.coreWorkflowId],
         });
-        if (fixture.workflowVersionId) {
+        if (isDefined(fixture.workflowVersionId)) {
           await deleteLegacyWorkspaceWorkflowRecords({
             workspaceWorkflowVersionIds: [fixture.workflowVersionId],
           });
@@ -404,7 +404,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'WorkflowTriggerJob',
         {
           workspaceId,
-          workflowId: fixture.workflowId as string,
+          workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
           payload: { marker: envelope },
           ...(envelope === 'workspace-version'
             ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
