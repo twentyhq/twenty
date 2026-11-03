@@ -441,7 +441,8 @@
                 "developers/extend/apps/data/extending-objects",
                 "developers/extend/apps/data/system-fields",
                 "developers/extend/apps/data/relations",
-                "developers/extend/apps/data/timeline-activity-types"
+                "developers/extend/apps/data/timeline-activity-types",
+                "developers/extend/apps/data/validation-rules"
               ]
             },
             {

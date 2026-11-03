@@ -1,10 +1,18 @@
-import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Header,
+  Post,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { AI_GENERATE_TEXT_DEPRECATION_HEADER_VALUE } from 'src/engine/metadata-modules/ai/ai-generate-text/constants/ai-generate-text-deprecation-header-value.constant';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -60,7 +68,9 @@ export class AiGenerateTextController {
     private readonly aiBillingService: AiBillingService,
   ) {}
 
+  // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
   @Post('generate-text')
+  @Header('Deprecation', AI_GENERATE_TEXT_DEPRECATION_HEADER_VALUE)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async handleGenerateText(
     @Body() body: GenerateTextInput,

@@ -44,7 +44,6 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -514,18 +513,16 @@ export class WorkflowDatabaseEventTriggerListener {
       return [];
     }
 
-    return resolveEventsReadableByRole({
-      application,
-      workspaceEventBatch,
-      eventRecordAccessGate:
-        this.recordAccessPolicyService.buildEventRecordAccessGate(
-          workspaceEventBatch,
-        ),
-      metadataMaps:
-        await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
-          workspaceEventBatch.workspaceId,
-        ),
-    });
+    return this.recordAccessPolicyService
+      .buildEventRecordAccessGate(workspaceEventBatch)
+      .resolveReadableEvents({
+        authContext: {
+          type: 'application',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          application,
+        },
+        events: workspaceEventBatch.events,
+      });
   }
 
   private shouldTriggerJob({

@@ -327,6 +327,7 @@ export {
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
+export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
