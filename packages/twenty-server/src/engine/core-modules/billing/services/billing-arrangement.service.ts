@@ -1,10 +1,9 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { DataSource, type EntityManager } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
 import {
   BillingException,
@@ -12,7 +11,6 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
-import { buildBillingArrangementLockKey } from 'src/engine/core-modules/billing/utils/build-billing-arrangement-lock-key.util';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -23,20 +21,18 @@ export class BillingArrangementService {
   constructor(
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
   ) {}
 
   async insertArrangement({
     workspaceId,
     arrangement,
     grantedByUserId,
-    entityManager = this.dataSource.manager,
+    entityManager,
   }: {
     workspaceId: string;
     arrangement: BillingArrangementDraft;
     grantedByUserId: string | null;
-    entityManager?: EntityManager;
+    entityManager: EntityManager;
   }): Promise<BillingArrangementEntity> {
     const validationErrors = getBillingArrangementValidationErrors(arrangement);
 
@@ -47,36 +43,28 @@ export class BillingArrangementService {
       );
     }
 
-    return entityManager.transaction(async (transactionManager) => {
-      // Released at commit, so it also covers inserts made inside a caller's transaction
-      await transactionManager.query(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [buildBillingArrangementLockKey(workspaceId)],
-      );
+    const billingArrangementRepository =
+      this.billingArrangementRepository.withManager(entityManager);
 
-      const billingArrangementRepository =
-        this.billingArrangementRepository.withManager(transactionManager);
-
-      const overlappingArrangement = findOverlappingBillingArrangement({
-        arrangement: { ...arrangement, revokedAt: null },
-        workspaceArrangements: await billingArrangementRepository.find(
-          workspaceId,
-          { where: { type: arrangement.type } },
-        ),
-      });
-
-      if (isDefined(overlappingArrangement)) {
-        throw new BillingException(
-          `${arrangement.type} arrangement for workspace ${workspaceId} overlaps arrangement ${overlappingArrangement.id}`,
-          BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
-        );
-      }
-
-      return billingArrangementRepository.insertAndReturnOne(workspaceId, {
-        ...arrangement,
+    const overlappingArrangement = findOverlappingBillingArrangement({
+      arrangement: { ...arrangement, revokedAt: null },
+      workspaceArrangements: await billingArrangementRepository.find(
         workspaceId,
-        grantedByUserId,
-      });
+        { where: { type: arrangement.type } },
+      ),
+    });
+
+    if (isDefined(overlappingArrangement)) {
+      throw new BillingException(
+        `${arrangement.type} arrangement for workspace ${workspaceId} overlaps arrangement ${overlappingArrangement.id}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
+      );
+    }
+
+    return billingArrangementRepository.insertAndReturnOne(workspaceId, {
+      ...arrangement,
+      workspaceId,
+      grantedByUserId,
     });
   }
 }
