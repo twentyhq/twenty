@@ -55,6 +55,14 @@ describe('migrateLegacyWorkspaceLogoSetting', () => {
     expect(metadataMutationMock).not.toHaveBeenCalled();
   });
 
+  it('keeps a style that is already set, so a retried hook cannot overwrite it', async () => {
+    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'MINIMAL');
+
+    expect(await migrateLegacyWorkspaceLogoSetting('1.19.0')).toBeUndefined();
+    expect(metadataMutationMock).not.toHaveBeenCalled();
+  });
+
   it('surfaces a failed save so the install hook can retry', async () => {
     metadataMutationMock.mockRejectedValue(new Error('network down'));
 
