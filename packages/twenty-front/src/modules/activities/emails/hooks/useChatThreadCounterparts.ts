@@ -6,9 +6,9 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 export const useChatThreadCounterparts = (
   messages: EmailThreadMessageWithSender[],
 ) => {
-  const { channels, hasLoaded } = useMyMessageChannels();
+  const { channels, hasLoaded, loading } = useMyMessageChannels();
 
-  if (!hasLoaded) {
+  if (!hasLoaded && loading) {
     return null;
   }
 

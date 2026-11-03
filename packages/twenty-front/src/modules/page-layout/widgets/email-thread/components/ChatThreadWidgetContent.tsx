@@ -6,7 +6,7 @@ import { useChatThreadCounterparts } from '@/activities/emails/hooks/useChatThre
 import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
 import { useStickToBottomScroll } from '@/activities/emails/hooks/useStickToBottomScroll';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { getParticipantFirstName } from '@/activities/emails/utils/getParticipantFirstName';
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
@@ -48,6 +48,7 @@ export const ChatThreadWidgetContent = ({
     PermissionFlagType.SEND_EMAIL_TOOL,
   );
   const counterparts = useChatThreadCounterparts(messages);
+  const firstCounterpart = counterparts?.[0];
   const { scrollContainerRef, handleScroll } = useStickToBottomScroll(
     messages.length,
   );
@@ -107,7 +108,11 @@ export const ChatThreadWidgetContent = ({
           messageThreadId={messageThreadId}
           messageChannelId={messageChannel.id}
           channelName={connectionProvider.displayName}
-          recipientName={getParticipantFirstName(counterparts?.[0])}
+          recipientName={
+            isDefined(firstCounterpart)
+              ? getDisplayNameFromParticipant({ participant: firstCounterpart })
+              : null
+          }
           isDisconnected={isDisconnected}
           onMessageSent={onMessageSent}
         />

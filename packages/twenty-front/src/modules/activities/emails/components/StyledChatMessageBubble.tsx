@@ -19,7 +19,7 @@ export const StyledChatMessageBubble = styled.div<{
   color: ${themeCssVariables.font.color.primary};
   line-height: ${themeCssVariables.text.lineHeight.lg};
   max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
-  opacity: ${({ isDimmed }) => (isDimmed === true ? 0.6 : 1)};
+  opacity: ${({ isDimmed }) => (isDimmed ? 0.6 : 1)};
   overflow-wrap: break-word;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   white-space: pre-line;
