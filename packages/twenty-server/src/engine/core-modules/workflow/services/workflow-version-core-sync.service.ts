@@ -92,7 +92,9 @@ export class WorkflowVersionCoreSyncService {
 
   async upsertToCore(
     workspaceId: string,
-    workflowVersions: (WorkflowVersionWorkspaceEntity & { workflowId: string })[],
+    workflowVersions: (WorkflowVersionWorkspaceEntity & {
+      workflowId: string;
+    })[],
   ): Promise<void> {
     if (workflowVersions.length === 0) {
       return;

@@ -40,17 +40,17 @@ export const RecordShowCommandMenu = () => {
       {hasSelectedRecord &&
         (isDefined(contextStoreCurrentObjectMetadataItemId) ||
           isDefined(contextStoreCurrentCoreObjectName)) && (
-        <>
-          <CommandMenuContextProvider
-            displayType="button"
-            containerType={CommandMenuItemContainerType.ShowPageHeader}
-            isInPreviewMode={isLayoutCustomizationModeEnabled}
-          >
-            <PinnedCommandMenuItemButtons />
-          </CommandMenuContextProvider>
-          <CommandMenuItemEditButton />
-        </>
-      )}
+          <>
+            <CommandMenuContextProvider
+              displayType="button"
+              containerType={CommandMenuItemContainerType.ShowPageHeader}
+              isInPreviewMode={isLayoutCustomizationModeEnabled}
+            >
+              <PinnedCommandMenuItemButtons />
+            </CommandMenuContextProvider>
+            <CommandMenuItemEditButton />
+          </>
+        )}
     </>
   );
 };
