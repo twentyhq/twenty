@@ -31,6 +31,8 @@ export class UpdateSubscriptionQuantityJob {
       this.logger.warn(
         `Failed to sync workspace ${data.workspaceId} subscription quantity. Error: ${e}`,
       );
+
+      throw e;
     }
   }
 }

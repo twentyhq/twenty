@@ -15,6 +15,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
@@ -131,7 +132,11 @@ export class BillingWebhookInvoiceService {
     await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
       UpdateSubscriptionQuantityJob.name,
       { workspaceId },
-      { workspaceId, isWorkspaceJob: true },
+      {
+        ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

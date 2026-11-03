@@ -219,9 +219,13 @@ export class BillingSubscriptionUpdateService {
 
   async syncSeats(workspaceId: string) {
     const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
+
+    if (!isDefined(billingSubscription)) {
+      return;
+    }
 
     const billedSeats =
       await this.billingSeatService.computeCurrentBilledSeats(workspaceId);
