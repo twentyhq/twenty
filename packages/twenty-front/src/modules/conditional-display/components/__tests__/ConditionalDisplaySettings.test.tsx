@@ -5,14 +5,19 @@ import userEvent from '@testing-library/user-event';
 import { type ComponentProps } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ConditionalDisplaySettings } from '@/conditional-display/components/ConditionalDisplaySettings';
 import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { GetRolesDocument } from '~/generated-metadata/graphql';
+import {
+  GetRolesDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { mockedUserData } from '~/testing/mock-data/users';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
@@ -63,6 +68,12 @@ const renderConditionalDisplaySettings = ({
     </MemoryRouter>,
     {
       wrapper: getJestMetadataAndApolloMocksWrapper({
+        onInitializeJotaiStore: (store) => {
+          store.set(currentUserWorkspaceState.atom, {
+            ...mockedUserData.currentUserWorkspace,
+            permissionFlags: [PermissionFlagType.ROLES],
+          });
+        },
         apolloMocks: [
           {
             request: { query: GetRolesDocument },
