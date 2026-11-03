@@ -450,10 +450,27 @@ export const PortalZoomPrevention: Story = {
   play: portalZoomTest,
 };
 
+export const PortalZoomPreventionPreact: Story = {
+  ...PortalBoundsPreact,
+  args: {
+    ...PortalBoundsPreact.args,
+    shouldPreventPageZoom: true,
+  },
+  play: portalZoomTest,
+};
+
 export const PortalBrowserZoom: Story = {
   ...PortalZoomPrevention,
   args: {
     ...PortalZoomPrevention.args,
+    shouldPreventPageZoom: false,
+  },
+};
+
+export const PortalBrowserZoomPreact: Story = {
+  ...PortalZoomPreventionPreact,
+  args: {
+    ...PortalZoomPreventionPreact.args,
     shouldPreventPageZoom: false,
   },
 };
