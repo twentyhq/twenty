@@ -7,7 +7,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 
-export type TestApiKey = {
+export type ApiKeyWithObjectRecordGrants = {
   roleId: string;
   apiKeyId: string;
   token: string;
@@ -23,10 +23,9 @@ type ObjectRecordGrants = Pick<
 
 const API_KEY_EXPIRES_AT = '2099-01-01T00:00:00Z';
 
-// Every grant defaults to false, so a test only gets what it asks for.
-export const createTestApiKey = async (
+export const createApiKeyWithObjectRecordGrants = async (
   grants: ObjectRecordGrants,
-): Promise<TestApiKey> => {
+): Promise<ApiKeyWithObjectRecordGrants> => {
   const label = `Test API key role ${randomUUID()}`;
 
   const { data: roleData } = await createOneRole({
@@ -82,7 +81,9 @@ export const createTestApiKey = async (
   };
 };
 
-export const deleteTestApiKeys = async (testApiKeys: TestApiKey[]) => {
+export const deleteApiKeysWithObjectRecordGrants = async (
+  testApiKeys: ApiKeyWithObjectRecordGrants[],
+) => {
   for (const { roleId, apiKeyId } of testApiKeys) {
     await global.testDataSource.query(
       'DELETE FROM core."apiKey" WHERE id = $1',

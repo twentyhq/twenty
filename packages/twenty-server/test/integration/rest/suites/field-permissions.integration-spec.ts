@@ -209,7 +209,7 @@ describe('Restricted fields', () => {
           },
         },
       })
-        .expect(400)
+        .expect(403)
         .expect((res) => {
           expect(res.body.messages[0]).toContain(
             'Entity performing the request does not have permission',
@@ -273,7 +273,7 @@ describe('Restricted fields', () => {
           },
         },
       })
-        .expect(400)
+        .expect(403)
         .expect((res) => {
           expect(res.body.messages[0]).toContain(
             'Entity performing the request does not have permission',
@@ -403,7 +403,7 @@ describe('Restricted fields', () => {
           },
         ],
       })
-        .expect(400)
+        .expect(403)
         .expect((res) => {
           expect(res.body.messages[0]).toContain(
             'Entity performing the request does not have permission',

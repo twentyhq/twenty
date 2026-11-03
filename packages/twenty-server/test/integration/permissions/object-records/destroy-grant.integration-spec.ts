@@ -1,35 +1,31 @@
 import {
-  createTestApiKey,
-  deleteTestApiKeys,
-  type TestApiKey,
-} from 'test/integration/permissions/utils/create-test-api-key.util';
+  createApiKeyWithObjectRecordGrants,
+  deleteApiKeysWithObjectRecordGrants,
+  type ApiKeyWithObjectRecordGrants,
+} from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
+import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
 import {
-  expectPermissionDeniedResponse,
-  expectSuccessfulResponse,
-} from 'test/integration/permissions/utils/expect-permission-denied.util';
-import { personApi } from 'test/integration/permissions/utils/person-api.util';
-import {
-  createTestPeople,
-  deleteTestPeople,
-  findTestPeople,
-  SEEDED_JOB_TITLE,
-} from 'test/integration/permissions/utils/test-people.util';
+  createPersonRecords,
+  deletePersonRecords,
+  findPersonRecordStates,
+  PERSON_RECORD_SEEDED_JOB_TITLE,
+} from 'test/integration/utils/person-record-fixtures.util';
 
-const ACTIVE = { status: 'active', jobTitle: SEEDED_JOB_TITLE };
+const ACTIVE = { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE };
 const ABSENT = { status: 'absent' };
 
 describe('destroy grant on object records', () => {
-  let withGrant: TestApiKey;
-  let withoutGrant: TestApiKey;
+  let withGrant: ApiKeyWithObjectRecordGrants;
+  let withoutGrant: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
-    withGrant = await createTestApiKey({
+    withGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
     });
-    // Every other grant, so only the missing destroy grant can explain a
-    // denial.
-    withoutGrant = await createTestApiKey({
+    withoutGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
@@ -37,61 +33,61 @@ describe('destroy grant on object records', () => {
   });
 
   afterAll(async () => {
-    await deleteTestApiKeys([withGrant, withoutGrant]);
-    await deleteTestPeople();
+    await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
+    await deletePersonRecords();
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
     it('denies destroyOne without the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.destroyOne({
+      const response = await personRequestsByApi.destroyOne({
         api,
         token: withoutGrant.token,
         id,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([ACTIVE]);
+      expect(await findPersonRecordStates([id])).toEqual([ACTIVE]);
     });
 
     it('allows destroyOne with the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.destroyOne({
+      const response = await personRequestsByApi.destroyOne({
         api,
         token: withGrant.token,
         id,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([ABSENT]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates([id])).toEqual([ABSENT]);
     });
 
     it('denies destroyMany without the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.destroyMany({
+      const response = await personRequestsByApi.destroyMany({
         api,
         token: withoutGrant.token,
         ids,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([ACTIVE, ACTIVE]);
+      expect(await findPersonRecordStates(ids)).toEqual([ACTIVE, ACTIVE]);
     });
 
     it('allows destroyMany with the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.destroyMany({
+      const response = await personRequestsByApi.destroyMany({
         api,
         token: withGrant.token,
         ids,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([ABSENT, ABSENT]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates(ids)).toEqual([ABSENT, ABSENT]);
     });
   });
 });

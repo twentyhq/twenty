@@ -13,7 +13,7 @@ import { updateManyOperationFactory } from 'test/integration/graphql/utils/updat
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
-export type Api = 'graphql' | 'rest';
+export type RecordApi = 'graphql' | 'rest';
 
 type PersonData = { id: string; jobTitle?: string };
 
@@ -27,15 +27,13 @@ const PERSON_NAMES = {
 const restIdFilter = (ids: string[]) =>
   `filter=id[in]:[${ids.map((id) => `"${id}"`).join(',')}]`;
 
-// Each call sends the same operation through GraphQL or REST, so a spec can
-// run one assertion against both APIs.
-export const personApi = {
+export const personRequestsByApi = {
   findMany: ({
     api,
     token,
     ids,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     ids: string[];
   }) =>
@@ -54,7 +52,15 @@ export const personApi = {
           bearer: token,
         }),
 
-  findOne: ({ api, token, id }: { api: Api; token: string; id: string }) =>
+  findOne: ({
+    api,
+    token,
+    id,
+  }: {
+    api: RecordApi;
+    token: string;
+    id: string;
+  }) =>
     api === 'graphql'
       ? makeGraphqlApiRequest(
           findOneOperationFactory({
@@ -75,7 +81,7 @@ export const personApi = {
     token,
     data,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     data: PersonData;
   }) =>
@@ -100,7 +106,7 @@ export const personApi = {
     token,
     data,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     data: PersonData[];
   }) =>
@@ -126,7 +132,7 @@ export const personApi = {
     id,
     data,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     id: string;
     data: Omit<PersonData, 'id'>;
@@ -154,7 +160,7 @@ export const personApi = {
     ids,
     data,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     ids: string[];
     data: Omit<PersonData, 'id'>;
@@ -176,7 +182,15 @@ export const personApi = {
           bearer: token,
         }),
 
-  deleteOne: ({ api, token, id }: { api: Api; token: string; id: string }) =>
+  deleteOne: ({
+    api,
+    token,
+    id,
+  }: {
+    api: RecordApi;
+    token: string;
+    id: string;
+  }) =>
     api === 'graphql'
       ? makeGraphqlApiRequest(
           deleteOneOperationFactory({
@@ -197,7 +211,7 @@ export const personApi = {
     token,
     ids,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     ids: string[];
   }) =>
@@ -216,7 +230,15 @@ export const personApi = {
           bearer: token,
         }),
 
-  restoreOne: ({ api, token, id }: { api: Api; token: string; id: string }) =>
+  restoreOne: ({
+    api,
+    token,
+    id,
+  }: {
+    api: RecordApi;
+    token: string;
+    id: string;
+  }) =>
     api === 'graphql'
       ? makeGraphqlApiRequest(
           restoreOneOperationFactory({
@@ -237,7 +259,7 @@ export const personApi = {
     token,
     ids,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     ids: string[];
   }) =>
@@ -256,7 +278,15 @@ export const personApi = {
           bearer: token,
         }),
 
-  destroyOne: ({ api, token, id }: { api: Api; token: string; id: string }) =>
+  destroyOne: ({
+    api,
+    token,
+    id,
+  }: {
+    api: RecordApi;
+    token: string;
+    id: string;
+  }) =>
     api === 'graphql'
       ? makeGraphqlApiRequest(
           destroyOneOperationFactory({
@@ -277,7 +307,7 @@ export const personApi = {
     token,
     ids,
   }: {
-    api: Api;
+    api: RecordApi;
     token: string;
     ids: string[];
   }) =>

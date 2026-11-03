@@ -7,41 +7,38 @@ import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { isDefined } from 'twenty-shared/utils';
 
-export const SEEDED_JOB_TITLE = 'Seeded job title';
+export const PERSON_RECORD_SEEDED_JOB_TITLE = 'Seeded job title';
 
-export type TestPerson = {
+export type PersonRecordState = {
   status: 'active' | 'softDeleted' | 'absent';
   jobTitle?: string;
 };
 
-const testPersonIds: string[] = [];
+const personRecordIds: string[] = [];
 
-// Ids for records a test is about to create, tracked so deleteTestPeople
-// removes them too.
-export const reserveTestPersonIds = (count: number) => {
+export const reservePersonRecordIds = (count: number) => {
   const ids = Array.from({ length: count }, () => randomUUID());
 
-  testPersonIds.push(...ids);
+  personRecordIds.push(...ids);
 
   return ids;
 };
 
-// Created as the seeded admin, so setup never depends on the grants under test.
-export const createTestPeople = async ({
+export const createPersonRecords = async ({
   count,
   isSoftDeleted = false,
 }: {
   count: number;
   isSoftDeleted?: boolean;
 }) => {
-  const ids = reserveTestPersonIds(count);
+  const ids = reservePersonRecordIds(count);
 
   const createResponse = await makeGraphqlApiRequest(
     createManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       gqlFields: 'id',
-      data: ids.map((id) => ({ id, jobTitle: SEEDED_JOB_TITLE })),
+      data: ids.map((id) => ({ id, jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE })),
     }),
   );
 
@@ -63,7 +60,9 @@ export const createTestPeople = async ({
   return ids;
 };
 
-export const findTestPeople = async (ids: string[]): Promise<TestPerson[]> => {
+export const findPersonRecordStates = async (
+  ids: string[],
+): Promise<PersonRecordState[]> => {
   const people = await findRecordNodesByFilter<{
     id: string;
     jobTitle: string;
@@ -91,5 +90,5 @@ export const findTestPeople = async (ids: string[]): Promise<TestPerson[]> => {
   });
 };
 
-export const deleteTestPeople = () =>
-  deleteRecordsByIds('person', testPersonIds.splice(0));
+export const deletePersonRecords = () =>
+  deleteRecordsByIds('person', personRecordIds.splice(0));

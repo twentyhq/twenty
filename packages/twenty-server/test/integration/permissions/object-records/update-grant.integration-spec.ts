@@ -1,34 +1,31 @@
 import {
-  createTestApiKey,
-  deleteTestApiKeys,
-  type TestApiKey,
-} from 'test/integration/permissions/utils/create-test-api-key.util';
+  createApiKeyWithObjectRecordGrants,
+  deleteApiKeysWithObjectRecordGrants,
+  type ApiKeyWithObjectRecordGrants,
+} from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
+import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
 import {
-  expectPermissionDeniedResponse,
-  expectSuccessfulResponse,
-} from 'test/integration/permissions/utils/expect-permission-denied.util';
-import { personApi } from 'test/integration/permissions/utils/person-api.util';
-import {
-  createTestPeople,
-  deleteTestPeople,
-  findTestPeople,
-  reserveTestPersonIds,
-  SEEDED_JOB_TITLE,
-} from 'test/integration/permissions/utils/test-people.util';
+  createPersonRecords,
+  deletePersonRecords,
+  findPersonRecordStates,
+  reservePersonRecordIds,
+  PERSON_RECORD_SEEDED_JOB_TITLE,
+} from 'test/integration/utils/person-record-fixtures.util';
 
 const UPDATED_JOB_TITLE = 'Updated job title';
 
 describe('update grant on object records', () => {
-  let withGrant: TestApiKey;
-  let withoutGrant: TestApiKey;
+  let withGrant: ApiKeyWithObjectRecordGrants;
+  let withoutGrant: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
-    withGrant = await createTestApiKey({
+    withGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
     });
-    // Every other grant, so only the missing update grant can explain a denial.
-    withoutGrant = await createTestApiKey({
+    withoutGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
@@ -36,75 +33,77 @@ describe('update grant on object records', () => {
   });
 
   afterAll(async () => {
-    await deleteTestApiKeys([withGrant, withoutGrant]);
-    await deleteTestPeople();
+    await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
+    await deletePersonRecords();
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
     it('denies createOne without the grant', async () => {
-      const [id] = reserveTestPersonIds(1);
+      const [id] = reservePersonRecordIds(1);
 
-      const response = await personApi.createOne({
+      const response = await personRequestsByApi.createOne({
         api,
         token: withoutGrant.token,
         data: { id },
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([{ status: 'absent' }]);
+      expect(await findPersonRecordStates([id])).toEqual([
+        { status: 'absent' },
+      ]);
     });
 
     it('allows createOne with the grant', async () => {
-      const [id] = reserveTestPersonIds(1);
+      const [id] = reservePersonRecordIds(1);
 
-      const response = await personApi.createOne({
+      const response = await personRequestsByApi.createOne({
         api,
         token: withGrant.token,
         data: { id },
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates([id])).toEqual([
         { status: 'active', jobTitle: '' },
       ]);
     });
 
     it('denies createMany without the grant', async () => {
-      const ids = reserveTestPersonIds(2);
+      const ids = reservePersonRecordIds(2);
 
-      const response = await personApi.createMany({
+      const response = await personRequestsByApi.createMany({
         api,
         token: withoutGrant.token,
         data: ids.map((id) => ({ id })),
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([
+      expect(await findPersonRecordStates(ids)).toEqual([
         { status: 'absent' },
         { status: 'absent' },
       ]);
     });
 
     it('allows createMany with the grant', async () => {
-      const ids = reserveTestPersonIds(2);
+      const ids = reservePersonRecordIds(2);
 
-      const response = await personApi.createMany({
+      const response = await personRequestsByApi.createMany({
         api,
         token: withGrant.token,
         data: ids.map((id) => ({ id })),
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates(ids)).toEqual([
         { status: 'active', jobTitle: '' },
         { status: 'active', jobTitle: '' },
       ]);
     });
 
     it('denies updateOne without the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.updateOne({
+      const response = await personRequestsByApi.updateOne({
         api,
         token: withoutGrant.token,
         id,
@@ -112,31 +111,31 @@ describe('update grant on object records', () => {
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([
-        { status: 'active', jobTitle: SEEDED_JOB_TITLE },
+      expect(await findPersonRecordStates([id])).toEqual([
+        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
       ]);
     });
 
     it('allows updateOne with the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.updateOne({
+      const response = await personRequestsByApi.updateOne({
         api,
         token: withGrant.token,
         id,
         data: { jobTitle: UPDATED_JOB_TITLE },
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates([id])).toEqual([
         { status: 'active', jobTitle: UPDATED_JOB_TITLE },
       ]);
     });
 
     it('denies updateMany without the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.updateMany({
+      const response = await personRequestsByApi.updateMany({
         api,
         token: withoutGrant.token,
         ids,
@@ -144,24 +143,24 @@ describe('update grant on object records', () => {
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([
-        { status: 'active', jobTitle: SEEDED_JOB_TITLE },
-        { status: 'active', jobTitle: SEEDED_JOB_TITLE },
+      expect(await findPersonRecordStates(ids)).toEqual([
+        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
+        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
       ]);
     });
 
     it('allows updateMany with the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.updateMany({
+      const response = await personRequestsByApi.updateMany({
         api,
         token: withGrant.token,
         ids,
         data: { jobTitle: UPDATED_JOB_TITLE },
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates(ids)).toEqual([
         { status: 'active', jobTitle: UPDATED_JOB_TITLE },
         { status: 'active', jobTitle: UPDATED_JOB_TITLE },
       ]);

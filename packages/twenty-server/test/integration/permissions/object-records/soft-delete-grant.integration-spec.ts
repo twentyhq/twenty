@@ -1,35 +1,34 @@
 import {
-  createTestApiKey,
-  deleteTestApiKeys,
-  type TestApiKey,
-} from 'test/integration/permissions/utils/create-test-api-key.util';
+  createApiKeyWithObjectRecordGrants,
+  deleteApiKeysWithObjectRecordGrants,
+  type ApiKeyWithObjectRecordGrants,
+} from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
+import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
 import {
-  expectPermissionDeniedResponse,
-  expectSuccessfulResponse,
-} from 'test/integration/permissions/utils/expect-permission-denied.util';
-import { personApi } from 'test/integration/permissions/utils/person-api.util';
-import {
-  createTestPeople,
-  deleteTestPeople,
-  findTestPeople,
-  SEEDED_JOB_TITLE,
-} from 'test/integration/permissions/utils/test-people.util';
+  createPersonRecords,
+  deletePersonRecords,
+  findPersonRecordStates,
+  PERSON_RECORD_SEEDED_JOB_TITLE,
+} from 'test/integration/utils/person-record-fixtures.util';
 
-const ACTIVE = { status: 'active', jobTitle: SEEDED_JOB_TITLE };
-const SOFT_DELETED = { status: 'softDeleted', jobTitle: SEEDED_JOB_TITLE };
+const ACTIVE = { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE };
+const SOFT_DELETED = {
+  status: 'softDeleted',
+  jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE,
+};
 
 describe('soft-delete grant on object records', () => {
-  let withGrant: TestApiKey;
-  let withoutGrant: TestApiKey;
+  let withGrant: ApiKeyWithObjectRecordGrants;
+  let withoutGrant: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
-    withGrant = await createTestApiKey({
+    withGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
     });
-    // Every other grant, so only the missing soft-delete grant can explain a
-    // denial.
-    withoutGrant = await createTestApiKey({
+    withoutGrant = await createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
@@ -37,113 +36,119 @@ describe('soft-delete grant on object records', () => {
   });
 
   afterAll(async () => {
-    await deleteTestApiKeys([withGrant, withoutGrant]);
-    await deleteTestPeople();
+    await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
+    await deletePersonRecords();
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
     it('denies deleteOne without the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.deleteOne({
+      const response = await personRequestsByApi.deleteOne({
         api,
         token: withoutGrant.token,
         id,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([ACTIVE]);
+      expect(await findPersonRecordStates([id])).toEqual([ACTIVE]);
     });
 
     it('allows deleteOne with the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.deleteOne({
+      const response = await personRequestsByApi.deleteOne({
         api,
         token: withGrant.token,
         id,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([SOFT_DELETED]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates([id])).toEqual([SOFT_DELETED]);
     });
 
     it('denies deleteMany without the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.deleteMany({
+      const response = await personRequestsByApi.deleteMany({
         api,
         token: withoutGrant.token,
         ids,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([ACTIVE, ACTIVE]);
+      expect(await findPersonRecordStates(ids)).toEqual([ACTIVE, ACTIVE]);
     });
 
     it('allows deleteMany with the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.deleteMany({
+      const response = await personRequestsByApi.deleteMany({
         api,
         token: withGrant.token,
         ids,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([SOFT_DELETED, SOFT_DELETED]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates(ids)).toEqual([
+        SOFT_DELETED,
+        SOFT_DELETED,
+      ]);
     });
 
     it('denies restoreOne without the grant', async () => {
-      const [id] = await createTestPeople({ count: 1, isSoftDeleted: true });
+      const [id] = await createPersonRecords({ count: 1, isSoftDeleted: true });
 
-      const response = await personApi.restoreOne({
+      const response = await personRequestsByApi.restoreOne({
         api,
         token: withoutGrant.token,
         id,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([SOFT_DELETED]);
+      expect(await findPersonRecordStates([id])).toEqual([SOFT_DELETED]);
     });
 
     it('allows restoreOne with the grant', async () => {
-      const [id] = await createTestPeople({ count: 1, isSoftDeleted: true });
+      const [id] = await createPersonRecords({ count: 1, isSoftDeleted: true });
 
-      const response = await personApi.restoreOne({
+      const response = await personRequestsByApi.restoreOne({
         api,
         token: withGrant.token,
         id,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople([id])).toEqual([ACTIVE]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates([id])).toEqual([ACTIVE]);
     });
 
     it('denies restoreMany without the grant', async () => {
-      const ids = await createTestPeople({ count: 2, isSoftDeleted: true });
+      const ids = await createPersonRecords({ count: 2, isSoftDeleted: true });
 
-      const response = await personApi.restoreMany({
+      const response = await personRequestsByApi.restoreMany({
         api,
         token: withoutGrant.token,
         ids,
       });
 
       expectPermissionDeniedResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([SOFT_DELETED, SOFT_DELETED]);
+      expect(await findPersonRecordStates(ids)).toEqual([
+        SOFT_DELETED,
+        SOFT_DELETED,
+      ]);
     });
 
     it('allows restoreMany with the grant', async () => {
-      const ids = await createTestPeople({ count: 2, isSoftDeleted: true });
+      const ids = await createPersonRecords({ count: 2, isSoftDeleted: true });
 
-      const response = await personApi.restoreMany({
+      const response = await personRequestsByApi.restoreMany({
         api,
         token: withGrant.token,
         ids,
       });
 
-      expectSuccessfulResponse({ api, response });
-      expect(await findTestPeople(ids)).toEqual([ACTIVE, ACTIVE]);
+      expectPermissionGrantedResponse({ api, response });
+      expect(await findPersonRecordStates(ids)).toEqual([ACTIVE, ACTIVE]);
     });
   });
 });

@@ -1,23 +1,21 @@
 import { type Response } from 'supertest';
 import {
-  createTestApiKey,
-  deleteTestApiKeys,
-  type TestApiKey,
-} from 'test/integration/permissions/utils/create-test-api-key.util';
+  createApiKeyWithObjectRecordGrants,
+  deleteApiKeysWithObjectRecordGrants,
+  type ApiKeyWithObjectRecordGrants,
+} from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import {
-  expectPermissionDeniedResponse,
-  expectSuccessfulResponse,
-} from 'test/integration/permissions/utils/expect-permission-denied.util';
+  type RecordApi,
+  personRequestsByApi,
+} from 'test/integration/utils/person-requests-by-api.util';
 import {
-  type Api,
-  personApi,
-} from 'test/integration/permissions/utils/person-api.util';
-import {
-  createTestPeople,
-  deleteTestPeople,
-} from 'test/integration/permissions/utils/test-people.util';
+  createPersonRecords,
+  deletePersonRecords,
+} from 'test/integration/utils/person-record-fixtures.util';
 
-const getReturnedPersonIds = (api: Api, response: Response): string[] => {
+const getReturnedPersonIds = (api: RecordApi, response: Response): string[] => {
   if (api === 'graphql') {
     return response.body.data.people.edges.map(
       (edge: { node: { id: string } }) => edge.node.id,
@@ -28,24 +26,26 @@ const getReturnedPersonIds = (api: Api, response: Response): string[] => {
 };
 
 describe('read grant on object records', () => {
-  let withGrant: TestApiKey;
-  let withoutGrant: TestApiKey;
+  let withGrant: ApiKeyWithObjectRecordGrants;
+  let withoutGrant: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
-    withGrant = await createTestApiKey({ canReadAllObjectRecords: true });
-    withoutGrant = await createTestApiKey({});
+    withGrant = await createApiKeyWithObjectRecordGrants({
+      canReadAllObjectRecords: true,
+    });
+    withoutGrant = await createApiKeyWithObjectRecordGrants({});
   });
 
   afterAll(async () => {
-    await deleteTestApiKeys([withGrant, withoutGrant]);
-    await deleteTestPeople();
+    await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
+    await deletePersonRecords();
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
     it('denies findMany without the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.findMany({
+      const response = await personRequestsByApi.findMany({
         api,
         token: withoutGrant.token,
         ids,
@@ -55,22 +55,22 @@ describe('read grant on object records', () => {
     });
 
     it('allows findMany with the grant', async () => {
-      const ids = await createTestPeople({ count: 2 });
+      const ids = await createPersonRecords({ count: 2 });
 
-      const response = await personApi.findMany({
+      const response = await personRequestsByApi.findMany({
         api,
         token: withGrant.token,
         ids,
       });
 
-      expectSuccessfulResponse({ api, response });
+      expectPermissionGrantedResponse({ api, response });
       expect(getReturnedPersonIds(api, response).sort()).toEqual(ids.sort());
     });
 
     it('denies findOne without the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.findOne({
+      const response = await personRequestsByApi.findOne({
         api,
         token: withoutGrant.token,
         id,
@@ -80,15 +80,15 @@ describe('read grant on object records', () => {
     });
 
     it('allows findOne with the grant', async () => {
-      const [id] = await createTestPeople({ count: 1 });
+      const [id] = await createPersonRecords({ count: 1 });
 
-      const response = await personApi.findOne({
+      const response = await personRequestsByApi.findOne({
         api,
         token: withGrant.token,
         id,
       });
 
-      expectSuccessfulResponse({ api, response });
+      expectPermissionGrantedResponse({ api, response });
       expect(response.body.data.person.id).toBe(id);
     });
   });
