@@ -1,5 +1,6 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
+import { SidePanelCoreAgentToolsPage } from '@/object-core/agents/components/SidePanelCoreAgentToolsPage';
 import { SidePanelCoreAgentDataAccessPage } from '@/object-core/agents/components/SidePanelCoreAgentDataAccessPage';
 import { SidePanelCoreAgentTriggerPage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerPage';
 import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
@@ -121,6 +122,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.AgentCoreFilters, <SidePanelCoreAgentFiltersPage />],
   [SidePanelPages.AgentCoreTrigger, <SidePanelCoreAgentTriggerPage />],
   [SidePanelPages.AgentCoreDataAccess, <SidePanelCoreAgentDataAccessPage />],
+  [SidePanelPages.AgentCoreTools, <SidePanelCoreAgentToolsPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],

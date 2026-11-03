@@ -155,10 +155,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                 <div role="alert">{error ?? validationError}</div>
               )}
               {isDefined(session) && isRoleTab && (
-                <CoreAgentRoleTab
-                  key={resetVersion}
-                  disabled={isFormDisabled}
-                />
+                <CoreAgentRoleTab key={resetVersion} />
               )}
               {isDefined(session) && isSettingsTab && (
                 <CoreAgentSettingsTab disabled={isFormDisabled} agent={agent} />
