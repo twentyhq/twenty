@@ -1,7 +1,7 @@
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType, SYSTEM_PAGE_KEYS } from 'twenty-shared/types';
+import { NavigationMenuItemType, NATIVE_PAGE_KEYS } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
@@ -25,7 +25,7 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import { SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/system-page/constants/SystemPageNavigationMenuItemConfigs';
+import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
@@ -192,35 +192,35 @@ export const useNavigationMenuItemAddOptions = ({
           hasSubMenu: true,
         },
         {
-          id: 'systemPage',
-          label: t`System page`,
+          id: 'nativePage',
+          label: t`Native page`,
           icon: (
             <TintedIconTile icon={<IconCompass size={theme.icon.size.md} />} />
           ),
-          onClick: () => navigateToStep('systemPage'),
+          onClick: () => navigateToStep('nativePage'),
           hasSubMenu: true,
         },
       ];
     }
-    if (targetStep === 'systemPage') {
-      const systemPageKeysAlreadyAdded = new Set(
-        currentItems.map((item) => item.systemPageKey),
+    if (targetStep === 'nativePage') {
+      const nativePageKeysAlreadyAdded = new Set(
+        currentItems.map((item) => item.nativePageKey),
       );
 
-      return SYSTEM_PAGE_KEYS.map((systemPageKey) => {
+      return NATIVE_PAGE_KEYS.map((nativePageKey) => {
         const { label, Icon } =
-          SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS[systemPageKey];
+          NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS[nativePageKey];
         const isAlreadyInSidebar =
-          systemPageKeysAlreadyAdded.has(systemPageKey);
+          nativePageKeysAlreadyAdded.has(nativePageKey);
 
         return {
-          id: systemPageKey,
+          id: nativePageKey,
           label: t(label),
           icon: (
             <ColoredIcon
               Icon={Icon}
               color={getNavigationMenuItemColor({
-                type: NavigationMenuItemType.SYSTEM_PAGE,
+                type: NavigationMenuItemType.NATIVE_PAGE,
               })}
             />
           ),
@@ -228,8 +228,8 @@ export const useNavigationMenuItemAddOptions = ({
           isAlreadyInSidebar,
           onClick: () =>
             addItem({
-              type: NavigationMenuItemType.SYSTEM_PAGE,
-              systemPageKey,
+              type: NavigationMenuItemType.NATIVE_PAGE,
+              nativePageKey,
             }),
         };
       });

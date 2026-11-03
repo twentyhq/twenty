@@ -70,8 +70,8 @@ export const NavigationMenuItemFolderContent = ({
           >
             <NavigationDrawerItem
               secondaryLabel={
-                navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE
-                  ? t`System`
+                navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE
+                  ? undefined
                   : getObjectNavigationMenuItemSecondaryLabel({
                       isView:
                         navigationMenuItem.type === NavigationMenuItemType.VIEW,

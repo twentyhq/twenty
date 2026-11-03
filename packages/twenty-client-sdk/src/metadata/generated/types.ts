@@ -3665,14 +3665,14 @@ export default {
             "name": [
                 1
             ],
+            "nativePageKey": [
+                1
+            ],
             "pageLayoutId": [
                 538
             ],
             "position": [
                 6
-            ],
-            "systemPageKey": [
-                1
             ],
             "targetObjectMetadataId": [
                 538
@@ -9829,14 +9829,14 @@ export default {
             "name": [
                 1
             ],
+            "nativePageKey": [
+                1
+            ],
             "pageLayoutId": [
                 538
             ],
             "position": [
                 6
-            ],
-            "systemPageKey": [
-                1
             ],
             "targetObjectMetadataId": [
                 538

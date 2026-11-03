@@ -177,12 +177,12 @@ describe('getNavigationMenuItemLabel', () => {
     });
   });
 
-  describe('when type is SYSTEM_PAGE', () => {
-    it('should return the system page label when name is null', () => {
+  describe('when type is NATIVE_PAGE', () => {
+    it('should return the native page label when name is null', () => {
       const item = {
         ...baseItem,
-        type: NavigationMenuItemType.SYSTEM_PAGE,
-        systemPageKey: 'agents',
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'agents',
         name: null,
       };
 
@@ -194,8 +194,8 @@ describe('getNavigationMenuItemLabel', () => {
     it('should prefer a custom name', () => {
       const item = {
         ...baseItem,
-        type: NavigationMenuItemType.SYSTEM_PAGE,
-        systemPageKey: 'workflows',
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
         name: 'Automations',
       };
 
@@ -204,11 +204,11 @@ describe('getNavigationMenuItemLabel', () => {
       );
     });
 
-    it('should fall back to the system page label for a blank name', () => {
+    it('should fall back to the native page label for a blank name', () => {
       const item = {
         ...baseItem,
-        type: NavigationMenuItemType.SYSTEM_PAGE,
-        systemPageKey: 'workflows',
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
         name: '   ',
       };
 

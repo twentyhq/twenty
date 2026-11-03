@@ -4,7 +4,7 @@ import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
 import { NavigationMenuItemPageLayoutDisplay } from '@/navigation-menu-item/display/page-layout/components/NavigationMenuItemPageLayoutDisplay';
-import { NavigationMenuItemSystemPageDisplay } from '@/navigation-menu-item/display/system-page/components/NavigationMenuItemSystemPageDisplay';
+import { NavigationMenuItemNativePageDisplay } from '@/navigation-menu-item/display/native-page/components/NavigationMenuItemNativePageDisplay';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 
 type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
@@ -71,10 +71,10 @@ export const NavigationMenuItemDisplay = ({
           />
         </NavigationMenuItemEditable>
       );
-    case NavigationMenuItemType.SYSTEM_PAGE:
+    case NavigationMenuItemType.NATIVE_PAGE:
       return (
         <NavigationMenuItemEditable item={item}>
-          <NavigationMenuItemSystemPageDisplay
+          <NavigationMenuItemNativePageDisplay
             item={item}
             editModeProps={editModeProps}
             isDragging={isDragging}

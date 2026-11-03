@@ -1,7 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { AppPath, type SystemPageKey } from 'twenty-shared/types';
+import { AppPath, type NativePageKey } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import {
   type IconComponent,
@@ -9,8 +9,8 @@ import {
   IconSettingsAutomation,
 } from 'twenty-ui/icon';
 
-export const SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
-  SystemPageKey,
+export const NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
+  NativePageKey,
   {
     label: MessageDescriptor;
     Icon: IconComponent;

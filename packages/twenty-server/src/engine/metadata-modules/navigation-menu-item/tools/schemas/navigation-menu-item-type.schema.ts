@@ -8,5 +8,5 @@ export const navigationMenuItemTypeSchema = z.enum([
   NavigationMenuItemType.VIEW,
   NavigationMenuItemType.RECORD,
   NavigationMenuItemType.PAGE_LAYOUT,
-  NavigationMenuItemType.SYSTEM_PAGE,
+  NavigationMenuItemType.NATIVE_PAGE,
 ]);

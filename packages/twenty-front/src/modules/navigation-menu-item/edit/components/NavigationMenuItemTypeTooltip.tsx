@@ -41,7 +41,7 @@ export const NavigationMenuItemTypeTooltip = ({
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
     AGENT_CHAT_CHANNEL: { label: t`Channel`, Icon: IconHash },
-    SYSTEM_PAGE: { label: t`System page`, Icon: IconCompass },
+    NATIVE_PAGE: { label: t`Native page`, Icon: IconCompass },
   };
 
   const { label, Icon } = labelsByType[type];

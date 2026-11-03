@@ -1424,7 +1424,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     link: { toCompare: true, toStringify: false, universalProperty: undefined },
-    systemPageKey: {
+    nativePageKey: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

@@ -23,8 +23,8 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
   ...(isDefined(flatNavigationMenuItem.link)
     ? { link: flatNavigationMenuItem.link }
     : {}),
-  ...(isDefined(flatNavigationMenuItem.systemPageKey)
-    ? { systemPageKey: flatNavigationMenuItem.systemPageKey }
+  ...(isDefined(flatNavigationMenuItem.nativePageKey)
+    ? { nativePageKey: flatNavigationMenuItem.nativePageKey }
     : {}),
   ...(isDefined(flatNavigationMenuItem.folderUniversalIdentifier)
     ? {
