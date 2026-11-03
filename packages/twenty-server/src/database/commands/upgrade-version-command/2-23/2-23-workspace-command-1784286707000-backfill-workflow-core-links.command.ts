@@ -51,9 +51,7 @@ export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceComman
         await this.workspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const workflowRepository =
-              this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>('workflow',
-                { shouldBypassPermissionChecks: true },
-              );
+              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>('workflow');
 
             return workflowRepository.find();
           },

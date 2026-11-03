@@ -1,3 +1,4 @@
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -59,6 +60,7 @@ const restApiCoreResolvers = [
     CoreCommonApiModule,
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
+    RecordShareModule,
   ],
   controllers: [RestApiCoreController],
   providers: [RestApiCoreService, ...restApiCoreResolvers],

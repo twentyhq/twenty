@@ -17,7 +17,6 @@ import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/servic
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
-import { type AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -69,10 +68,6 @@ export const createChatParticipationTestContext = async () => {
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
     'AgentChatSharingService',
   );
-  const participationService =
-    getAppProviderByClassName<AgentChatParticipationService>(
-      'AgentChatParticipationService',
-    );
   const replyPolicyService =
     getAppProviderByClassName<AgentChatReplyPolicyService>(
       'AgentChatReplyPolicyService',
@@ -263,7 +258,6 @@ export const createChatParticipationTestContext = async () => {
     threadService,
     chatService,
     sharingService,
-    participationService,
     replyPolicyService,
     featureFlagService,
     setAssistantModes,

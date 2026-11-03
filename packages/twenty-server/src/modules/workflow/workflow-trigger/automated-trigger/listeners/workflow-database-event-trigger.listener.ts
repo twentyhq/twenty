@@ -308,10 +308,10 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository = this.workspaceOrmManager.getRepository(
-          relatedObjectMetadataNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
+        const relatedObjectRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            relatedObjectMetadataNameSingular,
+          );
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },
@@ -506,6 +506,7 @@ export class WorkflowDatabaseEventTriggerListener {
       );
 
     return resolveEventsReadableByRole({
+      applicationId,
       roleId:
         findActiveFlatApplicationById(flatApplicationMaps, applicationId)
           ?.defaultRoleId ?? null,
