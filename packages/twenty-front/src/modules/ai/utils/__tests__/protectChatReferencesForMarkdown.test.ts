@@ -71,13 +71,13 @@ describe('protectChatReferencesForMarkdown', () => {
     ).toBe('See [[view:44444444-4444-4444-4444-444444444444:Q1 \\- pipeline]]');
   });
 
-  it('should leave a marker whose label contains brackets unchanged', () => {
+  it('should escape brackets in a label', () => {
     expect(
       protectChatReferencesForMarkdown(
         'Open [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[test] name]]',
       ),
     ).toBe(
-      'Open [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[test] name]]',
+      'Open [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:\\[test\\] name]]',
     );
   });
 
