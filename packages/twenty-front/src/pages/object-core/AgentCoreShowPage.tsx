@@ -11,6 +11,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
 import { CoreAgentDetailSkeletonLoader } from '@/object-core/agents/components/CoreAgentDetailSkeletonLoader';
+import { CoreAgentMetadataEventsEffect } from '@/object-core/agents/components/CoreAgentMetadataEventsEffect';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
 
@@ -24,7 +26,9 @@ export const AgentCoreShowPage = () => {
   });
 
   const agent = data?.findOneAgent;
-  const hasFailedToLoad = !loading && !isDefined(agent);
+  const hasFailedToLoad =
+    !loading && (!isDefined(agent) || isGraphqlErrorOfType(error, 'NOT_FOUND'));
+  const AgentIcon = getIcon('IconLego');
 
   useNavigateToNotFoundOnLoadFailure({
     hasFailedToLoad,
@@ -32,29 +36,30 @@ export const AgentCoreShowPage = () => {
     notFoundMessage: t`Agent not found`,
   });
 
-  if (hasFailedToLoad) {
-    return null;
-  }
-
-  if (!isDefined(agent)) {
-    const AgentIcon = getIcon('IconLego');
-
-    return (
-      <SettingsPageLayout
-        title={t`Agent`}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
-        links={getCoreAgentBreadcrumbLinks()}
-      >
-        <SettingsPageContainer>
-          <Section.Root>
-            <CoreAgentDetailSkeletonLoader />
-          </Section.Root>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    );
-  }
-
-  return <CoreAgentFormContent key={agent.id} agent={agent} />;
+  return (
+    <>
+      <CoreAgentMetadataEventsEffect agentId={agentId} />
+      {!hasFailedToLoad && !isDefined(agent) && (
+        <SettingsPageLayout
+          title={t`Agent`}
+          icon={
+            <AgentIcon
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          }
+          links={getCoreAgentBreadcrumbLinks()}
+        >
+          <SettingsPageContainer>
+            <Section.Root>
+              <CoreAgentDetailSkeletonLoader />
+            </Section.Root>
+          </SettingsPageContainer>
+        </SettingsPageLayout>
+      )}
+      {!hasFailedToLoad && isDefined(agent) && (
+        <CoreAgentFormContent key={agent.id} agent={agent} />
+      )}
+    </>
+  );
 };
