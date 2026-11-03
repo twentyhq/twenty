@@ -27,8 +27,6 @@ export const SSEStaleRecordQueriesEvictionEffect = () => {
         return;
       }
 
-      // Not broadcast: watchers still hold the old field name in their
-      // variables until React re-renders them with the new metadata.
       apolloCoreClient.cache.evict({
         id: 'ROOT_QUERY',
         fieldName: objectMetadataItem.namePlural,
