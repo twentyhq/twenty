@@ -44,7 +44,10 @@ export class AdminConsoleSessionService {
     workspaceId,
     authProvider,
   }: {
-    user: UserEntity;
+    user: Pick<
+      UserEntity,
+      'email' | 'canImpersonate' | 'canAccessFullAdminPanel'
+    >;
     workspaceId: string;
     authProvider: AuthProviderEnum;
   }): Promise<AdminConsoleLoginTokenDTO> {

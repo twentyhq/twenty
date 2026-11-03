@@ -52,8 +52,7 @@ export const useHandleImpersonate = () => {
         const { loginToken, workspace } = data.impersonateFromAdminPanel;
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
-        // The console has no workspace session to swap, so the target opens on its own host (even single-workspace),
-        // without an opener the customer's workspace page could use to navigate the console tab.
+        // No workspace session to swap here; noopener keeps the customer's page from navigating the console tab.
         if (isOnAdminConsole) {
           window.open(
             buildWorkspaceUrl(
