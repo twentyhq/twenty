@@ -29,6 +29,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
+import { isStreamQueryingObject } from 'src/engine/subscriptions/utils/is-stream-querying-object.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -52,19 +53,6 @@ type StreamPermissionsContext = {
 };
 
 const SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY = 10;
-
-const isStreamQueryingObject = ({
-  streamData,
-  objectNameSingular,
-}: {
-  streamData: EventStreamData;
-  objectNameSingular: string;
-}): boolean =>
-  Object.values(streamData.queries).some(
-    (operationSignature) =>
-      isRecordGqlOperationSignature(operationSignature) &&
-      operationSignature.objectNameSingular === objectNameSingular,
-  );
 
 @Injectable()
 export class ObjectRecordEventPublisher {
@@ -202,7 +190,7 @@ export class ObjectRecordEventPublisher {
     }).catch((error) => {
       if (!(error instanceof AuthException)) {
         this.logger.warn(
-          `Failed to resolve the subscriber of stream ${streamChannelId} for ${workspaceEventBatch.name}, skipping it: ${
+          `Failed to resolve the subscriber of stream ${streamChannelId} for ${workspaceEventBatch.name} in workspace ${workspaceEventBatch.workspaceId}, skipping it: ${
             error instanceof Error ? error.message : String(error)
           }`,
           error instanceof Error ? error.stack : undefined,

@@ -26,11 +26,11 @@ import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
+import { loadPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/load-permissions-principal-role-maps.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -219,43 +219,12 @@ export class PermissionsService {
       return undefined;
     }
 
-    const {
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'flatRoleTargetByAgentIdMaps',
-        'flatApplicationMaps',
-        'flatWorkspaceMemberMaps',
-      ],
-    );
-
-    const { flatRoleTargetMaps } =
-      authContext.type === 'webhook'
-        ? await this.workspaceCacheService.getOrRecompute(
-            authContext.workspace.id,
-            ['flatRoleTargetMaps'],
-          )
-        : { flatRoleTargetMaps: undefined };
-
     return resolvePermissionsPrincipalsWithRoles({
       authContext,
-      roleMaps: {
-        ...buildPermissionsPrincipalRoleMaps({
-          flatWorkspaceMemberMaps,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap,
-          flatRoleTargetByAgentIdMaps,
-          flatApplicationMaps,
-        }),
-        flatRoleTargetMaps,
-      },
+      roleMaps: await loadPermissionsPrincipalRoleMaps({
+        workspaceCacheService: this.workspaceCacheService,
+        authContext,
+      }),
     });
   }
 
