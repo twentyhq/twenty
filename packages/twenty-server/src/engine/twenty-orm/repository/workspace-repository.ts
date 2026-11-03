@@ -35,7 +35,6 @@ import {
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import {
   type RowAccessEvaluationContext,
-  type PermissionsMetadataMaps,
   type RowAccessRecord,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
@@ -126,7 +125,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
-  permissionsMetadataMaps: PermissionsMetadataMaps;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
@@ -168,7 +166,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return getPermissionsPrincipalsObjectsPermissions({
       principals: permissionsPrincipals,
-      metadataMaps: this.options.permissionsMetadataMaps,
+      metadataMaps: this.options.internalContext,
     });
   }
 
@@ -1067,7 +1065,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         records: this.formatResult<ObjectRecord[]>(formattedRecords),
         objectMetadata: this.options.flatObjectMetadata,
         principals: this.resolvePermissionsPrincipalsOrThrow(),
-        metadataMaps: this.options.permissionsMetadataMaps,
+        metadataMaps: this.options.internalContext,
       });
     }
 
@@ -1750,7 +1748,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const principals = this.resolvePermissionsPrincipalsOrThrow();
-    const metadataMaps = this.options.permissionsMetadataMaps;
+    const metadataMaps = this.options.internalContext;
 
     if (
       !isDefined(
@@ -2061,7 +2059,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return buildPermissionsCondition({
       principals: this.resolvePermissionsPrincipalsOrThrow(),
-      metadataMaps: this.options.permissionsMetadataMaps,
+      metadataMaps: this.options.internalContext,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       flatObjectMetadata,
       operationType,
@@ -2189,7 +2187,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }): Promise<Set<string>> {
     const condition = buildPermissionsCondition({
       principals,
-      metadataMaps: this.options.permissionsMetadataMaps,
+      metadataMaps: this.options.internalContext,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
@@ -2255,7 +2253,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       !this.isOperationDisabled({ operationType, flatObjectMetadata }) &&
       isObjectOperationDeniedToPrincipals({
         principals: this.resolvePermissionsPrincipalsOrThrow(),
-        metadataMaps: this.options.permissionsMetadataMaps,
+        metadataMaps: this.options.internalContext,
         flatObjectMetadata,
         operationType,
       })
@@ -2284,7 +2282,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return isObjectOperationDisabledToPrincipals({
       principals: this.resolvePermissionsPrincipalsOrThrow(),
-      metadataMaps: this.options.permissionsMetadataMaps,
+      metadataMaps: this.options.internalContext,
       flatObjectMetadata,
       operationType,
     });

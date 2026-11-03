@@ -3,10 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type ObjectRecord,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -29,7 +26,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
@@ -44,25 +40,20 @@ export class WorkspaceDataSource {
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
-  private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   private permissionsPrincipals?: PermissionsPrincipalsWithRolesContext | null;
-  private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
   constructor({
     pool,
     internalContext,
     authContext,
-    objectPermissionsByRoleId,
   }: {
     pool: Pool;
     internalContext: WorkspaceInternalContext;
     authContext: WorkspaceAuthContext;
-    objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   }) {
     this.pool = pool;
     this.internalContext = internalContext;
     this.authContext = authContext;
-    this.objectPermissionsByRoleId = objectPermissionsByRoleId;
   }
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -246,7 +237,6 @@ export class WorkspaceDataSource {
       internalContext,
       authContext: this.authContext,
       executor,
-      permissionsMetadataMaps: this.resolvePermissionsMetadataMaps(),
       permissionsPrincipals: shouldRepositoryBypassPermissionChecks
         ? undefined
         : this.resolvePermissionsPrincipals(),
@@ -299,22 +289,6 @@ export class WorkspaceDataSource {
     }
 
     return this.permissionsPrincipals ?? undefined;
-  }
-
-  // Shared by every repository of this data source so the engine's principal caches hit across them
-  private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {
-    return (this.permissionsMetadataMaps ??= {
-      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-      featureFlagsMap: this.internalContext.featureFlagsMap,
-      rolesPermissions: this.objectPermissionsByRoleId,
-      flatApplicationMaps: this.internalContext.flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps:
-        this.internalContext.flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps:
-        this.internalContext.flatRowLevelPermissionPredicateGroupMaps,
-      flatWorkspaceMemberMaps: this.internalContext.flatWorkspaceMemberMaps,
-    });
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {
