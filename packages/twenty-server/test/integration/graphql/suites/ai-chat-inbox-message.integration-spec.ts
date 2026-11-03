@@ -732,13 +732,15 @@ describe('Addressing channels and existing conversations as an application', () 
     )[0].count;
 
   beforeAll(async () => {
-    await makeGraphqlApiRequest(
+    const companyResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id',
         data: { id: companyId, name: 'Inbox addressing account' },
       }),
     );
+
+    assertGraphQLSuccessfulResponse(companyResponse);
 
     application = await setupApplicationWithResources({
       name: 'Inbox Addressing Application',
