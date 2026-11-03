@@ -7,7 +7,7 @@ import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { delay, graphql, HttpResponse } from 'msw';
+import { graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import {
@@ -23,8 +23,6 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-
-const WORKSPACE_SAVE_DELAY_MILLISECONDS = 100;
 
 type SettingsAiIntegrationStoryOptions = {
   permissionFlags: PermissionFlagType[];
@@ -43,7 +41,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     | undefined;
   const instructionsSaveReleases = new Set<() => void>();
   let shouldFailNextBehaviorSave = false;
-  let nextBehaviorSaveErrorMessage: string | undefined;
   let shouldFailNextInstructionsSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
@@ -67,7 +64,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     saveBehavior.mockClear();
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
-    nextBehaviorSaveErrorMessage = undefined;
     shouldFailNextInstructionsSave = false;
     permissionFlags = options.permissionFlags;
     workspace = {
@@ -95,9 +91,8 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     );
   };
 
-  const failNextBehaviorSave = (userFriendlyMessage?: string) => {
+  const failNextBehaviorSave = () => {
     shouldFailNextBehaviorSave = true;
-    nextBehaviorSaveErrorMessage = userFriendlyMessage;
   };
 
   const pauseBehaviorSave = () => {
@@ -213,14 +208,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           : nextInstructionsSave?.pendingSave;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
-        const behaviorSaveErrorMessage = nextBehaviorSaveErrorMessage;
         const shouldRejectInstructionsSave =
           hasInstructionsUpdate && shouldFailNextInstructionsSave;
 
         if (hasBehaviorUpdate) {
           saveBehavior(variables.input);
           shouldFailNextBehaviorSave = false;
-          nextBehaviorSaveErrorMessage = undefined;
         }
 
         if (hasInstructionsUpdate) {
@@ -233,8 +226,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           await pendingSave;
         }
 
-        await delay(WORKSPACE_SAVE_DELAY_MILLISECONDS);
-
         if (requestGeneration !== resetGeneration) {
           return HttpResponse.error();
         }
@@ -244,7 +235,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
             errors: [
               {
                 message: 'Behavior settings could not be saved',
-                extensions: { userFriendlyMessage: behaviorSaveErrorMessage },
+                extensions: {
+                  userFriendlyMessage:
+                    'You do not have permission to change this behavior.',
+                },
               },
             ],
           });

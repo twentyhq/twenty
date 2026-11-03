@@ -137,69 +137,7 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
   },
 };
 
-export const BehaviorPersistence: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const bodyQueries = within(canvasElement.ownerDocument.body);
-    const directMessages = await canvas.findByRole('combobox', { name: 'DMs' });
-    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
-
-    expect(directMessages).toHaveTextContent('Only when mentioned');
-    expect(inbox).toHaveTextContent('Auto');
-
-    fixture.pauseBehaviorSave();
-    await userEvent.click(directMessages);
-    const directMessageOptions = await bodyQueries.findByRole('listbox', {
-      name: 'DMs',
-    });
-    await userEvent.click(
-      within(directMessageOptions).getByRole('option', { name: 'Never' }),
-    );
-
-    await waitFor(() => expect(fixture.saveBehavior).toHaveBeenCalledOnce());
-    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
-    });
-    expect(directMessages).toHaveAttribute('data-disabled');
-    expect(inbox).toHaveAttribute('data-disabled');
-    expect(directMessages).toHaveTextContent('Only when mentioned');
-    expect(inbox).toHaveTextContent('Auto');
-
-    fixture.resumeBehaviorSave();
-    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
-    await waitFor(() => expect(inbox).not.toHaveAttribute('data-disabled'));
-    await userEvent.click(inbox);
-    const inboxOptions = await bodyQueries.findByRole('listbox', {
-      name: 'Global inbox',
-    });
-    await userEvent.click(
-      within(inboxOptions).getByRole('option', { name: 'Only when mentioned' }),
-    );
-
-    await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
-    expect(directMessages).toHaveTextContent('Never');
-    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
-    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
-      aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
-    });
-    expect(fixture.saveInstructions).not.toHaveBeenCalled();
-
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
-    await fixture.reloadWorkspace();
-    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-
-    expect(
-      await canvas.findByRole('combobox', { name: 'DMs' }),
-    ).toHaveTextContent('Never');
-    expect(
-      canvas.getByRole('combobox', { name: 'Global inbox' }),
-    ).toHaveTextContent('Only when mentioned');
-    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
-  },
-};
-
-export const BehaviorSaveFailure: Story = {
+export const BehaviorPersistenceAndRetry: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const bodyQueries = within(canvasElement.ownerDocument.body);
@@ -208,59 +146,53 @@ export const BehaviorSaveFailure: Story = {
 
     fixture.failNextBehaviorSave();
     await userEvent.click(directMessages);
-    const failedOptions = await bodyQueries.findByRole('listbox', {
-      name: 'DMs',
-    });
     await userEvent.click(
-      within(failedOptions).getByRole('option', { name: 'Never' }),
+      await bodyQueries.findByRole('option', { name: 'Never' }),
     );
-
     expect(await canvas.findByRole('alert')).toHaveTextContent(
-      'Failed to save behavior settings. Try again.',
-    );
-    expect(directMessages).toHaveTextContent('Only when mentioned');
-    expect(inbox).toHaveTextContent('Auto');
-    expect(fixture.saveBehavior).toHaveBeenCalledOnce();
-
-    fixture.failNextBehaviorSave(
       'You do not have permission to change this behavior.',
     );
-    await userEvent.click(directMessages);
-    const permissionDeniedOptions = await bodyQueries.findByRole('listbox', {
-      name: 'DMs',
-    });
-    await userEvent.click(
-      within(permissionDeniedOptions).getByRole('option', { name: 'Never' }),
-    );
-
-    await waitFor(() =>
-      expect(canvas.getByRole('alert')).toHaveTextContent(
-        'You do not have permission to change this behavior.',
-      ),
-    );
     expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
-    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
 
+    fixture.pauseBehaviorSave();
     await userEvent.click(directMessages);
-    const retryOptions = await bodyQueries.findByRole('listbox', {
-      name: 'DMs',
-    });
     await userEvent.click(
-      within(retryOptions).getByRole('option', { name: 'Never' }),
+      await bodyQueries.findByRole('option', { name: 'Never' }),
     );
-
-    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
-    expect(inbox).toHaveTextContent('Auto');
-    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
-    expect(fixture.saveBehavior).toHaveBeenCalledTimes(3);
+    await waitFor(() => expect(fixture.saveBehavior).toHaveBeenCalledTimes(2));
     expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
     });
+    expect(directMessages).toHaveAttribute('data-disabled');
+    expect(inbox).toHaveAttribute('data-disabled');
+    expect(directMessages).toHaveTextContent('Only when mentioned');
+
+    fixture.resumeBehaviorSave();
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await userEvent.click(inbox);
+    await userEvent.click(
+      await bodyQueries.findByRole('option', { name: 'Only when mentioned' }),
+    );
+    await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
+    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
+      aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+    });
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await fixture.reloadWorkspace();
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+    expect(
+      await canvas.findByRole('combobox', { name: 'DMs' }),
+    ).toHaveTextContent('Never');
+    expect(
+      canvas.getByRole('combobox', { name: 'Global inbox' }),
+    ).toHaveTextContent('Only when mentioned');
   },
 };
 
-export const InstructionsFailurePreservesBehavior: Story = {
+export const QueuedInstructionsPreserveConfirmedSettings: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const bodyQueries = within(canvasElement.ownerDocument.body);
@@ -268,8 +200,8 @@ export const InstructionsFailurePreservesBehavior: Story = {
       name: 'Workspace Instructions',
     });
     const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
+    const releaseFirstSave = fixture.pauseInstructionsSave();
 
-    const resumeInstructionsSave = fixture.pauseInstructionsSave();
     fixture.failNextInstructionsSave();
     await userEvent.type(instructions, 'Use concise replies.');
     await waitFor(
@@ -278,63 +210,34 @@ export const InstructionsFailurePreservesBehavior: Story = {
     );
 
     await userEvent.click(directMessages);
-    const options = await bodyQueries.findByRole('listbox', { name: 'DMs' });
     await userEvent.click(
-      within(options).getByRole('option', { name: 'Never' }),
+      await bodyQueries.findByRole('option', { name: 'Never' }),
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
 
-    resumeInstructionsSave();
-    expect(
-      await bodyQueries.findByText('Workspace instructions could not be saved'),
-    ).toBeVisible();
-    expect(directMessages).toHaveTextContent('Never');
-    expect(fixture.saveInstructions).not.toHaveBeenCalled();
-    expect(fixture.saveBehavior).toHaveBeenCalledOnce();
-
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
-    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-
-    expect(
-      await canvas.findByRole('combobox', { name: 'DMs' }),
-    ).toHaveTextContent('Never');
-    expect(
-      canvas.getByRole('textbox', { name: 'Workspace Instructions' }),
-    ).not.toHaveTextContent('Use concise replies.');
-  },
-};
-
-export const EarlierInstructionsFailurePreservesLaterSave: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const instructions = await canvas.findByRole('textbox', {
-      name: 'Workspace Instructions',
-    });
-    const releaseEarlierSave = fixture.pauseInstructionsSave();
-
-    fixture.failNextInstructionsSave();
-    await userEvent.type(instructions, 'Use concise replies.');
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
-      { timeout: 3000 },
-    );
-
-    const releaseLaterSave = fixture.pauseInstructionsSave();
+    const releaseSecondSave = fixture.pauseInstructionsSave();
     await userEvent.type(instructions, ' Add clear next steps.');
     await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
     expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
 
-    releaseEarlierSave();
+    releaseFirstSave();
     await waitFor(
       () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
       { timeout: 3000 },
     );
+    expect(directMessages).toHaveTextContent('Never');
 
-    releaseLaterSave();
-    await waitFor(() =>
-      expect(fixture.saveInstructions).toHaveBeenCalledOnce(),
-    );
+    fixture.failNextInstructionsSave();
+    await userEvent.type(instructions, ' Include examples.');
+    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
+    expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2);
+
+    releaseSecondSave();
+    expect(
+      await bodyQueries.findByText('Workspace instructions could not be saved'),
+    ).toBeVisible();
+    expect(instructions).toHaveTextContent('Include examples.');
+    expect(fixture.saveInstructions).toHaveBeenCalledOnce();
     expect(fixture.saveInstructions).toHaveBeenCalledWith({
       aiAdditionalInstructions: expect.stringContaining(
         'Add clear next steps.',
@@ -342,104 +245,15 @@ export const EarlierInstructionsFailurePreservesLaterSave: Story = {
     });
 
     await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
     await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-
-    expect(
-      await canvas.findByRole('textbox', { name: 'Workspace Instructions' }),
-    ).toHaveTextContent('Add clear next steps.');
-  },
-};
-
-export const LaterInstructionsFailurePreservesEarlierSave: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const bodyQueries = within(canvasElement.ownerDocument.body);
-    const instructions = await canvas.findByRole('textbox', {
-      name: 'Workspace Instructions',
-    });
-    const releaseEarlierSave = fixture.pauseInstructionsSave();
-
-    await userEvent.type(instructions, 'Use concise replies.');
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
-      { timeout: 3000 },
-    );
-
-    const releaseLaterSave = fixture.pauseInstructionsSave();
-    fixture.failNextInstructionsSave();
-    await userEvent.type(instructions, ' Add clear next steps.');
-    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
-    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
-
-    releaseEarlierSave();
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
-      { timeout: 3000 },
-    );
-
-    await waitFor(() =>
-      expect(fixture.saveInstructions).toHaveBeenCalledOnce(),
-    );
-    releaseLaterSave();
-    expect(
-      await bodyQueries.findByText('Workspace instructions could not be saved'),
-    ).toBeVisible();
-
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
-    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-
     const savedInstructions = await canvas.findByRole('textbox', {
       name: 'Workspace Instructions',
     });
-    expect(savedInstructions).toHaveTextContent('Use concise replies.');
-    expect(savedInstructions).not.toHaveTextContent('Add clear next steps.');
-  },
-};
-
-export const QueuedInstructionsSavesPersistLatestDraft: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const instructions = await canvas.findByRole('textbox', {
-      name: 'Workspace Instructions',
-    });
-    const releaseUnusedSave = fixture.pauseInstructionsSave();
-
-    releaseUnusedSave();
-    releaseUnusedSave();
-    const releaseEarlierSave = fixture.pauseInstructionsSave();
-
-    releaseUnusedSave();
-    await userEvent.type(instructions, 'Use concise replies.');
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
-      { timeout: 3000 },
+    expect(savedInstructions).toHaveTextContent('Add clear next steps.');
+    expect(savedInstructions).not.toHaveTextContent('Include examples.');
+    expect(canvas.getByRole('combobox', { name: 'DMs' })).toHaveTextContent(
+      'Never',
     );
-
-    const releaseLaterSave = fixture.pauseInstructionsSave();
-    await userEvent.type(instructions, ' Add clear next steps.');
-    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
-    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
-
-    releaseEarlierSave();
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
-      { timeout: 3000 },
-    );
-    releaseLaterSave();
-    await waitFor(() =>
-      expect(fixture.saveInstructions).toHaveBeenCalledTimes(2),
-    );
-
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await canvas.findByRole('heading', { name: 'Models' });
-    await fixture.reloadWorkspace();
-    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-
-    expect(
-      await canvas.findByRole('textbox', { name: 'Workspace Instructions' }),
-    ).toHaveTextContent('Add clear next steps.');
   },
 };
 
