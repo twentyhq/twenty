@@ -19,7 +19,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 type MessageToRefresh = Pick<
   MessageWorkspaceEntity,
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
-> & { messageChannelMessageAssociationId: string };
+> & { messageChannelMessageAssociationId: string; isSentDraft: boolean };
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -211,10 +211,11 @@ export class MessagingMessageService {
             existingAssociation.messageExternalId === message.externalId &&
             messageExternalIdsToRefreshSet.has(message.externalId)
           ) {
-            if (
+            const isSentDraft =
               messageAccumulator.existingMessageInDB?.isDraft === true &&
-              !message.isDraft
-            ) {
+              !message.isDraft;
+
+            if (isSentDraft) {
               sentDraftMessageExternalIds.push(message.externalId);
             }
 
@@ -225,6 +226,7 @@ export class MessagingMessageService {
               text: message.text,
               isDraft: message.isDraft,
               messageChannelMessageAssociationId: existingAssociation.id,
+              isSentDraft,
             };
           }
 
@@ -430,9 +432,15 @@ export class MessagingMessageService {
       );
     }
 
-    await messageParticipantRepository.delete({
-      messageId: In(messagesToRefresh.map(({ id }) => id)),
-    });
+    const sentDraftMessageIds = messagesToRefresh
+      .filter(({ isSentDraft }) => isSentDraft)
+      .map(({ id }) => id);
+
+    if (sentDraftMessageIds.length > 0) {
+      await messageParticipantRepository.delete({
+        messageId: In(sentDraftMessageIds),
+      });
+    }
 
     await messageFolderAssociationRepository.delete({
       messageChannelMessageAssociationId: In(

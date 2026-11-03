@@ -25,7 +25,24 @@ const FOLDERS = [
   { id: 'inbox', displayName: 'Inbox' },
   { id: 'drafts', displayName: 'Drafts' },
   { id: 'sentitems', displayName: 'Sent Items' },
+  { id: 'archive', displayName: 'Archive' },
 ];
+
+const RECEIVED_MESSAGE_ID = 'microsoft-received-message';
+const RECEIVED_MESSAGE_HEADER_ID = `<${RECEIVED_MESSAGE_ID}@example.com>`;
+
+const RECEIVED_MESSAGE = {
+  id: RECEIVED_MESSAGE_ID,
+  subject: `Microsoft received message ${randomUUID()}`,
+  body: { contentType: 'text', content: 'Received body' },
+  receivedDateTime: '2026-08-12T00:00:00.000Z',
+  internetMessageId: RECEIVED_MESSAGE_HEADER_ID,
+  conversationId: 'microsoft-received-conversation',
+  parentFolderId: 'inbox',
+  isDraft: false,
+  from: { emailAddress: { address: KEPT_RECIPIENT } },
+  toRecipients: [{ emailAddress: { address: HANDLE } }],
+};
 
 const SCHEDULED_MESSAGE_ID = 'microsoft-sent-draft-message';
 const SCHEDULED_MESSAGE_HEADER_ID = `<${SCHEDULED_MESSAGE_ID}@example.com>`;
@@ -60,14 +77,17 @@ type ImportedMessageState = {
   associations: { id: string; messageExternalId: string }[];
   folderExternalIds: (string | null)[];
   recipientHandles: string[];
+  participantIds: string[];
 };
 
-const findImportedMessageState = async (): Promise<ImportedMessageState> => {
+const findImportedMessageState = async (
+  headerMessageId: string,
+): Promise<ImportedMessageState> => {
   const messages = await findRecordNodesByFilter<ImportedMessage>(
     'message',
     'messages',
     'id subject text isDraft messageThreadId',
-    { headerMessageId: { eq: SCHEDULED_MESSAGE_HEADER_ID } },
+    { headerMessageId: { eq: headerMessageId } },
   );
 
   expect(messages).toHaveLength(1);
@@ -115,9 +135,10 @@ const findImportedMessageState = async (): Promise<ImportedMessageState> => {
   });
 
   const recipients = await findRecordNodesByFilter<{
+    id: string;
     handle: string;
     role: string;
-  }>('messageParticipant', 'messageParticipants', 'handle role', {
+  }>('messageParticipant', 'messageParticipants', 'id handle role', {
     messageId: { eq: message.id },
   });
 
@@ -130,6 +151,7 @@ const findImportedMessageState = async (): Promise<ImportedMessageState> => {
       .filter((recipient) => recipient.role === MessageParticipantRole.TO)
       .map((recipient) => recipient.handle)
       .sort(),
+    participantIds: recipients.map((recipient) => recipient.id).sort(),
   };
 };
 
@@ -137,12 +159,14 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
   const microsoftMock = setupMicrosoftMock({
     handle: HANDLE,
     folders: FOLDERS,
-    messages: [SCHEDULED_MESSAGE],
+    messages: [SCHEDULED_MESSAGE, RECEIVED_MESSAGE],
   });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let stateWhileScheduled: ImportedMessageState;
   let stateAfterSend: ImportedMessageState;
+  let receivedStateBeforeArchive: ImportedMessageState;
+  let receivedStateAfterArchive: ImportedMessageState;
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({
@@ -152,8 +176,14 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
 
     await runMessageChannelSync(channel.channelId);
 
-    stateWhileScheduled = await findImportedMessageState();
+    stateWhileScheduled = await findImportedMessageState(
+      SCHEDULED_MESSAGE_HEADER_ID,
+    );
+    receivedStateBeforeArchive = await findImportedMessageState(
+      RECEIVED_MESSAGE_HEADER_ID,
+    );
 
+    microsoftMock.moveMessageToFolder(RECEIVED_MESSAGE_ID, 'archive');
     microsoftMock.moveMessageToFolder(SCHEDULED_MESSAGE_ID, 'sentitems');
     SCHEDULED_MESSAGE.isDraft = false;
     SCHEDULED_MESSAGE.subject = SENT_SUBJECT;
@@ -164,7 +194,12 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
 
     await runMessageChannelSync(channel.channelId);
 
-    stateAfterSend = await findImportedMessageState();
+    stateAfterSend = await findImportedMessageState(
+      SCHEDULED_MESSAGE_HEADER_ID,
+    );
+    receivedStateAfterArchive = await findImportedMessageState(
+      RECEIVED_MESSAGE_HEADER_ID,
+    );
   }, 180000);
 
   afterAll(async () => {
@@ -206,5 +241,12 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
 
   it('links the message to Sent Items instead of Drafts', () => {
     expect(stateAfterSend.folderExternalIds).toEqual(['sentitems']);
+  });
+
+  it('moves an archived email to Archive and keeps its participants', () => {
+    expect(receivedStateAfterArchive.folderExternalIds).toEqual(['archive']);
+    expect(receivedStateAfterArchive.participantIds).toEqual(
+      receivedStateBeforeArchive.participantIds,
+    );
   });
 });
