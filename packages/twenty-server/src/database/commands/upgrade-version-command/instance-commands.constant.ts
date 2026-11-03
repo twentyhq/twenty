@@ -280,6 +280,7 @@ import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/co
 import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793473469981-enable-user-health-check';
 import { AddSettingsMenuItemSlugFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793618487873-add-settings-menu-item-slug';
 import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793627583457-add-application-role-target';
+import { AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793700975254-add-application-granted-iframe-media-permissions';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -562,4 +563,5 @@ export const INSTANCE_COMMANDS = [
   EnableUserHealthCheckFastInstanceCommand,
   AddSettingsMenuItemSlugFastInstanceCommand,
   AddApplicationRoleTargetFastInstanceCommand,
+  AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand,
 ];

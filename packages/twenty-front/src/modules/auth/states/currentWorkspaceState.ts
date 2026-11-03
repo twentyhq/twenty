@@ -41,6 +41,8 @@ export type CurrentWorkspace = Pick<
   | 'trashRetentionDays'
   | 'eventLogRetentionDays'
   | 'aiChatModelTier'
+  | 'aiChatDirectMessageAssistantMode'
+  | 'aiChatInboxAssistantMode'
   | 'aiAgentModelTier'
   | 'isAutoModelSelectionEnabled'
   | 'aiModelIdByTier'

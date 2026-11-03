@@ -9,6 +9,7 @@ import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
+  AiChatAssistantMode,
   AiModelTier,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
@@ -92,6 +93,8 @@ const mockWorkspace = {
   trashRetentionDays: 14,
   eventLogRetentionDays: 365 * 3,
   aiChatModelTier: AiModelTier.fast,
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+  aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},

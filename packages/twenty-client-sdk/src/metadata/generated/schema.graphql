@@ -455,6 +455,7 @@ type Application {
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
+  grantedIframeMediaPermissions: [IframeMediaPermission!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
   isUninstallBlockedByOtherWorkspaceInstallations: Boolean!
@@ -465,6 +466,7 @@ type Application {
   objects: [Object!]!
   packageJsonChecksum: String
   packageJsonFileId: UUID
+  requestedIframeMediaPermissions: [IframeMediaPermission!]!
   runOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
@@ -2339,7 +2341,6 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
-  IS_PRIVATE_RECORD_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2360,6 +2361,7 @@ type Field {
   isNullable: Boolean
   isSearchable: Boolean
   isSystem: Boolean
+  isSystemSideEffect: Boolean
   isUIEditable: Boolean
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isUnique: Boolean
@@ -2552,6 +2554,7 @@ type FormFieldConfiguration {
 
 type FrontComponent {
   applicationGrantedCapabilities: [String!]
+  applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
   applicationName: String
   applicationTokenPair: ApplicationTokenPair @deprecated(reason: "Use generateFrontComponentApplicationTokenPair")
@@ -2713,6 +2716,12 @@ type IframeConfiguration {
 }
 
 type IframeMediaPermission {
+  camera: Boolean!
+  microphone: Boolean!
+  origin: String!
+}
+
+input IframeMediaPermissionInput {
   camera: Boolean!
   microphone: Boolean!
   origin: String!
@@ -3035,6 +3044,7 @@ type MarketplaceAppDetail {
   objects: [MarketplaceAppObject!]
   pricingDescription: String
   requestedCapabilities: [String!]!
+  requestedIframeMediaPermissions: [IframeMediaPermission!]!
   roles: [MarketplaceAppRole!]
   screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
   sourcePackage: String
@@ -3325,6 +3335,7 @@ type Mutation {
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
+  approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
@@ -3915,7 +3926,9 @@ enum PageLayoutType {
 }
 
 type PageLayoutWidget {
+  applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
+  applicationName: String
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: WidgetConfiguration!

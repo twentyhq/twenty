@@ -143,8 +143,18 @@ describe('linkedinImportHistoryHandler', () => {
       chatId: 'chat-2',
     });
     expect(mocks.ingestLinkedinMessages).toHaveBeenCalledWith(
-      expect.objectContaining({ unipileAccountId: 'acc_1' }),
+      expect.objectContaining({
+        unipileAccountId: 'acc_1',
+        counterparts: [LISTED_CHAT_WITH_ATTENDEE.user],
+      }),
     );
+    expect(
+      new Set(
+        mocks.ingestLinkedinMessages.mock.calls.map(
+          ([input]) => input.resolveCounterpart,
+        ),
+      ).size,
+    ).toBe(1);
     expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
       completedChunkCount: 3,
       completedConversationCount: 42,

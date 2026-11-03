@@ -99,15 +99,10 @@ const buildCondition = (
     recordShareTableExpression: '"workspace"."recordShare"',
   });
 
-const privateRecordMetadataMaps = {
-  ...metadataMaps,
-  featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true },
-};
 const sharingMetadataMaps = {
   ...metadataMaps,
   featureFlagsMap: {
     [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-    [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
   },
 };
 
@@ -214,13 +209,7 @@ describe('buildPermissionsCondition', () => {
         principal: owningApplication,
         flatObjectMetadata: object,
       }),
-    ).toEqual({ kind: 'open' });
-  });
-
-  it('opens an object to a principal without predicate', () => {
-    expect(
-      build({ principal: readEverything, flatObjectMetadata: note }),
-    ).toEqual({ kind: 'open' });
+    ).toMatchObject({ kind: 'gated' });
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
@@ -243,29 +232,11 @@ describe('buildPermissionsCondition', () => {
     expect(policy.condition.sql).toContain('"workspace"."recordShare"');
   });
 
-  it('leaves records open to their role until private records are enabled', () => {
-    expect(
-      buildConditionOutcome({
-        principal: readEverything,
-        metadataMaps: {
-          ...metadataMaps,
-          featureFlagsMap: {
-            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-          },
-        },
-        tableAlias: 'company',
-        flatObjectMetadata: buildObject({ id: 'company' }),
-        operationType: 'select',
-      }),
-    ).toEqual({ kind: 'open' });
-  });
-
   it('gates every object on private records once they are enabled, without record sharing', () => {
     expect(
       gatedSql({
         principal: readEverything,
         flatObjectMetadata: person,
-        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('recordShare');
   });
@@ -392,24 +363,11 @@ describe('buildPermissionsCondition', () => {
     });
   });
 
-  it('gates an object on the role predicate alone', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
-    const sql = gatedSql({
-      principal: readEverything,
-      flatObjectMetadata: note,
-    });
-
-    expect(sql).toBe('"note"."title" = :restricted');
-  });
-
   it('gates records on their share rows', () => {
     expect(
       gatedSql({
         principal: readEverything,
         flatObjectMetadata: person,
-        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('"person_recordShare"."recordId" = "person"."id"');
   });
@@ -417,7 +375,7 @@ describe('buildPermissionsCondition', () => {
   it('opens private records only to shares naming the member or their roles', () => {
     const condition = buildCondition({
       principal: readEverything,
-      metadataMaps: privateRecordMetadataMaps,
+      metadataMaps,
       flatObjectMetadata: person,
       operationType: 'select',
     });
@@ -441,7 +399,6 @@ describe('buildPermissionsCondition', () => {
     const sql = gatedSql({
       principal: readEverything,
       flatObjectMetadata: person,
-      policyMetadataMaps: privateRecordMetadataMaps,
     });
 
     expect(sql).toMatch(
@@ -452,7 +409,7 @@ describe('buildPermissionsCondition', () => {
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildConditionOutcome({
       principal: readEverything,
-      metadataMaps: privateRecordMetadataMaps,
+      metadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'select',
@@ -501,9 +458,11 @@ describe('buildPermissionsCondition', () => {
           sql: expect.stringContaining('"note"."title" = :restricted'),
         },
       });
-      expect(policy).toMatchObject({
-        condition: { sql: expect.not.stringContaining('recordShare') },
-      });
+      expect(
+        policy.kind === 'gated'
+          ? policy.condition.sql.match(/"note"\."title" = :restricted/g)
+          : [],
+      ).toHaveLength(2);
     });
 
     it('preserves a disabled edit action', () => {
