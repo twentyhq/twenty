@@ -1283,7 +1283,8 @@
       "TOUCH_DEVICE_MEDIA_QUERY": "utilities/responsive/constants/TouchDeviceMediaQuery",
       "useIsMobile": "utilities/responsive/hooks/useIsMobile",
       "useIsTouchDevice": "utilities/responsive/hooks/useIsTouchDevice",
-      "useMediaQuery": "utilities/responsive/hooks/useMediaQuery"
+      "useMediaQuery": "utilities/responsive/hooks/useMediaQuery",
+      "usePreventPageZoomRef": "utilities/zoom/hooks/usePreventPageZoomRef"
     },
     "types": {
       "Nullable": "utilities/types/Nullable"

@@ -17,7 +17,6 @@ import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effec
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentPointerCaptureEffect } from '@/host/effect-components/FrontComponentPointerCaptureEffect';
 import { FrontComponentOutsidePressEffect } from '@/host/effect-components/FrontComponentOutsidePressEffect';
-import { FrontComponentPreventPageZoomEffect } from '@/host/effect-components/FrontComponentPreventPageZoomEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -32,6 +31,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from 'twenty-ui/theme';
+import { usePreventPageZoomRef } from 'twenty-ui/utilities';
 import { FrontComponentWorkerEffect } from '@/host/effect-components/FrontComponentWorkerEffect';
 import { componentRegistry } from '@/host/generated/host-component-registry';
 import { createFallbackComponentRegistry } from '@/host/utils/createFallbackComponentRegistry';
@@ -107,13 +107,17 @@ export const FrontComponentRenderer = ({
     }),
   );
   const [initialExecutionContext] = useState(executionContext);
+  const rootContainerRef = usePreventPageZoomRef({
+    preventPageZoom,
+    onElementChange: geometryTracker.setRoot,
+  });
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
       <div
-        ref={geometryTracker.setRoot}
+        ref={rootContainerRef}
         style={ROOT_CONTAINER_STYLE}
         onPointerDown={outsidePressController.forwardUnhandledOwnedPress}
         onPointerUp={outsidePressController.forwardUnhandledOwnedPress}
@@ -122,11 +126,6 @@ export const FrontComponentRenderer = ({
         onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
         onClick={outsidePressController.forwardUnhandledOwnedPress}
       >
-        {preventPageZoom && (
-          <FrontComponentPreventPageZoomEffect
-            geometryTracker={geometryTracker}
-          />
-        )}
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           componentSource={componentSource}
@@ -229,6 +228,7 @@ export const FrontComponentRenderer = ({
                     <FrontComponentRemoteRootRenderer
                       receiver={receiver}
                       components={fallbackComponentRegistry}
+                      preventPageZoom={preventPageZoom}
                     />
                   </FrontComponentPointerCaptureControllerContext.Provider>
                 </FrontComponentHostScrollControllerContext.Provider>
