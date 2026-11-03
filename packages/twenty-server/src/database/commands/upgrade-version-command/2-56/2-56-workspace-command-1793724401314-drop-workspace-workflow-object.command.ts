@@ -246,7 +246,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       twentyStandardFlatApplication.universalIdentifier;
 
     if (hasDeletions) {
-      await this.runMigration({
+      await this.runMigrationOrThrow({
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityOperationByMetadataName: {
@@ -302,7 +302,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
         commandMenuItemsToUpdate.length >
       0
     ) {
-      await this.runMigration({
+      await this.runMigrationOrThrow({
         workspaceId,
         applicationUniversalIdentifier,
         allFlatEntityOperationByMetadataName: {
@@ -343,7 +343,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     }
 
     const schema = getWorkspaceSchemaName(workspaceId);
-    const targetWorkflowColumns = fieldsToDelete
+    const objectIdsWithTargetWorkflowField = fieldsToDelete
       .filter(({ name }) => name === 'targetWorkflow')
       .map(({ objectMetadataId }) => objectMetadataId);
     const countRows = async ({
@@ -370,12 +370,12 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
             query: `SELECT COUNT(*) AS count FROM "${schema}"."workflowAutomatedTrigger"`,
           })
         : 0;
-    const attachmentCount = targetWorkflowColumns.length
+    const attachmentCount = objectIdsWithTargetWorkflowField.length
       ? await countRows({
           query: `SELECT COUNT(*) AS count FROM "${schema}"."attachment" WHERE "targetWorkflowId" IS NOT NULL`,
         })
       : 0;
-    const timelineActivityCount = targetWorkflowColumns.length
+    const timelineActivityCount = objectIdsWithTargetWorkflowField.length
       ? await countRows({
           query: `SELECT COUNT(*) AS count FROM "${schema}"."timelineActivity" WHERE "targetWorkflowId" IS NOT NULL`,
         })
@@ -388,7 +388,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     return `${workflowRecordCount} workflow record(s), ${workflowAutomatedTriggerRecordCount} automated trigger record(s), ${attachmentCount} attachment link(s), ${timelineActivityCount} timeline activity link(s), ${favoriteCount} favorite(s)`;
   }
 
-  private async runMigration(
+  private async runMigrationOrThrow(
     args: Omit<
       Parameters<
         WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunLegacyWorkspaceMigration']
