@@ -1131,6 +1131,9 @@ export const STANDARD_OBJECT_FIELDS = {
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
     },
+    attachments: {
+      universalIdentifier: '3ef4289a-5e39-468b-8439-f72d710201c6',
+    },
   },
   note: {
     ...buildStandardObjectSystemFields(

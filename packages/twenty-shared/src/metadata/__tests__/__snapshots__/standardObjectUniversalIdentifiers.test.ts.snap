@@ -1701,6 +1701,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "message": {
     "fields": {
+      "attachments": {
+        "universalIdentifier": "3ef4289a-5e39-468b-8439-f72d710201c6",
+      },
       "createdAt": {
         "universalIdentifier": "74d0ddc0-4dbe-5c29-8d4a-2e512c1e66ab",
       },

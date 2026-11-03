@@ -15,6 +15,7 @@ export type Message = Omit<
   | 'id'
   | 'messageCampaign'
   | 'messageCampaignId'
+  | 'attachments'
 > & {
   attachments: {
     filename: string;
