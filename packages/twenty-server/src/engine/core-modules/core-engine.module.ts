@@ -38,6 +38,7 @@ import { EnvironmentModule } from 'src/engine/core-modules/environment/environme
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { GettingStartedWorkflowModule } from 'src/engine/core-modules/getting-started/getting-started-workflow.module';
@@ -145,12 +146,14 @@ import { FileApiModule } from './file/file-api.module';
     }),
     MetricsModule,
     MessageQueueModule.registerAsync({
+      imports: [FeatureFlagModule],
       useFactory: messageQueueModuleFactory,
       inject: [
         TwentyConfigService,
         RedisClientService,
         MetricsService,
         EventEmitter2,
+        FeatureFlagService,
       ],
     }),
     ExceptionHandlerModule.forRootAsync({

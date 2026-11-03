@@ -37,6 +37,7 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
@@ -84,6 +85,7 @@ export class BullMQDriver
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
+    featureFlagService: FeatureFlagService,
   ) {
     this.fairQueueScheduler = new FairQueueScheduler({
       getClient: (queueName) => this.queueMap[queueName].client,
@@ -91,7 +93,7 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
-      twentyConfigService,
+      featureFlagService,
     });
   }
 
@@ -292,9 +294,7 @@ export class BullMQDriver
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
-          if (isDefined(job.id)) {
-            this.fairQueueScheduler.onJobStarted({ queueName, jobId: job.id });
-          }
+          this.fairQueueScheduler.onJobStarted({ queueName, job });
 
           const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 

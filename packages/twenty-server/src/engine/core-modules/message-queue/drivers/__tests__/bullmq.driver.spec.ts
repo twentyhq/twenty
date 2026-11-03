@@ -1,5 +1,6 @@
 import { type Job, Worker } from 'bullmq';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
@@ -23,6 +24,9 @@ const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
 const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
+const mockFeatureFlagService = {
+  isFeatureEnabled: jest.fn().mockResolvedValue(false),
+};
 const mockAllocateTickets = jest.fn();
 const mockRecordDispatch = jest.fn();
 
@@ -71,6 +75,7 @@ describe('BullMQDriver deduplication', () => {
     {} as never,
     mockTwentyConfigService as never,
     {} as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.workspaceQueue);
@@ -217,6 +222,7 @@ describe('BullMQDriver progress', () => {
     { recordHistogram: jest.fn() } as never,
     mockTwentyConfigService as never,
     {} as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.workspaceQueue);
@@ -277,6 +283,7 @@ describe('BullMQDriver job change events', () => {
     { recordHistogram: jest.fn() } as never,
     mockTwentyConfigService as never,
     eventEmitter as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.workspaceQueue);
@@ -354,6 +361,7 @@ describe('BullMQDriver queue wait metric', () => {
     { recordHistogram } as never,
     mockTwentyConfigService as never,
     {} as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.workflowQueue);
@@ -454,6 +462,7 @@ describe('BullMQDriver queue job count gauges', () => {
     { createMultiObservableGauge } as never,
     mockTwentyConfigService as never,
     {} as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.workflowQueue);
@@ -510,6 +519,7 @@ describe('BullMQDriver global concurrency', () => {
     {} as never,
     mockTwentyConfigService as never,
     {} as never,
+    mockFeatureFlagService as never,
   );
 
   driver.register(MessageQueue.recordExportQueue);
@@ -537,19 +547,23 @@ describe('BullMQDriver global concurrency', () => {
 
 describe('BullMQDriver fair tickets', () => {
   const incrementCounterForEvent = jest.fn();
+  const isFeatureEnabled = jest.fn();
   const driver = new BullMQDriver(
     {} as never,
     { incrementCounterForEvent } as never,
-    {
-      get: jest.fn((key: string) => key === 'IS_WORKER_FAIRNESS_ENABLED'),
-    } as never,
+    mockTwentyConfigService as never,
     {} as never,
+    { isFeatureEnabled } as never,
   );
 
   driver.register(MessageQueue.workspaceQueue);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    isFeatureEnabled.mockImplementation(
+      async (key: FeatureFlagKey) =>
+        key === FeatureFlagKey.IS_WORKER_FAIRNESS_ENABLED,
+    );
     mockGetRanges.mockResolvedValue([]);
     mockAdd.mockImplementation(async (_name, _data, opts) => ({
       id: opts.jobId,
@@ -640,18 +654,86 @@ describe('BullMQDriver fair tickets', () => {
     });
   });
 
-  it('ranks a system job on the system group', async () => {
-    mockAllocateTickets.mockResolvedValue({
-      base: 0,
-      tickets: [{ tag: 0, weight: 1 }],
-    });
-
+  it('leaves a system job on its static priority without charging a clock', async () => {
     await driver.add(MessageQueue.workspaceQueue, 'job', {}, SYSTEM_JOB);
 
+    expect(isFeatureEnabled).not.toHaveBeenCalled();
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      {},
+      expect.objectContaining({ priority: DEFAULT_JOB_PRIORITY }),
+    );
+  });
+
+  it('only allocates tickets to the workspaces with the fairness flag', async () => {
+    isFeatureEnabled.mockImplementation(
+      async (_key: FeatureFlagKey, workspaceId: string) =>
+        workspaceId === 'ws-1',
+    );
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [{ tag: 3, weight: 1 }],
+    });
+
+    await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
+      { data: {}, ...buildWorkspaceJobScope('ws-2') },
+      { data: {}, ...buildWorkspaceJobScope('ws-1') },
+      { data: {}, ...SYSTEM_JOB },
+      { data: {}, ...buildWorkspaceJobScope('ws-2') },
+    ]);
+
+    expect(isFeatureEnabled).toHaveBeenCalledTimes(2);
     expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
-      requests: [{ groupKeys: ['system'], jobCount: 1 }],
+      requests: [{ groupKeys: ['workspace:ws-1'], jobCount: 1 }],
     });
+    expect(
+      mockAddBulk.mock.calls[0][0].map(
+        ({ opts }: { opts: { priority: number } }) => opts.priority,
+      ),
+    ).toEqual([
+      DEFAULT_JOB_PRIORITY,
+      FAIR_TICKET_OFFSET + 3,
+      DEFAULT_JOB_PRIORITY,
+      DEFAULT_JOB_PRIORITY,
+    ]);
+  });
+
+  it('keeps the static priority without charging a clock when the workspace has no fairness flag', async () => {
+    isFeatureEnabled.mockResolvedValue(false);
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      {},
+      buildWorkspaceJobScope('ws-1'),
+    );
+
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      {},
+      expect.objectContaining({ priority: DEFAULT_JOB_PRIORITY }),
+    );
+  });
+
+  it('keeps the static priority when the fairness flag cannot be read', async () => {
+    isFeatureEnabled.mockRejectedValue(new Error('cache unavailable'));
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      {},
+      buildWorkspaceJobScope('ws-1'),
+    );
+
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      {},
+      expect.objectContaining({ priority: DEFAULT_JOB_PRIORITY }),
+    );
   });
 
   it('appends the additional group keys to the keys of the scope', async () => {
@@ -767,21 +849,13 @@ describe('BullMQDriver fair tickets', () => {
 });
 
 describe('BullMQDriver fair dispatch', () => {
-  const processJob = async ({
-    isFairnessEnabled,
-  }: {
-    isFairnessEnabled: boolean;
-  }) => {
+  const processJob = async ({ opts }: Pick<Job, 'opts'>) => {
     const driver = new BullMQDriver(
       {} as never,
       { recordHistogram: jest.fn() } as never,
-      {
-        get: jest.fn(
-          (key: string) =>
-            key === 'IS_WORKER_FAIRNESS_ENABLED' && isFairnessEnabled,
-        ),
-      } as never,
+      mockTwentyConfigService as never,
       {} as never,
+      mockFeatureFlagService as never,
     );
 
     driver.register(MessageQueue.workflowQueue);
@@ -798,7 +872,7 @@ describe('BullMQDriver fair dispatch', () => {
       id: 'job-id',
       name: 'job',
       data: {},
-      opts: {},
+      opts,
       timestamp: Date.now(),
       attemptsStarted: 1,
       updateData: jest.fn(),
@@ -806,8 +880,10 @@ describe('BullMQDriver fair dispatch', () => {
     } as unknown as Job);
   };
 
-  it('records the dispatch of a job when fairness is on', async () => {
-    await processJob({ isFairnessEnabled: true });
+  it('records the dispatch of a job that holds a fair ticket', async () => {
+    await processJob({
+      opts: { priority: FAIR_TICKET_OFFSET + 7, fairBase: 0 } as Job['opts'],
+    });
 
     expect(mockRecordDispatch).toHaveBeenCalledWith({
       queueName: MessageQueue.workflowQueue,
@@ -815,8 +891,8 @@ describe('BullMQDriver fair dispatch', () => {
     });
   });
 
-  it('records nothing when fairness is off', async () => {
-    await processJob({ isFairnessEnabled: false });
+  it('records nothing for a job on its static priority', async () => {
+    await processJob({ opts: { priority: DEFAULT_JOB_PRIORITY } });
 
     expect(mockRecordDispatch).not.toHaveBeenCalled();
   });

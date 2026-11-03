@@ -4,6 +4,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { v4 as generateUuid } from 'uuid';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -30,12 +31,10 @@ export const withQueueOrderTestContext = async (
           incrementCounterForEvent: jest.fn(),
         },
       },
+      { provide: TwentyConfigService, useValue: { get: () => undefined } },
       {
-        provide: TwentyConfigService,
-        useValue: {
-          get: (key: string) =>
-            key === 'IS_WORKER_FAIRNESS_ENABLED' ? false : undefined,
-        },
+        provide: FeatureFlagService,
+        useValue: { isFeatureEnabled: async () => false },
       },
       { provide: EventEmitter2, useValue: new EventEmitter2() },
       {
@@ -44,8 +43,14 @@ export const withQueueOrderTestContext = async (
           metrics: MetricsService,
           config: TwentyConfigService,
           events: EventEmitter2,
-        ) => new BullMQDriver(options, metrics, config, events),
-        inject: [MetricsService, TwentyConfigService, EventEmitter2],
+          featureFlags: FeatureFlagService,
+        ) => new BullMQDriver(options, metrics, config, events, featureFlags),
+        inject: [
+          MetricsService,
+          TwentyConfigService,
+          EventEmitter2,
+          FeatureFlagService,
+        ],
       },
     ],
   }).compile();

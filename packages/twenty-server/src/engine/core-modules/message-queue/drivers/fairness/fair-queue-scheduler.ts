@@ -1,6 +1,10 @@
-import { PRIORITY_LIMIT, type RedisClient } from 'bullmq';
+import { Logger } from '@nestjs/common';
+
+import { type Job, PRIORITY_LIMIT, type RedisClient } from 'bullmq';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FAIR_TICKET_OFFSET,
   URGENT_FAIR_PRIORITY,
@@ -11,7 +15,6 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type FairJobOptions = { priority?: number; fairBase?: number };
 
@@ -20,10 +23,11 @@ type FairQueueSchedulerOptions = {
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
-  twentyConfigService: TwentyConfigService;
+  featureFlagService: FeatureFlagService;
 };
 
 export class FairQueueScheduler {
+  private readonly logger = new Logger(FairQueueScheduler.name);
   private readonly fairTicketAllocator: FairTicketAllocator;
 
   constructor(private readonly options: FairQueueSchedulerOptions) {
@@ -51,7 +55,13 @@ export class FairQueueScheduler {
       priority: staticPriority,
     }));
 
-    if (!this.isFairnessEnabled() || (delay ?? 0) > 0) {
+    if ((delay ?? 0) > 0) {
+      return staticJobOptions;
+    }
+
+    const fairWorkspaceIds = await this.findFairWorkspaceIds(scopes);
+
+    if (fairWorkspaceIds.size === 0) {
       return staticJobOptions;
     }
 
@@ -61,6 +71,13 @@ export class FairQueueScheduler {
     >();
 
     scopes.forEach((scope, jobIndex) => {
+      if (
+        !isDefined(scope.workspaceId) ||
+        !fairWorkspaceIds.has(scope.workspaceId)
+      ) {
+        return;
+      }
+
       const groupKeys = buildQueueJobGroupKeys({ scope, additionalGroupKeys });
       const signature = JSON.stringify(groupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
@@ -118,19 +135,49 @@ export class FairQueueScheduler {
 
   onJobStarted({
     queueName,
-    jobId,
+    job,
   }: {
     queueName: MessageQueue;
-    jobId: string;
+    job: Pick<Job, 'id' | 'opts'>;
   }): void {
-    if (!this.isFairnessEnabled()) {
+    const { fairBase }: FairJobOptions = job.opts;
+
+    if (!isDefined(job.id) || !isDefined(fairBase)) {
       return;
     }
 
-    void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
+    void this.fairTicketAllocator.recordDispatch({ queueName, jobId: job.id });
   }
 
-  private isFairnessEnabled(): boolean {
-    return this.options.twentyConfigService.get('IS_WORKER_FAIRNESS_ENABLED');
+  private async findFairWorkspaceIds(
+    scopes: QueueJobScope[],
+  ): Promise<Set<string>> {
+    const workspaceIds = [
+      ...new Set(
+        scopes.map(({ workspaceId }) => workspaceId).filter(isDefined),
+      ),
+    ];
+    const fairnessByWorkspace = await Promise.all(
+      workspaceIds.map((workspaceId) => this.isFairnessEnabled(workspaceId)),
+    );
+
+    return new Set(
+      workspaceIds.filter((_, index) => fairnessByWorkspace[index]),
+    );
+  }
+
+  private async isFairnessEnabled(workspaceId: string): Promise<boolean> {
+    try {
+      return await this.options.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKER_FAIRNESS_ENABLED,
+        workspaceId,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read the fairness flag of workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return false;
+    }
   }
 }

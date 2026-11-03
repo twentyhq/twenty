@@ -597,12 +597,12 @@ describe('BullMQDriver fairness scenarios', () => {
       ]);
     });
 
-    it('flag on: the system jobs form one group, the workspace job runs second', async () => {
+    it('flag on: the system jobs have no workspace flag and keep the static priority, the first ticket of W passes them', async () => {
       const harness = await createFairnessHarness({ isFairnessEnabled: true });
 
       await enqueue(harness);
 
-      expect(await harness.processAll()).toEqual(['S1', 'W1', 'S2', 'S3']);
+      expect(await harness.processAll()).toEqual(['W1', 'S1', 'S2', 'S3']);
     });
   });
 

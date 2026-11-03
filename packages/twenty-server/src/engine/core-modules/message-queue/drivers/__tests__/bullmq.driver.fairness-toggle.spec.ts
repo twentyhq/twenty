@@ -8,7 +8,7 @@ describe('BullMQDriver fairness toggle', () => {
   beforeAll(silenceDriverLogs);
 
   describe('S12: A has jobs waiting when IS_WORKER_FAIRNESS_ENABLED changes, then B enqueues jobs', () => {
-    it('turned on: the first tickets start at the virtual time and pass the static backlog, which then drains FIFO ahead of the next tickets', async () => {
+    it('turned on: the tickets start at the virtual time and pass the static backlog until they reach its priority, since static jobs do not move the virtual time', async () => {
       const harness = await createFairnessHarness({ isFairnessEnabled: false });
 
       await harness.enqueueMany({
@@ -25,7 +25,7 @@ describe('BullMQDriver fairness toggle', () => {
 
       await harness.enqueue({ label: 'B3', workspaceId: 'B' });
 
-      expect(await harness.processAll()).toEqual(['A2', 'A3', 'B3']);
+      expect(await harness.processAll()).toEqual(['B3', 'A2', 'A3']);
     });
 
     it('turned off: the new jobs take the static priority, behind the tickets below it and ahead of the rest of the backlog', async () => {

@@ -60,4 +60,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
+  [FeatureFlagKey.IS_WORKER_FAIRNESS_ENABLED]: {
+    label: msg`Worker fairness`,
+    description: msg`Order this workspace's background jobs by fair tickets, so a burst from one tenant does not delay the others. Off: its jobs are processed in FIFO order.`,
+  },
 };

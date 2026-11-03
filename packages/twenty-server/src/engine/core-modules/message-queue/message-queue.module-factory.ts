@@ -1,5 +1,6 @@
 import { type EventEmitter2 } from '@nestjs/event-emitter';
 
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   type BullMQDriverFactoryOptions,
   MessageQueueDriverType,
@@ -14,6 +15,7 @@ export const messageQueueModuleFactory = async (
   redisClientService: RedisClientService,
   metricsService: MetricsService,
   eventEmitter: EventEmitter2,
+  featureFlagService: FeatureFlagService,
 ): Promise<MessageQueueModuleOptions> => {
   const driverType = MessageQueueDriverType.BullMQ;
 
@@ -28,6 +30,7 @@ export const messageQueueModuleFactory = async (
         metricsService,
         twentyConfigService,
         eventEmitter,
+        featureFlagService,
       } satisfies BullMQDriverFactoryOptions;
     }
     default:

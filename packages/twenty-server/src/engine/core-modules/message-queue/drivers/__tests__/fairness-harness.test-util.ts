@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type Job, PRIORITY_LIMIT } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -71,7 +72,6 @@ const QUEUE = MessageQueue.logicFunctionQueue;
 const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const JOB_NAME = 'scenario-job';
-const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
@@ -352,11 +352,12 @@ export const createFairnessHarness = async ({
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    {
-      get: (key: string) =>
-        key === FAIRNESS_FLAG ? isFairnessEnabled : undefined,
-    } as never,
+    { get: () => undefined } as never,
     { emit: jest.fn() } as never,
+    {
+      isFeatureEnabled: async (key: FeatureFlagKey) =>
+        key === FeatureFlagKey.IS_WORKER_FAIRNESS_ENABLED && isFairnessEnabled,
+    } as never,
   );
 
   driver.register(QUEUE);
