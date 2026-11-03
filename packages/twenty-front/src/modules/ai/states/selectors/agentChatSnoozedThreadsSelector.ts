@@ -53,7 +53,13 @@ export const agentChatSnoozedThreadsSelector = createAtomSelector<
 
       return (
         isDefined(snoozedUntil) &&
-        new Date(snoozedUntil).getTime() <= new Date(lastLoadedWakeAt).getTime()
+        isAgentChatThreadWithinPageBoundary({
+          threadId: thread.id,
+          sortAt: snoozedUntil,
+          boundaryThreadId: lastLoadedThreadId,
+          boundarySortAt: lastLoadedSortAt,
+          isAscending: true,
+        })
       );
     });
   },
