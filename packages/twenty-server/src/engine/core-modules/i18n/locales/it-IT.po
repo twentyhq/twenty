@@ -825,8 +825,13 @@ msgstr "Pannello di amministrazione"
 msgid "Admin role not found."
 msgstr "Ruolo amministratore non trovato."
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr ""
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "L'agente \"{label}\" è archiviato."
 
@@ -1113,6 +1118,11 @@ msgstr "Esiste già un agente con questo nome"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "Esiste già un agente con questo nome."
+
+#. js-lingui-id: pk6kfE
+#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
+msgid "An AI step cannot change its agent. Create a new step instead."
+msgstr ""
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13480,6 +13490,11 @@ msgstr "La chiave della vista {reservedViewKey} è riservata alla vista predefin
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "La chiave della vista {reservedViewKey} è riservata alla vista predefinita di proprietà del motore; rimuovere la chiave dalla definizione della vista"
+
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr ""
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts

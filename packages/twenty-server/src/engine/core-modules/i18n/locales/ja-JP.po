@@ -825,8 +825,13 @@ msgstr "管理パネル"
 msgid "Admin role not found."
 msgstr "管理者ロールが見つかりません。"
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr ""
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "エージェント \"{label}\" はアーカイブされています。"
 
@@ -1113,6 +1118,11 @@ msgstr "この名前のエージェントはすでに存在します"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "この名前のエージェントはすでに存在します."
+
+#. js-lingui-id: pk6kfE
+#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
+msgid "An AI step cannot change its agent. Create a new step instead."
+msgstr ""
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13480,6 +13490,11 @@ msgstr "{reservedViewKey} ビューキーはデフォルトビュー用に予約
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "{reservedViewKey} ビューキーはエンジン所有のデフォルトビュー用に予約されているため、そのキーをビュー定義から削除してください。"
+
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr ""
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
