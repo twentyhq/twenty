@@ -16,12 +16,11 @@ import { ApplicationCapabilityResolver } from 'src/engine/core-modules/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
@@ -42,18 +41,20 @@ const USER_REQUEST = {
 class TestQueryResolver {
   @Query(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+      requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   isReady(): boolean {
     return true;

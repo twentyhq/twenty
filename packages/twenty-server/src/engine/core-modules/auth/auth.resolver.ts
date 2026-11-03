@@ -104,8 +104,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -124,6 +122,7 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -651,11 +650,14 @@ export class AuthResolver {
 
   @Query(() => SubdomainAvailabilityDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -667,11 +669,14 @@ export class AuthResolver {
 
   @Query(() => WorkspaceCreationDefaultsDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -687,11 +692,14 @@ export class AuthResolver {
 
   @Mutation(() => SignUpDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
     }),
     WorkspaceCreationCaptchaGuard,
     NoPermissionGuard,
@@ -741,11 +749,14 @@ export class AuthResolver {
       'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -778,11 +789,14 @@ export class AuthResolver {
 
   @Mutation(() => FileUploadTargetDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -813,11 +827,14 @@ export class AuthResolver {
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -844,11 +861,14 @@ export class AuthResolver {
 
   @Mutation(() => TransientTokenDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -1140,11 +1160,14 @@ export class AuthResolver {
 
   @Mutation(() => AuthorizeAppDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -1211,21 +1234,23 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+        PermissionFlagType.ROLES,
+      ],
     }),
-    SettingsPermissionGuard([
-      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-      PermissionFlagType.ROLES,
-    ]),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
@@ -1240,18 +1265,20 @@ export class AuthResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => AuthToken)
   async generatePlaygroundToken(

@@ -19,8 +19,6 @@ import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/c
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
@@ -32,23 +30,10 @@ import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/u
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -66,6 +51,22 @@ export class WorkflowVersionStepResolver {
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
   @Query(() => ConnectedAccountHandleDTO, { nullable: true })
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+    }),
+  )
   async workflowStepConnectedAccountHandle(
     @Args('connectedAccountId', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -89,16 +90,19 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: false,
       },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
     }),
   )
   async updateWorkflowRunStep(
@@ -134,6 +138,22 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+    }),
+  )
   async submitFormStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input') { workflowRunId, stepId, response }: SubmitFormStepInput,
@@ -158,6 +178,22 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => TestHttpRequestDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+    }),
+  )
   async testHttpRequest(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')

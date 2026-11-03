@@ -93,7 +93,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
@@ -105,6 +104,7 @@ import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -115,20 +115,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
-  }),
-  NoPermissionGuard,
-)
+@UseGuards(NoPermissionGuard)
 export class AdminPanelResolver {
   constructor(
     private readonly adminUserLookupService: AdminPanelUserLookupService,
@@ -157,7 +144,23 @@ export class AdminPanelResolver {
     private readonly cronQueueService: MessageQueueService,
   ) {}
 
-  @UseGuards(AdminPanelOrImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelOrImpersonateGuard,
+  )
   @Query(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
@@ -167,7 +170,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelOrImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelOrImpersonateGuard,
+  )
   @Query(() => [AdminPanelRecentUserDTO])
   async adminPanelRecentUsers(
     @Args('searchTerm', {
@@ -180,7 +199,23 @@ export class AdminPanelResolver {
     return this.adminStatisticsService.getRecentUsers(searchTerm);
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ServerLevelImpersonateGuard,
+  )
   @Query(() => [AdminPanelTopWorkspaceDTO])
   async adminPanelTopWorkspaces(
     @Args('searchTerm', {
@@ -194,16 +229,19 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: false,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [],
     }),
     AdminPanelGuard,
   )
@@ -213,16 +251,19 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: false,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [],
     }),
     AdminPanelGuard,
   )
@@ -243,16 +284,19 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: false,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [],
     }),
     AdminPanelGuard,
   )
@@ -272,7 +316,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
@@ -294,19 +354,67 @@ export class AdminPanelResolver {
     }
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => ConfigVariablesDTO)
   async getConfigVariablesGrouped(): Promise<ConfigVariablesDTO> {
     return this.adminConfigService.getConfigVariablesGrouped();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => SystemHealthDTO)
   async getSystemHealthStatus(): Promise<SystemHealthDTO> {
     return this.adminPanelHealthService.getSystemHealthStatus();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => AdminPanelHealthServiceDataDTO)
   async getIndicatorHealthStatus(
     @Args('indicatorId', {
@@ -317,7 +425,23 @@ export class AdminPanelResolver {
     return this.adminPanelHealthService.getIndicatorHealthStatus(indicatorId);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => QueueMetricsDataDTO)
   async getQueueMetrics(
     @Args('queueName', { type: () => String })
@@ -335,13 +459,45 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
     return this.adminVersionService.getVersionInfo();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => AdminAiModelsDTO)
   async getAdminAiModels(): Promise<AdminAiModelsDTO> {
     const resolvedProviders =
@@ -410,7 +566,23 @@ export class AdminPanelResolver {
     };
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async setAdminAiModelEnabled(
     @Args('modelId', { type: () => String }) modelId: string,
@@ -421,7 +593,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async setAdminAiModelsEnabled(
     @Args('modelIds', { type: () => [String] }) modelIds: string[],
@@ -432,7 +620,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async setAdminDefaultAiModel(
     @Args('tier', { type: () => AiModelTier }) tier: AiModelTier,
@@ -443,7 +647,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => ConfigVariableDTO)
   async getDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -453,7 +673,23 @@ export class AdminPanelResolver {
     return this.adminConfigService.getConfigVariable(key);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async createDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -465,7 +701,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async updateDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -477,7 +729,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async deleteDatabaseConfigVariable(
     @Args('key', { type: () => String }) key: keyof ConfigVariables,
@@ -487,7 +755,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => QueueJobsResponseDTO)
   async getQueueJobs(
     @Args('queueName', { type: () => String })
@@ -507,7 +791,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => RetryJobsResponseDTO)
   async retryJobs(
     @Args('queueName', { type: () => String })
@@ -521,7 +821,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => DeleteJobsResponseDTO)
   async deleteJobs(
     @Args('queueName', { type: () => String })
@@ -535,7 +851,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => PaginatedApplicationRegistrationsDTO)
   async findAllApplicationRegistrations(
     @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
@@ -567,7 +899,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async syncMarketplaceCatalog(): Promise<boolean> {
     await this.cronQueueService.add(
@@ -579,7 +927,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [AdminApplicationRegistrationClaimDTO])
   async findAdminApplicationRegistrationClaims(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
@@ -589,7 +953,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => ApplicationRegistrationEntity)
   async updateAdminApplicationRegistration(
     @Args('input') input: AdminUpdateApplicationRegistrationInput,
@@ -597,7 +977,23 @@ export class AdminPanelResolver {
     return this.applicationRegistrationService.updateGlobal(input);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [UsageBreakdownItemDTO])
   async getAdminAiUsageByWorkspace(
     @Args('periodStart', { type: () => Date, nullable: true })
@@ -640,7 +1036,23 @@ export class AdminPanelResolver {
     }));
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => MaintenanceModeDTO, { nullable: true })
   async getMaintenanceMode(): Promise<MaintenanceModeDTO | null> {
     const value = await this.maintenanceModeService.getMaintenanceMode();
@@ -656,7 +1068,23 @@ export class AdminPanelResolver {
     };
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async setMaintenanceMode(
     @Args() { startAt, endAt, link }: SetMaintenanceModeInput,
@@ -670,7 +1098,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => Boolean)
   async clearMaintenanceMode(): Promise<boolean> {
     await this.maintenanceModeService.clearMaintenanceMode();
@@ -678,7 +1122,23 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ServerLevelImpersonateGuard,
+  )
   @Query(() => UserLookup)
   async workspaceLookupAdminPanel(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
@@ -686,7 +1146,23 @@ export class AdminPanelResolver {
     return this.adminUserLookupService.workspaceLookup(workspaceId);
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ServerLevelImpersonateGuard,
+  )
   @Query(() => AdminPanelWorkspaceBillingDTO, { nullable: true })
   async workspaceBillingAdminPanel(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
@@ -694,7 +1170,23 @@ export class AdminPanelResolver {
     return this.adminBillingService.getWorkspaceBilling(workspaceId);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
   async grantWorkspaceCredits(
     @Args() input: GrantWorkspaceCreditsInput,
@@ -711,7 +1203,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
   async revokeWorkspaceCreditGrant(
     @Args() input: RevokeWorkspaceCreditGrantInput,
@@ -724,7 +1232,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ServerLevelImpersonateGuard,
+  )
   @Query(() => [AdminWorkspaceChatThreadDTO])
   async getAdminWorkspaceChatThreads(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
@@ -732,7 +1256,23 @@ export class AdminPanelResolver {
     return this.adminChatService.getWorkspaceChatThreads(workspaceId);
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ServerLevelImpersonateGuard,
+  )
   @Query(() => AdminChatThreadMessagesDTO)
   async getAdminChatThreadMessages(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
@@ -744,7 +1284,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => ApplicationRegistrationEntity)
   async findOneAdminApplicationRegistration(
     @Args('id') id: string,
@@ -752,7 +1308,23 @@ export class AdminPanelResolver {
     return this.applicationRegistrationService.findOneByIdGlobal(id);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [ApplicationRegistrationVariableDTO])
   async findAdminApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
@@ -762,7 +1334,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @UseFilters(ApplicationRegistrationExceptionFilter)
   @Query(() => ApplicationRegistrationStatsDTO)
   async findAdminApplicationRegistrationStats(
@@ -781,7 +1369,23 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => ApplicationRegistrationInstalledWorkspacesDTO)
   async findAdminApplicationRegistrationInstalledWorkspaces(
     @Args('input')
@@ -800,7 +1404,23 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => ApplicationRegistrationVariableDTO)
   async updateAdminApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
@@ -810,19 +1430,67 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
   async getInstanceAndAllWorkspacesUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
     return this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
   async refreshUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
     return this.upgradeStatusService.refreshInstanceAndAllWorkspacesStatus();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [WorkspaceUpgradeStatusDTO])
   async getUpgradeStatus(
     @Args('workspaceIds', { type: () => [UUIDScalarType] })
@@ -835,13 +1503,45 @@ export class AdminPanelResolver {
     return this.upgradeStatusService.getWorkspaceStatuses(workspaceIds);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => SigningKeysAdminPanelDTO)
   async getSigningKeys(): Promise<SigningKeysAdminPanelDTO> {
     return this.adminPanelSigningKeyService.getSigningKeys();
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => SigningKeyDTO)
   async revokeSigningKey(
     @Args() { id }: RevokeSigningKeyInput,

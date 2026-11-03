@@ -15,10 +15,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -28,16 +27,19 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   AuthGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: false,
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: false,
+    requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
   }),
   NoPermissionGuard,
 )
@@ -48,10 +50,7 @@ export class ApplicationUpgradeResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async upgradeApplication(
     @ApplicationTargetArg('appRegistrationId', {
       kind: 'applicationRegistrationId',
@@ -69,10 +68,7 @@ export class ApplicationUpgradeResolver {
   }
 
   @Mutation(() => TriggerUpgradeApplicationResultDTO)
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async triggerUpgradeApplication(
     @ApplicationTargetArg<TriggerUpgradeApplicationInput>('input', {
       kind: 'applicationUniversalIdentifier',
@@ -90,10 +86,7 @@ export class ApplicationUpgradeResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async findUpgradeApplicationJobStatus(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
