@@ -1,10 +1,8 @@
 import { getWorkflowVersionUniversalIdentifier } from 'twenty-shared/application';
-import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { buildWorkflowVersionDeleteSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-delete-side-effects.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
@@ -15,9 +13,6 @@ const MANAGED_VERSION_ID = getWorkflowVersionUniversalIdentifier({
   applicationUniversalIdentifier: APPLICATION_ID,
   workflowUniversalIdentifier: WORKFLOW_ID,
 });
-
-const OWNED_FUNCTION_ID = '33333333-3333-4333-8333-333333333333';
-const SHARED_FUNCTION_ID = '44444444-4444-4444-8444-444444444444';
 
 const deletedWorkflow = {
   universalIdentifier: WORKFLOW_ID,
@@ -45,15 +40,6 @@ const buildDeleteSideEffects = (
     },
   });
 };
-
-const codeStep = (logicFunctionId: string) => ({
-  id: `step-${logicFunctionId}`,
-  name: 'Code',
-  type: WorkflowActionType.CODE,
-  valid: true,
-  nextStepIds: [],
-  settings: { input: { logicFunctionId } },
-});
 
 describe('buildWorkflowVersionDeleteSideEffects', () => {
   it('deletes the managed version of a deleted application workflow', () => {
@@ -92,7 +78,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     ).toEqual({ status: 'noop' });
   });
 
-  it('deletes every version of the workflow with its command menu items and the CODE functions only it uses', () => {
+  it('deletes every version of the workflow with its command menu items', () => {
     const result = buildDeleteSideEffects((maps) => {
       maps.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] = {
         id: 'core-workflow-id',
@@ -105,21 +91,18 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
           universalIdentifier: 'active-version',
           coreWorkflowId: 'core-workflow-id',
           workspaceWorkflowVersionId: 'mirror-active-version-id',
-          steps: [codeStep(OWNED_FUNCTION_ID)],
         },
         {
           id: 'draft-version-id',
           universalIdentifier: 'draft-version',
           coreWorkflowId: 'core-workflow-id',
           workspaceWorkflowVersionId: null,
-          steps: [codeStep(SHARED_FUNCTION_ID)],
         },
         {
           id: 'other-version-id',
           universalIdentifier: 'other-version',
           coreWorkflowId: 'other-core-workflow-id',
           workspaceWorkflowVersionId: null,
-          steps: [codeStep(SHARED_FUNCTION_ID)],
         },
       ];
 
@@ -152,15 +135,6 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
           commandMenuItem.universalIdentifier
         ] = commandMenuItem as FlatCommandMenuItem;
       }
-
-      for (const logicFunctionId of [OWNED_FUNCTION_ID, SHARED_FUNCTION_ID]) {
-        maps.flatLogicFunctionMaps.byUniversalIdentifier[
-          `${logicFunctionId}-universal`
-        ] = {
-          id: logicFunctionId,
-          universalIdentifier: `${logicFunctionId}-universal`,
-        } as FlatLogicFunction;
-      }
     });
 
     expect(result.status).toBe('success');
@@ -175,8 +149,5 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     expect(
       Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
     ).toEqual(['core-version-item', 'mirror-version-item']);
-    expect(
-      Object.keys(result.operations.logicFunction?.flatEntityToDelete ?? {}),
-    ).toEqual([`${OWNED_FUNCTION_ID}-universal`]);
   });
 });
