@@ -1,0 +1,46 @@
+import { join } from 'node:path';
+import sharp from 'sharp';
+import { describe, expect, it } from 'vitest';
+
+import { renderCameraTileText } from 'src/logic-functions/domain/render-camera-tile-text.util';
+
+const FONT_FILE_PATH = join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'public',
+  'fonts',
+  'Inter-SemiBold.ttf',
+);
+const MAX_WIDTH = 400;
+
+const render = (text: string, maxWidth?: number) =>
+  renderCameraTileText({
+    sharp,
+    fontFilePath: FONT_FILE_PATH,
+    text,
+    fontSize: 44,
+    maxWidth,
+  });
+
+describe('renderCameraTileText', () => {
+  it('keeps text that fits at its natural size', async () => {
+    const natural = await render('Acme');
+    const constrained = await render('Acme', MAX_WIDTH);
+
+    expect(constrained.width).toBe(natural.width);
+    expect(constrained.height).toBe(natural.height);
+  });
+
+  it('shrinks text wider than the max width to fit on one line', async () => {
+    const text = 'A workspace name long enough to overflow the camera tile';
+    const natural = await render(text);
+    const constrained = await render(text, MAX_WIDTH);
+
+    expect(natural.width).toBeGreaterThan(MAX_WIDTH);
+    expect(constrained.width).toBeLessThanOrEqual(MAX_WIDTH);
+    expect(constrained.height).toBeLessThanOrEqual(natural.height);
+  });
+});

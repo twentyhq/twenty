@@ -8,28 +8,24 @@ import { StyledCameraTilePreviewImage } from 'src/front-components/components/St
 import { CAMERA_TILE_PREVIEW_ASSET_PATHS } from 'src/front-components/constants/camera-tile-preview-asset-paths.constant';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 
-const MOBILE_CHOICE_WIDTH = '160px';
+const TWO_COLUMN_MAX_WIDTH = '560px';
 
 const StyledChoices = styled.div`
-  display: flex;
+  display: grid;
   gap: ${() => themeCssVariables.spacing[4]};
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
 
-  @media (max-width: 767px) {
-    overflow-x: auto;
+  @media (max-width: ${TWO_COLUMN_MAX_WIDTH}) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 `;
 
 const StyledChoice = styled.label`
   cursor: pointer;
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
   min-width: 0;
-
-  @media (max-width: 767px) {
-    flex: 0 0 ${MOBILE_CHOICE_WIDTH};
-  }
 `;
 
 const StyledRadioInput = styled.input`

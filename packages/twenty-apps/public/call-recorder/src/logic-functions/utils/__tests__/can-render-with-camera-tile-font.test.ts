@@ -14,7 +14,10 @@ describe('canRenderWithCameraTileFont', () => {
     expect(canRenderWithCameraTileFont(text)).toBe(true);
   });
 
-  it.each(['日本商事', 'شركة', 'Acme 🚀', 'שלום'])('rejects %s', (text) => {
-    expect(canRenderWithCameraTileFont(text)).toBe(false);
-  });
+  it.each(['日本商事', 'شركة', 'Acme 🚀', 'Acme 🇫🇷', 'Team 1️⃣', 'שלום'])(
+    'rejects %s',
+    (text) => {
+      expect(canRenderWithCameraTileFont(text)).toBe(false);
+    },
+  );
 });
