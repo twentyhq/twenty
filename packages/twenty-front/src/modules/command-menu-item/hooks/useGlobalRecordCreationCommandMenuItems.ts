@@ -22,13 +22,15 @@ export const useGlobalRecordCreationCommandMenuItems = (
       item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
       !isDefined(item.availabilityObjectMetadataId),
   );
-  const isCreateRecordCommandDisplayed =
+
+  const hasGlobalRecordCreationCommandTemplate =
     isDefined(createRecordCommand) &&
     doesCommandMenuItemMatchConditionalDisplay(createRecordCommand);
-
-  const hasGlobalRecordCreationCommandTemplate = isCreateRecordCommandDisplayed;
   const globalRecordCreationCommandMenuItems = useMemo(() => {
-    if (!isDefined(createRecordCommand) || !isCreateRecordCommandDisplayed) {
+    if (
+      !isDefined(createRecordCommand) ||
+      !hasGlobalRecordCreationCommandTemplate
+    ) {
       return [];
     }
 
@@ -40,7 +42,7 @@ export const useGlobalRecordCreationCommandMenuItems = (
     });
   }, [
     createRecordCommand,
-    isCreateRecordCommandDisplayed,
+    hasGlobalRecordCreationCommandTemplate,
     activeObjectMetadataItems,
     objectPermissionsByObjectMetadataId,
     t,
