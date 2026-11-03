@@ -66,6 +66,8 @@ export const fathomBackfillWorkerHandler = async (
       ),
       createdAfter,
       cursor: payload.cursor,
+      // Fathom can't name a token's account, so the handle (member's email) stands in for it.
+      recordedBy: connection.scope === 'USER' ? [connection.handle] : undefined,
     });
   } catch (error) {
     const delay = getFathomRequeueDelay({ error, now: new Date() });
