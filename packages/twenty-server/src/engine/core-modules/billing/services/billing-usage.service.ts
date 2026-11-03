@@ -174,13 +174,16 @@ export class BillingUsageService {
       })?.workspaceCreditsForSeatsMicro ??
       0;
 
+    const trialWorkspaceCreditAllowanceMicro =
+      findActiveWorkspaceCreditAllowanceMicro({
+        workspaceCreditAllowances,
+        nowMs,
+        interval: subscription.interval,
+        isTrialing: true,
+      });
+
     const workspaceCreditsGranted = isTrialing
-      ? (findActiveWorkspaceCreditAllowanceMicro({
-          workspaceCreditAllowances,
-          nowMs,
-          interval: subscription.interval,
-          isTrialing: true,
-        }) ?? item.freeTrialQuantity)
+      ? (trialWorkspaceCreditAllowanceMicro ?? item.freeTrialQuantity)
       : item.creditAmount + workspaceCreditsGrantedForSeats;
 
     return {
