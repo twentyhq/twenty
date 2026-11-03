@@ -1,6 +1,10 @@
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
+import {
+  type EffectiveObjectPermissions,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
@@ -28,8 +32,8 @@ import { MERGE_MANY_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-cru
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
-import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { buildDeprecatedPermissionsPrincipalsFromConfig } from 'src/engine/permissions/principal/utils/build-deprecated-permissions-principals-from-config.util';
@@ -77,10 +81,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps, flatApplicationMaps } =
+    const { rolesPermissions, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
-        'flatObjectPermissionMaps',
         'flatApplicationMaps',
       ]);
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -113,28 +116,20 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
-    const { explicitObjectGrantsRoleId } = context;
-    const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
+    const { explicitObjectGrants } = context;
+    const requireExplicitObjectGrants = isDefined(explicitObjectGrants);
+    const explicitPermissionByObjectId = requireExplicitObjectGrants
+      ? buildExplicitObjectPermissionByObjectId({
+          explicitObjectGrants,
+          flatObjectMetadataMaps,
+        })
+      : new Map<string, EffectiveObjectPermissions>();
 
-    const explicitPermissionByObjectId = new Map<
-      string,
-      FlatObjectPermission
-    >();
-
-    if (requireExplicitObjectGrants) {
-      for (const flatObjectPermission of Object.values(
-        flatObjectPermissionMaps.byUniversalIdentifier,
-      )) {
-        if (
-          isDefined(flatObjectPermission) &&
-          flatObjectPermission.roleId === explicitObjectGrantsRoleId
-        ) {
-          explicitPermissionByObjectId.set(
-            flatObjectPermission.objectMetadataId,
-            flatObjectPermission,
-          );
-        }
-      }
+    if (
+      requireExplicitObjectGrants &&
+      explicitPermissionByObjectId.size === 0
+    ) {
+      return descriptors;
     }
 
     const allFlatObjects = getDatabaseCrudToolFlatObjects(
@@ -166,15 +161,7 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const isExplicitlyGranted = (
-        objectPermission: keyof Pick<
-          FlatObjectPermission,
-          | 'canReadObjectRecords'
-          | 'canUpdateObjectRecords'
-          | 'canSoftDeleteObjectRecords'
-          | 'canDestroyObjectRecords'
-        >,
-      ) =>
+      const isExplicitlyGranted = (objectPermission: ObjectPermissionAction) =>
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>

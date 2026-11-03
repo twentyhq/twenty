@@ -20,6 +20,12 @@ export const STANDARD_OBJECT_FIELDS = {
     conversationType: {
       universalIdentifier: '66f93c2f-ae10-4c1a-8510-355a521f7899',
     },
+    directMessageFirstWorkspaceMemberId: {
+      universalIdentifier: 'dd7e093b-06af-47f3-a246-57ae2de33244',
+    },
+    directMessageSecondWorkspaceMemberId: {
+      universalIdentifier: '730c7491-35fa-4bce-90e1-29901e08eba3',
+    },
     isAssistantParticipant: {
       universalIdentifier: 'd901f5bc-23ba-48ac-9103-145da4b76afe',
     },

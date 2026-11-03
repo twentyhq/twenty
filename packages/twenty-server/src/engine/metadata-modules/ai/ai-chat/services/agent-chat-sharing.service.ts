@@ -335,8 +335,11 @@ export class AgentChatSharingService {
                 this.recordAccessPolicyService.hasAccessToRecords({
                   principals: {
                     workspaceId,
-                    mainPrincipal: { workspaceMemberId: memberId },
-                    applicationPrincipal: { isCustomApp: true },
+                    mainPrincipal: {
+                      type: 'workspaceMember',
+                      workspaceMemberId: memberId,
+                    },
+                    applicationPrincipal: { type: 'customApplication' },
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],

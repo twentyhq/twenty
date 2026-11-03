@@ -21,8 +21,9 @@ export const buildPermissionsPrincipalsWithRolesFromConfig = ({
     return undefined;
   }
 
+  const { intersectionOf, scope } = rolePermissionConfig;
   const principalRoles = buildPermissionsPrincipalRoles({
-    roleIdsBySource: rolePermissionConfig.intersectionOf,
+    roleIdsBySource: intersectionOf,
     principalsContext,
   });
 
@@ -30,5 +31,9 @@ export const buildPermissionsPrincipalsWithRolesFromConfig = ({
     return undefined;
   }
 
-  return { workspaceId, ...principalRoles };
+  return {
+    workspaceId,
+    ...principalRoles,
+    ...(isDefined(scope) ? { scope } : {}),
+  };
 };
