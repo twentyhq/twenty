@@ -34,8 +34,8 @@ export class AdminPanelUsageLimitDefaultDTO {
   @Field(() => UsageUnit)
   unit: UsageUnit;
 
-  @Field(() => GraphQLBigInt)
-  limitValue: number;
+  @Field(() => GraphQLBigInt, { nullable: true })
+  limitValue: number | null;
 
   @Field(() => Boolean)
   isOverridable: boolean;

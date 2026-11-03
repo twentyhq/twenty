@@ -11,12 +11,23 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 
 export type UsageLimitDefaultScope = UsageLimitScope & {
   isOverridable: boolean;
-  limitValue: number;
+  limitValue: number | null;
 };
 
 type GetConfigValue = <TKey extends OptionalNumericConfigVariableKey>(
   key: TKey,
 ) => ConfigVariables[TKey];
+
+type GetDefaultLimitValue = (
+  limitValueConfigVariable: OptionalNumericConfigVariableKey,
+) => number | null;
+
+const isPerSpenderOverridableDefault = (
+  usageLimitDefault: UsageLimitDefaultDefinition,
+): boolean =>
+  usageLimitDefault.limitKind === 'quota' &&
+  usageLimitDefault.isPerSpender &&
+  usageLimitDefault.isOverridable;
 
 const buildPeriodCount = ({
   usageLimitDefault,
@@ -31,19 +42,22 @@ const buildPeriodCount = ({
 
 export const buildUsageLimitDefaultScopes = ({
   getConfigValue,
+  getDefaultLimitValue,
 }: {
   getConfigValue: GetConfigValue;
+  getDefaultLimitValue: GetDefaultLimitValue;
 }): UsageLimitDefaultScope[] =>
   Object.values(UsageResourceType).flatMap((resourceType) =>
     findUsageLimitDefaults({ resourceType }).flatMap((usageLimitDefault) => {
-      const limitValue = getConfigValue(
+      const limitValue = getDefaultLimitValue(
         usageLimitDefault.limitValueConfigVariable,
       );
       const operationType = getUsageLimitDefaultOverrideOperationType(
         getUsageLimitDefaultOperationTypes(usageLimitDefault),
       );
 
-      return isDefined(limitValue)
+      return isDefined(limitValue) ||
+        isPerSpenderOverridableDefault(usageLimitDefault)
         ? [
             {
               resourceType: usageLimitDefault.resourceType,

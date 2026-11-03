@@ -4,6 +4,7 @@ import { formatBytes } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { isCreditUsageUnit } from '@/settings/billing/utils/isCreditUsageUnit';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import {
   type UsageOperationType,
@@ -24,7 +25,7 @@ export const useUsageLimitFormatter = () => {
     unit: UsageUnit;
     operationType: UsageOperationType;
   }): string => {
-    if (unit === UsageUnit.CREDIT) {
+    if (isCreditUsageUnit(unit)) {
       return formatUsageAmount(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
         abbreviate: true,
       });

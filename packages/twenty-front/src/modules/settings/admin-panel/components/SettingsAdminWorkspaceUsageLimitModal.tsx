@@ -15,6 +15,8 @@ import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mut
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
+import { parseAdminUsageLimitValue } from '@/settings/admin-panel/utils/parseAdminUsageLimitValue';
+import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -38,22 +40,6 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parseInteger = ({
-  value,
-  min,
-}: {
-  value: string;
-  min: number;
-}): number | null => {
-  const parsed = Number(value);
-
-  return isNonEmptyString(value.trim()) &&
-    Number.isInteger(parsed) &&
-    parsed >= min
-    ? parsed
-    : null;
-};
-
 export const SettingsAdminWorkspaceUsageLimitModal = ({
   dialogId,
   workspaceId,
@@ -65,7 +51,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
 
-  const [limitValue, setLimitValue] = useState(String(row.limitValue));
+  const inputScale = getUsageLimitInputScale(row.unit);
+
+  const [limitValue, setLimitValue] = useState(
+    isDefined(row.limitValue) ? String(row.limitValue / inputScale) : '',
+  );
   const [burstValue, setBurstValue] = useState(
     isDefined(row.burstValue) ? String(row.burstValue) : '',
   );
@@ -88,13 +78,14 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     );
 
   const minimumLimitValue = row.limitKind === 'quota' ? 0 : 1;
-  const parsedLimitValue = parseInteger({
+  const parsedLimitValue = parseAdminUsageLimitValue({
     value: limitValue,
     min: minimumLimitValue,
+    scale: inputScale,
   });
   const hasBurstValue = isNonEmptyString(burstValue.trim());
   const parsedBurstValue = hasBurstValue
-    ? parseInteger({ value: burstValue, min: 1 })
+    ? parseAdminUsageLimitValue({ value: burstValue, min: 1, scale: 1 })
     : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isResetting;
@@ -174,11 +165,13 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     operationType: row.operationType,
   });
   const scopeLabel = getAdminUsageLimitScopeLabel(row);
-  const defaultText = formatLimitValue({
-    value: row.defaultValue,
-    unit: row.unit,
-    operationType: row.operationType,
-  });
+  const defaultText = isDefined(row.defaultValue)
+    ? formatLimitValue({
+        value: row.defaultValue,
+        unit: row.unit,
+        operationType: row.operationType,
+      })
+    : t`None`;
 
   return (
     <DialogInstance
@@ -196,7 +189,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           <Dialog.Header>
             <Dialog.Title>{t`Set limit for this workspace`}</Dialog.Title>
             <Dialog.Description>
-              {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
+              {t`${scopeLabel} — the default for this workspace is ${defaultText}. Saving applies to this workspace only.`}
             </Dialog.Description>
           </Dialog.Header>
           <Dialog.Body>

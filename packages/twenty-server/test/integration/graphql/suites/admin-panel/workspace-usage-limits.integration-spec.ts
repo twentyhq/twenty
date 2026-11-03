@@ -103,6 +103,7 @@ describe('Workspace usage limits from the admin panel', () => {
   const readConfig = twentyConfigService.get.bind(twentyConfigService);
 
   let usageLimitRepository: Repository<UsageLimitEntity>;
+  let instanceAiUserCreditsLimit: number | undefined;
 
   const createWorkspaceUsageLimit = async (
     payload: typeof STORAGE_STOCK_PAYLOAD | typeof USER_CREDIT_QUOTA_PAYLOAD,
@@ -138,7 +139,7 @@ describe('Workspace usage limits from the admin panel', () => {
       }
 
       if (key === 'AI_USER_CREDITS_LIMIT') {
-        return 5_000_000;
+        return instanceAiUserCreditsLimit;
       }
 
       return readConfig(key);
@@ -147,6 +148,10 @@ describe('Workspace usage limits from the admin panel', () => {
 
   afterAll(() => {
     jest.restoreAllMocks();
+  });
+
+  beforeEach(() => {
+    instanceAiUserCreditsLimit = 5_000_000;
   });
 
   afterEach(async () => {
@@ -249,6 +254,29 @@ describe('Workspace usage limits from the admin panel', () => {
         operationType: UsageOperationType.ALL,
         spenderType: 'userWorkspace',
         unit: UsageUnit.USER_CREDIT,
+        isOverridable: true,
+        overriddenByUsageLimitId: usageLimitId,
+      }),
+    );
+  });
+
+  it('lists the member AI credit default without a value when the instance sets none, so an operator can override it', async () => {
+    instanceAiUserCreditsLimit = undefined;
+
+    const usageLimitId = await createWorkspaceUsageLimit({
+      ...USER_CREDIT_QUOTA_PAYLOAD,
+      limitValue: 3_000_000,
+    });
+
+    const workspaceUsageLimits = await findWorkspaceUsageLimits();
+
+    expect(workspaceUsageLimits.defaults).toContainEqual(
+      expect.objectContaining({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.ALL,
+        spenderType: 'userWorkspace',
+        unit: UsageUnit.USER_CREDIT,
+        limitValue: null,
         isOverridable: true,
         overriddenByUsageLimitId: usageLimitId,
       }),

@@ -85,6 +85,17 @@ describe('buildAdminUsageLimitRows', () => {
     expect(row.limitValue).toBe(100);
   });
 
+  it('keeps a default without a value empty instead of showing 0', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [buildDefault({ limitValue: null })],
+      }),
+    );
+
+    expect(row.defaultValue).toBeNull();
+    expect(row.limitValue).toBeNull();
+  });
+
   it('leaves a default writable when the server named no row for it', () => {
     const [row] = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
