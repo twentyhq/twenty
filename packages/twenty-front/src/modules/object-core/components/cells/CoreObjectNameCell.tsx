@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +28,7 @@ type CoreObjectNameCellProps = {
   avatarColorSeed: string;
   avatarShape: AvatarShape;
   Icon?: IconComponent;
+  avatar?: ReactNode;
 };
 
 export const CoreObjectNameCell = ({
@@ -34,28 +36,24 @@ export const CoreObjectNameCell = ({
   avatarColorSeed,
   avatarShape,
   Icon,
+  avatar,
 }: CoreObjectNameCellProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const defaultAvatar = isDefined(Icon) ? (
+    <Icon aria-hidden size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+  ) : (
+    <Avatar
+      name={name ?? undefined}
+      colorSeed={avatarColorSeed}
+      size="sm"
+      shape={avatarShape}
+    />
+  );
 
   return (
     <StyledContainer>
-      <StyledAvatarContainer>
-        {isDefined(Icon) ? (
-          <Icon
-            aria-hidden
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        ) : (
-          <Avatar
-            name={name ?? undefined}
-            colorSeed={avatarColorSeed}
-            size="sm"
-            shape={avatarShape}
-          />
-        )}
-      </StyledAvatarContainer>
+      <StyledAvatarContainer>{avatar ?? defaultAvatar}</StyledAvatarContainer>
       <OverflowingTextWithTooltip
         text={isNonEmptyString(name) ? name : t`Untitled`}
       />

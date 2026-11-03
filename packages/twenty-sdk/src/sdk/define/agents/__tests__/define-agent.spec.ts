@@ -1,3 +1,5 @@
+import { type AgentManifest } from 'twenty-shared/application';
+
 import { defineAgent } from '@/sdk/define/agents/define-agent';
 
 const VALID_AGENT_CONFIG = {
@@ -5,8 +7,8 @@ const VALID_AGENT_CONFIG = {
   name: 'sales-assistant',
   label: 'Sales Assistant',
   prompt: 'You are a sales assistant.',
-  responseFormat: { type: 'text' as const },
-};
+  responseFormat: { type: 'text' },
+} satisfies AgentManifest;
 
 describe('defineAgent', () => {
   it('should accept a valid agent config', () => {
@@ -15,6 +17,22 @@ describe('defineAgent', () => {
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.config).toEqual(VALID_AGENT_CONFIG);
+  });
+
+  it('accepts avatar preferences without replacing an application icon', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      icon: 'IconRobot',
+      avatarColor: 'purple',
+      avatarShape: 'flower',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config).toMatchObject({
+      icon: 'IconRobot',
+      avatarColor: 'purple',
+      avatarShape: 'flower',
+    });
   });
 
   it('should accept an optional roleUniversalIdentifier', () => {

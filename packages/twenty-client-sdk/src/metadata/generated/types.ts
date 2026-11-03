@@ -152,6 +152,12 @@ export default {
             "applicationId": [
                 538
             ],
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "createdAt": [
                 213
             ],
@@ -3175,6 +3181,12 @@ export default {
             ]
         },
         "CreateAgentInput": {
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -13555,6 +13567,12 @@ export default {
             ]
         },
         "UpdateAgentInput": {
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "description": [
                 1
             ],

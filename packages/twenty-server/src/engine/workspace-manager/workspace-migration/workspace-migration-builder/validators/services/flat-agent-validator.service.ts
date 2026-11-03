@@ -15,6 +15,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateAgentAvatarWithOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar-with-overrides.util';
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
@@ -28,6 +29,7 @@ export class FlatAgentValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatAgentMaps: optimisticFlatAgentMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<'agent', 'create'> {
@@ -67,6 +69,14 @@ export class FlatAgentValidatorService {
 
     validationResult.errors.push(
       ...validateAgentTriggers({ triggers: flatAgent.triggers }),
+    );
+
+    validationResult.errors.push(
+      ...validateAgentAvatarWithOverrides({
+        agent: flatAgent,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      }),
     );
 
     return validationResult;
@@ -221,6 +231,14 @@ export class FlatAgentValidatorService {
         ...validateAgentResponseFormat({ responseFormat }),
       );
     }
+
+    validationResult.errors.push(
+      ...validateAgentAvatarWithOverrides({
+        agent: flatEntityUpdate,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
+      }),
+    );
 
     if (flatEntityUpdate.triggers !== undefined) {
       validationResult.errors.push(

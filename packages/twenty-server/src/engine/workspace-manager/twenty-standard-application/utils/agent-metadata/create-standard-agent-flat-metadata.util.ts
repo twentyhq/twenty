@@ -51,6 +51,8 @@ export const createStandardAgentFlatMetadata = ({
     name,
     label,
     icon,
+    avatarColor: null,
+    avatarShape: null,
     description,
     prompt,
     modelId,

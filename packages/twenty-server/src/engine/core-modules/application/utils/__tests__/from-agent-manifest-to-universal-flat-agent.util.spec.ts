@@ -26,6 +26,8 @@ describe('fromAgentManifestToUniversalFlatAgent', () => {
       universalIdentifier: AGENT_MANIFEST.universalIdentifier,
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       icon: null,
+      avatarColor: null,
+      avatarShape: null,
       description: null,
       modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
       responseFormat: { type: 'text' },

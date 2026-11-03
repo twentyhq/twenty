@@ -1,22 +1,25 @@
-import { useIcons } from 'twenty-ui/icon/provider';
+import { useTheme } from 'twenty-ui/theme';
 
-import { CoreObjectNameCell } from '@/object-core/components/cells/CoreObjectNameCell';
+import { CoreAgentAvatar } from '@/object-core/agents/components/CoreAgentAvatar';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
-import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
+import { CoreObjectNameCell } from '@/object-core/components/cells/CoreObjectNameCell';
 
 type CoreAgentNameCellProps = {
-  agent: Pick<CoreAgent, 'id' | 'label' | 'icon'>;
+  agent: Pick<
+    CoreAgent,
+    'id' | 'label' | 'icon' | 'avatarColor' | 'avatarShape'
+  >;
 };
 
 export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
-  const { getIcon } = useIcons();
+  const theme = useTheme();
 
   return (
     <CoreObjectNameCell
       name={agent.label}
       avatarColorSeed={agent.id}
       avatarShape="square"
-      Icon={getIcon(getAgentIcon(agent.icon))}
+      avatar={<CoreAgentAvatar agent={agent} size={theme.icon.size.md} />}
     />
   );
 };
