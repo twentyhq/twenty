@@ -7077,6 +7077,7 @@ msgstr "Միացեք այս աշխատանքային տարածքին"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect via IMAP/SMTP"
 msgstr "Միացնել IMAP/SMTP-ով"
 
@@ -7087,18 +7088,19 @@ msgid "Connect with {0}"
 msgstr "Միանալ {0}-ին"
 
 #. js-lingui-id: vPwoq6
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
 msgstr "Միացնել {appName}-ը"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect with Google"
 msgstr "Միացնել Google-ը"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect with Microsoft"
 msgstr "Միացնել Microsoft-ը"
 
