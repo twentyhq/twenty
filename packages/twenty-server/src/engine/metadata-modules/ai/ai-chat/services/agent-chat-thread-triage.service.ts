@@ -20,6 +20,7 @@ import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { buildAgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-triage-change.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
+import { isAgentChatSnoozePending } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-snooze-pending.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -156,6 +157,22 @@ export class AgentChatThreadTriageService {
     threadId,
     snoozedUntil,
   }: EndAgentChatChannelSnoozeJobData): Promise<void> {
+    const threadBefore = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    // A snooze the channel replaced or cleared since has nothing to end
+    if (
+      !isDefined(threadBefore) ||
+      !isAgentChatSnoozePending({
+        archivedAt: threadBefore.channelArchivedAt,
+        snoozedUntil: threadBefore.channelSnoozedUntil,
+        scheduledSnoozedUntil: snoozedUntil,
+      })
+    ) {
+      return;
+    }
+
     const remainingDelay = await this.threadRepository.query(
       workspaceId,
       ({ manager }) =>
@@ -177,15 +194,6 @@ export class AgentChatThreadTriageService {
       return;
     }
 
-    const threadBefore = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(threadBefore)) {
-      return;
-    }
-
-    // A snooze the channel replaced or cleared since has nothing to end
     const endedThreadIds = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>

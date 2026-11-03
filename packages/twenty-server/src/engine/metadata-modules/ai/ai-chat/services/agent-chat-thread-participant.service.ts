@@ -29,6 +29,7 @@ import { buildAgentChatThreadParticipantLockKey } from 'src/engine/metadata-modu
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
+import { isAgentChatSnoozePending } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-snooze-pending.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -355,6 +356,23 @@ export class AgentChatThreadParticipantService {
     snoozedUntil,
     ...args
   }: EndAgentChatThreadSnoozeJobData): Promise<void> {
+    const participant = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager }) => this.findOne({ manager, ...args }),
+    );
+
+    // A snooze the member replaced or cleared since has nothing to end
+    if (
+      !isDefined(participant) ||
+      !isAgentChatSnoozePending({
+        archivedAt: participant.archivedAt,
+        snoozedUntil: participant.snoozedUntil,
+        scheduledSnoozedUntil: snoozedUntil,
+      })
+    ) {
+      return;
+    }
+
     const remainingDelay = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) =>
@@ -385,7 +403,6 @@ export class AgentChatThreadParticipantService {
       return;
     }
 
-    // A snooze the member replaced or cleared since has nothing to end
     await this.write(
       {
         workspaceId: args.workspaceId,
