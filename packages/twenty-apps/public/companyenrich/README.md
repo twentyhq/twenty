@@ -100,6 +100,8 @@ yarn test:unit
 twenty app build
 ```
 
+`sharp` is a development dependency used by the Twenty CLI to generate the marketplace cover from the app logo.
+
 Unit and component tests use synthetic data and mocked requests, without CompanyEnrich credentials or paid calls. `yarn test` runs the installation smoke test against a disposable Twenty server using `TWENTY_API_URL`, `TWENTY_API_KEY`, and an installed Twenty CLI (or `TWENTY_CLI`).
 
 `src/schemas/operations.json` contains the selected request schemas from CompanyEnrich's public OpenAPI v1 specification, checked against its public reference on 2026-11-02. OpenAPI nullable schemas are represented with JSON Schema `anyOf`; unknown request properties are rejected to catch misspelled filters before spending credits. Keep operation/entity UUIDs stable when updating the app.
