@@ -45,9 +45,8 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
-import { getWorkflowStepAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-after-rebuild.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
-import { isWorkflowStepRebuiltOnUpdate } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/is-workflow-step-rebuilt-on-update.util';
+import { isWorkflowAiAgentStepKindChanged } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/is-workflow-ai-agent-step-kind-changed.util';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -222,13 +221,21 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       );
     }
 
-    const isStepRebuilt = isWorkflowStepRebuiltOnUpdate({
-      existingStep,
-      updatedStep: step,
-    });
+    // what an AI step owns follows from its agent, so switching it would leave or miss owned resources
+    if (isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step })) {
+      throw new WorkflowVersionStepException(
+        'An AI step cannot switch between generating and running an agent, or to another agent. Create a new step instead.',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`An AI step cannot change its agent. Create a new step instead.`,
+        },
+      );
+    }
 
-    const { updatedStep, additionalCreatedSteps } = isStepRebuilt
-      ? await this.rebuildStep({
+    const isStepTypeChanged = existingStep.type !== step.type;
+
+    const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
+      ? await this.rebuildStepForTypeChange({
           existingStep,
           newStep: step,
           workspaceId,
@@ -252,7 +259,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         steps: updatedSteps,
       })
       .catch(async (error: unknown) => {
-        if (isStepRebuilt) {
+        if (isStepTypeChanged) {
           const stepsToDelete =
             error instanceof CoreWorkflowVersionPostCommitError
               ? [existingStep]
@@ -273,7 +280,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         throw error;
       });
 
-    if (isStepRebuilt) {
+    if (isStepTypeChanged) {
       await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
         {
           step: existingStep,
@@ -704,7 +711,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     });
   }
 
-  private async rebuildStep({
+  private async rebuildStepForTypeChange({
     existingStep,
     newStep,
     workspaceId,
@@ -716,12 +723,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
   }> {
-    // read before the creation side effects: only a failed write cleans them up
-    const previousAgentLabel =
-      await this.workflowVersionStepOperationsWorkspaceService.findStepAgentLabel(
-        { step: existingStep, workspaceId },
-      );
-
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
@@ -735,12 +736,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
     return {
       updatedStep: {
-        ...getWorkflowStepAfterRebuild({
-          existingStep,
-          updatedStep: newStep,
-          builtStep,
-          previousAgentLabel,
-        }),
+        ...builtStep,
         nextStepIds: getNextStepIdsForStepTypeChange({
           existingStep,
           builtStep,

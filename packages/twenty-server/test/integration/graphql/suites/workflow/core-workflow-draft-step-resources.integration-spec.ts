@@ -21,10 +21,6 @@ type AiAgentStep = {
   settings: {
     input: { agentId?: string; instructions?: string; prompt?: string };
     outputSchema?: Record<string, unknown>;
-    errorHandlingOptions?: {
-      continueOnFailure: { value: boolean };
-      retryOnFailure: { value: number };
-    };
   };
 };
 
@@ -220,23 +216,10 @@ describe('AI agent step duplication and deletion (e2e)', () => {
 });
 
 describe('AI agent step kind change (e2e)', () => {
-  it('keeps the name, prompt and error handling the author set when the step switches between Generate and an agent', async () => {
+  it('refuses to switch a Generate step to an agent', async () => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'AI Step Kind Change Test',
     });
-    const { data: agentData } = await createOneAgent({
-      expectToFail: false,
-      input: {
-        label: 'Kind Change Agent',
-        prompt: 'You qualify leads.',
-        modelId: TEST_AI_MODEL_ID,
-      },
-    });
-    const reusableAgentId = agentData.createOneAgent.id;
-    const errorHandlingOptions = {
-      continueOnFailure: { value: true },
-      retryOnFailure: { value: 3 },
-    };
 
     await updateCoreWorkflowVersionTrigger({
       coreWorkflowVersionId,
@@ -249,85 +232,27 @@ describe('AI agent step kind change (e2e)', () => {
       },
     });
 
-    const createdStep = await createCoreWorkflowVersionStep<AiAgentStep>({
+    const generateStep = await createCoreWorkflowVersionStep<AiAgentStep>({
       coreWorkflowVersionId,
       stepType: 'AI_AGENT',
     });
-    const generateStep = {
-      ...createdStep,
-      name: 'Score the lead',
-      settings: {
-        ...createdStep.settings,
-        input: {
-          ...createdStep.settings.input,
-          instructions: 'You qualify leads.',
-          prompt: 'Qualify the new lead.',
-        },
-        errorHandlingOptions,
-      },
-    };
 
-    await updateCoreWorkflowVersionStep({
-      coreWorkflowVersionId,
-      step: generateStep,
-    });
-
-    const findStep = async () => {
-      const { steps } = await findCoreWorkflowVersion<AiAgentStep>({
+    await expect(
+      updateCoreWorkflowVersionStep({
         coreWorkflowVersionId,
-      });
-
-      return steps?.find((step) => step.id === createdStep.id);
-    };
-
-    await updateCoreWorkflowVersionStep({
-      coreWorkflowVersionId,
-      step: {
-        ...generateStep,
-        settings: {
-          ...generateStep.settings,
-          input: { ...generateStep.settings.input, agentId: reusableAgentId },
+        step: {
+          ...generateStep,
+          settings: {
+            ...generateStep.settings,
+            input: {
+              ...generateStep.settings.input,
+              agentId: '20202020-0000-4000-8000-000000000001',
+            },
+          },
         },
-      },
-    });
-
-    const agentStep = await findStep();
-
-    expect(agentStep?.settings.input).toEqual({
-      agentId: reusableAgentId,
-      prompt: 'Qualify the new lead.',
-    });
-    expect(agentStep?.name).toBe('Score the lead');
-    expect(agentStep?.settings.errorHandlingOptions).toEqual(
-      errorHandlingOptions,
-    );
-
-    await updateCoreWorkflowVersionStep({
-      coreWorkflowVersionId,
-      step: {
-        ...agentStep,
-        settings: {
-          ...agentStep?.settings,
-          input: { prompt: agentStep?.settings.input.prompt },
-        },
-      },
-    });
-
-    const switchedBackStep = await findStep();
-
-    expect(switchedBackStep?.settings.input).toEqual({
-      instructions: '',
-      prompt: 'Qualify the new lead.',
-    });
-    expect(switchedBackStep?.name).toBe('Score the lead');
-    expect(switchedBackStep?.settings.errorHandlingOptions).toEqual(
-      errorHandlingOptions,
-    );
+      }),
+    ).rejects.toThrow('Create a new step instead');
 
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteOneAgent({
-      expectToFail: false,
-      input: { id: reusableAgentId },
-    });
   });
 });

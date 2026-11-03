@@ -18,13 +18,11 @@ const CORE_WORKFLOW_VERSION_ID = 'core-workflow-version-id';
 
 const buildAiAgentStep = ({
   input,
-  name = 'Agent',
 }: {
   input: WorkflowAiAgentAction['settings']['input'];
-  name?: string;
 }): WorkflowAiAgentAction => ({
   id: 'step-id',
-  name,
+  name: 'Agent',
   type: WorkflowActionType.AI_AGENT,
   valid: true,
   nextStepIds: ['next-step-id'],
@@ -55,13 +53,7 @@ const buildService = async ({
       .mockImplementation(async ({ steps }) => ({ trigger: null, steps })),
   };
   const workflowVersionStepOperationsWorkspaceService = {
-    runStepCreationSideEffectsAndBuildStep: jest.fn().mockResolvedValue({
-      builtStep: buildAiAgentStep({
-        input: { instructions: '', prompt: '' },
-        name: 'Generate',
-      }),
-    }),
-    findStepAgentLabel: jest.fn().mockResolvedValue('Lead qualifier'),
+    runStepCreationSideEffectsAndBuildStep: jest.fn(),
     runWorkflowVersionStepDeletionSideEffects: jest.fn(),
   };
 
@@ -95,80 +87,34 @@ const buildService = async ({
 };
 
 describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
-  it('rebuilds an AI step whose agent is removed, and runs the old step deletion side effects', async () => {
-    const existingStep = buildAiAgentStep({
-      name: 'Lead qualifier',
-      input: { agentId: 'agent-id', prompt: 'Qualify' },
-    });
-    const {
-      service,
-      coreWorkflowVersionWriteService,
-      workflowVersionStepOperationsWorkspaceService,
-    } = await buildService({ existingStep });
-
-    const updatedStep = await service.updateStep({
-      workspaceId: WORKSPACE_ID,
-      userWorkspaceId: undefined,
-      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-      step: buildAiAgentStep({ input: { prompt: 'Qualify' } }),
-    });
-
-    expect(
-      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: WorkflowActionType.AI_AGENT,
-        id: existingStep.id,
-        defaultSettings: expect.objectContaining({
-          input: { prompt: 'Qualify' },
+  it.each([
+    ['removes its agent', { agentId: 'agent-id' }, {}],
+    ['adds an agent', {}, { agentId: 'agent-id' }],
+    ['changes its agent', { agentId: 'agent-id' }, { agentId: 'other-id' }],
+  ])(
+    'refuses to update an AI step that %s',
+    async (_, existingInput, updatedInput) => {
+      const { service, coreWorkflowVersionWriteService } = await buildService({
+        existingStep: buildAiAgentStep({
+          input: { ...existingInput, prompt: 'Qualify' },
         }),
-      }),
-    );
-    expect(updatedStep).toMatchObject({
-      name: 'Generate',
-      nextStepIds: ['next-step-id'],
-      settings: { input: { instructions: '', prompt: 'Qualify' } },
-    });
-    expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-      expectedVersion: { id: CORE_WORKFLOW_VERSION_ID },
-      trigger: null,
-      steps: [updatedStep],
-    });
-    expect(
-      workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
-    ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
-  });
+      });
 
-  it('creates nothing for the rebuilt step when its previous agent cannot be read', async () => {
-    const existingStep = buildAiAgentStep({
-      input: { agentId: 'agent-id', prompt: 'Qualify' },
-    });
-    const {
-      service,
-      coreWorkflowVersionWriteService,
-      workflowVersionStepOperationsWorkspaceService,
-    } = await buildService({ existingStep });
-
-    workflowVersionStepOperationsWorkspaceService.findStepAgentLabel.mockRejectedValue(
-      new Error('Cache unavailable'),
-    );
-
-    await expect(
-      service.updateStep({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: undefined,
-        coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-        step: buildAiAgentStep({ input: { prompt: 'Qualify' } }),
-      }),
-    ).rejects.toThrow('Cache unavailable');
-
-    expect(
-      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
-    ).not.toHaveBeenCalled();
-    expect(coreWorkflowVersionWriteService.writeContent).not.toHaveBeenCalled();
-  });
+      await expect(
+        service.updateStep({
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: undefined,
+          coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+          step: buildAiAgentStep({
+            input: { ...updatedInput, prompt: 'Qualify' },
+          }),
+        }),
+      ).rejects.toThrow('Create a new step instead');
+      expect(
+        coreWorkflowVersionWriteService.writeContent,
+      ).not.toHaveBeenCalled();
+    },
+  );
 
   it('updates an AI step in place when its agent is unchanged', async () => {
     const existingStep = buildAiAgentStep({

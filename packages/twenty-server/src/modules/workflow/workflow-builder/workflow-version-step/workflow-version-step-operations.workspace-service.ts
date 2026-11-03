@@ -121,25 +121,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  async findStepAgentLabel({
-    step,
-    workspaceId,
-  }: {
-    step: WorkflowAction;
-    workspaceId: string;
-  }): Promise<string | undefined> {
-    if (step.type !== WorkflowActionType.AI_AGENT) {
-      return undefined;
-    }
-
-    const agent = await this.workflowAiAgentStepAgentService.findStepAgent({
-      input: step.settings.input,
-      workspaceId,
-    });
-
-    return agent?.label;
-  }
-
   private async findFirstActiveObjectMetadata(workspaceId: string) {
     return this.objectMetadataRepository.findOne(workspaceId, {
       where: { isActive: true, isSystem: false },

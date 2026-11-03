@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  isAgentRunnableAsWorkflowStep,
-  isWorkflowAiAgentGenerateStep,
-} from 'twenty-shared/workflow';
+import { isAgentRunnableAsWorkflowStep } from 'twenty-shared/workflow';
 
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import {
@@ -17,39 +13,10 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class WorkflowAiAgentStepAgentService {
   constructor(private readonly agentService: AgentService) {}
-
-  // a deleted agent leaves the step without one rather than failing, so the step can still be edited or removed
-  async findStepAgent({
-    input,
-    workspaceId,
-  }: {
-    input: Pick<WorkflowAiAgentAction['settings']['input'], 'agentId'>;
-    workspaceId: string;
-  }): Promise<FlatAgentWithRoleId | null> {
-    const { agentId } = input;
-
-    if (isWorkflowAiAgentGenerateStep(input) || !isDefined(agentId)) {
-      return null;
-    }
-
-    return this.agentService
-      .findOneAgentById({ id: agentId, workspaceId })
-      .catch((error) => {
-        if (
-          error instanceof AiException &&
-          error.code === AiExceptionCode.AGENT_NOT_FOUND
-        ) {
-          return null;
-        }
-
-        throw error;
-      });
-  }
 
   async findAgentRunnableByNewStepOrThrow({
     agentId,

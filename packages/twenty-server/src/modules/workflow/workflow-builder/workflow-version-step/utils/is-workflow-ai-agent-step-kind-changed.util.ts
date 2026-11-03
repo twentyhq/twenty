@@ -11,13 +11,12 @@ const getAiAgentStepAgentId = (step: WorkflowAction): string | undefined =>
     ? step.settings.input.agentId
     : undefined;
 
-// an AI step's agent decides its kind and what the step owns, so changing it rebuilds the step like a type change
-export const isWorkflowStepRebuiltOnUpdate = ({
+export const isWorkflowAiAgentStepKindChanged = ({
   existingStep,
   updatedStep,
 }: {
   existingStep: WorkflowAction;
   updatedStep: WorkflowAction;
 }): boolean =>
-  existingStep.type !== updatedStep.type ||
+  existingStep.type === updatedStep.type &&
   getAiAgentStepAgentId(existingStep) !== getAiAgentStepAgentId(updatedStep);
