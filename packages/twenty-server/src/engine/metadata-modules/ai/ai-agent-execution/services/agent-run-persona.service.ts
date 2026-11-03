@@ -121,7 +121,7 @@ export class AgentRunPersonaService {
     return buildAgentRunAuthContext({
       authContext,
       agentId: agentId ?? undefined,
-      permissionScope: resolveAiRunPermissionScope({
+      ephemeralRole: resolveAiRunPermissionScope({
         scope,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

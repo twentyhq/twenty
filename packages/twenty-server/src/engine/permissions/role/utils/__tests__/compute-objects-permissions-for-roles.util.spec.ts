@@ -108,17 +108,17 @@ const buildMemberAuthContext = ({
 const buildApiKeyAuthContext = ({
   apiKeyId,
   agentId,
-  permissionScope,
+  ephemeralRole,
 }: {
   apiKeyId: string;
   agentId?: string;
-  permissionScope?: PermissionScope;
+  ephemeralRole?: PermissionScope;
 }): PermissionsAuthContext => ({
   type: 'apiKey',
   workspace: { id: 'workspace-id' },
   apiKey: { id: apiKeyId },
   ...(isDefined(agentId) ? { agentId } : {}),
-  ...(isDefined(permissionScope) ? { permissionScope } : {}),
+  ...(isDefined(ephemeralRole) ? { ephemeralRole } : {}),
 });
 
 const computeForAuthContext = ({
@@ -718,7 +718,7 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
     const principal = resolvePermissionsPrincipalsWithRoles({
       authContext: buildApiKeyAuthContext({
         apiKeyId,
-        permissionScope: hasScope
+        ephemeralRole: hasScope
           ? {
               objectsPermissions: isDefined(scopeObjectPermissions)
                 ? { [INVOICE_ID]: scopeObjectPermissions }

@@ -197,7 +197,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
+        scope: authContext.ephemeralRole,
       };
     case 'apiKey':
       return {
@@ -206,7 +206,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
+        scope: authContext.ephemeralRole,
       };
     case 'application':
       return {
@@ -216,7 +216,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        scope: authContext.permissionScope,
+        scope: authContext.ephemeralRole,
       };
     case 'webhook':
       return {

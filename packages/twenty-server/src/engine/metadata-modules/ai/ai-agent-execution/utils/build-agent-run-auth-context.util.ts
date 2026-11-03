@@ -13,16 +13,16 @@ export const buildAgentRunAuthContext = ({
   authContext,
   agentId,
   application,
-  permissionScope,
+  ephemeralRole,
 }: {
   authContext: WorkspaceAuthContext;
   agentId?: string;
   application?: FlatApplication;
-  permissionScope?: PermissionScope;
+  ephemeralRole?: PermissionScope;
 }): WorkspaceAuthContext => {
   const narrowing = {
     ...(isDefined(agentId) ? { agentId } : {}),
-    ...(isDefined(permissionScope) ? { permissionScope } : {}),
+    ...(isDefined(ephemeralRole) ? { ephemeralRole } : {}),
   };
 
   switch (authContext.type) {
