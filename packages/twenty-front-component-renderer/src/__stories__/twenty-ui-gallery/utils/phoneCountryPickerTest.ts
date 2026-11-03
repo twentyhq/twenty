@@ -72,13 +72,13 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.clear(primarySearch);
   await userEvent.type(primarySearch, ' +44 ');
   await waitFor(() => expect(primarySearch).toHaveValue(' +44 '));
-  const unitedKingdom = await page.findByRole('option', {
-    name: 'United Kingdom (+44)',
-  });
   await waitFor(() => {
     expect(
       page.queryByRole('option', { name: 'United States (+1)' }),
     ).toBeNull();
+  });
+  const unitedKingdom = await page.findByRole('option', {
+    name: 'United Kingdom (+44)',
   });
   await userEvent.click(unitedKingdom);
   await waitFor(() => {
