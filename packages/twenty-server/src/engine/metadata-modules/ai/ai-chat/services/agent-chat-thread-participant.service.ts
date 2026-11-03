@@ -795,9 +795,8 @@ export class AgentChatThreadParticipantService {
     participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
     const participantRepository =
-      scope.getRepository<AgentChatThreadParticipantRow>(
+      scope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
         'agentChatThreadParticipant',
-        { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
     const findParticipants = () =>
