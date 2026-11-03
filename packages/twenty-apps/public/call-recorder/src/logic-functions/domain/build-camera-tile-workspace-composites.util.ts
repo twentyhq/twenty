@@ -59,15 +59,17 @@ export const buildCameraTileWorkspaceComposites = async ({
     : undefined;
 
   if (isUndefined(displayName)) {
-    return isDefined(logo)
-      ? [
-          await renderCameraTileSvgLayer({
-            sharp,
-            content: buildCameraTilePlateSvg(),
-          }),
-          logo,
-        ]
-      : undefined;
+    if (isUndefined(logo)) {
+      return undefined;
+    }
+
+    return [
+      await renderCameraTileSvgLayer({
+        sharp,
+        content: buildCameraTilePlateSvg(),
+      }),
+      logo,
+    ];
   }
 
   const plateContent =
