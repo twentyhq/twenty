@@ -1,5 +1,5 @@
 import { type SidePanelNavigationStackItem } from '@/side-panel/states/sidePanelNavigationStackState';
-import { releaseRoutedFlowStateScope } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
+import { routedFlowStateScopeRegistry } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
 import { isDefined } from 'twenty-shared/utils';
 
 export const releaseRemovedRoutedFlowStateScopes = ({
@@ -16,9 +16,11 @@ export const releaseRemovedRoutedFlowStateScopes = ({
     removedItems.map((item) => item.routedFlowStateScopeId).filter(isDefined),
   );
 
-  removedScopeIds.forEach((scopeId) => {
-    if (!remainingScopeIds.has(scopeId)) {
-      releaseRoutedFlowStateScope(scopeId);
+  for (const scopeId of removedScopeIds) {
+    if (remainingScopeIds.has(scopeId)) {
+      continue;
     }
-  });
+
+    routedFlowStateScopeRegistry.release(scopeId);
+  }
 };

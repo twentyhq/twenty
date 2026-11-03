@@ -1,3 +1,5 @@
+import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
+import { RoutedFlowStateScopeRetentionEffect } from '@/ui/utilities/state/jotai/components/RoutedFlowStateScopeRetentionEffect';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
@@ -27,6 +29,15 @@ const StyledSidePanelContent = styled.div`
 export const SidePanelRouter = () => {
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
+  );
+  const retainedScopeIds = new Set(
+    sidePanelNavigationStack
+      .map(
+        (item) =>
+          item.routedFlowStateScopeId ??
+          (item.page === SidePanelPages.RoutedPage ? item.pageId : undefined),
+      )
+      .filter(isDefined),
   );
   const currentNavigationItem = sidePanelNavigationStack.at(-1);
   const sidePanelPage =
@@ -77,6 +88,9 @@ export const SidePanelRouter = () => {
 
   return (
     <SidePanelContainer>
+      {[...retainedScopeIds].map((scopeId) => (
+        <RoutedFlowStateScopeRetentionEffect key={scopeId} scopeId={scopeId} />
+      ))}
       <SidePanelPageComponentInstanceContext.Provider
         value={{ instanceId: sidePanelPageInstanceId }}
       >
@@ -84,32 +98,42 @@ export const SidePanelRouter = () => {
           value={pageLayoutSidePanelTarget}
         >
           <WorkspaceSurfaceContext.Provider value={workspaceSurface}>
-            <WorkspaceSurfaceHeaderPortalContext.Provider value={headerPortal}>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{
-                  duration: theme.animation.duration.instant,
-                  delay: 0.1,
-                }}
+            <RoutedFlowStateScopeContext.Provider
+              value={
+                workspaceSurface.routedFlowStateScopeId ??
+                currentNavigationItem?.routedFlowStateScopeId ??
+                null
+              }
+            >
+              <WorkspaceSurfaceHeaderPortalContext.Provider
+                value={headerPortal}
               >
-                <SidePanelTopBar
-                  setHeaderTitlePortal={setHeaderTitlePortal}
-                  setHeaderActionsPortal={setHeaderActionsPortal}
-                />
-              </motion.div>
-              <StyledSidePanelContent>
-                <CommandMenuContextProvider
-                  displayType="listItem"
-                  containerType={CommandMenuItemContainerType.CommandMenuList}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: theme.animation.duration.instant,
+                    delay: 0.1,
+                  }}
                 >
-                  <SidePanelSubPageRouter>
-                    {sidePanelPageComponent}
-                  </SidePanelSubPageRouter>
-                </CommandMenuContextProvider>
-              </StyledSidePanelContent>
-            </WorkspaceSurfaceHeaderPortalContext.Provider>
+                  <SidePanelTopBar
+                    setHeaderTitlePortal={setHeaderTitlePortal}
+                    setHeaderActionsPortal={setHeaderActionsPortal}
+                  />
+                </motion.div>
+                <StyledSidePanelContent>
+                  <CommandMenuContextProvider
+                    displayType="listItem"
+                    containerType={CommandMenuItemContainerType.CommandMenuList}
+                  >
+                    <SidePanelSubPageRouter>
+                      {sidePanelPageComponent}
+                    </SidePanelSubPageRouter>
+                  </CommandMenuContextProvider>
+                </StyledSidePanelContent>
+              </WorkspaceSurfaceHeaderPortalContext.Provider>
+            </RoutedFlowStateScopeContext.Provider>
           </WorkspaceSurfaceContext.Provider>
         </PageLayoutSidePanelTargetContext.Provider>
       </SidePanelPageComponentInstanceContext.Provider>

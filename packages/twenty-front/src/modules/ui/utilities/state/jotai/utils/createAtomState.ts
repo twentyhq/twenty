@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { createJotaiCookieStorage } from '@/ui/utilities/state/jotai/utils/createJotaiCookieStorage';
-import { registerRoutedFlowStateScopeRelease } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
+import { routedFlowStateScopeRegistry } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
 
 type CookieStorageConfig<ValueType> = {
   cookieKey: string;
@@ -107,7 +107,7 @@ export const createAtomState = <ValueType>({
   const scopedAtomCache = new Map<string, StateAtom<ValueType>>();
 
   if (scope === 'routed-flow') {
-    registerRoutedFlowStateScopeRelease((scopeId) => {
+    routedFlowStateScopeRegistry.registerRelease((scopeId) => {
       scopedAtomCache.delete(scopeId);
     });
   }

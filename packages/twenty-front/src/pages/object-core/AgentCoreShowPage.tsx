@@ -1,3 +1,4 @@
+import { CoreAgentEditingScope } from '@/object-core/agents/components/CoreAgentEditingScope';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
@@ -56,5 +57,9 @@ export const AgentCoreShowPage = () => {
     );
   }
 
-  return <CoreAgentFormContent key={agent.id} agent={agent} />;
+  return (
+    <CoreAgentEditingScope key={agent.id} agentId={agent.id}>
+      <CoreAgentFormContent agent={agent} />
+    </CoreAgentEditingScope>
+  );
 };
