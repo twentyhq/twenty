@@ -13,7 +13,7 @@ export const reconcileRoleDraft = ({
   persistedRole: RoleWithPartialMembers;
   submittedRole?: RoleWithPartialMembers;
 }): RoleWithPartialMembers => {
-  if (draftRole.id !== persistedRole.id || !isDefined(baseRole)) {
+  if (draftRole.id !== persistedRole.id) {
     return persistedRole;
   }
 

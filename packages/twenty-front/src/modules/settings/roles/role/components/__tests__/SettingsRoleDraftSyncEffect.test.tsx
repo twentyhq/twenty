@@ -96,7 +96,7 @@ describe('SettingsRoleDraftSyncEffect', () => {
     });
 
     expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
-      editedDraftRole,
+      { ...REFRESHED_ROLE, label: editedDraftRole.label },
     );
   });
 });

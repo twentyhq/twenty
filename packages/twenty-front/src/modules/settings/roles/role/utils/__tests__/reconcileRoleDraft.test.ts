@@ -68,3 +68,21 @@ describe('reconcileRoleDraft', () => {
     });
   });
 });
+
+it('preserves a matching new-role draft on its first persisted refresh', () => {
+  const draftRole = {
+    ...baseRole,
+    label: 'Edited during creation',
+    canAccessAllTools: true,
+    fieldPermissions: [fieldPermission],
+  };
+  const result = reconcileRoleDraft({
+    draftRole,
+    baseRole: undefined,
+    persistedRole: { ...baseRole, label: 'Submitted role' },
+  });
+
+  expect(result.label).toBe(draftRole.label);
+  expect(result.canAccessAllTools).toBe(true);
+  expect(result.fieldPermissions).toEqual([fieldPermission]);
+});

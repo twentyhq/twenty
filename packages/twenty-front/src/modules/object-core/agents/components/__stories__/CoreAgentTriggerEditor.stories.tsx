@@ -93,7 +93,9 @@ export const ReadOnly: Story = {
     await expect(
       canvas.getByRole('textbox', { name: 'Instructions' }),
     ).toBeDisabled();
-    await expect(canvas.getByRole('switch', { name: 'Active' })).toBeDisabled();
+    await expect(
+      canvas.getByRole('switch', { name: 'Active' }),
+    ).toHaveAttribute('aria-disabled', 'true');
     await expect(
       canvas.getByRole('button', { name: 'Remove trigger 2' }),
     ).toBeDisabled();
