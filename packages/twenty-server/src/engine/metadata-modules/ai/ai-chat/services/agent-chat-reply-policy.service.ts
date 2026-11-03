@@ -39,7 +39,7 @@ export class AgentChatReplyPolicyService {
     shouldAssistantReply: boolean;
     thread: Pick<
       AgentChatThreadWorkspaceEntity,
-      'id' | 'isAssistantParticipant'
+      'id' | 'isAssistantParticipant' | 'pendingQuestionMessageId'
     >;
     assistantPolicy: AgentChatAssistantParticipation['assistantPolicy'];
     workspaceId: string;
@@ -63,6 +63,10 @@ export class AgentChatReplyPolicyService {
 
     if (replyDecision !== 'EVALUATE') {
       return replyDecision === 'REPLY';
+    }
+
+    if (isDefined(thread.pendingQuestionMessageId)) {
+      return true;
     }
 
     if (!this.aiEvaluationService.isAvailable()) {

@@ -1,7 +1,10 @@
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -26,11 +29,13 @@ describe('Assistant reply selection with stored conversation participants', () =
     isAssistantMentioned = false,
     shouldAssistantReply = true,
     isAiChatInboxEnabled = true,
+    text = 'Can Ada help with the latest task?',
   }: {
     threadId: string;
     isAssistantMentioned?: boolean | null;
     shouldAssistantReply?: boolean;
     isAiChatInboxEnabled?: boolean;
+    text?: string;
   }) => {
     const isAssistantMentionedInMessage = isAssistantMentioned ?? false;
     const { thread, assistantPolicy } =
@@ -49,7 +54,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
       isAssistantMentioned: isAssistantMentionedInMessage,
-      text: 'Can Ada help with the latest task?',
+      text,
     });
   };
   const addJonyAsParticipant = (threadId: string) =>
@@ -249,6 +254,56 @@ describe('Assistant reply selection with stored conversation participants', () =
     const threadId = await createGroup();
 
     await expect(shouldReply({ threadId })).resolves.toBe(false);
+  });
+
+  it('continues a pending question without relying on the evaluator', async () => {
+    const threadId = await createGroup();
+    const { turnId } = await context.chatService.addMessage({
+      threadId,
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: 'Draft a quote.' }],
+      },
+    });
+    const conversationWriterService =
+      getAppProviderByClassName<AgentConversationWriterService>(
+        'AgentConversationWriterService',
+      );
+    const question = {
+      header: 'Plan',
+      question: 'Which plan should I quote?',
+      options: [{ label: 'Pro' }, { label: 'Team' }],
+    };
+
+    await conversationWriterService.insertMessage({
+      workspaceId: context.workspaceId,
+      threadId,
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+      agentId: null,
+      senderUserWorkspaceId: null,
+      isAwaitingAnswer: true,
+      parts: [
+        {
+          type: 'dynamic-tool',
+          toolName: 'ask_question',
+          toolCallId: 'pending-quote-plan',
+          state: 'output-available',
+          input: question,
+          output: buildAskQuestionPendingOutput(question),
+        },
+      ],
+    });
+
+    await expect(shouldReply({ threadId, text: 'Pro' })).resolves.toBe(true);
+
+    models.enableEvaluation();
+    models.setReplyProbability(0);
+
+    await expect(shouldReply({ threadId, text: 'Pro' })).resolves.toBe(true);
+    expect(models.evaluate).not.toHaveBeenCalled();
   });
 
   it('rechecks persisted participants when a direct chat becomes a group', async () => {
