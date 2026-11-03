@@ -4,7 +4,6 @@ import {
   type PrivateRecordInsertSql,
 } from 'src/engine/permissions/private-record/utils/build-private-record-insert-sql.util';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
-import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
@@ -38,6 +37,7 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
+import { replaceAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-agent-chat-channel-rule-grants.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -78,7 +78,6 @@ export class AgentChatSharingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
@@ -401,6 +400,7 @@ export class AgentChatSharingService {
           manager,
           workspaceId: args.workspaceId,
           channelIds: [args.channelId],
+          shouldProtectThreadIdentity: isDefined(args.id),
         });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${privateColumn}${isDefined(args.channelId) ? ', "channelId"' : ''})
@@ -432,11 +432,10 @@ export class AgentChatSharingService {
           );
         }
         if (isDefined(args.channelId)) {
-          await this.channelGrantService.rewriteThreadGrantsInTransaction({
+          await replaceAgentChatChannelRuleGrants({
             manager,
             workspaceId: args.workspaceId,
-            threadIds: [record.id],
-            affectedChannelIds: [args.channelId],
+            scope: { threadIds: [record.id] },
           });
         }
         const [setUpRecord] = await this.setUpCreatedThreadsInboxState({

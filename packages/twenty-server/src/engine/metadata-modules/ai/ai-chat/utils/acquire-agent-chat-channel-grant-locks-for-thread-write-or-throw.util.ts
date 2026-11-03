@@ -3,6 +3,7 @@ import { type EntityManager } from 'typeorm';
 
 import { AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grant-lock-timeout-ms.constant';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { acquireAgentChatThreadIdentityLock } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-thread-identity-lock.util';
 import { isLockNotAvailableError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-lock-not-available-error.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
 
@@ -10,12 +11,14 @@ export const acquireAgentChatChannelGrantLocksForThreadWriteOrThrow = async ({
   manager,
   workspaceId,
   channelIds,
+  shouldProtectThreadIdentity = false,
 }: {
   manager: Pick<EntityManager, 'query'>;
   workspaceId: string;
   channelIds: (string | null | undefined)[];
+  shouldProtectThreadIdentity?: boolean;
 }): Promise<void> => {
-  if (!channelIds.some(isDefined)) {
+  if (!shouldProtectThreadIdentity && !channelIds.some(isDefined)) {
     return;
   }
 
@@ -23,16 +26,26 @@ export const acquireAgentChatChannelGrantLocksForThreadWriteOrThrow = async ({
     `${AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS}ms`,
   ]);
 
-  await acquireAgentChatChannelGrantLocks({
-    manager,
-    workspaceId,
-    channelIds,
-    mode: 'shared',
-  }).catch((error: unknown) => {
+  try {
+    if (shouldProtectThreadIdentity) {
+      await acquireAgentChatThreadIdentityLock({
+        manager,
+        workspaceId,
+        mode: 'exclusive',
+      });
+    }
+
+    await acquireAgentChatChannelGrantLocks({
+      manager,
+      workspaceId,
+      channelIds,
+      mode: 'shared',
+    });
+  } catch (error: unknown) {
     if (isLockNotAvailableError(error)) {
       throwAgentChatChannelBusy();
     }
 
     throw error;
-  });
+  }
 };

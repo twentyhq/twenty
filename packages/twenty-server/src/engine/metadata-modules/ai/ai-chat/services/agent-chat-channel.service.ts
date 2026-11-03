@@ -1,19 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
+
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
+import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -25,6 +29,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 type ChannelChanges = {
   name?: string;
@@ -46,6 +51,8 @@ export class AgentChatChannelService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async findChannels({
@@ -234,48 +241,53 @@ export class AgentChatChannelService {
       after: AgentChatThreadWorkspaceEntity;
     }[]
   > {
-    return this.threadRepository.query(
-      workspaceId,
-      async ({ manager, table }) => {
-        await assertAgentChatChannelExists({ manager, workspaceId, channelId });
+    const [doesSourceChannelExist, threadsBefore] = await Promise.all([
+      this.coreDataSource
+        .getRepository(AgentChatChannelEntity)
+        .existsBy({ id: channelId, workspaceId }),
+      this.threadRepository.find(workspaceId, { where: { channelId } }),
+    ]);
 
-        const threadsBefore = await manager.query<
-          AgentChatThreadWorkspaceEntity[]
-        >(
-          `SELECT * FROM ${table('agentChatThread')}
-           WHERE "channelId" = $1 FOR NO KEY UPDATE`,
-          [channelId],
-        );
+    if (!doesSourceChannelExist) {
+      throwAgentChatChannelNotFound();
+    }
 
-        if (threadsBefore.length === 0) {
-          return [];
-        }
+    if (!isNonEmptyArray(threadsBefore)) {
+      return [];
+    }
 
-        if (!isDefined(destinationChannelId)) {
-          throw new AiException(
-            'The channel still has chats',
-            AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
-          );
-        }
+    if (!isDefined(destinationChannelId)) {
+      throw new AiException(
+        'The channel still has chats',
+        AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+      );
+    }
 
+    const threadTable = `${getWorkspaceSchemaName(workspaceId)}.agentChatThread`;
+    const threadsAfter = await this.coreDataSource.transaction(
+      async (manager) => {
         await lockAgentChatChannelForThreadWriteOrThrow({
           manager,
           workspaceId,
           channelId: destinationChannelId,
         });
 
-        const threadsAfter = await manager.query<
-          AgentChatThreadWorkspaceEntity[]
-        >(
-          `WITH moved_thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "channelId" = $2, "updatedAt" = now()
-             WHERE id = ANY($1::uuid[])
-             RETURNING *
-           )
-           SELECT * FROM moved_thread`,
-          [threadsBefore.map(({ id }) => id), destinationChannelId],
-        );
+        const movedThreads = await manager
+          .createQueryBuilder()
+          .update<AgentChatThreadWorkspaceEntity>(threadTable)
+          .set({
+            channelId: destinationChannelId,
+            updatedAt: () => 'CURRENT_TIMESTAMP',
+          })
+          .where('id = ANY(:threadIds::uuid[])', {
+            threadIds: threadsBefore.map(({ id }) => id),
+          })
+          .andWhere('"channelId" = :sourceChannelId', {
+            sourceChannelId: channelId,
+          })
+          .returning('*')
+          .execute();
+        const threadsAfter: AgentChatThreadWorkspaceEntity[] = movedThreads.raw;
 
         await this.channelGrantService.rewriteThreadGrantsInTransaction({
           manager,
@@ -284,16 +296,17 @@ export class AgentChatChannelService {
           affectedChannelIds: [channelId, destinationChannelId],
         });
 
-        const threadBeforeById = new Map(
-          threadsBefore.map((thread) => [thread.id, thread]),
-        );
-
-        return threadsAfter.flatMap((after) => {
-          const before = threadBeforeById.get(after.id);
-
-          return isDefined(before) ? [{ before, after }] : [];
-        });
+        return threadsAfter;
       },
     );
+    const threadBeforeById = new Map(
+      threadsBefore.map((thread) => [thread.id, thread]),
+    );
+
+    return threadsAfter.flatMap((after) => {
+      const before = threadBeforeById.get(after.id);
+
+      return isDefined(before) ? [{ before, after }] : [];
+    });
   }
 }

@@ -38,7 +38,7 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     ]);
   });
 
-  it('takes the lock exclusively for a channel-wide rewrite', async () => {
+  it('protects thread identities before locking a channel for a rewrite', async () => {
     const query = jest.fn().mockResolvedValue([]);
 
     await acquireAgentChatChannelGrantLocks({
@@ -49,6 +49,7 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     });
 
     expect(query.mock.calls).toEqual([
+      [SHARED_LOCK_QUERY, [`agent-chat-thread-identity:${WORKSPACE_ID}`]],
       [
         EXCLUSIVE_LOCK_QUERY,
         [`agent-chat-channel-grants:${WORKSPACE_ID}:${FIRST_CHANNEL_ID}`],
@@ -56,16 +57,19 @@ describe('acquireAgentChatChannelGrantLocks', () => {
     ]);
   });
 
-  it('locks nothing for a chat outside any channel', async () => {
-    const query = jest.fn().mockResolvedValue([]);
+  it.each(['shared', 'exclusive'] as const)(
+    'locks nothing for an empty %s scope',
+    async (mode) => {
+      const query = jest.fn().mockResolvedValue([]);
 
-    await acquireAgentChatChannelGrantLocks({
-      manager: { query },
-      workspaceId: WORKSPACE_ID,
-      channelIds: [null, undefined],
-      mode: 'shared',
-    });
+      await acquireAgentChatChannelGrantLocks({
+        manager: { query },
+        workspaceId: WORKSPACE_ID,
+        channelIds: [null, undefined],
+        mode,
+      });
 
-    expect(query).not.toHaveBeenCalled();
-  });
+      expect(query).not.toHaveBeenCalled();
+    },
+  );
 });

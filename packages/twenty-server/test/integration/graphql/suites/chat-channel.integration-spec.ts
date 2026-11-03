@@ -5,8 +5,10 @@ import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
+import { lockAgentChatChannelForThreadWriteInTestOrThrow } from 'test/integration/ai/utils/lock-agent-chat-channel-for-thread-write-in-test-or-throw.util';
+import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
@@ -31,7 +33,6 @@ import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/a
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
-import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -345,15 +346,19 @@ const watchThreadEvents = () => {
     'emitDatabaseBatchEvent',
   );
 
+  const findEmittedThreadEvent = (threadId: string) =>
+    eventSpy.mock.calls
+      .flatMap(([batchEvent]) =>
+        batchEvent?.objectMetadataNameSingular === 'agentChatThread'
+          ? batchEvent.events
+          : [],
+      )
+      .find((event) => 'recordId' in event && event.recordId === threadId);
+
   return {
+    findEmittedThreadEvent,
     hasEmittedThreadEvent: (threadId: string) =>
-      eventSpy.mock.calls.some(
-        ([batchEvent]) =>
-          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
-          batchEvent.events.some(
-            (event) => 'recordId' in event && event.recordId === threadId,
-          ),
-      ),
+      isDefined(findEmittedThreadEvent(threadId)),
   };
 };
 
@@ -480,7 +485,8 @@ describe('Chat channels through the authenticated API', () => {
   let isChannelCacheStale = false;
 
   const startHeldTransaction = async (): Promise<QueryRunner> => {
-    const queryRunner = global.testDataSource.createQueryRunner();
+    const queryRunner =
+      getAppProviderByClassName<DataSource>('DataSource').createQueryRunner();
 
     await queryRunner.connect();
     heldQueryRunners.push(queryRunner);
@@ -535,7 +541,7 @@ describe('Chat channels through the authenticated API', () => {
   }): Promise<QueryRunner> => {
     const queryRunner = await startHeldTransaction();
 
-    await lockAgentChatChannelForThreadWriteOrThrow({
+    await lockAgentChatChannelForThreadWriteInTestOrThrow({
       manager: queryRunner.manager,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       channelId,
@@ -1071,41 +1077,71 @@ describe('Chat channels through the authenticated API', () => {
     ]);
   });
 
-  it("creates a chat under a destroyed chat's id while its channel is rewritten", async () => {
-    const channelId = await createChannel();
-    const threadId = await createThreadInChannel(channelId);
+  it.each(['other', 'private'] as const)(
+    'recreates a destroyed chat in the %s channel scope while its old grants are rewritten',
+    async (destination) => {
+      const channelId = await createChannel();
+      const recreatedChannelId =
+        destination === 'other' ? await createChannel() : undefined;
+      const threadId = await createThreadInChannel(channelId);
 
-    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
-    await destroyAgentChatThread({ threadId });
+      await global.testDataSource.query(
+        `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
+        [threadId],
+      );
 
-    const queryRunner = await holdChannelGrantLock({
-      channelId,
-      mode: 'exclusive',
-    });
+      const queryRunner = await holdChannelGrantLock({
+        channelId,
+        mode: 'exclusive',
+      });
+      const [prefetchedGrant]: { roleId: string; channelId: string }[] =
+        await queryRunner.query(
+          `SELECT role.id AS "roleId", thread."channelId"
+         FROM ${SCHEMA}."agentChatThread" thread
+         JOIN core."role" role ON role."workspaceId" = $2
+           AND role."canAccessAllAgentChatChannels" = true
+         WHERE thread.id = $1 LIMIT 1`,
+          [threadId, SEED_APPLE_WORKSPACE_ID],
+        );
+      const [{ processId }]: { processId: number }[] = await queryRunner.query(
+        'SELECT pg_backend_pid() AS "processId"',
+      );
 
-    const pendingCreate = getAppProviderByClassName<AgentChatThreadService>(
-      'AgentChatThreadService',
-    ).createThreadIfMissing({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: JANE,
-      threadId,
-      channelId,
-    });
+      expect(prefetchedGrant).toBeDefined();
+      createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
+      await destroyAgentChatThread({ threadId });
+      expect(await readChannelGrants(threadId)).toEqual([]);
 
-    await waitForBlockedChannelGrantLock(channelId);
-    await queryRunner.query(
-      `DELETE FROM ${SCHEMA}."recordShare" WHERE "rowCause" = 'RULE' AND "sourceId" = $1`,
-      [channelId],
-    );
-    await queryRunner.commitTransaction();
-    await pendingCreate;
-    createdThreadIds.push(threadId);
+      const pendingCreate = getAppProviderByClassName<AgentChatThreadService>(
+        'AgentChatThreadService',
+      ).createThreadIfMissing({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: JANE,
+        threadId,
+        channelId: recreatedChannelId,
+      });
 
-    expect((await readChannelState(threadId)).channelId).toBe(channelId);
-    expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'ROLE', sourceId: channelId },
-    ]);
-  });
+      await waitForBlockedDatabaseQueryOrThrow(processId);
+      await insertChannelGrant({
+        queryRunner,
+        threadId,
+        roleId: prefetchedGrant.roleId,
+        channelId: prefetchedGrant.channelId,
+      });
+      await queryRunner.commitTransaction();
+      await pendingCreate;
+      createdThreadIds.push(threadId);
+
+      expect((await readChannelState(threadId)).channelId).toBe(
+        recreatedChannelId ?? null,
+      );
+      expect(await readChannelGrants(threadId)).toEqual(
+        isDefined(recreatedChannelId)
+          ? [{ principalType: 'ROLE', sourceId: recreatedChannelId }]
+          : [],
+      );
+    },
+  );
 
   it('refuses a role from outside the workspace', async () => {
     const response = await makeMetadataApiRequest({
@@ -1434,7 +1470,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(selfResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    const { hasEmittedThreadEvent } = watchThreadEvents();
+    const { findEmittedThreadEvent } = watchThreadEvents();
 
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
@@ -1451,7 +1487,57 @@ describe('Chat channels through the authenticated API', () => {
     ]);
     expect((await listChannels()).map(({ id }) => id)).not.toContain(channelId);
     // Moved in SQL, so the move is sent for clients watching the chat
-    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+    expect(findEmittedThreadEvent(threadId)).toMatchObject({
+      properties: {
+        updatedFields: ['channelId'],
+        diff: { channelId: { before: channelId, after: destinationChannelId } },
+      },
+    });
+  });
+
+  it('keeps a conversation moved out while its former channel is being deleted', async () => {
+    const sourceChannelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const otherChannelId = await createChannel();
+    const threadId = await createThreadInChannel(sourceChannelId);
+    const queryRunner = await startHeldTransaction();
+    const [{ processId }]: { processId: number }[] = await queryRunner.query(
+      'SELECT pg_backend_pid() AS "processId"',
+    );
+
+    await queryRunner.query(
+      'SELECT id FROM core."agentChatChannel" WHERE id = $1 FOR UPDATE',
+      [destinationChannelId],
+    );
+
+    const pendingDeleteResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: {
+          channelId: sourceChannelId,
+          destinationChannelId,
+        },
+      }),
+    );
+
+    try {
+      await waitForBlockedDatabaseQueryOrThrow(processId);
+
+      assertGraphQLSuccessfulResponse(
+        await makeMetadataApiRequest({
+          query: MOVE_THREAD,
+          variables: { threadId, channelId: otherChannelId },
+        }),
+      );
+    } finally {
+      await queryRunner.commitTransaction();
+    }
+
+    assertGraphQLSuccessfulResponse(await pendingDeleteResponse);
+    expect((await readChannelState(threadId)).channelId).toBe(otherChannelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: otherChannelId },
+    ]);
   });
 
   it('refuses chats in a channel while it is being deleted', async () => {
