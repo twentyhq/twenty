@@ -18,11 +18,16 @@ export const getLambdaConnectionOptions = (
   const subhostingRole = twentyConfigService.get(
     'LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE',
   );
-  const s3BucketName = twentyConfigService.get('STORAGE_S3_NAME');
   const layerBucket =
     twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ??
-    s3BucketName ??
-    'twenty-lambda-layer';
+    twentyConfigService.get('STORAGE_S3_NAME');
+
+  if (!isNonEmptyString(layerBucket)) {
+    throw new Error(
+      'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET or STORAGE_S3_NAME must be set to use the Lambda logic function driver',
+    );
+  }
+
   const layerBucketRegion =
     twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION') ??
     region;
