@@ -14,11 +14,13 @@ const reconstruct = ({
   isErrorFieldResolvable = true,
   expression = 'isNonEmptyString(reference)',
   message = 'Message',
+  bindings = { reference: 'reference' },
 }: {
   isObjectExported?: boolean;
   isErrorFieldResolvable?: boolean;
   expression?: string;
   message?: string;
+  bindings?: Record<string, string>;
 }) => {
   const applicationAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -45,7 +47,7 @@ const reconstruct = ({
       description: null,
       icon: null,
       expression,
-      bindings: { reference: 'reference' },
+      bindings,
       message,
       isActive: true,
       createdAt: NOW,
@@ -76,6 +78,7 @@ describe('reconstructValidationRulesManifest', () => {
     ['error field', { isErrorFieldResolvable: false }],
     ['expression', { expression: '' }],
     ['message', { message: ' ' }],
+    ['deleted field', { bindings: { score: 'deleted-score' } }],
   ])('leaves out a rule whose %s cannot be exported', (_, options) => {
     const { validationRules, coverage } = reconstruct(options);
 
