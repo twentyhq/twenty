@@ -24,9 +24,9 @@ type ChatThreadMessagesProps = {
 
 export const ChatThreadMessages = ({ messages }: ChatThreadMessagesProps) => {
   const { t } = useLingui();
-  const { channels, hasLoaded } = useMyMessageChannels();
+  const { channels, hasLoaded, loading } = useMyMessageChannels();
 
-  if (!hasLoaded) {
+  if (!hasLoaded && loading) {
     return <EmailLoader loadingText={t`Loading thread`} />;
   }
 
