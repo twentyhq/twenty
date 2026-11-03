@@ -77,6 +77,10 @@ export class CallWebhookJobsJob {
     );
 
     if (!isDefined(workspace)) {
+      this.logger.warn(
+        `Workspace ${workspaceEventBatch.workspaceId} not found, dropping the webhook batch`,
+      );
+
       return;
     }
 

@@ -75,6 +75,10 @@ export class CallAgentDatabaseEventTriggersJob {
     );
 
     if (!isDefined(workspace)) {
+      this.logger.warn(
+        `Workspace ${workspaceId} not found, skipping agent triggers for ${eventName}`,
+      );
+
       return;
     }
 
