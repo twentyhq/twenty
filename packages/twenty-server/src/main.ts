@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
+import { type Server } from 'http';
 import { inspect } from 'util';
 
 import bytes from 'bytes';
@@ -28,6 +29,9 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { enableValidationMetadataCache } from './utils/enable-validation-metadata-cache.util';
+import { createHttpServerShutdown } from './utils/create-http-server-shutdown.util';
+
+const APPLICATION_SHUTDOWN_TIMEOUT_MS = 90_000;
 
 const bootstrap = async () => {
   enableValidationMetadataCache();
@@ -104,7 +108,8 @@ const bootstrap = async () => {
   const keepAliveTimeout = twentyConfigService.get(
     'SERVER_KEEP_ALIVE_TIMEOUT_MS',
   );
-  const httpServer = app.getHttpServer();
+  const httpServer = app.getHttpServer<Server>();
+  const shutdownHttpServer = createHttpServerShutdown(httpServer);
 
   httpServer.keepAliveTimeout = keepAliveTimeout;
   httpServer.headersTimeout = keepAliveTimeout + 1000;
@@ -114,12 +119,43 @@ const bootstrap = async () => {
     ApplicationRepeatedEventRecorderService,
   );
 
-  for (const signal of ['SIGTERM', 'SIGINT'] as const) {
-    process.once(signal, () => {
-      void Promise.allSettled([
+  let isShuttingDown = false;
+
+  const shutdown = async () => {
+    if (isShuttingDown) {
+      return;
+    }
+
+    isShuttingDown = true;
+
+    const shutdownTimeout = setTimeout(() => {
+      logger.error('Application shutdown exceeded its deadline');
+      process.exit(1);
+    }, APPLICATION_SHUTDOWN_TIMEOUT_MS);
+
+    shutdownTimeout.unref();
+
+    try {
+      await shutdownHttpServer();
+
+      // Requests can still record usage until HTTP draining has finished.
+      await Promise.allSettled([
         usageRecorder.flushAndStop(),
         applicationRepeatedEventRecorder.flushAndStop(),
-      ]).finally(() => process.exit(0));
+      ]);
+
+      await app.close();
+      clearTimeout(shutdownTimeout);
+      process.exit(0);
+    } catch (error) {
+      logger.error('Application shutdown failed', error);
+      process.exit(1);
+    }
+  };
+
+  for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+    process.on(signal, () => {
+      void shutdown();
     });
   }
 
