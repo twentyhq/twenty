@@ -132,22 +132,6 @@ export class BillingWebhookInvoiceService {
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    const params =
-      await this.resourceCreditService.getResourceCreditRolloverParameters({
-        workspaceId: subscription.workspaceId,
-        subscriptionId: subscription.id,
-        boundary,
-      });
-
-    // Skipping the transition forfeits the unspent part of every grant of this workspace
-    if (!isDefined(params)) {
-      this.logger.error(
-        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack or seats`,
-      );
-
-      return;
-    }
-
     // Only needed while subscriptions predating previousPeriodStart transition for the first time
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
@@ -158,6 +142,7 @@ export class BillingWebhookInvoiceService {
     const {
       closingPeriodStart,
       closingPeriodEnd,
+      closingPeriodInterval,
       nextPeriodStart,
       isFirstPeriodAfterTrial,
     } = deriveBillingPeriodTransition({
@@ -170,33 +155,47 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    const workspaceCreditAllowanceMicro =
-      await this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
+    const [params, workspaceCreditAllowanceMicro] = await Promise.all([
+      this.resourceCreditService.getResourceCreditRolloverParameters({
+        workspaceId: subscription.workspaceId,
+        subscriptionId: subscription.id,
+        boundary,
+        interval: closingPeriodInterval,
+      }),
+      this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
         {
           workspaceId: subscription.workspaceId,
           nowMs: closingPeriodEnd.getTime() - 1,
-          interval: subscription.interval,
+          interval: closingPeriodInterval,
           isTrialing: isFirstPeriodAfterTrial,
         },
+      ),
+    ]);
+
+    const closingAllowances = computeRolloverClosingAllowances({
+      planWorkspaceCredits: params,
+      trialAllowanceMicro:
+        this.billingUsageService.getTrialResourceUsageCap(subscription),
+      isFirstPeriodAfterTrial,
+      workspaceCreditAllowanceMicro,
+    });
+
+    // Skipping the transition forfeits the unspent part of every grant of this workspace
+    if (!isDefined(closingAllowances)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack, seats or a workspace credit allowance`,
       );
 
-    const { closingAllowanceMicro, closingSeatAllowanceMicro } =
-      computeRolloverClosingAllowances({
-        planWorkspaceCredits: params,
-        trialAllowanceMicro:
-          this.billingUsageService.getTrialResourceUsageCap(subscription),
-        isFirstPeriodAfterTrial,
-        workspaceCreditAllowanceMicro,
-      });
+      return;
+    }
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
       closingPeriodStart,
       closingPeriodEnd,
-      closingAllowanceMicro,
-      closingSeatAllowanceMicro,
+      ...closingAllowances,
       nextPeriodStart,
-      nextAllowanceMicro: params.workspaceCreditsForPackMicro,
+      nextAllowanceMicro: params?.workspaceCreditsForPackMicro ?? 0,
     });
   }
 

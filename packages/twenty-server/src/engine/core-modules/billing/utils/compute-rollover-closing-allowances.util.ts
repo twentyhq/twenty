@@ -11,21 +11,25 @@ export const computeRolloverClosingAllowances = ({
   isFirstPeriodAfterTrial,
   workspaceCreditAllowanceMicro,
 }: {
-  planWorkspaceCredits: PlanWorkspaceCreditsMicro;
+  planWorkspaceCredits: PlanWorkspaceCreditsMicro | null;
   trialAllowanceMicro: number;
   isFirstPeriodAfterTrial: boolean;
   workspaceCreditAllowanceMicro: number | null;
 }): {
   closingAllowanceMicro: number;
   closingSeatAllowanceMicro: number;
-} => {
+} | null => {
   if (isDefined(workspaceCreditAllowanceMicro)) {
     return {
       closingAllowanceMicro: isFirstPeriodAfterTrial
         ? 0
-        : planWorkspaceCredits.workspaceCreditsForPackMicro,
+        : (planWorkspaceCredits?.workspaceCreditsForPackMicro ?? 0),
       closingSeatAllowanceMicro: workspaceCreditAllowanceMicro,
     };
+  }
+
+  if (!isDefined(planWorkspaceCredits)) {
+    return null;
   }
 
   // Trial credits carry into the first paid period; the trial allowance comes from config, not the price

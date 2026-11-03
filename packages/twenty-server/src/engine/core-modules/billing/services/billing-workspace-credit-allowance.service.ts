@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, IsNull, MoreThan } from 'typeorm';
+import { type FindOptionsWhere, IsNull, MoreThan, Or } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
@@ -24,9 +24,13 @@ export class BillingWorkspaceCreditAllowanceService {
   async findUnexpiredWorkspaceCreditAllowances(
     workspaceId: string,
   ): Promise<WorkspaceCreditAllowanceWindow[]> {
+    const now = new Date();
+
     return this.findWorkspaceCreditAllowances(workspaceId, [
-      { revokedAt: IsNull(), endsAt: IsNull() },
-      { revokedAt: IsNull(), endsAt: MoreThan(new Date()) },
+      {
+        revokedAt: Or(IsNull(), MoreThan(now)),
+        endsAt: Or(IsNull(), MoreThan(now)),
+      },
     ]);
   }
 

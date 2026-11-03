@@ -50,6 +50,31 @@ describe('computeRolloverClosingAllowances', () => {
     });
   });
 
+  it('settles a plan without credits when a workspace credit allowance is active', () => {
+    expect(
+      computeRolloverClosingAllowances({
+        planWorkspaceCredits: null,
+        trialAllowanceMicro: 2_500_000,
+        isFirstPeriodAfterTrial: false,
+        workspaceCreditAllowanceMicro: 5_000_000,
+      }),
+    ).toEqual({
+      closingAllowanceMicro: 0,
+      closingSeatAllowanceMicro: 5_000_000,
+    });
+  });
+
+  it('skips a plan without credits when no workspace credit allowance is active', () => {
+    expect(
+      computeRolloverClosingAllowances({
+        planWorkspaceCredits: null,
+        trialAllowanceMicro: 2_500_000,
+        isFirstPeriodAfterTrial: false,
+        workspaceCreditAllowanceMicro: null,
+      }),
+    ).toBeNull();
+  });
+
   it('carries nothing from a trial whose credits a workspace credit allowance replaced', () => {
     expect(
       computeRolloverClosingAllowances({
