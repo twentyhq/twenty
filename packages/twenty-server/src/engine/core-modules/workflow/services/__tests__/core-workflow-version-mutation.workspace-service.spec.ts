@@ -118,6 +118,9 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
 
     expect(
       workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'step-id',

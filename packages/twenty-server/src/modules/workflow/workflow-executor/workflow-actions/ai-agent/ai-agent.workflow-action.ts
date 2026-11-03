@@ -113,7 +113,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     // a Test run skips activation's validation, and a Generate step has nothing to answer without a prompt
     const isPromptEmpty =
       !isDefined(resolvedPrompt) ||
-      (isString(resolvedPrompt) && resolvedPrompt.trim() === '');
+      (isString(resolvedPrompt) && !isNonEmptyString(resolvedPrompt.trim()));
 
     if (isGenerateStep && isPromptEmpty) {
       throw new WorkflowStepExecutorException(
