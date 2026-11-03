@@ -4,7 +4,6 @@ import { IconCheck } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
 import { CALL_RECORDER_STYLE_OPTIONS } from 'src/constants/call-recorder-style-options';
-import { StyledCameraTilePreviewImage } from 'src/front-components/components/StyledCameraTilePreviewImage';
 import { CAMERA_TILE_PREVIEW_ASSET_PATHS } from 'src/front-components/constants/camera-tile-preview-asset-paths.constant';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 
@@ -77,6 +76,13 @@ const StyledCheckmark = styled.span<{ $checked: boolean }>`
   }
 `;
 
+const StyledPreviewImage = styled.img`
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+`;
+
 const StyledChoiceLabel = styled.span`
   color: ${() => themeCssVariables.font.color.secondary};
   font-size: ${() => themeCssVariables.font.size.xs};
@@ -111,7 +117,7 @@ export const CameraTileStylePicker = ({
             onChange={() => onChange(option.value)}
           />
           <StyledTile>
-            <StyledCameraTilePreviewImage
+            <StyledPreviewImage
               src={getPublicAssetUrl(
                 CAMERA_TILE_PREVIEW_ASSET_PATHS[option.value],
               )}

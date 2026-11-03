@@ -1,12 +1,8 @@
-import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { getPublicAssetUrl } from 'twenty-sdk/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CameraTileStylePicker } from 'src/front-components/components/CameraTileStylePicker';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
-import { StyledCameraTilePreviewImage } from 'src/front-components/components/StyledCameraTilePreviewImage';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import {
@@ -14,34 +10,11 @@ import {
   CALL_RECORDER_STYLE_DESCRIPTIONS,
   CALL_RECORDER_STYLE_FIELD,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
-import { CAMERA_TILE_PREVIEW_ASSET_PATHS } from 'src/front-components/constants/camera-tile-preview-asset-paths.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { DEFAULT_CALL_RECORDER_STYLE } from 'src/logic-functions/constants/default-call-recorder-style';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 import { isCallRecorderStyle } from 'src/logic-functions/utils/is-call-recorder-style.util';
-
-const StyledPreview = styled.figure`
-  background-color: ${() => themeCssVariables.background.secondary};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-  margin: 0;
-  padding: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledPreviewFrame = styled.div`
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  overflow: hidden;
-`;
-
-const StyledPreviewCaption = styled.figcaption`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  text-align: center;
-`;
 
 const getInitialStyle = (): CallRecorderStyle => {
   const value = getApplicationVariableValue(
@@ -115,15 +88,6 @@ export const RecorderSection = () => {
             onChange={handleStyleChange}
           />
         </LabelledSettingsField>
-        <StyledPreview>
-          <StyledPreviewFrame>
-            <StyledCameraTilePreviewImage
-              src={getPublicAssetUrl(CAMERA_TILE_PREVIEW_ASSET_PATHS[style])}
-              alt=""
-            />
-          </StyledPreviewFrame>
-          <StyledPreviewCaption>Preview</StyledPreviewCaption>
-        </StyledPreview>
       </StyledSettingsSectionStack>
     </Section.Root>
   );
