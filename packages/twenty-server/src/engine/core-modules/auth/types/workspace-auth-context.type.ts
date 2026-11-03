@@ -30,7 +30,6 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: NonNullable<RawAuthContext['application']>;
-  viaApplication?: NonNullable<RawAuthContext['application']>;
   agentId?: string;
   // Set when an AI run narrows the caller to an inline scope
   permissionScope?: PermissionScope;
