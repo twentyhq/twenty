@@ -1,7 +1,8 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { getObjectMetadataIdWithStaleFieldName } from '@/sse-db-event/utils/getObjectMetadataIdWithStaleFieldName';
+import { isObjectMetadataFieldRename } from '@/sse-db-event/utils/isObjectMetadataFieldRename';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { AllMetadataName } from '~/generated-metadata/graphql';
@@ -10,18 +11,28 @@ export const SSEStaleRecordQueriesEvictionEffect = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
 
-  useListenToMetadataOperationBrowserEvent({
+  useListenToMetadataOperationBrowserEvent<FlatFieldMetadataItem>({
     metadataName: AllMetadataName.fieldMetadata,
     onMetadataOperationBrowserEvent: ({ operation }) => {
-      const objectMetadataId = getObjectMetadataIdWithStaleFieldName(operation);
+      if (
+        !isObjectMetadataFieldRename(operation) &&
+        operation.type !== 'delete'
+      ) {
+        return;
+      }
 
-      if (!isDefined(objectMetadataId)) {
+      const fieldMetadataItem =
+        operation.type === 'delete'
+          ? operation.deletedRecord
+          : operation.updatedRecord;
+
+      if (!isDefined(fieldMetadataItem)) {
         return;
       }
 
       const objectMetadataItem = store
         .get(objectMetadataItemsSelector.atom)
-        .find((item) => item.id === objectMetadataId);
+        .find((item) => item.id === fieldMetadataItem.objectMetadataId);
 
       if (!isDefined(objectMetadataItem)) {
         return;
