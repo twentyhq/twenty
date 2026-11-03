@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
+import { SidePanelCoreAgentRoleLayout } from '@/object-core/agents/components/SidePanelCoreAgentRoleLayout';
 import { SidePanelCoreAgentSearchInput } from '@/object-core/agents/components/SidePanelCoreAgentSearchInput';
 import { SidePanelCoreAgentRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessGroup';
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
@@ -63,12 +64,16 @@ export const SidePanelCoreAgentDataAccessPage = () => {
     : t`This agent shares its role with other members or agents. Change its access in Settings > Roles.`;
 
   return (
-    <>
-      <SidePanelCoreAgentSearchInput
-        value={search}
-        placeholder={t`Search objects`}
-        onChange={setSearch}
-      />
+    <SidePanelCoreAgentRoleLayout
+      roleId={agent?.roleId}
+      searchInput={
+        <SidePanelCoreAgentSearchInput
+          value={search}
+          placeholder={t`Search objects`}
+          onChange={setSearch}
+        />
+      }
+    >
       <SidePanelList
         selectableItemIds={selectableItemIds}
         noResults={selectableItemIds.length === 0}
@@ -108,6 +113,6 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           />
         ))}
       </SidePanelList>
-    </>
+    </SidePanelCoreAgentRoleLayout>
   );
 };

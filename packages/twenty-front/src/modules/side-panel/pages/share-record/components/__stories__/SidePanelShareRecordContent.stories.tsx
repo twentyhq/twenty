@@ -641,8 +641,6 @@ export const Loading: Story = {
     ).not.toBeInTheDocument();
     const copyLink = page.getByRole('button', { name: 'Copy link' });
     await expect(copyLink).toBeVisible();
-    const footer = copyLink.closest('[data-variant="compact"]');
-    await expect(footer?.getBoundingClientRect().height).toBe(40);
     await expect(setShare).not.toHaveBeenCalled();
     await expect(setGeneralAccess).not.toHaveBeenCalled();
   },

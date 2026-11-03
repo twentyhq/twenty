@@ -8,6 +8,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
+import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
 import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
@@ -34,6 +35,12 @@ export const useCoreObjectsCommands = () => {
   );
 
   const { coreAgentEditionCommandIds } = useCoreAgentEditionCommands();
+  const {
+    coreAgentsIndexCommandIds,
+    coreAgentSelectionCommandIds,
+    coreAgentsObjectSectionContext,
+    coreAgentSelectionSectionContext,
+  } = useCoreAgentCommands();
 
   const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
@@ -71,12 +78,16 @@ export const useCoreObjectsCommands = () => {
     ...(shouldDisplayCoreWorkflowFiltersCommand
       ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
       : []),
-    ...coreAgentEditionCommandIds,
+    ...coreAgentsIndexCommandIds,
   ];
 
-  const coreSelectionCommandIds = shouldDisplayCoreWorkflowsDeleteCommand
-    ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
-    : [];
+  const coreSelectionCommandIds = [
+    ...(shouldDisplayCoreWorkflowsDeleteCommand
+      ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
+      : []),
+    ...coreAgentEditionCommandIds,
+    ...coreAgentSelectionCommandIds,
+  ];
 
   const coreSelectionSectionContext =
     isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
@@ -89,10 +100,11 @@ export const useCoreObjectsCommands = () => {
             numberOfSelectedRecords: selectedCoreWorkflowIds.length,
           }),
         }
-      : undefined;
+      : coreAgentSelectionSectionContext;
 
   return {
     coreObjectCommandIds,
+    coreObjectSectionContext: coreAgentsObjectSectionContext,
     coreSelectionCommandIds,
     coreSelectionSectionContext,
     coreWorkflowFiltersCommandLabel,

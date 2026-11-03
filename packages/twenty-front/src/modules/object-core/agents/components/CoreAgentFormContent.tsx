@@ -1,19 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
-import {
-  IconCancel,
-  IconDeviceFloppy,
-  IconSettings,
-  IconTerminal,
-  IconTrash,
-} from 'twenty-ui/icon';
+import { useMemo } from 'react';
+import { IconCancel, IconDeviceFloppy, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { CoreAgentPinnedCommandMenuItems } from '@/object-core/commands/components/CoreAgentPinnedCommandMenuItems';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -39,6 +35,8 @@ import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentD
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
 import { useRenameCoreAgent } from '@/object-core/agents/hooks/useRenameCoreAgent';
 import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
+import { coreAgentIsRunsViewFamilyState } from '@/object-core/agents/states/coreAgentIsRunsViewFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
@@ -53,7 +51,10 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { openDialog } = useDialog();
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
-  const [isRunsView, setIsRunsView] = useState(false);
+  const coreAgentIsRunsView = useAtomFamilyStateValue(
+    coreAgentIsRunsViewFamilyState,
+    agent.id,
+  );
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);
   const { isDirty } = useCoreAgentDirtyState(agent);
@@ -78,7 +79,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   );
 
   const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
-  const isShowingRuns = isAiChatInboxEnabled && isRunsView;
+  const isShowingRuns = isAiChatInboxEnabled && coreAgentIsRunsView;
 
   return (
     <>
@@ -123,18 +124,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                     />
                   </>
                 )}
-                {isAiChatInboxEnabled && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    startIcon={
-                      isShowingRuns ? <IconSettings /> : <IconTerminal />
-                    }
-                    onClick={() => setIsRunsView(!isRunsView)}
-                  >
-                    {isShowingRuns ? t`Settings` : t`Runs`}
-                  </Button>
-                )}
                 {!isReadOnly && (
                   <Button
                     size="sm"
@@ -143,6 +132,10 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                     onClick={() => openDialog(CORE_AGENT_DELETE_DIALOG_ID)}
                   >{t`Delete`}</Button>
                 )}
+                <CoreAgentPinnedCommandMenuItems
+                  commandMenuInstanceId={`core-agent-${agent.id}`}
+                  containerType={CommandMenuItemContainerType.ShowPageHeader}
+                />
                 <SidePanelToggleButton />
               </>
             }
@@ -163,10 +156,10 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
             />
           }
         />
-        <SettingsPageContainer>
-          {isShowingRuns ? (
-            <CoreAgentRunsContent agentId={agent.id} />
-          ) : (
+        {isShowingRuns ? (
+          <CoreAgentRunsContent agentId={agent.id} />
+        ) : (
+          <SettingsPageContainer>
             <CoreAgentSettingsContent
               agent={agent}
               formValues={draft}
@@ -174,8 +167,8 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
               isReadOnly={isReadOnly}
               areTriggersEnabled={isAiChatInboxEnabled}
             />
-          )}
-        </SettingsPageContainer>
+          </SettingsPageContainer>
+        )}
       </PageCardLayout>
       {!isReadOnly && <CoreAgentDeleteConfirmationModal agentId={agent.id} />}
     </>

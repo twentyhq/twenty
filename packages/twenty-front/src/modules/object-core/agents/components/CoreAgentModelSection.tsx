@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
@@ -11,6 +10,7 @@ import { useAgentModelCapabilities } from '@/ai/hooks/useAgentModelCapabilities'
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { CoreAgentSectionCard } from '@/object-core/agents/components/CoreAgentSectionCard';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
+import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -61,7 +61,7 @@ export const CoreAgentModelSection = ({
             onModelIdChange={(value) => onFieldChange('modelId', value)}
             disabled={isReadOnly}
           />
-          {isNonEmptyArray(capabilities) && <Separator />}
+          {isNonEmptyArray(capabilities) && <OverlayMenuListSeparator />}
           {capabilities.map((capability) => (
             <SettingsRow
               key={capability.key}

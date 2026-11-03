@@ -6,6 +6,7 @@ import { IconTool } from 'twenty-ui/icon';
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
+import { SidePanelCoreAgentRoleLayout } from '@/object-core/agents/components/SidePanelCoreAgentRoleLayout';
 import { SidePanelCoreAgentSearchInput } from '@/object-core/agents/components/SidePanelCoreAgentSearchInput';
 import { useCoreAgentSidePanelRole } from '@/object-core/agents/hooks/useCoreAgentSidePanelRole';
 import { getCoreAgentEnabledToolFlags } from '@/object-core/agents/utils/getCoreAgentEnabledToolFlags';
@@ -55,12 +56,16 @@ export const SidePanelCoreAgentToolsPage = () => {
     : t`This agent shares its role with other members or agents. Change its tools in Settings > Roles.`;
 
   return (
-    <>
-      <SidePanelCoreAgentSearchInput
-        value={search}
-        placeholder={t`Search tools`}
-        onChange={setSearch}
-      />
+    <SidePanelCoreAgentRoleLayout
+      roleId={agent?.roleId}
+      searchInput={
+        <SidePanelCoreAgentSearchInput
+          value={search}
+          placeholder={t`Search tools`}
+          onChange={setSearch}
+        />
+      }
+    >
       <SidePanelList
         selectableItemIds={matchingToolPermissions.map(({ key }) => key)}
         noResults={matchingToolPermissions.length === 0}
@@ -106,6 +111,6 @@ export const SidePanelCoreAgentToolsPage = () => {
           </CommandMenuItemSectionGroup>
         )}
       </SidePanelList>
-    </>
+    </SidePanelCoreAgentRoleLayout>
   );
 };

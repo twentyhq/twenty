@@ -9,6 +9,7 @@ import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAg
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
@@ -21,6 +22,12 @@ const RUNS_POLL_INTERVAL_MS = 10000;
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledEmptyStateContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 0;
 `;
 
 const StyledTableHeaderRowContainer = styled.div`
@@ -76,42 +83,48 @@ export const CoreAgentRunsContent = ({
 
   if (loading && runs.length === 0) {
     return (
-      <StyledTableContainer>
-        <Table>
-          {header}
-          {Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonLine height={32} key={index} />
-          ))}
-        </Table>
-      </StyledTableContainer>
+      <SettingsPageContainer>
+        <StyledTableContainer>
+          <Table>
+            {header}
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonLine height={32} key={index} />
+            ))}
+          </Table>
+        </StyledTableContainer>
+      </SettingsPageContainer>
     );
   }
 
   if (isDefined(error) && runs.length === 0) {
     return (
-      <EmptyState.Root>
-        <AnimatedPlaceholder type="errorIndex" />
-        <EmptyState.Content>
-          <EmptyState.Title>{t`Could not load runs`}</EmptyState.Title>
-          <EmptyState.Description>
-            {t`Try again in a moment`}
-          </EmptyState.Description>
-        </EmptyState.Content>
-      </EmptyState.Root>
+      <StyledEmptyStateContainer>
+        <EmptyState.Root>
+          <AnimatedPlaceholder type="errorIndex" />
+          <EmptyState.Content>
+            <EmptyState.Title>{t`Could not load runs`}</EmptyState.Title>
+            <EmptyState.Description>
+              {t`Try again in a moment`}
+            </EmptyState.Description>
+          </EmptyState.Content>
+        </EmptyState.Root>
+      </StyledEmptyStateContainer>
     );
   }
 
   if (runs.length === 0) {
     return (
-      <EmptyState.Root>
-        <AnimatedPlaceholder type="emptyTimeline" />
-        <EmptyState.Content>
-          <EmptyState.Title>{t`No runs yet`}</EmptyState.Title>
-          <EmptyState.Description>
-            {t`Runs appear here once a workflow or an app uses this agent`}
-          </EmptyState.Description>
-        </EmptyState.Content>
-      </EmptyState.Root>
+      <StyledEmptyStateContainer>
+        <EmptyState.Root>
+          <AnimatedPlaceholder type="emptyTimeline" />
+          <EmptyState.Content>
+            <EmptyState.Title>{t`No runs yet`}</EmptyState.Title>
+            <EmptyState.Description>
+              {t`Runs appear here once a workflow or an app uses this agent`}
+            </EmptyState.Description>
+          </EmptyState.Content>
+        </EmptyState.Root>
+      </StyledEmptyStateContainer>
     );
   }
 
@@ -119,34 +132,36 @@ export const CoreAgentRunsContent = ({
     setExpandedRunIds((runIds) => toggleId(runIds, runId));
 
   return (
-    <StyledTableContainer>
-      <Table>
-        {header}
-        {groupCoreAgentRunsByConversation(runs).map((item) =>
-          item.type === 'conversation' ? (
-            <CoreAgentRunConversation
-              key={item.threadId}
-              title={item.title}
-              runs={item.runs}
-              isExpanded={expandedThreadIds.has(item.threadId)}
-              onToggle={() =>
-                setExpandedThreadIds((threadIds) =>
-                  toggleId(threadIds, item.threadId),
-                )
-              }
-              expandedRunIds={expandedRunIds}
-              onToggleRun={handleToggleRun}
-            />
-          ) : (
-            <CoreAgentRunRow
-              key={item.run.id}
-              run={item.run}
-              isExpanded={expandedRunIds.has(item.run.id)}
-              onToggle={() => handleToggleRun(item.run.id)}
-            />
-          ),
-        )}
-      </Table>
-    </StyledTableContainer>
+    <SettingsPageContainer>
+      <StyledTableContainer>
+        <Table>
+          {header}
+          {groupCoreAgentRunsByConversation(runs).map((item) =>
+            item.type === 'conversation' ? (
+              <CoreAgentRunConversation
+                key={item.threadId}
+                title={item.title}
+                runs={item.runs}
+                isExpanded={expandedThreadIds.has(item.threadId)}
+                onToggle={() =>
+                  setExpandedThreadIds((threadIds) =>
+                    toggleId(threadIds, item.threadId),
+                  )
+                }
+                expandedRunIds={expandedRunIds}
+                onToggleRun={handleToggleRun}
+              />
+            ) : (
+              <CoreAgentRunRow
+                key={item.run.id}
+                run={item.run}
+                isExpanded={expandedRunIds.has(item.run.id)}
+                onToggle={() => handleToggleRun(item.run.id)}
+              />
+            ),
+          )}
+        </Table>
+      </StyledTableContainer>
+    </SettingsPageContainer>
   );
 };

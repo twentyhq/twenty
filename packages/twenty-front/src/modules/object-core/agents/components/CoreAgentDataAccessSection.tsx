@@ -1,5 +1,7 @@
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconEdit, IconLock } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -13,6 +15,7 @@ import { useOpenCoreAgentSidePanelPage } from '@/object-core/agents/hooks/useOpe
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreAgentSectionListItem } from '@/object-core/agents/types/CoreAgentSectionListItem';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
+import { getCoreAgentObjectRules } from '@/object-core/agents/utils/getCoreAgentObjectRules';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -46,6 +49,37 @@ export const CoreAgentDataAccessSection = ({
           .map(({ label }) => t(label))
           .join(', ');
 
+  const formatObjectRules = ({
+    levels,
+    objectMetadataId,
+  }: {
+    levels: CoreAgentRecordAccessLevel[];
+    objectMetadataId: string;
+  }) => {
+    if (levels.length === 0) {
+      return [];
+    }
+
+    const { hasRecordLevelFilter, unreadableFieldCount, readOnlyFieldCount } =
+      getCoreAgentObjectRules({ role, objectMetadataId });
+
+    return [
+      hasRecordLevelFilter ? t`Record-level filter` : undefined,
+      unreadableFieldCount > 0
+        ? plural(unreadableFieldCount, {
+            one: `Can't see # field`,
+            other: `Can't see # fields`,
+          })
+        : undefined,
+      readOnlyFieldCount > 0 && levels.includes('edit')
+        ? plural(readOnlyFieldCount, {
+            one: `Can't edit # field`,
+            other: `Can't edit # fields`,
+          })
+        : undefined,
+    ].filter(isDefined);
+  };
+
   const removeAccess = (objectMetadataId?: string) =>
     updateRole((currentRole) =>
       getRoleWithCoreAgentRecordAccessLevel({
@@ -78,7 +112,12 @@ export const CoreAgentDataAccessSection = ({
         objectMetadataId: objectMetadataItem.id,
       });
 
-      if (isDeeplyEqual(levels, allRecordsLevels)) {
+      const objectRules = formatObjectRules({
+        levels,
+        objectMetadataId: objectMetadataItem.id,
+      });
+
+      if (isDeeplyEqual(levels, allRecordsLevels) && objectRules.length === 0) {
         return [];
       }
 
@@ -88,7 +127,7 @@ export const CoreAgentDataAccessSection = ({
         {
           id: objectMetadataItem.id,
           label: objectLabel,
-          description: formatLevels(levels),
+          description: [formatLevels(levels), ...objectRules].join(' · '),
           icon: <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />,
           remove:
             canRemoveAccess && levels.length > 0

@@ -3,10 +3,15 @@ import { IconFilter, IconTrash } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreAgentEditionCommands } from '@/object-core/commands/components/CoreAgentEditionCommands';
+import { CoreAgentPageCommands } from '@/object-core/commands/components/CoreAgentPageCommands';
+import { CoreAgentsDeleteCommand } from '@/object-core/commands/components/CoreAgentsDeleteCommand';
+import { CoreAgentsIndexCommands } from '@/object-core/commands/components/CoreAgentsIndexCommands';
+import { CoreAgentsSeeRunsCommand } from '@/object-core/commands/components/CoreAgentsSeeRunsCommand';
 import { CoreWorkflowsDeleteConfirmationDialogCleanupEffect } from '@/object-core/commands/components/CoreWorkflowsDeleteConfirmationDialogCleanupEffect';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteConfirmationDialogId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
+import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
 import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { useDeleteSelectedCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows';
@@ -37,6 +42,14 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
     shouldDisplayCoreWorkflowsDeleteCommand,
   } = useCoreObjectsCommands();
 
+  const {
+    selectedCoreAgentIds,
+    seeRunsCommandLabel: coreAgentsSeeRunsCommandLabel,
+    shouldDisplaySeeRunsCommand: shouldDisplayCoreAgentsSeeRunsCommand,
+    deleteCommandLabel: coreAgentsDeleteCommandLabel,
+    shouldDisplayDeleteCommand: shouldDisplayCoreAgentsDeleteCommand,
+  } = useCoreAgentCommands();
+
   const { openCoreWorkflowFiltersSidePanel } =
     useOpenCoreWorkflowFiltersSidePanel();
 
@@ -62,15 +75,6 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   return (
     <>
-      {section === 'THIS_OBJECT' && isDefined(currentCoreAgent) && (
-        <CoreAgentEditionCommands
-          agent={currentCoreAgent}
-          saveCommandLabel={saveCommandLabel}
-          shouldDisplaySaveCommand={shouldDisplaySaveCommand}
-          cancelEditionCommandLabel={cancelEditionCommandLabel}
-          shouldDisplayCancelEditionCommand={shouldDisplayCancelEditionCommand}
-        />
-      )}
       {section === 'THIS_OBJECT' && shouldDisplayCoreWorkflowFiltersCommand && (
         <SelectableListItem
           itemId={CORE_WORKFLOW_FILTERS_COMMAND_ID}
@@ -84,6 +88,7 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           />
         </SelectableListItem>
       )}
+      {section === 'THIS_OBJECT' && <CoreAgentsIndexCommands />}
       {section === 'SELECTION' && shouldDisplayCoreWorkflowsDeleteCommand && (
         <>
           <SelectableListItem
@@ -106,6 +111,29 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           />
           <CoreWorkflowsDeleteConfirmationDialogCleanupEffect />
         </>
+      )}
+      {section === 'SELECTION' && isDefined(currentCoreAgent) && (
+        <>
+          <CoreAgentEditionCommands
+            agent={currentCoreAgent}
+            saveCommandLabel={saveCommandLabel}
+            shouldDisplaySaveCommand={shouldDisplaySaveCommand}
+            cancelEditionCommandLabel={cancelEditionCommandLabel}
+            shouldDisplayCancelEditionCommand={
+              shouldDisplayCancelEditionCommand
+            }
+          />
+          <CoreAgentPageCommands />
+        </>
+      )}
+      {section === 'SELECTION' && shouldDisplayCoreAgentsSeeRunsCommand && (
+        <CoreAgentsSeeRunsCommand
+          agentId={selectedCoreAgentIds[0]}
+          label={coreAgentsSeeRunsCommandLabel}
+        />
+      )}
+      {section === 'SELECTION' && shouldDisplayCoreAgentsDeleteCommand && (
+        <CoreAgentsDeleteCommand label={coreAgentsDeleteCommandLabel} />
       )}
     </>
   );
