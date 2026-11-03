@@ -1,4 +1,4 @@
-import { type SystemPageKey } from 'twenty-shared/types';
+import { type NativePageKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -50,7 +50,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   agentChatChannelUniversalIdentifier: null,
   name,
   link: null,
-  systemPageKey: null,
+  nativePageKey: null,
   icon: icon ?? null,
   color,
   position,
@@ -61,7 +61,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
 export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
-  systemPageKey,
+  nativePageKey,
   folderId,
   folderUniversalIdentifier,
   position,
@@ -73,7 +73,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 }: {
   universalIdentifier: string;
   viewUniversalIdentifier?: string;
-  systemPageKey?: SystemPageKey;
+  nativePageKey?: NativePageKey;
   folderId: string;
   folderUniversalIdentifier: string;
   position: number;
@@ -92,7 +92,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
       })
     : undefined;
 
-  if (!isDefined(systemPageKey) && !isDefined(flatView)) {
+  if (!isDefined(nativePageKey) && !isDefined(flatView)) {
     throw new Error(
       `View not found for universal identifier ${viewUniversalIdentifier}`,
     );
@@ -100,8 +100,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
-    type: isDefined(systemPageKey)
-      ? NavigationMenuItemType.SYSTEM_PAGE
+    type: isDefined(nativePageKey)
+      ? NavigationMenuItemType.NATIVE_PAGE
       : NavigationMenuItemType.OBJECT,
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -123,9 +123,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     agentChatChannelUniversalIdentifier: null,
     name: null,
     link: null,
-    systemPageKey: systemPageKey ?? null,
+    nativePageKey: nativePageKey ?? null,
     icon: null,
-    color: isDefined(systemPageKey) ? null : 'gray',
+    color: isDefined(nativePageKey) ? null : 'gray',
     position,
     createdAt: now,
     updatedAt: now,

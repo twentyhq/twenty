@@ -29,7 +29,7 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
   [VIEW_OBJECT_PAGE]: 'view',
   record: 'record',
   page: 'page',
-  systemPage: 'systemPage',
+  nativePage: 'nativePage',
 };
 
 type NavigationMenuItemAddDropdownContentProps = {
@@ -112,7 +112,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     view: t`View`,
     record: t`Record`,
     page: t`Page`,
-    systemPage: t`System page`,
+    nativePage: t`Native page`,
   };
 
   const normalizedSearch = normalizeSearchText(search.trim());
@@ -126,8 +126,8 @@ export const NavigationMenuItemAddDropdownContent = ({
         { label: t`Views`, items: getItems('view').filter(matchesSearch) },
         { label: t`Pages`, items: getItems('page').filter(matchesSearch) },
         {
-          label: t`System pages`,
-          items: getItems('systemPage').filter(matchesSearch),
+          label: t`Native pages`,
+          items: getItems('nativePage').filter(matchesSearch),
         },
         {
           label: t`Records`,

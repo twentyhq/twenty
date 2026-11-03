@@ -3665,7 +3665,7 @@ export default {
             "position": [
                 6
             ],
-            "systemPageKey": [
+            "nativePageKey": [
                 1
             ],
             "targetObjectMetadataId": [
@@ -9829,7 +9829,7 @@ export default {
             "position": [
                 6
             ],
-            "systemPageKey": [
+            "nativePageKey": [
                 1
             ],
             "targetObjectMetadataId": [

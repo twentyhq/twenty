@@ -5,13 +5,13 @@ import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/util
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 describe('isNavigationMenuItemReadable', () => {
-  it('keeps system page items, which do not depend on an object', () => {
+  it('keeps native page items, which do not depend on an object', () => {
     expect(
       isNavigationMenuItemReadable({
         item: {
-          id: 'workflows-system-page-id',
-          type: NavigationMenuItemType.SYSTEM_PAGE,
-          systemPageKey: 'workflows',
+          id: 'workflows-native-page-id',
+          type: NavigationMenuItemType.NATIVE_PAGE,
+          nativePageKey: 'workflows',
           position: 0,
         } as NavigationMenuItem,
         permissionFlagMap: { [PermissionFlagType.WORKFLOWS]: true },
@@ -22,13 +22,13 @@ describe('isNavigationMenuItemReadable', () => {
     ).toBe(true);
   });
 
-  it('hides a system page item from members without its permission', () => {
+  it('hides a native page item from members without its permission', () => {
     expect(
       isNavigationMenuItemReadable({
         item: {
-          id: 'data-model-system-page-id',
-          type: NavigationMenuItemType.SYSTEM_PAGE,
-          systemPageKey: 'agents',
+          id: 'data-model-native-page-id',
+          type: NavigationMenuItemType.NATIVE_PAGE,
+          nativePageKey: 'agents',
           position: 0,
         } as NavigationMenuItem,
         permissionFlagMap: { [PermissionFlagType.AI]: false },
@@ -39,13 +39,13 @@ describe('isNavigationMenuItemReadable', () => {
     ).toBe(false);
   });
 
-  it('hides a system page item when its permission is absent from the map', () => {
+  it('hides a native page item when its permission is absent from the map', () => {
     expect(
       isNavigationMenuItemReadable({
         item: {
-          id: 'agents-system-page-id',
-          type: NavigationMenuItemType.SYSTEM_PAGE,
-          systemPageKey: 'agents',
+          id: 'agents-native-page-id',
+          type: NavigationMenuItemType.NATIVE_PAGE,
+          nativePageKey: 'agents',
           position: 0,
         } as NavigationMenuItem,
         permissionFlagMap: {},

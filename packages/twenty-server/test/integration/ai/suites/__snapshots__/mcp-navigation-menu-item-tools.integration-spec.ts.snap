@@ -27,7 +27,7 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
           "type": "string",
         },
         "type": {
-          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, SYSTEM_PAGE).",
+          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, NATIVE_PAGE).",
           "enum": [
             "FOLDER",
             "LINK",
@@ -35,7 +35,7 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
             "VIEW",
             "RECORD",
             "PAGE_LAYOUT",
-            "SYSTEM_PAGE",
+            "NATIVE_PAGE",
           ],
           "type": "string",
         },
@@ -54,7 +54,7 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
-- SYSTEM_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
+- NATIVE_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.",
     "inputSchema": {
@@ -387,7 +387,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               ],
               "type": "string",
             },
-            "systemPageKey": {
+            "nativePageKey": {
               "description": "Built-in page to pin: workflows or agents",
               "enum": [
                 "workflows",
@@ -396,14 +396,14 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "type": {
-              "const": "SYSTEM_PAGE",
+              "const": "NATIVE_PAGE",
               "type": "string",
             },
           },
           "required": [
             "type",
             "scope",
-            "systemPageKey",
+            "nativePageKey",
           ],
           "type": "object",
         },

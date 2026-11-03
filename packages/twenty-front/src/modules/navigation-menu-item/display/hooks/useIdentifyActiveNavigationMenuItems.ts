@@ -9,7 +9,7 @@ import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/com
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { isLinkNavigationMenuItemActive } from '@/navigation-menu-item/display/link/utils/isLinkNavigationMenuItemActive';
-import { isSystemPageNavigationMenuItemActive } from '@/navigation-menu-item/display/system-page/utils/isSystemPageNavigationMenuItemActive';
+import { isNativePageNavigationMenuItemActive } from '@/navigation-menu-item/display/native-page/utils/isNativePageNavigationMenuItemActive';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -111,8 +111,8 @@ export const useIdentifyActiveNavigationMenuItems = (): {
                 computedLink: getLinkNavigationMenuItemComputedLink(item),
                 location: { pathname: currentPath, search: currentSearch },
               })) ||
-            (item.type === NavigationMenuItemType.SYSTEM_PAGE &&
-              isSystemPageNavigationMenuItemActive({
+            (item.type === NavigationMenuItemType.NATIVE_PAGE &&
+              isNativePageNavigationMenuItemActive({
                 item,
                 pathname: currentPath,
               })),

@@ -1,26 +1,23 @@
-import { useLingui } from '@lingui/react/macro';
-
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
-import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
+import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/display/native-page/utils/getNativePageNavigationMenuItemConfig';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type NavigationMenuItemSystemPageDisplayProps = Pick<
+type NavigationMenuItemNativePageDisplayProps = Pick<
   NavigationMenuItemSectionContentProps,
   'item' | 'editModeProps' | 'isDragging' | 'rightOptions'
 >;
 
-export const NavigationMenuItemSystemPageDisplay = ({
+export const NavigationMenuItemNativePageDisplay = ({
   item,
   editModeProps,
   isDragging,
   rightOptions,
-}: NavigationMenuItemSystemPageDisplayProps) => {
-  const { t } = useLingui();
+}: NavigationMenuItemNativePageDisplayProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -31,11 +28,10 @@ export const NavigationMenuItemSystemPageDisplay = ({
   return (
     <NavigationDrawerItem
       label={getNavigationMenuItemLabel(item, [], [])}
-      secondaryLabel={t`System`}
       to={
         isLayoutCustomizationModeEnabled || isDragging
           ? undefined
-          : getSystemPageNavigationMenuItemConfig(item)?.path
+          : getNativePageNavigationMenuItemConfig(item)?.path
       }
       onClick={
         isLayoutCustomizationModeEnabled

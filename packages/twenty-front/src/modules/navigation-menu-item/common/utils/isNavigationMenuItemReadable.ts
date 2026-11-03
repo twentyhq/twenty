@@ -3,7 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
+import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/display/native-page/utils/getNativePageNavigationMenuItemConfig';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -36,9 +36,9 @@ export const isNavigationMenuItemReadable = ({
     return true;
   }
 
-  if (itemType === NavigationMenuItemType.SYSTEM_PAGE) {
+  if (itemType === NavigationMenuItemType.NATIVE_PAGE) {
     const requiredPermissionFlag =
-      getSystemPageNavigationMenuItemConfig(item)?.requiredPermissionFlag;
+      getNativePageNavigationMenuItemConfig(item)?.requiredPermissionFlag;
 
     return (
       !isDefined(requiredPermissionFlag) ||

@@ -1,2 +1,0 @@
-export const ADD_SYSTEM_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME =
-  '2.56.0_AddSystemPageNavigationMenuItemFastInstanceCommand_1793720312475';

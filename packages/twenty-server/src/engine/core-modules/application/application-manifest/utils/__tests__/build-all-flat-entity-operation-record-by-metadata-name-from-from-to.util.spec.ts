@@ -118,7 +118,7 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   type: NavigationMenuItemType.LINK,
   name: 'App link',
   link: 'https://example.com',
-  systemPageKey: null,
+  nativePageKey: null,
   icon: null,
   color: null,
   folderId: null,
