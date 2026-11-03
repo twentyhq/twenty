@@ -96,7 +96,7 @@ enum AgentChatChannelThreadStatus {
 
 type AgentChatEvent {
   event: JSON!
-  threadId: String!
+  threadId: String
 }
 
 enum AgentChatInboxAction {
@@ -220,7 +220,7 @@ type AgentRun {
   reply: String
   startedAt: DateTime
   status: AgentTurnStatus!
-  threadId: UUID!
+  threadId: UUID
   threadTitle: String
   toolNames: [String!]!
 }
@@ -289,6 +289,11 @@ enum AiModelTier {
   extraSmart
   fast
   smart
+}
+
+type AiRunUsage {
+  inputTokens: Int!
+  outputTokens: Int!
 }
 
 type AiSystemPromptPreview {
@@ -2583,6 +2588,24 @@ type FullName {
   lastName: String!
 }
 
+input GenerateInput {
+  input: [RunAgentMessageInput!]!
+  instructions: String
+  modelId: String
+  responseFormat: JSON
+  runId: UUID
+  scope: JSON
+}
+
+type GenerateResult {
+  error: String
+  object: JSON
+  runId: UUID!
+  success: Boolean!
+  text: String
+  usage: AiRunUsage!
+}
+
 input GetApiKeyInput {
   id: UUID!
 }
@@ -3436,6 +3459,7 @@ type Mutation {
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  generate(input: GenerateInput!): GenerateResult!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!
@@ -4128,8 +4152,8 @@ type Query {
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
-  chatMessages(threadId: UUID!): [AgentMessage!]!
-  chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
+  chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
+  chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
   chatThread(id: UUID!): AgentChatThread!
   checkUserExists(captchaToken: String, email: String!): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
@@ -4559,6 +4583,7 @@ enum RunAgentMessageRole {
 type RunAgentResult {
   error: String
   result: JSON
+  runId: UUID!
   status: String!
   success: Boolean!
   threadId: UUID!
@@ -4806,7 +4831,7 @@ type Subscription {
   eventLogsLive(fieldFilters: [EventLogFieldFilterInput!], table: EventLogTable!): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-  onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAgentChatEvent(agentUniversalIdentifier: UUID, runId: UUID, threadId: UUID, threadKey: String): AgentChatEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

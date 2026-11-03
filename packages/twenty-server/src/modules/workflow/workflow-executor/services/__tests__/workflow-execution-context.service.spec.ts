@@ -1,3 +1,4 @@
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldActorSource } from 'twenty-shared/types';
 
@@ -82,9 +83,11 @@ const buildWorkflowRun = ({
 const buildService = ({
   workflowRun = buildWorkflowRun({ coreWorkflowId: WORKSPACE_WORKFLOW_ID }),
   applications = [installedApplication, workspaceCustomApplication],
+  roleIds = ['installed-app-role-id'],
 }: {
   workflowRun?: WorkflowRunWorkspaceEntity;
   applications?: FlatApplication[];
+  roleIds?: string[];
 } = {}) =>
   new WorkflowExecutionContextService(
     {
@@ -112,7 +115,6 @@ const buildService = ({
             ]),
           ),
         },
-        userWorkspaceRoleMap: {},
       }),
     } as unknown as WorkspaceCacheService,
     {
@@ -121,6 +123,9 @@ const buildService = ({
         workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     } as unknown as CoreEntityCacheService,
+    {
+      getRoleIds: jest.fn().mockResolvedValue(roleIds),
+    } as unknown as PermissionsService,
   );
 
 const runInfo = { workflowRunId: 'workflow-run-id', workspaceId: WORKSPACE_ID };
@@ -139,9 +144,17 @@ describe('WorkflowExecutionContextService', () => {
         type: 'application',
         application: installedApplication,
       });
-      expect(executionContext.rolePermissionConfig).toEqual({
-        intersectionOf: { applicationRoleId: 'installed-app-role-id' },
-      });
+    });
+
+    it('refuses a run left with no role', async () => {
+      await expect(
+        buildService({
+          workflowRun: buildWorkflowRun({
+            coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+          }),
+          roleIds: [],
+        }).getExecutionContext(runInfo),
+      ).rejects.toThrow('No role is left to run this step with');
     });
 
     it('takes the application from the workflow of the run, not from the one stamped on it', async () => {

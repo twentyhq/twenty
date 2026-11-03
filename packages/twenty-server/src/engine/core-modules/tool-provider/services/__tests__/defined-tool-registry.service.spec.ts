@@ -19,9 +19,6 @@ const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
 
 const context: ToolProviderContext = {
   workspaceId: 'workspace-id',
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-  },
 };
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
@@ -124,7 +121,7 @@ const buildDefinedToolRegistryService = ({
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
     {
-      checkRolesPermissions: jest.fn().mockResolvedValue(isGranted),
+      hasPermissionFlag: jest.fn().mockResolvedValue(isGranted),
     } as unknown as PermissionsService,
     featureFlagService as unknown as FeatureFlagService,
   );

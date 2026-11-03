@@ -94,7 +94,7 @@ export type AgentChatChannelThreadStatus = 'DONE' | 'OPEN' | 'SNOOZED'
 
 export interface AgentChatEvent {
     event: Scalars['JSON']
-    threadId: Scalars['String']
+    threadId?: Scalars['String']
     __typename: 'AgentChatEvent'
 }
 
@@ -212,7 +212,7 @@ export interface AgentRun {
     reply?: Scalars['String']
     startedAt?: Scalars['DateTime']
     status: AgentTurnStatus
-    threadId: Scalars['UUID']
+    threadId?: Scalars['UUID']
     threadTitle?: Scalars['String']
     toolNames: Scalars['String'][]
     __typename: 'AgentRun'
@@ -257,6 +257,12 @@ export interface AiChatUserCreditsUsage {
 }
 
 export type AiModelTier = 'balanced' | 'extraFast' | 'extraSmart' | 'fast' | 'smart'
+
+export interface AiRunUsage {
+    inputTokens: Scalars['Int']
+    outputTokens: Scalars['Int']
+    __typename: 'AiRunUsage'
+}
 
 export interface AiSystemPromptPreview {
     estimatedTokenCount: Scalars['Int']
@@ -1718,6 +1724,16 @@ export interface FullName {
     __typename: 'FullName'
 }
 
+export interface GenerateResult {
+    error?: Scalars['String']
+    object?: Scalars['JSON']
+    runId: Scalars['UUID']
+    success: Scalars['Boolean']
+    text?: Scalars['String']
+    usage: AiRunUsage
+    __typename: 'GenerateResult'
+}
+
 export interface GetAuthorizationUrlForSSO {
     authorizationURL: Scalars['String']
     id: Scalars['UUID']
@@ -2430,6 +2446,7 @@ export interface Mutation {
     enqueueJobs: EnqueueJobsResult
     enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
     executeOneLogicFunction: LogicFunctionExecutionResult
+    generate: GenerateResult
     generateApiKeyToken: ApiKeyToken
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
@@ -3372,6 +3389,7 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 export interface RunAgentResult {
     error?: Scalars['String']
     result?: Scalars['JSON']
+    runId: Scalars['UUID']
     status: Scalars['String']
     success: Scalars['Boolean']
     threadId: Scalars['UUID']
@@ -4556,6 +4574,13 @@ export interface AiChatUserCreditsUsageGenqlSelection{
     consumedValue?: boolean | number
     limitValue?: boolean | number
     periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AiRunUsageGenqlSelection{
+    inputTokens?: boolean | number
+    outputTokens?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6286,6 +6311,19 @@ export interface FullNameGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface GenerateInput {input: RunAgentMessageInput[],instructions?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runId?: (Scalars['UUID'] | null),scope?: (Scalars['JSON'] | null)}
+
+export interface GenerateResultGenqlSelection{
+    error?: boolean | number
+    object?: boolean | number
+    runId?: boolean | number
+    success?: boolean | number
+    text?: boolean | number
+    usage?: AiRunUsageGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
 export interface GetAuthorizationUrlForSSOGenqlSelection{
@@ -7023,6 +7061,7 @@ export interface MutationGenqlSelection{
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
+    generate?: (GenerateResultGenqlSelection & { __args: {input: GenerateInput} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
@@ -7678,8 +7717,8 @@ export interface QueryGenqlSelection{
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
-    chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatMessages?: (AgentMessageGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
+    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String']} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -8040,6 +8079,7 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
     result?: boolean | number
+    runId?: boolean | number
     status?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
@@ -8255,7 +8295,7 @@ export interface SubscriptionGenqlSelection{
     eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {fieldFilters?: (EventLogFieldFilterInput[] | null), table: EventLogTable} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
-    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), runId?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9438,6 +9478,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AiRunUsage_possibleTypes: string[] = ['AiRunUsage']
+    export const isAiRunUsage = (obj?: { __typename?: any } | null): obj is AiRunUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiRunUsage"')
+      return AiRunUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
     export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
@@ -10578,6 +10626,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isFullName = (obj?: { __typename?: any } | null): obj is FullName => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
       return FullName_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GenerateResult_possibleTypes: string[] = ['GenerateResult']
+    export const isGenerateResult = (obj?: { __typename?: any } | null): obj is GenerateResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateResult"')
+      return GenerateResult_possibleTypes.includes(obj.__typename)
     }
     
 

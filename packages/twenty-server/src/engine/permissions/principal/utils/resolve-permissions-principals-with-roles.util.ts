@@ -23,7 +23,7 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 
-type PermissionsPrincipalRoleMaps = {
+export type PermissionsPrincipalRoleMaps = {
   flatWorkspaceMemberMaps: {
     byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'userId'>>>;
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
@@ -107,18 +107,14 @@ const findMainPrincipalRoleId = ({
   }
 };
 
-// TODO(@charlesBochet): an agent or application always needs a role; until then one without counts as the custom app
 const resolveLimitingPrincipal = ({
   limitingPrincipal,
   roleMaps,
 }: {
-  limitingPrincipal: PermissionsLimitingPrincipal | undefined;
+  limitingPrincipal: PermissionsLimitingPrincipal;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): PermissionsLimitingPrincipalWithRole | undefined => {
-  if (
-    !isDefined(limitingPrincipal) ||
-    limitingPrincipal.type === 'deprecatedRoleOnly'
-  ) {
+  if (limitingPrincipal.type === 'deprecatedRoleOnly') {
     return limitingPrincipal;
   }
 
@@ -150,7 +146,7 @@ const resolveApplicationPrincipal = ({
     return undefined;
   }
 
-  const { applicationRoleId } = resolveApplicationRoleId({
+  const applicationRoleId = resolveApplicationRoleId({
     application: flatApplication,
     userRoleId:
       mainPrincipal.type === 'workspaceMember'
@@ -164,7 +160,7 @@ const resolveApplicationPrincipal = ({
         roleId: applicationRoleId,
         applicationId: applicationPrincipal.applicationId,
       }
-    : { type: 'customApplication' };
+    : undefined;
 };
 
 export const resolvePermissionsPrincipalsWithRoles = ({
@@ -198,13 +194,23 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
+  const { limitingPrincipal } = principalsContext;
+  const limitingPrincipalWithRole = isDefined(limitingPrincipal)
+    ? resolveLimitingPrincipal({ limitingPrincipal, roleMaps })
+    : undefined;
+
+  // Dropping a limiting agent that lost its role would widen access, so deny instead
+  if (isDefined(limitingPrincipal) && !isDefined(limitingPrincipalWithRole)) {
+    return undefined;
+  }
+
   return {
     workspaceId: principalsContext.workspaceId,
     mainPrincipal,
-    limitingPrincipal: resolveLimitingPrincipal({
-      limitingPrincipal: principalsContext.limitingPrincipal,
-      roleMaps,
-    }),
+    limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
+    ...(isDefined(principalsContext.scope)
+      ? { scope: principalsContext.scope }
+      : {}),
   };
 };

@@ -77,9 +77,8 @@ export class AgentChatDirectMessageIdentityService {
           this.workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
               const { identifiers } = await transactionScope
-                .getRepository<AgentChatThreadWorkspaceEntity>(
+                .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
                   'agentChatThread',
-                  { shouldBypassPermissionChecks: true },
                   { shouldSkipEventEmission: true },
                 )
                 .insert(

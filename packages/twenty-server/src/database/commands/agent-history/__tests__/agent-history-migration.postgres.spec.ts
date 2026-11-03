@@ -148,6 +148,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
+        getRepositoryWithoutPermissionChecks:
+          workspaceDataSource.getRepositoryWithoutPermissionChecks.bind(
+            workspaceDataSource,
+          ),
         runInWorkspaceTransaction:
           workspaceDataSource.transaction.bind(workspaceDataSource),
       };
@@ -263,7 +267,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceMemberId: MEMBER_ID,
           }),
         } as never,
-        {} as never,
         {} as never,
       );
 

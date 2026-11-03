@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -7,8 +9,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
-// TODO(@charlesBochet): agent runs do not always carry their agent yet, so their row-level checks can miss its role
-export const getPermissionsPrincipalsFromAuthContext = (
+const getIdentityPrincipalsFromAuthContext = (
   authContext: WorkspaceAuthContext,
 ): PermissionsPrincipalsContext | undefined => {
   if (isUserAuthContext(authContext)) {
@@ -26,8 +27,8 @@ export const getPermissionsPrincipalsFromAuthContext = (
       workspaceId: authContext.workspace.id,
       workspaceMemberId: undefined,
       apiKeyId: authContext.apiKey.id,
-      applicationId: undefined,
-      agentId: undefined,
+      applicationId: authContext.application?.id,
+      agentId: authContext.agentId,
     });
   }
 
@@ -42,4 +43,20 @@ export const getPermissionsPrincipalsFromAuthContext = (
   }
 
   return undefined;
+};
+
+export const getPermissionsPrincipalsFromAuthContext = (
+  authContext: WorkspaceAuthContext,
+): PermissionsPrincipalsContext | undefined => {
+  const principalsContext = getIdentityPrincipalsFromAuthContext(authContext);
+
+  if (
+    !isDefined(principalsContext) ||
+    !('permissionScope' in authContext) ||
+    !isDefined(authContext.permissionScope)
+  ) {
+    return principalsContext;
+  }
+
+  return { ...principalsContext, scope: authContext.permissionScope };
 };
