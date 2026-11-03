@@ -1,9 +1,9 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { camelToSnakeCase } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.constant';
 import { buildMcpServerInstructions } from 'src/engine/api/mcp/utils/build-mcp-server-instructions.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -25,7 +25,7 @@ export class McpInstructionBuilderService {
     isDirectMode,
   }: {
     workspaceId: string;
-    authContext: WorkspaceAuthContext | undefined;
+    authContext: WorkspaceAuthContext;
     isDirectMode: boolean;
   }): Promise<string> {
     const [{ flatObjectMetadataMaps }, allSkills, actionToolCatalog] =
