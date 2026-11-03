@@ -7,15 +7,15 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const useAgentChatThreadRowMetadata = (
   thread: AgentChatThreadRecord,
 ) => {
-  const metadata = useAtomFamilyStateValue(
+  const agentChatThreadRowMetadata = useAtomFamilyStateValue(
     agentChatThreadRowMetadataFamilyState,
     thread.id,
   );
   const isCurrentMetadata =
-    isDefined(metadata) &&
-    metadata.activityAt === (thread.lastActivityAt ?? null) &&
-    metadata.pendingQuestionMessageId ===
+    isDefined(agentChatThreadRowMetadata) &&
+    agentChatThreadRowMetadata.activityAt === (thread.lastActivityAt ?? null) &&
+    agentChatThreadRowMetadata.pendingQuestionMessageId ===
       (thread.pendingQuestionMessageId ?? null);
 
-  return isCurrentMetadata ? metadata : null;
+  return isCurrentMetadata ? agentChatThreadRowMetadata : null;
 };

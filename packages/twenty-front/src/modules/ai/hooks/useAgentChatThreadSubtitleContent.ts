@@ -21,11 +21,13 @@ export const useAgentChatThreadSubtitleContent = (
   );
 
   const rowMetadata = useAgentChatThreadRowMetadata(thread);
-  const participants = useAtomStateValue(agentChatThreadParticipantsState);
+  const agentChatThreadParticipants = useAtomStateValue(
+    agentChatThreadParticipantsState,
+  );
 
   return getAgentChatThreadSubtitleContent({
     rowMetadata,
-    participant: participants?.[thread.id],
+    participant: agentChatThreadParticipants?.[thread.id],
     thread,
     draftPreviewText,
     workspaceMembers: currentWorkspaceMembers,
