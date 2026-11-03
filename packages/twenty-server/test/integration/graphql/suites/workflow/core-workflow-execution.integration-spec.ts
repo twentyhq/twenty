@@ -526,10 +526,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     };
 
     await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", status, state, position) VALUES ($1, 'B-Async old queued run', $2, $3, 'ENQUEUED', $4, 0)`,
+      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowVersionId", status, state, position) VALUES ($1, 'B-Async old queued run', $2, 'ENQUEUED', $3, 0)`,
       [
         workflowRunId,
-        fixture.workflowId,
         fixture.workflowVersionId,
         JSON.stringify(state),
       ],
@@ -2506,8 +2505,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         const id = randomUUID();
         runIds.push(id);
         await global.testDataSource.query(
-          `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", status, position, state) VALUES ($1, 'B-Async migration', $2, $3, $4, 0, '{}')`,
-          [id, fixture.workflowId, fixture.workflowVersionId, status],
+          `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowVersionId", status, position, state) VALUES ($1, 'B-Async migration', $2, $3, 0, '{}')`,
+          [id, fixture.workflowVersionId, status],
         );
       }
       await backfill(true);
@@ -2536,10 +2535,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const id = randomUUID();
     try {
       await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", status, position, state) VALUES ($1, 'B-Async conflict', $2, $3, $4, 'ENQUEUED', 0, '{}')`,
+        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowVersionId", "coreWorkflowId", status, position, state) VALUES ($1, 'B-Async conflict', $2, $3, 'ENQUEUED', 0, '{}')`,
         [
           id,
-          fixture.workflowId,
           fixture.workflowVersionId,
           other.coreWorkflowId,
         ],
@@ -2572,10 +2570,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const id = randomUUID();
     try {
       await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, position, state) VALUES ($1, 'B-Async stale', $2, $3, $4, $5, 'COMPLETED', 0, '{}')`,
+        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, position, state) VALUES ($1, 'B-Async stale', $2, $3, $4, 'COMPLETED', 0, '{}')`,
         [
           id,
-          fixture.workflowId,
           fixture.workflowVersionId,
           randomUUID(),
           randomUUID(),
