@@ -27,7 +27,6 @@ import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
-import { assertPrivateRecordEnabledOrThrow } from 'src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
@@ -253,15 +252,10 @@ export class RecordSharingService {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
-    const { featureFlagsMap, flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
         'flatFieldMetadataMaps',
       ]);
-
-    if (isPrivate) {
-      assertPrivateRecordEnabledOrThrow(featureFlagsMap);
-    }
 
     await this.privateRecordStorageService.setPrivate({
       workspaceId,
