@@ -26,7 +26,7 @@ const getInitialStyle = (): CallRecorderStyle => {
 
 export const RecorderSection = () => {
   const nameInputId = useId();
-  const styleGroupId = useId();
+  const styleLabelId = useId();
   const [nameValue, setNameValue] = useState(() =>
     getApplicationVariableValue(CALL_RECORDER_NAME_FIELD.variableKey),
   );
@@ -78,12 +78,11 @@ export const RecorderSection = () => {
         </LabelledSettingsField>
         <LabelledSettingsField
           label={CALL_RECORDER_STYLE_FIELD.label}
-          inputId={styleGroupId}
+          labelId={styleLabelId}
           hint={`${CALL_RECORDER_STYLE_DESCRIPTIONS[style]} ${CALL_RECORDER_STYLE_FIELD.hint}`}
         >
           <CameraTileStylePicker
-            id={styleGroupId}
-            label={CALL_RECORDER_STYLE_FIELD.label}
+            labelId={styleLabelId}
             value={style}
             onChange={handleStyleChange}
           />

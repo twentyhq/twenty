@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useId } from 'react';
 import { getPublicAssetUrl } from 'twenty-sdk/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
@@ -91,45 +92,47 @@ const StyledChoiceLabel = styled.span`
 `;
 
 type CameraTileStylePickerProps = {
-  id: string;
-  label: string;
+  labelId: string;
   value: CallRecorderStyle;
   onChange: (style: CallRecorderStyle) => void;
 };
 
 export const CameraTileStylePicker = ({
-  id,
-  label,
+  labelId,
   value,
   onChange,
-}: CameraTileStylePickerProps) => (
-  <StyledChoices id={id} role="radiogroup" aria-label={label}>
-    {CALL_RECORDER_STYLE_OPTIONS.map((option) => {
-      const isChecked = option.value === value;
+}: CameraTileStylePickerProps) => {
+  const name = useId();
 
-      return (
-        <StyledChoice key={option.value}>
-          <StyledRadioInput
-            type="radio"
-            name={id}
-            value={option.value}
-            checked={isChecked}
-            onChange={() => onChange(option.value)}
-          />
-          <StyledTile>
-            <StyledPreviewImage
-              src={getPublicAssetUrl(
-                CAMERA_TILE_PREVIEW_ASSET_PATHS[option.value],
-              )}
-              alt=""
+  return (
+    <StyledChoices role="radiogroup" aria-labelledby={labelId}>
+      {CALL_RECORDER_STYLE_OPTIONS.map((option) => {
+        const isChecked = option.value === value;
+
+        return (
+          <StyledChoice key={option.value}>
+            <StyledRadioInput
+              type="radio"
+              name={name}
+              value={option.value}
+              checked={isChecked}
+              onChange={() => onChange(option.value)}
             />
-            <StyledCheckmark $checked={isChecked} aria-hidden>
-              <IconCheck size={THEME_COMMON.icon.size.sm} />
-            </StyledCheckmark>
-          </StyledTile>
-          <StyledChoiceLabel>{option.label}</StyledChoiceLabel>
-        </StyledChoice>
-      );
-    })}
-  </StyledChoices>
-);
+            <StyledTile>
+              <StyledPreviewImage
+                src={getPublicAssetUrl(
+                  CAMERA_TILE_PREVIEW_ASSET_PATHS[option.value],
+                )}
+                alt=""
+              />
+              <StyledCheckmark $checked={isChecked} aria-hidden>
+                <IconCheck size={THEME_COMMON.icon.size.sm} />
+              </StyledCheckmark>
+            </StyledTile>
+            <StyledChoiceLabel>{option.label}</StyledChoiceLabel>
+          </StyledChoice>
+        );
+      })}
+    </StyledChoices>
+  );
+};

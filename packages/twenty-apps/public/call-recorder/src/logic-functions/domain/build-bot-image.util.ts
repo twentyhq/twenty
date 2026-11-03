@@ -24,6 +24,27 @@ const JPEG_QUALITIES = Array.from(
   (_, index) => RECALL_BOT_IMAGE_JPEG_QUALITY - index * JPEG_QUALITY_STEP,
 );
 
+const createBaseImage = ({
+  sharp,
+  background,
+}: {
+  sharp: SharpFactory;
+  background: Buffer | undefined;
+}) => {
+  if (isUndefined(background)) {
+    return sharp({
+      create: {
+        width: RECALL_BOT_IMAGE_WIDTH,
+        height: RECALL_BOT_IMAGE_HEIGHT,
+        channels: 3,
+        background: CAMERA_TILE_BACKGROUND_COLOR,
+      },
+    });
+  }
+
+  return sharp(background);
+};
+
 export const buildBotImage = async ({
   sharp,
   background,
@@ -34,17 +55,7 @@ export const buildBotImage = async ({
   composites: OverlayOptions[];
 }): Promise<string | undefined> => {
   const composeJpeg = (quality: number) =>
-    (isUndefined(background)
-      ? sharp({
-          create: {
-            width: RECALL_BOT_IMAGE_WIDTH,
-            height: RECALL_BOT_IMAGE_HEIGHT,
-            channels: 3,
-            background: CAMERA_TILE_BACKGROUND_COLOR,
-          },
-        })
-      : sharp(background)
-    )
+    createBaseImage({ sharp, background })
       .composite(composites)
       .jpeg({ quality, mozjpeg: true })
       .toBuffer();

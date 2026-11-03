@@ -16,7 +16,7 @@ const FONT_FILE_PATH = join(
 );
 const MAX_WIDTH = 400;
 
-const render = (text: string, maxWidth?: number) =>
+const render = ({ text, maxWidth }: { text: string; maxWidth?: number }) =>
   renderCameraTileText({
     sharp,
     fontFilePath: FONT_FILE_PATH,
@@ -27,8 +27,8 @@ const render = (text: string, maxWidth?: number) =>
 
 describe('renderCameraTileText', () => {
   it('keeps text that fits at its natural size', async () => {
-    const natural = await render('Acme');
-    const constrained = await render('Acme', MAX_WIDTH);
+    const natural = await render({ text: 'Acme' });
+    const constrained = await render({ text: 'Acme', maxWidth: MAX_WIDTH });
 
     expect(constrained.width).toBe(natural.width);
     expect(constrained.height).toBe(natural.height);
@@ -36,8 +36,8 @@ describe('renderCameraTileText', () => {
 
   it('shrinks text wider than the max width to fit on one line', async () => {
     const text = 'A workspace name long enough to overflow the camera tile';
-    const natural = await render(text);
-    const constrained = await render(text, MAX_WIDTH);
+    const natural = await render({ text });
+    const constrained = await render({ text, maxWidth: MAX_WIDTH });
 
     expect(natural.width).toBeGreaterThan(MAX_WIDTH);
     expect(constrained.width).toBeLessThanOrEqual(MAX_WIDTH);
