@@ -25,7 +25,6 @@ export const useCodeStepInputSchema = ({
     stepId,
   );
 
-  // The schema is inferred asynchronously from the saved source, so a stale inference must not win
   useEffect(() => {
     if (!isDefined(sourceCode)) {
       return;
@@ -42,16 +41,17 @@ export const useCodeStepInputSchema = ({
 
       setInputSchema(inferredInputSchema);
 
-      setLogicFunctionTestData((previousTestData) =>
-        previousTestData.shouldInitInput
-          ? {
-              ...previousTestData,
-              input:
-                getFunctionInputFromInputSchema(inferredInputSchema)[0] ?? {},
-              shouldInitInput: false,
-            }
-          : previousTestData,
-      );
+      setLogicFunctionTestData((previousTestData) => {
+        if (!previousTestData.shouldInitInput) {
+          return previousTestData;
+        }
+
+        return {
+          ...previousTestData,
+          input: getFunctionInputFromInputSchema(inferredInputSchema)[0] ?? {},
+          shouldInitInput: false,
+        };
+      });
     });
 
     return () => {

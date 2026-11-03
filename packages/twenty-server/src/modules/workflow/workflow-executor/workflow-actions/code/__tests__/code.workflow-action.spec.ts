@@ -102,7 +102,13 @@ const buildAction = async ({ isBuildUpToDate = true } = {}) => {
   };
 };
 
-const runStep = (action: CodeWorkflowAction, step: WorkflowCodeAction) =>
+const runStep = ({
+  action,
+  step,
+}: {
+  action: CodeWorkflowAction;
+  step: WorkflowCodeAction;
+}) =>
   action.execute({
     currentStepId: step.id,
     steps: [step],
@@ -118,13 +124,13 @@ describe('CodeWorkflowAction', () => {
     const code =
       'export const main = async ({ a, b }) => ({ sum: a + b, raw: "{{trigger.a}}" });';
 
-    const result = await runStep(
+    const result = await runStep({
       action,
-      buildCodeStep({
+      step: buildCodeStep({
         code,
         logicFunctionInput: { a: '{{trigger.a}}', b: '{{trigger.b}}' },
       }),
-    );
+    });
 
     expect(codeStepRunnerService.run).toHaveBeenCalledWith({
       flatApplication: APPLICATION,
@@ -143,13 +149,13 @@ describe('CodeWorkflowAction', () => {
       workflowExecutionContextService,
     } = await buildAction();
 
-    await runStep(
+    await runStep({
       action,
-      buildCodeStep({
+      step: buildCodeStep({
         logicFunctionId: 'logic-function-id',
         logicFunctionInput: { a: '{{trigger.a}}' },
       }),
-    );
+    });
 
     expect(
       workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow,
@@ -167,13 +173,13 @@ describe('CodeWorkflowAction', () => {
       isBuildUpToDate: false,
     });
 
-    await runStep(
+    await runStep({
       action,
-      buildCodeStep({
+      step: buildCodeStep({
         logicFunctionId: 'logic-function-id',
         logicFunctionInput: {},
       }),
-    );
+    });
 
     expect(
       logicFunctionFromSourceService.buildOneFromSource,

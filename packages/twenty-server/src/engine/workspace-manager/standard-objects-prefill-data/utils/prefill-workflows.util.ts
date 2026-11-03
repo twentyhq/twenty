@@ -17,7 +17,7 @@ import {
   EXTRACT_DOMAIN_CODE_STEP_SOURCE,
   FIND_MATCHING_COMPANY_BY_DOMAIN_CODE_STEP_SOURCE,
   IS_PERSONAL_EMAIL_CODE_STEP_SOURCE,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-sources.util';
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/constants/prefill-workflow-code-step-sources.constant';
 
 const WORKFLOW_PREFILL_ID_NAMESPACE = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 
