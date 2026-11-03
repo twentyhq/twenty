@@ -29,6 +29,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
@@ -45,6 +46,7 @@ export class WorkspaceDataSource {
   private readonly authContext: WorkspaceAuthContext;
   private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   private permissionsPrincipal?: PermissionsPrincipalsWithRolesContext | null;
+  private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
   constructor({
     pool,
@@ -244,7 +246,7 @@ export class WorkspaceDataSource {
       internalContext,
       authContext: this.authContext,
       executor,
-      rolesPermissions: this.objectPermissionsByRoleId,
+      permissionsMetadataMaps: this.resolvePermissionsMetadataMaps(),
       permissionsPrincipal: shouldRepositoryBypassPermissionChecks
         ? undefined
         : this.resolvePermissionsPrincipal(),
@@ -295,6 +297,22 @@ export class WorkspaceDataSource {
       }) ?? null;
 
     return this.permissionsPrincipal ?? undefined;
+  }
+
+  // Shared by every repository of this data source so the engine's principal caches hit across them
+  private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {
+    return (this.permissionsMetadataMaps ??= {
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      featureFlagsMap: this.internalContext.featureFlagsMap,
+      rolesPermissions: this.objectPermissionsByRoleId,
+      flatApplicationMaps: this.internalContext.flatApplicationMaps,
+      flatRowLevelPermissionPredicateMaps:
+        this.internalContext.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        this.internalContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps: this.internalContext.flatWorkspaceMemberMaps,
+    });
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {

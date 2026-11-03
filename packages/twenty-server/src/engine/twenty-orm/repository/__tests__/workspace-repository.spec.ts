@@ -124,16 +124,24 @@ const buildRepository = ({
         return [];
       },
     },
-    rolesPermissions: {
-      [ROLE_ID]: {
-        [OBJECT_METADATA_ID]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          restrictedFields: {},
+    permissionsMetadataMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      featureFlagsMap: {},
+      rolesPermissions: {
+        [ROLE_ID]: {
+          [OBJECT_METADATA_ID]: {
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: true,
+            restrictedFields: {},
+          },
         },
       },
+      flatApplicationMaps: { byId: {} },
+      flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
+      flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
     permissionsPrincipal: {
       workspaceId: 'workspace-id',

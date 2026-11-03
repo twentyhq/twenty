@@ -4,7 +4,6 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
   type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -127,7 +126,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
-  rolesPermissions: ObjectsPermissionsByRoleId;
+  permissionsMetadataMaps: PermissionsMetadataMaps;
   permissionsPrincipal: PermissionsPrincipalsWithRolesContext | undefined;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
@@ -155,8 +154,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private _filesFieldSync?: FilesFieldSync;
 
-  private permissionsMetadataMaps?: PermissionsMetadataMaps;
-
   constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
   }
@@ -170,7 +167,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return getPermissionsPrincipalObjectsPermissions({
       principal: permissionsPrincipal,
-      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      metadataMaps: this.options.permissionsMetadataMaps,
     });
   }
 
@@ -1069,7 +1066,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         records: this.formatResult<ObjectRecord[]>(formattedRecords),
         objectMetadata: this.options.flatObjectMetadata,
         principal: this.resolvePermissionsPrincipalOrThrow(),
-        metadataMaps: this.resolvePermissionsMetadataMaps(),
+        metadataMaps: this.options.permissionsMetadataMaps,
       });
     }
 
@@ -1752,7 +1749,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const principal = this.resolvePermissionsPrincipalOrThrow();
-    const metadataMaps = this.resolvePermissionsMetadataMaps();
+    const metadataMaps = this.options.permissionsMetadataMaps;
 
     if (
       !isDefined(
@@ -2063,7 +2060,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return buildPermissionsCondition({
       principal: this.resolvePermissionsPrincipalOrThrow(),
-      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      metadataMaps: this.options.permissionsMetadataMaps,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       flatObjectMetadata,
       operationType,
@@ -2191,7 +2188,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }): Promise<Set<string>> {
     const condition = buildPermissionsCondition({
       principal,
-      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      metadataMaps: this.options.permissionsMetadataMaps,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
@@ -2257,7 +2254,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       !this.isOperationDisabled({ operationType, flatObjectMetadata }) &&
       isObjectOperationDeniedToPrincipal({
         principal: this.resolvePermissionsPrincipalOrThrow(),
-        metadataMaps: this.resolvePermissionsMetadataMaps(),
+        metadataMaps: this.options.permissionsMetadataMaps,
         flatObjectMetadata,
         operationType,
       })
@@ -2286,7 +2283,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return isObjectOperationDisabledToPrincipal({
       principal: this.resolvePermissionsPrincipalOrThrow(),
-      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      metadataMaps: this.options.permissionsMetadataMaps,
       flatObjectMetadata,
       operationType,
     });
@@ -2303,23 +2300,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return permissionsPrincipal;
-  }
-
-  private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {
-    return (this.permissionsMetadataMaps ??= {
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-      flatObjectMetadataMaps:
-        this.options.internalContext.flatObjectMetadataMaps,
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
-      rolesPermissions: this.options.rolesPermissions,
-      flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps:
-        this.options.internalContext.flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps:
-        this.options.internalContext.flatRowLevelPermissionPredicateGroupMaps,
-      flatWorkspaceMemberMaps:
-        this.options.internalContext.flatWorkspaceMemberMaps,
-    });
   }
 
   private getRecordShareTableExpression(): string {
