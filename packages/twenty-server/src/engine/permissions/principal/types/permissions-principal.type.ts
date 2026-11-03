@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-// A role on its own, as when a record is shared with a role
 export type PermissionsRolePrincipal = {
   type: 'role';
   roleId: string;
