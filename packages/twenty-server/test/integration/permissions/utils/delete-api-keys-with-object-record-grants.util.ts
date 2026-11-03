@@ -5,14 +5,19 @@ import { type ApiKeyWithObjectRecordGrants } from 'test/integration/permissions/
 export const deleteApiKeysWithObjectRecordGrants = async (
   testApiKeys: ApiKeyWithObjectRecordGrants[],
 ) => {
-  for (const { roleId, apiKeyId } of testApiKeys) {
-    const revokeResponse = await revokeApiKey({
-      apiKeyId,
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    });
+  await Promise.all(
+    testApiKeys.map(async ({ roleId, apiKeyId }) => {
+      const revokeResponse = await revokeApiKey({
+        apiKeyId,
+        accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
 
-    expect(revokeResponse.body.errors).toBeUndefined();
+      expect(revokeResponse.body.errors).toBeUndefined();
 
-    await deleteOneRole({ input: { idToDelete: roleId }, expectToFail: false });
-  }
+      await deleteOneRole({
+        input: { idToDelete: roleId },
+        expectToFail: false,
+      });
+    }),
+  );
 };

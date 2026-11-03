@@ -20,20 +20,24 @@ describe('update grant on object records', () => {
   let withoutGrant: ApiKeyWithObjectRecordGrants;
 
   beforeAll(async () => {
-    withGrant = await createApiKeyWithObjectRecordGrants({
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-    });
-    withoutGrant = await createApiKeyWithObjectRecordGrants({
-      canReadAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-    });
+    [withGrant, withoutGrant] = await Promise.all([
+      createApiKeyWithObjectRecordGrants({
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+      }),
+      createApiKeyWithObjectRecordGrants({
+        canReadAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      }),
+    ]);
   });
 
   afterAll(async () => {
-    await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
-    await destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName);
+    await Promise.all([
+      deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]),
+      destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName),
+    ]);
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
