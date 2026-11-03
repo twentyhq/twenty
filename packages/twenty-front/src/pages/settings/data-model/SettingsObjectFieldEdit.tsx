@@ -37,7 +37,12 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isEmptyObject,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -190,6 +195,12 @@ export const SettingsObjectFieldEdit = () => {
 
   const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);
 
+  // Mirrors the server guard: system-managed fields only accept activation changes
+  const isFieldPropertiesReadonly =
+    readonly ||
+    (fieldMetadataItem.isSystemSideEffect === true &&
+      !isMorphRelationHead(fieldMetadataItem));
+
   const fieldLabel = fieldMetadataItem.label;
   const objectLabel = objectMetadataItem.labelPlural;
 
@@ -212,7 +223,7 @@ export const SettingsObjectFieldEdit = () => {
   const handleSave = async (
     formValues: SettingsDataModelFieldEditFormValues,
   ) => {
-    if (readonly) {
+    if (isFieldPropertiesReadonly) {
       return;
     }
 
@@ -381,7 +392,7 @@ export const SettingsObjectFieldEdit = () => {
           actionButton={
             <SaveAndCancelButtons
               isLoading={isSubmitting}
-              isSaveDisabled={!canSave || readonly}
+              isSaveDisabled={!canSave || isFieldPropertiesReadonly}
               isCancelDisabled={isSubmitting || readonly}
               onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
@@ -398,7 +409,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
                 isCreationMode={false}
-                readonly={readonly}
+                readonly={isFieldPropertiesReadonly}
               />
             </Section.Root>
             {!isReverseJunctionRelation && (
@@ -418,7 +429,7 @@ export const SettingsObjectFieldEdit = () => {
                   fieldType={fieldMetadataItem.type}
                   existingFieldMetadataId={fieldMetadataItem.id}
                   objectNameSingular={objectMetadataItem.nameSingular}
-                  disabled={readonly}
+                  disabled={isFieldPropertiesReadonly}
                 />
               </Section.Root>
             )}
@@ -429,7 +440,7 @@ export const SettingsObjectFieldEdit = () => {
               />
               <SettingsDataModelFieldDescriptionForm
                 fieldMetadataItem={fieldMetadataItem}
-                disabled={readonly}
+                disabled={isFieldPropertiesReadonly}
               />
             </Section.Root>
 

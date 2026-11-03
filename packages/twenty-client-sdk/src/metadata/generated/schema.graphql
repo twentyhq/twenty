@@ -2355,6 +2355,7 @@ type Field {
   isNullable: Boolean
   isSearchable: Boolean
   isSystem: Boolean
+  isSystemSideEffect: Boolean
   isUIEditable: Boolean
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isUnique: Boolean
