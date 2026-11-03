@@ -18,6 +18,7 @@ import {
   CALL_RECORDER_STYLE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
@@ -35,6 +36,7 @@ import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-
 import { CALL_RECORDER_STYLE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-style-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
+import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
 import { DEFAULT_CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED } from 'src/logic-functions/constants/default-call-recorder-calendar-bot-scheduling-enabled';
@@ -46,6 +48,7 @@ import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-funct
 import { DEFAULT_CALL_RECORDER_STYLE } from 'src/logic-functions/constants/default-call-recorder-style';
 import { DEFAULT_CALL_RECORDER_SUMMARY_ENABLED } from 'src/logic-functions/constants/default-call-recorder-summary-enabled';
 import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/default-call-recorder-transcript-provider';
+import { DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO } from 'src/logic-functions/constants/default-call-recorder-use-workspace-logo';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
@@ -187,6 +190,16 @@ export default defineApplication({
       type: FieldType.SELECT,
       options: CALL_RECORDER_STYLE_OPTIONS,
       value: DEFAULT_CALL_RECORDER_STYLE,
+    },
+    [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Use workspace logo',
+      description: 'Replaced by the recorder style.',
+      isSecret: false,
+      isDeprecated: true,
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO,
     },
   },
   serverVariables: {

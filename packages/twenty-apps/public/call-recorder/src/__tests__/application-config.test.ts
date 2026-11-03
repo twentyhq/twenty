@@ -12,9 +12,15 @@ describe('application config', () => {
     expect(applicationConfig.errors).toEqual([]);
   });
 
-  it('lays out every application variable in the settings component', () => {
+  it('lays out every non-deprecated application variable in the settings component', () => {
+    const activeVariableKeys = Object.entries(
+      applicationConfig.config.applicationVariables ?? {},
+    )
+      .filter(([, variable]) => variable.isDeprecated !== true)
+      .map(([key]) => key);
+
     expect([...CALL_RECORDER_MAPPED_VARIABLE_KEYS].sort()).toEqual(
-      Object.keys(applicationConfig.config.applicationVariables ?? {}).sort(),
+      activeVariableKeys.sort(),
     );
   });
 
