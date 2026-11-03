@@ -144,6 +144,8 @@ export class AccessPolicyService {
     });
   }
 
+  // Temporary hack: `application: true` refuses agent-bound callers by default, and tools must
+  // admit them. Remove once AuthPrincipalGuardConfig makes withAgent explicit on every policy
   private withoutAgent(
     authPrincipalVariant: AuthPrincipalVariant | undefined,
   ): AuthPrincipalVariant | undefined {
