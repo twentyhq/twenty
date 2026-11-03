@@ -4,14 +4,9 @@ import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/Workf
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
-import {
-  type WorkflowAction,
-  type WorkflowAiAgentAction,
-} from '@/workflow/types/Workflow';
+import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -26,7 +21,6 @@ import { type WorkflowAiAgentStepInput } from '@/workflow/workflow-steps/workflo
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isWorkflowAiAgentGenerateStep } from 'twenty-shared/workflow';
@@ -87,32 +81,17 @@ export const WorkflowEditActionAiAgent = ({
     action.settings.input,
   );
 
-  const store = useStore();
-  const flowState = useAtomComponentStateCallbackState(flowComponentState);
-
   // saves the input of the latest render, so editing one field does not drop a pending edit of another
   const saveInput = useDebouncedCallback(() => {
     if (actionOptions.readonly) {
       return;
     }
 
-    // a draft created by an earlier save may have rebuilt the step, which the local input predates
-    const currentStep = store
-      .get(flowState)
-      ?.steps?.find(
-        (step: WorkflowAction): step is WorkflowAiAgentAction =>
-          step.id === action.id && step.type === 'AI_AGENT',
-      );
-
-    if (!isDefined(currentStep)) {
-      return;
-    }
-
     actionOptions.onActionUpdate({
-      ...currentStep,
+      ...action,
       settings: {
-        ...currentStep.settings,
-        input: { ...input, agentId: currentStep.settings.input.agentId },
+        ...action.settings,
+        input,
         ...(input.responseFormat?.type === 'json'
           ? {
               outputSchema: agentResponseSchemaToOutputSchema(
