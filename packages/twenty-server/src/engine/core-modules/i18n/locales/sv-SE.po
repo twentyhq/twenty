@@ -1129,6 +1129,11 @@ msgstr "Ett AI-steg kan inte ändra sin agent. Skapa ett nytt steg i stället."
 msgid "An application can only start its own workflows."
 msgstr "En applikation kan bara starta sina egna arbetsflöden."
 
+#. js-lingui-id: T/ZKXs
+#: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
+msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
+msgstr ""
+
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
@@ -13544,6 +13549,11 @@ msgstr "Definitionen av applikationsarbetsflödet är ogiltig."
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Programmets produktionsberoenden är för stora för att installeras. Flytta paket som inte importeras av dess logikfunktioner (UI-bibliotek, utvecklingsverktyg) från \"dependencies\"."
+
+#. js-lingui-id: 2a7bjg
+#: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
+msgid "The application's requested permissions have changed. Review them again before approving."
+msgstr ""
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
