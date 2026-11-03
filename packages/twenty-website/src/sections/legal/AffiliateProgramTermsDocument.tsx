@@ -285,8 +285,8 @@ export function AffiliateProgramTermsDocument() {
           Offer customers cashback, gifts or any share of your commission.
         </li>
         <li>
-          Create fake accounts, or pay for workspaces yourself, to earn
-          commissions.
+          Create fake accounts, or pay for workspaces no real client uses, to
+          earn commissions.
         </li>
         <li>Refer yourself or your own company.</li>
       </ul>

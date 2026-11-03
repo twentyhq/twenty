@@ -96,6 +96,26 @@ const CheckboxLabel = styled.label`
   }
 `;
 
+// Not a <label>: the sentence holds a link, and a link inside a label makes
+// a click ambiguous. The sentence labels the checkbox through aria instead.
+const TermsCheckboxRow = styled.div`
+  ${typeRampDeclarations('bodyXs')}
+  align-items: center;
+  color: ${semanticColor.inkMuted};
+  display: flex;
+  font-family: ${fontFamily('sans')};
+  gap: ${spacing(2)};
+
+  & > input {
+    accent-color: ${color('blue')};
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+  }
+`;
+
+const ACCEPTS_TERMS_LABEL_ID = 'affiliate-application-accepts-terms-label';
+
 const ErrorBanner = styled.p`
   ${typeRampDeclarations('bodyXs')}
   color: ${color('error')};
@@ -316,8 +336,9 @@ export function AffiliateApplicationForm() {
               />
               {i18n._(COPY.fields.isIntegrationPartner)}
             </CheckboxLabel>
-            <CheckboxLabel>
+            <TermsCheckboxRow>
               <input
+                aria-labelledby={ACCEPTS_TERMS_LABEL_ID}
                 checked={state.acceptsTerms}
                 name="acceptsTerms"
                 onChange={(event) =>
@@ -325,7 +346,7 @@ export function AffiliateApplicationForm() {
                 }
                 type="checkbox"
               />
-              <span>
+              <span id={ACCEPTS_TERMS_LABEL_ID}>
                 <Trans>
                   I agree to the{' '}
                   <TermsLink
@@ -335,7 +356,7 @@ export function AffiliateApplicationForm() {
                   </TermsLink>
                 </Trans>
               </span>
-            </CheckboxLabel>
+            </TermsCheckboxRow>
           </CheckboxStack>
           <Button
             disabled={isSubmitting}
