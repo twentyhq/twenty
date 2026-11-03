@@ -12,7 +12,6 @@ import {
   CAMERA_TILE_INITIAL_FONT_SIZE,
   CAMERA_TILE_LOGO_BOX_SIZE,
   CAMERA_TILE_MINIMAL_FONT_SIZE,
-  CAMERA_TILE_NOTES_BY_TWENTY,
   CAMERA_TILE_PLATE_COLOR,
   CAMERA_TILE_PLATE_RADIUS,
   CAMERA_TILE_PLATE_SIZE,
@@ -186,12 +185,10 @@ const buildWorkspaceComposites = async ({
   sharp,
   renderText,
   branding,
-  isNotesByTwentyEnabled,
 }: {
   sharp: SharpFactory;
   renderText: TextRenderer;
   branding: WorkspaceBranding | undefined;
-  isNotesByTwentyEnabled: boolean;
 }): Promise<OverlayOptions[] | undefined> => {
   const displayName =
     isDefined(branding?.displayName) &&
@@ -219,35 +216,20 @@ const buildWorkspaceComposites = async ({
     return undefined;
   }
 
-  const lines: TextLine[] = [];
+  if (isUndefined(displayName)) {
+    return [await renderSvgLayer(sharp, buildPlateSvg()), plateContent];
+  }
 
-  if (isDefined(displayName)) {
-    lines.push({
+  const { lineComposites, scrimSvg } = buildTextBlock([
+    {
       text: await renderText({
         text: displayName,
         fontSize: CAMERA_TILE_TITLE_FONT_SIZE,
         maxWidth: CAMERA_TILE_TEXT_MAX_WIDTH,
       }),
       lineHeight: CAMERA_TILE_TITLE_LINE_HEIGHT,
-    });
-  }
-
-  if (isNotesByTwentyEnabled) {
-    lines.push({
-      text: await renderText({
-        text: CAMERA_TILE_NOTES_BY_TWENTY,
-        fontSize: CAMERA_TILE_SUBTITLE_FONT_SIZE,
-        opacity: CAMERA_TILE_SECONDARY_TEXT_OPACITY,
-      }),
-      lineHeight: CAMERA_TILE_SUBTITLE_LINE_HEIGHT,
-    });
-  }
-
-  if (lines.length === 0) {
-    return [await renderSvgLayer(sharp, buildPlateSvg()), plateContent];
-  }
-
-  const { lineComposites, scrimSvg } = buildTextBlock(lines);
+    },
+  ]);
 
   return [
     await renderSvgLayer(sharp, scrimSvg + buildPlateSvg()),
@@ -297,13 +279,11 @@ export const buildCameraTileLayout = async ({
   style,
   branding,
   fontFilePath,
-  isNotesByTwentyEnabled,
 }: {
   sharp: SharpFactory;
   style: Exclude<CallRecorderStyle, 'NONE'>;
   branding: WorkspaceBranding | undefined;
   fontFilePath: string;
-  isNotesByTwentyEnabled: boolean;
 }): Promise<CameraTileLayout> => {
   const renderText: TextRenderer = (options) =>
     renderCameraTileText({ sharp, fontFilePath, ...options });
@@ -330,7 +310,6 @@ export const buildCameraTileLayout = async ({
       sharp,
       renderText,
       branding,
-      isNotesByTwentyEnabled,
     });
 
     if (isDefined(workspaceComposites)) {

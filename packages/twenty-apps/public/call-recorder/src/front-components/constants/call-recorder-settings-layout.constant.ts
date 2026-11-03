@@ -5,7 +5,6 @@ import {
   IconHourglassHigh,
   IconLanguage,
   IconMessage,
-  IconNotes,
   IconPlayerStop,
   IconSparkles,
   type IconComponent,
@@ -17,7 +16,6 @@ import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/lo
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
-import { CALL_RECORDER_NOTES_BY_TWENTY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-notes-by-twenty-enabled-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
@@ -113,13 +111,6 @@ export const CALL_RECORDER_STYLE_DESCRIPTIONS: Record<
   NONE: 'Sends no image. People only see the recorder name.',
 };
 
-export const CALL_RECORDER_NOTES_BY_TWENTY_ROW = {
-  variableKey: CALL_RECORDER_NOTES_BY_TWENTY_ENABLED_ENV_VAR_NAME,
-  title: 'Include "Notes by Twenty"',
-  description: 'Second line under your workspace name. Workspace style only.',
-  Icon: IconNotes,
-};
-
 export const CALL_RECORDER_NAME_FIELD = {
   variableKey: CALL_RECORDER_NAME_ENV_VAR_NAME,
   label: 'Recorder name',
@@ -144,5 +135,4 @@ export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
   CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
   CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
   CALL_RECORDER_STYLE_FIELD.variableKey,
-  CALL_RECORDER_NOTES_BY_TWENTY_ROW.variableKey,
 ];

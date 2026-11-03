@@ -9,14 +9,10 @@ import {
   getCameraTileStyleOptionId,
 } from 'src/front-components/components/CameraTileStylePicker';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
-import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import {
   CALL_RECORDER_NAME_FIELD,
-  CALL_RECORDER_NOTES_BY_TWENTY_ROW,
   CALL_RECORDER_STYLE_DESCRIPTIONS,
   CALL_RECORDER_STYLE_FIELD,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
@@ -64,12 +60,6 @@ export const RecorderSection = () => {
     getApplicationVariableValue(CALL_RECORDER_NAME_FIELD.variableKey),
   );
   const [style, setStyle] = useState(getInitialStyle);
-  const [isNotesByTwentyEnabled, setIsNotesByTwentyEnabled] = useState(
-    () =>
-      getApplicationVariableValue(
-        CALL_RECORDER_NOTES_BY_TWENTY_ROW.variableKey,
-      ) !== 'false',
-  );
   const { logoUrl, displayName } = useWorkspaceBranding();
 
   const { saveDebounced: saveNameDebounced } = useAutosaveApplicationVariable({
@@ -78,10 +68,6 @@ export const RecorderSection = () => {
   const { saveImmediately: saveStyleImmediately } =
     useAutosaveApplicationVariable({
       variableKey: CALL_RECORDER_STYLE_FIELD.variableKey,
-    });
-  const { saveImmediately: saveNotesByTwentyImmediately } =
-    useAutosaveApplicationVariable({
-      variableKey: CALL_RECORDER_NOTES_BY_TWENTY_ROW.variableKey,
     });
 
   const handleNameChange = (value: string) => {
@@ -98,13 +84,7 @@ export const RecorderSection = () => {
     saveStyleImmediately(value);
   };
 
-  const handleNotesByTwentyChange = (checked: boolean) => {
-    setIsNotesByTwentyEnabled(checked);
-    saveNotesByTwentyImmediately(checked ? 'true' : 'false');
-  };
-
-  const isWorkspaceStyle = style === 'WORKSPACE';
-  const previewProps = { logoUrl, displayName, isNotesByTwentyEnabled };
+  const previewProps = { logoUrl, displayName };
 
   return (
     <Section.Root>
@@ -152,18 +132,6 @@ export const RecorderSection = () => {
           </StyledPreviewFrame>
           <StyledPreviewCaption>Preview</StyledPreviewCaption>
         </StyledPreview>
-        <StyledDimmable $dimmed={!isWorkspaceStyle}>
-          <StyledSettingsCard>
-            <SettingsOptionCardContentToggle
-              Icon={CALL_RECORDER_NOTES_BY_TWENTY_ROW.Icon}
-              title={CALL_RECORDER_NOTES_BY_TWENTY_ROW.title}
-              description={CALL_RECORDER_NOTES_BY_TWENTY_ROW.description}
-              checked={isNotesByTwentyEnabled}
-              disabled={!isWorkspaceStyle}
-              onChange={handleNotesByTwentyChange}
-            />
-          </StyledSettingsCard>
-        </StyledDimmable>
       </StyledSettingsSectionStack>
     </Section.Root>
   );

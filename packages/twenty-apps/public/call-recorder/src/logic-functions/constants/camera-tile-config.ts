@@ -31,5 +31,4 @@ export const CAMERA_TILE_RECORDING_DOT_GAP = 12;
 
 export const CAMERA_TILE_TWENTY_TITLE = 'Twenty';
 export const CAMERA_TILE_TWENTY_SUBTITLE = 'Learn more at twenty.com';
-export const CAMERA_TILE_NOTES_BY_TWENTY = 'Notes by Twenty';
 export const CAMERA_TILE_RECORDING_LABEL = 'Recording';

@@ -12,16 +12,11 @@ import {
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { enqueueWorkspaceDistributedJob } from 'src/logic-functions/data/enqueue-workspace-distributed-job.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { migrateLegacyWorkspaceLogoSetting } from 'src/logic-functions/flows/migrate-legacy-workspace-logo-setting.util';
-import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 type StartPostInstallBackfillsResult =
   | { calendarEventSweepOutcome: 'sweep-enqueued' }
-  | {
-      stuckRequestFollowUpDelayMs: number;
-      migratedCallRecorderStyle: CallRecorderStyle | undefined;
-    };
+  | { stuckRequestFollowUpDelayMs: number };
 
 // The async install hook is redelivered only for retryable failures.
 export const startPostInstallBackfillsHandler = async ({
@@ -41,18 +36,6 @@ export const startPostInstallBackfillsHandler = async ({
     return { calendarEventSweepOutcome: 'sweep-enqueued' };
   }
 
-  let migratedCallRecorderStyle: CallRecorderStyle | undefined;
-
-  try {
-    migratedCallRecorderStyle =
-      await migrateLegacyWorkspaceLogoSetting(previousVersion);
-  } catch (error) {
-    throw buildRetryableStepFailure(
-      'post-upgrade recorder style migration',
-      error,
-    );
-  }
-
   // Requests that got stuck under an earlier version never had a follow-up.
   const workspaceId = getCurrentWorkspaceId();
 
@@ -67,7 +50,7 @@ export const startPostInstallBackfillsHandler = async ({
     stepLabel: 'post-upgrade stuck request follow-up kickoff',
   });
 
-  return { stuckRequestFollowUpDelayMs: delayMs, migratedCallRecorderStyle };
+  return { stuckRequestFollowUpDelayMs: delayMs };
 };
 
 export default definePostInstallLogicFunction({
@@ -75,7 +58,7 @@ export default definePostInstallLogicFunction({
     START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'start-post-install-backfills',
   description:
-    'Schedules recording bots for upcoming meetings when the app is installed. On upgrade, carries the old workspace logo setting over to the recorder style and follows up on requests left stuck by an earlier version.',
+    'Schedules recording bots for upcoming meetings when the app is installed, and follows up on requests left stuck by an earlier version when it is upgraded.',
   timeoutSeconds: 30,
   shouldRunOnVersionUpgrade: true,
   handler: startPostInstallBackfillsHandler,

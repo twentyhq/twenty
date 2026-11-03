@@ -13,7 +13,6 @@ import {
   CAMERA_TILE_INITIAL_FONT_SIZE,
   CAMERA_TILE_LOGO_BOX_SIZE,
   CAMERA_TILE_MINIMAL_FONT_SIZE,
-  CAMERA_TILE_NOTES_BY_TWENTY,
   CAMERA_TILE_PLATE_COLOR,
   CAMERA_TILE_PLATE_RADIUS,
   CAMERA_TILE_PLATE_SIZE,
@@ -193,7 +192,7 @@ const getFirstCharacter = (text: string) =>
 
 type CameraTileTextBlockProps = {
   title: string | undefined;
-  subtitle: string | undefined;
+  subtitle?: string;
 };
 
 const CameraTileTextBlock = ({ title, subtitle }: CameraTileTextBlockProps) => {
@@ -213,7 +212,6 @@ export type CameraTilePreviewProps = {
   style: CallRecorderStyle;
   logoUrl: string | undefined;
   displayName: string | undefined;
-  isNotesByTwentyEnabled: boolean;
   isRecording?: boolean;
   recorderName?: string;
 };
@@ -222,7 +220,6 @@ export const CameraTilePreview = ({
   style,
   logoUrl,
   displayName,
-  isNotesByTwentyEnabled,
   isRecording = false,
   recorderName,
 }: CameraTilePreviewProps) => {
@@ -275,12 +272,7 @@ export const CameraTilePreview = ({
           src={getPublicAssetUrl(CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH)}
           alt=""
         />
-        <CameraTileTextBlock
-          title={renderableDisplayName}
-          subtitle={
-            isNotesByTwentyEnabled ? CAMERA_TILE_NOTES_BY_TWENTY : undefined
-          }
-        />
+        <CameraTileTextBlock title={renderableDisplayName} />
         <StyledPlate>
           {isDefined(logoUrl) ? (
             <StyledLogo src={logoUrl} alt="" />
