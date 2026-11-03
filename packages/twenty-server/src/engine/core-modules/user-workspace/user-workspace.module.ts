@@ -1,4 +1,4 @@
-import { UserWorkspaceAuthContextModule } from 'src/engine/core-modules/user-workspace/user-workspace-auth-context.module';
+import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -36,10 +36,10 @@ import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role
     TokenModule,
     OnboardingModule,
     CoreEntityCacheModule,
-    UserWorkspaceAuthContextModule,
   ],
-  exports: [UserWorkspaceService, UserWorkspaceAuthContextModule],
+  exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
   providers: [
+    UserWorkspaceAuthContextService,
     UserWorkspaceService,
     UserWorkspaceEntityCacheProviderService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
