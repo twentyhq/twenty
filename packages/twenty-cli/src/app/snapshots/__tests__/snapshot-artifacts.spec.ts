@@ -43,18 +43,17 @@ const FIXTURES_DIRECTORY = join(
   REPOSITORY_ROOT,
   'packages/twenty-apps/fixtures',
 );
+const FAILING_FIXTURES = [
+  'invalid-app',
+  'unmapped-conditional-availability-app',
+];
 const FIXTURES = [
   'minimal-app',
   'rich-app',
   'function-execute-app',
   'shared-dependencies-app',
-  'invalid-app',
   'conditional-availability-app',
-  'unmapped-conditional-availability-app',
-];
-const FAILING_FIXTURES = [
-  'invalid-app',
-  'unmapped-conditional-availability-app',
+  ...FAILING_FIXTURES,
 ];
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 const hash = (bytes: Buffer | string) =>

@@ -4,6 +4,22 @@ import { ARRAY_LENGTH_VARIABLE_NAMES } from '@/app/source/constants/array-length
 import { getConditionalAvailabilityExpressionTokenText } from '@/app/source/get-conditional-availability-expression-token-text';
 import { scanConditionalAvailabilityExpressionTokens } from '@/app/source/scan-conditional-availability-expression-tokens';
 
+const isTrailingCommaToken = (
+  tokens: ReturnType<typeof scanConditionalAvailabilityExpressionTokens>,
+  index: number,
+): boolean => {
+  let nextIndex = index + 1;
+
+  while (
+    tokens[nextIndex]?.kind === ts.SyntaxKind.WhitespaceTrivia ||
+    tokens[nextIndex]?.kind === ts.SyntaxKind.NewLineTrivia
+  ) {
+    nextIndex++;
+  }
+
+  return tokens[nextIndex]?.kind === ts.SyntaxKind.CloseParenToken;
+};
+
 export const toConditionalAvailabilityExpressionString = (
   expressionText: string,
 ): string => {
@@ -24,19 +40,11 @@ export const toConditionalAvailabilityExpressionString = (
       continue;
     }
 
-    if (token.kind === ts.SyntaxKind.CommaToken) {
-      let nextIndex = index + 1;
-
-      while (
-        tokens[nextIndex]?.kind === ts.SyntaxKind.WhitespaceTrivia ||
-        tokens[nextIndex]?.kind === ts.SyntaxKind.NewLineTrivia
-      ) {
-        nextIndex++;
-      }
-
-      if (tokens[nextIndex]?.kind === ts.SyntaxKind.CloseParenToken) {
-        continue;
-      }
+    if (
+      token.kind === ts.SyntaxKind.CommaToken &&
+      isTrailingCommaToken(tokens, index)
+    ) {
+      continue;
     }
 
     expressionString += getConditionalAvailabilityExpressionTokenText(token);
