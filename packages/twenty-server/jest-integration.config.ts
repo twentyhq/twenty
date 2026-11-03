@@ -22,7 +22,7 @@ const jestConfig: JestConfigWithTsJest = {
   silent: false,
   errorOnDeprecated: true,
   maxConcurrency: 1,
-  detectOpenHandles: process.env.INTEGRATION_OPEN_HANDLE_DIAGNOSTICS === 'true',
+  detectOpenHandles: process.env.INTEGRATION_OPEN_HANDLE_TRACE === 'true',
   moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
