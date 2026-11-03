@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -17,11 +17,10 @@ const ASSISTANT_REPLY_EVALUATION_TIMEOUT_MS = 5_000;
 export class AgentChatReplyPolicyService {
   private readonly logger = new Logger(AgentChatReplyPolicyService.name);
 
-  @Inject(AiEvaluationService)
-  private readonly aiEvaluationService: AiEvaluationService;
-
-  @Inject(AgentConversationReaderService)
-  private readonly conversationReaderService: AgentConversationReaderService;
+  constructor(
+    private readonly aiEvaluationService: AiEvaluationService,
+    private readonly conversationReaderService: AgentConversationReaderService,
+  ) {}
 
   async shouldReply({
     decision,

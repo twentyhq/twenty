@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -25,23 +25,14 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class AgentChatInboxDeliveryWriterService {
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatThreadParticipantEventService)
-  private readonly participantEventService: AgentChatThreadParticipantEventService;
-
-  @Inject(WorkspaceOrmManager)
-  private readonly workspaceOrmManager: WorkspaceOrmManager;
-
-  @Inject(WorkspaceCacheService)
-  private readonly workspaceCacheService: WorkspaceCacheService;
-
-  @Inject(PrivateRecordStorageService)
-  private readonly privateRecordStorageService: PrivateRecordStorageService;
-
-  @Inject(RecordShareStorageService)
-  private readonly recordShareStorageService: RecordShareStorageService;
+  constructor(
+    private readonly sharingService: AgentChatSharingService,
+    private readonly participantEventService: AgentChatThreadParticipantEventService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly recordShareStorageService: RecordShareStorageService,
+  ) {}
 
   async write({
     workspaceMemberIds,

@@ -1,5 +1,5 @@
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -31,50 +31,23 @@ import {
 
 @Injectable()
 export class AgentChatMemberMessageSenderService {
-  @Inject(AgentChatReplyPolicyService)
-  private readonly replyPolicyService: AgentChatReplyPolicyService;
-
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
-
-  @Inject(AgentChatAssistantParticipationService)
-  private readonly participationService: AgentChatAssistantParticipationService;
-
-  @Inject(AgentChatMemberMessageWriterService)
-  private readonly messageWriterService: AgentChatMemberMessageWriterService;
-
-  @Inject(AgentChatInboxDeliveryService)
-  private readonly inboxDeliveryService: AgentChatInboxDeliveryService;
-
-  @Inject(AgentChatStreamingService)
-  private readonly streamingService: AgentChatStreamingService;
-
-  @Inject(AgentChatQueueService)
-  private readonly queueService: AgentChatQueueService;
-
-  @Inject(AgentChatStreamClaimService)
-  private readonly streamClaimService: AgentChatStreamClaimService;
-
-  @Inject(AgentChatStreamRecoveryService)
-  private readonly streamRecoveryService: AgentChatStreamRecoveryService;
-
-  @Inject(AgentChatTurnPreflightService)
-  private readonly turnPreflightService: AgentChatTurnPreflightService;
-
-  @Inject(AgentChatThreadLifecycleService)
-  private readonly threadLifecycleService: AgentChatThreadLifecycleService;
-
-  @Inject(AgentRunSuspensionService)
-  private readonly runSuspensionService: AgentRunSuspensionService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
-
-  @Inject(FeatureFlagService)
-  private readonly featureFlagService: FeatureFlagService;
-
-  @Inject(CoreEntityCacheService)
-  private readonly coreEntityCacheService: CoreEntityCacheService;
+  constructor(
+    private readonly threadService: AgentChatThreadService,
+    private readonly participationService: AgentChatAssistantParticipationService,
+    private readonly messageWriterService: AgentChatMemberMessageWriterService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
+    private readonly streamingService: AgentChatStreamingService,
+    private readonly queueService: AgentChatQueueService,
+    private readonly streamClaimService: AgentChatStreamClaimService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly turnPreflightService: AgentChatTurnPreflightService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly runSuspensionService: AgentRunSuspensionService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
+  ) {}
 
   async send({
     actor,
@@ -104,7 +77,7 @@ export class AgentChatMemberMessageSenderService {
     await this.threadService.createThreadIfMissing({
       ...access,
       channelId: target.channelId,
-      shouldApplyAssistantParticipation: !isInboxEnabled,
+      shouldApplyAssistantParticipation: false,
       ...participationIntent,
     });
 
@@ -115,14 +88,6 @@ export class AgentChatMemberMessageSenderService {
       ...participationIntent,
       isReplyRequested: assistant.isReplyRequested,
     });
-
-    if (!isInboxEnabled) {
-      await this.participationService.save({
-        workspaceId: actor.workspaceId,
-        thread,
-        participation,
-      });
-    }
 
     const replyDecision = participation.replyDecision;
     const shouldReply =
@@ -168,8 +133,8 @@ export class AgentChatMemberMessageSenderService {
       actor,
       thread,
       message,
-      addressing,
-      participation: isInboxEnabled ? participation : undefined,
+      addressing: isInboxEnabled ? addressing : undefined,
+      participation,
     };
     const result: AgentChatMemberMessageResult = shouldReply
       ? await this.sendWithReply({ ...write, execution })
@@ -211,10 +176,8 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     participation,
     execution,
-  }: Pick<
-    AgentChatMemberMessageSendArgs,
-    'actor' | 'message' | 'addressing' | 'execution'
-  > & {
+  }: Pick<AgentChatMemberMessageSendArgs, 'actor' | 'message' | 'execution'> & {
+    addressing?: AgentChatMemberMessageSendArgs['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
     participation?: Pick<
       AgentChatAssistantParticipation,

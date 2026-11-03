@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 
+import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+
 export const sendChatParticipationMessageOperationFactory = ({
   threadId,
   messageId = randomUUID(),
@@ -13,6 +15,7 @@ export const sendChatParticipationMessageOperationFactory = ({
   isAssistantMentioned = false,
   mentionedWorkspaceMemberIds = [],
   recipientWorkspaceMemberIds = [],
+  attachments,
 }: {
   threadId: string;
   messageId?: string;
@@ -23,6 +26,7 @@ export const sendChatParticipationMessageOperationFactory = ({
   isAssistantMentioned?: boolean | null;
   mentionedWorkspaceMemberIds?: string[];
   recipientWorkspaceMemberIds?: string[];
+  attachments?: AiChatFileAttachment[];
 }) => ({
   query: gql`
     mutation SendParticipationMessage(
@@ -35,6 +39,7 @@ export const sendChatParticipationMessageOperationFactory = ({
       $isAssistantMentioned: Boolean
       $mentionedWorkspaceMemberIds: [UUID!]
       $recipientWorkspaceMemberIds: [UUID!]
+      $attachments: [FileAttachmentInput!]
     ) {
       sendChatMessage(
         threadId: $threadId
@@ -46,6 +51,7 @@ export const sendChatParticipationMessageOperationFactory = ({
         isAssistantMentioned: $isAssistantMentioned
         mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
         recipientWorkspaceMemberIds: $recipientWorkspaceMemberIds
+        attachments: $attachments
       ) {
         messageId
         queued
@@ -65,5 +71,6 @@ export const sendChatParticipationMessageOperationFactory = ({
     isAssistantMentioned,
     mentionedWorkspaceMemberIds,
     recipientWorkspaceMemberIds,
+    attachments,
   },
 });

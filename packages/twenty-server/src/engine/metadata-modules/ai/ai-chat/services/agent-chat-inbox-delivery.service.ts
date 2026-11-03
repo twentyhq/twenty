@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -18,18 +18,12 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 export class AgentChatInboxDeliveryService {
   private readonly logger = new Logger(AgentChatInboxDeliveryService.name);
 
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatInboxDeliveryWriterService)
-  private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService;
-
-  @Inject(AgentChatThreadRecordEventService)
-  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
   async deliver({
@@ -61,11 +55,20 @@ export class AgentChatInboxDeliveryService {
       }
     }
 
-    if (isNonEmptyArray(initialRecipientWorkspaceMemberIds)) {
+    const deliveredMentionWorkspaceMemberIdSet = new Set(
+      deliveredMentionWorkspaceMemberIds,
+    );
+    const remainingInitialRecipientWorkspaceMemberIds =
+      initialRecipientWorkspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !deliveredMentionWorkspaceMemberIdSet.has(workspaceMemberId),
+      );
+
+    if (isNonEmptyArray(remainingInitialRecipientWorkspaceMemberIds)) {
       try {
         deliveredRecipientWorkspaceMemberIds = await this.addMembers({
           ...access,
-          workspaceMemberIds: initialRecipientWorkspaceMemberIds,
+          workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
           reason: 'recipient',
         });
       } catch (error) {
@@ -77,9 +80,18 @@ export class AgentChatInboxDeliveryService {
       }
     }
 
+    const deliveredWorkspaceMemberIdSet = new Set([
+      ...deliveredMentionWorkspaceMemberIds,
+      ...deliveredRecipientWorkspaceMemberIds,
+    ]);
+
     return {
       deliveredMentionWorkspaceMemberIds,
-      deliveredRecipientWorkspaceMemberIds,
+      deliveredRecipientWorkspaceMemberIds: [
+        ...new Set(initialRecipientWorkspaceMemberIds),
+      ].filter((workspaceMemberId) =>
+        deliveredWorkspaceMemberIdSet.has(workspaceMemberId),
+      ),
     };
   }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
@@ -41,9 +41,6 @@ const findNewWorkspaceMemberIds = (
 
 @Injectable()
 export class AgentInboxService {
-  @Inject(AgentChatInboxDeliveryService)
-  private readonly inboxDeliveryService: AgentChatInboxDeliveryService;
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -55,6 +52,7 @@ export class AgentInboxService {
     private readonly sharingService: AgentChatSharingService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the

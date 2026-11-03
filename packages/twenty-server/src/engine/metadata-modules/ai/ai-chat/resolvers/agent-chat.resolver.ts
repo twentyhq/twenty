@@ -4,7 +4,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { Inject, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -68,32 +68,17 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 )
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
-  @Inject(AgentChatMemberMessageSenderService)
-  private readonly memberMessageSenderService: AgentChatMemberMessageSenderService;
-
-  @Inject(AgentChatQueueService)
-  private readonly agentChatQueueService: AgentChatQueueService;
-
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
-
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatStreamingService)
-  private readonly agentChatStreamingService: AgentChatStreamingService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
-
-  @Inject(SystemPromptBuilderService)
-  private readonly systemPromptBuilderService: SystemPromptBuilderService;
-
-  @Inject(AgentChatTurnPreflightService)
-  private readonly turnPreflightService: AgentChatTurnPreflightService;
-
-  @Inject(AgentChatThreadLifecycleService)
-  private readonly threadLifecycleService: AgentChatThreadLifecycleService;
+  constructor(
+    private readonly agentChatQueueService: AgentChatQueueService,
+    private readonly threadService: AgentChatThreadService,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly systemPromptBuilderService: SystemPromptBuilderService,
+    private readonly turnPreflightService: AgentChatTurnPreflightService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly memberMessageSenderService: AgentChatMemberMessageSenderService,
+  ) {}
 
   @Query(() => AgentChatThreadDTO)
   async chatThread(

@@ -1,23 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 
 @Injectable()
 export class AgentChatQueueService {
-  @Inject(getAgentHistoryRepositoryToken('agentTurn'))
-  private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>;
-
-  @Inject(getAgentHistoryRepositoryToken('agentMessage'))
-  private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>;
-
-  @Inject(AgentConversationWriterService)
-  private readonly conversationWriterService: AgentConversationWriterService;
+  constructor(
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly conversationWriterService: AgentConversationWriterService,
+  ) {}
 
   async hasQueuedMessages({
     threadId,
