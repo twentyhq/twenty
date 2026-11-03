@@ -15,6 +15,7 @@ import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-prin
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
+import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
@@ -81,19 +82,19 @@ export class AccessPolicyService {
 
   async isToolAccessPolicySatisfied({
     accessPolicy,
-    authPrincipalVariant,
     authContext,
     featureFlagsMap,
   }: {
     accessPolicy: AccessPolicy;
-    authPrincipalVariant: AuthPrincipalVariant | undefined;
     authContext: WorkspaceAuthContext | undefined;
     featureFlagsMap: FeatureFlagMap;
   }): Promise<boolean> {
     if (
       !this.isAuthPrincipalAccepted({
         authPrincipals: this.withAgentsAdmitted(accessPolicy.authPrincipals),
-        authPrincipalVariant,
+        authPrincipalVariant: isDefined(authContext)
+          ? classifyWorkspaceAuthContext(authContext)
+          : undefined,
       }) ||
       isDefined(this.findDisabledFeatureFlag({ accessPolicy, featureFlagsMap }))
     ) {
