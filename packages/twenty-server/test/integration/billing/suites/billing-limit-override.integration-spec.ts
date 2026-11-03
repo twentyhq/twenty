@@ -1,6 +1,7 @@
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { gql } from 'graphql-tag';
@@ -8,7 +9,7 @@ import { type Repository } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { type BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
+import { BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -189,9 +190,7 @@ describe('Billing limit overrides', () => {
       },
     );
 
-    await getAppProviderByClassName<BillingLimitOverrideExpiryCronJob>(
-      'BillingLimitOverrideExpiryCronJob',
-    ).handle();
+    await runSyncCron(BillingLimitOverrideExpiryCronJob);
 
     expect(await usageLimitRepository.existsBy({ id: usageLimitId })).toBe(
       false,

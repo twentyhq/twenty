@@ -9,13 +9,22 @@ export const parseAdminUsageLimitValue = ({
   min: number;
   scale: number;
 }): number | null => {
+  if (!isNonEmptyString(value.trim())) {
+    return null;
+  }
+
   const inputValue = Number(value);
   const scaledValue = Math.round(inputValue * scale);
 
-  return isNonEmptyString(value.trim()) &&
-    Number.isSafeInteger(scaledValue) &&
-    scaledValue >= min &&
-    (scaledValue !== 0 || inputValue === 0)
-    ? scaledValue
-    : null;
+  if (!Number.isSafeInteger(scaledValue) || scaledValue < min) {
+    return null;
+  }
+
+  const isTooSmallToStore = scaledValue === 0 && inputValue !== 0;
+
+  if (isTooSmallToStore) {
+    return null;
+  }
+
+  return scaledValue;
 };

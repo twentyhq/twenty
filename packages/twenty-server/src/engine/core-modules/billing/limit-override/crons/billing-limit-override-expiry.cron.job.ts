@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Logger } from '@nestjs/common';
+import groupBy from 'lodash.groupby';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -10,21 +10,27 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN } from 'src/engine/core-modules/billing/limit-override/constants/billing-limit-override-expiry.cron-pattern.constant';
+import {
+  BillingLimitOverrideExpiryJob,
+  type BillingLimitOverrideExpiryJobData,
+} from 'src/engine/core-modules/billing/limit-override/jobs/billing-limit-override-expiry.job';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 
 @Processor(MessageQueue.cronQueue)
 export class BillingLimitOverrideExpiryCronJob {
-  private readonly logger = new Logger(BillingLimitOverrideExpiryCronJob.name);
-
   constructor(
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: Repository<BillingArrangementEntity>,
-    private readonly usageLimitService: UsageLimitService,
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(BillingLimitOverrideExpiryCronJob.name)
@@ -51,22 +57,28 @@ export class BillingLimitOverrideExpiryCronJob {
       })
       .getMany();
 
-    for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
-      if (!isDefined(usageLimitId)) {
-        continue;
-      }
+    const expiredLimitOverridesByWorkspaceId = groupBy(
+      expiredLimitOverrides,
+      'workspaceId',
+    );
+
+    for (const [workspaceId, workspaceLimitOverrides] of Object.entries(
+      expiredLimitOverridesByWorkspaceId,
+    )) {
+      const usageLimitIds = workspaceLimitOverrides
+        .map(({ usageLimitId }) => usageLimitId)
+        .filter(isDefined);
 
       try {
-        await this.usageLimitService.delete({
-          workspaceId,
-          usageLimitId,
-          isOperator: true,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Could not delete the expired limit override ${usageLimitId} of workspace ${workspaceId}`,
-          error,
+        await this.messageQueueService.add<BillingLimitOverrideExpiryJobData>(
+          BillingLimitOverrideExpiryJob.name,
+          { workspaceId, usageLimitIds },
+          { workspaceId, isWorkspaceJob: true },
         );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: workspaceId },
+        });
       }
     }
   }
