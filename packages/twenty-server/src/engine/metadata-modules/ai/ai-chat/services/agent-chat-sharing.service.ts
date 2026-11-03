@@ -502,7 +502,7 @@ export class AgentChatSharingService {
           id,
           title,
           channelId,
-          lastActivityAt: new Date().toISOString(),
+          lastActivityAt: () => 'clock_timestamp()',
           ...(isPrivate ? { [IS_PRIVATE_COLUMN_NAME]: true } : {}),
         })
         .returning('*')
