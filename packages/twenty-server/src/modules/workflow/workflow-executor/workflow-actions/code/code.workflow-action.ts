@@ -67,21 +67,13 @@ export class CodeWorkflowAction implements WorkflowAction {
     const { authContext, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { code, logicFunctionId } = step.settings.input;
-
-    const result = isDefined(code)
-      ? await this.codeStepRunnerService.run({
-          flatApplication: application,
-          code,
-          payload: logicFunctionInput,
-          ...getUserFromAuthContext(authContext),
-        })
-      : await this.executeLegacyLogicFunction({
-          logicFunctionId,
-          workspaceId,
-          payload: logicFunctionInput,
-          executionContext: { authContext, application },
-        });
+    const result = await this.runCodeStep({
+      code: step.settings.input.code,
+      logicFunctionId: step.settings.input.logicFunctionId,
+      workspaceId,
+      payload: logicFunctionInput,
+      executionContext: { authContext, application },
+    });
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,
@@ -95,6 +87,39 @@ export class CodeWorkflowAction implements WorkflowAction {
     }
 
     return { result: result.data || {} };
+  }
+
+  private async runCodeStep({
+    code,
+    logicFunctionId,
+    workspaceId,
+    payload,
+    executionContext,
+  }: {
+    code: string | undefined;
+    logicFunctionId: string | undefined;
+    workspaceId: string;
+    payload: object;
+    executionContext: Pick<
+      WorkflowExecutionContext,
+      'authContext' | 'application'
+    >;
+  }): Promise<LogicFunctionExecuteResult> {
+    if (isDefined(code)) {
+      return this.codeStepRunnerService.run({
+        flatApplication: executionContext.application,
+        code,
+        payload,
+        ...getUserFromAuthContext(executionContext.authContext),
+      });
+    }
+
+    return this.executeLegacyLogicFunction({
+      logicFunctionId,
+      workspaceId,
+      payload,
+      executionContext,
+    });
   }
 
   // runs started before upgrade:2-56:inline-code-step-sources

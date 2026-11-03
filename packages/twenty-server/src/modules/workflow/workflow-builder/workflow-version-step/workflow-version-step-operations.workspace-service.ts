@@ -23,7 +23,7 @@ import {
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { getLogicFunctionSeedSourceCode } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-source-code.util';
+import { getLogicFunctionSeedSourceCodeOrThrow } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-source-code-or-throw.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
@@ -136,7 +136,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                     logicFunctionInput: defaultInput.logicFunctionInput ?? {},
                   }
                 : {
-                    code: await getLogicFunctionSeedSourceCode(),
+                    code: await getLogicFunctionSeedSourceCodeOrThrow(),
                     logicFunctionInput:
                       defaultInput?.logicFunctionInput ??
                       getFunctionInputFromInputSchema(

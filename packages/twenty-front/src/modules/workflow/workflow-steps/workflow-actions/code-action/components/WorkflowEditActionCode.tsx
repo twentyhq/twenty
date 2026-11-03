@@ -129,30 +129,12 @@ export const WorkflowEditActionCode = ({
       ? { code, logicFunctionInput }
       : { ...action.settings.input, logicFunctionInput };
 
-  const updateOutputSchemaFromTestResult = (testResult: object) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    updateAction({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: buildStepInput(functionInput),
-        outputSchema: getOutputSchemaFromValue(testResult),
-      },
-    });
-  };
-
   const {
     testWorkflowCodeStep,
     isTesting,
     logicFunctionTestData,
     updateLogicFunctionTestInput,
-  } = useTestWorkflowCodeStep({
-    stepId: action.id,
-    onSuccess: updateOutputSchemaFromTestResult,
-  });
+  } = useTestWorkflowCodeStep({ stepId: action.id });
 
   // Read after an await, so it must not be a render-time snapshot
   // oxlint-disable-next-line twenty/no-state-useref
@@ -168,7 +150,6 @@ export const WorkflowEditActionCode = ({
     // Not per keystroke: concurrent dynamic imports resolve out of order
     const inferredJsonSchema = await getInputSchemaFromSourceCode(newCode);
 
-    // A newer edit was made meanwhile; persisting this one would save stale source
     if (codeEditGeneration !== codeEditGenerationRef.current) {
       return;
     }
@@ -250,7 +231,25 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    await testWorkflowCodeStep({ workflowVersionId, code });
+    const codeEditGeneration = codeEditGenerationRef.current;
+
+    const testResult = await testWorkflowCodeStep({ workflowVersionId, code });
+
+    if (
+      !isDefined(testResult) ||
+      codeEditGeneration !== codeEditGenerationRef.current
+    ) {
+      return;
+    }
+
+    updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: buildStepInput(functionInput),
+        outputSchema: getOutputSchemaFromValue(testResult),
+      },
+    });
   };
 
   const handleEditorDidMount = async (

@@ -4,6 +4,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client/react';
 import { useState } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import {
   LogicFunctionExecutionStatus,
@@ -11,13 +12,7 @@ import {
 } from '~/generated/graphql';
 import { sleep } from '~/utils/sleep';
 
-export const useTestWorkflowCodeStep = ({
-  stepId,
-  onSuccess,
-}: {
-  stepId: string;
-  onSuccess?: (result: object) => void;
-}) => {
+export const useTestWorkflowCodeStep = ({ stepId }: { stepId: string }) => {
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
   const [testWorkflowCodeStepMutation] = useMutation(
@@ -48,9 +43,9 @@ export const useTestWorkflowCodeStep = ({
   }: {
     workflowVersionId: string;
     code: string;
-  }) => {
+  }): Promise<object | undefined> => {
     if (isTesting) {
-      return;
+      return undefined;
     }
 
     setIsTesting(true);
@@ -71,10 +66,6 @@ export const useTestWorkflowCodeStep = ({
       const executionResult = result.data?.testWorkflowCodeStep;
       const executionData = executionResult?.data;
 
-      if (isDefined(executionData)) {
-        onSuccess?.(executionData);
-      }
-
       setLogicFunctionTestData((previousTestData) => ({
         ...previousTestData,
         language: 'json',
@@ -90,6 +81,8 @@ export const useTestWorkflowCodeStep = ({
             : undefined,
         },
       }));
+
+      return executionData ?? undefined;
     } catch (error) {
       setLogicFunctionTestData((previousTestData) => ({
         ...previousTestData,
@@ -101,7 +94,8 @@ export const useTestWorkflowCodeStep = ({
           status: LogicFunctionExecutionStatus.ERROR,
           error: JSON.stringify(
             {
-              errorType: error instanceof Error ? error.name : 'Error',
+              errorType:
+                error instanceof Error ? error.name : doNotTranslate('Error'),
               errorMessage:
                 error instanceof Error ? error.message : String(error),
             },
@@ -110,6 +104,8 @@ export const useTestWorkflowCodeStep = ({
           ),
         },
       }));
+
+      return undefined;
     } finally {
       setIsTesting(false);
     }
