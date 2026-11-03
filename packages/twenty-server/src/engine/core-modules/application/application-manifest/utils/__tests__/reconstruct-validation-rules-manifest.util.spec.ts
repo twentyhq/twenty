@@ -12,9 +12,13 @@ const NOW = '2026-11-02T00:00:00.000Z';
 const reconstruct = ({
   isObjectExported = true,
   isErrorFieldResolvable = true,
+  expression = 'isNonEmptyString(reference)',
+  message = 'Message',
 }: {
   isObjectExported?: boolean;
   isErrorFieldResolvable?: boolean;
+  expression?: string;
+  message?: string;
 }) => {
   const applicationAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -40,9 +44,9 @@ const reconstruct = ({
       name: 'Rule',
       description: null,
       icon: null,
-      expression: 'isNonEmptyString(reference)',
+      expression,
       bindings: { reference: 'reference' },
-      message: 'Message',
+      message,
       isActive: true,
       createdAt: NOW,
       updatedAt: NOW,
@@ -70,7 +74,9 @@ describe('reconstructValidationRulesManifest', () => {
   it.each([
     ['object', { isObjectExported: false }],
     ['error field', { isErrorFieldResolvable: false }],
-  ])('leaves out a rule whose %s is not exported', (_, options) => {
+    ['expression', { expression: '' }],
+    ['message', { message: ' ' }],
+  ])('leaves out a rule whose %s cannot be exported', (_, options) => {
     const { validationRules, coverage } = reconstruct(options);
 
     expect(validationRules).toEqual([]);

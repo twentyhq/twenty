@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ValidationRuleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,6 +18,16 @@ import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-valida
 const convertFlatValidationRule = (
   flatValidationRule: FlatValidationRule,
 ): { manifest: ValidationRuleManifest } | { reason: string } => {
+  if (
+    !isNonEmptyString(flatValidationRule.expression.trim()) ||
+    !isNonEmptyString(flatValidationRule.message.trim())
+  ) {
+    return {
+      reason:
+        'The rule has no expression or message yet, so it cannot be written as a definition.',
+    };
+  }
+
   const manifest = fromFlatValidationRuleToValidationRuleManifest({
     flatValidationRule,
   });

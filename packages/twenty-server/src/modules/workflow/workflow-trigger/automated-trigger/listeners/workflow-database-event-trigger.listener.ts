@@ -506,6 +506,7 @@ export class WorkflowDatabaseEventTriggerListener {
       );
 
     return resolveEventsReadableByRole({
+      applicationId,
       roleId:
         findActiveFlatApplicationById(flatApplicationMaps, applicationId)
           ?.defaultRoleId ?? null,

@@ -1,6 +1,5 @@
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
@@ -21,7 +20,7 @@ const getAgentRunRoleIdsFromRolePermissionConfig = (
   return agentRunRoleIds;
 };
 
-// The step's agent acts with the run's permissions, derived again each time the agent continues
+// The run's roles narrow the step's agent, derived again each time the agent continues
 export const buildWorkflowAgentRunExecutionContext = ({
   executionContext,
   turnCreatedBy,
@@ -35,10 +34,7 @@ export const buildWorkflowAgentRunExecutionContext = ({
     : undefined,
   turnCreatedBy,
   userWorkspaceId: getWorkflowRunUserWorkspaceId(executionContext),
-  rolePermissionConfig: executionContext.rolePermissionConfig,
-  usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
   agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(
     executionContext.rolePermissionConfig,
   ),
-  application: executionContext.application,
 });

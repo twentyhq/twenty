@@ -3,14 +3,15 @@ title: Validation Rules
 description: Declare the conditions a record must meet before it can be saved.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Overview
 
 A validation rule is a condition on a record. When it evaluates to false, Twenty rejects the record and shows the rule's message.
 
 <Note>
-  Validation rules are only enforced in workspaces where the feature is available.
+  Validation rules are only enforced in workspaces where the feature is
+  available.
 </Note>
 
 Define a rule with `defineValidationRule` from `twenty-sdk/define`:
@@ -37,16 +38,16 @@ You can also scaffold one with the CLI:
 twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 ```
 
-| Property | Required | Description |
-| --- | --- | --- |
-| `universalIdentifier` | Yes | Stable identifier of the rule |
-| `objectUniversalIdentifier` | Yes | The object the rule applies to. It can be an object of your app or a standard object. |
-| `name` | Yes | Name shown in settings |
-| `expression` | Yes | A `ruleExpression` or a string |
-| `message` | Yes | Message shown when the rule fails |
-| `errorFieldUniversalIdentifier` | No | Field the message is attached to. It must belong to the rule's object. |
-| `description` | No | Longer description |
-| `icon` | No | Icon name |
+| Property                        | Required | Description                                                                           |
+| ------------------------------- | -------- | ------------------------------------------------------------------------------------- |
+| `universalIdentifier`           | Yes      | Stable identifier of the rule                                                         |
+| `objectUniversalIdentifier`     | Yes      | The object the rule applies to. It can be an object of your app or a standard object. |
+| `name`                          | Yes      | Name shown in settings                                                                |
+| `expression`                    | Yes      | A `ruleExpression` or a string                                                        |
+| `message`                       | Yes      | Message shown when the rule fails                                                     |
+| `errorFieldUniversalIdentifier` | No       | Field the message is attached to. It must belong to the rule's object.                |
+| `description`                   | No       | Longer description                                                                    |
+| `icon`                          | No       | Icon name                                                                             |
 
 ## Writing expressions
 
@@ -72,13 +73,14 @@ A rule can read fields you declare, and the [system fields](/developers/extend/a
 
 ## Fields that become unavailable
 
-| Situation | Result |
-| --- | --- |
-| Your app removes a field its rule reads | The sync fails with an error naming the rule and the field |
-| A workspace deactivates a field outside your app | The sync succeeds, the rule stays off and the CLI shows a warning |
-| A workspace deletes a field outside your app, and your rule's expression is unchanged | The sync succeeds, the rule stays off and the CLI shows a warning |
-| A new or edited rule names a field that doesn't exist | The sync fails |
-| A workspace deletes the rule's error field | The sync succeeds, the rule is no longer attached to that field and the CLI shows a warning |
+| Situation                                                                             | Result                                                                                       |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Your app removes a field its rule reads                                               | The sync fails with an error naming the rule and the field                                   |
+| A workspace deactivates a field outside your app                                      | The sync succeeds, the rule stays off and the CLI shows a warning                            |
+| A workspace deletes a field outside your app, and your rule's expression is unchanged | The sync succeeds, the rule stays off and the CLI shows a warning                            |
+| A workspace renames a field outside your app                                          | The sync succeeds and keeps the rule under the new name, which `twenty app pull` writes back |
+| A new or edited rule names a field that doesn't exist                                 | The sync fails                                                                               |
+| A workspace deletes the rule's error field                                            | The sync succeeds, the rule is no longer attached to that field and the CLI shows a warning  |
 
 A sync keeps an existing rule's `isActive`, so a rule a workspace admin turned off stays off. Only new rules start on.
 

@@ -189,6 +189,7 @@ export class StreamAgentChatJob {
           .catch(() => null);
 
     const { finish } = await this.turnStreamService.streamTurn({
+      workspaceId: data.workspaceId,
       claim,
       turnId,
       abortSignal,
