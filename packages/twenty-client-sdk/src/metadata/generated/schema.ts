@@ -1233,12 +1233,8 @@ export interface CommandMenuItem {
     availabilityObjectMetadataId?: Scalars['UUID']
     availabilityType: CommandMenuItemAvailabilityType
     conditionalAvailability?: Scalars['JSON']
-    /** @deprecated Use `conditionalAvailability` instead. */
-    conditionalAvailabilityExpression?: Scalars['String']
     conditionalDisplay?: Scalars['JSON']
     conditionalPinned?: Scalars['JSON']
-    /** @deprecated Use `conditionalPinned` instead. */
-    conditionalPinnedExpression?: Scalars['String']
     coreWorkflowVersionId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     engineComponentKey: EngineComponentKey
@@ -2833,8 +2829,6 @@ export type PageLayoutType = 'DASHBOARD' | 'RECORD_FORM' | 'RECORD_INDEX' | 'REC
 export interface PageLayoutWidget {
     applicationId: Scalars['UUID']
     conditionalAvailability?: Scalars['JSON']
-    /** @deprecated Use `conditionalDisplay` instead. */
-    conditionalAvailabilityExpression?: Scalars['String']
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
     createdAt: Scalars['DateTime']
@@ -5596,12 +5590,8 @@ export interface CommandMenuItemGenqlSelection{
     availabilityObjectMetadataId?: boolean | number
     availabilityType?: boolean | number
     conditionalAvailability?: boolean | number
-    /** @deprecated Use `conditionalAvailability` instead. */
-    conditionalAvailabilityExpression?: boolean | number
     conditionalDisplay?: boolean | number
     conditionalPinned?: boolean | number
-    /** @deprecated Use `conditionalPinned` instead. */
-    conditionalPinnedExpression?: boolean | number
     coreWorkflowVersionId?: boolean | number
     createdAt?: boolean | number
     engineComponentKey?: boolean | number
@@ -5713,7 +5703,7 @@ export interface CreateCalendarEventOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailability?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),conditionalPinned?: (Scalars['JSON'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailability?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null),conditionalPinned?: (Scalars['JSON'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
 
 export interface CreateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),handle: Scalars['String']}
 
@@ -7441,8 +7431,6 @@ export interface PageLayoutTabGenqlSelection{
 export interface PageLayoutWidgetGenqlSelection{
     applicationId?: boolean | number
     conditionalAvailability?: boolean | number
-    /** @deprecated Use `conditionalDisplay` instead. */
-    conditionalAvailabilityExpression?: boolean | number
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection
     createdAt?: boolean | number
@@ -8520,9 +8508,9 @@ export interface UpdatePageLayoutTabInput {conditionalDisplay?: (Scalars['JSON']
 
 export interface UpdatePageLayoutTabWithWidgetsInput {conditionalDisplay?: (Scalars['JSON'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],layoutMode?: (PageLayoutTabLayoutMode | null),position: Scalars['Float'],title: Scalars['String'],widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
-export interface UpdatePageLayoutWidgetInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),isActive?: (Scalars['Boolean'] | null),objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId?: (Scalars['UUID'] | null),position?: (Scalars['JSON'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null)}
+export interface UpdatePageLayoutWidgetInput {conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),isActive?: (Scalars['Boolean'] | null),objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId?: (Scalars['UUID'] | null),position?: (Scalars['JSON'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null)}
 
-export interface UpdatePageLayoutWidgetWithIdInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),id: Scalars['UUID'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
+export interface UpdatePageLayoutWidgetWithIdInput {conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),id: Scalars['UUID'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
 
 export interface UpdatePageLayoutWithTabsInput {isFirstTabPinned?: (Scalars['Boolean'] | null),name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[],type: PageLayoutType}
 

@@ -1360,10 +1360,8 @@ type CommandMenuItem {
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType!
   conditionalAvailability: JSON
-  conditionalAvailabilityExpression: String @deprecated(reason: "Use `conditionalAvailability` instead.")
   conditionalDisplay: JSON
   conditionalPinned: JSON
-  conditionalPinnedExpression: String @deprecated(reason: "Use `conditionalPinned` instead.")
   coreWorkflowVersionId: UUID
   createdAt: DateTime!
   engineComponentKey: EngineComponentKey!
@@ -1534,10 +1532,8 @@ input CreateCommandMenuItemInput {
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   conditionalAvailability: JSON
-  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalAvailability` instead.")
   conditionalDisplay: JSON
   conditionalPinned: JSON
-  conditionalPinnedExpression: String @deprecated(reason: "Ignored. Use `conditionalPinned` instead.")
   coreWorkflowVersionId: UUID
   engineComponentKey: EngineComponentKey!
   frontComponentId: UUID
@@ -3896,7 +3892,6 @@ enum PageLayoutType {
 type PageLayoutWidget {
   applicationId: UUID!
   conditionalAvailability: JSON
-  conditionalAvailabilityExpression: String @deprecated(reason: "Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: WidgetConfiguration!
   createdAt: DateTime!
@@ -5295,7 +5290,6 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
-  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: JSON
   isActive: Boolean
@@ -5307,7 +5301,6 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
-  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: JSON
   id: UUID!

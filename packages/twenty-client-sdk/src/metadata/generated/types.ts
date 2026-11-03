@@ -2948,17 +2948,11 @@ export default {
             "conditionalAvailability": [
                 324
             ],
-            "conditionalAvailabilityExpression": [
-                1
-            ],
             "conditionalDisplay": [
                 324
             ],
             "conditionalPinned": [
                 324
-            ],
-            "conditionalPinnedExpression": [
-                1
             ],
             "coreWorkflowVersionId": [
                 534
@@ -3359,17 +3353,11 @@ export default {
             "conditionalAvailability": [
                 324
             ],
-            "conditionalAvailabilityExpression": [
-                1
-            ],
             "conditionalDisplay": [
                 324
             ],
             "conditionalPinned": [
                 324
-            ],
-            "conditionalPinnedExpression": [
-                1
             ],
             "coreWorkflowVersionId": [
                 534
@@ -10250,9 +10238,6 @@ export default {
             "conditionalAvailability": [
                 324
             ],
-            "conditionalAvailabilityExpression": [
-                1
-            ],
             "conditionalDisplay": [
                 324
             ],
@@ -14100,9 +14085,6 @@ export default {
             ]
         },
         "UpdatePageLayoutWidgetInput": {
-            "conditionalAvailabilityExpression": [
-                1
-            ],
             "conditionalDisplay": [
                 324
             ],
@@ -14132,9 +14114,6 @@ export default {
             ]
         },
         "UpdatePageLayoutWidgetWithIdInput": {
-            "conditionalAvailabilityExpression": [
-                1
-            ],
             "conditionalDisplay": [
                 324
             ],

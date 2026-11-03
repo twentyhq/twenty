@@ -92,22 +92,6 @@ export class CreateCommandMenuItemInput {
   @Field(() => GraphQLJSON, { nullable: true })
   conditionalPinned?: ConditionalDisplay | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-    deprecationReason: 'Ignored. Use `conditionalAvailability` instead.',
-  })
-  conditionalAvailabilityExpression?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-    deprecationReason: 'Ignored. Use `conditionalPinned` instead.',
-  })
-  conditionalPinnedExpression?: string;
-
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
