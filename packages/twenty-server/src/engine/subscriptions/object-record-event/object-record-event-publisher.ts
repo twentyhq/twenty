@@ -1,6 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
@@ -50,6 +51,8 @@ type StreamPermissionsContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
+const SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY = 10;
+
 @Injectable()
 export class ObjectRecordEventPublisher {
   private readonly logger = new Logger(ObjectRecordEventPublisher.name);
@@ -98,6 +101,12 @@ export class ObjectRecordEventPublisher {
       string,
       Promise<WorkspaceAuthContext>
     >();
+
+    await this.prefetchSubscriberAuthContexts({
+      streamsData,
+      workspaceEventBatch: eventBatch,
+      subscriberAuthContexts,
+    });
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -384,6 +393,47 @@ export class ObjectRecordEventPublisher {
   }
 
   // Streams of one member share their auth context within a batch; null keeps the writer's application out
+  // Streams are processed one by one, so membership is looked up ahead, a few subscribers at a time
+  private async prefetchSubscriberAuthContexts({
+    streamsData,
+    workspaceEventBatch,
+    subscriberAuthContexts,
+  }: {
+    streamsData: Map<string, EventStreamData | undefined>;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
+  }): Promise<void> {
+    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
+    const subscribers = [...streamsData.values()]
+      .filter(isDefined)
+      .filter((streamData) =>
+        Object.values(streamData.queries).some(
+          (operationSignature) =>
+            isRecordGqlOperationSignature(operationSignature) &&
+            operationSignature.objectNameSingular === objectNameSingular,
+        ),
+      )
+      .flatMap(({ authContext: { userWorkspaceId, applicationId } }) =>
+        isDefined(userWorkspaceId) ? [{ userWorkspaceId, applicationId }] : [],
+      );
+
+    for (const subscriberChunk of chunk(
+      subscribers,
+      SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY,
+    )) {
+      await Promise.allSettled(
+        subscriberChunk.map(({ userWorkspaceId, applicationId }) =>
+          this.findSubscriberAuthContext({
+            subscriberAuthContexts,
+            workspaceId: workspaceEventBatch.workspaceId,
+            userWorkspaceId,
+            applicationId,
+          }),
+        ),
+      );
+    }
+  }
+
   private findSubscriberAuthContext({
     subscriberAuthContexts,
     workspaceId,
