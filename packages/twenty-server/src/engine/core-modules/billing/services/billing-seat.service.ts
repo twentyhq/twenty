@@ -75,6 +75,24 @@ export class BillingSeatService {
     });
   }
 
+  async isWorkspaceAtSeatLimit(workspaceId: string): Promise<boolean> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return false;
+    }
+
+    const seatArrangements = await this.findSeatArrangements(workspaceId);
+
+    if (seatArrangements.length === 0) {
+      return false;
+    }
+
+    return isSeatLimitReached({
+      memberCount: await this.countWorkspaceMembers(workspaceId),
+      seatArrangements,
+      now: new Date(),
+    });
+  }
+
   async addMemberWithinSeatLimit<TResult>(
     workspaceId: string,
     addMember: () => Promise<TResult>,
