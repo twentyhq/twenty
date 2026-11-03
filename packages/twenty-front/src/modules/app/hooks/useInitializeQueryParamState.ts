@@ -13,6 +13,14 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useInitializeQueryParamState = () => {
   const store = useStore();
   const initializeQueryParamState = useCallback(() => {
+    const storePartner = (value: string) => {
+      const partner = normalizePartner(value);
+
+      if (isDefined(partner)) {
+        store.set(partnerCookieState.atom, { partner });
+      }
+    };
+
     const handlers: Record<string, (value: string) => void> = {
       billingCheckoutSession: (value: string) => {
         const billingCheckoutSession = store.get(
@@ -51,13 +59,8 @@ export const useInitializeQueryParamState = () => {
           store.set(returnToPathState.atom, value);
         }
       },
-      partner: (value: string) => {
-        const partner = normalizePartner(value);
-
-        if (isDefined(partner)) {
-          store.set(partnerCookieState.atom, { partner });
-        }
-      },
+      partner: storePartner,
+      via: storePartner,
     };
 
     const queryParams = new URLSearchParams(window.location.search);

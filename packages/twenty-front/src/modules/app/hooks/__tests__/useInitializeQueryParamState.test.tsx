@@ -41,6 +41,14 @@ describe('useInitializeQueryParamState', () => {
     expect(Cookies.get('partner')).toBe(JSON.stringify({ partner: 'acme' }));
   });
 
+  it('should store the partner from the via param used in partner links', () => {
+    initializeQueryParamStateAt('/welcome?via=NORTHWIND');
+
+    expect(Cookies.get('partner')).toBe(
+      JSON.stringify({ partner: 'northwind' }),
+    );
+  });
+
   it('should not re-render the caller when it stores the partner', () => {
     window.history.pushState({}, '', '/welcome?partner=acme');
 

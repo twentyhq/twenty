@@ -37,6 +37,8 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { WorkspaceCurrentBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-current-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/services/billing-partner-code.service';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -55,6 +57,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CoreEntityCacheModule,
     StripeModule,
     PermissionsModule,
+    SecureHttpClientModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([
@@ -83,6 +86,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPlanService,
     BillingWorkspaceMemberListener,
     BillingService,
+    BillingPartnerCodeService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingUpdateSubscriptionPriceCommand,

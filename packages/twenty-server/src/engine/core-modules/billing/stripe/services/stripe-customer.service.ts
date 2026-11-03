@@ -39,6 +39,22 @@ export class StripeCustomerService {
     });
   }
 
+  async getCustomerPartner(stripeCustomerId: string): Promise<string | null> {
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId);
+
+    if ('deleted' in customer && customer.deleted === true) {
+      return null;
+    }
+
+    return customer.metadata.partner ?? null;
+  }
+
+  async updateCustomerPartner(stripeCustomerId: string, partner: string) {
+    await this.stripe.customers.update(stripeCustomerId, {
+      metadata: { partner },
+    });
+  }
+
   async hasPaymentMethod(stripeCustomerId: string) {
     const { data: paymentMethods } =
       await this.stripe.customers.listPaymentMethods(stripeCustomerId);

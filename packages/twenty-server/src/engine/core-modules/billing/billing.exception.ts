@@ -38,6 +38,8 @@ export enum BillingExceptionCode {
   BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
   BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
   BILLING_CREDIT_TOP_UP_NOT_GRANTED = 'BILLING_CREDIT_TOP_UP_NOT_GRANTED',
+  BILLING_PARTNER_CODE_NOT_FOUND = 'BILLING_PARTNER_CODE_NOT_FOUND',
+  BILLING_PARTNER_CODE_LOCKED = 'BILLING_PARTNER_CODE_LOCKED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -102,6 +104,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`An unexpected billing error occurred. Please contact support.`;
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return msg`Your purchased credits could not be added. Please contact support.`;
+    case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_FOUND:
+      return msg`This partner code does not exist.`;
+    case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
+      return msg`The partner code can no longer be changed after the first payment. Please contact support.`;
     default:
       assertUnreachable(code);
   }

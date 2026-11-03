@@ -1057,6 +1057,13 @@ export type BillingMeteredProduct = BillingProductDto & {
   prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
+export type BillingPartnerCode = {
+  __typename?: 'BillingPartnerCode';
+  /** False once the workspace has made its first payment */
+  isEditable: Scalars['Boolean']['output'];
+  partnerCode?: Maybe<Scalars['String']['output']>;
+};
+
 export type BillingPaymentIntent = {
   __typename?: 'BillingPaymentIntent';
   clientSecret: Scalars['String']['output'];
@@ -3700,6 +3707,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
@@ -4777,6 +4785,11 @@ export type MutationSendMessageCampaignTestArgs = {
 
 export type MutationSetAppKeyValueArgs = {
   input: SetAppKeyValueInput;
+};
+
+
+export type MutationSetBillingPartnerCodeArgs = {
+  partnerCode: Scalars['String']['input'];
 };
 
 
@@ -5882,6 +5895,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
+  billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
