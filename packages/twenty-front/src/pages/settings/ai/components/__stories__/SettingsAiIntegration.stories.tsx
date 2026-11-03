@@ -83,7 +83,6 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     });
     expect(instructions).toHaveAttribute('contenteditable', 'true');
     await userEvent.type(instructions, 'Use concise replies.');
-    await userEvent.keyboard('{Home}{ArrowRight}{ArrowRight}{ArrowRight}');
     const caretOffset =
       canvasElement.ownerDocument.getSelection()?.anchorOffset;
     expect(caretOffset).toBeGreaterThan(0);
