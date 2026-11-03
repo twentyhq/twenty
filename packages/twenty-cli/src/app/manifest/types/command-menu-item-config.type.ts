@@ -5,6 +5,9 @@ export type CommandMenuItemConfig = Omit<
   CommandMenuItemManifest,
   'conditionalAvailability' | 'conditionalPinned' | 'conditionalDisplay'
 > & {
-  conditionalAvailabilityExpression?: string | CompiledConditionExpression;
-  conditionalPinnedExpression?: string | CompiledConditionExpression;
+  conditionalAvailabilityExpression?:
+    | boolean
+    | string
+    | CompiledConditionExpression;
+  conditionalPinnedExpression?: boolean | string | CompiledConditionExpression;
 };

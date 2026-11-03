@@ -75,7 +75,7 @@ const toTypeScriptSource = (formulaString: string): string =>
     .join('');
 
 const collectRepositoryAppExpressions = async (): Promise<string[]> => {
-  const filePaths = await glob(['fixtures/**/*.ts', 'public/**/*.ts'], {
+  const filePaths = await glob(['fixtures/**/*.ts'], {
     cwd: TWENTY_APPS_DIRECTORY,
     ignore: ['**/node_modules/**', '**/dist/**', '**/.twenty/**'],
     absolute: true,

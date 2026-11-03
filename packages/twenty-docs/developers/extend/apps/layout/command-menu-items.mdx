@@ -108,7 +108,7 @@ Combine variables into boolean expressions:
 | Operator | Description |
 |----------|-------------|
 | `isDefined(value)` | `true` if the value is not null/undefined |
-| `isNonEmptyString(value)` | `true` if a text context value (`pageType`, `objectMetadataItem.nameSingular`) is a non-empty string |
+| `isNonEmptyString(value)` | `true` if a text context value (`pageType`, `objectMetadataItem.nameSingular`, `objectMetadataLabel`) is a non-empty string |
 | `includes(list, value)` | `true` if a text context value is one of the listed values, e.g. `includes(["INDEX_PAGE", "RECORD_PAGE"], pageType)` |
 | `includesEvery(array, prop, value)` | `true` if every item's property includes the value |
 | `every(array, prop)` | `true` if the property is truthy on every item |

@@ -1,5 +1,5 @@
 import { type CompiledConditionExpression } from '@/app/source/types/compiled-condition-expression.type';
-import { isObject, isString } from '@sniptt/guards';
+import { isBoolean, isObject, isString } from '@sniptt/guards';
 import { type UniversalConditionalDisplay } from 'twenty-shared/types';
 import {
   compileConditionalAvailabilityExpression,
@@ -11,7 +11,7 @@ export const compileCommandMenuItemConditionExpression = ({
   expressionDescription,
   manifestKey,
 }: {
-  expression: string | CompiledConditionExpression | undefined;
+  expression: boolean | string | CompiledConditionExpression | undefined;
   expressionDescription: string;
   manifestKey: 'conditionalAvailability' | 'conditionalPinned';
 }): {
@@ -21,6 +21,15 @@ export const compileCommandMenuItemConditionExpression = ({
 } => {
   if (!isDefined(expression)) {
     return { errors: [], warnings: [] };
+  }
+
+  if (isBoolean(expression)) {
+    return {
+      errors: [
+        `${expressionDescription} must be written inline in defineCommandMenuItem() so the build can compile it.`,
+      ],
+      warnings: [],
+    };
   }
 
   if (isObject(expression) && 'errorMessage' in expression) {
