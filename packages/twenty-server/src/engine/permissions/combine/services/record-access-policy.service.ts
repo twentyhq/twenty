@@ -27,6 +27,7 @@ import {
   type PermissionsObjectAccessRequest,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
@@ -407,6 +408,16 @@ export class RecordAccessPolicyService {
         }
 
         const principalMetadataMaps = await loadMetadataMaps();
+
+        // A role missing from the cache must not fall through to share or creator admission
+        if (
+          getPermissionsPrincipalRoleIds(principal).some(
+            (roleId) =>
+              !isDefined(principalMetadataMaps.rolesPermissions[roleId]),
+          )
+        ) {
+          return [];
+        }
 
         return filterReadableEvents({
           events: candidateEvents,
