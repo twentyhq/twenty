@@ -166,6 +166,18 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
+    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
+
+    if (
+      !Object.values(streamData.queries).some(
+        (operationSignature) =>
+          isRecordGqlOperationSignature(operationSignature) &&
+          operationSignature.objectNameSingular === objectNameSingular,
+      )
+    ) {
+      return;
+    }
+
     const { applicationId } = subscriberAuthContext;
     const permissionsAuthContext: PermissionsAuthContext = {
       type: 'user',
@@ -182,18 +194,6 @@ export class ObjectRecordEventPublisher {
       );
 
     if (!isDefined(objectsPermissions)) {
-      return;
-    }
-
-    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
-
-    if (
-      !Object.values(streamData.queries).some(
-        (operationSignature) =>
-          isRecordGqlOperationSignature(operationSignature) &&
-          operationSignature.objectNameSingular === objectNameSingular,
-      )
-    ) {
       return;
     }
 
