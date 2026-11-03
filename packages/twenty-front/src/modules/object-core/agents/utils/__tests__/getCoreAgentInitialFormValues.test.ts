@@ -7,6 +7,8 @@ const agent = {
   label: 'Sales assistant',
   description: 'Qualifies leads',
   icon: 'IconRobot',
+  avatarColor: null,
+  avatarShape: null,
   prompt: 'You qualify leads.',
   modelId: 'anthropic/claude-sonnet-5',
   responseFormat: { type: 'json', schema: {} },
