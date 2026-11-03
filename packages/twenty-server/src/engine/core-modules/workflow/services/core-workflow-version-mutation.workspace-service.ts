@@ -221,7 +221,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       );
     }
 
-    // an AI step's kind and agent shape its settings, so switching them rebuilds it like a type change
     const isStepRebuilt =
       existingStep.type !== step.type ||
       isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step });
