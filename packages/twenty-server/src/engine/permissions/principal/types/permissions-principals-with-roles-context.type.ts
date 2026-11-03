@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type PermissionsEphemeralRole } from 'src/engine/permissions/principal/types/permissions-ephemeral-role.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
@@ -36,5 +36,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  scope?: PermissionScope;
+  ephemeralRole?: PermissionsEphemeralRole;
 };

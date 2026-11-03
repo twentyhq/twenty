@@ -6,7 +6,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type PermissionsEphemeralRole } from 'src/engine/permissions/principal/types/permissions-ephemeral-role.type';
 
 // A run never exceeds its agent, its scope nor the agent's application, whoever calls it
 export const buildAgentRunAuthContext = ({
@@ -18,7 +18,7 @@ export const buildAgentRunAuthContext = ({
   authContext: WorkspaceAuthContext;
   agentId?: string;
   application?: FlatApplication;
-  ephemeralRole?: PermissionScope;
+  ephemeralRole?: PermissionsEphemeralRole;
 }): WorkspaceAuthContext => {
   const narrowing = {
     ...(isDefined(agentId) ? { agentId } : {}),

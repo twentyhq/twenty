@@ -21,7 +21,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type PermissionsEphemeralRole } from 'src/engine/permissions/principal/types/permissions-ephemeral-role.type';
 
 // a flag decides objects such as workflows regardless of their object permission, so a scope's explicit deny is applied after
 const narrowObjectsPermissionsToExplicitDenies = ({
@@ -62,7 +62,7 @@ const narrowObjectsPermissionsToExplicitDenies = ({
     objectsPermissions,
   );
 
-export const resolveAiRunPermissionScope = ({
+export const resolveAiRunEphemeralRole = ({
   scope,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -76,7 +76,7 @@ export const resolveAiRunPermissionScope = ({
     FlatEntityMaps<FlatFieldMetadata>,
     'byUniversalIdentifier'
   >;
-}): PermissionScope => {
+}): PermissionsEphemeralRole => {
   if (hasAiRunScopeRepeatedEntries(scope)) {
     throw new PermissionsException(
       'An AI run scope lists an object or field more than once',
