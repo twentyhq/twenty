@@ -2102,55 +2102,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('records hard-throttled runs with their requested id and snapshot', async () => {
-    const fixture = await createFixture({ mirrorless: true });
-    jest
-      .spyOn(
-        global.workflowTestServices.throttling,
-        'throttleOrThrowIfHardLimitReached',
-      )
-      .mockRejectedValue(new Error('Throttle limit reached'));
-    const run = await waitForRun(await runFixture(fixture), 'FAILED');
-
-    expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
-    expect(run.state.flow.steps).toEqual(fixture.steps);
-    expect(run.state.workflowRunError).toBe('Throttle limit reached');
-  });
-
-  it('leaves automated runs queued under the soft limit and drains them when capacity returns', async () => {
-    const fixture = await createFixture({
-      mirrorless: true,
-      triggerType: 'WEBHOOK',
-      triggerSettings: {
-        httpMethod: 'POST',
-        authentication: null,
-        expectedBody: {},
-      },
-    });
-    const capacity = jest
-      .spyOn(
-        global.workflowTestServices.throttling,
-        'consumeRemainingRunsToEnqueueCount',
-      )
-      .mockResolvedValue(0);
-    const runId = await runFixture(fixture);
-    await waitForRun(runId, 'NOT_STARTED');
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    expect((await getRun(runId)).status).toBe('NOT_STARTED');
-    capacity.mockRestore();
-    await global.app
-      .get<MessageQueueService>(getQueueToken(MessageQueue.workflowQueue))
-      .add(
-        'WorkflowRunEnqueueJob',
-        { workspaceId, isCacheMode: false },
-        {
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
-    await waitForRun(runId, 'COMPLETED');
-  });
-
   it('fails the run when the subscription is inactive', async () => {
     const fixture = await createFixture({ mirrorless: true });
     const subscriptionCheck = jest

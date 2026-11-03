@@ -53,7 +53,6 @@ export class WorkflowRunWorkspaceService {
     workflowRunId,
     status,
     triggerPayload,
-    error,
     workspaceId,
   }: {
     coreWorkflowId: string;
@@ -64,13 +63,9 @@ export class WorkflowRunWorkspaceService {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
     createdBy: ActorMetadata;
-    status:
-      | WorkflowRunStatus.NOT_STARTED
-      | WorkflowRunStatus.ENQUEUED
-      | WorkflowRunStatus.FAILED;
+    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
     triggerPayload: object;
     workflowRunId?: string;
-    error?: string;
     workspaceId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -105,7 +100,7 @@ export class WorkflowRunWorkspaceService {
         createdBy,
         status,
         position,
-        state: this.getInitState({ trigger, steps }, triggerPayload, error),
+        state: this.getInitState({ trigger, steps }, triggerPayload),
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
       });
 
@@ -617,7 +612,6 @@ export class WorkflowRunWorkspaceService {
   private getInitState(
     workflowVersion: Pick<WorkflowVersionWorkspaceEntity, 'trigger' | 'steps'>,
     triggerPayload: object,
-    error?: string,
   ): WorkflowRunState | undefined {
     if (
       !isDefined(workflowVersion.trigger) ||
@@ -640,7 +634,6 @@ export class WorkflowRunWorkspaceService {
           ]),
         ),
       },
-      workflowRunError: error,
     };
   }
 

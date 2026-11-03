@@ -1,8 +1,8 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
-import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -69,11 +69,6 @@ const buildService = (triggerType: WorkflowTriggerType) => {
     {
       getSubscriptionInactiveReason: jest.fn().mockResolvedValue(undefined),
     } as never,
-    {
-      throttleOrThrowIfHardLimitReached: jest.fn(),
-      increaseWorkflowRunNotStartedCount: jest.fn(),
-    } as never,
-    {} as never,
     new WorkflowRunJobScopeWorkspaceService(
       workspaceCacheService as never,
       {} as never,
@@ -97,59 +92,48 @@ const buildService = (triggerType: WorkflowTriggerType) => {
     }
   };
 
-  return { runBothWorkflows, messageQueueService };
+  return { runBothWorkflows, messageQueueService, workflowRunWorkspaceService };
 };
 
 describe('CoreWorkflowRunnerService', () => {
-  it('scopes the run job of each workflow to the application owning it', async () => {
-    const { runBothWorkflows, messageQueueService } = buildService(
-      WorkflowTriggerType.MANUAL,
-    );
+  it.each([WorkflowTriggerType.MANUAL, WorkflowTriggerType.DATABASE_EVENT])(
+    'enqueues each %s run right away, scoped to the application owning its workflow',
+    async (triggerType) => {
+      const {
+        runBothWorkflows,
+        messageQueueService,
+        workflowRunWorkspaceService,
+      } = buildService(triggerType);
 
-    await runBothWorkflows();
+      await runBothWorkflows();
 
-    expect(messageQueueService.add.mock.calls).toEqual([
-      [
-        RUN_WORKFLOW_JOB_NAME,
-        { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-a' },
-        {
-          id: 'run-of-workflow-a',
-          doNotCheckDuplicatesBasedOnPrefix: true,
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: 'application-a-universal-id',
-        },
-      ],
-      [
-        RUN_WORKFLOW_JOB_NAME,
-        { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-b' },
-        {
-          id: 'run-of-workflow-b',
-          doNotCheckDuplicatesBasedOnPrefix: true,
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: 'application-b-universal-id',
-        },
-      ],
-    ]);
-  });
-
-  it('keeps the workspace dispatcher of queued runs out of any application scope', async () => {
-    const { runBothWorkflows, messageQueueService } = buildService(
-      WorkflowTriggerType.DATABASE_EVENT,
-    );
-
-    await runBothWorkflows();
-
-    expect(messageQueueService.add.mock.calls).toEqual([
-      [
-        WorkflowRunEnqueueJob.name,
-        { workspaceId: WORKSPACE_ID, isCacheMode: true },
-        { workspaceId: WORKSPACE_ID, isWorkspaceJob: true },
-      ],
-      [
-        WorkflowRunEnqueueJob.name,
-        { workspaceId: WORKSPACE_ID, isCacheMode: true },
-        { workspaceId: WORKSPACE_ID, isWorkspaceJob: true },
-      ],
-    ]);
-  });
+      expect(
+        workflowRunWorkspaceService.createCoreWorkflowRun.mock.calls.map(
+          ([{ status }]) => status,
+        ),
+      ).toEqual([WorkflowRunStatus.ENQUEUED, WorkflowRunStatus.ENQUEUED]);
+      expect(messageQueueService.add.mock.calls).toEqual([
+        [
+          RUN_WORKFLOW_JOB_NAME,
+          { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-a' },
+          {
+            id: 'run-of-workflow-a',
+            doNotCheckDuplicatesBasedOnPrefix: true,
+            workspaceId: WORKSPACE_ID,
+            applicationUniversalIdentifier: 'application-a-universal-id',
+          },
+        ],
+        [
+          RUN_WORKFLOW_JOB_NAME,
+          { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-b' },
+          {
+            id: 'run-of-workflow-b',
+            doNotCheckDuplicatesBasedOnPrefix: true,
+            workspaceId: WORKSPACE_ID,
+            applicationUniversalIdentifier: 'application-b-universal-id',
+          },
+        ],
+      ]);
+    },
+  );
 });

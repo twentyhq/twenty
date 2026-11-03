@@ -21,8 +21,6 @@ export enum MetricsKeys {
   WorkflowRunCompleted = 'workflow-run/completed',
   WorkflowRunFailed = 'workflow-run/failed',
   WorkflowRunStopped = 'workflow-run/stopped',
-  WorkflowRunThrottled = 'workflow-run/throttled',
-  WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
   WorkflowRunSystemError = 'workflow-run/system-error',
   WorkflowRunStuckRunningDetected = 'workflow-run/stuck-running/detected',
   WorkflowRunStuckRunningFalsePositive = 'workflow-run/stuck-running/false-positive',

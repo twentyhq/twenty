@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
@@ -11,6 +12,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -22,13 +24,20 @@ import {
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckRunningRunsMonitorCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-monitor-cache-key.util';
 import { getStuckStoppingRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+
+type WorkflowRunReference = Pick<
+  WorkflowRunWorkspaceEntity,
+  'id' | 'coreWorkflowId'
+>;
 
 @Injectable()
 export class WorkflowHandleStaledRunsWorkspaceService {
@@ -37,8 +46,8 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   );
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
@@ -46,8 +55,28 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
+  // A run of a tenant with a backlog can wait in the queue past the threshold, so only a run whose job is gone gets a new one
   async handleStaledRunsForWorkspace(workspaceId: string) {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const staledRuns = await this.collectRuns({
+      workspaceId,
+      findOptions: getStaledRunsFindOptions(),
+    });
+
+    if (staledRuns.length === 0) {
+      return;
+    }
+
+    const hasInFlightJob = await this.buildInFlightJobLookup();
+    const lostRuns = staledRuns.filter(({ id }) => !hasInFlightJob(id));
+
+    if (lostRuns.length === 0) {
+      return;
+    }
+
+    const resolveJobScope =
+      await this.workflowRunJobScopeWorkspaceService.getCoreWorkflowJobScopeResolver(
+        workspaceId,
+      );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
@@ -55,54 +84,36 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           WorkflowRunWorkspaceEntity,
         );
 
-      const staledRunsCount = await workflowRunRepository.count({
-        where: getStaledRunsFindOptions(),
-      });
-
-      if (staledRunsCount <= 0) {
-        return;
-      }
-
-      const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
-
-      for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
-        const staledWorkflowRuns = await workflowRunRepository.find({
-          where: getStaledRunsFindOptions(),
-          select: {
-            id: true,
-          },
-          order: {
-            createdAt: 'ASC',
-          },
-          take: QUERY_MAX_RECORDS,
-        });
-
-        if (staledWorkflowRuns.length <= 0) {
-          break;
-        }
-
+      for (const lostRunsBatch of chunk(lostRuns, QUERY_MAX_RECORDS)) {
         await workflowRunRepository.update(
-          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+          lostRunsBatch.map(({ id }) => id),
           {
-            enqueuedAt: null,
-            status: WorkflowRunStatus.NOT_STARTED,
+            status: WorkflowRunStatus.ENQUEUED,
+            enqueuedAt: new Date().toISOString(),
           },
         );
       }
+    }, buildSystemAuthContext(workspaceId));
 
-      await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
-        workspaceId,
+    for (const { id: workflowRunId, coreWorkflowId } of lostRuns) {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        { workflowRunId, workspaceId },
+        buildRunWorkflowJobOptions({
+          workflowRunId,
+          scope: resolveJobScope(coreWorkflowId),
+        }),
       );
-    }, authContext);
+    }
   }
 
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
-    const stuckStoppingRunIds = await this.collectRunIds({
+    const stuckStoppingRuns = await this.collectRuns({
       workspaceId,
       findOptions: getStuckStoppingRunsFindOptions(),
     });
 
-    for (const workflowRunId of stuckStoppingRunIds) {
+    for (const { id: workflowRunId } of stuckStoppingRuns) {
       try {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
@@ -127,27 +138,19 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       (await this.cacheStorageService.get<Record<string, string>>(cacheKey)) ??
       {};
 
-    const stuckRunningRunIds = await this.collectRunIds({
+    const stuckRunningRuns = await this.collectRuns({
       workspaceId,
       findOptions: getStuckRunningRunsFindOptions(),
     });
 
     if (
-      stuckRunningRunIds.length === 0 &&
+      stuckRunningRuns.length === 0 &&
       Object.keys(flaggedRuns).length === 0
     ) {
       return;
     }
 
-    const inFlightJobs =
-      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
-
-    const hasInFlightJob = (workflowRunId: string) =>
-      inFlightJobs.some(
-        (job) =>
-          job.id?.startsWith(`${workflowRunId}-`) ||
-          job.data?.workflowRunId === workflowRunId,
-      );
+    const hasInFlightJob = await this.buildInFlightJobLookup();
 
     const stillFlaggedRuns: Record<string, string> = {};
 
@@ -187,7 +190,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       }
     }
 
-    for (const workflowRunId of stuckRunningRunIds) {
+    for (const { id: workflowRunId } of stuckRunningRuns) {
       if (
         isDefined(flaggedRuns[workflowRunId]) ||
         hasInFlightJob(workflowRunId)
@@ -273,13 +276,33 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     return WorkflowRunStatus.COMPLETED;
   }
 
-  private async collectRunIds({
+  private async buildInFlightJobLookup(): Promise<
+    (workflowRunId: string) => boolean
+  > {
+    const inFlightJobs =
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+
+    const workflowRunIdsWithJob = new Set(
+      inFlightJobs
+        .flatMap((job) => [
+          job.data?.workflowRunId,
+          isDefined(job.id) ? getQueueJobIdPrefix(job.id) : undefined,
+        ])
+        .filter(isDefined),
+    );
+
+    return (workflowRunId) => workflowRunIdsWithJob.has(workflowRunId);
+  }
+
+  private async collectRuns({
     workspaceId,
     findOptions,
   }: {
     workspaceId: string;
-    findOptions: FindOptionsWhere<WorkflowRunWorkspaceEntity>;
-  }): Promise<string[]> {
+    findOptions:
+      | FindOptionsWhere<WorkflowRunWorkspaceEntity>
+      | FindOptionsWhere<WorkflowRunWorkspaceEntity>[];
+  }): Promise<WorkflowRunReference[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -288,22 +311,22 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           WorkflowRunWorkspaceEntity,
         );
 
-      const runIds: string[] = [];
-      let page: WorkflowRunWorkspaceEntity[];
+      const runs: WorkflowRunReference[] = [];
+      let page: WorkflowRunReference[];
 
       do {
         page = await workflowRunRepository.find({
           where: findOptions,
-          select: { id: true },
+          select: { id: true, coreWorkflowId: true },
           order: { createdAt: 'ASC', id: 'ASC' },
           take: QUERY_MAX_RECORDS,
-          skip: runIds.length,
+          skip: runs.length,
         });
 
-        runIds.push(...page.map((workflowRun) => workflowRun.id));
+        runs.push(...page);
       } while (page.length === QUERY_MAX_RECORDS);
 
-      return runIds;
+      return runs;
     }, authContext);
   }
 }

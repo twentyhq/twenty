@@ -2280,42 +2280,6 @@ export class ConfigVariables {
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
