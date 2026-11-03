@@ -52,7 +52,7 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
         sharp,
         background,
         composites: [...layout.composites, ...layout.recordingComposites],
-      })) ?? notRecordingImage;
+      }).catch(() => undefined)) ?? notRecordingImage;
 
     return {
       in_call_recording: { kind: 'jpeg', b64_data: recordingImage },

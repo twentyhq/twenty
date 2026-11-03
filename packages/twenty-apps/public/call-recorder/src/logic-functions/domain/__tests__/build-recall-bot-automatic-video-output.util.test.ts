@@ -189,6 +189,23 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     );
   });
 
+  it('falls back to the plain frame when the recording frame fails', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'MINIMAL');
+    vi.doMock('src/logic-functions/domain/build-bot-image.util', () => ({
+      buildBotImage: vi
+        .fn()
+        .mockResolvedValueOnce('PLAIN_FRAME')
+        .mockRejectedValueOnce(new Error('encode failed')),
+    }));
+
+    expect(await buildOutput()).toEqual({
+      in_call_recording: { kind: 'jpeg', b64_data: 'PLAIN_FRAME' },
+      in_call_not_recording: { kind: 'jpeg', b64_data: 'PLAIN_FRAME' },
+    });
+
+    vi.doUnmock('src/logic-functions/domain/build-bot-image.util');
+  });
+
   it('sends no image when an asset cannot be downloaded', async () => {
     vi.stubEnv('CALL_RECORDER_STYLE', 'TWENTY');
     fetchMock.mockResolvedValue(new Response(null, { status: 503 }));

@@ -39,7 +39,9 @@ export const getWorkspaceBranding = async (): Promise<WorkspaceBranding> => {
     });
 
     const logoUrl = queryResult.currentWorkspace?.logo;
-    const displayName = queryResult.currentWorkspace?.displayName?.trim();
+    const displayName = queryResult.currentWorkspace?.displayName
+      ?.replace(/\s+/gu, ' ')
+      .trim();
 
     return {
       logo: isNonEmptyString(logoUrl) ? await downloadLogo(logoUrl) : undefined,

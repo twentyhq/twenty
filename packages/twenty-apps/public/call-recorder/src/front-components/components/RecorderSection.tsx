@@ -46,7 +46,7 @@ const StyledPreviewCaption = styled.figcaption`
 const getInitialStyle = (): CallRecorderStyle => {
   const value = getApplicationVariableValue(
     CALL_RECORDER_STYLE_FIELD.variableKey,
-  );
+  ).trim();
 
   return isCallRecorderStyle(value) ? value : DEFAULT_CALL_RECORDER_STYLE;
 };
