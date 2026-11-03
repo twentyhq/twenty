@@ -17,19 +17,19 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 
-type EmailThreadWidgetProps = {
+type EmailThreadWidgetContentProps = {
   messages: EmailThreadMessageWithSender[];
   lastMessage: EmailThreadMessageWithSender;
   loading: boolean;
   onFetchMoreMessages: () => void;
 };
 
-export const EmailThreadWidget = ({
+export const EmailThreadWidgetContent = ({
   messages,
   lastMessage,
   loading,
   onFetchMoreMessages,
-}: EmailThreadWidgetProps) => {
+}: EmailThreadWidgetContentProps) => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 

@@ -1,13 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
-import { useOutgoingMessageIds } from '@/activities/emails/hooks/useOutgoingMessageIds';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { getOutgoingMessageIds } from '@/activities/emails/utils/getOutgoingMessageIds';
 import { groupChatMessagesBySender } from '@/activities/emails/utils/groupChatMessagesBySender';
-import { isNull } from '@sniptt/guards';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -24,13 +23,17 @@ type ChatThreadMessagesProps = {
 };
 
 export const ChatThreadMessages = ({ messages }: ChatThreadMessagesProps) => {
-  const messageIds = useMemo(() => messages.map(({ id }) => id), [messages]);
-  const outgoingMessageIds = useOutgoingMessageIds(messageIds);
   const { t } = useLingui();
+  const { channels, hasLoaded } = useMyMessageChannels();
 
-  if (isNull(outgoingMessageIds)) {
+  if (!hasLoaded) {
     return <EmailLoader loadingText={t`Loading thread`} />;
   }
+
+  const outgoingMessageIds = getOutgoingMessageIds({
+    messages,
+    viewerMessageChannelIds: new Set(channels.map(({ id }) => id)),
+  });
 
   const groups = groupChatMessagesBySender(messages, outgoingMessageIds);
 

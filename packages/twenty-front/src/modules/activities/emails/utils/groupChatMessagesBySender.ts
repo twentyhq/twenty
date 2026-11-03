@@ -5,8 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const groupChatMessagesBySender = (
   messages: EmailThreadMessageWithSender[],
   outgoingMessageIds: ReadonlySet<string>,
-): ChatMessageGroup[] =>
-  messages.reduce<ChatMessageGroup[]>((groups, message) => {
+): ChatMessageGroup[] => {
+  const groups: ChatMessageGroup[] = [];
+
+  for (const message of messages) {
     const isOutgoing = outgoingMessageIds.has(message.id);
     const lastGroup = groups.at(-1);
     const lastSenderHandle = lastGroup?.messages.at(-1)?.sender?.handle;
@@ -17,9 +19,10 @@ export const groupChatMessagesBySender = (
       lastSenderHandle === message.sender.handle
     ) {
       lastGroup.messages.push(message);
-
-      return groups;
+    } else {
+      groups.push({ id: message.id, isOutgoing, messages: [message] });
     }
+  }
 
-    return [...groups, { id: message.id, isOutgoing, messages: [message] }];
-  }, []);
+  return groups;
+};

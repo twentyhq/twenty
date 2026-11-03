@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import Linkify from 'linkify-react';
 
+import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/activities/emails/constants/ChatMessageBubbleMaxWidth';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
@@ -39,7 +40,7 @@ const StyledBubble = styled.div<{ isOutgoing: boolean }>`
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-  max-width: 85%;
+  max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
   overflow-wrap: break-word;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   white-space: pre-line;

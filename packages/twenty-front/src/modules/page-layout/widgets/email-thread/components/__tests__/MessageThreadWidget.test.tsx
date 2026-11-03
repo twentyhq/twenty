@@ -7,18 +7,14 @@ import { MessageThreadWidget } from '@/page-layout/widgets/email-thread/componen
 import { MessageChannelType } from '~/generated/graphql';
 
 const mockUseMessageThreadChannel = jest.fn();
+const mockUseEmailThread = jest.fn();
 
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
   useTargetRecord: () => ({ id: 'thread-id' }),
 }));
 
 jest.mock('@/activities/emails/hooks/useEmailThread', () => ({
-  useEmailThread: () => ({
-    thread: { id: 'thread-id' },
-    messages: [{ id: 'message-id' }],
-    fetchMoreMessages: jest.fn(),
-    threadLoading: false,
-  }),
+  useEmailThread: () => mockUseEmailThread(),
 }));
 
 jest.mock('@/activities/emails/hooks/useMessageThreadChannel', () => ({
@@ -31,8 +27,8 @@ jest.mock(
 );
 
 jest.mock(
-  '@/page-layout/widgets/email-thread/components/EmailThreadWidget',
-  () => ({ EmailThreadWidget: () => <div>Email thread</div> }),
+  '@/page-layout/widgets/email-thread/components/EmailThreadWidgetContent',
+  () => ({ EmailThreadWidgetContent: () => <div>Email thread</div> }),
 );
 
 const renderWidget = () =>
@@ -42,33 +38,51 @@ const renderWidget = () =>
     </I18nProvider>,
   );
 
+const mockThread = ({ threadLoading = false } = {}) =>
+  mockUseEmailThread.mockReturnValue({
+    thread: { id: 'thread-id' },
+    messages: [{ id: 'message-id' }],
+    fetchMoreMessages: jest.fn(),
+    threadLoading,
+  });
+
+const mockChannel = (type: MessageChannelType) =>
+  mockUseMessageThreadChannel.mockReturnValue({
+    messageThreadChannel: { type, provider: 'app', applicationId: null },
+    messageThreadChannelLoading: false,
+  });
+
 describe('MessageThreadWidget', () => {
-  it.each([MessageChannelType.APP, MessageChannelType.SMS])(
-    'renders %s threads as a chat',
-    (type) => {
-      mockUseMessageThreadChannel.mockReturnValue({
-        messageThreadChannel: { type, provider: 'app', applicationId: null },
-        messageThreadChannelLoading: false,
-      });
+  beforeEach(() => {
+    mockThread();
+  });
 
-      renderWidget();
-
-      expect(screen.getByText('Chat thread')).toBeInTheDocument();
-    },
-  );
-
-  it('renders email threads as an email thread', () => {
-    mockUseMessageThreadChannel.mockReturnValue({
-      messageThreadChannel: {
-        type: MessageChannelType.EMAIL,
-        provider: 'google',
-        applicationId: null,
-      },
-      messageThreadChannelLoading: false,
-    });
+  it('renders app threads as a chat', () => {
+    mockChannel(MessageChannelType.APP);
 
     renderWidget();
 
-    expect(screen.getByText('Email thread')).toBeInTheDocument();
+    expect(screen.getByText('Chat thread')).toBeInTheDocument();
+  });
+
+  it.each([MessageChannelType.EMAIL, MessageChannelType.SMS])(
+    'renders %s threads as an email thread',
+    (type) => {
+      mockChannel(type);
+
+      renderWidget();
+
+      expect(screen.getByText('Email thread')).toBeInTheDocument();
+    },
+  );
+
+  it('keeps the thread on screen while the next page of messages loads', () => {
+    mockThread({ threadLoading: true });
+    mockChannel(MessageChannelType.APP);
+
+    renderWidget();
+
+    expect(screen.getByText('Chat thread')).toBeInTheDocument();
+    expect(screen.queryByText('Loading thread')).not.toBeInTheDocument();
   });
 });

@@ -5,7 +5,7 @@ import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTim
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { ChatThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent';
-import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
+import { EmailThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/EmailThreadWidgetContent';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import {
@@ -34,7 +34,10 @@ export const MessageThreadWidget = ({
 
   const lastMessage = messages.at(-1);
 
-  if (threadLoading || messageThreadChannelLoading) {
+  const isFirstLoad =
+    threadLoading && (!isDefined(thread) || !isDefined(lastMessage));
+
+  if (isFirstLoad || messageThreadChannelLoading) {
     return (
       <StyledWidgetContentContainer>
         <WidgetRelationsHeader />
@@ -75,7 +78,7 @@ export const MessageThreadWidget = ({
   }
 
   return (
-    <EmailThreadWidget
+    <EmailThreadWidgetContent
       messages={messages}
       lastMessage={lastMessage}
       loading={threadLoading}
