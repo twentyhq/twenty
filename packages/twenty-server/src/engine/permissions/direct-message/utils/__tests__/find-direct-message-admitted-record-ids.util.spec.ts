@@ -16,9 +16,12 @@ import {
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordAccessSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-access-snapshots.util';
+import { DIRECT_MESSAGE_ROW_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-chat/row-access/direct-message-row-access-policy';
 import { type DirectMessagePermissionObject } from 'src/engine/permissions/direct-message/types/direct-message-permission-object.type';
 import { type DirectMessageThreadPair } from 'src/engine/permissions/direct-message/types/direct-message-thread-pair.type';
 import { findDirectMessageAdmittedRecordIds } from 'src/engine/permissions/direct-message/utils/find-direct-message-admitted-record-ids.util';
+import { validateDirectMessageRecordsForWriteOrThrow } from 'src/engine/permissions/direct-message/utils/validate-direct-message-records-for-write-or-throw.util';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 
 const MEMBER_ID = 'member-one';
 const PEER_ID = 'member-two';
@@ -199,6 +202,31 @@ describe('direct message record admission', () => {
     });
   });
 
+  it('preserves ordinary chat creation', async () => {
+    const request = buildRequest();
+
+    request.operationType = 'insert';
+    request.records = [{ id: REGULAR_THREAD_ID, ...regularThreadPair }];
+
+    await expect(
+      validateDirectMessageRecordsForWriteOrThrow(request),
+    ).resolves.toBeUndefined();
+  });
+
+  it('rejects target insertion without DM write access', async () => {
+    const request = buildRequest({ objectName: 'agentChatThreadTarget' });
+
+    request.operationType = 'insert';
+    request.records = [{ id: 'target-id', threadId: DIRECT_MESSAGE_ID }];
+    request.context.findAdmittedRecordIds = async () => new Set();
+
+    await expect(
+      validateDirectMessageRecordsForWriteOrThrow(request),
+    ).rejects.toMatchObject({
+      code: PermissionsExceptionCode.PERMISSION_DENIED,
+    });
+  });
+
   it('keeps a DM-to-ordinary-thread reparent event out of the outsider admitted set', async () => {
     const request = buildRequest({ objectName: 'agentChatThreadTarget' });
 
@@ -230,5 +258,47 @@ describe('direct message record admission', () => {
     expect(await findDirectMessageAdmittedRecordIds(request)).toEqual(
       new Set(['target-id']),
     );
+  });
+
+  it('rejects changing the canonical member pair through generic updates', async () => {
+    const request = buildRequest();
+
+    request.operationType = 'update';
+    request.records = [
+      {
+        id: DIRECT_MESSAGE_ID,
+        ...directMessagePair,
+        directMessageSecondWorkspaceMemberId: OUTSIDER_ID,
+      },
+    ];
+
+    await expect(
+      DIRECT_MESSAGE_ROW_ACCESS_POLICY.validateWritesOrThrow({
+        ...request,
+        recordsBefore: [{ id: DIRECT_MESSAGE_ID, ...directMessagePair }],
+        targetRelations: [],
+        findReadableRecordIds: async () => new Set(),
+      }),
+    ).rejects.toMatchObject({
+      code: PermissionsExceptionCode.PERMISSION_DENIED,
+    });
+  });
+
+  it('rejects a pair member moving DM history into an ordinary thread', async () => {
+    const request = buildRequest({ objectName: 'agentChatThreadTarget' });
+
+    request.operationType = 'update';
+    request.records = [{ id: 'target-id', threadId: REGULAR_THREAD_ID }];
+
+    await expect(
+      DIRECT_MESSAGE_ROW_ACCESS_POLICY.validateWritesOrThrow({
+        ...request,
+        recordsBefore: [{ id: 'target-id', threadId: DIRECT_MESSAGE_ID }],
+        targetRelations: [],
+        findReadableRecordIds: async () => new Set(),
+      }),
+    ).rejects.toMatchObject({
+      code: PermissionsExceptionCode.PERMISSION_DENIED,
+    });
   });
 });

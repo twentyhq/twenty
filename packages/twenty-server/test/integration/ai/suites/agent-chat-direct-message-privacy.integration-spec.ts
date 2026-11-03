@@ -1,6 +1,7 @@
 import { parse } from 'graphql';
 
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { readChatThreadFieldOperationFactory } from 'test/integration/graphql/utils/read-chat-thread-field-operation-factory.util';
 import { readSharedChatThreadOperationFactory } from 'test/integration/graphql/utils/read-shared-chat-thread-operation-factory.util';
@@ -234,6 +235,38 @@ describe('Direct message pair privacy', () => {
         operationType: 'update',
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+  });
+
+  it('rejects canonical identity fields through generic creation', async () => {
+    for (const data of [
+      { conversationType: 'DIRECT_MESSAGE' },
+      {
+        directMessageFirstWorkspaceMemberId:
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        directMessageSecondWorkspaceMemberId:
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+    ]) {
+      const id = context.registerThread();
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          data: { id, ...data },
+          gqlFields: 'id',
+        }),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toEqual([
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            code: 'FORBIDDEN',
+            subCode: 'PERMISSION_DENIED',
+          }),
+        }),
+      ]);
+      expect(await context.readThread(id)).toBeUndefined();
+    }
   });
 
   it('hides the DM and its participant from an administrator with stray member and role grants', async () => {
