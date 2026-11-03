@@ -450,21 +450,15 @@ export class AgentRunnerService {
           wakeUpId,
           outcomeType: outcome.type,
         });
-        const result:
-          | AgentRunnerResult
-          | typeof CONTINUATION_INPUT_REJECTED
-          | null =
-          continuation === CONTINUATION_INPUT_REJECTED
-            ? CONTINUATION_INPUT_REJECTED
-            : await this.continueSuspendedRun({
-                workspaceId,
-                threadId,
-                suspension: currentSuspension,
-                isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
-                outcome,
-                stream,
-                continuation,
-              });
+        const result = await this.continueSuspendedRun({
+          workspaceId,
+          threadId,
+          suspension: currentSuspension,
+          isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
+          outcome,
+          stream,
+          continuation,
+        });
 
         if (result === CONTINUATION_INPUT_REJECTED) {
           await this.publishContinuationEvent({
@@ -795,8 +789,12 @@ export class AgentRunnerService {
     suspension: AgentRunSuspension;
     isAwaitingAnswer: boolean;
     stream: AgentRunStream;
-    continuation: RunContinuation;
+    continuation: RunContinuation | typeof CONTINUATION_INPUT_REJECTED;
   }): Promise<AgentRunnerResult | typeof CONTINUATION_INPUT_REJECTED | null> {
+    if (continuation === CONTINUATION_INPUT_REJECTED) {
+      return CONTINUATION_INPUT_REJECTED;
+    }
+
     const { caller, runSpec } = suspension;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -1190,17 +1188,23 @@ export class AgentRunnerService {
           durationMs: Date.now() - startedAtMs,
         }),
       });
-    const outcome: AgentRunnerOutcome = isAborted
-      ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
-      : await this.settleTurn({
-          input,
-          execution,
-          wait,
-          isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
-          summary,
-          suspension,
-          stream,
-        });
+    if (isAborted) {
+      return {
+        summary,
+        outcome: { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR },
+        continuationCompletion,
+      };
+    }
+
+    const outcome = await this.settleTurn({
+      input,
+      execution,
+      wait,
+      isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
+      summary,
+      suspension,
+      stream,
+    });
 
     return { summary, outcome, continuationCompletion };
   }
