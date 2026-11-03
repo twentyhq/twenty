@@ -15,11 +15,13 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
 >({
+  workspace,
   application,
   workspaceEventBatch,
   eventRecordAccessGate,
   metadataMaps,
 }: {
+  workspace: FlatWorkspace;
   application: FlatApplication;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
@@ -42,10 +44,7 @@ export const resolveEventsReadableByRole = async <
   });
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds(
-      buildApplicationAuthContext({
-        workspace: { id: workspaceEventBatch.workspaceId } as FlatWorkspace,
-        application,
-      }),
+      buildApplicationAuthContext({ workspace, application }),
     );
 
   return workspaceEventBatch.events

@@ -1,3 +1,4 @@
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -21,6 +22,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
+    CoreEntityCacheModule,
     TypeOrmModule.forFeature([LogicFunctionEntity, WorkspaceEntity]),
     TokenModule,
     WorkspaceDomainsModule,

@@ -509,12 +509,17 @@ export class WorkflowDatabaseEventTriggerListener {
       flatApplicationMaps,
       applicationId,
     );
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceEventBatch.workspaceId,
+    );
 
-    if (!isDefined(application)) {
+    if (!isDefined(application) || !isDefined(workspace)) {
       return [];
     }
 
     return resolveEventsReadableByRole({
+      workspace,
       application,
       workspaceEventBatch,
       eventRecordAccessGate:

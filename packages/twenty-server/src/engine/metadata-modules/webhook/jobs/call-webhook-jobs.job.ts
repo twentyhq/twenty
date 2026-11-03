@@ -1,3 +1,4 @@
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
@@ -11,7 +12,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
@@ -34,6 +34,7 @@ export class CallWebhookJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -70,6 +71,15 @@ export class CallWebhookJobsJob {
       return;
     }
 
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceEventBatch.workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      return;
+    }
+
     const eventRecordAccessGate =
       this.recordAccessPolicyService.buildEventRecordAccessGate({
         ...workspaceEventBatch,
@@ -96,10 +106,7 @@ export class CallWebhookJobsJob {
       const admittedRecordIds =
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
         eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildWebhookAuthContext({
-            workspace: { id: workspaceEventBatch.workspaceId } as FlatWorkspace,
-            webhook,
-          }),
+          buildWebhookAuthContext({ workspace, webhook }),
         );
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);

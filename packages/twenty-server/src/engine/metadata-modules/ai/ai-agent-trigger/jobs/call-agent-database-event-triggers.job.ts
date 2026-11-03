@@ -1,3 +1,4 @@
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
@@ -11,7 +12,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
@@ -35,6 +35,7 @@ export class CallAgentDatabaseEventTriggersJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   @Process(CallAgentDatabaseEventTriggersJob.name)
@@ -68,6 +69,15 @@ export class CallAgentDatabaseEventTriggersJob {
       return;
     }
 
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      return;
+    }
+
     const eventRecordAccessGate =
       this.recordAccessPolicyService.buildEventRecordAccessGate(
         workspaceEventBatch,
@@ -81,7 +91,7 @@ export class CallAgentDatabaseEventTriggersJob {
       }
 
       const agentAuthContext = buildApplicationAuthContext({
-        workspace: { id: workspaceId } as FlatWorkspace,
+        workspace,
         application,
         agentId: flatAgent.id,
       });

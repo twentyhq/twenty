@@ -1,3 +1,4 @@
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -39,6 +40,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -86,6 +88,15 @@ export class CallDatabaseEventTriggerJobsJob {
         workspaceEventBatch.workspaceId,
       );
 
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceEventBatch.workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      return;
+    }
+
     for (const [
       applicationId,
       logicFunctions,
@@ -101,6 +112,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const admittedEvents = await resolveEventsReadableByRole({
+        workspace,
         application,
         workspaceEventBatch,
         eventRecordAccessGate,

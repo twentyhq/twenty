@@ -1,3 +1,4 @@
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -18,6 +19,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    CoreEntityCacheModule,
     TypeOrmModule.forFeature([AgentEntity, WorkspaceEntity]),
     AiAgentExecutionModule,
     CronModule,
