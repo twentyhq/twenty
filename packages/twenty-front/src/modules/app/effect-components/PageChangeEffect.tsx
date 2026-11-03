@@ -69,7 +69,11 @@ export const PageChangeEffect = () => {
   // TODO: make useResetRecordSelection accept an empty recordIndexId, then drop CoreObjectNamePlural.Person
   const objectNamePlural =
     matchPath(AppPath.RecordIndexPage, location.pathname)?.params
-      .objectNamePlural ?? CoreObjectNamePlural.Person;
+      .objectNamePlural ??
+    (location.pathname === AppPath.WorkflowCoreIndexPage ||
+    previousLocation === AppPath.WorkflowCoreIndexPage
+      ? CoreObjectNamePlural.Workflow
+      : CoreObjectNamePlural.Person);
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
@@ -192,10 +196,9 @@ export const PageChangeEffect = () => {
   ]);
 
   useEffect(() => {
-    const isLeavingRecordIndexPage = !!matchPath(
-      AppPath.RecordIndexPage,
-      previousLocation,
-    );
+    const isLeavingRecordIndexPage =
+      isDefined(matchPath(AppPath.RecordIndexPage, previousLocation)) ||
+      isDefined(matchPath(AppPath.WorkflowCoreIndexPage, previousLocation));
 
     if (isLeavingRecordIndexPage) {
       resetRecordSelection();
@@ -215,7 +218,8 @@ export const PageChangeEffect = () => {
     }
 
     switch (true) {
-      case isMatchingLocation(location, AppPath.RecordIndexPage): {
+      case isMatchingLocation(location, AppPath.RecordIndexPage):
+      case isMatchingLocation(location, AppPath.WorkflowCoreIndexPage): {
         resetFocusStackToRecordIndex();
         break;
       }

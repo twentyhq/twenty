@@ -1,10 +1,10 @@
+import { getNavigationMenuItemCurrentObjectMetadata } from '@/navigation-menu-item/display/utils/getNavigationMenuItemCurrentObjectMetadata';
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
@@ -43,20 +43,12 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const currentSearch = location.search;
   const currentPathWithSearch = location.pathname + location.search;
 
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
-  const currentObjectMetadataItem =
-    activeObjectMetadataItems.find(
-      (item) =>
-        item.namePlural === currentObjectNamePlural ||
-        item.nameSingular === currentObjectNameSingular,
-    ) ??
-    activeObjectMetadataItems.find(
-      (item) => item.id === contextStoreCurrentObjectMetadataItemId,
-    );
+  const currentObjectMetadataItem = getNavigationMenuItemCurrentObjectMetadata({
+    activeObjectMetadataItems,
+    currentPath,
+    currentObjectNamePlural,
+    currentObjectNameSingular,
+  });
 
   const isOnRecordShowPage =
     isDefined(currentObjectMetadataItem) &&
