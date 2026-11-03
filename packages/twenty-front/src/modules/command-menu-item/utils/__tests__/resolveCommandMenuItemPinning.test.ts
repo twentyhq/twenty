@@ -5,6 +5,7 @@ import {
 
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { type ConditionalDisplayEvaluationContext } from '@/conditional-display/types/ConditionalDisplayEvaluationContext';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 const STATUS_IS_SENT: ConditionalDisplay = {
   recordFilters: [
@@ -28,10 +29,10 @@ const buildContext = (status: string): ConditionalDisplayEvaluationContext => ({
 });
 
 const resolvePinning = (
-  commandMenuItem: {
-    isPinned: boolean;
-    conditionalPinned: ConditionalDisplay | null;
-  },
+  commandMenuItem: Pick<
+    CommandMenuItemFieldsFragment,
+    'isPinned' | 'conditionalPinned'
+  >,
   status: string,
 ) =>
   resolveCommandMenuItemPinning({
