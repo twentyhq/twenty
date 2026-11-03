@@ -2,21 +2,35 @@ import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 
-const uniqueByHandle = (participants: EmailThreadMessageParticipant[]) => [
+type ChatThreadParticipant = Pick<
+  EmailThreadMessageParticipant,
+  'handle' | 'role'
+>;
+
+type ChatThreadMessage<TParticipant extends ChatThreadParticipant> = {
+  id: string;
+  sender?: TParticipant;
+  messageParticipants?: TParticipant[];
+};
+
+const uniqueByHandle = <TParticipant extends ChatThreadParticipant>(
+  participants: TParticipant[],
+) => [
   ...new Map(
     participants.map((participant) => [participant.handle, participant]),
   ).values(),
 ];
 
-export const getChatThreadCounterparts = ({
+export const getChatThreadCounterparts = <
+  TParticipant extends ChatThreadParticipant,
+>({
   messages,
   outgoingMessageIds,
 }: {
-  messages: EmailThreadMessageWithSender[];
+  messages: ChatThreadMessage<TParticipant>[];
   outgoingMessageIds: ReadonlySet<string>;
-}): EmailThreadMessageParticipant[] => {
+}): TParticipant[] => {
   const incomingSenders = uniqueByHandle(
     messages
       .filter(({ id }) => !outgoingMessageIds.has(id))
