@@ -8,7 +8,6 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEye } from 'twenty-ui/icon';
@@ -16,6 +15,7 @@ import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableFieldsDropdownHiddenFieldsContentProps = {
   objectMetadataId: string;
@@ -33,6 +33,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
   onFieldUpdated,
   onFieldCreated,
 }: RecordTableFieldsDropdownHiddenFieldsContentProps) => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });

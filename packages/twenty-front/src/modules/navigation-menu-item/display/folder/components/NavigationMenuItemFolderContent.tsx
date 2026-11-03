@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHeartOff } from 'twenty-ui/icon';
@@ -18,6 +17,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useLingui } from '@lingui/react/macro';
 
 type NavigationMenuItemFolderContentProps = {
   folderId: string;
@@ -30,6 +30,7 @@ export const NavigationMenuItemFolderContent = ({
   folderId,
   navigationMenuItems,
 }: NavigationMenuItemFolderContentProps) => {
+  const { t } = useLingui();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(

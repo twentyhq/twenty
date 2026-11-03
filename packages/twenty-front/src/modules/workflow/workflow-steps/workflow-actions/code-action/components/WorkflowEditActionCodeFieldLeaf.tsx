@@ -10,7 +10,6 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
-import { t } from '@lingui/core/macro';
 import {
   isBoolean,
   isNonEmptyArray,
@@ -24,6 +23,7 @@ import {
   type InputSchemaProperty,
   isStandaloneVariableString,
 } from 'twenty-shared/workflow';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowEditActionCodeFieldLeafProps = {
   label: string;
@@ -42,6 +42,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
   onChange,
   VariablePicker,
 }: WorkflowEditActionCodeFieldLeafProps) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const leafKind = getWorkflowCodeFieldsLeafKind(schemaProperty);

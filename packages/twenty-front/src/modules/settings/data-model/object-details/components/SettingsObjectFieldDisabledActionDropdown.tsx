@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import {
   IconArchiveOff,
   IconDotsVertical,
@@ -13,6 +12,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
@@ -34,6 +34,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
   isCustomField,
   isSystemField,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
+  const { t } = useLingui();
   const isDeletable = isCustomField && !isSystemField;
 
   return (

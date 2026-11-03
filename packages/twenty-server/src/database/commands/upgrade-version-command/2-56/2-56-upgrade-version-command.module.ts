@@ -6,7 +6,9 @@ import { EnableDirectMessagePairIdentityCommand } from 'src/database/commands/up
 import { MakeAgentTurnThreadOptionalCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418663-make-agent-turn-thread-optional.command';
 import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
 import { RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793707166734-rename-emails-tab-to-messages.command';
-import { ConvertWorkflowNavigationMenuItemsToSystemPageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793717128388-convert-workflow-navigation-menu-items-to-system-page.command';
+import { RepairApplicationDependencyChecksumsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720039867-repair-application-dependency-checksums.command';
+import { ConvertWorkflowNavigationMenuItemsToSystemPageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720614286-convert-workflow-navigation-menu-items-to-system-page.command';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -16,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 @Module({
   imports: [
     ApplicationModule,
+    ApplicationPackageModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
@@ -28,6 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeAgentTurnThreadOptionalCommand,
     InlineWorkflowStepAgentsCommand,
     RenameEmailsTabToMessagesCommand,
+    RepairApplicationDependencyChecksumsCommand,
     ConvertWorkflowNavigationMenuItemsToSystemPageCommand,
   ],
 })
