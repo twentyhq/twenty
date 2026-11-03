@@ -2,7 +2,7 @@ import {
   type AgentTrigger,
   type AgentTriggerType,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type FlatAgentWithTrigger } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/flat-agent-with-trigger.type';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
@@ -23,7 +23,7 @@ export const findActiveAgentTriggers = <TTriggerType extends AgentTriggerType>({
       flatAgent.triggers
         .filter(
           (trigger): trigger is Extract<AgentTrigger, { type: TTriggerType }> =>
-            trigger.type === type && trigger.isActive,
+            isPlainObject(trigger) && trigger.type === type && trigger.isActive,
         )
         .map((trigger) => ({ flatAgent, trigger })),
     );

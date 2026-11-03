@@ -224,7 +224,10 @@ export class FlatAgentValidatorService {
 
     if (flatEntityUpdate.triggers !== undefined) {
       validationResult.errors.push(
-        ...validateAgentTriggers({ triggers: flatEntityUpdate.triggers }),
+        ...validateAgentTriggers({
+          triggers: flatEntityUpdate.triggers,
+          persistedTriggers: fromFlatAgent.triggers,
+        }),
         ...validateAgentTriggersCallerApplication({
           callerApplicationUniversalIdentifier:
             buildOptions.applicationUniversalIdentifier,
