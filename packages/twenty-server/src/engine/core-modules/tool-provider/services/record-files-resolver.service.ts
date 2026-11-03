@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { DirectMessageFileAccessService } from 'src/engine/permissions/direct-message/services/direct-message-file-access.service';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -17,6 +19,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 export type RecordFilesResolution = {
   records: Record<string, unknown>[];
@@ -28,6 +31,7 @@ export class RecordFilesResolverService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly filesFieldService: FilesFieldService,
+    private readonly directMessageFileAccessService: DirectMessageFileAccessService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -36,10 +40,12 @@ export class RecordFilesResolverService {
     objectNameSingular,
     records,
     workspaceId,
+    authContext,
   }: {
     objectNameSingular: string;
     records: Record<string, unknown>[];
     workspaceId: string;
+    authContext?: WorkspaceAuthContext;
   }): Promise<RecordFilesResolution> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -75,6 +81,15 @@ export class RecordFilesResolverService {
       return { records, notes: [] };
     }
 
+    const copyableFileIds = await this.findCopyableFileIds({
+      fileIds: records.flatMap((record) =>
+        filesFields.flatMap((filesField) =>
+          collectFileIdsFromFilesFieldValue(record[filesField.name]),
+        ),
+      ),
+      workspaceId,
+      authContext,
+    });
     const notes: string[] = [];
     const resolvedRecords: Record<string, unknown>[] = [];
 
@@ -82,27 +97,25 @@ export class RecordFilesResolverService {
       let resolvedRecord = record;
 
       for (const filesField of filesFields) {
-        const fileIds = collectFileIdsFromFilesFieldValue(
-          resolvedRecord[filesField.name],
-        );
+        const fieldCopyableFileIds = [
+          ...new Set(
+            collectFileIdsFromFilesFieldValue(resolvedRecord[filesField.name]),
+          ),
+        ].filter((fileId) => copyableFileIds.has(fileId));
 
-        const copyableFileIds = await this.findCopyableFileIds(
-          fileIds,
-          workspaceId,
-        );
-
-        if (copyableFileIds.length === 0) {
+        if (fieldCopyableFileIds.length === 0) {
           continue;
         }
 
         const fileIdSubstitutions = new Map<string, string>();
 
-        for (const fileId of copyableFileIds) {
+        for (const fileId of fieldCopyableFileIds) {
           const copiedFile =
             await this.filesFieldService.copyFileIntoFilesField({
               fileId,
               workspaceId,
               fieldMetadataId: filesField.id,
+              authContext,
             });
 
           fileIdSubstitutions.set(fileId, copiedFile.id);
@@ -126,20 +139,29 @@ export class RecordFilesResolverService {
     return { records: resolvedRecords, notes };
   }
 
-  private async findCopyableFileIds(
-    fileIds: string[],
-    workspaceId: string,
-  ): Promise<string[]> {
+  private async findCopyableFileIds({
+    fileIds,
+    workspaceId,
+    authContext,
+  }: {
+    fileIds: string[];
+    workspaceId: string;
+    authContext?: WorkspaceAuthContext;
+  }): Promise<Set<string>> {
     if (fileIds.length === 0) {
-      return [];
+      return new Set();
     }
 
     const files = await this.fileRepository.find(workspaceId, {
       where: { id: In([...new Set(fileIds)]) },
     });
 
-    return files
-      .filter((file) => isCopyableFilesFieldSourcePath(file.path))
-      .map((file) => file.id);
+    return this.directMessageFileAccessService.findReadableFileIds({
+      workspaceId,
+      fileIds: files
+        .filter((file) => isCopyableFilesFieldSourcePath(file.path))
+        .map((file) => file.id),
+      authContext,
+    });
   }
 }

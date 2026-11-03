@@ -12,6 +12,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { DirectMessageFileAccessModule } from 'src/engine/permissions/direct-message/direct-message-file-access.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PermissionsModule } from 'src/engine/permissions/permissions.module';
     PermissionsModule,
     FileUrlModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    DirectMessageFileAccessModule,
   ],
   providers: [
     FilesFieldService,

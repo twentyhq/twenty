@@ -51,6 +51,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentChatFileAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-file-access.service';
 
 type MemberMessageOptions = {
   thread: AgentChatThreadWorkspaceEntity;
@@ -90,6 +91,7 @@ export class AgentChatStreamingService {
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly fileAccessService: AgentChatFileAccessService,
   ) {}
 
   // a message sent while a reply or a run streams in the conversation waits in its queue
@@ -507,10 +509,11 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const fileParts = await this.buildFilePartsFromAttachments(
+    const fileParts = await this.buildFilePartsFromAttachments({
       fileAttachments,
       workspaceId,
-    );
+      workspaceMemberId,
+    });
 
     const savedMessage =
       await this.agentChatService.addMessageAndResolveMention({
@@ -775,15 +778,26 @@ export class AgentChatStreamingService {
     ];
   }
 
-  private async buildFilePartsFromAttachments(
-    fileAttachments: AiChatFileAttachment[] | undefined,
-    workspaceId: string,
-  ): Promise<ExtendedUIMessagePart[]> {
+  private async buildFilePartsFromAttachments({
+    fileAttachments,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    fileAttachments: AiChatFileAttachment[] | undefined;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<ExtendedUIMessagePart[]> {
     if (!fileAttachments || fileAttachments.length === 0) {
       return [];
     }
 
     const fileIds = fileAttachments.map((attachment) => attachment.id);
+
+    await this.fileAccessService.assertFilesReadableOrThrow({
+      workspaceId,
+      workspaceMemberId,
+      fileIds,
+    });
 
     const validFiles = await this.fileRepository.find(workspaceId, {
       where: {

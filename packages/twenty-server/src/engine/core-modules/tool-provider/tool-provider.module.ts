@@ -23,6 +23,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
+import { DirectMessageFileAccessModule } from 'src/engine/permissions/direct-message/direct-message-file-access.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
@@ -47,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RecordCrudModule,
     FeatureFlagModule,
     FilesFieldModule,
+    DirectMessageFileAccessModule,
     PermissionsModule,
     RecordShareModule,
     ViewToolsModule,

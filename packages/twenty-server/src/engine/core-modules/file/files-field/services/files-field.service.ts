@@ -13,6 +13,8 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { DirectMessageFileAccessService } from 'src/engine/permissions/direct-message/services/direct-message-file-access.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import {
   FilesFieldException,
@@ -36,6 +38,7 @@ export class FilesFieldService {
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
+    private readonly directMessageFileAccessService: DirectMessageFileAccessService,
   ) {}
 
   async uploadFile({
@@ -118,10 +121,12 @@ export class FilesFieldService {
     fileId,
     workspaceId,
     fieldMetadataId,
+    authContext,
   }: {
     fileId: string;
     workspaceId: string;
     fieldMetadataId: string;
+    authContext?: WorkspaceAuthContext;
   }): Promise<FileEntity> {
     const sourceFile = await this.fileRepository.findOne(workspaceId, {
       where: { id: fileId },
@@ -133,6 +138,14 @@ export class FilesFieldService {
         FilesFieldExceptionCode.BAD_REQUEST,
         { userFriendlyMessage: msg`File not found.` },
       );
+    }
+
+    if (sourceFile.path.startsWith(`${FileFolder.AgentChat}/`)) {
+      await this.directMessageFileAccessService.assertFilesReadableOrThrow({
+        workspaceId,
+        fileIds: [fileId],
+        authContext,
+      });
     }
 
     if (sourceFile.status !== FILE_STATUS.UPLOADED) {

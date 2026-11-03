@@ -254,6 +254,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         conversationWriter,
         chatThreadService,
         { resolveMentionInTransaction: jest.fn() } as never,
+        { assertFilesReadableOrThrow: jest.fn() } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>

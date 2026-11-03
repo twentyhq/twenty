@@ -18,6 +18,7 @@ describe('FileUploadService.createFileUpload', () => {
       {} as never,
       {} as never,
       {} as never,
+      {} as never,
     );
 
   const createUpload = (filename: string, size: number) =>

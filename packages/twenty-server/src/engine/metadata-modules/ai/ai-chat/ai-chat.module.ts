@@ -44,6 +44,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatConversationAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-conversation-access.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
+import { AgentChatFileAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-file-access.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
@@ -52,6 +53,7 @@ import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
+import { DirectMessageFileAccessModule } from 'src/engine/permissions/direct-message/direct-message-file-access.module';
 
 @Module({
   imports: [
@@ -75,6 +77,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     ToolProviderModule,
     DashboardToolsModule,
     AiFrontComponentModule,
+    DirectMessageFileAccessModule,
   ],
   providers: [
     AgentChatActorService,
@@ -91,6 +94,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentInboxResolver,
     AgentInboxProposalService,
     AgentChatQueueService,
+    AgentChatFileAccessService,
     AgentChatConversationAccessService,
     AgentChatService,
     AgentChatThreadTargetService,

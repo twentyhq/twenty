@@ -40,6 +40,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { withDeadline } from 'src/utils/with-deadline';
+import { DirectMessageFileAccessService } from 'src/engine/permissions/direct-message/services/direct-message-file-access.service';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -74,6 +75,7 @@ export class FileUploadService {
     private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
+    private readonly directMessageFileAccessService: DirectMessageFileAccessService,
   ) {}
 
   async createFileUpload({
@@ -283,6 +285,13 @@ export class FileUploadService {
           userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
         },
       );
+    }
+
+    if (fileFolder === FileFolder.AgentChat) {
+      await this.directMessageFileAccessService.assertFilesReadableOrThrow({
+        workspaceId,
+        fileIds: [fileId],
+      });
     }
 
     if (file.status === FILE_STATUS.UPLOADED) {

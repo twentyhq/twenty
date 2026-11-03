@@ -16,6 +16,7 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { DirectMessageFileAccessModule } from 'src/engine/permissions/direct-message/direct-message-file-access.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
@@ -29,6 +30,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ]),
     PermissionsModule,
     FileUrlModule,
+    DirectMessageFileAccessModule,
   ],
   providers: [
     FileUploadService,
