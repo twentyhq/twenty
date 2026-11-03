@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isPageZoomGesture } from 'twenty-ui/utilities';
 
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 
@@ -12,10 +13,8 @@ export const FrontComponentPreventPageZoomEffect = ({
 }: FrontComponentPreventPageZoomEffectProps) => {
   useEffect(() => {
     const preventPageZoom = (event: WheelEvent) => {
-      const isZoomGesture = event.ctrlKey || event.metaKey;
-
       if (
-        !isZoomGesture ||
+        !isPageZoomGesture(event) ||
         !isDefined(
           geometryTracker.findRemoteElementIdContainingNode(event.target),
         )

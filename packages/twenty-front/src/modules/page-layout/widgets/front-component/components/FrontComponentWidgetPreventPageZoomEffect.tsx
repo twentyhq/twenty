@@ -1,5 +1,6 @@
 import { type RefObject, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isPageZoomGesture } from 'twenty-ui/utilities';
 
 type FrontComponentWidgetPreventPageZoomEffectProps = {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -16,7 +17,7 @@ export const FrontComponentWidgetPreventPageZoomEffect = ({
     }
 
     const preventPageZoom = (event: WheelEvent) => {
-      if (event.ctrlKey || event.metaKey) {
+      if (isPageZoomGesture(event)) {
         event.preventDefault();
       }
     };
