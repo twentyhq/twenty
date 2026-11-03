@@ -144,7 +144,7 @@ export default defineMcpServer({
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -303,6 +303,186 @@ const { result } = await runAgent({
 <Warning>
   يقوم `runAgent()` بإطلاق استثناء عندما يتعذّر حل عضو مساحة العمل — مثل عضو غير معروف أو تمت إزالته، أو ليس لديه أي دور. لا يعود إطلاقًا إلى دور الوكيل نفسه، لأن ذلك سيمنح صلاحيات وصول أكثر مما طلبه المستدعي.
 </Warning>
+
+### متابعة محادثة
+
+يقرأ التطبيق المحادثات التي يجريها مع وكلائه عبر واجهة برمجة التطبيقات نفسها
+المستخدمة للدردشة: تُرجع `listConversationMessages()` سجلها، وتُنتج
+`streamConversation()` أحداثها المباشرة، رمزًا تلو الآخر. سمِّ
+المحادثة باستخدام الوكيل ومفتاح `thread` الذي تمرره إلى `runAgent()`؛ ويمكنك
+بدء متابعتها قبل أن يصل إليها التشغيل الأول.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+* الأحداث خاصة بالدردشة نفسها: يحمل `stream-chunk` كائن `UIMessageChunk` من AI SDK
+  ومعرّف `seq`، وتوضح الإشعارات مثل `message-persisted`
+  (تم حفظ رسالة: رسالة عضو أو الرد، الذي يحمل `turnId` الخاص بتشغيله)، و`credits-exhausted`
+  (توقف الرد عند نفاد الأرصدة من مساحة العمل)، و`queue-updated` أو `stream-error` متى
+  تقرأ السجل مرة أخرى. يصل `keepalive` عند الاتصال، ثم كل
+  بضع ثوانٍ: اقرأ السجل عند أول واحد، لأن ما حدث قبله
+  موجود فيه.
+* لتحويل المقاطع إلى رسائل كما تفعل الدردشة، مررها إلى
+  `readUIMessageStream()` من الحزمة `ai`.
+* تُرجع `listConversationMessages()` القيمة `{ messages, streamCatchup }`: الرسائل
+  المحفوظة ككائنات `UIMessage` من AI SDK، كما تنشئها الدردشة، ومقاطع
+  رد ما زال يُبث. اعرض تلك المقاطع، ثم تخطَّ المقاطع المباشرة التي يكون فيها
+  `seq` أقل من أو مساويًا لـ `streamCatchup.maxSeq`، لأنها تكررها.
+* تُرجع `runAgent()` القيمة `runId`، أي الدور الذي تفتحه المكالمة: تحمل رسائل ذلك التشغيل
+  هذه القيمة كـ `metadata.turnId`. يستمر التشغيل الذي ينتظر في أدوار لاحقة من
+  المحادثة.
+* يبقى الدفق مفتوحًا حتى تُلغي `signal` الخاص به أو تستخدم `break`، ويُطلق خطأً إذا
+  انقطع الاتصال: أعد إنشاء الدفق للاستئناف.
+* يقرأ التطبيق محادثاته الخاصة فقط. تُظهر الأدوار التي فتحها عضو في مكان آخر،
+  مثل الدردشة، نصها فقط في السجل والبث المباشر وفي التشغيل التالي
+  للوكيل: في البث المباشر، تصل مقاطعها الأخرى كمقاطع `message-metadata`
+  فارغة، لذلك يبقى `seq` بلا فجوات. تبقى الأدوار التي شغّلها تطبيقك
+  كعضو (انظر أعلاه) كاملة عندما يقرأها بنفسه.
+* يتطلب `"engines": { "twenty": ">=2.56.0" }`.
+
+</Accordion>
+<Accordion title="إنشاء بالذكاء الاصطناعي" description="استدعِ نموذجًا من دالة منطقية، من دون وكيل">
+
+تستدعي `ai.generate()` نموذجًا من دالة منطقية. بخلاف
+`runAgent()`، لا تحتاج إلى `defineAgent()`: تحمل المكالمة تعليماتها
+الخاصة، ولا تفتح أي محادثة. استخدمها للمهام التي تُنفذ لمرة واحدة، مثل
+التصنيف أو التلخيص أو الاستخراج.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+* `input` عبارة عن سلسلة، أو قائمة برسائل `{ role: 'user' | 'assistant', content }`.
+* يضيف `instructions` (اختياري) تعليمات النظام الخاصة بالمتصل.
+* يختار `modelId` (اختياري) النموذج. من دونه، تستخدم المكالمة
+  النموذج الافتراضي لمساحة العمل.
+* يعمل `responseFormat` (اختياري) كما في `runAgent()`. مع
+  `{ type: 'json', schema }`، يُضاف المخطط إلى طلب النموذج نفسه، لذا
+  يتطلب جواب JSON طلبًا واحدًا (بالإضافة إلى خطوات الأداة عندما يمنح `scope`
+  الأدوات).
+* يتيح `scope` (اختياري) للمكالمة استخدام قاعدة البيانات، كما هو موضح أدناه.
+
+يُحل إلى `{ success, text, object, error, runId, usage }`:
+
+* `text` هو رد الاستجابة النصية، ويكون `null` لاستجابة JSON.
+* `object` هو نتيجة استجابة JSON، ويكون `null` بخلاف ذلك.
+* يشرح `error` التشغيل الفاشل عندما تكون `success` هي `false`. يُحل التشغيل الذي يفشل
+  بهذه الطريقة بدلًا من إطلاق خطأ؛ أما المكالمة التي لا يمكنها بدء تشغيل، مثل
+  مكالمة ذات إدخال غير صالح، فتُطلق خطأً.
+* يحدد `runId` التشغيل المسجل، مع نموذجه واستخدامه وأرصدته.
+* `usage` هو `{ inputTokens, outputTokens }`: ما أنفقه التشغيل، بما في ذلك
+  الخطوات التي انتهت قبل الإخفاق.
+
+تتصرف المكالمة بصفتها الجهة التي أجرتها: العضو الذي ينتمي إليه رمز مميز بنطاق مستخدم،
+وإلا فتطبيقك، وإلا مفتاح API. من دالة منطقية، تتبع
+العملاء الافتراضيين: تتصرف بصفتها الشخص الذي شغّل التشغيل، أو بصفتها
+تطبيقك عندما لا يكون هناك أحد. لا تتجاوز مطلقًا دور تطبيقك، ولا
+يمكن لتطبيق من دون دور افتراضي استدعاؤها.
+
+من دون `scope`، لا تقرأ المكالمة أي سجلات ولا تكتبها. للسماح لها باستخدام
+قاعدة البيانات، مرر `scope`، مكتوبًا مثل أذونات الدور:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+النطاق لا يؤدي إلا إلى التضييق: فهو لا يمنح أي شيء لا يملكه المتصل بالفعل.
+
+لعرض الرد أثناء كتابته، مرر `onChunk`. تُحل المكالمة مع ذلك
+إلى النتيجة نفسها، بمجرد تمرير المقطع الأخير إلى `onChunk`. إذا لم تصل
+نهاية الدفق مطلقًا، تتوقف عن الانتظار بمجرد وصول النتيجة ومرور 5 ثوانٍ
+من دون مقطع جديد، وتظل تمرر كل مقطع تلقته حتى ذلك الحين:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+* تتبع المكالمة التشغيل عبر الاشتراك نفسه الذي تستخدمه
+  `streamConversation()`: تشترك أولًا، وتنتظر حتى يصبح الاشتراك
+  مباشرًا، ثم تبدأ التشغيل، لذلك لا يفوتها أي مقطع.
+* المقاطع خاصة بالدردشة نفسها: مررها إلى `readUIMessageStream()` من حزمة
+  `ai` لإنشاء الرسالة.
+* يلغي `signal` المكالمة: يُرفض بخطأ الإلغاء ويغلق
+  الدفق. يستمر التشغيل نفسه، ويُسجل كالمعتاد.
+* بمجرد أن يصبح الدفق مباشرًا، لا يؤدي فشله إلا إلى إيقاف المقاطع: تظل المكالمة
+  تُحل بنتيجة التشغيل، التي تُفوتر في كلتا الحالتين. تُرفض المكالمة
+  عندما يفشل الاشتراك قبل أن يصبح مباشرًا، لذلك لا يبدأ التشغيل
+  مطلقًا، أو عندما يُطلق `onChunk` خطأً.
+* يتابع التطبيق عمليات التشغيل الخاصة به فقط، لذا يحتاج `onChunk` إلى رمز مميز للتطبيق.
+* يتطلب `"engines": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  تتطلب `ai.generate()` علامة إذن الذكاء الاصطناعي في الدور الافتراضي للتطبيق،
+  مثل `runAgent()`.
+</Note>
 
 </Accordion>
 <Accordion title="sendInboxMessage" description="بدء محادثة أو متابعتها في دردشات الأعضاء">

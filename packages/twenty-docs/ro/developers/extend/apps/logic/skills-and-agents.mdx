@@ -145,7 +145,7 @@ către `defineAgent()` și transmite ca `input` ceea ce vrei să proceseze:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -309,6 +309,186 @@ Orice altceva — o sesiune simplă de utilizator, o cheie API fără un token a
   `runAgent()` aruncă o eroare atunci când membrul spațiului de lucru nu poate fi identificat — un membru necunoscut sau eliminat, ori unul fără niciun rol. Nu revine niciodată la
   propriul rol al agentului, deoarece acest lucru ar acorda mai mult acces decât a cerut apelantul.
 </Warning>
+
+### În urma unei conversații
+
+O aplicație citește conversațiile pe care le deține cu agenții săi prin intermediul aceluiași API
+ca și chat: `listConversationMessages()` returnează istoricul ei, și
+`streamConversation()` generează evenimentele sale live, token by token. Numește conversația
+de către agent și cheia `thread` pe care o treci la \`runAgent()"; tu
+îl poți urmări înainte ca prima execuție să ajungă la el.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+* Evenimentele sunt ale chatului: `stream-chunk` transportă un AI SDK
+  `UIMessageChunk` şi un `seq`, şi notificări precum `mesaj` persistă`  (un mesaj a fost salvat: un membru sau răspunsul, care transportă contul său`turnId`), `credits-exhausted`(răspunsul s-a oprit atunci când spațiul de lucru a expirat
+    din credite),`queue-updated`sau`stream-error\` spune când
+  să citească din nou istoria. Un "keepalive" vine odată conectat, apoi la fiecare
+  câteva secunde: citește istoria din primul, de când ce s-a întâmplat înainte de
+  este acolo.
+* Pentru a transforma bucățile în mesaje cum face chatul, țineți-le în
+  `readUIMessageStream()` din pachetul `ai`.
+* `listConversationMessages()` returnează `{ mesaje, streamCatchup }`: mesajele salvate
+  ca `UIMessage`s, pe măsură ce chat-ul le construiește, și bucățile de
+  sunt încă în mișcare. Arată acele chunks, apoi sari peste chunkurile în direct care
+  `seq` este cel mult `streamCatchup.maxSeq`, din moment ce le repetă.
+* `runAgent()` returnează `runId`, apelul se deschis: mesajele care rulează
+  îl poartă ca `metadata.turnId`. O cursă care așteaptă să se îndrepte mai târziu de conversația de la
+  .
+* Fluxul rămâne deschis până când renunțați la `semnal` sau `break`, și aruncă dacă
+  picăturile de conexiune: stream-ul pentru a relua.
+* O aplicație citește doar propriile sale conversații. Întoarce un membru deschis în altă parte,
+  cum ar fi în chat, arată doar textul în istorie, live și în următoarea rulare a agentului
+  : live, celelalte bucăți de joc sosesc sub formă de bucăți goale
+  'mesagerie metadata', astfel încât `seq` rămâne nesigur. Transformă aplicația ta rulată ca membru
+  (a se vedea mai sus) rămâne întreagă atunci când citește de unul singur.
+* Necesită `"motoare": { "twenty": ">=2.56.0" }`.
+
+</Accordion>
+<Accordion title="ai.generate" description="Apelați un model dintr-o funcție logică, fără un agent">
+
+`ai.generate()` apelează un model dintr-o funcţie logică. Spre deosebire de
+`runAgent()`, nu are nevoie de `defineAgent()`: apelul are propriile instrucțiuni
+și nu deschide nicio conversație. Folosiți-l pentru o singură împuşcătură, cum ar fi
+clasificare, sumarizare sau extracție.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+* `input` este un șir sau o listă de mesaje `{ role: 'user' | 'assistant', content }`
+  .
+* `instrucțiuni` (opțional) adaugă instrucțiunile sistemului apelantului.
+* `modelId` (opţional) alege modelul. Fără el, apelul folosește modelul implicit al spațiului de lucru
+  .
+* `responseFormat` (opţional) funcţionează ca în `runAgent()`. Cu
+  `{ type: 'json', schema }", schema merge pe cererea modelului în sine, prin urmare
+    un răspuns JSON face o cerere (plus unealtă pași atunci când un `scope\` acordă instrumente
+  ).
+* `scope` (opţional) permite apelării să utilizeze baza de date, aşa cum este descrisă mai jos.
+
+Acesta se rezolvă pentru `{ success, text, obiect, eroare, runId, usage }`:
+
+* `text` este răspunsul unui text şi `null` pentru unul JSON.
+* `object` este rezultatul unui răspuns JSON şi `null` altfel.
+* `error` explică o rulare eșuată, când `succes` este `false`. O execuție care eșuează
+  rezolvă în acest fel în loc să aruncați; un apel care nu poate începe o rulare, cum ar fi
+  ca unul cu intrare nevalidă, aruncă.
+* `runId` identifică rularea înregistrată, cu modelul, utilizarea şi creditele sale.
+* `usage` este `{ inputTokens, outputTokens }`: what the run cheltuit, including the
+  steps that finished before a fail.
+
+Apelul acționează ca oricine a făcut-o: membrului îi aparține un token scris de utilizator,
+în caz contrar, aplicația dvs., în caz contrar cheia API. Dintr-o funcție logică
+urmează clienții implici: acționează ca persoana care a declanșat rularea, sau ca
+aplicația ta atunci când nimeni nu a făcut. Nu depășește niciodată rolul aplicației tale, iar
+o aplicație fără un rol implicit nu o poate apela.
+
+Fără `scope`, apelul citeşte şi nu scrie nici o înregistrare. Pentru a o lăsa să folosească baza de date
+pasează un `scope`, scris ca permisiunile unui rol:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+O sferă de aplicare se limitează: nu acordă nimic apelantului care nu are deja un telefon.
+
+Pentru a afișa răspunsul în timp ce este scris, treceți `onChunk`. Apelul încă se rezolvă cu
+în acelaşi rezultat, odată ce ultimul chunk a fost înmânat lui `onChunk`. Dacă runda
+nu soseşte niciodată, se opreşte să aştepte odată ce rezultatul este în şi 5 s
+trece fără un nou chunk, și chiar mâini peste fiecare bucată primită până atunci:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+* Apelul se derulează prin același abonament ca
+  `streamConversation()`: se abonează mai întâi, așteaptă până când abonamentul este
+  live, apoi începe rularea, astfel încât să nu piardă chunk.
+* Bucățile sunt ale chat-ului: țineți-le în `readUIMessageStream()` din pachetul
+  pentru a construi mesajul.
+* `semnal` anulează apelul: acesta respinge cu eroarea de abortare și închide fluxul
+  Drumul în sine continuă şi este înregistrat ca de obicei.
+* Odată ce fluxul este live, un eşec al acestuia opreşte doar bucăţile: apelul
+  încă se rezolvă cu rezultatul run-ului. care este facturat în ambele sensuri. Apelul
+  respinge atunci când abonamentul eșuează înainte de a trece în direct, astfel încât nu mai începe niciodată
+  sau când `onChunk` arată.
+* O aplicație urmează doar propriile sale execuții, astfel încât `onChunk` are nevoie de un token de aplicație.
+* Necesită `"motoare": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  `ai.generate()` necesită steagul de permisiune AI de pe rolul implicit al aplicației,
+  like `runAgent()`.
+</Note>
 
 </Accordion>
 <Accordion title="sendInboxMessage" description="Începeți sau continuați o conversație în chaturile membrilor">
