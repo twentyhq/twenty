@@ -10,6 +10,7 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-actor.type';
 import { type AgentChatMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message.type';
 import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
@@ -109,20 +110,21 @@ export class AgentChatMemberMessageWriterService {
         return queuedMessage;
       },
     );
-    const delivery =
-      isDefined(participation) && isDefined(addressing)
-        ? await this.inboxDeliveryService.deliver({
-            ...access,
-            messageId: savedMessage.id,
-            mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-            initialRecipientWorkspaceMemberIds: participation.isInitialMessage
-              ? addressing.initialRecipientWorkspaceMemberIds
-              : [],
-          })
-        : {
-            deliveredMentionWorkspaceMemberIds: [],
-            deliveredRecipientWorkspaceMemberIds: [],
-          };
+    let delivery: AgentChatInboxDeliveryResult = {
+      deliveredMentionWorkspaceMemberIds: [],
+      deliveredRecipientWorkspaceMemberIds: [],
+    };
+
+    if (isDefined(participation) && isDefined(addressing)) {
+      delivery = await this.inboxDeliveryService.deliver({
+        ...access,
+        messageId: savedMessage.id,
+        mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
+        initialRecipientWorkspaceMemberIds: participation.isInitialMessage
+          ? addressing.initialRecipientWorkspaceMemberIds
+          : [],
+      });
+    }
 
     if (placement !== 'queued') {
       await this.eventPublisherService.publish({
