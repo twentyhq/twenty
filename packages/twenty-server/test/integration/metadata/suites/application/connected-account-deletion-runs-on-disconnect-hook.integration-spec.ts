@@ -222,7 +222,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
         connectedAccountCountDuringHook =
           await countConnectedAccounts(connectedAccountId);
         accessTokenDuringHook = (await findConnectedAccount(connectedAccountId))
-          ?.accessToken;
+          .accessToken;
         await globalThis.testDataSource.query(
           `UPDATE core."connectedAccount" SET "accessToken" = $1 WHERE id = $2`,
           [REFRESHED_ACCESS_TOKEN, connectedAccountId],

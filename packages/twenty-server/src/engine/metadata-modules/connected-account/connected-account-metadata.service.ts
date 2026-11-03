@@ -435,7 +435,6 @@ export class ConnectedAccountMetadataService {
       ),
     );
 
-    // Runs before the tokens are wiped below; archived accounts were already disconnected
     const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
       connectedAccounts: connectedAccounts.filter(
         ({ archivedAt }) => !isDefined(archivedAt),
@@ -709,7 +708,6 @@ export class ConnectedAccountMetadataService {
     );
   }
 
-  // Returns the accounts re-read, since hooks may refresh tokens through getConnection and an overlapping delete may remove rows
   private async runOnDisconnectHooksAndReload({
     connectedAccounts,
     workspaceId,
