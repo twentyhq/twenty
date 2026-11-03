@@ -8,10 +8,14 @@ const INPUT = {
 };
 
 describe('buildInboxThreadMessageIds', () => {
-  it('returns the same ids for the same conversation, sender and key', () => {
-    expect(buildInboxThreadMessageIds(INPUT)).toEqual(
-      buildInboxThreadMessageIds(INPUT),
-    );
+  it('preserves the persisted ids for an existing conversation', () => {
+    expect(buildInboxThreadMessageIds(INPUT)).toEqual({
+      threadId: INPUT.threadId,
+      messageId: '937086f0-ecd2-5f35-be4b-917310efac3d',
+      toolCallId: 'call_937086f0ecd25f35be4b917310efac3d',
+      turnId: '1c8cbd13-3eb6-5ddc-b3b8-ba7b024aed13',
+      openingMessageId: null,
+    });
   });
 
   it('keeps the conversation, writes no opener and returns distinct ids for each record', () => {

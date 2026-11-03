@@ -7,8 +7,14 @@ const INPUT = {
 };
 
 describe('buildInboxMessageIds', () => {
-  it('returns the same ids for the same sender and keys', () => {
-    expect(buildInboxMessageIds(INPUT)).toEqual(buildInboxMessageIds(INPUT));
+  it('preserves the persisted ids for a keyed conversation', () => {
+    expect(buildInboxMessageIds(INPUT)).toEqual({
+      threadId: 'de421ee2-fe2d-5d16-923d-01d80c0933ab',
+      messageId: '4ea93906-8976-5162-9360-c346a1aa500b',
+      toolCallId: 'call_4ea93906897651629360c346a1aa500b',
+      turnId: '2962f5c7-6eb2-5395-b179-18aac9556bc3',
+      openingMessageId: 'a2de0431-5d56-5a22-817d-22b972ee2258',
+    });
   });
 
   it('returns distinct ids for each record of one message', () => {
