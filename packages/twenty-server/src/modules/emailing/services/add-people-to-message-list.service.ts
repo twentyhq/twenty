@@ -39,15 +39,14 @@ export class AddPeopleToMessageListService {
     authContext: WorkspaceAuthContext;
     personFilter: Partial<ObjectRecordFilter>;
   }): Promise<void> {
-    const personCount =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () => this.buildPersonQueryBuilder(personFilter).getCount(),
-        authContext,
-      );
+    const totalCount = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () => this.buildPersonQueryBuilder(personFilter).getCount(),
+      authContext,
+    );
 
-    if (personCount > ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT) {
+    if (totalCount > ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT) {
       throw new MessageListException(
-        `Cannot add ${personCount} people to a list at once`,
+        `Cannot add ${totalCount} people to a list at once`,
         MessageListExceptionCode.MESSAGE_LIST_TOO_MANY_PEOPLE_TO_ADD,
       );
     }
@@ -72,60 +71,60 @@ export class AddPeopleToMessageListService {
       ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT /
         ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE,
     );
+    let after: string | undefined;
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personQueryBuilder = this.buildPersonQueryBuilder(personFilter)
-        .select(['id'])
-        .orderBy('id')
-        .limit(ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE + 1);
-      const messageListMemberRepository =
-        this.workspaceOrmManager.getRepository<MessageListMemberWorkspaceEntity>(
-          'messageListMember',
-        );
-      let lastPersonId: string | undefined;
+    for (let pageIndex = 0; pageIndex < maxPageCount; pageIndex++) {
+      const fetchedRecords =
+        await this.workspaceOrmManager.executeInWorkspaceContext(() => {
+          const queryBuilder = this.buildPersonQueryBuilder(personFilter)
+            .select(['id'])
+            .orderBy('id')
+            .limit(ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE + 1);
 
-      for (let pageIndex = 0; pageIndex < maxPageCount; pageIndex++) {
-        const pageQueryBuilder = personQueryBuilder.clone();
+          if (isDefined(after)) {
+            queryBuilder.andWhere({ id: MoreThan(after) });
+          }
 
-        if (isDefined(lastPersonId)) {
-          pageQueryBuilder.andWhere({ id: MoreThan(lastPersonId) });
-        }
+          return queryBuilder.getMany<Pick<PersonWorkspaceEntity, 'id'>>();
+        }, authContext);
+      const records = fetchedRecords.slice(
+        0,
+        ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE,
+      );
 
-        const people =
-          await pageQueryBuilder.getMany<Pick<PersonWorkspaceEntity, 'id'>>();
-        const pagePeople = people.slice(
-          0,
-          ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE,
-        );
-
-        if (pagePeople.length > 0) {
-          const members =
-            await this.actorFromAuthContextService.injectActorFieldsOnCreate({
-              records: pagePeople.map((person) => ({
-                listId: messageListId,
-                personId: person.id,
-              })),
-              objectMetadataNameSingular: 'messageListMember',
-              authContext,
-            });
-
-          await messageListMemberRepository.insert(members, {
-            onConflictDoNothing: true,
+      if (records.length > 0) {
+        const members =
+          await this.actorFromAuthContextService.injectActorFieldsOnCreate({
+            records: records.map((person) => ({
+              listId: messageListId,
+              personId: person.id,
+            })),
+            objectMetadataNameSingular: 'messageListMember',
+            authContext,
           });
-        }
 
-        if (people.length <= ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE) {
-          return;
-        }
-
-        lastPersonId = pagePeople[pagePeople.length - 1].id;
+        await this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.workspaceOrmManager
+              .getRepository<MessageListMemberWorkspaceEntity>(
+                'messageListMember',
+              )
+              .insert(members, { onConflictDoNothing: true }),
+          authContext,
+        );
       }
 
-      throw new MessageListException(
-        `More than ${ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT} people match the selection`,
-        MessageListExceptionCode.MESSAGE_LIST_TOO_MANY_PEOPLE_TO_ADD,
-      );
-    }, authContext);
+      if (fetchedRecords.length <= ADD_PEOPLE_TO_MESSAGE_LIST_PAGE_SIZE) {
+        return;
+      }
+
+      after = records[records.length - 1].id;
+    }
+
+    throw new MessageListException(
+      `More than ${ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT} people match the selection`,
+      MessageListExceptionCode.MESSAGE_LIST_TOO_MANY_PEOPLE_TO_ADD,
+    );
   }
 
   private buildPersonQueryBuilder(
