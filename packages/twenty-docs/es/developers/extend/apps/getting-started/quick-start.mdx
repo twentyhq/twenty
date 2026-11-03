@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Antes de empezar
 
-Usa Node.js 24.5+ o 26.5+ y Yarn 4 (mediante Corepack: `corepack enable`; en Node 26, instálalo primero con `npm install -g corepack`). Instala la CLI globalmente; tu aplicación conserva sus propias dependencias del SDK.
+Use Node.js 24 (24.5+) o 26 (26.5.1+) y Yarn 4 (mediante Corepack: `corepack enable`; en Node 26, instálelo primero con `npm install -g corepack`). Instala la CLI globalmente; tu aplicación conserva sus propias dependencias del SDK.
 
 <Note>
 La compilación de aplicaciones Twenty solo es compatible oficialmente con sistemas Unix (macOS y Linux). En Windows, trabaja dentro de WSL 2.
@@ -30,8 +30,11 @@ yarn install
 Usa un espacio de trabajo existente o inicia un [servidor local](/es/developers/extend/apps/getting-started/local-server) y, a continuación, inicia sesión:
 
 ```bash
-twenty auth login --url https://your-workspace.twenty.com --name dev
+twenty auth login --url https://your-workspace.twenty.com --name dev --use
+twenty auth status --remote dev
 ```
+
+`--name dev` guarda la conexión como `dev`; `--use` la establece como predeterminada para los comandos siguientes. Para dirigirse a ella explícitamente, agregue `--remote dev`. Las variables de entorno pueden anular el valor predeterminado; consulte la [selección del espacio de trabajo](/es/developers/extend/apps/operations/cli#connecting-to-a-workspace).
 
 ## Sincroniza tus cambios
 
