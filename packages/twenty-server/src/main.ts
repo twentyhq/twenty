@@ -108,7 +108,7 @@ const bootstrap = async () => {
   const keepAliveTimeout = twentyConfigService.get(
     'SERVER_KEEP_ALIVE_TIMEOUT_MS',
   );
-  const httpServer = app.getHttpServer<Server>();
+  const httpServer: Server = app.getHttpServer();
   const shutdownHttpServer = createHttpServerShutdown(httpServer);
 
   httpServer.keepAliveTimeout = keepAliveTimeout;
@@ -129,7 +129,7 @@ const bootstrap = async () => {
     isShuttingDown = true;
 
     const shutdownTimeout = setTimeout(() => {
-      logger.error('Application shutdown exceeded its deadline');
+      logger.error('Application shutdown exceeded its deadline', 'Bootstrap');
       process.exit(1);
     }, APPLICATION_SHUTDOWN_TIMEOUT_MS);
 
@@ -148,7 +148,7 @@ const bootstrap = async () => {
       clearTimeout(shutdownTimeout);
       process.exit(0);
     } catch (error) {
-      logger.error('Application shutdown failed', error);
+      logger.error('Application shutdown failed', 'Bootstrap', error);
       process.exit(1);
     }
   };
