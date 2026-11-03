@@ -20,6 +20,10 @@ const PREDICATE_GROUP_MANIFEST: Required<RowLevelPermissionPredicateGroupManifes
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
     parentPredicateGroupUniversalIdentifier: PARENT_PREDICATE_GROUP_UID,
     position: 0,
+    canReadRecords: true,
+    canUpdateRecords: true,
+    canSoftDeleteRecords: true,
+    canDestroyRecords: true,
   };
 
 const forward = (
