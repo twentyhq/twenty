@@ -24,6 +24,7 @@ import {
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
+import { listMostRecentUnipileChats } from 'src/unipile/utils/list-most-recent-unipile-chats.util';
 import { listUnipileInboxIds } from 'src/unipile/utils/list-unipile-inbox-ids.util';
 import { sortUnipileChatsByLastMessage } from 'src/unipile/utils/sort-unipile-chats-by-last-message.util';
 
@@ -159,6 +160,47 @@ const finishPlanning = async ({
   return { status: 'PLANNED', chunkCount };
 };
 
+const planLimitedHistoryImport = async ({
+  payload,
+  chats,
+}: {
+  payload: LinkedinPlanHistoryImportJobPayload;
+  chats: UnipileChat[];
+}): Promise<LinkedinPlanHistoryImportResult> => {
+  let chunkCount = 0;
+
+  for (
+    let chunkStart = 0;
+    chunkStart < chats.length;
+    chunkStart += LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB
+  ) {
+    const chunkChats = chats.slice(
+      chunkStart,
+      chunkStart + LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+    );
+
+    if (
+      !(await planChunk({
+        payload,
+        chunkIndex: chunkCount,
+        chats: chunkChats,
+        conversationCount: chunkStart + chunkChats.length,
+        reportedConversationCount: chats.length,
+      }))
+    ) {
+      return { status: 'CANCELLED' };
+    }
+
+    chunkCount += 1;
+  }
+
+  return finishPlanning({
+    payload,
+    chunkCount,
+    conversationCount: chats.length,
+  });
+};
+
 const planHistoryImport = async (
   payload: LinkedinPlanHistoryImportJobPayload,
   conversationLimit: number | undefined,
@@ -221,18 +263,21 @@ const planHistoryImport = async (
     return inboxIds;
   }
 
+  if (isDefined(conversationLimit)) {
+    const chats = await pauseOnRateLimit(() =>
+      listMostRecentUnipileChats({
+        accountId: unipileAccountId,
+        inboxIds,
+        limit: conversationLimit,
+      }),
+    );
+
+    return Array.isArray(chats)
+      ? planLimitedHistoryImport({ payload, chats })
+      : chats;
+  }
+
   while (inboxIndex < inboxIds.length) {
-    const remainingConversationCount = isDefined(conversationLimit)
-      ? conversationLimit - conversationCount
-      : undefined;
-
-    if (
-      isDefined(remainingConversationCount) &&
-      remainingConversationCount <= 0
-    ) {
-      break;
-    }
-
     if (
       Date.now() - startedAt >
       LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS
@@ -245,10 +290,7 @@ const planHistoryImport = async (
         accountId: unipileAccountId,
         inboxId: inboxIds[inboxIndex],
         cursor,
-        limit: Math.min(
-          LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
-          remainingConversationCount ?? LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
-        ),
+        limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
       }),
     );
 
@@ -261,16 +303,10 @@ const planHistoryImport = async (
       !isDefined(cursor) &&
       isDefined(page.totalCount)
     ) {
-      reportedConversationCount = Math.min(
-        page.totalCount,
-        conversationLimit ?? page.totalCount,
-      );
+      reportedConversationCount = page.totalCount;
     }
 
-    const chats = sortUnipileChatsByLastMessage(page.items).slice(
-      0,
-      remainingConversationCount,
-    );
+    const chats = sortUnipileChatsByLastMessage(page.items);
 
     console.log(
       `[linkedin] history run ${runId}: inbox ${inboxIndex + 1} of ${inboxIds.length}, ${chats.length} chats listed (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'})${isDefined(page.totalCount) ? `, ${page.totalCount} in inbox` : ''}`,
@@ -346,7 +382,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the most recent past LinkedIn conversations of a connection, up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
+    'Lists the most recent past LinkedIn conversations of a connection across its inboxes, up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });

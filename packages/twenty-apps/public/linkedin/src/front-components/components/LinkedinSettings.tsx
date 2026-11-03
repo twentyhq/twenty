@@ -141,6 +141,8 @@ export const LinkedinSettings = () => {
     setIsSyncStarting(true);
 
     try {
+      await settingsSaveQueueRef.current;
+
       showView(
         await postLinkedinSettingsRouteOrThrow({
           routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.syncHistory,
