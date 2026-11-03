@@ -173,7 +173,6 @@ export class UserWorkspaceAuthContextService {
     return buildUserAuthContext({
       workspace,
       application,
-      viaApplication: matchingUserContext?.viaApplication,
       userWorkspaceId,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId,

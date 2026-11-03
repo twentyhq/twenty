@@ -93,7 +93,6 @@ export class AgentRunCallerContextService {
         await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
           workspaceMemberId: callerRef.callerWorkspaceMemberId,
           workspaceId: workspace.id,
-          viaApplication: applicationAuthContext?.application,
         });
 
       return { authContext, actorContext };

@@ -17,7 +17,7 @@ export const getAuthContextApplication = (
   }
 
   if (isUserAuthContext(authContext)) {
-    return authContext.application ?? authContext.viaApplication;
+    return authContext.application;
   }
 
   return undefined;

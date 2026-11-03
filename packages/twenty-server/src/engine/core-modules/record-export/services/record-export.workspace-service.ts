@@ -494,7 +494,7 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportAuthContext> {
     if (
       !isApiKeyAuthContext(authContext) &&
-      (!isUserAuthContext(authContext) || isDefined(authContext.viaApplication))
+      (!isUserAuthContext(authContext) || isDefined(authContext.agentId))
     ) {
       throw new ForbiddenException(t`Sign in to export records.`);
     }
