@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DeleteTimelineActivitiesOfDestroyedLinkedRecordsJob } from 'src/modules/timeline/jobs/delete-timeline-activities-of-destroyed-linked-records.job';
+import { LinkedTimelineActivityDeletionJob } from 'src/modules/timeline/jobs/linked-timeline-activity-deletion.job';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
@@ -8,7 +8,7 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
   imports: [TimelineActivityModule],
   providers: [
     UpsertTimelineActivityFromInternalEvent,
-    DeleteTimelineActivitiesOfDestroyedLinkedRecordsJob,
+    LinkedTimelineActivityDeletionJob,
   ],
 })
 export class TimelineJobModule {}

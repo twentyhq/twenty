@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectRecordBaseEvent,
-  type ObjectRecordDestroyEvent,
-} from 'twenty-shared/database-events';
+import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
@@ -23,6 +20,7 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
@@ -207,20 +205,12 @@ export class TimelineActivityService {
     }
   }
 
-  async deleteActivitiesOfDestroyedLinkedRecords({
-    events,
-    objectMetadata,
-    workspaceId,
-  }: WorkspaceEventBatch<ObjectRecordDestroyEvent>) {
-    if (!isDefined(workspaceId)) {
-      return;
-    }
-
-    await this.timelineActivityRepository.deleteLinkedTimelineActivities({
-      workspaceId,
-      linkedObjectMetadataId: objectMetadata.id,
-      linkedRecordIds: events.map((event) => event.recordId),
-    });
+  async deleteLinkedTimelineActivities(
+    linkedTimelineActivityDeletion: LinkedTimelineActivityDeletion,
+  ) {
+    await this.timelineActivityRepository.deleteLinkedTimelineActivities(
+      linkedTimelineActivityDeletion,
+    );
   }
 
   private ruleMatchesEvent({

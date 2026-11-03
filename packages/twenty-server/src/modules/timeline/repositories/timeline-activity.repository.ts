@@ -13,6 +13,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type LinkedTimelineActivityHappensAtSyncUpdate } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import {
   buildTimelineActivityMergeKey,
@@ -87,11 +88,7 @@ export class TimelineActivityRepository {
     workspaceId,
     linkedObjectMetadataId,
     linkedRecordIds,
-  }: {
-    workspaceId: string;
-    linkedObjectMetadataId: string;
-    linkedRecordIds: string[];
-  }) {
+  }: LinkedTimelineActivityDeletion) {
     if (linkedRecordIds.length === 0) {
       return;
     }
@@ -100,10 +97,7 @@ export class TimelineActivityRepository {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager
-        .getRepositoryWithoutPermissionChecks<ObjectLiteral>(
-          'timelineActivity',
-          { shouldSkipEventEmission: true },
-        )
+        .getRepositoryWithoutPermissionChecks<ObjectLiteral>('timelineActivity')
         .delete({
           linkedObjectMetadataId,
           linkedRecordId: Any(linkedRecordIds),
