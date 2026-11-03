@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { type Repository } from 'typeorm';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -28,9 +24,6 @@ export class AgentChatReplyContinuationPolicyService {
   private readonly logger = new Logger(
     AgentChatReplyContinuationPolicyService.name,
   );
-
-  @InjectRepository(WorkspaceEntity)
-  private readonly workspaceRepository: Repository<WorkspaceEntity>;
 
   @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
   private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
@@ -57,8 +50,7 @@ export class AgentChatReplyContinuationPolicyService {
     workspaceId: string;
     threadId: string;
   }): Promise<string[]> {
-    const [workspace, thread, queuedMessages] = await Promise.all([
-      this.workspaceRepository.findOneByOrFail({ id: workspaceId }),
+    const [thread, queuedMessages] = await Promise.all([
       this.threadRepository.findOneOrFail(workspaceId, {
         where: { id: threadId },
         select: ['id', 'workspaceMemberId'],
@@ -78,7 +70,7 @@ export class AgentChatReplyContinuationPolicyService {
 
     for (const message of queuedMessages) {
       const isExecutionAllowed = await this.shouldExecuteMessage({
-        workspace,
+        workspaceId,
         threadId,
         message,
         ownerWorkspaceMemberId: thread.workspaceMemberId,
@@ -117,12 +109,12 @@ export class AgentChatReplyContinuationPolicyService {
   }
 
   private async shouldExecuteMessage({
-    workspace,
+    workspaceId,
     threadId,
     message,
     ownerWorkspaceMemberId,
   }: {
-    workspace: WorkspaceEntity;
+    workspaceId: string;
     threadId: string;
     message: Pick<
       AgentMessageWorkspaceEntity,
@@ -137,12 +129,12 @@ export class AgentChatReplyContinuationPolicyService {
       });
       const { userWorkspaceId } =
         await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
-          workspaceId: workspace.id,
+          workspaceId,
           workspaceMemberId,
         });
 
       return await this.replyExecutionPolicyService.shouldExecute({
-        workspace,
+        workspaceId,
         threadId,
         messageId: message.id,
         userWorkspaceId,

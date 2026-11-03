@@ -173,7 +173,7 @@ export class StreamAgentChatJob {
     const isExecutionAllowed =
       await this.replyExecutionPolicyService.shouldExecute({
         threadId: data.threadId,
-        workspace,
+        workspaceId: data.workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         messageId: message?.id,
       });

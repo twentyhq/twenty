@@ -3,11 +3,10 @@ import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modu
 
 const DEFAULT_PARTICIPATION = {
   mode: AiChatAssistantMode.MENTION_ONLY,
-  isDirectAssistantChat: false,
-  isDirectMessage: false,
+  audience: 'conversation',
   isAssistantParticipant: false,
   isAssistantMentioned: false,
-};
+} satisfies Parameters<typeof resolveAgentChatAssistantParticipation>[0];
 
 describe('resolveAgentChatAssistantParticipation', () => {
   it.each(Object.values(AiChatAssistantMode))(
@@ -17,7 +16,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         resolveAgentChatAssistantParticipation({
           ...DEFAULT_PARTICIPATION,
           mode,
-          isDirectAssistantChat: true,
+          audience: 'assistant-chat',
           isInitialAssistantParticipant: false,
         }),
       ).toBe(true);
@@ -41,7 +40,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
         mode: AiChatAssistantMode.AUTOMATIC,
-        isDirectMessage: true,
+        audience: 'direct-message',
         isInitialAssistantParticipant: false,
       }),
     ).toBe(true);
@@ -51,7 +50,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        isDirectMessage: true,
+        audience: 'direct-message',
         isInitialMessage: true,
         isInitialAssistantParticipant: true,
       }),
@@ -62,7 +61,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        isDirectMessage: true,
+        audience: 'direct-message',
         isAssistantParticipant: true,
         isInitialMessage: true,
         isInitialAssistantParticipant: true,
@@ -74,7 +73,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        isDirectMessage: true,
+        audience: 'direct-message',
         isAssistantParticipant: true,
       }),
     ).toBe(true);

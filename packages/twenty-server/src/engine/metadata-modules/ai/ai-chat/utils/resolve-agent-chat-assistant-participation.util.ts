@@ -1,23 +1,22 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
 
 export const resolveAgentChatAssistantParticipation = ({
   mode,
-  isDirectAssistantChat,
-  isDirectMessage,
+  audience,
   isAssistantParticipant,
   isAssistantMentioned,
   isInitialAssistantParticipant,
   isInitialMessage = false,
 }: {
   mode: AiChatAssistantMode;
-  isDirectAssistantChat: boolean;
-  isDirectMessage: boolean;
+  audience: AgentChatAudience;
   isAssistantParticipant: boolean;
   isAssistantMentioned: boolean;
   isInitialAssistantParticipant?: boolean;
   isInitialMessage?: boolean;
 }): boolean => {
-  if (isDirectAssistantChat) {
+  if (audience === 'assistant-chat') {
     return true;
   }
 
@@ -25,11 +24,11 @@ export const resolveAgentChatAssistantParticipation = ({
     return false;
   }
 
-  if (isDirectMessage && mode === AiChatAssistantMode.AUTOMATIC) {
+  if (audience === 'direct-message' && mode === AiChatAssistantMode.AUTOMATIC) {
     return true;
   }
 
-  if (isDirectMessage && isInitialMessage) {
+  if (audience === 'direct-message' && isInitialMessage) {
     return isAssistantMentioned;
   }
 

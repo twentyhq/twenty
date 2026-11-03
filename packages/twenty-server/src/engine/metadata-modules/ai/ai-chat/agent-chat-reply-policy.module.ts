@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AgentChatReplyContinuationPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-continuation-policy.service';
@@ -19,7 +17,6 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
     AgentHistoryModule,
     AiEvaluationModule,
     FeatureFlagModule,
-    TypeOrmModule.forFeature([WorkspaceEntity]),
     UserWorkspaceModule,
   ],
   providers: [
