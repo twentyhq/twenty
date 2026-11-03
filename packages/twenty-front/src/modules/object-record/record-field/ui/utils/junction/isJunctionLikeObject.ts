@@ -10,8 +10,8 @@ export const isJunctionLikeObject = (
 ) =>
   fields.every(
     (field) =>
-      field.isSystem === true ||
-      field.isSystemSideEffect === true ||
+      field.isSystem ||
+      field.isSystemSideEffect ||
       getFieldRelations(field).every(
         ({ type }) => type === RelationType.MANY_TO_ONE,
       ),
