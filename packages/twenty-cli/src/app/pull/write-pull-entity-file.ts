@@ -10,10 +10,12 @@ export const writePullEntityFile = ({
   entity,
   relativePath,
   isCodeStepPathAvailable,
+  localCodeStepPathByStepIdentifier,
 }: {
   entity: Pick<PullEntity, 'kind' | 'definer' | 'config' | 'enumBindings'>;
   relativePath: string;
   isCodeStepPathAvailable?: IsCodeStepPathAvailable;
+  localCodeStepPathByStepIdentifier?: ReadonlyMap<string, string>;
 }): {
   content: string;
   requiredSdkExports: string[];
@@ -25,6 +27,7 @@ export const writePullEntityFile = ({
           config: entity.config,
           workflowRelativePath: relativePath,
           isCodeStepPathAvailable,
+          localCodeStepPathByStepIdentifier,
         })
       : { config: entity.config, importStatements: [], codeStepFiles: [] };
 

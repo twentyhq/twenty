@@ -91,16 +91,7 @@ export const getOverwrittenLocalChanges = async ({
         writePullEntityFile({
           entity: baseEntity,
           relativePath,
-          isCodeStepPathAvailable: ({
-            relativePath: codeStepPath,
-            stepUniversalIdentifier,
-          }) => {
-            const localPath = localCodeStepPathByStepIdentifier.get(
-              stepUniversalIdentifier,
-            );
-
-            return !isDefined(localPath) || localPath === codeStepPath;
-          },
+          localCodeStepPathByStepIdentifier,
         }).content,
         writeDefineFile({
           definer: baseEntity.definer,

@@ -1,6 +1,7 @@
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { describe, expect, it } from 'vitest';
 
+import { type IsCodeStepPathAvailable } from '@/app/pull/extract-workflow-code-step-files';
 import { WORKFLOW_ENUM_BINDINGS } from '@/app/pull/write-define-file';
 import { writePullEntityFile } from '@/app/pull/write-pull-entity-file';
 
@@ -38,6 +39,21 @@ const workflowEntity = (steps: WorkflowStepManifest[]) => ({
     },
   },
 });
+
+// Fails instead of hanging the worker if name probing stops terminating
+const boundedProbing = (): IsCodeStepPathAvailable => {
+  let probeCount = 0;
+
+  return () => {
+    probeCount++;
+
+    if (probeCount > 100) {
+      throw new Error('Code step file name probing did not terminate');
+    }
+
+    return true;
+  };
+};
 
 describe('writePullEntityFile', () => {
   it('writes the source of each code step next to its workflow and reads it from there', () => {
@@ -115,6 +131,61 @@ describe('writePullEntityFile', () => {
       'src/workflows/greet-new-pets/55555555-format-name.code.ts',
       'src/workflows/greet-new-pets/55555555-format-name-2.code.ts',
     ]);
+  });
+
+  it('keeps the local name of a code step when it could have generated it', () => {
+    const { codeStepFiles } = writePullEntityFile({
+      entity: workflowEntity([
+        codeStep({ universalIdentifier: FORMAT_STEP_UID, name: 'Format name' }),
+      ]),
+      relativePath: 'src/workflows/greet-new-pets.workflow.ts',
+      isCodeStepPathAvailable: boundedProbing(),
+      localCodeStepPathByStepIdentifier: new Map([
+        [
+          FORMAT_STEP_UID,
+          'src/workflows/greet-new-pets/44444444-format-name-3.code.ts',
+        ],
+      ]),
+    });
+
+    expect(codeStepFiles.map(({ relativePath }) => relativePath)).toEqual([
+      'src/workflows/greet-new-pets/44444444-format-name-3.code.ts',
+    ]);
+  });
+
+  it('generates names for code steps whose local files it could not have named', () => {
+    const steps = [
+      codeStep({ universalIdentifier: FORMAT_STEP_UID, name: 'Format name' }),
+      codeStep({
+        universalIdentifier: SECOND_FORMAT_STEP_UID,
+        name: 'Format name',
+      }),
+    ];
+    const expectedPaths = [
+      'src/workflows/greet-new-pets/format-name.code.ts',
+      'src/workflows/greet-new-pets/55555555-format-name.code.ts',
+    ];
+    const generatePaths = (localPaths: [string, string]) =>
+      writePullEntityFile({
+        entity: workflowEntity(steps),
+        relativePath: 'src/workflows/greet-new-pets.workflow.ts',
+        isCodeStepPathAvailable: boundedProbing(),
+        localCodeStepPathByStepIdentifier: new Map([
+          [FORMAT_STEP_UID, localPaths[0]],
+          [SECOND_FORMAT_STEP_UID, localPaths[1]],
+        ]),
+      }).codeStepFiles.map(({ relativePath }) => relativePath);
+
+    // Identical code matched each step to the other's file
+    expect(generatePaths([expectedPaths[1], expectedPaths[0]])).toEqual(
+      expectedPaths,
+    );
+    expect(
+      generatePaths([
+        'src/workflows/greet-new-pets/renamed.code.ts',
+        'src/workflows/moved/55555555-format-name.code.ts',
+      ]),
+    ).toEqual(expectedPaths);
   });
 
   it('writes a workflow without code steps as a single file', () => {

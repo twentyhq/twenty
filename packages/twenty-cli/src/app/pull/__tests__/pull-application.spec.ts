@@ -1006,6 +1006,76 @@ export default defineField({
     expect(await read(unrelatedPath)).toBe(unrelated);
   });
 
+  it('reports a workflow file pointing at a renamed code step file as edited', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const renamedPath = 'src/workflows/greet-new-pets/renamed.code.ts';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath)).replace(
+        "'format-name.code.ts'",
+        "'renamed.code.ts'",
+      ),
+    );
+    await writeFile(join(appPath, renamedPath), CODE_STEP_SOURCE);
+    await rm(join(appPath, codeStepPath));
+    await dropSourceFingerprints();
+
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(CODE_STEP_SOURCE.replace('Hello', 'Welcome')),
+        }),
+      ),
+    );
+
+    expect(changed.overwrittenLocalChanges).toEqual([
+      { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
+    ]);
+  });
+
+  it('removes the code step file of a step that no longer reads it locally', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath)).replace(
+        "readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8')",
+        printString('export const main = async () => ({});'),
+      ),
+    );
+
+    const replaced = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          universalIdentifier: OTHER_IDENTIFIER,
+          name: 'Wait',
+          type: 'EMPTY',
+          input: {},
+        }),
+      ),
+    );
+
+    expect(replaced.deletions).toContainEqual({
+      universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+      relativePath: codeStepPath,
+    });
+    await expect(read(codeStepPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
   it('does not report a workflow file holding its code step source inline as edited', async () => {
     const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
     const codeStepFolder = 'src/workflows/greet-new-pets';

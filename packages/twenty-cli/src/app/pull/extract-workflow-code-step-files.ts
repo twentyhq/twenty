@@ -1,7 +1,7 @@
 import { posix } from 'node:path';
 
 import { isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import {
   printString,
@@ -43,12 +43,14 @@ const reserveCodeStepFileName = ({
   folderPath,
   fileBaseName,
   universalIdentifier,
+  localFileName,
   takenFileNames,
   isCodeStepPathAvailable,
 }: {
   folderPath: string;
   fileBaseName: string;
   universalIdentifier: string;
+  localFileName: string | undefined;
   takenFileNames: Set<string>;
   isCodeStepPathAvailable: IsCodeStepPathAvailable;
 }): string => {
@@ -59,30 +61,60 @@ const reserveCodeStepFileName = ({
       relativePath: posix.join(folderPath, fileName),
       stepUniversalIdentifier: universalIdentifier,
     });
+  const unsuffixedFileNames = [
+    `${fileBaseName}${CODE_STEP_FILE_SUFFIX}`,
+    `${identifierPrefix}-${fileBaseName}${CODE_STEP_FILE_SUFFIX}`,
+  ];
+  const suffixedFileNamePrefix = `${identifierPrefix}-${fileBaseName}-`;
+  const isGeneratedFileName = (fileName: string) =>
+    unsuffixedFileNames.includes(fileName) ||
+    (fileName.startsWith(suffixedFileNamePrefix) &&
+      fileName.endsWith(CODE_STEP_FILE_SUFFIX) &&
+      /^([2-9]|[1-9]\d+)$/.test(
+        fileName.slice(
+          suffixedFileNamePrefix.length,
+          -CODE_STEP_FILE_SUFFIX.length,
+        ),
+      ));
 
-  let fileName = `${fileBaseName}${CODE_STEP_FILE_SUFFIX}`;
+  const reserve = (fileName: string) => {
+    takenFileNames.add(fileName);
+
+    return fileName;
+  };
+
+  // A local file under a name this generator never produces (renamed by hand) cannot be where the base put this step
+  if (
+    isDefined(localFileName) &&
+    isGeneratedFileName(localFileName) &&
+    isAvailable(localFileName)
+  ) {
+    return reserve(localFileName);
+  }
+
+  let [fileName] = unsuffixedFileNames;
 
   if (!isAvailable(fileName)) {
-    fileName = `${identifierPrefix}-${fileName}`;
+    fileName = unsuffixedFileNames[1];
   }
 
   for (let suffix = 2; !isAvailable(fileName); suffix++) {
-    fileName = `${identifierPrefix}-${fileBaseName}-${suffix}${CODE_STEP_FILE_SUFFIX}`;
+    fileName = `${suffixedFileNamePrefix}${suffix}${CODE_STEP_FILE_SUFFIX}`;
   }
 
-  takenFileNames.add(fileName);
-
-  return fileName;
+  return reserve(fileName);
 };
 
 export const extractWorkflowCodeStepFiles = ({
   config,
   workflowRelativePath,
   isCodeStepPathAvailable = () => true,
+  localCodeStepPathByStepIdentifier,
 }: {
   config: unknown;
   workflowRelativePath: string;
   isCodeStepPathAvailable?: IsCodeStepPathAvailable;
+  localCodeStepPathByStepIdentifier?: ReadonlyMap<string, string>;
 }): {
   config: unknown;
   importStatements: string[];
@@ -112,6 +144,9 @@ export const extractWorkflowCodeStepFiles = ({
       return step;
     }
 
+    const localCodeStepPath = localCodeStepPathByStepIdentifier?.get(
+      step.universalIdentifier,
+    );
     const fileName = reserveCodeStepFileName({
       folderPath,
       fileBaseName: toFileBaseName({
@@ -119,6 +154,11 @@ export const extractWorkflowCodeStepFiles = ({
         universalIdentifier: step.universalIdentifier,
       }),
       universalIdentifier: step.universalIdentifier,
+      localFileName:
+        isDefined(localCodeStepPath) &&
+        posix.dirname(localCodeStepPath) === folderPath
+          ? posix.basename(localCodeStepPath)
+          : undefined,
       takenFileNames,
       isCodeStepPathAvailable,
     });

@@ -70,6 +70,7 @@ export const pullApplication = async (
     const localCodeStepFilesByWorkflowPath = await findLocalCodeStepFiles({
       appPath,
       scannedFiles,
+      baseEntities,
     });
     const plan = planPullWrites({
       entities,
