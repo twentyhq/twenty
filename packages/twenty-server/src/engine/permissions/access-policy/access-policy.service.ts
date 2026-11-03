@@ -11,6 +11,7 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
@@ -45,7 +46,7 @@ export class AccessPolicyService {
   }): Promise<void> {
     if (
       !this.isAuthPrincipalAccepted({
-        accessPolicy,
+        authPrincipals: accessPolicy.authPrincipals,
         authPrincipalVariant: classifyAuthPrincipal(request),
       })
     ) {
@@ -91,8 +92,8 @@ export class AccessPolicyService {
   }): Promise<boolean> {
     if (
       !this.isAuthPrincipalAccepted({
-        accessPolicy,
-        authPrincipalVariant: this.withoutAgent(authPrincipalVariant),
+        authPrincipals: this.withAgentsAdmitted(accessPolicy.authPrincipals),
+        authPrincipalVariant,
       }) ||
       isDefined(this.findDisabledFeatureFlag({ accessPolicy, featureFlagsMap }))
     ) {
@@ -144,27 +145,37 @@ export class AccessPolicyService {
     });
   }
 
-  // Temporary hack: `application: true` refuses agent-bound callers by default, and tools must
-  // admit them. Remove once AuthPrincipalGuardConfig makes withAgent explicit on every policy
-  private withoutAgent(
-    authPrincipalVariant: AuthPrincipalVariant | undefined,
-  ): AuthPrincipalVariant | undefined {
-    return authPrincipalVariant?.kind === 'application'
-      ? { ...authPrincipalVariant, withAgent: false }
-      : authPrincipalVariant;
+  // Temporary hack: tools admit agents wherever the policy admits the application, which
+  // `application: true` leaves out. Remove once AuthPrincipalGuardConfig makes withAgent explicit
+  private withAgentsAdmitted(
+    authPrincipals: AuthPrincipalGuardConfig,
+  ): AuthPrincipalGuardConfig {
+    const { application } = authPrincipals;
+
+    if (application === false) {
+      return authPrincipals;
+    }
+
+    return {
+      ...authPrincipals,
+      application:
+        application === true
+          ? { withUser: true, withoutUser: true, withAgent: true }
+          : { ...application, withAgent: true },
+    };
   }
 
   private isAuthPrincipalAccepted({
-    accessPolicy,
+    authPrincipals,
     authPrincipalVariant,
   }: {
-    accessPolicy: AccessPolicy;
+    authPrincipals: AuthPrincipalGuardConfig;
     authPrincipalVariant: AuthPrincipalVariant | undefined;
   }): boolean {
     return (
       isDefined(authPrincipalVariant) &&
       isAuthPrincipalVariantAccepted({
-        authPrincipalGuardConfig: accessPolicy.authPrincipals,
+        authPrincipalGuardConfig: authPrincipals,
         authPrincipalVariant,
       })
     );
