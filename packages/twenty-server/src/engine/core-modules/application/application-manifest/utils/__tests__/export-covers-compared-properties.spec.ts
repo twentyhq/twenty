@@ -649,9 +649,14 @@ const EXPORTED_KINDS: ExportedKind[] = [
           }),
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: {
+      targetObjectMetadataUniversalIdentifier: 'targetObjectUniversalIdentifier',
+    },
     workspaceLocalProperties: [],
-    knownGaps: {},
+    knownGaps: {
+      agentChatChannelUniversalIdentifier:
+        'apps cannot declare AGENT_CHAT_CHANNEL navigation menu items',
+    },
   },
   {
     metadataName: 'pageLayout',
