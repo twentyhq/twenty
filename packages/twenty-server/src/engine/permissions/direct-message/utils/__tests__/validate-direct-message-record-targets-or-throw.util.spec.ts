@@ -25,6 +25,7 @@ describe('validateDirectMessageRecordTargetsOrThrow', () => {
   it('requires independent target record access when attaching or changing a DM link', async () => {
     const request = {
       records: [{ id: 'link', threadId: 'dm', targetCompanyId: 'company' }],
+      recordsBefore: [],
       context: {
         findRecords: async () => [{ id: 'dm', ...directMessagePair }],
       },
@@ -55,6 +56,7 @@ describe('validateDirectMessageRecordTargetsOrThrow', () => {
 
     await validateDirectMessageRecordTargetsOrThrow({
       records: [{ id: 'link', threadId: 'chat', targetCompanyId: 'company' }],
+      recordsBefore: [],
       context: {
         findRecords: async () => [
           {
@@ -74,6 +76,29 @@ describe('validateDirectMessageRecordTargetsOrThrow', () => {
       findReadableRecordIds,
     });
 
+    expect(findReadableRecordIds).not.toHaveBeenCalled();
+  });
+
+  it('skips links that an update leaves unchanged', async () => {
+    const link = { id: 'link', threadId: 'dm', targetCompanyId: 'company' };
+    const findReadableRecordIds = jest.fn(async () => new Set<string>());
+
+    await expect(
+      validateDirectMessageRecordTargetsOrThrow({
+        records: [{ ...link, position: 2 }],
+        recordsBefore: [{ ...link, position: 1 }],
+        context: {
+          findRecords: async () => [{ id: 'dm', ...directMessagePair }],
+        },
+        metadataMaps: {
+          featureFlagsMap: {
+            [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: true,
+          },
+        },
+        targetRelations,
+        findReadableRecordIds,
+      }),
+    ).resolves.toBeUndefined();
     expect(findReadableRecordIds).not.toHaveBeenCalled();
   });
 });
