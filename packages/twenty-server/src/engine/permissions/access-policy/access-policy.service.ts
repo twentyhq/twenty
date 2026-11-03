@@ -3,7 +3,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { type Request } from 'express';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -58,11 +58,13 @@ export class AccessPolicyService {
 
     const disabledFeatureFlag = this.findDisabledFeatureFlag({
       accessPolicy,
-      featureFlagsMap: isDefined(workspace)
-        ? await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-            workspace.id,
-          )
-        : undefined,
+      featureFlagsMap:
+        isDefined(workspace) &&
+        isNonEmptyArray(accessPolicy.requiredFeatureFlags)
+          ? await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+              workspace.id,
+            )
+          : undefined,
     });
 
     if (isDefined(disabledFeatureFlag)) {
