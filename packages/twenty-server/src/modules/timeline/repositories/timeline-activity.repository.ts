@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThan, type ObjectLiteral } from 'typeorm';
+import { Any, In, MoreThan, type ObjectLiteral } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -80,6 +80,34 @@ export class TimelineActivityRepository {
           update,
         );
       }
+    }, authContext);
+  }
+
+  async deleteLinkedTimelineActivities({
+    workspaceId,
+    linkedObjectMetadataId,
+    linkedRecordIds,
+  }: {
+    workspaceId: string;
+    linkedObjectMetadataId: string;
+    linkedRecordIds: string[];
+  }) {
+    if (linkedRecordIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks<ObjectLiteral>(
+          'timelineActivity',
+          { shouldSkipEventEmission: true },
+        )
+        .delete({
+          linkedObjectMetadataId,
+          linkedRecordId: Any(linkedRecordIds),
+        });
     }, authContext);
   }
 

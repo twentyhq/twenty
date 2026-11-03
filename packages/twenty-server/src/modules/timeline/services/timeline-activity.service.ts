@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordBaseEvent,
+  type ObjectRecordDestroyEvent,
+} from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
@@ -202,6 +205,22 @@ export class TimelineActivityService {
         payloads: payloadsByObjectSingularName[objectSingularName],
       });
     }
+  }
+
+  async deleteActivitiesOfDestroyedLinkedRecords({
+    events,
+    objectMetadata,
+    workspaceId,
+  }: WorkspaceEventBatch<ObjectRecordDestroyEvent>) {
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
+    await this.timelineActivityRepository.deleteLinkedTimelineActivities({
+      workspaceId,
+      linkedObjectMetadataId: objectMetadata.id,
+      linkedRecordIds: events.map((event) => event.recordId),
+    });
   }
 
   private ruleMatchesEvent({

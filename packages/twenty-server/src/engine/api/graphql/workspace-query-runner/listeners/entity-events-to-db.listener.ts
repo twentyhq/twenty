@@ -29,6 +29,7 @@ import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
+import { DeleteTimelineActivitiesOfDestroyedLinkedRecordsJob } from 'src/modules/timeline/jobs/delete-timeline-activities-of-destroyed-linked-records.job';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { TimelineActivityRoutingPlanService } from 'src/modules/timeline/services/timeline-activity-routing-plan.service';
 
@@ -127,6 +128,22 @@ export class EntityEventsToDbListener {
       this.enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches(batchEvent),
       this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent),
     ];
+
+    if (action === DatabaseEventAction.DESTROYED) {
+      promises.push(
+        this.entityEventsToDbQueueService.add<
+          WorkspaceEventBatch<ObjectRecordDestroyEvent>
+        >(
+          DeleteTimelineActivitiesOfDestroyedLinkedRecordsJob.name,
+          batchEvent as WorkspaceEventBatch<ObjectRecordDestroyEvent>,
+          {
+            retryLimit: 1,
+            workspaceId: batchEvent.workspaceId,
+            isWorkspaceJob: true,
+          },
+        ),
+      );
+    }
 
     if (shouldCreateTimelineActivity) {
       promises.push(
