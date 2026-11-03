@@ -127,16 +127,14 @@ describe('computeFlatEntityAndRelatedFlatEntitiesToDelete', () => {
     ).toEqual([parentGroup]);
   });
 
-  it('throws when the maps of a required child are missing', () => {
-    const { flatObjectPermissionMaps: _, ...flatEntityMaps } =
-      buildFlatEntityMaps();
-
+  it('throws beyond the maximum depth', () => {
     expect(() =>
       computeFlatEntityAndRelatedFlatEntitiesToDelete({
         metadataName: 'role',
         flatEntity: role,
-        flatEntityMaps,
+        flatEntityMaps: buildFlatEntityMaps(),
+        maxDepth: 0,
       }),
-    ).toThrow('flatObjectPermissionMaps');
+    ).toThrow('beyond the maximum depth of 0');
   });
 });
