@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
@@ -91,6 +92,10 @@ export class AgentConversationWriterService {
     id?: string;
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
+    if (!isDefined(threadId)) {
+      await this.assertTurnWithoutThreadAllowedOrThrow(workspaceId);
+    }
+
     const now = new Date().toISOString();
     const values = {
       threadId,
@@ -246,6 +251,28 @@ export class AgentConversationWriterService {
     }
 
     return messageId;
+  }
+
+  // TODO: remove once 2.56 leaves the cross-upgrade window. Until
+  // upgrade:2-56:make-agent-turn-thread-optional reaches a workspace, its turns need a thread
+  private async assertTurnWithoutThreadAllowedOrThrow(
+    workspaceId: string,
+  ): Promise<void> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier
+      ]?.isNullable !== true
+    ) {
+      throw new AiException(
+        'AI runs without a conversation are unavailable until this workspace finishes upgrading',
+        AiExceptionCode.AI_RUN_UPGRADE_IN_PROGRESS,
+      );
+    }
   }
 
   // Callers name the sender by their membership; a sender who has left since
