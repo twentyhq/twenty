@@ -6,7 +6,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { WidgetActionMessageCompose } from '@/page-layout/widgets/emails/components/WidgetActionMessageCompose';
+import { WidgetActionMessageCompose } from '@/page-layout/widgets/messages/components/WidgetActionMessageCompose';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const PERSON_ID = '20202020-0000-4000-8000-000000000001';

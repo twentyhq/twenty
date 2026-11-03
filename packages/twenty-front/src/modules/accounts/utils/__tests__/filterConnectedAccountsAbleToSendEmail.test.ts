@@ -18,6 +18,10 @@ describe('filterConnectedAccountsAbleToSendEmail', () => {
       provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
       connectionParameters: { SMTP: { host: 'smtp.example.com' } },
     };
+    const sharedMailboxAccount = {
+      id: 'shared-mailbox',
+      provider: ConnectedAccountProvider.EMAIL_GROUP,
+    };
     const oidcAccount = {
       id: 'oidc',
       provider: ConnectedAccountProvider.OIDC,
@@ -28,9 +32,10 @@ describe('filterConnectedAccountsAbleToSendEmail', () => {
         oidcAccount,
         googleAccount,
         imapWithoutSmtpAccount,
+        sharedMailboxAccount,
         imapWithSmtpAccount,
       ]),
-    ).toEqual([googleAccount, imapWithSmtpAccount]);
+    ).toEqual([googleAccount, sharedMailboxAccount, imapWithSmtpAccount]);
   });
 
   it('returns an empty list when no account can send', () => {

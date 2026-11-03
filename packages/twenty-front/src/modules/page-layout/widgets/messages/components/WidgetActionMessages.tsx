@@ -1,10 +1,10 @@
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
-import { WidgetActionMessageCompose } from '@/page-layout/widgets/emails/components/WidgetActionMessageCompose';
+import { WidgetActionMessageCompose } from '@/page-layout/widgets/messages/components/WidgetActionMessageCompose';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useLingui } from '@lingui/react/macro';
 import { IconLink } from 'twenty-ui/icon';
 
-export const WidgetActionEmails = () => {
+export const WidgetActionMessages = () => {
   const { t } = useLingui();
 
   return (
