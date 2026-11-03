@@ -8,6 +8,7 @@ import { type EntityManager, IsNull } from 'typeorm';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -26,6 +27,7 @@ export class BillingLimitOverrideService {
   constructor(
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
+    private readonly billingArrangementService: BillingArrangementService,
     private readonly usageLimitService: UsageLimitService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -132,13 +134,12 @@ export class BillingLimitOverrideService {
       );
     }
 
-    await this.billingArrangementRepository
-      .withManager(entityManager)
-      .insert(workspaceId, {
-        ...limitOverride,
-        workspaceId,
-        grantedByUserId,
-      });
+    await this.billingArrangementService.insertArrangement({
+      workspaceId,
+      arrangement: limitOverride,
+      grantedByUserId,
+      entityManager,
+    });
   }
 
   private async endLimitOverrides({

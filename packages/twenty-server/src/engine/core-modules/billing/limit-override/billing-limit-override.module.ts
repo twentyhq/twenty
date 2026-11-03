@@ -3,6 +3,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { BillingLimitOverrideExpiryCronCommand } from 'src/engine/core-modules/billing/limit-override/crons/commands/billing-limit-override-expiry.cron.command';
@@ -14,6 +15,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     TypeOrmModule.forFeature([BillingArrangementEntity]),
+    BillingArrangementModule,
     UsageLimitModule,
   ],
   providers: [
