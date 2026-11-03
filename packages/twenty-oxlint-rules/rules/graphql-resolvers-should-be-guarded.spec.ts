@@ -35,6 +35,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [PermissionFlagType.WORKSPACE] }))
+          testMutation() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
           @Query()
           @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
           testQuery() {}
@@ -570,13 +580,13 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Mutation()
-          @UseGuards(AccessPolicyGuard({ authPrincipals: {}, requiredPermissionFlags: [] }))
+          @UseGuards(AccessPolicyGuard({ ...VIEW_WRITE_ACCESS_POLICY }))
           testMutation() {}
         }
       `,
       errors: [
         { messageId: 'graphqlResolversShouldBeGuarded' },
-        { messageId: 'accessPolicyGuardWithoutPolicyConstant' },
+        { messageId: 'accessPolicyGuardWithoutPolicy' },
       ],
       filename: 'test.tsx',
     },

@@ -14,8 +14,8 @@ const AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID =
 const AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID =
   'authPrincipalGuardWiderThanClass';
 const AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID = 'authPrincipalGuardNotFirst';
-const ACCESS_POLICY_GUARD_WITHOUT_POLICY_CONSTANT_MESSAGE_ID =
-  'accessPolicyGuardWithoutPolicyConstant';
+const ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID =
+  'accessPolicyGuardWithoutPolicy';
 const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
   'accessPolicyGuardOnClassAndMethod';
 
@@ -64,8 +64,8 @@ export const createGuardedEndpointRule = ({
           'This method-level AuthPrincipalGuard accepts {{ principalVariants }}, which the class-level AuthPrincipalGuard refuses: a method can only narrow what its class accepts.',
         [AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID]:
           'AuthPrincipalGuard and AccessPolicyGuard must come first in their @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after them only run once the principal is known.',
-        [ACCESS_POLICY_GUARD_WITHOUT_POLICY_CONSTANT_MESSAGE_ID]:
-          'AccessPolicyGuard takes an imported *_ACCESS_POLICY constant, so the GraphQL, REST and tool entry points of an operation share one policy.',
+        [ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID]:
+          'AccessPolicyGuard takes an imported *_ACCESS_POLICY constant when GraphQL, REST or tools share the operation, otherwise an inline policy object (no spread, no shorthand) readable at the endpoint.',
         [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
           'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
       },
@@ -93,12 +93,12 @@ export const createGuardedEndpointRule = ({
           });
         }
 
-        for (const guard of typedTokenHelpers.getAccessPolicyGuardsWithoutPolicyConstant(
+        for (const guard of typedTokenHelpers.getAccessPolicyGuardsWithoutPolicy(
           node,
         )) {
           context.report({
             node: guard,
-            messageId: ACCESS_POLICY_GUARD_WITHOUT_POLICY_CONSTANT_MESSAGE_ID,
+            messageId: ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID,
           });
         }
       };
