@@ -34,6 +34,22 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+};
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -101,22 +117,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY))
   @UsePipes(ResolverValidationPipe)
   async updateTimelineActivityType(
     @Args('input') input: UpdateTimelineActivityTypeInput,
@@ -129,22 +130,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY))
   async resetTimelineActivityType(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

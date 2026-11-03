@@ -57,6 +57,52 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const LOGIC_FUNCTION_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
+
+const LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+const LOGIC_FUNCTION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
 
 @UseGuards(NoPermissionGuard)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -79,20 +125,7 @@ export class LogicFunctionResolver {
 
   @Query(() => LogicFunctionDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(LOGIC_FUNCTION_READ_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async findOneLogicFunction(
@@ -126,22 +159,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => [LogicFunctionDTO])
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
     @AuthWorkspace()
@@ -193,22 +211,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY))
   async getAvailablePackages(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -247,22 +250,7 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WRITE_ACCESS_POLICY))
   async deleteOneLogicFunction(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -282,22 +270,7 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WRITE_ACCESS_POLICY))
   async createOneLogicFunction(
     @Args('input') input: CreateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -314,20 +287,7 @@ export class LogicFunctionResolver {
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async executeOneLogicFunction(
@@ -357,20 +317,7 @@ export class LogicFunctionResolver {
 
   @Query(() => String, { nullable: true })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async getLogicFunctionSourceCode(
@@ -395,20 +342,7 @@ export class LogicFunctionResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
+    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async updateOneLogicFunction(
@@ -467,22 +401,7 @@ export class LogicFunctionResolver {
       );
     },
   })
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY))
   async logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

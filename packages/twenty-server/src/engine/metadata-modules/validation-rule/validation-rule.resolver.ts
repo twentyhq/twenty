@@ -22,6 +22,22 @@ import { ValidationRuleService } from 'src/engine/metadata-modules/validation-ru
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { VALIDATION_RULE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ValidationRuleDTO)
@@ -35,20 +51,7 @@ export class ValidationRuleResolver {
 
   @Query(() => [ValidationRuleDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async validationRules(
@@ -64,20 +67,7 @@ export class ValidationRuleResolver {
 
   @Query(() => [ValidationRuleDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async validationRulesReadingField(

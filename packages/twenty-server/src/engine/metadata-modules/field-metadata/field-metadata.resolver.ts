@@ -51,6 +51,22 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 // structural type so ResolverValidationPipe skips FieldMetadataDTO decorators on loaded parents
 type FieldMetadataStandardOverrideParent = Pick<
@@ -75,20 +91,7 @@ export class FieldMetadataResolver {
   ) {}
 
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @Query(() => FieldConnectionDTO)
@@ -139,20 +142,7 @@ export class FieldMetadataResolver {
   }
 
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(FIELD_METADATA_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @Query(() => FieldMetadataDTO)

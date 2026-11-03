@@ -36,6 +36,22 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const VIEW_FIELD_GROUP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @MetadataResolver(() => ViewFieldGroupDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -73,20 +89,7 @@ export class ViewFieldGroupResolver {
 
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async getViewFieldGroups(
@@ -98,20 +101,7 @@ export class ViewFieldGroupResolver {
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async getViewFieldGroup(
@@ -123,20 +113,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     ViewChildEntityPermissionGuard('viewFieldGroup'),
   )
   async updateViewFieldGroup(
@@ -151,20 +128,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     CreateViewChildEntityPermissionGuard,
   )
   async createViewFieldGroup(
@@ -180,20 +144,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => [ViewFieldGroupDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     CreateViewChildEntityPermissionGuard,
   )
   async createManyViewFieldGroups(
@@ -209,20 +160,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     ViewChildEntityPermissionGuard('viewFieldGroup'),
   )
   async deleteViewFieldGroup(
@@ -237,20 +175,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(VIEW_FIELD_GROUP_ACCESS_POLICY),
     ViewChildEntityPermissionGuard('viewFieldGroup'),
   )
   async destroyViewFieldGroup(

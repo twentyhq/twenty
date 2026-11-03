@@ -60,6 +60,22 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-read-access-policy.constant';
 import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @MetadataResolver(() => ObjectMetadataDTO)
 @UsePipes(ResolverValidationPipe)
@@ -79,20 +95,7 @@ export class ObjectMetadataResolver {
   ) {}
 
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @Query(() => ObjectConnectionDTO)
@@ -139,20 +142,7 @@ export class ObjectMetadataResolver {
   }
 
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @Query(() => ObjectMetadataDTO)

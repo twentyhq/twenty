@@ -24,6 +24,22 @@ import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connect
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const CONNECTED_ACCOUNT_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
@@ -35,20 +51,7 @@ export class ConnectedAccountResolver {
 
   @Query(() => [ConnectedAccountPublicDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
@@ -110,20 +113,7 @@ export class ConnectedAccountResolver {
 
   @Mutation(() => ConnectedAccountPublicDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async deleteConnectedAccount(
@@ -150,20 +140,7 @@ export class ConnectedAccountResolver {
 
   @Mutation(() => ConnectedAccountPublicDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(CONNECTED_ACCOUNT_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async disconnectConnectedAccount(

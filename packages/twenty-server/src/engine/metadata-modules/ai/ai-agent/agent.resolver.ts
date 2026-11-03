@@ -27,6 +27,40 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const AGENT_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.AI],
+};
+
+const AGENT_RESOLVER_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [
+    PermissionFlagType.AI,
+    PermissionFlagType.AI_SETTINGS,
+  ],
+};
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -51,22 +85,7 @@ export class AgentResolver {
   }
 
   @Query(() => [AgentDTO])
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.AI],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(AGENT_RESOLVER_READ_ACCESS_POLICY))
   async findManyAgents(
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
@@ -90,20 +109,7 @@ export class AgentResolver {
 
   @Query(() => AgentDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.AI],
-    }),
+    AccessPolicyGuard(AGENT_RESOLVER_READ_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async findOneAgent(
@@ -125,25 +131,7 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.AI,
-        PermissionFlagType.AI_SETTINGS,
-      ],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(AGENT_RESOLVER_WRITE_ACCESS_POLICY))
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -162,23 +150,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.AI,
-        PermissionFlagType.AI_SETTINGS,
-      ],
-    }),
+    AccessPolicyGuard(AGENT_RESOLVER_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async updateOneAgent(
@@ -205,23 +177,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.AI,
-        PermissionFlagType.AI_SETTINGS,
-      ],
-    }),
+    AccessPolicyGuard(AGENT_RESOLVER_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async deleteOneAgent(
