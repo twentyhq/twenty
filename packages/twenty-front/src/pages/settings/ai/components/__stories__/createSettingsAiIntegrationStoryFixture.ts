@@ -9,7 +9,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { delay, graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   GetCurrentUserDocument,
@@ -151,7 +151,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     const savedWorkspace = result.data?.currentUser.currentWorkspace;
 
     if (!isDefined(savedWorkspace)) {
-      throw new Error('Saved workspace was not returned');
+      throw new CustomError('Saved workspace was not returned');
     }
 
     jotaiStore.set(currentWorkspaceState.atom, {
