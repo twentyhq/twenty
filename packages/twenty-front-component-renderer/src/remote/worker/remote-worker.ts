@@ -33,7 +33,6 @@ import { installFocusAndBlurMethodsPolyfill } from '@/polyfills/dom/utils/instal
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
-import { installHtmlElementInheritancePolyfill } from '@/polyfills/dom/utils/installHtmlElementInheritancePolyfill';
 import { installInputClickActivationPolyfill } from '@/polyfills/dom/utils/installInputClickActivationPolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
@@ -254,11 +253,6 @@ installImageLoadingPolyfill({
   cancelImage: async (requestId) => {
     await hostThread?.imports.cancelImage(requestId);
   },
-});
-
-installHtmlElementInheritancePolyfill({
-  documentTarget: document,
-  htmlElementPrototype: HTMLElement.prototype,
 });
 
 const workerExports: WorkerExports = {
