@@ -8,6 +8,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
+import agentAvatarFace from '@/ai/assets/agent-avatar/face-default.svg';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
@@ -103,13 +104,9 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
   const avatarStyle = getComputedStyle(avatar);
 
   await expect(avatarStyle.width).toBe(avatarStyle.height);
-  await expect(avatarStyle.borderRadius).toBe('50%');
-
-  if (CSS.supports('corner-shape', 'round')) {
-    await expect(['round', 'superellipse(1)']).toContain(
-      avatarStyle.getPropertyValue('corner-shape'),
-    );
-  }
+  await expect(getComputedStyle(avatar, '::after').maskImage).toContain(
+    agentAvatarFace,
+  );
 
   await expect(
     canvas.getByRole('button', { name: 'Create a workflow' }),
