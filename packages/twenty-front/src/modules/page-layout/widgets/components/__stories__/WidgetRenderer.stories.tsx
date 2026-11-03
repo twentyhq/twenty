@@ -423,7 +423,10 @@ const expectFrontComponentZoomRouting = async ({
   frontComponentContainer.append(eventTarget);
 
   try {
-    for (const modifier of [{ ctrlKey: true }, { metaKey: true }]) {
+    for (const modifier of [
+      { ctrlKey: true },
+      { ctrlKey: true, metaKey: true },
+    ]) {
       const zoomEvent = new WheelEvent('wheel', {
         ...modifier,
         bubbles: true,
@@ -437,17 +440,21 @@ const expectFrontComponentZoomRouting = async ({
       expect(handleWheel).toHaveBeenLastCalledWith(zoomEvent);
     }
 
-    const scrollEvent = new WheelEvent('wheel', {
-      bubbles: true,
-      cancelable: true,
-      deltaY: 100,
-    });
+    for (const modifier of [{}, { metaKey: true }]) {
+      const scrollEvent = new WheelEvent('wheel', {
+        ...modifier,
+        bubbles: true,
+        cancelable: true,
+        deltaY: 100,
+      });
 
-    eventTarget.dispatchEvent(scrollEvent);
+      eventTarget.dispatchEvent(scrollEvent);
 
-    expect(scrollEvent.defaultPrevented).toBe(false);
-    expect(handleWheel).toHaveBeenLastCalledWith(scrollEvent);
-    expect(handleWheel).toHaveBeenCalledTimes(3);
+      expect(scrollEvent.defaultPrevented).toBe(false);
+      expect(handleWheel).toHaveBeenLastCalledWith(scrollEvent);
+    }
+
+    expect(handleWheel).toHaveBeenCalledTimes(4);
 
     const outsideZoomEvent = new WheelEvent('wheel', {
       bubbles: true,

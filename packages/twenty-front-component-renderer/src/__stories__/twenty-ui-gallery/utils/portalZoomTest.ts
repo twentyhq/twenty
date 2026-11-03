@@ -18,7 +18,10 @@ export const portalZoomTest: TwentyUiGalleryPlayFunction = async ({
 
   expect(canvasElement).not.toContainElement(portalAction);
 
-  for (const modifier of [{ ctrlKey: true }, { metaKey: true }]) {
+  for (const modifier of [
+    { ctrlKey: true },
+    { ctrlKey: true, metaKey: true },
+  ]) {
     const zoomEvent = new WheelEvent('wheel', {
       ...modifier,
       bubbles: true,
@@ -33,19 +36,22 @@ export const portalZoomTest: TwentyUiGalleryPlayFunction = async ({
     );
   }
 
-  const scrollEvent = new WheelEvent('wheel', {
-    bubbles: true,
-    cancelable: true,
-    deltaY: 100,
-  });
+  for (const modifier of [{}, { metaKey: true }]) {
+    const scrollEvent = new WheelEvent('wheel', {
+      ...modifier,
+      bubbles: true,
+      cancelable: true,
+      deltaY: 100,
+    });
 
-  portalAction.dispatchEvent(scrollEvent);
+    portalAction.dispatchEvent(scrollEvent);
 
-  expect(scrollEvent.defaultPrevented).toBe(false);
+    expect(scrollEvent.defaultPrevented).toBe(false);
+  }
   await waitFor(() =>
     expect(
       canvas.getByRole('status', { name: 'Portal wheel events' }),
-    ).toHaveTextContent('Portal wheel events: 3'),
+    ).toHaveTextContent('Portal wheel events: 4'),
   );
 
   const outsideZoomEvent = new WheelEvent('wheel', {
