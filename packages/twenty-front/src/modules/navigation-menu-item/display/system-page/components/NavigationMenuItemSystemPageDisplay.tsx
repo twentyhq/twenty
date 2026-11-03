@@ -4,13 +4,15 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
-import { getSystemPageNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemComputedLink';
-import { getSystemPageNavigationMenuItemLabel } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemLabel';
+import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type NavigationMenuItemSystemPageDisplayProps =
-  NavigationMenuItemSectionContentProps;
+type NavigationMenuItemSystemPageDisplayProps = Pick<
+  NavigationMenuItemSectionContentProps,
+  'item' | 'editModeProps' | 'isDragging' | 'rightOptions'
+>;
 
 export const NavigationMenuItemSystemPageDisplay = ({
   item,
@@ -28,12 +30,12 @@ export const NavigationMenuItemSystemPageDisplay = ({
 
   return (
     <NavigationDrawerItem
-      label={getSystemPageNavigationMenuItemLabel(item)}
+      label={getNavigationMenuItemLabel(item, [], [])}
       secondaryLabel={t`System`}
       to={
         isLayoutCustomizationModeEnabled || isDragging
           ? undefined
-          : getSystemPageNavigationMenuItemComputedLink(item)
+          : getSystemPageNavigationMenuItemConfig(item)?.path
       }
       onClick={
         isLayoutCustomizationModeEnabled

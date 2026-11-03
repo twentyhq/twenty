@@ -1,18 +1,23 @@
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { AppPath, SettingsPath, type SystemPageKey } from 'twenty-shared/types';
-import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
+import { AppPath, type SystemPageKey } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import {
-  IconHierarchy,
+  type IconComponent,
   IconLego,
   IconSettingsAutomation,
 } from 'twenty-ui/icon';
 
-import { type SystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/types/SystemPageNavigationMenuItemConfig';
-
 export const SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
   SystemPageKey,
-  SystemPageNavigationMenuItemConfig
+  {
+    label: MessageDescriptor;
+    Icon: IconComponent;
+    path: string;
+    activePathPatterns: string[];
+    requiredPermissionFlag?: PermissionFlagType;
+  }
 > = {
   workflows: {
     label: msg`Workflows`,
@@ -29,12 +34,6 @@ export const SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS: Record<
     Icon: IconLego,
     path: getAppPath(AppPath.AgentIndexPage),
     activePathPatterns: [AppPath.AgentIndexPage, AppPath.AgentShowPage],
-  },
-  dataModel: {
-    label: msg`Data model`,
-    Icon: IconHierarchy,
-    path: getSettingsPath(SettingsPath.Objects),
-    activePathPatterns: [`${getSettingsPath(SettingsPath.Objects)}/*`],
-    requiredPermissionFlag: PermissionFlagType.DATA_MODEL,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
 };

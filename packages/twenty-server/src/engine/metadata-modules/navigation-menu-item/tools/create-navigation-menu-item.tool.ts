@@ -96,7 +96,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     scope: navigationMenuItemScopeSchema,
     systemPageKey: z
       .enum(SYSTEM_PAGE_KEYS)
-      .describe('Built-in page to pin: workflows, agents or dataModel'),
+      .describe('Built-in page to pin: workflows or agents'),
     name: derivedNameField,
     ...commonOptionalFields,
   }),
@@ -169,7 +169,7 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
-- SYSTEM_PAGE: pins a built-in page such as Workflows, Agents or the Data model (label auto-derived; only pass 'name' for a custom label).
+- SYSTEM_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
 })
