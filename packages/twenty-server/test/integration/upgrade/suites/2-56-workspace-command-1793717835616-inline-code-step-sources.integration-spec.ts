@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { Readable } from 'node:stream';
 
+import { FileFolder } from 'twenty-shared/types';
 import { CODE_STEP_SOURCE_MAX_LENGTH } from 'twenty-shared/workflow';
 
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -24,6 +26,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { type InlineCodeStepSourcesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793717835616-inline-code-step-sources.command';
 import { UNRECOVERABLE_CODE_STEP_SOURCE } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -122,19 +125,44 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       )
     ).length === 1;
 
-  const createLogicFunction = async (
-    sourceHandlerCode = SOURCE,
-  ): Promise<string> => {
+  const createLogicFunction = async (): Promise<string> => {
     const { data } = await createOneLogicFunction({
       expectToFail: false,
       input: {
         name: 'A Code Step',
-        source: { sourceHandlerCode, handlerName: 'main' },
+        source: { sourceHandlerCode: SOURCE, handlerName: 'main' },
       },
     });
     const logicFunctionId = data.createOneLogicFunction.id;
 
     logicFunctionIds.push(logicFunctionId);
+
+    return logicFunctionId;
+  };
+
+  // the oversized source is over the test app's 100kb JSON body limit, so it is written to storage directly
+  const createOversizedLogicFunction = async (): Promise<string> => {
+    const logicFunctionId = await createLogicFunction();
+
+    const [{ sourceHandlerPath, applicationUniversalIdentifier }] =
+      await global.testDataSource.query(
+        `SELECT "logicFunction"."sourceHandlerPath", application."universalIdentifier" AS "applicationUniversalIdentifier"
+         FROM core."logicFunction" "logicFunction"
+         JOIN core.application application ON application.id = "logicFunction"."applicationId"
+         WHERE "logicFunction".id = $1`,
+        [logicFunctionId],
+      );
+
+    await getAppProviderByClassName<FileStorageService>(
+      'FileStorageService',
+    ).writeFileStream({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
+      stream: Readable.from(Buffer.from(OVERSIZED_SOURCE)),
+      mimeType: 'text/plain',
+    });
 
     return logicFunctionId;
   };
@@ -279,7 +307,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     });
     oversizedWorkflow = await createLegacyCodeStepWorkflow({
       name: 'Greet with oversized code',
-      logicFunctionId: await createLogicFunction(OVERSIZED_SOURCE),
+      logicFunctionId: await createOversizedLogicFunction(),
     });
     otherApplicationWorkflow = await createLegacyCodeStepWorkflow({
       name: 'Greet with application code',

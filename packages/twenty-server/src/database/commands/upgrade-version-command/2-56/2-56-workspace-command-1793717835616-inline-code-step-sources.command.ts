@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -188,7 +188,7 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     flatLogicFunctions,
   }: {
     workspaceId: string;
-    flatApplicationMaps: FlatApplicationCacheMaps;
+    flatApplicationMaps: Pick<FlatApplicationCacheMaps, 'byId'>;
     flatLogicFunctions: FlatLogicFunction[];
   }): Promise<FunctionSources> {
     const sourceByLogicFunctionId = new Map<string, string>();
@@ -196,24 +196,38 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
 
     for (const batch of chunk(flatLogicFunctions, SOURCE_READ_BATCH_SIZE)) {
       const sources = await Promise.all(
-        batch.map(({ applicationId, sourceHandlerPath }) => {
+        batch.map(({ id, applicationId, sourceHandlerPath }) => {
           const applicationUniversalIdentifier =
             flatApplicationMaps.byId[applicationId]?.universalIdentifier;
 
-          return isDefined(applicationUniversalIdentifier)
-            ? this.readSource({
-                workspaceId,
-                applicationUniversalIdentifier,
-                sourceHandlerPath,
-              })
-            : null;
+          if (!isDefined(applicationUniversalIdentifier)) {
+            this.logger.warn(
+              `Workspace ${workspaceId}: application ${applicationId} of function ${id} is missing, its code steps get code that throws`,
+            );
+
+            return undefined;
+          }
+
+          return this.readSource({
+            workspaceId,
+            applicationUniversalIdentifier,
+            sourceHandlerPath,
+          });
         }),
       );
 
-      batch.forEach(({ id }, index) => {
+      batch.forEach(({ id, sourceHandlerPath }, index) => {
         const source = sources[index];
 
+        if (isUndefined(source)) {
+          return;
+        }
+
         if (!isNonEmptyString(source)) {
+          this.logger.warn(
+            `Workspace ${workspaceId}: the source ${sourceHandlerPath} of function ${id} is missing or empty, its code steps get code that throws`,
+          );
+
           return;
         }
 
