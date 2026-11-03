@@ -15,6 +15,7 @@ import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
 import { matchLinkedinParticipantPersonId } from 'src/logic-functions/utils/match-linkedin-participant-person-id.util';
 import { splitLinkedinUserName } from 'src/logic-functions/utils/split-linkedin-user-name.util';
+import { type LinkedinCounterpartResolver } from 'src/logic-functions/types/linkedin-counterpart-resolver.type';
 import { type LinkedinIngestResult } from 'src/logic-functions/types/linkedin-ingest-result.type';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
@@ -103,6 +104,7 @@ export const ingestLinkedinMessages = async ({
   settings,
   chat,
   counterparts,
+  resolveCounterpart,
   messages,
 }: {
   unipileAccountId: string;
@@ -111,6 +113,7 @@ export const ingestLinkedinMessages = async ({
   settings: LinkedinSettings;
   chat: UnipileChat;
   counterparts: UnipileUser[];
+  resolveCounterpart: LinkedinCounterpartResolver;
   messages: UnipileMessage[];
 }): Promise<LinkedinIngestResult> => {
   const isGroupChat = isLinkedinGroupChat(chat);
@@ -134,9 +137,14 @@ export const ingestLinkedinMessages = async ({
     return { ...emptyResult, skippedReason: 'NO_MESSAGES' };
   }
 
+  // Each lookup spends LinkedIn's daily profile quota, so skipped chats make none.
+  const resolvedCounterparts = await Promise.all(
+    counterparts.map(resolveCounterpart),
+  );
+
   const resolvedPersons = await resolvePersonIdByHandle({
     settings,
-    counterparts,
+    counterparts: resolvedCounterparts,
     hasUserSentMessage: ingestableMessages.some((message) => message.is_sender),
     isGroupChat,
   });
@@ -156,12 +164,12 @@ export const ingestLinkedinMessages = async ({
           ...message,
           sender: message.is_sender
             ? message.sender
-            : (counterparts.find(
+            : (resolvedCounterparts.find(
                 (counterpart) => counterpart.id === message.sender_id,
               ) ?? message.sender),
         },
         channelHandle: channel.handle,
-        counterparts,
+        counterparts: resolvedCounterparts,
       }),
     )
     .filter(isDefined)

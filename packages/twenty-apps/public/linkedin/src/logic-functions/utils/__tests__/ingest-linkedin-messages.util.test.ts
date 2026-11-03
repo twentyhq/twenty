@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   matchLinkedinParticipantPersonId: vi.fn(),
   createLinkedinPerson: vi.fn(),
   importLinkedinMessageAttachments: vi.fn(),
+  resolveCounterpart: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -90,6 +91,7 @@ const ingest = ({
     settings,
     chat,
     counterparts,
+    resolveCounterpart: mocks.resolveCounterpart,
     messages,
   });
 
@@ -104,6 +106,27 @@ describe('ingestLinkedinMessages', () => {
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
     mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
+    mocks.resolveCounterpart.mockImplementation(
+      async (user: UnipileUser) => user,
+    );
+  });
+
+  it('ingests under the public profile URL of the resolved counterpart', async () => {
+    mocks.resolveCounterpart.mockResolvedValue(PRIYA);
+
+    await ingest({
+      counterparts: [{ ...PRIYA, public_identifier: undefined }],
+    });
+
+    expect(
+      mocks.ingestMessages.mock.calls[0][0].messages[0].participants[1].handle,
+    ).toBe('https://www.linkedin.com/in/priya-nair');
+  });
+
+  it('looks up no profile for a page with no message to import', async () => {
+    await ingest({ messages: [{ ...buildMessage(false), is_event: true }] });
+
+    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
   });
 
   it('attaches the matched person to the participant', async () => {
@@ -153,6 +176,7 @@ describe('ingestLinkedinMessages', () => {
       }),
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.matchLinkedinParticipantPersonId).not.toHaveBeenCalled();
+    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
   });
 
   it('creates a person for an unknown profile the member messaged', async () => {
