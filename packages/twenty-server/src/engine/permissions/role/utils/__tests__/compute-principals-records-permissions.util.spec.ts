@@ -1,8 +1,5 @@
 import {
   FieldMetadataType,
-  type ObjectPermissions,
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
   type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -11,7 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import {
+  type OperationType,
+  validateOperationIsPermittedOrThrow,
+} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -24,7 +24,11 @@ import {
   type PermissionsPrincipalsRoleMaps,
   resolvePermissionsPrincipalsWithRoles,
 } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
+import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
+import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 type PrincipalsWithRoles = Pick<
   PermissionsPrincipalsWithRolesContext,
@@ -49,37 +53,37 @@ const buildRoleMaps = (
   flatApplicationMaps,
 });
 
-const agentRolePermissions = {
-  [OBJECT_ID]: {
-    canReadObjectRecords: true,
-    canUpdateObjectRecords: false,
-    canSoftDeleteObjectRecords: false,
-    canDestroyObjectRecords: false,
-    restrictedFields: {},
-    rowLevelPermissionPredicates: [],
-    rowLevelPermissionPredicateGroups: [],
-  },
-};
+const buildRoleRecordsPermissions = (
+  objects: RoleRecordsPermissions['objects'],
+): RoleRecordsPermissions => ({ ...NO_ROLE_RECORDS_PERMISSIONS, objects });
 
-const defaultRolePermissions = {
+const agentRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
-    canReadObjectRecords: false,
-    canUpdateObjectRecords: false,
-    canSoftDeleteObjectRecords: false,
-    canDestroyObjectRecords: false,
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
     restrictedFields: {},
-    rowLevelPermissionPredicates: [],
-    rowLevelPermissionPredicateGroups: [],
   },
-};
+});
 
-const rolesPermissions: ObjectsPermissionsByRoleId = {
+const defaultRolePermissions = buildRoleRecordsPermissions({
+  [OBJECT_ID]: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    restrictedFields: {},
+  },
+});
+
+const rolesPermissions: Record<string, RoleRecordsPermissions> = {
   'agent-role-id': agentRolePermissions,
   'default-role-id': defaultRolePermissions,
 };
 
 const computeForPrincipals = (principals: PrincipalsWithRoles) =>
-  computeObjectsPermissionsForRoles({
+  computePrincipalsRecordsPermissions({
     principals,
     rolesPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
@@ -125,24 +129,24 @@ const computeForAuthContext = ({
 }: {
   authContext: PermissionsAuthContext;
   roleMaps: PermissionsPrincipalsRoleMaps;
-}): ObjectsPermissions => {
+}): RoleRecordsPermissions => {
   const principals = resolvePermissionsPrincipalsWithRoles({
     authContext,
     roleMaps,
   });
 
   return isDefined(principals)
-    ? computeObjectsPermissionsForRoles({
+    ? computePrincipalsRecordsPermissions({
         principals,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
         flatApplicationMaps: roleMaps.flatApplicationMaps,
       })
-    : {};
+    : NO_ROLE_RECORDS_PERMISSIONS;
 };
 
-describe('computeObjectsPermissionsForRoles', () => {
+describe('computePrincipalsRecordsPermissions', () => {
   it('should resolve a single role unchanged', () => {
     expect(
       computeForPrincipals({
@@ -197,7 +201,7 @@ describe('computeObjectsPermissionsForRoles', () => {
           applicationId: 'application-id',
           roleId: 'agent-role-id',
         },
-      })[OBJECT_ID].canReadObjectRecords,
+      }).objects[OBJECT_ID]?.canReadAllRecords,
     ).toBe(false);
   });
 
@@ -216,7 +220,7 @@ describe('computeObjectsPermissionsForRoles', () => {
           roleId: 'missing-role-id',
         },
       }),
-    ).toEqual({});
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   it('should return empty permissions when the role is missing from the cache', () => {
@@ -229,7 +233,7 @@ describe('computeObjectsPermissionsForRoles', () => {
         },
         applicationPrincipal: { type: 'customApplication' },
       }),
-    ).toEqual({});
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   it('should deny when the main principal has no role', () => {
@@ -246,7 +250,7 @@ describe('computeObjectsPermissionsForRoles', () => {
           },
         },
       }),
-    ).toEqual({});
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   it('should deny when the limiting agent has lost its role', () => {
@@ -268,7 +272,7 @@ describe('computeObjectsPermissionsForRoles', () => {
         }),
         roleMaps,
       }),
-    ).toEqual({});
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   it('should run an application agent within both its role and its application role', () => {
@@ -309,7 +313,7 @@ describe('computeObjectsPermissionsForRoles', () => {
         },
         roleMaps: buildRoleMaps(),
       }),
-    ).toEqual({});
+    ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
   });
 
   describe('with member and application principals', () => {
@@ -362,11 +366,13 @@ describe('computeObjectsPermissionsForRoles', () => {
           applicationRoleId: 'agent-role-id',
           memberRoleId: null,
         }),
-      ).toEqual({});
+      ).toEqual(NO_ROLE_RECORDS_PERMISSIONS);
     });
 
     it('should deny an installed application without a role', () => {
-      expect(computeForMemberThroughApplication({})).toEqual({});
+      expect(computeForMemberThroughApplication({})).toEqual(
+        NO_ROLE_RECORDS_PERMISSIONS,
+      );
     });
 
     it('should fall back to the member role for an OAuth-only application', () => {
@@ -382,14 +388,12 @@ describe('computeObjectsPermissionsForRoles', () => {
 const INVOICE_ID = 'invoice-id';
 const AMOUNT_FIELD_ID = 'amount-field-id';
 
-const FULL_ACCESS: ObjectPermissions = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+const FULL_ACCESS: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -443,10 +447,13 @@ const disabledActionRolesPermissions = Object.fromEntries(
     'user-role-id',
     'owning-application-role-id',
     'other-application-role-id',
-  ].map((roleId) => [roleId, { [INVOICE_ID]: FULL_ACCESS }]),
+  ].map((roleId) => [
+    roleId,
+    buildRoleRecordsPermissions({ [INVOICE_ID]: FULL_ACCESS }),
+  ]),
 );
 
-describe('computeObjectsPermissionsForRoles disabled actions', () => {
+describe('computePrincipalsRecordsPermissions disabled actions', () => {
   it.each<{
     actor: string;
     principals: PrincipalsWithRoles;
@@ -567,15 +574,15 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
   ])(
     'disabled actions allowed for $actor: $canDestroy',
     ({ principals, canDestroy }) => {
-      const invoicePermissions = computeObjectsPermissionsForRoles({
+      const invoicePermissions = computePrincipalsRecordsPermissions({
         principals,
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
-      })[INVOICE_ID];
+      }).objects[INVOICE_ID];
 
-      expect(invoicePermissions?.canDestroyObjectRecords).toBe(canDestroy);
+      expect(invoicePermissions?.canDestroyAllRecords).toBe(canDestroy);
       expect(
         invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canUpdate ===
           false,
@@ -644,7 +651,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
         flatFieldMetadata.universalIdentifier;
     }
 
-    const objectsPermissions = computeObjectsPermissionsForRoles({
+    const { objects } = computePrincipalsRecordsPermissions({
       principals: {
         mainPrincipal: {
           type: 'workspaceMember',
@@ -654,10 +661,10 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
         applicationPrincipal: { type: 'customApplication' },
       },
       rolesPermissions: {
-        'user-role-id': {
+        'user-role-id': buildRoleRecordsPermissions({
           [INVOICE_ID]: FULL_ACCESS,
           [COMPANY_ID]: FULL_ACCESS,
-        },
+        }),
       },
       flatObjectMetadataMaps: objectMaps,
       flatFieldMetadataMaps: fieldMaps,
@@ -665,23 +672,20 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     });
 
     expect(
-      objectsPermissions[INVOICE_ID]?.restrictedFields['invoice-name-field-id']
-        ?.canRead,
+      objects[INVOICE_ID]?.restrictedFields['invoice-name-field-id']?.canRead,
     ).not.toBe(false);
     expect(
-      objectsPermissions[COMPANY_ID]?.restrictedFields[
-        'company-invoices-field-id'
-      ]?.canRead,
+      objects[COMPANY_ID]?.restrictedFields['company-invoices-field-id']
+        ?.canRead,
     ).toBe(false);
     expect(
-      objectsPermissions[COMPANY_ID]?.restrictedFields[
-        'company-paid-invoices-field-id'
-      ]?.canRead,
+      objects[COMPANY_ID]?.restrictedFields['company-paid-invoices-field-id']
+        ?.canRead,
     ).toBe(false);
   });
 });
 
-describe('computeObjectsPermissionsForRoles with a scope', () => {
+describe('computePrincipalsRecordsPermissions with a scope', () => {
   const USER_PREDICATE: RowLevelPermissionPredicate = {
     id: 'predicate-id',
     fieldMetadataId: AMOUNT_FIELD_ID,
@@ -697,13 +701,29 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
 
   const rolesPermissionsWithPredicate = {
     ...disabledActionRolesPermissions,
-    'user-role-id': {
+    'user-role-id': buildRoleRecordsPermissions({
       [INVOICE_ID]: {
-        ...FULL_ACCESS,
-        rowLevelPermissionPredicates: [USER_PREDICATE],
+        canReadAllRecords: false,
+        canUpdateAllRecords: false,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+        restrictedFields: {},
+        rls: {
+          canReadRecords: true,
+          canUpdateRecords: true,
+          canSoftDeleteRecords: true,
+          canDestroyRecords: true,
+          predicates: [USER_PREDICATE],
+          predicateGroups: [],
+        },
       },
-    },
+    }),
   };
+
+  const canReach = (
+    objectRecordsPermissions: ObjectRecordsPermissions | undefined,
+    operationType: OperationType,
+  ) => canReachSomeRecords({ objectRecordsPermissions, operationType });
 
   const compute = ({
     apiKeyId = 'api-key-id',
@@ -711,7 +731,7 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
     hasScope = true,
   }: {
     apiKeyId?: string;
-    scopeObjectPermissions?: ObjectPermissions;
+    scopeObjectPermissions?: ObjectRecordsPermissions;
     hasScope?: boolean;
   }) => {
     const principals = resolvePermissionsPrincipalsWithRoles({
@@ -719,9 +739,11 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
         apiKeyId,
         aiRunScope: hasScope
           ? {
-              objectsPermissions: isDefined(scopeObjectPermissions)
-                ? { [INVOICE_ID]: scopeObjectPermissions }
-                : {},
+              recordsPermissions: buildRoleRecordsPermissions(
+                isDefined(scopeObjectPermissions)
+                  ? { [INVOICE_ID]: scopeObjectPermissions }
+                  : {},
+              ),
               permissionFlags: {},
             }
           : undefined,
@@ -733,13 +755,13 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
     });
 
     return isDefined(principals)
-      ? computeObjectsPermissionsForRoles({
+      ? computePrincipalsRecordsPermissions({
           principals,
           rolesPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           flatApplicationMaps,
-        })[INVOICE_ID]
+        }).objects[INVOICE_ID]
       : undefined;
   };
 
@@ -747,12 +769,12 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
     const invoicePermissions = compute({
       scopeObjectPermissions: {
         ...FULL_ACCESS,
-        canUpdateObjectRecords: false,
+        canUpdateAllRecords: false,
       },
     });
 
-    expect(invoicePermissions?.canReadObjectRecords).toBe(true);
-    expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    expect(canReach(invoicePermissions, 'select')).toBe(true);
+    expect(canReach(invoicePermissions, 'update')).toBe(false);
   });
 
   it('never grants what the roles deny', () => {
@@ -760,14 +782,14 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.canDestroyObjectRecords).toBe(false);
+    expect(canReach(invoicePermissions, 'delete')).toBe(false);
   });
 
   it('denies an object the scope leaves out', () => {
     const invoicePermissions = compute({});
 
-    expect(invoicePermissions?.canReadObjectRecords).toBe(false);
-    expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    expect(canReach(invoicePermissions, 'select')).toBe(false);
+    expect(canReach(invoicePermissions, 'update')).toBe(false);
   });
 
   it("keeps the roles' row-level predicates", () => {
@@ -775,9 +797,7 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.rowLevelPermissionPredicates).toEqual([
-      USER_PREDICATE,
-    ]);
+    expect(invoicePermissions?.rls?.predicates).toEqual([USER_PREDICATE]);
   });
 
   it('adds the field restrictions of the scope', () => {
@@ -798,13 +818,17 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
 
   describe('inserting a record that sets the predicate field', () => {
     // the user role cannot update amount (a disabled action), which its own predicate exempts on insert
-    const insertAmount = (invoicePermissions: ObjectPermissions | undefined) =>
+    const insertAmount = (
+      invoicePermissions: ObjectRecordsPermissions | undefined,
+    ) =>
       validateOperationIsPermittedOrThrow({
         entityName: 'invoice',
         operationType: 'insert',
-        objectsPermissions: isDefined(invoicePermissions)
-          ? { [INVOICE_ID]: invoicePermissions }
-          : {},
+        recordsPermissions: buildRoleRecordsPermissions(
+          isDefined(invoicePermissions)
+            ? { [INVOICE_ID]: invoicePermissions }
+            : {},
+        ),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         objectIdByNameSingular: { invoice: INVOICE_ID },

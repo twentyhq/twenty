@@ -2,24 +2,27 @@ import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
+import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
-  objectsPermissions: rawObjectsPermissions,
+  recordsPermissions,
   permissionFlags: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
-  const objectPermissions = Object.entries(rawObjectsPermissions).map(
-    ([objectMetadataId, permissions]) => ({
-      objectMetadataId,
-      canReadObjectRecords: permissions.canReadObjectRecords,
-      canUpdateObjectRecords: permissions.canUpdateObjectRecords,
-      canSoftDeleteObjectRecords: permissions.canSoftDeleteObjectRecords,
-      canDestroyObjectRecords: permissions.canDestroyObjectRecords,
-      restrictedFields: permissions.restrictedFields,
-      rowLevelPermissionPredicates: permissions.rowLevelPermissionPredicates,
-      rowLevelPermissionPredicateGroups:
-        permissions.rowLevelPermissionPredicateGroups,
+  const objectPermissions = Object.entries(
+    fromRoleRecordsPermissionsToObjectsPermissions({
+      roleRecordsPermissions: recordsPermissions,
     }),
-  );
+  ).map(([objectMetadataId, permissions]) => ({
+    objectMetadataId,
+    canReadObjectRecords: permissions.canReadObjectRecords,
+    canUpdateObjectRecords: permissions.canUpdateObjectRecords,
+    canSoftDeleteObjectRecords: permissions.canSoftDeleteObjectRecords,
+    canDestroyObjectRecords: permissions.canDestroyObjectRecords,
+    restrictedFields: permissions.restrictedFields,
+    rowLevelPermissionPredicates: permissions.rowLevelPermissionPredicates,
+    rowLevelPermissionPredicateGroups:
+      permissions.rowLevelPermissionPredicateGroups,
+  }));
 
   const objectsPermissions = objectPermissions;
 

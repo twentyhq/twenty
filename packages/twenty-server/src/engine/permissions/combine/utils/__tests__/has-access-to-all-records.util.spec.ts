@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -10,6 +9,8 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { hasAccessToAllRecords } from 'src/engine/permissions/combine/utils/has-access-to-all-records.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -30,14 +31,12 @@ const flatObjectMetadata = {
   applicationId: APPLICATION_ID,
 };
 
-const readOnlyPermissions: ObjectPermissions = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
+const readOnlyPermissions: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const buildPrincipals = (
@@ -79,12 +78,17 @@ const hasAccess = ({
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
-        [READ_ONLY_ROLE_ID]: { [flatObjectMetadata.id]: readOnlyPermissions },
+        [READ_ONLY_ROLE_ID]: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: readOnlyPermissions },
+        },
         [APPLICATION_ROLE_ID]: {
-          [flatObjectMetadata.id]: readOnlyPermissions,
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: readOnlyPermissions },
         },
         [OTHER_APPLICATION_ROLE_ID]: {
-          [flatObjectMetadata.id]: readOnlyPermissions,
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: readOnlyPermissions },
         },
       },
       flatApplicationMaps: {

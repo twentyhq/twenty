@@ -17,7 +17,8 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
-import { getPermissionsPrincipalsObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-objects-permissions.util';
+import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
+import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
@@ -241,9 +242,11 @@ export class RecordAccessPolicyService {
       return undefined;
     }
 
-    return getPermissionsPrincipalsObjectsPermissions({
-      principals,
-      metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+    return fromRoleRecordsPermissionsToObjectsPermissions({
+      roleRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+        principals,
+        metadataMaps: await this.findPrincipalsMetadataMaps(principals),
+      }),
     });
   }
 
@@ -423,9 +426,11 @@ export class RecordAccessPolicyService {
           events: candidateEvents,
           admittedRecordIds: await findAdmittedRecordIds(principals),
           objectMetadata,
-          objectsPermissions: getPermissionsPrincipalsObjectsPermissions({
-            principals,
-            metadataMaps: principalMetadataMaps,
+          objectsPermissions: fromRoleRecordsPermissionsToObjectsPermissions({
+            roleRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+              principals,
+              metadataMaps: principalMetadataMaps,
+            }),
           }),
           metadataMaps: principalMetadataMaps,
         });
