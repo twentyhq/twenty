@@ -1,17 +1,15 @@
 /* @license Enterprise */
 
-import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { type BillingArrangementPeriod } from 'src/engine/core-modules/billing/types/billing-arrangement-period.type';
+import { type ScopedBillingArrangementPeriod } from 'src/engine/core-modules/billing/types/scoped-billing-arrangement-period.type';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
-
-type ScopedPeriod = BillingArrangementPeriod &
-  Pick<BillingArrangementEntity, 'usageLimitId'>;
 
 const FIRST_USAGE_LIMIT_ID = '20202020-0000-4000-8000-000000000001';
 const SECOND_USAGE_LIMIT_ID = '20202020-0000-4000-8000-000000000002';
 
-const period = (overrides: Partial<ScopedPeriod> = {}): ScopedPeriod => ({
+const period = (
+  overrides: Partial<ScopedBillingArrangementPeriod> = {},
+): ScopedBillingArrangementPeriod => ({
   type: BillingArrangementType.FREE_SEATS,
   startsAt: new Date('2026-11-01T00:00:00.000Z'),
   endsAt: null,
@@ -20,7 +18,9 @@ const period = (overrides: Partial<ScopedPeriod> = {}): ScopedPeriod => ({
   ...overrides,
 });
 
-const limitOverride = (overrides: Partial<ScopedPeriod> = {}): ScopedPeriod =>
+const limitOverride = (
+  overrides: Partial<ScopedBillingArrangementPeriod> = {},
+): ScopedBillingArrangementPeriod =>
   period({
     type: BillingArrangementType.LIMIT_OVERRIDE,
     usageLimitId: FIRST_USAGE_LIMIT_ID,
@@ -104,6 +104,17 @@ describe('findOverlappingBillingArrangement', () => {
     ).toBeUndefined();
   });
 
+  it('allows a new arrangement to end when the next one starts', () => {
+    expect(
+      findOverlappingBillingArrangement({
+        arrangement: period({ endsAt: new Date('2026-12-01T00:00:00.000Z') }),
+        workspaceArrangements: [
+          period({ startsAt: new Date('2026-12-01T00:00:00.000Z') }),
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
   it('ignores an arrangement ended early before the new one starts', () => {
     expect(
       findOverlappingBillingArrangement({
@@ -129,16 +140,17 @@ describe('findOverlappingBillingArrangement', () => {
     ).toBeUndefined();
   });
 
-  it('never blocks a one-time type', () => {
-    expect(
-      findOverlappingBillingArrangement({
-        arrangement: period({ type: BillingArrangementType.REFUND }),
-        workspaceArrangements: [
-          period({ type: BillingArrangementType.REFUND }),
-        ],
-      }),
-    ).toBeUndefined();
-  });
+  it.each([BillingArrangementType.REFUND, BillingArrangementType.CREDIT_GRANT])(
+    'never blocks a one-time %s',
+    (type) => {
+      expect(
+        findOverlappingBillingArrangement({
+          arrangement: period({ type }),
+          workspaceArrangements: [period({ type })],
+        }),
+      ).toBeUndefined();
+    },
+  );
 
   it('finds a limit override on the same usage limit', () => {
     const existingArrangement = limitOverride();
