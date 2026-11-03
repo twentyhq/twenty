@@ -19,8 +19,9 @@ import {
 // a CODE step's source is never resolved, so only its inputs can reference variables
 const getStepVariableInput = (step: ValidatableWorkflowStep): unknown =>
   step.type === 'CODE' && isObject(step.settings?.input)
-    ? (step.settings.input as { logicFunctionInput?: unknown })
-        .logicFunctionInput
+    ? 'logicFunctionInput' in step.settings.input
+      ? step.settings.input.logicFunctionInput
+      : undefined
     : step.settings?.input;
 
 export const validateWorkflowVariableReferences = ({

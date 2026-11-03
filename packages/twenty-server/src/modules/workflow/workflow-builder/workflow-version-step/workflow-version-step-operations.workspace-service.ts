@@ -166,7 +166,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (type) {
       case WorkflowActionType.CODE: {
         const defaultInput = defaultSettings?.input as
-          | { code?: unknown; logicFunctionInput?: Record<string, unknown> }
+          | { code?: string; logicFunctionInput?: Record<string, unknown> }
           | undefined;
 
         return {
