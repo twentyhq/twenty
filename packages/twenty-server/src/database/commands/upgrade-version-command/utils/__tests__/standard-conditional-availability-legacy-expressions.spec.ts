@@ -99,9 +99,11 @@ describe('standard conditional availability legacy expressions', () => {
         conditionalAvailability: compileLegacyExpression(
           conditionalAvailabilityExpression,
         ),
+        conditionalDisplay: flatPageLayoutWidget.conditionalDisplay,
       }).toEqual({
         universalIdentifier: flatPageLayoutWidget.universalIdentifier,
         conditionalAvailability: flatPageLayoutWidget.conditionalAvailability,
+        conditionalDisplay: null,
       });
     });
   });

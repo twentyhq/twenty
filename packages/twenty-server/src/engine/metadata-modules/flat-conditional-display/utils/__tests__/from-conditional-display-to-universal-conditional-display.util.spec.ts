@@ -10,6 +10,9 @@ import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/
 
 const FIELD_ID = '11111111-1111-4111-8111-111111111111';
 const FIELD_UNIVERSAL_IDENTIFIER = '20202020-1111-4111-8111-111111111111';
+const RELATION_TARGET_FIELD_ID = '44444444-4444-4444-8444-444444444444';
+const RELATION_TARGET_FIELD_UNIVERSAL_IDENTIFIER =
+  '20202020-4444-4444-8444-444444444444';
 const ADMIN_ROLE_ID = '22222222-2222-4222-8222-222222222222';
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-2222-4222-8222-222222222222';
 const SALES_ROLE_ID = '33333333-3333-4333-8333-333333333333';
@@ -20,6 +23,10 @@ const flatFieldMetadataMaps = {
     [FIELD_UNIVERSAL_IDENTIFIER]: {
       id: FIELD_ID,
       universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+    },
+    [RELATION_TARGET_FIELD_UNIVERSAL_IDENTIFIER]: {
+      id: RELATION_TARGET_FIELD_ID,
+      universalIdentifier: RELATION_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
     },
   },
 } as unknown as MetadataFlatEntityMaps<'fieldMetadata'>;
@@ -49,6 +56,7 @@ const CONDITIONAL_DISPLAY: ConditionalDisplay = {
     {
       id: '1',
       fieldMetadataId: FIELD_ID,
+      relationTargetFieldMetadataId: RELATION_TARGET_FIELD_ID,
       operand: ViewFilterOperand.IS_NOT_EMPTY,
       value: '',
       recordFilterGroupId: 'root',
@@ -66,6 +74,8 @@ describe('fromConditionalDisplayToUniversalConditionalDisplay', () => {
         conditionalDisplay: CONDITIONAL_DISPLAY,
         fieldMetadataUniversalIdentifierById: {
           [FIELD_ID]: FIELD_UNIVERSAL_IDENTIFIER,
+          [RELATION_TARGET_FIELD_ID]:
+            RELATION_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
         },
         roleUniversalIdentifierById: {
           [ADMIN_ROLE_ID]: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
@@ -82,6 +92,8 @@ describe('fromConditionalDisplayToUniversalConditionalDisplay', () => {
       }),
       expect.objectContaining({
         fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+        relationTargetFieldMetadataUniversalIdentifier:
+          RELATION_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
       }),
     ]);
 
@@ -92,5 +104,19 @@ describe('fromConditionalDisplayToUniversalConditionalDisplay', () => {
         flatRoleMaps,
       }),
     ).toEqual(CONDITIONAL_DISPLAY);
+  });
+
+  it('should leave malformed record filters for the validator to reject', () => {
+    const malformedConditionalDisplay = {
+      recordFilters: [null],
+    } as unknown as ConditionalDisplay;
+
+    expect(
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: malformedConditionalDisplay,
+        fieldMetadataUniversalIdentifierById: {},
+        roleUniversalIdentifierById: {},
+      }),
+    ).toBe(malformedConditionalDisplay);
   });
 });

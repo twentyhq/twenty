@@ -503,6 +503,37 @@ describe('validateConditionalDisplay', () => {
       ]);
     });
 
+    it('should reject null groups and a rule without an id', () => {
+      const nullGroups = {
+        recordFilters: [DEVICE_RULE],
+        recordFilterGroups: null,
+      };
+      const ruleWithoutId = {
+        recordFilters: [{ ...DEVICE_RULE, id: undefined }],
+      };
+
+      expect(validate({ conditionalDisplay: nullGroups })).toEqual([
+        expect.objectContaining({ value: nullGroups }),
+      ]);
+      expect(validate({ conditionalDisplay: ruleWithoutId })).toEqual([
+        expect.objectContaining({ value: ruleWithoutId }),
+      ]);
+    });
+
+    it('should reject groups sharing an id', () => {
+      expect(
+        validate({
+          conditionalDisplay: {
+            recordFilters: [{ ...DEVICE_RULE, recordFilterGroupId: 'a' }],
+            recordFilterGroups: [
+              { id: 'a', logicalOperator: 'AND' },
+              { id: 'a', logicalOperator: 'OR' },
+            ],
+          },
+        }),
+      ).toEqual([expect.objectContaining({ value: ['a', 'a'] })]);
+    });
+
     it('should reject a rule with both a field and a context key', () => {
       expect(
         validate({
