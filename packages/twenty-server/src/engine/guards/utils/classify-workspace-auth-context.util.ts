@@ -28,11 +28,9 @@ export const classifyWorkspaceAuthContext = (
 ): AuthPrincipalVariant | undefined => {
   switch (authContext.type) {
     case 'user': {
-      const application = authContext.application ?? authContext.viaApplication;
-
-      if (isDefined(application)) {
+      if (isDefined(authContext.application)) {
         return classifyApplicationPrincipal({
-          application,
+          application: authContext.application,
           variant: 'withUser',
           withAgent: isDefined(authContext.agentId),
         });

@@ -55,11 +55,6 @@ const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
     { kind: 'application', variant: 'withUser', withAgent: false },
   ],
   [
-    'a member a run acts as through an application as that application with a user',
-    { type: 'user', ...memberFields, viaApplication: installedApplication },
-    { kind: 'application', variant: 'withUser', withAgent: false },
-  ],
-  [
     'a member token bound to an agent of an installed application as that application with a user and an agent',
     {
       type: 'user',
