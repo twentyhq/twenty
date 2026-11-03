@@ -2825,7 +2825,9 @@
                 "anyOf": [
                   {
                     "type": "array",
-                    "items": {},
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                    },
                     "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
                   },
                   {

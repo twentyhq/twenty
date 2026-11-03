@@ -1,12 +1,13 @@
 import { type LogicFunctionConfig } from 'twenty-sdk/define';
 
-import {
-  getOperation,
-  queryCompanyEnrich,
-  type ResearchInput,
-} from './companyenrich-client';
+import { getOperation, queryCompanyEnrich } from './companyenrich-client';
 import { executeOperation } from './companyenrich-error';
 import { toToolSchema } from './to-tool-schema';
+import {
+  toResearchInput,
+  type ActionInput,
+  type ResearchActionInput,
+} from './to-action-input';
 
 export const createResearchFunction = (name: string): LogicFunctionConfig => {
   const operation = getOperation(name);
@@ -25,16 +26,22 @@ export const createResearchFunction = (name: string): LogicFunctionConfig => {
       type: 'string' | 'object' | 'array' | 'boolean';
       label: string;
       description: string;
-      items?: { type: 'string' };
+      items?: { type: 'string'; enum?: string[] };
+      multiline?: boolean;
       enum?: string[];
     }
   > = {};
 
   for (const key of Object.keys(operation.inputSchema.properties)) {
-    properties[key] = {
+    const schema = toToolSchema(
+      operation.inputSchema.properties[
+        key as keyof typeof operation.inputSchema.properties
+      ],
+    );
+    properties[key === 'body' ? 'bodyJson' : key] = {
       type:
         key === 'body'
-          ? 'object'
+          ? 'string'
           : key === 'expand'
             ? 'array'
             : key === 'waitForEnrichment'
@@ -51,7 +58,17 @@ export const createResearchFunction = (name: string): LogicFunctionConfig => {
               : key === 'id'
                 ? 'CompanyEnrich ID, not a Twenty record ID. Pass person IDs as exact decimal strings.'
                 : 'Company domain or website URL.',
-      ...(key === 'expand' ? { items: { type: 'string' } } : {}),
+      ...(key === 'expand'
+        ? {
+            items: {
+              type: 'string',
+              enum: schema.items?.enum?.filter(
+                (value): value is string => typeof value === 'string',
+              ),
+            },
+          }
+        : {}),
+      ...(key === 'body' ? { multiline: true } : {}),
     };
   }
 
@@ -60,8 +77,8 @@ export const createResearchFunction = (name: string): LogicFunctionConfig => {
     name: `companyenrich-${name}`,
     description: `${operation.label} using your CompanyEnrich account. ${free ? 'This endpoint is free; preview actions require the Scale plan.' : 'Consumes CompanyEnrich credits.'} Returns the full provider response without changing CRM records. People search returns professional profiles, not email addresses.`,
     timeoutSeconds: 60,
-    handler: (input: ResearchInput) =>
-      executeOperation(() => queryCompanyEnrich(name, input)),
+    handler: (input: ActionInput<ResearchActionInput>) =>
+      executeOperation(() => queryCompanyEnrich(name, toResearchInput(input))),
     httpRouteTriggerSettings: {
       path: `/companyenrich/${name}`,
       httpMethod: 'POST',

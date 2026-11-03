@@ -19,7 +19,9 @@ type RecordSnapshot = {
 export const enrichRecord = async (
   kind: RecordKind,
   input: RecordInput,
-  client: Pick<CoreApiClient, 'query' | 'mutation'> = new CoreApiClient(),
+  client: Pick<CoreApiClient, 'query' | 'mutation'> = new CoreApiClient({
+    runAs: 'user',
+  }),
   query = queryCompanyEnrich,
 ): Promise<ResearchResult & { recordId: string; updatedFields: string[] }> => {
   if (
@@ -31,7 +33,7 @@ export const enrichRecord = async (
   }
 
   const collection = kind === 'company' ? 'companies' : 'people';
-  const records = (await client.query({
+  const records = await client.query({
     [collection]: {
       __args: { filter: { id: { eq: input.recordId } }, first: 1 },
       edges: {
@@ -44,8 +46,10 @@ export const enrichRecord = async (
         },
       },
     },
-  })) as Record<string, { edges?: { node: RecordSnapshot }[] }>;
-  const record = records[collection]?.edges?.[0]?.node;
+  });
+  const connection = records[collection] as
+    { edges?: { node: RecordSnapshot }[] } | undefined;
+  const record = connection?.edges?.[0]?.node;
 
   if (!record?.id || !record.updatedAt) {
     throw new CompanyEnrichError(
@@ -101,7 +105,7 @@ export const enrichRecord = async (
   }
 
   const mutation = kind === 'company' ? 'updateCompanies' : 'updatePeople';
-  const updated = (await client.mutation({
+  const updated = await client.mutation({
     [mutation]: {
       __args: {
         filter: { id: { eq: record.id }, updatedAt: { eq: record.updatedAt } },
@@ -109,9 +113,10 @@ export const enrichRecord = async (
       },
       id: true,
     },
-  })) as Record<string, { id: string }[]>;
+  });
 
-  if (!updated[mutation]?.some((entry) => entry.id === record.id)) {
+  const updatedRecords = updated[mutation] as { id: string }[] | undefined;
+  if (!updatedRecords?.some((entry) => entry.id === record.id)) {
     throw new CompanyEnrichError(
       'The CRM record changed during enrichment. Nothing was saved. The provider request may have consumed credits; review usage before retrying.',
     );

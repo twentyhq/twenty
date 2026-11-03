@@ -29,7 +29,7 @@ export const Research = ({
   const theme = useTheme();
   const [operationName, setOperationName] = useState(initialAction);
   const [domain, setDomain] = useState('');
-  const [identifier, setIdentifier] = useState(recordId ?? '');
+  const [identifier, setIdentifier] = useState('');
   const [email, setEmail] = useState('');
   const [body, setBody] = useState('{}');
   const [expand, setExpand] = useState(false);
@@ -63,7 +63,7 @@ export const Research = ({
     setResult('');
     try {
       const input: Record<string, unknown> = {};
-      if (isRecordAction) input.recordId = identifier.trim();
+      if (isRecordAction) input.recordId = (recordId ?? identifier).trim();
       if ('domain' in properties && domain.trim()) input.domain = domain.trim();
       if ('query' in properties) input.query = domain.trim();
       if ('id' in properties && identifier.trim()) input.id = identifier.trim();
@@ -167,7 +167,8 @@ export const Research = ({
             aria-label={
               isRecordAction ? 'Twenty record ID' : 'CompanyEnrich ID'
             }
-            value={identifier}
+            value={isRecordAction ? (recordId ?? identifier) : identifier}
+            readOnly={isRecordAction && recordId !== undefined}
             onChange={(event) => setIdentifier(event.target.value)}
             style={INPUT_STYLE}
           />

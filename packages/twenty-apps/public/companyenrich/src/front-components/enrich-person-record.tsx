@@ -1,3 +1,4 @@
+import { IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 
@@ -19,7 +20,7 @@ const EnrichRecord = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'c036dd61-6364-403b-b6f6-f82a7cb6b9d2',
+  universalIdentifier: IDENTIFIERS.enrichPersonPanel,
   name: 'companyenrich-enrich-person-panel',
   description: 'Review and explicitly enrich a selected person record.',
   component: EnrichRecord,

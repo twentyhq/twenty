@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
-    "ajv": "^8.20.0"
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -34,7 +35,6 @@
     "oxlint": "^0.16.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "sharp": "^0.35.5",
     "twenty-client-sdk": "2.54.0",
     "twenty-sdk": "2.54.0",
     "twenty-ui": "2.54.0",

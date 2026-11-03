@@ -27,9 +27,16 @@ describe('CompanyEnrich requests', () => {
       );
       const [url, request] = fetchRequest.mock.calls[0];
 
-      expect(String(url)).toContain(
+      const requestUrl = new URL(String(url));
+      expect(`${requestUrl.origin}${requestUrl.pathname}`).toBe(
         `https://api.companyenrich.com${operation.path}`,
       );
+      for (const [key, value] of Object.entries(input)) {
+        if (key === 'body' || value === undefined) continue;
+        expect(requestUrl.searchParams.getAll(key)).toEqual(
+          (Array.isArray(value) ? value : [value]).map(String),
+        );
+      }
       expect(request?.method).toBe(operation.method);
       expect(request?.redirect).toBe('error');
       expect(request?.signal).toBeInstanceOf(AbortSignal);
@@ -73,6 +80,20 @@ describe('CompanyEnrich requests', () => {
       page: 1,
       pageSize: 10,
     });
+  });
+
+  it('normalizes the supported singular similarity domain', async () => {
+    const fetchRequest = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response('{}'));
+    await queryCompanyEnrich(
+      'similar-companies',
+      { body: { domain: 'https://EXAMPLE.com/about' } },
+      fetchRequest,
+    );
+    expect(JSON.parse(String(fetchRequest.mock.calls[0][1]?.body)).domain).toBe(
+      'example.com',
+    );
   });
 
   it('retains unsafe integer IDs exactly, including nested IDs', async () => {
@@ -140,6 +161,20 @@ describe('CompanyEnrich requests', () => {
     ['search-companies', { body: { page: 0 } }],
     ['search-people', { body: { positionQuery: 'engineer' } }],
     ['search-people', { body: { inventedFilter: 'x' } }],
+    [
+      'search-people',
+      {
+        body: {
+          companyFilter: {
+            similar: { domains: ['example.com'], workforceSize: ['invalid'] },
+          },
+        },
+      },
+    ],
+    ['search-people', { body: { atCurrentCompanyAfter: 'not-a-date' } }],
+    ['search-companies', { body: { lists: ['not-a-uuid'] } }],
+    ['search-companies', { body: { states: [2147483648] } }],
+    ['enrich-company-properties', { body: { linkedinUrl: 'not a URI' } }],
     ['company-workforce', {}],
     ['similar-companies', { body: {} }],
     ['enrich-company-properties', { body: {} }],
@@ -177,13 +212,16 @@ describe('CompanyEnrich requests', () => {
         .mockResolvedValue(
           new Response('provider-secret-and-private-details', { status }),
         );
-      await expect(
-        queryCompanyEnrich(
-          'enrich-company',
-          { domain: 'example.com' },
-          fetchRequest,
-        ),
-      ).rejects.toThrow(`(${status})`);
+      const error = await queryCompanyEnrich(
+        'enrich-company',
+        { domain: 'example.com' },
+        fetchRequest,
+      ).catch((caught: Error) => caught);
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toContain(`(${status})`);
+      expect((error as Error).message).not.toContain(
+        'provider-secret-and-private-details',
+      );
       expect(fetchRequest).toHaveBeenCalledTimes(1);
     },
   );
@@ -192,31 +230,34 @@ describe('CompanyEnrich requests', () => {
     const fetchRequest = vi
       .fn<typeof fetch>()
       .mockRejectedValue(new Error('Authorization: private-key'));
+    const error = await queryCompanyEnrich(
+      'enrich-company',
+      { domain: 'example.com' },
+      fetchRequest,
+    ).catch((caught: Error) => caught);
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toContain('not retried');
+    expect((error as Error).message).not.toContain(
+      'Authorization: private-key',
+    );
+    expect(fetchRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    'not JSON',
+    JSON.stringify({ payload: 'x'.repeat(8 * 1024 * 1024) }),
+  ])('rejects invalid or oversized responses', async (responseBody) => {
+    const fetchRequest = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(responseBody));
     await expect(
       queryCompanyEnrich(
         'enrich-company',
         { domain: 'example.com' },
         fetchRequest,
       ),
-    ).rejects.toThrow('not retried');
-    expect(fetchRequest).toHaveBeenCalledTimes(1);
+    ).rejects.toThrow('invalid or oversized');
   });
-
-  it.each(['not JSON', ' '.repeat(8 * 1024 * 1024 + 1)])(
-    'rejects invalid or oversized responses',
-    async (responseBody) => {
-      const fetchRequest = vi
-        .fn<typeof fetch>()
-        .mockResolvedValue(new Response(responseBody));
-      await expect(
-        queryCompanyEnrich(
-          'enrich-company',
-          { domain: 'example.com' },
-          fetchRequest,
-        ),
-      ).rejects.toThrow('invalid or oversized');
-    },
-  );
 
   it('does not convert text, booleans, or ordinary numbers during parsing', () => {
     expect(

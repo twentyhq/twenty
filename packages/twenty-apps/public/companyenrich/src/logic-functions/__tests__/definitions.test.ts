@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import application from 'src/application.config';
 import role from 'src/roles/application.role';
@@ -17,9 +18,28 @@ describe('app contracts', () => {
       application.config?.applicationVariables?.COMPANYENRICH_API_KEY,
     ).toMatchObject({ isSecret: true, isRequired: true });
     expect(role.success).toBe(true);
-    expect(role.config?.canReadAllObjectRecords).toBe(false);
-    expect(role.config?.canDestroyAllObjectRecords).toBe(false);
-    expect(role.config?.objectPermissions).toHaveLength(2);
+    expect(role.config).toMatchObject({
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+      canUpdateAllSettings: false,
+      canBeAssignedToAgents: false,
+      canBeAssignedToUsers: false,
+      canBeAssignedToApiKeys: false,
+      fieldPermissions: [],
+    });
+    expect(role.config?.objectPermissions).toEqual(
+      ['company', 'person'].map((kind) => ({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS[kind as 'company' | 'person']
+            .universalIdentifier,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      })),
+    );
   });
 
   it('exposes every operation to authenticated HTTP, workflow, and AI consumers', () => {
@@ -48,11 +68,45 @@ describe('app contracts', () => {
         throw new CompanyEnrichError('Check the API key.');
       }),
     ).toEqual({ success: false, error: 'Check the API key.' });
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
     const result = await executeOperation(async () => {
-      throw new Error('private-token');
+      const error = new Error('private-token');
+      error.stack =
+        'Error: private-token\n    at operation (/srv/utils/enrich-record.ts:42:7)';
+      throw error;
     });
+    expect(log).toHaveBeenCalledWith(
+      'CompanyEnrich unexpected operation failure',
+      { locations: ['enrich-record.ts:42:7'] },
+    );
+    expect(JSON.stringify(log.mock.calls)).not.toContain('private-token');
+    log.mockRestore();
     expect(result.success).toBe(false);
     expect(JSON.stringify(result)).not.toContain('private-token');
+  });
+
+  it('exposes editable workflow JSON and supported expansion choices', () => {
+    const schema =
+      createResearchFunction('similar-companies').workflowActionTriggerSettings
+        ?.inputSchema?.[0];
+    expect(schema).toMatchObject({
+      properties: {
+        bodyJson: { type: 'string', multiline: true },
+        expand: {
+          type: 'array',
+          items: { type: 'string', enum: ['workforce'] },
+        },
+      },
+    });
+    expect(JSON.stringify(schema)).not.toContain('"body":');
+    const batch = createResearchFunction('enrich-companies-batch')
+      .toolTriggerSettings?.inputSchema;
+    expect(batch?.properties?.body?.properties?.domains?.description).toContain(
+      'minItems: 1',
+    );
+    expect(batch?.properties?.body?.properties?.domains?.description).toContain(
+      'maxItems: 50',
+    );
   });
 
   it('describes nested search filters to AI tools without unresolved references', () => {

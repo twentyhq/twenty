@@ -6,7 +6,7 @@ Use it to qualify accounts, research people at a target company, discover simila
 
 ## Setup
 
-Requires Twenty 2.54.0+, Node.js 24.5+ or 26.5.1+, Yarn 4, and your own CompanyEnrich account.
+Requires Twenty 2.54.0+, Node.js 24.5.0–24.x or 26.5.1–26.x, Yarn 4, and your own CompanyEnrich account.
 
 1. Install the app in your Twenty workspace. For development, run `yarn install --immutable`, authenticate the [Twenty CLI](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start) to a development workspace, and run `twenty app apply --create` from this directory.
 2. Open the app's settings and set **CompanyEnrich API key**. It is a workspace secret, injected only into server-side logic functions.
@@ -17,7 +17,7 @@ The app adds no recurring jobs or automatic paid requests. A workflow or AI tool
 
 ## Available actions
 
-Every action is available as a workflow step, an AI tool, and an authenticated HTTP route. The panel supports the same actions. Workflow and HTTP inputs use `body` for POST request fields; `expand`, `waitForEnrichment`, and GET parameters stay at the top level. AI tools expose the full typed filter schema.
+Every action is available as a workflow step, an AI tool, and an authenticated HTTP route. The panel supports the same actions. Workflows expose an editable multiline `bodyJson` string for POST request fields. HTTP and AI inputs use a typed `body` object; `expand`, `waitForEnrichment`, and GET parameters stay at the top level. AI tools expose the full typed filter schema.
 
 | Action                                 | CompanyEnrich endpoint            |
 | -------------------------------------- | --------------------------------- |
@@ -40,7 +40,7 @@ Every action is available as a workflow step, an AI tool, and an authenticated H
 
 Two additional actions, **Enrich company record** and **Enrich person record**, read an existing Twenty record and save the retrieved profile. All other actions only return research results.
 
-Search and similarity actions default to page 1 with 10 results, accept all documented filters, and support manual pagination up to 100 results per page. Company operations that support expansion accept `expand: ["workforce"]`; people operations accept `expand: ["education"]`. Expansions are off by default and cost extra. Explicit `waitForEnrichment: false` is preserved; a 404 can mean a new domain is still being enriched. No polling or retries occur automatically.
+Search and similarity actions default to page 1 with 10 results, accept all documented filters, and support manual pagination up to 100 results per page. Company operations that support expansion accept `expand: ["workforce"]`; people search, person lookup, and get-person accept `expand: ["education"]`. Expansions are off by default and cost extra. Explicit `waitForEnrichment: false` is preserved; a 404 can mean a new domain is still being enriched. No polling or retries occur automatically.
 
 Long-running export jobs, scroll cursors, saved-list administration, and beta email discovery are outside this synchronous CRM app. The first three require job/export lifecycle management; email discovery is a separate product from profile search. Geography helper endpoints are not separate actions; use the documented country codes and location IDs in filters.
 
@@ -68,7 +68,7 @@ In **Search professional profiles**:
 }
 ```
 
-Equivalent workflow or HTTP input wraps that object in `{"body": {...}}`. For example, the authenticated Twenty route `/s/companyenrich/search-people` accepts `{"body":{"domains":["example.com"],"positionQuery":["Engineer"]}}`. CompanyEnrich IDs identify provider profiles; `recordId` identifies a Twenty record. Pass numeric person IDs as strings to preserve all 64 bits.
+Paste the request object as JSON text into a workflow's **Request body (JSON)** field (`bodyJson`). HTTP and AI inputs wrap that object in `{"body": {...}}`. For example, the authenticated Twenty route `/s/companyenrich/search-people` accepts `{"body":{"domains":["example.com"],"positionQuery":["Engineer"]}}`. CompanyEnrich IDs identify provider profiles; `recordId` identifies a Twenty record. Pass numeric person IDs as strings to preserve all 64 bits.
 
 Outputs contain `success`, the full provider `data`, and `creditsConsumed` when reported. Errors return `success: false` with a safe `error` message. In workflows, branch on `success` before using `data`. Raw arrays, count zero, scores, pagination, and metadata are preserved. Unsafe JSON integers are returned as exact decimal strings.
 
@@ -76,9 +76,9 @@ Outputs contain `success`, the full provider `data`, and `creditsConsumed` when 
 
 Record enrichment saves `companyenrichData`, `companyenrichId`, and `companyenrichEnrichedAt`. Companies also receive `companyenrichIndustry` and `companyenrichEmployeeRange`; people receive `companyenrichPosition` and `companyenrichDepartment`. These are separate from existing CRM fields. Each refresh replaces the app's snapshot, including clearing summary values missing from the latest profile.
 
-The app reads a permitted record before contacting the provider. Its update matches both record ID and the original `updatedAt`, so a record changed during enrichment is not overwritten. The app does not create contacts, change email/phone fields, enroll records in campaigns, or send messages.
+Record-saving actions require a signed-in workspace member in Twenty's trusted execution context. They use the delegated member's CRM permissions for reads and updates; API-key-only and background invocations are rejected before reading or spending credits. Research-only actions remain available to configured workflows and API callers. The app reads a permitted record before contacting the provider; an update-permission denial can still occur after the provider has consumed credits. Its update matches both record ID and the original `updatedAt`, so a record changed during enrichment is not overwritten. The app does not create contacts, change email/phone fields, enroll records in campaigns, or send messages.
 
-Only supplied research filters/identifiers, or the selected company's website/person's known email, leave the workspace, sent to `https://api.companyenrich.com`. The API key never enters the panel bundle. Requests have a 50-second timeout, reject redirects, and are not retried. Responses are limited to 8 MiB; request JSON to 256 KiB.
+Supplied research filters/identifiers, or the selected company's website/person's known email, are sent to `https://api.companyenrich.com`. The workspace API key is also sent to CompanyEnrich in the Authorization header; it never enters the panel bundle. Requests have a 50-second timeout, reject redirects, and are not retried. Responses are limited to 8 MiB; request JSON to 256 KiB.
 
 Research results may appear in Twenty's workflow/AI execution history under the workspace's retention settings. Saved CompanyEnrich fields persist in Twenty until cleared or the record is deleted; clear them using Twenty's normal record tools when no longer needed. Provider-side retention and deletion are described in [CompanyEnrich's privacy policy](https://companyenrich.com/privacy-policy). API requests and minimized logs are retained for up to 90 days under that policy; deletion requests go through CompanyEnrich. This app adds no separate external storage or analytics.
 

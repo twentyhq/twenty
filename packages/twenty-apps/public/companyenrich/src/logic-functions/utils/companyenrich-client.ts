@@ -1,6 +1,7 @@
 import { CompanyEnrichError } from './companyenrich-error';
 import { isObject } from '@sniptt/guards';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 import specification from 'src/schemas/operations.json';
 
@@ -22,7 +23,8 @@ export type ResearchResult = {
 const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
 const MAX_REQUEST_BYTES = 256 * 1024;
 const REQUEST_TIMEOUT_MS = 50_000;
-const validator = new Ajv({ strict: false, validateFormats: false });
+const validator = new Ajv({ strict: false });
+addFormats(validator);
 
 validator.addSchema(specification, 'companyenrich');
 
@@ -132,6 +134,10 @@ const validateInput = (name: string, input: ResearchInput): ResearchInput => {
       Number(normalized.body.page) < 1
     ) {
       throw new CompanyEnrichError('Page must be at least 1.');
+    }
+
+    if (typeof normalized.body.domain === 'string') {
+      normalized.body.domain = normalizeDomain(normalized.body.domain);
     }
 
     if (Array.isArray(normalized.body.domains)) {

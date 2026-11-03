@@ -10,6 +10,12 @@ type Schema = {
   required?: string[];
   minimum?: number;
   maximum?: number;
+  minItems?: number;
+  maxItems?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  format?: string;
   additionalProperties?: boolean;
   properties?: Record<string, Schema>;
   items?: Schema;
@@ -32,9 +38,30 @@ export const toToolSchema = (input: unknown): InputJsonSchema => {
     return Object.assign({}, ...schema.allOf.map(toToolSchema));
   }
 
+  // Twenty's InputJsonSchema supports numeric bounds but not these JSON Schema
+  // keywords. Preserve them in tool-visible metadata; Ajv enforces them at runtime.
+  const constraints = (
+    [
+      'minItems',
+      'maxItems',
+      'minLength',
+      'maxLength',
+      'pattern',
+      'format',
+    ] as const
+  )
+    .filter((key) => schema[key] !== undefined)
+    .map((key) => `${key}: ${schema[key]}`);
+  const description = [
+    schema.description,
+    constraints.length ? `Constraints: ${constraints.join('; ')}.` : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return {
     ...(schema.type ? { type: schema.type } : {}),
-    ...(schema.description ? { description: schema.description } : {}),
+    ...(description ? { description } : {}),
     ...(schema.enum ? { enum: schema.enum } : {}),
     ...(schema.required ? { required: schema.required } : {}),
     ...(schema.minimum !== undefined ? { minimum: schema.minimum } : {}),

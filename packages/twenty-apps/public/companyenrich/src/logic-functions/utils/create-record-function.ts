@@ -5,7 +5,8 @@ import {
 
 import { IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { enrichRecord } from './enrich-record';
-import { executeOperation } from './companyenrich-error';
+import { CompanyEnrichError, executeOperation } from './companyenrich-error';
+import { toActionInput, type ActionInput } from './to-action-input';
 
 export const createRecordFunction = (
   kind: 'company' | 'person',
@@ -17,8 +18,17 @@ export const createRecordFunction = (
   name: `companyenrich-enrich-${kind}-record`,
   description: `Read a Twenty ${kind}'s ${kind === 'company' ? 'domain' : 'known email'}, retrieve its profile, and save dedicated CompanyEnrich fields. Existing CRM fields are preserved. Consumes CompanyEnrich credits.`,
   timeoutSeconds: 60,
-  handler: (input: { recordId: string }) =>
-    executeOperation(() => enrichRecord(kind, input)),
+  handler: (input: ActionInput<{ recordId: string }>, context) =>
+    executeOperation(() => {
+      // Only the trusted execution context can establish a delegated member.
+      // API-key and background triggers otherwise fall back to app-wide access.
+      if (!context?.userWorkspaceId || !context.workspaceMemberId) {
+        throw new CompanyEnrichError(
+          'Saving CRM profiles requires a signed-in workspace member. API-key and background invocations cannot save records.',
+        );
+      }
+      return enrichRecord(kind, toActionInput(input));
+    }),
   httpRouteTriggerSettings: {
     path: `/companyenrich/enrich-${kind}-record`,
     httpMethod: 'POST',

@@ -48,7 +48,30 @@ describe('CompanyEnrich research panel', () => {
 
   it('exposes all sixteen research operations and two explicit CRM actions', () => {
     render(<Research />);
-    expect(screen.getAllByRole('option')).toHaveLength(18);
+    expect(
+      screen
+        .getAllByRole('option')
+        .map((option) => (option as HTMLOptionElement).value),
+    ).toEqual([
+      'enrich-company',
+      'enrich-company-properties',
+      'enrich-companies-batch',
+      'get-company',
+      'search-companies',
+      'similar-companies',
+      'count-companies',
+      'count-similar-companies',
+      'company-workforce',
+      'search-people',
+      'lookup-person',
+      'get-person',
+      'autocomplete-companies',
+      'person-education',
+      'preview-companies',
+      'preview-similar-companies',
+      'enrich-company-record',
+      'enrich-person-record',
+    ]);
     fireEvent.change(screen.getByLabelText('Action'), {
       target: { value: 'enrich-person-record' },
     });
@@ -57,6 +80,48 @@ describe('CompanyEnrich research panel', () => {
       screen.getByRole('button', { name: 'Enrich and save profile' }),
     ).toBeDefined();
     expect(post).not.toHaveBeenCalled();
+  });
+
+  it('uses the current selected record after the panel selection changes', async () => {
+    post.mockResolvedValue({ success: true });
+    const { rerender } = render(
+      <Research initialAction="enrich-company-record" recordId="record-a" />,
+    );
+    rerender(
+      <Research initialAction="enrich-company-record" recordId="record-b" />,
+    );
+    expect(screen.getByLabelText('Twenty record ID')).toHaveProperty(
+      'value',
+      'record-b',
+    );
+    expect(screen.getByLabelText('Twenty record ID')).toHaveProperty(
+      'readOnly',
+      true,
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Enrich and save profile' }),
+    );
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledExactlyOnceWith(
+        '/s/companyenrich/enrich-company-record',
+        { recordId: 'record-b' },
+      ),
+    );
+  });
+
+  it('keeps a manually entered global record ID editable', () => {
+    render(<Research initialAction="enrich-person-record" />);
+    fireEvent.change(screen.getByLabelText('Twenty record ID'), {
+      target: { value: 'manual-record' },
+    });
+    expect(screen.getByLabelText('Twenty record ID')).toHaveProperty(
+      'value',
+      'manual-record',
+    );
+    expect(screen.getByLabelText('Twenty record ID')).toHaveProperty(
+      'readOnly',
+      false,
+    );
   });
 
   it('preserves person IDs as text and surfaces a safe provider error without replay', async () => {
