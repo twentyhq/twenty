@@ -28,10 +28,10 @@ describe('isNavigationMenuItemReadable', () => {
         item: {
           id: 'data-model-system-page-id',
           type: NavigationMenuItemType.SYSTEM_PAGE,
-          systemPageKey: 'dataModel',
+          systemPageKey: 'agents',
           position: 0,
         } as NavigationMenuItem,
-        permissionFlagMap: { [PermissionFlagType.DATA_MODEL]: false },
+        permissionFlagMap: { [PermissionFlagType.AI]: false },
         objectMetadataItems: [],
         views: [],
         objectPermissionsByObjectMetadataId: {},
@@ -39,7 +39,7 @@ describe('isNavigationMenuItemReadable', () => {
     ).toBe(false);
   });
 
-  it('shows a system page item that needs no permission', () => {
+  it('hides a system page item when its permission is absent from the map', () => {
     expect(
       isNavigationMenuItemReadable({
         item: {
@@ -53,7 +53,7 @@ describe('isNavigationMenuItemReadable', () => {
         views: [],
         objectPermissionsByObjectMetadataId: {},
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('hides an object item whose object is missing', () => {

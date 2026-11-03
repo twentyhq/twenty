@@ -78,7 +78,6 @@ const sumPetColumn = ({
       featureFlagsMap: {},
     } as unknown as WorkspaceInternalContext,
     authContext: {} as WorkspaceAuthContext,
-    objectPermissionsByRoleId: {},
   })
     .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);

@@ -17,6 +17,7 @@ import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effec
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentPointerCaptureEffect } from '@/host/effect-components/FrontComponentPointerCaptureEffect';
 import { FrontComponentOutsidePressEffect } from '@/host/effect-components/FrontComponentOutsidePressEffect';
+import { FrontComponentPreventPageZoomEffect } from '@/host/effect-components/FrontComponentPreventPageZoomEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -59,6 +60,7 @@ type FrontComponentRendererProps = {
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
+  shouldPreventPageZoom?: boolean;
 };
 
 export const FrontComponentRenderer = ({
@@ -81,6 +83,7 @@ export const FrontComponentRenderer = ({
   onError,
   colorScheme,
   loadingFallback,
+  shouldPreventPageZoom = false,
 }: FrontComponentRendererProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<FrontComponentThread | null>(null);
@@ -119,6 +122,11 @@ export const FrontComponentRenderer = ({
         onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
         onClick={outsidePressController.forwardUnhandledOwnedPress}
       >
+        {shouldPreventPageZoom && (
+          <FrontComponentPreventPageZoomEffect
+            geometryTracker={geometryTracker}
+          />
+        )}
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           componentSource={componentSource}

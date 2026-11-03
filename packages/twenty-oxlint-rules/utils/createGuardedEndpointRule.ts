@@ -14,6 +14,10 @@ const AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID =
 const AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID =
   'authPrincipalGuardWiderThanClass';
 const AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID = 'authPrincipalGuardNotFirst';
+const ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID =
+  'accessPolicyGuardWithoutPolicy';
+const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
+  'accessPolicyGuardOnClassAndMethod';
 
 const findClassDeclaration = (node: any): any | null => {
   if (node.type === 'ClassDeclaration') return node;
@@ -59,7 +63,11 @@ export const createGuardedEndpointRule = ({
         [AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID]:
           'This method-level AuthPrincipalGuard accepts {{ principalVariants }}, which the class-level AuthPrincipalGuard refuses: a method can only narrow what its class accepts.',
         [AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID]:
-          'AuthPrincipalGuard must come first in its @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after it only run once the principal is known.',
+          'AuthPrincipalGuard and AccessPolicyGuard must come first in their @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after them only run once the principal is known.',
+        [ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID]:
+          'AccessPolicyGuard takes a *_ACCESS_POLICY constant or an inline policy object (no spread, no shorthand).',
+        [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
+          'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
       },
       schema: [],
       hasSuggestions: false,
@@ -82,6 +90,15 @@ export const createGuardedEndpointRule = ({
           context.report({
             node: guard,
             messageId: AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID,
+          });
+        }
+
+        for (const guard of typedTokenHelpers.getAccessPolicyGuardsWithoutPolicy(
+          node,
+        )) {
+          context.report({
+            node: guard,
+            messageId: ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID,
           });
         }
       };
@@ -126,6 +143,24 @@ export const createGuardedEndpointRule = ({
         }
       };
 
+      const reportAccessPolicyGuardOnClassAndMethod = (node: any): void => {
+        const classNode = findClassDeclaration(node);
+
+        if (
+          !classNode ||
+          typedTokenHelpers.getAccessPolicyGuards(classNode).length === 0
+        ) {
+          return;
+        }
+
+        for (const guard of typedTokenHelpers.getAccessPolicyGuards(node)) {
+          context.report({
+            node: guard,
+            messageId: ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID,
+          });
+        }
+      };
+
       return {
         ClassDeclaration: (node: any): void => {
           const hasEndpoint = node.body.body.some(
@@ -150,6 +185,7 @@ export const createGuardedEndpointRule = ({
 
           reportAuthPrincipalGuardUsage(node);
           reportMethodGuardWiderThanClassGuard(node);
+          reportAccessPolicyGuardOnClassAndMethod(node);
 
           if (isMissingGuards(node, triggerDecorators)) {
             context.report({ node, messageId });

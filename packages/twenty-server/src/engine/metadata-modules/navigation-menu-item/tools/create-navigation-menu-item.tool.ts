@@ -6,6 +6,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-write-access-policy.constant';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemScopeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-scope.schema';
@@ -95,7 +96,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     scope: navigationMenuItemScopeSchema,
     systemPageKey: z
       .enum(SYSTEM_PAGE_KEYS)
-      .describe('Built-in page to pin: workflows, agents or dataModel'),
+      .describe('Built-in page to pin: workflows or agents'),
     name: derivedNameField,
     ...commonOptionalFields,
   }),
@@ -158,7 +159,7 @@ const toServiceInput = (
 @DefineTool({
   name: 'create_navigation_menu_item',
   category: ToolCategory.NAVIGATION_MENU_ITEM,
-  requiredPermissionFlags: [],
+  accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
@@ -168,7 +169,7 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
-- SYSTEM_PAGE: pins a built-in page such as Workflows, Agents or the Data model (label auto-derived; only pass 'name' for a custom label).
+- SYSTEM_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
 })

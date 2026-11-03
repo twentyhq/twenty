@@ -76,15 +76,9 @@ export const NavigationMenuItemDisplay = ({
         <NavigationMenuItemEditable item={item}>
           <NavigationMenuItemSystemPageDisplay
             item={item}
-            isEditInPlace={isEditInPlace}
             editModeProps={editModeProps}
             isDragging={isDragging}
-            folderChildrenById={folderChildrenById}
-            folderCount={folderCount}
             rightOptions={rightOptions}
-            onNavigationMenuItemClick={onNavigationMenuItemClick}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            readOnly={readOnly}
           />
         </NavigationMenuItemEditable>
       );

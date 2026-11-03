@@ -22,8 +22,8 @@ import {
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSystemPage';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { SYSTEM_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/system-page/constants/SystemPageNavigationMenuItemConfigs';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -219,7 +219,9 @@ export const useNavigationMenuItemAddOptions = ({
           icon: (
             <ColoredIcon
               Icon={Icon}
-              color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE}
+              color={getNavigationMenuItemColor({
+                type: NavigationMenuItemType.SYSTEM_PAGE,
+              })}
             />
           ),
           isDisabled: isAlreadyInSidebar,
@@ -228,7 +230,6 @@ export const useNavigationMenuItemAddOptions = ({
             addItem({
               type: NavigationMenuItemType.SYSTEM_PAGE,
               systemPageKey,
-              color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SYSTEM_PAGE,
             }),
         };
       });
