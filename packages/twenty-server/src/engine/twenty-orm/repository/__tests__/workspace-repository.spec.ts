@@ -124,15 +124,6 @@ const buildRepository = ({
         return [];
       },
     },
-    objectRecordsPermissions: {
-      [OBJECT_METADATA_ID]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: {},
-      },
-    },
     rolesPermissions: {
       [ROLE_ID]: {
         [OBJECT_METADATA_ID]: {

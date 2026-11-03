@@ -45,6 +45,7 @@ import { type RecordShareGrant } from 'src/engine/permissions/record-share/types
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
+import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -126,7 +127,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
-  objectRecordsPermissions: ObjectsPermissions;
   rolesPermissions: ObjectsPermissionsByRoleId;
   permissionsPrincipal: PermissionsPrincipalsWithRolesContext | undefined;
   shouldBypassPermissionChecks: boolean;
@@ -151,8 +151,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
 };
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
-  readonly objectRecordsPermissions: ObjectsPermissions;
-
   private readonly options: WorkspaceRepositoryOptions<TEntity>;
 
   private _filesFieldSync?: FilesFieldSync;
@@ -161,7 +159,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
-    this.objectRecordsPermissions = options.objectRecordsPermissions;
+  }
+
+  get objectRecordsPermissions(): ObjectsPermissions {
+    const { permissionsPrincipal, shouldBypassPermissionChecks } = this.options;
+
+    if (shouldBypassPermissionChecks || !isDefined(permissionsPrincipal)) {
+      return {};
+    }
+
+    return getPermissionsPrincipalObjectsPermissions({
+      principal: permissionsPrincipal,
+      metadataMaps: this.resolvePermissionsMetadataMaps(),
+    });
   }
 
   private get filesFieldSync(): FilesFieldSync {
@@ -185,7 +195,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
-        objectRecordsPermissions: this.options.objectRecordsPermissions,
+        objectRecordsPermissions: this.objectRecordsPermissions,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
@@ -1437,7 +1447,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new WorkspaceSelectQueryBuilder(alias, {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
-      objectRecordsPermissions: this.options.objectRecordsPermissions,
+      objectRecordsPermissions: this.objectRecordsPermissions,
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
@@ -1718,7 +1728,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     validateOperationIsPermittedOrThrow({
       entityName: this.options.tableShape.nameSingular,
       operationType,
-      objectsPermissions: this.options.objectRecordsPermissions,
+      objectsPermissions: this.objectRecordsPermissions,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
@@ -1947,7 +1957,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       validateOperationIsPermittedOrThrow({
         entityName: tableShape.nameSingular,
         operationType: 'select',
-        objectsPermissions: this.options.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         flatObjectMetadataMaps:
           this.options.internalContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps:
@@ -2232,7 +2242,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return isObjectOperationPermitted({
       objectMetadata: flatObjectMetadata,
       operationType,
-      objectsPermissions: this.options.objectRecordsPermissions,
+      objectsPermissions: this.objectRecordsPermissions,
     });
   }
 

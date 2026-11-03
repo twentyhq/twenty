@@ -28,22 +28,15 @@ import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/u
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
-import {
-  type ObjectRecordsPermissionsResolution,
-  resolveObjectRecordsPermissions,
-} from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
   WeakMap<FlatObjectMetadata, WorkspaceTableShape>
 >();
-
-const SYSTEM_PERMISSIONS: ObjectRecordsPermissionsResolution = {
-  objectRecordsPermissions: {},
-  shouldBypassPermissionChecks: true,
-  permissionsPrincipal: undefined,
-};
 
 export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
@@ -51,7 +44,7 @@ export class WorkspaceDataSource {
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
   private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
-  private contextPermissions?: ObjectRecordsPermissionsResolution;
+  private permissionsPrincipal?: PermissionsPrincipalsWithRolesContext | null;
 
   constructor({
     pool,
@@ -242,9 +235,8 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
-    const permissions = shouldBypassPermissionChecks
-      ? SYSTEM_PERMISSIONS
-      : this.resolveContextPermissions();
+    const shouldRepositoryBypassPermissionChecks =
+      shouldBypassPermissionChecks || isSystemAuthContext(this.authContext);
 
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
@@ -252,10 +244,11 @@ export class WorkspaceDataSource {
       internalContext,
       authContext: this.authContext,
       executor,
-      objectRecordsPermissions: permissions.objectRecordsPermissions,
       rolesPermissions: this.objectPermissionsByRoleId,
-      permissionsPrincipal: permissions.permissionsPrincipal,
-      shouldBypassPermissionChecks: permissions.shouldBypassPermissionChecks,
+      permissionsPrincipal: shouldRepositoryBypassPermissionChecks
+        ? undefined
+        : this.resolvePermissionsPrincipal(),
+      shouldBypassPermissionChecks: shouldRepositoryBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),
@@ -292,14 +285,16 @@ export class WorkspaceDataSource {
     });
   }
 
-  private resolveContextPermissions(): ObjectRecordsPermissionsResolution {
-    return (this.contextPermissions ??= resolveObjectRecordsPermissions({
-      authContext: this.authContext,
-      roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
-      objectPermissionsByRoleId: this.objectPermissionsByRoleId,
-      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-    }));
+  private resolvePermissionsPrincipal():
+    | PermissionsPrincipalsWithRolesContext
+    | undefined {
+    this.permissionsPrincipal ??=
+      resolvePermissionsPrincipalsWithRoles({
+        authContext: this.authContext,
+        roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
+      }) ?? null;
+
+    return this.permissionsPrincipal ?? undefined;
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {
