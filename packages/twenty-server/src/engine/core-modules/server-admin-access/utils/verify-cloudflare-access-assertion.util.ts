@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JWTVerifyGetKey, jwtVerify } from 'jose';
 
-// Returns the verified, lowercased email, or undefined when the assertion is missing or invalid.
 export const verifyCloudflareAccessAssertion = async ({
   assertion,
   teamDomain,

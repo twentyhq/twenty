@@ -1249,7 +1249,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Origin of a dedicated admin console (e.g. https://admin.example.com). When set, server administration is only served on this host instead of inside workspace settings. Leave unset for standard self-hosted installations.',
+      'Origin of a dedicated admin console (e.g. https://admin.example.com). When set, server administration is only served on this host instead of inside workspace settings, so this host must serve both the frontend and the API. Leave unset for standard self-hosted installations.',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })

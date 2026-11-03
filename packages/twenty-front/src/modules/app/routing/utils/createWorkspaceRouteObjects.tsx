@@ -209,7 +209,6 @@ export const createWorkspaceRouteObjects = ({
   ];
 };
 
-// The admin console host only serves the admin pages; anything else lands on the admin panel.
 export const createAdminConsoleRouteObjects = (): WorkspaceRouteObject[] => [
   {
     path: SETTINGS_ROOT_PATH,

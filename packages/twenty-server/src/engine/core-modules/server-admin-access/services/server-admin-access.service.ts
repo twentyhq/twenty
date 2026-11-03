@@ -9,13 +9,12 @@ import { CLOUDFLARE_ACCESS_ASSERTION_HEADER_NAME } from 'src/engine/core-modules
 import { verifyCloudflareAccessAssertion } from 'src/engine/core-modules/server-admin-access/utils/verify-cloudflare-access-assertion.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type CloudflareAccessConfiguration = {
-  teamDomain: string;
-  audience: string;
-};
+type CloudflareAccessConfiguration =
+  | { status: 'disabled' }
+  | { status: 'incomplete' }
+  | { status: 'enabled'; teamDomain: string; audience: string };
 
-// The edge cannot be trusted to cover every route to the origin (custom hostnames bypass Access),
-// so the origin itself checks the admin host and the Access assertion.
+// Custom hostnames bypass Access at the edge, so the origin checks the host and the assertion itself.
 @Injectable()
 export class ServerAdminAccessService {
   private readonly logger = new Logger(ServerAdminAccessService.name);
@@ -44,11 +43,13 @@ export class ServerAdminAccessService {
     );
   }
 
-  // Pass the authenticated user's email to also bind the Access identity to the Twenty account.
-  async isRequestAllowed(
-    request: Request,
-    userEmail?: string,
-  ): Promise<boolean> {
+  async isRequestAllowed({
+    request,
+    userEmail,
+  }: {
+    request: Request;
+    userEmail?: string;
+  }): Promise<boolean> {
     if (
       isDefined(this.getAdminConsoleUrl()) &&
       !this.isRequestOnAdminConsoleHost(request)
@@ -59,8 +60,17 @@ export class ServerAdminAccessService {
     const cloudflareAccessConfiguration =
       this.getCloudflareAccessConfiguration();
 
-    if (!isDefined(cloudflareAccessConfiguration)) {
+    if (cloudflareAccessConfiguration.status === 'disabled') {
       return true;
+    }
+
+    // Fail closed: a half-configured Access check must not silently become no check.
+    if (cloudflareAccessConfiguration.status === 'incomplete') {
+      this.logger.error(
+        'Refused server admin request: set both SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN and SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE, or neither',
+      );
+
+      return false;
     }
 
     const accessEmail = await this.getVerifiedAccessEmail(
@@ -87,9 +97,7 @@ export class ServerAdminAccessService {
     return true;
   }
 
-  private getCloudflareAccessConfiguration():
-    | CloudflareAccessConfiguration
-    | undefined {
+  private getCloudflareAccessConfiguration(): CloudflareAccessConfiguration {
     const teamDomain = this.twentyConfigService.get(
       'SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN',
     );
@@ -97,16 +105,24 @@ export class ServerAdminAccessService {
       'SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE',
     );
 
-    if (!isNonEmptyString(teamDomain) || !isNonEmptyString(audience)) {
-      return undefined;
+    if (!isNonEmptyString(teamDomain) && !isNonEmptyString(audience)) {
+      return { status: 'disabled' };
     }
 
-    return { teamDomain: new URL(teamDomain).origin, audience };
+    if (!isNonEmptyString(teamDomain) || !isNonEmptyString(audience)) {
+      return { status: 'incomplete' };
+    }
+
+    return {
+      status: 'enabled',
+      teamDomain: new URL(teamDomain).origin,
+      audience,
+    };
   }
 
   private getVerifiedAccessEmail(
     request: Request,
-    { teamDomain, audience }: CloudflareAccessConfiguration,
+    { teamDomain, audience }: { teamDomain: string; audience: string },
   ): Promise<string | undefined> {
     const cachedVerification = this.verifiedAccessEmailByRequest.get(request);
 

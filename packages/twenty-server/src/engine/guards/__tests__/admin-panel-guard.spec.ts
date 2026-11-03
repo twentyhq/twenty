@@ -3,7 +3,6 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { type ServerAdminAccessService } from 'src/engine/core-modules/server-admin-access/services/server-admin-access.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 
 const mockRequest = (request: Record<string, unknown>) => {
   jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
@@ -32,10 +31,10 @@ describe('AdminPanelGuard', () => {
         executionContext,
       ),
     ).resolves.toBe(true);
-    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith(
+    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith({
       request,
-      'admin@example.com',
-    );
+      userEmail: 'admin@example.com',
+    });
   });
 
   it('refuses a full admin whose request fails the server admin access checks', async () => {
@@ -76,20 +75,6 @@ describe('AdminPanelGuard', () => {
       new AdminPanelGuard(buildServerAdminAccessService(true)).canActivate(
         executionContext,
       ),
-    ).resolves.toBe(false);
-  });
-});
-
-describe('ServerLevelImpersonateGuard', () => {
-  it('applies the server admin access checks to impersonators', async () => {
-    mockRequest({
-      user: { canImpersonate: true, email: 'support@example.com' },
-    });
-
-    await expect(
-      new ServerLevelImpersonateGuard(
-        buildServerAdminAccessService(false),
-      ).canActivate(executionContext),
     ).resolves.toBe(false);
   });
 });

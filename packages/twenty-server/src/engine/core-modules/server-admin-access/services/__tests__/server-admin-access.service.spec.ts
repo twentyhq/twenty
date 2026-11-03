@@ -38,7 +38,7 @@ describe('ServerAdminAccessService', () => {
     const service = buildService({});
 
     await expect(
-      service.isRequestAllowed(buildRequest('crm.example.com')),
+      service.isRequestAllowed({ request: buildRequest('crm.example.com') }),
     ).resolves.toBe(true);
     expect(mockedVerifyCloudflareAccessAssertion).not.toHaveBeenCalled();
   });
@@ -49,10 +49,10 @@ describe('ServerAdminAccessService', () => {
     });
 
     await expect(
-      service.isRequestAllowed(buildRequest('acme.example.com')),
+      service.isRequestAllowed({ request: buildRequest('acme.example.com') }),
     ).resolves.toBe(false);
     await expect(
-      service.isRequestAllowed(buildRequest('admin.example.com')),
+      service.isRequestAllowed({ request: buildRequest('admin.example.com') }),
     ).resolves.toBe(true);
   });
 
@@ -62,9 +62,38 @@ describe('ServerAdminAccessService', () => {
     mockedVerifyCloudflareAccessAssertion.mockResolvedValue(undefined);
 
     await expect(
-      service.isRequestAllowed(buildRequest('admin.example.com')),
+      service.isRequestAllowed({ request: buildRequest('admin.example.com') }),
     ).resolves.toBe(false);
   });
+
+  it.each([
+    {
+      SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN:
+        'https://acme.cloudflareaccess.com',
+    },
+    { SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE: 'audience' },
+    {
+      SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN:
+        'https://acme.cloudflareaccess.com',
+      SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE: '',
+    },
+  ])(
+    'refuses every request when Access is half configured: %o',
+    async (config) => {
+      const service = buildService(config);
+
+      mockedVerifyCloudflareAccessAssertion.mockResolvedValue(
+        'admin@example.com',
+      );
+
+      await expect(
+        service.isRequestAllowed({
+          request: buildRequest('admin.example.com'),
+          userEmail: 'admin@example.com',
+        }),
+      ).resolves.toBe(false);
+    },
+  );
 
   it('binds the Access identity to the authenticated user', async () => {
     const service = buildService(ACCESS_CONFIG);
@@ -74,16 +103,16 @@ describe('ServerAdminAccessService', () => {
     );
 
     await expect(
-      service.isRequestAllowed(
-        buildRequest('admin.example.com'),
-        'Admin@Example.com',
-      ),
+      service.isRequestAllowed({
+        request: buildRequest('admin.example.com'),
+        userEmail: 'Admin@Example.com',
+      }),
     ).resolves.toBe(true);
     await expect(
-      service.isRequestAllowed(
-        buildRequest('admin.example.com'),
-        'someone-else@example.com',
-      ),
+      service.isRequestAllowed({
+        request: buildRequest('admin.example.com'),
+        userEmail: 'someone-else@example.com',
+      }),
     ).resolves.toBe(false);
   });
 
@@ -95,8 +124,8 @@ describe('ServerAdminAccessService', () => {
       'admin@example.com',
     );
 
-    await service.isRequestAllowed(request);
-    await service.isRequestAllowed(request, 'admin@example.com');
+    await service.isRequestAllowed({ request });
+    await service.isRequestAllowed({ request, userEmail: 'admin@example.com' });
 
     expect(mockedVerifyCloudflareAccessAssertion).toHaveBeenCalledTimes(1);
   });

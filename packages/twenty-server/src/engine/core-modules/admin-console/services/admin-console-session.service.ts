@@ -25,8 +25,7 @@ import { UserSessionService } from 'src/engine/core-modules/user-session/service
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
-// Session cookies are host-only, so the admin console gets its own session through a
-// single-use login token minted from the admin's workspace session.
+// Host-only session cookies: the console session comes from a single-use token minted by the workspace session.
 @Injectable()
 export class AdminConsoleSessionService {
   constructor(
@@ -104,12 +103,12 @@ export class AdminConsoleSessionService {
 
     if (
       !isDefined(userWorkspace) ||
-      userWorkspace.user.disabled === true ||
+      userWorkspace.user.disabled ||
       !userHasAdminPrivileges(userWorkspace.user) ||
-      !(await this.serverAdminAccessService.isRequestAllowed(
+      !(await this.serverAdminAccessService.isRequestAllowed({
         request,
-        userWorkspace.user.email,
-      ))
+        userEmail: userWorkspace.user.email,
+      }))
     ) {
       throw new AuthException(
         'Admin console sign-in refused',

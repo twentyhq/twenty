@@ -776,7 +776,6 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 
 type CreateSettingsRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
-  // When a dedicated admin console is configured, admin pages are only served there.
   isAdminConsoleEnabled?: boolean;
 };
 

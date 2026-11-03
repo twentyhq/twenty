@@ -28,9 +28,9 @@ export class AdminPanelOrImpersonateGuard implements CanActivate {
       return false;
     }
 
-    return this.serverAdminAccessService.isRequestAllowed(
+    return this.serverAdminAccessService.isRequestAllowed({
       request,
-      request.user.email,
-    );
+      userEmail: request.user.email,
+    });
   }
 }

@@ -8,7 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useIsCurrentLocationOnAdminConsole } from '@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -22,6 +24,8 @@ export const useHandleImpersonate = () => {
   const { enqueueToast } = useToast();
   const { startImpersonating } = useImpersonationSession();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { redirect } = useRedirect();
   const { isOnAdminConsole } = useIsCurrentLocationOnAdminConsole();
   const apolloAdminClient = useApolloAdminClient();
   const [impersonate] = useMutation(ImpersonateFromAdminPanelDocument, {
@@ -49,8 +53,21 @@ export const useHandleImpersonate = () => {
         const { loginToken, workspace } = data.impersonateFromAdminPanel;
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
-        // The admin console host holds no workspace session to swap, so the target workspace always opens in its own host.
-        if (isCurrentWorkspace && !isOnAdminConsole) {
+        // The console holds no workspace session to swap, so the target opens on its own host, even in single-workspace mode.
+        if (isOnAdminConsole) {
+          redirect(
+            buildWorkspaceUrl(
+              getWorkspaceUrl(workspace.workspaceUrls),
+              AppPath.Verify,
+              { loginToken: loginToken.token },
+            ),
+            '_blank',
+          );
+
+          return;
+        }
+
+        if (isCurrentWorkspace) {
           await startImpersonating(loginToken.token);
 
           return;

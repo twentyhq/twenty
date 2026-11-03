@@ -133,6 +133,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
           'AuthSession',
           'Impersonation',
           'ServerAdminAccessChanged',
+          'ServerAdminAction',
           'User Signup',
           'Custom Domain Activated',
           'Custom Domain Deactivated',
