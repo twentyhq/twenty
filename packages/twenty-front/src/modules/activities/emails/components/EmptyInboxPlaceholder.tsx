@@ -8,12 +8,14 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const EmptyInboxPlaceholder = () => {
@@ -25,6 +27,9 @@ export const EmptyInboxPlaceholder = () => {
 
   const { connectedAccountId, loading: connectedAccountLoading } =
     useFirstConnectedAccount();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
@@ -44,9 +49,13 @@ export const EmptyInboxPlaceholder = () => {
           <Trans>No messages yet</Trans>
         </EmptyState.Title>
         <EmptyState.Description>
-          {isNonEmptyString(recordName)
-            ? t`Connect email, WhatsApp or LinkedIn to see your conversations with ${recordName} here.`
-            : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
+          {hasAccountAbleToSend
+            ? isNonEmptyString(recordName)
+              ? t`Your conversations with ${recordName} will show up here.`
+              : t`Your conversations will show up here.`
+            : isNonEmptyString(recordName)
+              ? t`Connect email, WhatsApp or LinkedIn to see your conversations with ${recordName} here.`
+              : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
         </EmptyState.Description>
       </EmptyState.Content>
       {!connectedAccountLoading && (
@@ -70,7 +79,13 @@ export const EmptyInboxPlaceholder = () => {
             </>
           ) : (
             <Button
-              onClick={() => navigateSettings(SettingsPath.NewAccount)}
+              onClick={() =>
+                navigateSettings(
+                  isAppPreferencesEnabled
+                    ? SettingsPath.AppPreferences
+                    : SettingsPath.NewAccount,
+                )
+              }
               variant="outline"
             >{t`Connect an account`}</Button>
           )}
