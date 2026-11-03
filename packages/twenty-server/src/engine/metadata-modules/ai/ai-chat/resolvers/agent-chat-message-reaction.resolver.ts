@@ -9,25 +9,26 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentMessageReactionSummaryDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message-reaction-summary.dto';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [PermissionFlagType.AI],
   }),
-  SettingsPermissionGuard(PermissionFlagType.AI),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(AuthGraphqlApiExceptionFilter)

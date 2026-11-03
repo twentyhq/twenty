@@ -1,5 +1,5 @@
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principal-acting-application-id.util';
+import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principals-acting-application-id.util';
 
 const APPLICATION_ID = 'application-1';
 const APPLICATION_ROLE_ID = 'application-role';
@@ -14,11 +14,11 @@ const flatApplicationMaps: ApplicationDefaultRoleMaps = {
   },
 };
 
-describe('getPermissionsPrincipalActingApplicationId', () => {
+describe('getPermissionsPrincipalsActingApplicationId', () => {
   it('returns the application a member acts through', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: {
             type: 'workspaceMember',
             roleId: 'user-role',
@@ -37,8 +37,8 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
 
   it('returns the application acting alone', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: {
             type: 'application',
             roleId: APPLICATION_ROLE_ID,
@@ -57,8 +57,8 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
 
   it('looks up the application of a deprecated role-only app', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'user-role' },
           applicationPrincipal: {
             type: 'deprecatedRoleOnly',
@@ -72,8 +72,8 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
 
   it('keeps the owning application of a role-only application config', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: {
             type: 'deprecatedRoleOnly',
             roleId: APPLICATION_ROLE_ID,
@@ -90,8 +90,8 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
 
   it('ignores an app role the member also holds', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: {
             type: 'workspaceMember',
             roleId: APPLICATION_ROLE_ID,
@@ -110,8 +110,8 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
 
   it('ignores the custom app', () => {
     expect(
-      getPermissionsPrincipalActingApplicationId({
-        principal: {
+      getPermissionsPrincipalsActingApplicationId({
+        principals: {
           mainPrincipal: {
             type: 'workspaceMember',
             roleId: 'user-role',
