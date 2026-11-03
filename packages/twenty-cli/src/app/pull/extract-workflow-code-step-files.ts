@@ -15,7 +15,7 @@ export type WorkflowCodeStepFile = {
   content: string;
 };
 
-const CODE_STEP_FILE_SUFFIX = '.code.ts';
+export const CODE_STEP_FILE_SUFFIX = '.code.ts';
 
 // The CLI evaluates definitions as CommonJS, where __dirname is the workflow file's folder
 const CODE_STEP_SOURCE_IMPORT_STATEMENTS = [
@@ -34,31 +34,55 @@ export const getWorkflowCodeStepFolderPath = (
     getCodeStepFolderName(workflowRelativePath),
   );
 
+export type IsCodeStepPathAvailable = (params: {
+  relativePath: string;
+  stepUniversalIdentifier: string;
+}) => boolean;
+
 const reserveCodeStepFileName = ({
+  folderPath,
   fileBaseName,
   universalIdentifier,
   takenFileNames,
+  isCodeStepPathAvailable,
 }: {
+  folderPath: string;
   fileBaseName: string;
   universalIdentifier: string;
   takenFileNames: Set<string>;
+  isCodeStepPathAvailable: IsCodeStepPathAvailable;
 }): string => {
-  const fileName = `${fileBaseName}${CODE_STEP_FILE_SUFFIX}`;
-  const reservedFileName = takenFileNames.has(fileName)
-    ? `${universalIdentifier.slice(0, 8)}-${fileName}`
-    : fileName;
+  const identifierPrefix = universalIdentifier.slice(0, 8);
+  const isAvailable = (fileName: string) =>
+    !takenFileNames.has(fileName) &&
+    isCodeStepPathAvailable({
+      relativePath: posix.join(folderPath, fileName),
+      stepUniversalIdentifier: universalIdentifier,
+    });
 
-  takenFileNames.add(reservedFileName);
+  let fileName = `${fileBaseName}${CODE_STEP_FILE_SUFFIX}`;
 
-  return reservedFileName;
+  if (!isAvailable(fileName)) {
+    fileName = `${identifierPrefix}-${fileName}`;
+  }
+
+  for (let suffix = 2; !isAvailable(fileName); suffix++) {
+    fileName = `${identifierPrefix}-${fileBaseName}-${suffix}${CODE_STEP_FILE_SUFFIX}`;
+  }
+
+  takenFileNames.add(fileName);
+
+  return fileName;
 };
 
 export const extractWorkflowCodeStepFiles = ({
   config,
   workflowRelativePath,
+  isCodeStepPathAvailable = () => true,
 }: {
   config: unknown;
   workflowRelativePath: string;
+  isCodeStepPathAvailable?: IsCodeStepPathAvailable;
 }): {
   config: unknown;
   importStatements: string[];
@@ -73,6 +97,7 @@ export const extractWorkflowCodeStepFiles = ({
   }
 
   const folderName = getCodeStepFolderName(workflowRelativePath);
+  const folderPath = getWorkflowCodeStepFolderPath(workflowRelativePath);
   const takenFileNames = new Set<string>();
   const codeStepFiles: WorkflowCodeStepFile[] = [];
 
@@ -88,21 +113,19 @@ export const extractWorkflowCodeStepFiles = ({
     }
 
     const fileName = reserveCodeStepFileName({
+      folderPath,
       fileBaseName: toFileBaseName({
         segments: [isString(step.name) ? step.name : null],
         universalIdentifier: step.universalIdentifier,
       }),
       universalIdentifier: step.universalIdentifier,
       takenFileNames,
+      isCodeStepPathAvailable,
     });
 
     codeStepFiles.push({
       universalIdentifier: step.universalIdentifier,
-      relativePath: posix.join(
-        posix.dirname(workflowRelativePath),
-        folderName,
-        fileName,
-      ),
+      relativePath: posix.join(folderPath, fileName),
       content: step.input.code,
     });
 
@@ -117,11 +140,13 @@ export const extractWorkflowCodeStepFiles = ({
     };
   });
 
-  return codeStepFiles.length === 0
-    ? { config, importStatements: [], codeStepFiles }
-    : {
-        config: { ...config, version: { ...config.version, steps } },
-        importStatements: CODE_STEP_SOURCE_IMPORT_STATEMENTS,
-        codeStepFiles,
-      };
+  if (codeStepFiles.length === 0) {
+    return { config, importStatements: [], codeStepFiles };
+  }
+
+  return {
+    config: { ...config, version: { ...config.version, steps } },
+    importStatements: CODE_STEP_SOURCE_IMPORT_STATEMENTS,
+    codeStepFiles,
+  };
 };

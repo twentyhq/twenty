@@ -52,7 +52,10 @@ export {
   workflowClassifyActionSettingsSchema,
 } from './schemas/classify-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
-export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
+export {
+  workflowCodeActionInputSchema,
+  workflowCodeActionSettingsSchema,
+} from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
 export { workflowCreateCalendarEventActionSettingsSchema } from './schemas/create-calendar-event-action-settings-schema';
 export { workflowCreateRecordActionSchema } from './schemas/create-record-action-schema';

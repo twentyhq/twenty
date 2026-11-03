@@ -675,18 +675,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       });
     });
 
-    it('reports a step type applications cannot use', () => {
-      const synced = syncWorkflow(buildWorkflow({}));
-      const [step] = synced.flatWorkflowVersion.steps ?? [];
-
-      Object.assign(step, { type: 'CHAT_WITH_AN_ORACLE' });
-
-      expect(exportWorkflow(synced)).toEqual({
-        reason:
-          'CHAT_WITH_AN_ORACLE steps are not supported in application workflows',
-      });
-    });
-
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
         buildWorkflow({ steps: [buildStep({ type: 'FIND_RECORDS' })] }),

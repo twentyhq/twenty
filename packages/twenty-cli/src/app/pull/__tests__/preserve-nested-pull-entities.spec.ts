@@ -195,6 +195,10 @@ describe('preserveNestedPullEntities', () => {
       universalIdentifier: stepIdentifier,
     };
     const otherWrite = createWrite(tabEntity, 'src/workflows/greeting.ts');
+    const otherWorkflowCodeStepWrite: PullWrite = {
+      ...createWrite(tabEntity, 'src/workflows/greet/other-format.code.ts'),
+      universalIdentifier: '88888888-8888-4888-8888-888888888888',
+    };
 
     const result = protect({
       entities: [workflowEntity, tabEntity],
@@ -221,6 +225,7 @@ describe('preserveNestedPullEntities', () => {
         createWrite(workflowEntity, workflowPath),
         codeStepWrite,
         otherWrite,
+        otherWorkflowCodeStepWrite,
       ],
       deletions: [
         {
@@ -230,7 +235,7 @@ describe('preserveNestedPullEntities', () => {
       ],
     });
 
-    expect(result.writes).toEqual([otherWrite]);
+    expect(result.writes).toEqual([otherWrite, otherWorkflowCodeStepWrite]);
     expect(result.deletions).toEqual([]);
     expect(result.skipped).toEqual([
       expect.objectContaining({ universalIdentifier: workflowIdentifier }),

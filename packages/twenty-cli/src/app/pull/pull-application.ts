@@ -5,6 +5,7 @@ import { getToolingErrorContext } from '@/app/get-tooling-error-context';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { getOverwrittenLocalChanges } from '@/app/pull/get-overwritten-local-changes';
+import { findLocalCodeStepFiles } from '@/app/pull/find-local-code-step-files';
 import { prepareAppPull } from '@/app/pull/prepare-app-pull';
 import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { preserveNestedPullEntities } from '@/app/pull/preserve-nested-pull-entities';
@@ -66,12 +67,17 @@ export const pullApplication = async (
     const workspaceUniversalIdentifiers = new Set(
       applicationExport.coverage.map((entry) => entry.universalIdentifier),
     );
+    const localCodeStepFilesByWorkflowPath = await findLocalCodeStepFiles({
+      appPath,
+      scannedFiles,
+    });
     const plan = planPullWrites({
       entities,
       baseEntities,
       scannedFiles,
       workspaceUniversalIdentifiers,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
+      localCodeStepFilesByWorkflowPath,
     });
     const protectedIdentifiers = new Set<string>();
 
@@ -168,6 +174,7 @@ export const pullApplication = async (
       deletions,
       frontComponentSourcePaths,
       baseEntities,
+      localCodeStepFilesByWorkflowPath,
       sourceFingerprints: base.sourceFingerprints,
     });
     const entityLabelByUniversalIdentifier =

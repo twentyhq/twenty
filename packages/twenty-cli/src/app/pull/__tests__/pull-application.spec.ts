@@ -27,6 +27,7 @@ import * as fileUtilities from '@/app/fs-utils';
 import { type AppExportCoverageEntry } from '@/app/types/app-export.type';
 import * as sourceScanner from '@/app/source/scan-project-source-files';
 import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
+import { printString } from '@/app/pull/print-typescript-value';
 
 const APPLICATION_IDENTIFIER = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const OBJECT_IDENTIFIER = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
@@ -123,6 +124,51 @@ const createExport = ({
   files: [],
 });
 
+const CODE_STEP_SOURCE = `export const main = async (params: { name: string }) => {
+  return { greeting: \`Hello \${params.name}\` };
+};
+`;
+
+type TestWorkflowStep = {
+  universalIdentifier?: string;
+  name: string;
+  type: 'CODE' | 'EMPTY';
+  input: Record<string, unknown>;
+};
+
+const createWorkflowExport = ({
+  universalIdentifier = WORKFLOW_STEP_IDENTIFIER,
+  ...step
+}: TestWorkflowStep) => {
+  const exported = createExport();
+
+  return {
+    ...exported,
+    manifest: {
+      ...exported.manifest,
+      workflows: [
+        {
+          universalIdentifier: WORKFLOW_IDENTIFIER,
+          name: 'Greet new pets',
+          version: {
+            trigger: {
+              universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
+              type: 'MANUAL',
+              nextStepIds: [universalIdentifier],
+            },
+            steps: [{ universalIdentifier, nextStepIds: [], ...step }],
+          },
+        },
+      ],
+    },
+  };
+};
+
+const createCodeStep = (code = CODE_STEP_SOURCE) => ({
+  type: 'CODE' as const,
+  input: { code, logicFunctionInput: { name: '{{trigger.name}}' } },
+});
+
 const sha256 = (content: string) =>
   createHash('sha256').update(content).digest('hex');
 
@@ -172,6 +218,13 @@ describe('programmatic application pull', { timeout: 30_000 }, () => {
       sourceFingerprints: await collectSourceFingerprints(appPath),
       signal: new AbortController().signal,
     });
+  const dropSourceFingerprints = async () => {
+    const { sourceFingerprints: _sourceFingerprints, ...base } = JSON.parse(
+      await read(BASE_PATH),
+    );
+
+    await writeFile(join(appPath, BASE_PATH), JSON.stringify(base));
+  };
   const addStandaloneField = async () => {
     await mkdir(join(appPath, 'src/fields'), { recursive: true });
     await writeFile(
@@ -819,45 +872,11 @@ export default defineField({
   it('writes the source of a code step next to its workflow, which reads it back', async () => {
     const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
     const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
-    const source = `export const main = async (params: { name: string }) => {
-  return { greeting: \`Hello \${params.name}\` };
-};
-`;
-    const workflowWithStep = ({
-      universalIdentifier = WORKFLOW_STEP_IDENTIFIER,
-      ...step
-    }: Record<string, unknown>) => {
-      const exported = createExport();
-
-      return {
-        ...exported,
-        manifest: {
-          ...exported.manifest,
-          workflows: [
-            {
-              universalIdentifier: WORKFLOW_IDENTIFIER,
-              name: 'Greet new pets',
-              version: {
-                trigger: {
-                  universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
-                  type: 'MANUAL',
-                  nextStepIds: [universalIdentifier],
-                },
-                steps: [{ universalIdentifier, nextStepIds: [], ...step }],
-              },
-            },
-          ],
-        },
-      };
-    };
-    const codeStep = {
-      type: 'CODE',
-      input: {
-        code: source,
-        logicFunctionInput: { name: '{{trigger.name}}' },
-      },
-    };
-    const withCodeStep = workflowWithStep({ name: 'Format name', ...codeStep });
+    const source = CODE_STEP_SOURCE;
+    const withCodeStep = createWorkflowExport({
+      name: 'Format name',
+      ...createCodeStep(),
+    });
 
     const created = requireSuccess(await pull(withCodeStep));
     expect(created.writes).toEqual(
@@ -883,7 +902,9 @@ export default defineField({
 
     const renamedPath = 'src/workflows/greet-new-pets/shout-name.code.ts';
     const renamed = requireSuccess(
-      await pull(workflowWithStep({ name: 'Shout name', ...codeStep })),
+      await pull(
+        createWorkflowExport({ name: 'Shout name', ...createCodeStep() }),
+      ),
     );
     expect(renamed.writes).toEqual([
       expect.objectContaining({ relativePath: workflowPath }),
@@ -916,7 +937,7 @@ export default defineField({
 
     const replaced = requireSuccess(
       await pull(
-        workflowWithStep({
+        createWorkflowExport({
           universalIdentifier: OTHER_IDENTIFIER,
           name: 'Wait',
           type: 'EMPTY',
@@ -932,6 +953,100 @@ export default defineField({
     ]);
     await expect(read(codeStepPath)).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(read(renamedPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('reports locally edited code step files without fingerprints and never writes over unrelated files', async () => {
+    const unrelatedPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const codeStepPath = `src/workflows/greet-new-pets/${WORKFLOW_STEP_IDENTIFIER.slice(0, 8)}-format-name.code.ts`;
+    const unrelated = 'export const unrelated = true;\n';
+
+    await mkdir(join(appPath, 'src/workflows/greet-new-pets'), {
+      recursive: true,
+    });
+    await writeFile(join(appPath, unrelatedPath), unrelated);
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    expect(await read(codeStepPath)).toBe(CODE_STEP_SOURCE);
+    expect(await read(unrelatedPath)).toBe(unrelated);
+
+    await dropSourceFingerprints();
+    await writeFile(
+      join(appPath, codeStepPath),
+      CODE_STEP_SOURCE.replace('Hello', 'Hi'),
+    );
+
+    const remoteSource = CODE_STEP_SOURCE.replace('Hello', 'Welcome');
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(remoteSource),
+        }),
+      ),
+    );
+
+    expect(changed.writes).toContainEqual(
+      expect.objectContaining({
+        relativePath: codeStepPath,
+        isRegeneration: true,
+      }),
+    );
+    expect(changed.deletions).toEqual([]);
+    expect(changed.overwrittenLocalChanges).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: codeStepPath,
+      },
+    ]);
+    expect(await read(codeStepPath)).toBe(remoteSource);
+    expect(await read(unrelatedPath)).toBe(unrelated);
+  });
+
+  it('does not report a workflow file holding its code step source inline as edited', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepFolder = 'src/workflows/greet-new-pets';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath))
+        .replace(
+          "import { readFileSync } from 'node:fs';\nimport { join } from 'node:path';\n",
+          '',
+        )
+        .replace(
+          "readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8')",
+          printString(CODE_STEP_SOURCE),
+        ),
+    );
+    await rm(join(appPath, codeStepFolder), { recursive: true });
+
+    await dropSourceFingerprints();
+
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(CODE_STEP_SOURCE.replace('Hello', 'Welcome')),
+        }),
+      ),
+    );
+
+    expect(changed.writes).toContainEqual(
+      expect.objectContaining({
+        relativePath: workflowPath,
+        isRegeneration: true,
+      }),
+    );
+    expect(changed.overwrittenLocalChanges).toEqual([]);
   });
 
   it('writes agents and skills, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {

@@ -1,3 +1,4 @@
+import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { describe, expect, it } from 'vitest';
 
 import { WORKFLOW_ENUM_BINDINGS } from '@/app/pull/write-define-file';
@@ -10,7 +11,13 @@ const SOURCE = `export const main = async (params: { name: string }) => {
 };
 `;
 
-const codeStep = (universalIdentifier: string, name: string) => ({
+const codeStep = ({
+  universalIdentifier,
+  name,
+}: {
+  universalIdentifier: string;
+  name: string;
+}): WorkflowStepManifest => ({
   universalIdentifier,
   name,
   type: 'CODE',
@@ -18,7 +25,7 @@ const codeStep = (universalIdentifier: string, name: string) => ({
   input: { code: SOURCE, logicFunctionInput: { name: '{{trigger.name}}' } },
 });
 
-const workflowEntity = (steps: unknown[]) => ({
+const workflowEntity = (steps: WorkflowStepManifest[]) => ({
   kind: 'workflow' as const,
   definer: 'defineWorkflow',
   enumBindings: WORKFLOW_ENUM_BINDINGS,
@@ -36,8 +43,11 @@ describe('writePullEntityFile', () => {
   it('writes the source of each code step next to its workflow and reads it from there', () => {
     const { content, requiredSdkExports, codeStepFiles } = writePullEntityFile({
       entity: workflowEntity([
-        codeStep(FORMAT_STEP_UID, 'Format name'),
-        codeStep(SECOND_FORMAT_STEP_UID, 'Format name'),
+        codeStep({ universalIdentifier: FORMAT_STEP_UID, name: 'Format name' }),
+        codeStep({
+          universalIdentifier: SECOND_FORMAT_STEP_UID,
+          name: 'Format name',
+        }),
       ]),
       relativePath: 'src/workflows/greet-new-pets.workflow.ts',
     });
@@ -70,12 +80,40 @@ describe('writePullEntityFile', () => {
 
   it('names the code step folder after a workflow file without the usual suffix', () => {
     const { codeStepFiles } = writePullEntityFile({
-      entity: workflowEntity([codeStep(FORMAT_STEP_UID, '')]),
+      entity: workflowEntity([
+        codeStep({ universalIdentifier: FORMAT_STEP_UID, name: '' }),
+      ]),
       relativePath: 'src/automations/welcome.ts',
     });
 
     expect(codeStepFiles.map(({ relativePath }) => relativePath)).toEqual([
       'src/automations/welcome/44444444.code.ts',
+    ]);
+  });
+
+  it('probes further names while a fallback name is taken', () => {
+    const thirdFormatStepUid = '55555555-6666-4666-8666-666666666666';
+    const { codeStepFiles } = writePullEntityFile({
+      entity: workflowEntity([
+        codeStep({ universalIdentifier: FORMAT_STEP_UID, name: 'Format name' }),
+        codeStep({
+          universalIdentifier: SECOND_FORMAT_STEP_UID,
+          name: 'Format name',
+        }),
+        codeStep({
+          universalIdentifier: thirdFormatStepUid,
+          name: 'Format name',
+        }),
+      ]),
+      relativePath: 'src/workflows/greet-new-pets.workflow.ts',
+      isCodeStepPathAvailable: ({ relativePath }) =>
+        relativePath !== 'src/workflows/greet-new-pets/format-name.code.ts',
+    });
+
+    expect(codeStepFiles.map(({ relativePath }) => relativePath)).toEqual([
+      'src/workflows/greet-new-pets/44444444-format-name.code.ts',
+      'src/workflows/greet-new-pets/55555555-format-name.code.ts',
+      'src/workflows/greet-new-pets/55555555-format-name-2.code.ts',
     ]);
   });
 

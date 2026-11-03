@@ -125,12 +125,14 @@ export const planPullWrites = ({
   scannedFiles,
   workspaceUniversalIdentifiers,
   unreconciledUniversalIdentifiers,
+  localCodeStepFilesByWorkflowPath,
 }: {
   entities: PullEntity[];
   baseEntities: PullEntity[];
   scannedFiles: ScannedSourceFile[];
   workspaceUniversalIdentifiers: ReadonlySet<string>;
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  localCodeStepFilesByWorkflowPath?: ReadonlyMap<string, PullDeletion[]>;
 }): PullWritePlan => {
   const exportedUniversalIdentifiers = new Set(
     entities.map((entity) => entity.universalIdentifier.toLowerCase()),
@@ -140,9 +142,6 @@ export const planPullWrites = ({
       entity.universalIdentifier,
       JSON.stringify(entity.config),
     ]),
-  );
-  const baseEntityByUniversalIdentifier = new Map(
-    baseEntities.map((entity) => [entity.universalIdentifier, entity]),
   );
   const fileBaseNameByUniversalIdentifier =
     resolvePullFileNameCollisions(entities);
@@ -172,25 +171,10 @@ export const planPullWrites = ({
   const takenRelativePaths = new Set(scannedRelativePaths);
   const staleCodeStepFiles: PullDeletion[] = [];
 
-  const findLocalCodeStepFiles = ({
-    entity,
-    relativePath,
-  }: {
-    entity: PullEntity | undefined;
-    relativePath: string;
-  }): PullDeletion[] =>
-    isDefined(entity)
-      ? writePullEntityFile({ entity, relativePath })
-          .codeStepFiles.filter((codeStepFile) =>
-            scannedRelativePaths.has(
-              toReservationKey(codeStepFile.relativePath),
-            ),
-          )
-          .map(({ universalIdentifier, relativePath }) => ({
-            universalIdentifier,
-            relativePath,
-          }))
-      : [];
+  const plannedReservationKeys = new Set<string>();
+
+  const findLocalCodeStepFiles = (workflowPath: string): PullDeletion[] =>
+    localCodeStepFilesByWorkflowPath?.get(workflowPath) ?? [];
 
   for (const entity of entities) {
     const existingSourceFile = findExistingSourceFile({
@@ -222,6 +206,7 @@ export const planPullWrites = ({
 
     usedRelativePaths.add(relativePath);
     takenRelativePaths.add(toReservationKey(relativePath));
+    plannedReservationKeys.add(toReservationKey(relativePath));
 
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,
@@ -258,9 +243,30 @@ export const planPullWrites = ({
       continue;
     }
 
+    const previousCodeStepFiles = isDefined(existingPath)
+      ? findLocalCodeStepFiles(existingPath)
+      : [];
+    const previousCodeStepReservationKeyByStep = new Map(
+      previousCodeStepFiles.map((codeStepFile) => [
+        codeStepFile.universalIdentifier,
+        toReservationKey(codeStepFile.relativePath),
+      ]),
+    );
+
     const { codeStepFiles, ...definitionFile } = writePullEntityFile({
       entity,
       relativePath,
+      isCodeStepPathAvailable: ({ relativePath, stepUniversalIdentifier }) => {
+        const reservationKey = toReservationKey(relativePath);
+
+        return (
+          !takenRelativePaths.has(reservationKey) ||
+          (!plannedReservationKeys.has(reservationKey) &&
+            previousCodeStepReservationKeyByStep.get(
+              stepUniversalIdentifier,
+            ) === reservationKey)
+        );
+      },
     });
 
     writes.push({
@@ -284,18 +290,10 @@ export const planPullWrites = ({
       });
       usedRelativePaths.add(codeStepFile.relativePath);
       takenRelativePaths.add(codeStepReservationKey);
+      plannedReservationKeys.add(codeStepReservationKey);
     }
 
-    if (isDefined(existingPath)) {
-      staleCodeStepFiles.push(
-        ...findLocalCodeStepFiles({
-          entity: baseEntityByUniversalIdentifier.get(
-            entity.universalIdentifier,
-          ),
-          relativePath: existingPath,
-        }),
-      );
-    }
+    staleCodeStepFiles.push(...previousCodeStepFiles);
   }
 
   const deletions: PullDeletion[] = [];
@@ -325,12 +323,7 @@ export const planPullWrites = ({
 
     // An unsupported workflow keeps its file, which still reads its code step files
     if (!workspaceUniversalIdentifiers.has(baseUniversalIdentifier)) {
-      staleCodeStepFiles.push(
-        ...findLocalCodeStepFiles({
-          entity: baseEntityByUniversalIdentifier.get(baseUniversalIdentifier),
-          relativePath,
-        }),
-      );
+      staleCodeStepFiles.push(...findLocalCodeStepFiles(relativePath));
     }
   }
 
