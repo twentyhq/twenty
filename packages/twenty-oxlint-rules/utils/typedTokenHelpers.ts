@@ -48,19 +48,6 @@ const isAccessPolicyConstant = (node: any): boolean =>
   node.type === 'Identifier' &&
   ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.name);
 
-const isInlineAccessPolicy = (node: any): boolean =>
-  node.type === 'ObjectExpression' &&
-  node.properties.every(
-    (property: any) =>
-      property.type === 'Property' && !property.computed && !property.shorthand,
-  );
-
-const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
-  isAccessPolicyGuardCall(node) &&
-  node.arguments.length === 1 &&
-  (isAccessPolicyConstant(node.arguments[0]) ||
-    isInlineAccessPolicy(node.arguments[0]));
-
 // Both guards check the principal, so the guards after them only run once it is known
 const isPrincipalCheckingGuardCall = (node: any): boolean =>
   isAuthPrincipalGuardCall(node) || isAccessPolicyGuardCall(node);
@@ -95,6 +82,28 @@ const getPropertyValue = (objectNode: any, propertyName: string): any =>
   objectNode.properties.find(
     (property: any) => getPropertyName(property) === propertyName,
   )?.value;
+
+const isArrayWithoutSpread = (node: any): boolean =>
+  node.type === 'ArrayExpression' &&
+  node.elements.every((element: any) => element?.type !== 'SpreadElement');
+
+const isInlineAccessPolicy = (node: any): boolean =>
+  node.type === 'ObjectExpression' &&
+  node.properties.every(
+    (property: any) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      !property.shorthand &&
+      (getPropertyName(property) === 'authPrincipals'
+        ? isInlineAuthPrincipalGuardConfig(property.value)
+        : isArrayWithoutSpread(property.value)),
+  );
+
+const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
+  isAccessPolicyGuardCall(node) &&
+  node.arguments.length === 1 &&
+  (isAccessPolicyConstant(node.arguments[0]) ||
+    isInlineAccessPolicy(node.arguments[0]));
 
 const isVariantsConfig = (kindConfig: any): boolean =>
   kindConfig?.type === 'ObjectExpression';
