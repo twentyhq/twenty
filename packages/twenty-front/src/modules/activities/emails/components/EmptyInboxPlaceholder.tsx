@@ -1,3 +1,4 @@
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
@@ -12,7 +13,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -27,6 +28,7 @@ export const EmptyInboxPlaceholder = () => {
 
   const { connectedAccountId, loading: connectedAccountLoading } =
     useFirstConnectedAccount();
+  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -40,6 +42,7 @@ export const EmptyInboxPlaceholder = () => {
 
   const recordName = recordIdentifier?.name;
   const hasAccountAbleToSend = isDefined(connectedAccountId);
+  const hasConnectedAccount = isNonEmptyArray(myConnectedAccounts);
 
   return (
     <EmptyState.Root>
@@ -60,23 +63,23 @@ export const EmptyInboxPlaceholder = () => {
       </EmptyState.Content>
       {!connectedAccountLoading && (
         <EmptyState.Actions>
+          {hasConnectedAccount && (
+            <LinkEmailThreadsDropdown
+              dropdownIdPrefix="empty-inbox-link-email-threads"
+              trigger={
+                <Button startIcon={<IconLink />} variant="outline">
+                  {t`Link email threads`}
+                </Button>
+              }
+            />
+          )}
           {hasAccountAbleToSend ? (
-            <>
-              <LinkEmailThreadsDropdown
-                dropdownIdPrefix="empty-inbox-link-email-threads"
-                trigger={
-                  <Button startIcon={<IconLink />} variant="outline">
-                    {t`Link email threads`}
-                  </Button>
-                }
-              />
-              <Button
-                startIcon={<IconMail />}
-                onClick={openComposer}
-                disabled={loading}
-                variant="outline"
-              >{t`Send Email`}</Button>
-            </>
+            <Button
+              startIcon={<IconMail />}
+              onClick={openComposer}
+              disabled={loading}
+              variant="outline"
+            >{t`Send Email`}</Button>
           ) : (
             <Button
               onClick={() =>
