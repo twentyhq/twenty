@@ -8,7 +8,7 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AiAgentAvatar } from '@/ai/components/AiAgentAvatar';
 import { CORE_AGENT_AVATAR_SHAPE_LABELS } from '@/object-core/agents/constants/CoreAgentAvatarShapeLabels';
-import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
+import { useUpdateCoreAgentAvatar } from '@/object-core/agents/hooks/useUpdateCoreAgentAvatar';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentAvatar } from '@/object-core/agents/utils/getCoreAgentAvatar';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
@@ -42,12 +42,12 @@ export const CoreAgentAvatarPicker = ({
   const { t } = useLingui();
   const theme = useTheme();
   const colorLabels = useColorLabels();
-  const { draft, updateDraft } = useCoreAgentDraft(agent);
+  const { updateCoreAgentAvatar } = useUpdateCoreAgentAvatar(agent);
 
   const { color, shape } = getCoreAgentAvatar({
     agentId: agent.id,
-    avatarColor: draft.avatarColor,
-    avatarShape: draft.avatarShape,
+    avatarColor: agent.avatarColor,
+    avatarShape: agent.avatarShape,
   });
   const dropdownId = `core-agent-avatar-picker-${agent.id}`;
 
@@ -64,7 +64,7 @@ export const CoreAgentAvatarPicker = ({
       return;
     }
 
-    updateDraft((currentDraft) => ({ ...currentDraft, avatarShape }));
+    updateCoreAgentAvatar({ avatarColor: agent.avatarColor, avatarShape });
   };
 
   const handleColorChange = (value: string | null) => {
@@ -76,7 +76,7 @@ export const CoreAgentAvatarPicker = ({
       return;
     }
 
-    updateDraft((currentDraft) => ({ ...currentDraft, avatarColor }));
+    updateCoreAgentAvatar({ avatarColor, avatarShape: agent.avatarShape });
   };
 
   return (
