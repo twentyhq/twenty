@@ -22,8 +22,10 @@ import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
@@ -31,7 +33,11 @@ import {
   SendChatMessageDocument,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const attachChatThreadToRecord = jest.fn();
 const sentShouldAssistantReply = jest.fn();
@@ -105,6 +111,7 @@ const renderAgentChat = ({
     recipientWorkspaceMemberIds: [],
   },
   currentThreadId = null,
+  objectMetadataItems,
 }: {
   persistedDrafts: Record<string, string>;
   sendChatMessageOutcomes: ('sent' | 'failed')[];
@@ -113,9 +120,11 @@ const renderAgentChat = ({
   newThreadChannelId?: string | null;
   newThreadRecipients?: AgentChatNewThreadRecipients;
   currentThreadId?: string | null;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
+    objectMetadataItems,
     onInitializeJotaiStore: (store) => {
       store.set(
         aiModelsState.atom,
@@ -213,6 +222,74 @@ describe('useAgentChat', () => {
 
     expect(result.current.currentAiChatThread).toBe(THREAD_ID);
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
+  });
+
+  it('finishes sending while recipient verification is still pending', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+      objectMetadataItems: [
+        getMockObjectMetadataItemOrThrow('company'),
+        {
+          ...getMockObjectMetadataItemOrThrow('note'),
+          nameSingular: CoreObjectNameSingular.AgentChatThread,
+          namePlural: 'agentChatThreads',
+        },
+      ],
+    });
+
+    act(() => {
+      jotaiStore.set(currentWorkspaceMembersState.atom, [
+        { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
+      ]);
+    });
+
+    let releaseVerification: (() => void) | undefined;
+    const verificationGate = new Promise<void>((resolve) => {
+      releaseVerification = resolve;
+    });
+    const verificationCompleted = jest.fn();
+    const query = jest
+      .spyOn(result.current.apolloClient, 'query')
+      .mockImplementationOnce(async () => {
+        await verificationGate;
+        verificationCompleted();
+
+        return { data: undefined };
+      });
+
+    await send(result);
+
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledWith(
+      expect.objectContaining({ fetchPolicy: 'network-only' }),
+    );
+    expect(verificationCompleted).not.toHaveBeenCalled();
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
+    expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
+    expect(
+      jotaiStore.get(
+        agentChatIsSendingMessageFamilyState.atomFamily({
+          threadId: THREAD_ID,
+        }),
+      ),
+    ).toBe(false);
+
+    await act(async () => {
+      assertIsDefinedOrThrow(releaseVerification);
+      releaseVerification();
+      await query.mock.results[0].value;
+    });
+
+    expect(verificationCompleted).toHaveBeenCalledTimes(1);
+    query.mockRestore();
   });
 
   it('files the chat when the retry of a failed first send goes through', async () => {

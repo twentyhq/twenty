@@ -61,6 +61,7 @@ import {
   StopAgentChatStreamDocument,
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
@@ -305,7 +306,7 @@ export const useAgentChat = () => {
       ).forEach((conversationTarget) => {
         void attachChatThreadToRecord({ threadId, ...conversationTarget });
       });
-      await warnAboutParticipantMentionsNotAdded({
+      void warnAboutParticipantMentionsNotAdded({
         threadId,
         participantMentions,
         initialRecipients,
@@ -315,7 +316,7 @@ export const useAgentChat = () => {
           ...(data?.sendChatMessage.recipientParticipantWorkspaceMemberIds ??
             []),
         ],
-      });
+      }).catch(logError);
 
       if (data?.sendChatMessage.queued === true) {
         removeOptimisticUserMessage();
