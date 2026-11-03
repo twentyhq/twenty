@@ -21,6 +21,7 @@ import { findPersonByCanonicalHandle } from 'src/modules/match-participant/perso
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -201,6 +202,14 @@ export class MatchParticipantService<
           })
         : [];
 
+      const draftMessageIds = shouldMatchWithPerson
+        ? await this.findDraftMessageIds({
+            participants,
+            objectMetadataName,
+            transactionScope,
+          })
+        : new Set<string>();
+
       const partipantsToBeUpdated = participants
         .map((participant) => ({
           ...participant,
@@ -223,10 +232,17 @@ export class MatchParticipantService<
               workspaceMember.userEmail === participant.handle,
           );
 
+          const isDraftMessageParticipant = draftMessageIds.has(
+            this.getSourceRecordId(participant),
+          );
+
           const newParticipant = {
             ...participant,
             ...(shouldMatchWithPerson && {
-              personId: isDefined(person) ? person.id : null,
+              personId:
+                isDefined(person) && !isDraftMessageParticipant
+                  ? person.id
+                  : null,
             }),
             ...(shouldMatchWithWorkspaceMember && {
               workspaceMemberId: isDefined(workspaceMember)
@@ -461,6 +477,38 @@ export class MatchParticipantService<
       (participant) =>
         !appChannelMessageIds.has(this.getSourceRecordId(participant)),
     );
+  }
+
+  private async findDraftMessageIds({
+    participants,
+    objectMetadataName,
+    transactionScope,
+  }: {
+    participants: ParticipantWorkspaceEntity[];
+    objectMetadataName: ObjectMetadataName;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<Set<string>> {
+    if (objectMetadataName !== 'messageParticipant') {
+      return new Set();
+    }
+
+    const draftMessages =
+      await getWorkspaceRepositoryWithOptionalTransaction<MessageWorkspaceEntity>(
+        {
+          objectMetadataName: 'message',
+          transactionScope,
+          workspaceOrmManager: this.workspaceOrmManager,
+          shouldBypassPermissionChecks: true,
+        },
+      ).find({
+        where: {
+          id: Any([...new Set(this.getSourceRecordIds(participants))]),
+          isDraft: true,
+        },
+        select: { id: true },
+      });
+
+    return new Set(draftMessages.map((draftMessage) => draftMessage.id));
   }
 
   private buildPersonQueryBuilder({

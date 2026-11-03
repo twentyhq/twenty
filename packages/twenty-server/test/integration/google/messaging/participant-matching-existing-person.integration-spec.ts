@@ -27,6 +27,7 @@ const HANDLE = 'gmail-existing-person-matching@apple.dev';
 
 const KNOWN_SENDER = `known-sender-${randomUUID()}@acme.com`;
 const KNOWN_ATTENDEE = `known-attendee-${randomUUID()}@acme.com`;
+const KNOWN_DRAFT_RECIPIENT = `known-draft-recipient-${randomUUID()}@acme.com`;
 
 type ImportedParticipantLink<
   TLinkedRecordIdField extends 'messageId' | 'calendarEventId',
@@ -86,16 +87,25 @@ const createPerson = async (primaryEmail: string) => {
 describe('Participant matching when the person already exists (integration)', () => {
   const gmail = setupGoogleMock({
     handle: HANDLE,
-    inbox: [gmailMessage({ from: KNOWN_SENDER, to: HANDLE })],
+    inbox: [
+      gmailMessage({ from: KNOWN_SENDER, to: HANDLE }),
+      gmailMessage({
+        from: HANDLE,
+        to: KNOWN_DRAFT_RECIPIENT,
+        labelIds: ['DRAFT'],
+      }),
+    ],
   });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let senderPersonId: string;
   let attendeePersonId: string;
+  let draftRecipientPersonId: string;
 
   beforeAll(async () => {
     senderPersonId = await createPerson(KNOWN_SENDER);
     attendeePersonId = await createPerson(KNOWN_ATTENDEE);
+    draftRecipientPersonId = await createPerson(KNOWN_DRAFT_RECIPIENT);
 
     await waitForAllJobsToFinish();
 
@@ -163,6 +173,26 @@ describe('Participant matching when the person already exists (integration)', ()
         objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
       },
     });
+  }, 60000);
+
+  it('does not link an existing person to a draft or add it to their timeline', async () => {
+    const participants = await findParticipantLinks(
+      'messageParticipant',
+      'messageParticipants',
+      KNOWN_DRAFT_RECIPIENT,
+      'messageId',
+    );
+    const [participant] = participants;
+
+    expect(participants).toHaveLength(1);
+    expect(participant.personId).toBeNull();
+
+    const timelineActivities = await findLinkedTimelineActivities({
+      personId: draftRecipientPersonId,
+      linkedRecordId: participant.messageId,
+    });
+
+    expect(timelineActivities).toHaveLength(0);
   }, 60000);
 
   it('creates a typed timeline activity when importing a calendar event for an existing person', async () => {
