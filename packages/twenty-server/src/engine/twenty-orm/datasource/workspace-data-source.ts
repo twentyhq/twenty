@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -41,11 +42,15 @@ const SYSTEM_PERMISSIONS: ObjectRecordsPermissionsResolution = {
   permissionsPrincipal: undefined,
 };
 
+type DataSourceWorkspaceContext = ObjectRecordsPermissionsWorkspaceContext & {
+  authContext: WorkspaceAuthContext;
+};
+
 export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
-  private readonly workspaceContext: ObjectRecordsPermissionsWorkspaceContext;
+  private readonly workspaceContext: DataSourceWorkspaceContext;
 
   constructor({
     pool,
@@ -54,7 +59,7 @@ export class WorkspaceDataSource {
   }: {
     pool: Pool;
     internalContext: WorkspaceInternalContext;
-    workspaceContext: ObjectRecordsPermissionsWorkspaceContext;
+    workspaceContext: DataSourceWorkspaceContext;
   }) {
     this.pool = pool;
     this.internalContext = internalContext;

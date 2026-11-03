@@ -1,7 +1,6 @@
 import { type Pool } from 'pg';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -10,11 +9,12 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ObjectRecordsPermissionsWorkspaceContext } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 const PET_OBJECT_METADATA_ID = 'pet-object-id';
+const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const buildFlatEntityMaps = <T extends SyncableFlatEntity>(
   flatEntities: T[],
@@ -72,16 +72,22 @@ const sumPetColumn = ({
   new WorkspaceDataSource({
     pool,
     internalContext: {
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: WORKSPACE_ID,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectIdByNameSingular: { pet: PET_OBJECT_METADATA_ID },
       featureFlagsMap: {},
     } as unknown as WorkspaceInternalContext,
     workspaceContext: {
-      authContext: {} as WorkspaceAuthContext,
+      authContext: buildSystemAuthContext(WORKSPACE_ID),
       permissionsPerRoleId: {},
-    } as ObjectRecordsPermissionsWorkspaceContext,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      userWorkspaceRoleMap: {},
+      apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
+      flatApplicationMaps: { byId: {} },
+    },
   })
     .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);
