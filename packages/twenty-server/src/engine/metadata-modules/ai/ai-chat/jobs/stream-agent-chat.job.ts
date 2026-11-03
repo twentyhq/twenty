@@ -1,3 +1,4 @@
+import { AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
 import { Inject, Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -327,7 +328,10 @@ export class StreamAgentChatJob {
     }
 
     this.recordTurnOutcome(
-      { kind: 'cancelled', reason: 'workspace_policy' },
+      {
+        kind: 'cancelled',
+        reason: AgentChatTurnCancellationReason.WORKSPACE_POLICY,
+      },
       turnModelId,
     );
 

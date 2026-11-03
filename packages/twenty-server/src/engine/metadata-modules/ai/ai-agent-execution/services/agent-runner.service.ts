@@ -4,7 +4,11 @@ import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { generateId } from 'ai';
-import { type AgentRunSummary, type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type AgentChatSubscriptionEvent,
+  type AgentRunSummary,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import {
   assertIsDefinedOrThrow,
@@ -464,7 +468,7 @@ export class AgentRunnerService {
           await this.publishContinuationEvent({
             workspaceId,
             threadId,
-            eventType: 'stream-ended',
+            event: { type: 'stream-ended' },
           });
 
           return null;
@@ -590,7 +594,7 @@ export class AgentRunnerService {
     await this.publishContinuationEvent({
       workspaceId,
       threadId,
-      eventType: 'stream-ended',
+      event: { type: 'stream-ended' },
     });
 
     return result;
@@ -710,17 +714,17 @@ export class AgentRunnerService {
   private async publishContinuationEvent({
     workspaceId,
     threadId,
-    eventType,
+    event,
   }: {
     workspaceId: string;
     threadId: string;
-    eventType: 'stream-ended' | 'queue-updated';
+    event: AgentChatSubscriptionEvent;
   }): Promise<void> {
     await this.eventPublisherService
-      .publish({ workspaceId, threadId, event: { type: eventType } })
+      .publish({ workspaceId, threadId, event })
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not publish ${eventType} for workspace ${workspaceId}, thread ${threadId}: ${formatErrorWithCause(error)}`,
+          `Could not publish ${event.type} for workspace ${workspaceId}, thread ${threadId}: ${formatErrorWithCause(error)}`,
         ),
       );
   }
@@ -1002,7 +1006,7 @@ export class AgentRunnerService {
       await this.publishContinuationEvent({
         workspaceId,
         threadId,
-        eventType: 'queue-updated',
+        event: { type: 'queue-updated' },
       });
     }
 

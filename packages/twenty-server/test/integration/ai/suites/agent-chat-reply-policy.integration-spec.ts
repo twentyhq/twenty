@@ -1,3 +1,4 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -5,6 +6,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -64,7 +67,7 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     const decision = isAiChatInboxEnabled
       ? participation.replyDecision
-      : 'REPLY';
+      : AgentChatReplyDecision.REPLY;
 
     return context.replyPolicyService.shouldReply({
       decision,
@@ -81,7 +84,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceMemberId: context.workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'recipient',
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     });
   const createGroup = async (isAssistantParticipant = true) => {
     const threadId = await context.createThread(isAssistantParticipant);
@@ -110,7 +113,7 @@ describe('Assistant reply selection with stored conversation participants', () =
           workspaceMemberId: context.workspaceMemberId,
         }),
         message: { text: 'Continue the task with this answer.' },
-        placement: 'completed',
+        placement: AgentChatMemberMessagePlacement.COMPLETED,
         assistantReplyContext,
       });
 

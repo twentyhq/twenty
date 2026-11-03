@@ -1,4 +1,6 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
+import { AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-execution-decision.enum';
 import { resolveAgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-execution-decision.util';
 
 const DEFAULT_REPLY_CONTEXT = {
@@ -9,16 +11,25 @@ const DEFAULT_REPLY_CONTEXT = {
 
 const DEFAULT_EXECUTION = {
   mode: AiChatAssistantMode.AUTOMATIC,
-  audience: 'conversation',
+  audience: AgentChatAudience.CONVERSATION,
   isAssistantParticipant: true,
   context: DEFAULT_REPLY_CONTEXT,
 } satisfies Parameters<typeof resolveAgentChatReplyExecutionDecision>[0];
 
 describe('resolveAgentChatReplyExecutionDecision', () => {
   it.each([
-    { mode: AiChatAssistantMode.NEVER, expected: 'SKIP' },
-    { mode: AiChatAssistantMode.MENTION_ONLY, expected: 'EXECUTE' },
-    { mode: AiChatAssistantMode.AUTOMATIC, expected: 'EXECUTE' },
+    {
+      mode: AiChatAssistantMode.NEVER,
+      expected: AgentChatReplyExecutionDecision.SKIP,
+    },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      expected: AgentChatReplyExecutionDecision.EXECUTE,
+    },
+    {
+      mode: AiChatAssistantMode.AUTOMATIC,
+      expected: AgentChatReplyExecutionDecision.EXECUTE,
+    },
   ])(
     'preserves legacy context-free execution under $mode',
     ({ mode, expected }) => {
@@ -37,10 +48,10 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
       resolveAgentChatReplyExecutionDecision({
         ...DEFAULT_EXECUTION,
         mode: AiChatAssistantMode.NEVER,
-        audience: 'assistant-chat',
+        audience: AgentChatAudience.ASSISTANT_CHAT,
         context: undefined,
       }),
-    ).toBe('EXECUTE');
+    ).toBe(AgentChatReplyExecutionDecision.EXECUTE);
   });
 
   it('does not grant an earlier group message a new assistant-chat exemption', () => {
@@ -48,9 +59,9 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
       resolveAgentChatReplyExecutionDecision({
         ...DEFAULT_EXECUTION,
         mode: AiChatAssistantMode.NEVER,
-        audience: 'assistant-chat',
+        audience: AgentChatAudience.ASSISTANT_CHAT,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyExecutionDecision.SKIP);
   });
 
   it('keeps the exemption while an assistant-only chat remains assistant-only', () => {
@@ -58,10 +69,10 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
       resolveAgentChatReplyExecutionDecision({
         ...DEFAULT_EXECUTION,
         mode: AiChatAssistantMode.NEVER,
-        audience: 'assistant-chat',
+        audience: AgentChatAudience.ASSISTANT_CHAT,
         context: { ...DEFAULT_REPLY_CONTEXT, isDirectAssistantChat: true },
       }),
-    ).toBe('EXECUTE');
+    ).toBe(AgentChatReplyExecutionDecision.EXECUTE);
   });
 
   it('reevaluates an assistant-only message after its audience expands', () => {
@@ -70,12 +81,12 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
         ...DEFAULT_EXECUTION,
         context: { ...DEFAULT_REPLY_CONTEXT, isDirectAssistantChat: true },
       }),
-    ).toBe('REEVALUATE');
+    ).toBe(AgentChatReplyExecutionDecision.REEVALUATE);
   });
 
   it('retains an earlier group reply decision without repeating evaluation', () => {
     expect(resolveAgentChatReplyExecutionDecision(DEFAULT_EXECUTION)).toBe(
-      'EXECUTE',
+      AgentChatReplyExecutionDecision.EXECUTE,
     );
   });
 
@@ -85,12 +96,18 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
         ...DEFAULT_EXECUTION,
         isAssistantParticipant: false,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyExecutionDecision.SKIP);
   });
 
   it.each([
-    { mode: AiChatAssistantMode.MENTION_ONLY, expected: 'EXECUTE' },
-    { mode: AiChatAssistantMode.NEVER, expected: 'SKIP' },
+    {
+      mode: AiChatAssistantMode.MENTION_ONLY,
+      expected: AgentChatReplyExecutionDecision.EXECUTE,
+    },
+    {
+      mode: AiChatAssistantMode.NEVER,
+      expected: AgentChatReplyExecutionDecision.SKIP,
+    },
   ])('checks structured continuation against $mode', ({ mode, expected }) => {
     expect(
       resolveAgentChatReplyExecutionDecision({
@@ -110,12 +127,12 @@ describe('resolveAgentChatReplyExecutionDecision', () => {
       resolveAgentChatReplyExecutionDecision({
         ...DEFAULT_EXECUTION,
         mode: AiChatAssistantMode.NEVER,
-        audience: 'assistant-chat',
+        audience: AgentChatAudience.ASSISTANT_CHAT,
         context: {
           ...DEFAULT_REPLY_CONTEXT,
           isStructuredRequestContinuation: true,
         },
       }),
-    ).toBe('EXECUTE');
+    ).toBe(AgentChatReplyExecutionDecision.EXECUTE);
   });
 });

@@ -1,6 +1,6 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
-import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
-import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 
 export const resolveAgentChatReplyDecision = ({
@@ -16,24 +16,24 @@ export const resolveAgentChatReplyDecision = ({
   isAssistantMentioned: boolean;
   isReplyRequested?: boolean;
 }): AgentChatReplyDecision => {
-  if (audience === 'assistant-chat') {
-    return 'ASSISTANT_CHAT_REPLY';
+  if (audience === AgentChatAudience.ASSISTANT_CHAT) {
+    return AgentChatReplyDecision.ASSISTANT_CHAT_REPLY;
   }
 
   if (!isReplyRequested) {
-    return 'SKIP';
+    return AgentChatReplyDecision.SKIP;
   }
 
   if (mode === AiChatAssistantMode.NEVER) {
-    return 'SKIP';
+    return AgentChatReplyDecision.SKIP;
   }
 
   if (isAssistantMentioned) {
-    return 'REPLY';
+    return AgentChatReplyDecision.REPLY;
   }
 
   if (mode === AiChatAssistantMode.MENTION_ONLY) {
-    return 'SKIP';
+    return AgentChatReplyDecision.SKIP;
   }
 
   const isAssistantParticipating = resolveAgentChatAssistantParticipation({
@@ -43,5 +43,7 @@ export const resolveAgentChatReplyDecision = ({
     isAssistantMentioned,
   });
 
-  return isAssistantParticipating ? 'EVALUATE' : 'SKIP';
+  return isAssistantParticipating
+    ? AgentChatReplyDecision.EVALUATE
+    : AgentChatReplyDecision.SKIP;
 };
