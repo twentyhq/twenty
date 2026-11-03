@@ -14,7 +14,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -414,9 +414,7 @@ const expectFrontComponentZoomRouting = async ({
     ':scope > div:last-child > div',
   );
 
-  if (!isDefined(frontComponentContainer)) {
-    throw new Error('Front component container is missing');
-  }
+  assertIsDefinedOrThrow(frontComponentContainer);
 
   const eventTarget = canvasElement.ownerDocument.createElement('div');
   const handleWheel = fn();
