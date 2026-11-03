@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
@@ -13,10 +12,6 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
-
-const AGENT_CHAT_MESSAGE_LOCK_KEY_PREFIX = 'agent-chat-message:';
-const AGENT_CHAT_MESSAGE_LOCK_WAIT_MS = 30_000;
-const AGENT_CHAT_MESSAGE_LOCK_RETRY_INTERVAL_MS = 100;
 
 type AgentChatParticipantDelivery = AgentChatThreadAccessArgs & {
   participantWorkspaceMemberIds: string[];
@@ -30,28 +25,7 @@ export class AgentChatParticipationService {
     private readonly threadService: AgentChatThreadService,
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly cacheLockService: CacheLockService,
   ) {}
-
-  runWithMessageLock<TResult>({
-    workspaceId,
-    threadId,
-    work,
-  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
-    work: () => Promise<TResult>;
-  }): Promise<TResult> {
-    return this.cacheLockService.withLock(
-      work,
-      `${AGENT_CHAT_MESSAGE_LOCK_KEY_PREFIX}${workspaceId}:${threadId}`,
-      {
-        ms: AGENT_CHAT_MESSAGE_LOCK_RETRY_INTERVAL_MS,
-        maxRetries: Math.ceil(
-          AGENT_CHAT_MESSAGE_LOCK_WAIT_MS /
-            AGENT_CHAT_MESSAGE_LOCK_RETRY_INTERVAL_MS,
-        ),
-      },
-    );
-  }
 
   async persistMessage<TSavedMessage extends { id: string }>({
     participation,
