@@ -54,6 +54,8 @@ describe('teamsHealthCheckHandler', () => {
       description: expect.stringContaining('No working Microsoft Teams'),
       action: { label: 'Add connection', location: '#general' },
     });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should report nothing once a working connection exists', async () => {
@@ -63,12 +65,16 @@ describe('teamsHealthCheckHandler', () => {
     ]);
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should let personal connections alone satisfy transcript imports', async () => {
     listTeamsConnectionsMock.mockResolvedValue([PERSONAL_CONNECTION]);
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should ask to reconnect when every connection was rejected', async () => {
@@ -82,6 +88,8 @@ describe('teamsHealthCheckHandler', () => {
       description: expect.stringContaining('Microsoft rejected the stored'),
       action: { label: 'Manage connection', location: '#general' },
     });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should ask for a workspace connection when chat only has personal ones', async () => {
@@ -94,6 +102,8 @@ describe('teamsHealthCheckHandler', () => {
       description: expect.stringContaining('personal connections do not count'),
       action: { label: 'Add connection', location: '#general' },
     });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should report nothing for chat once a workspace connection works', async () => {
@@ -104,6 +114,8 @@ describe('teamsHealthCheckHandler', () => {
     ]);
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+
+    expect(listTeamsConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('should report nothing when no feature needs a connection', async () => {

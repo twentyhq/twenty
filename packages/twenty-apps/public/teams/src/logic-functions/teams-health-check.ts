@@ -38,7 +38,6 @@ export const teamsHealthCheckHandler =
       };
     }
 
-    // Only a workspace-shared connection claims the Microsoft tenant chat routes on.
     const hasWorkingWorkspaceConnection = connections.some(
       (connection) =>
         connection.scope === 'WORKSPACE' && !isDefined(connection.authFailedAt),
