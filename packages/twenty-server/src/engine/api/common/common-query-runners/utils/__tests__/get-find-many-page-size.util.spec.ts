@@ -18,4 +18,10 @@ describe('getFindManyPageSize', () => {
       QUERY_MAX_RECORDS,
     );
   });
+
+  it('keeps a page size over QUERY_MAX_RECORDS when bypassing the cap', () => {
+    expect(
+      getFindManyPageSize({ first: 1000, shouldBypassQueryMaxRecords: true }),
+    ).toBe(1000);
+  });
 });
