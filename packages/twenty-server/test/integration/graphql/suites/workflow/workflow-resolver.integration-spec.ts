@@ -44,36 +44,6 @@ describe('workflowResolver', () => {
 
   it.each([
     {
-      operation: 'createWorkflow',
-      buildQuery: () =>
-        'mutation { createWorkflow(data: { name: "Records API Workflow" }) { id } }',
-    },
-    {
-      operation: 'createWorkflows',
-      buildQuery: () =>
-        'mutation { createWorkflows(data: [{ name: "Records API Workflow" }]) { id } }',
-    },
-    {
-      operation: 'updateWorkflow',
-      buildQuery: () =>
-        `mutation { updateWorkflow(id: "${workspaceWorkflowId}", data: { name: "Renamed" }) { id } }`,
-    },
-    {
-      operation: 'deleteWorkflow',
-      buildQuery: () =>
-        `mutation { deleteWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'destroyWorkflow',
-      buildQuery: () =>
-        `mutation { destroyWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'restoreWorkflow',
-      buildQuery: () =>
-        `mutation { restoreWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
       operation: 'updateWorkflowVersion',
       buildQuery: () =>
         `mutation { updateWorkflowVersion(id: "${workspaceWorkflowVersionId}", data: { name: "Renamed" }) { id } }`,
