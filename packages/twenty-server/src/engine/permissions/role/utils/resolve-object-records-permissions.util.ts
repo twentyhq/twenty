@@ -1,20 +1,12 @@
-import {
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import {
-  type PermissionsPrincipalRoleMaps,
-  resolvePermissionsPrincipalsWithRoles,
-} from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { type ORMWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 
 export type ObjectRecordsPermissionsResolution = {
   objectRecordsPermissions: ObjectsPermissions;
@@ -22,19 +14,30 @@ export type ObjectRecordsPermissionsResolution = {
   permissionsPrincipal: PermissionsPrincipalsWithRolesContext | undefined;
 };
 
-export const resolveObjectRecordsPermissions = ({
-  authContext,
-  roleMaps,
-  objectPermissionsByRoleId,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-}: {
-  authContext: WorkspaceAuthContext;
-  roleMaps: PermissionsPrincipalRoleMaps;
-  objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): ObjectRecordsPermissionsResolution => {
+export type ObjectRecordsPermissionsWorkspaceContext = Pick<
+  ORMWorkspaceContext,
+  | 'authContext'
+  | 'permissionsPerRoleId'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatWorkspaceMemberMaps'
+  | 'userWorkspaceRoleMap'
+  | 'apiKeyRoleMap'
+  | 'flatRoleTargetByAgentIdMaps'
+  | 'flatApplicationMaps'
+>;
+
+// A workspace context is replaced, never mutated, so it can key the resolution
+const resolutionByWorkspaceContext = new WeakMap<
+  ObjectRecordsPermissionsWorkspaceContext,
+  ObjectRecordsPermissionsResolution
+>();
+
+const computeObjectRecordsPermissions = (
+  workspaceContext: ObjectRecordsPermissionsWorkspaceContext,
+): ObjectRecordsPermissionsResolution => {
+  const { authContext } = workspaceContext;
+
   if (isSystemAuthContext(authContext)) {
     return {
       objectRecordsPermissions: {},
@@ -45,7 +48,7 @@ export const resolveObjectRecordsPermissions = ({
 
   const permissionsPrincipal = resolvePermissionsPrincipalsWithRoles({
     authContext,
-    roleMaps,
+    roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
   });
 
   if (!isDefined(permissionsPrincipal)) {
@@ -59,12 +62,30 @@ export const resolveObjectRecordsPermissions = ({
   return {
     objectRecordsPermissions: computeObjectsPermissionsForRoles({
       principal: permissionsPrincipal,
-      rolesPermissions: objectPermissionsByRoleId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps: roleMaps.flatApplicationMaps,
+      rolesPermissions: workspaceContext.permissionsPerRoleId,
+      flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
+      flatApplicationMaps: workspaceContext.flatApplicationMaps,
     }),
     shouldBypassPermissionChecks: false,
     permissionsPrincipal,
   };
+};
+
+export const resolveObjectRecordsPermissions = ({
+  workspaceContext,
+}: {
+  workspaceContext: ObjectRecordsPermissionsWorkspaceContext;
+}): ObjectRecordsPermissionsResolution => {
+  const cachedResolution = resolutionByWorkspaceContext.get(workspaceContext);
+
+  if (isDefined(cachedResolution)) {
+    return cachedResolution;
+  }
+
+  const resolution = computeObjectRecordsPermissions(workspaceContext);
+
+  resolutionByWorkspaceContext.set(workspaceContext, resolution);
+
+  return resolution;
 };

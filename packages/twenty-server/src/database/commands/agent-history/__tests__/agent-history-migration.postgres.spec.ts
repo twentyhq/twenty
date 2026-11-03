@@ -94,10 +94,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         .map((field) => field.id);
     }
     const emitDatabaseBatchEvent = jest.fn();
+    const authContext = buildSystemAuthContext(WORKSPACE_ID);
     const workspaceDataSourceOptions = {
       pool,
-      authContext: buildSystemAuthContext(WORKSPACE_ID),
-      objectPermissionsByRoleId: {},
       internalContext: {
         workspaceId: WORKSPACE_ID,
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
@@ -125,27 +124,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       },
     };
     const createOrm = (maps = metadata) => {
-      const options = {
-        ...workspaceDataSourceOptions,
-        internalContext: {
-          ...workspaceDataSourceOptions.internalContext,
-          flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: maps.flatFieldMetadataMaps,
-        },
+      const internalContext = {
+        ...workspaceDataSourceOptions.internalContext,
+        flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: maps.flatFieldMetadataMaps,
       };
-      const workspaceDataSource = new WorkspaceDataSource(options);
+      const workspaceContext = {
+        ...internalContext,
+        authContext,
+        permissionsPerRoleId: {},
+      };
+      const workspaceDataSource = new WorkspaceDataSource({
+        pool: workspaceDataSourceOptions.pool,
+        internalContext,
+        workspaceContext,
+      });
       return {
         executeInWorkspaceContext: async <TResult>(
           work: () => Promise<TResult>,
-        ) =>
-          withWorkspaceContext(
-            {
-              ...options.internalContext,
-              authContext: options.authContext,
-              permissionsPerRoleId: {},
-            },
-            work,
-          ),
+        ) => withWorkspaceContext(workspaceContext, work),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
         getRepositoryWithoutPermissionChecks:

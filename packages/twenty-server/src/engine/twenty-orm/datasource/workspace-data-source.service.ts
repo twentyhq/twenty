@@ -100,8 +100,7 @@ export class WorkspaceDataSourceService
     return new WorkspaceDataSource({
       pool,
       internalContext: this.buildInternalContext(workspaceContext),
-      authContext: workspaceContext.authContext,
-      objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
+      workspaceContext,
     });
   }
 

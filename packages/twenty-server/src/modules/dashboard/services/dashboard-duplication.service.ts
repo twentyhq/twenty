@@ -20,7 +20,6 @@ import {
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -141,13 +140,7 @@ export class DashboardDuplicationService {
     workspaceContext: ORMWorkspaceContext;
   }): void {
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
-      resolveObjectRecordsPermissions({
-        authContext: workspaceContext.authContext,
-        roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
-        objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
-        flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
-      });
+      resolveObjectRecordsPermissions({ workspaceContext });
 
     if (shouldBypassPermissionChecks) {
       return;

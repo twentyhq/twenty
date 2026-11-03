@@ -3,13 +3,9 @@ import { Logger } from '@nestjs/common';
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type ObjectRecord,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -30,9 +26,9 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import {
   type ObjectRecordsPermissionsResolution,
+  type ObjectRecordsPermissionsWorkspaceContext,
   resolveObjectRecordsPermissions,
 } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -49,25 +45,20 @@ export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
-  private readonly authContext: WorkspaceAuthContext;
-  private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
-  private contextPermissions?: ObjectRecordsPermissionsResolution;
+  private readonly workspaceContext: ObjectRecordsPermissionsWorkspaceContext;
 
   constructor({
     pool,
     internalContext,
-    authContext,
-    objectPermissionsByRoleId,
+    workspaceContext,
   }: {
     pool: Pool;
     internalContext: WorkspaceInternalContext;
-    authContext: WorkspaceAuthContext;
-    objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
+    workspaceContext: ObjectRecordsPermissionsWorkspaceContext;
   }) {
     this.pool = pool;
     this.internalContext = internalContext;
-    this.authContext = authContext;
-    this.objectPermissionsByRoleId = objectPermissionsByRoleId;
+    this.workspaceContext = workspaceContext;
   }
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -244,16 +235,18 @@ export class WorkspaceDataSource {
 
     const permissions = shouldBypassPermissionChecks
       ? SYSTEM_PERMISSIONS
-      : this.resolveContextPermissions();
+      : resolveObjectRecordsPermissions({
+          workspaceContext: this.workspaceContext,
+        });
 
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
       flatObjectMetadata,
       internalContext,
-      authContext: this.authContext,
+      authContext: this.workspaceContext.authContext,
       executor,
       objectRecordsPermissions: permissions.objectRecordsPermissions,
-      rolesPermissions: this.objectPermissionsByRoleId,
+      rolesPermissions: this.workspaceContext.permissionsPerRoleId,
       permissionsPrincipal: permissions.permissionsPrincipal,
       shouldBypassPermissionChecks: permissions.shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
@@ -290,16 +283,6 @@ export class WorkspaceDataSource {
           ),
         ),
     });
-  }
-
-  private resolveContextPermissions(): ObjectRecordsPermissionsResolution {
-    return (this.contextPermissions ??= resolveObjectRecordsPermissions({
-      authContext: this.authContext,
-      roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
-      objectPermissionsByRoleId: this.objectPermissionsByRoleId,
-      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-    }));
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {

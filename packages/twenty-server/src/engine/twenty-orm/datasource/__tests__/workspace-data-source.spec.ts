@@ -10,6 +10,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type ObjectRecordsPermissionsWorkspaceContext } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -77,8 +78,10 @@ const sumPetColumn = ({
       objectIdByNameSingular: { pet: PET_OBJECT_METADATA_ID },
       featureFlagsMap: {},
     } as unknown as WorkspaceInternalContext,
-    authContext: {} as WorkspaceAuthContext,
-    objectPermissionsByRoleId: {},
+    workspaceContext: {
+      authContext: {} as WorkspaceAuthContext,
+      permissionsPerRoleId: {},
+    } as ObjectRecordsPermissionsWorkspaceContext,
   })
     .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);
