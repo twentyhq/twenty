@@ -201,10 +201,13 @@ const planLimitedHistoryImport = async ({
   });
 };
 
-const planHistoryImport = async (
-  payload: LinkedinPlanHistoryImportJobPayload,
-  conversationLimit: number | undefined,
-): Promise<LinkedinPlanHistoryImportResult> => {
+const planHistoryImport = async ({
+  payload,
+  conversationLimit,
+}: {
+  payload: LinkedinPlanHistoryImportJobPayload;
+  conversationLimit: number | undefined;
+}): Promise<LinkedinPlanHistoryImportResult> => {
   const { connectedAccountId, runId } = payload;
   const startedAt = Date.now();
   const connection = await getConnection(connectedAccountId);
@@ -356,7 +359,10 @@ export const linkedinPlanHistoryImportHandler = async (
   }
 
   try {
-    return await planHistoryImport(payload, state.conversationLimit);
+    return await planHistoryImport({
+      payload,
+      conversationLimit: state.conversationLimit,
+    });
   } catch (error) {
     return failLinkedinHistoryImportJob({
       error,
