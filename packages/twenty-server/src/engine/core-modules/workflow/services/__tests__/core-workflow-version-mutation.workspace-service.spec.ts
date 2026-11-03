@@ -91,30 +91,53 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     ['removes its agent', { agentId: 'agent-id' }, {}],
     ['adds an agent', {}, { agentId: 'agent-id' }],
     ['changes its agent', { agentId: 'agent-id' }, { agentId: 'other-id' }],
-  ])(
-    'refuses to update an AI step that %s',
-    async (_, existingInput, updatedInput) => {
-      const { service, coreWorkflowVersionWriteService } = await buildService({
-        existingStep: buildAiAgentStep({
-          input: { ...existingInput, prompt: 'Qualify' },
-        }),
-      });
+  ])('rebuilds an AI step that %s', async (_, existingInput, updatedInput) => {
+    const existingStep = buildAiAgentStep({
+      input: { ...existingInput, prompt: 'Qualify' },
+    });
+    const {
+      service,
+      coreWorkflowVersionWriteService,
+      workflowVersionStepOperationsWorkspaceService,
+    } = await buildService({ existingStep });
+    const step = buildAiAgentStep({
+      input: { ...updatedInput, prompt: 'Qualify' },
+    });
+    const builtStep = buildAiAgentStep({ input: { prompt: 'Qualify' } });
 
-      await expect(
-        service.updateStep({
-          workspaceId: WORKSPACE_ID,
-          userWorkspaceId: undefined,
-          coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-          step: buildAiAgentStep({
-            input: { ...updatedInput, prompt: 'Qualify' },
-          }),
-        }),
-      ).rejects.toThrow('Create a new step instead');
-      expect(
-        coreWorkflowVersionWriteService.writeContent,
-      ).not.toHaveBeenCalled();
-    },
-  );
+    workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep.mockResolvedValue(
+      {
+        builtStep: { ...builtStep, nextStepIds: [], position: { x: 0, y: 0 } },
+      },
+    );
+
+    const updatedStep = await service.updateStep({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+      step,
+    });
+
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).toHaveBeenCalledWith({
+      type: WorkflowActionType.AI_AGENT,
+      workspaceId: WORKSPACE_ID,
+      position: step.position,
+      id: 'step-id',
+      defaultSettings: step.settings,
+    });
+    expect(updatedStep).toEqual(builtStep);
+    expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith(
+      expect.objectContaining({ steps: [builtStep] }),
+    );
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
+    ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
+  });
 
   it('updates an AI step in place when its agent is unchanged', async () => {
     const existingStep = buildAiAgentStep({

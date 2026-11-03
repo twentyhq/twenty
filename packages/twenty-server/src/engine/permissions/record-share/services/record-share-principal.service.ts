@@ -154,13 +154,10 @@ export class RecordSharePrincipalService {
       }
 
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
-        principals: {
-          workspaceId,
-          mainPrincipal: {
-            type: 'workspaceMember',
-            workspaceMemberId: principal.principalId,
-          },
-          applicationPrincipal: { type: 'customApplication' },
+        authContext: {
+          type: 'user',
+          workspace: { id: workspaceId },
+          workspaceMemberId: principal.principalId,
         },
         flatObjectMetadata,
         operationType: 'select',

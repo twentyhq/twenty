@@ -142,7 +142,7 @@ const buildContext = (): RowAccessEvaluationContext => ({
 
 const findAdmitted = ({
   principal,
-  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
+  featureFlagKeys = [],
   context = buildContext(),
 }: {
   principal: PermissionsPrincipalsWithRolesContext;
@@ -195,13 +195,13 @@ describe('findPermissionsAdmittedRecordIds', () => {
     );
   });
 
-  it('admits records shared with the member beyond the role, ignoring shares with everyone', async () => {
+  it('admits records shared with or created by the member beyond the role', async () => {
     expect(
       await findAdmitted({
         principal: deniedPrincipal,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
-    ).toEqual(new Set(['active-shared', 'archived-shared']));
+    ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
   it('admits private records to their creator within the role filter', async () => {
@@ -230,10 +230,9 @@ describe('findPermissionsAdmittedRecordIds', () => {
         context,
       }),
     ).toEqual(new Set(records.map((record) => record.id)));
-    expect(context.findPrivateRecordStates).not.toHaveBeenCalled();
     expect(context.fetchRecordShares).toHaveBeenCalledWith({
       objectMetadataId: flatObjectMetadata.id,
-      recordIds: ['archived-shared'],
+      recordIds: ['active-private', 'archived-shared'],
     });
   });
 });
