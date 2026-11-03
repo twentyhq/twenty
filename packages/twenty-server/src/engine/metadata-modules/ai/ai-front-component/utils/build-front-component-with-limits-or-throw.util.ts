@@ -1,7 +1,6 @@
 import { FRONT_COMPONENT_BUILD_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-timeout-ms.constant';
 import { context, type BuildOptions } from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
-import { msg } from '@lingui/core/macro';
 
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
@@ -16,8 +15,7 @@ export const buildFrontComponentWithLimitsOrThrow = async (
     const timeout = setTimeout(() => {
       timeoutError = new FrontComponentBuildException({
         message: 'Component build exceeded the 10 second time limit.',
-        code: 'BUILD_FAILED',
-        userFriendlyMessage: msg`Component build exceeded the 10 second time limit.`,
+        code: 'BUILD_TIMEOUT',
       });
       void buildContext.cancel();
     }, FRONT_COMPONENT_BUILD_TIMEOUT_MS);
@@ -36,8 +34,7 @@ export const buildFrontComponentWithLimitsOrThrow = async (
       ) {
         throw new FrontComponentBuildException({
           message: 'Component build exceeds the 5 MB output limit.',
-          code: 'INVALID_INPUT',
-          userFriendlyMessage: msg`Component build exceeds the 5 MB output limit.`,
+          code: 'OUTPUT_TOO_LARGE',
         });
       }
 

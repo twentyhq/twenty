@@ -177,6 +177,8 @@ export class ApplicationUpgradeService {
               workspaceId: application.workspaceId,
               onlyAutoUpgrade,
             },
+            workspaceId: application.workspaceId,
+            applicationUniversalIdentifier: application.universalIdentifier,
           })),
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
         );

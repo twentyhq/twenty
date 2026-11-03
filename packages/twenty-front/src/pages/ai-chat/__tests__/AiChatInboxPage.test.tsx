@@ -131,6 +131,21 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
 }));
 
+jest.mock('@/ai/hooks/useAgentChatOpenThreadsSummary', () => ({
+  useAgentChatOpenThreadsSummary: () => ({
+    openThreadCount: 0,
+    unreadOpenThreadCount: 0,
+    needsInputThreadCount: 0,
+    mentionThreadCount: 0,
+    assignedToMeThreadCount: 0,
+    assignedThreadCount: 0,
+    unassignedThreadCount: 0,
+    hasUnreadOpenThread: false,
+    hasUnreadMentionThread: false,
+    hasUnreadAssignedThread: false,
+  }),
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
@@ -286,6 +301,7 @@ describe('AiChatInboxPage', () => {
             snoozedUntil: null,
             isSubscribed: true,
             lastMentionedAt: null,
+            mentionsResolvedAt: null,
             updatedAt,
           },
         ]),
@@ -355,6 +371,7 @@ describe('AiChatInboxPage', () => {
             snoozedUntil: null,
             isSubscribed: true,
             lastMentionedAt: null,
+            mentionsResolvedAt: null,
             updatedAt: '2026-09-08T00:00:00.000Z',
           },
         ]),

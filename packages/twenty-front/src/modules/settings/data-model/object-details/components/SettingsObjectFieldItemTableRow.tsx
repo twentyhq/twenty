@@ -23,12 +23,8 @@ import { useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import {
-  IconChevronRight,
-  IconMinus,
-  IconPlus,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconChevronRight, IconMinus, IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { RelationType } from '~/generated-metadata/graphql';

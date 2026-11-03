@@ -1,31 +1,27 @@
 import { createHash } from 'crypto';
 import {
+  FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   createJsxRuntimeRemoteWrapperPlugin,
   cssInjectionPlugin,
   getCommonFrontComponentBuildOptions,
   getSharedDependenciesEntrySource,
   enumerateSharedDependenciesExportNames,
+  normalizeFrontComponentSharedDependencies,
 } from 'twenty-shared/front-component-build';
 
-import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
 import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
 
 export const buildFrontComponentSharedDependencies = async ({
   resolveDirectory,
+  dependencies = FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
 }: {
   resolveDirectory: string;
+  dependencies?: string[];
 }): Promise<FrontComponentSharedDependencies> => {
-  const dependencies = [
-    'react',
-    'react-dom',
-    'react-dom/client',
-    'react/jsx-runtime',
-    ...FRONT_COMPONENT_UI_IMPORTS,
-  ];
   const exportNamesBySpecifier = new Map(
     await Promise.all(
-      dependencies.map(
+      normalizeFrontComponentSharedDependencies({ dependencies }).map(
         async (specifier) =>
           [
             specifier,

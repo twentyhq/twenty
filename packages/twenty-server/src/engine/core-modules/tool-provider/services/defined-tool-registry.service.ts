@@ -20,7 +20,7 @@ import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provid
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -175,11 +175,10 @@ export class DefinedToolRegistryService implements OnModuleInit {
           return cachedGrant;
         }
 
-        const grant = this.permissionsService.checkRolesPermissions(
-          context.rolePermissionConfig,
-          context.workspaceId,
-          permissionFlag,
-        );
+        const grant = this.permissionsService.hasPermissionFlag({
+          authContext: context.authContext,
+          setting: permissionFlag,
+        });
 
         grantedByPermissionFlag.set(permissionFlag, grant);
 

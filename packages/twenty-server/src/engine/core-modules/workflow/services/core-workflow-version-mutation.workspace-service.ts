@@ -46,6 +46,7 @@ import {
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
+import { isWorkflowAiAgentStepKindChanged } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/is-workflow-ai-agent-step-kind-changed.util';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -217,6 +218,17 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       throw new WorkflowVersionStepException(
         'Step not found',
         WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    // an AI step's kind and agent are fixed once it exists: a different agent is a new step
+    if (isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step })) {
+      throw new WorkflowVersionStepException(
+        'An AI step cannot switch between generating and running an agent, or to another agent. Create a new step instead.',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`An AI step cannot change its agent. Create a new step instead.`,
+        },
       );
     }
 

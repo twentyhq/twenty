@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -39,6 +39,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -88,6 +89,7 @@ export class AgentChatStreamingService {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   // a message sent while a reply or a run streams in the conversation waits in its queue
@@ -110,6 +112,8 @@ export class AgentChatStreamingService {
     } = options;
     const threadId = thread.id;
     const workspaceId = workspace.id;
+
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
       this.agentRunSuspensionService.findConversationWait({
@@ -479,6 +483,10 @@ export class AgentChatStreamingService {
         hasTitle: isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
       },
+      {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -504,17 +512,19 @@ export class AgentChatStreamingService {
       workspaceId,
     );
 
-    const savedMessage = await this.agentChatService.addMessage({
-      threadId,
-      userWorkspaceId,
-      id: messageId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [{ type: 'text' as const, text }, ...fileParts],
-      },
-      turnStatus,
-      workspaceId,
-    });
+    const savedMessage =
+      await this.agentChatService.addMessageAndResolveMention({
+        threadId,
+        workspaceMemberId,
+        userWorkspaceId,
+        id: messageId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [{ type: 'text' as const, text }, ...fileParts],
+        },
+        turnStatus,
+        workspaceId,
+      });
 
     await this.eventPublisherService.publish({
       workspaceId,

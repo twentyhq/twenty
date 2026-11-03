@@ -1,3 +1,4 @@
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -61,6 +62,7 @@ import {
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type ViewManifest,
   type WorkflowManifest,
+  type WorkflowStepManifest,
 } from 'twenty-shared/application';
 import {
   PermissionFlagType,
@@ -85,10 +87,10 @@ import {
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from 'twenty-shared/workflow';
 import { version as getUuidVersion, v4 } from 'uuid';
 
 import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
-import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -1988,23 +1990,31 @@ describe('Application export - workflows built in the workflow builder', () => {
   let workflowUniversalIdentifier: string;
   let workflowRunId: string | undefined;
 
+  let stepId: string;
+
   const buildManifest = (url: string): WorkflowManifest => ({
     universalIdentifier: workflowUniversalIdentifier,
     name: workflowName,
     version: {
       trigger: {
-        universalIdentifier: workflowNodeIdentifier(40),
+        name: 'Launch manually',
         type: 'MANUAL',
-        nextStepIds: [workflowNodeIdentifier(41)],
-        settings: { availability: { type: 'GLOBAL' }, isPinned: true },
+        nextStepIds: [stepId],
+        settings: {
+          availability: { type: 'GLOBAL' },
+          icon: 'IconHandMove',
+          isPinned: false,
+        },
       },
       steps: [
         {
-          universalIdentifier: workflowNodeIdentifier(41),
-          name: 'Notify sales',
+          universalIdentifier: stepId,
+          name: 'HTTP Request',
           type: 'HTTP_REQUEST',
           nextStepIds: [],
-          input: { method: 'POST', url },
+          position: { x: 200, y: 0 },
+          input: { method: 'POST', url, headers: {}, body: {} },
+          expectedOutputSchema: {},
         },
       ],
     },
@@ -2036,7 +2046,6 @@ describe('Application export - workflows built in the workflow builder', () => {
   };
 
   beforeAll(async () => {
-    const customFlatApplication = await findWorkspaceCustomFlatApplication();
     const createdWorkflow = await createCoreWorkflow({ name: workflowName });
 
     coreWorkflowId = createdWorkflow.coreWorkflowId;
@@ -2049,38 +2058,56 @@ describe('Application export - workflows built in the workflow builder', () => {
 
     workflowUniversalIdentifier = universalIdentifier;
 
-    // The builder stores whatever trigger and steps it is sent, so it is sent exactly what a manifest produces
-    const { triggers, steps } =
-      fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
-        manifest: buildManifest('http://localhost:1/before'),
-        applicationUniversalIdentifier:
-          customFlatApplication.universalIdentifier,
-        now: new Date().toISOString(),
-        logicFunctionIdByUniversalIdentifier: new Map(),
-      }).flatUniversalWorkflowVersion!;
-    const [trigger] = triggers!;
-    const [step] = steps!;
-
+    // Same calls and payloads as the builder front, so the stored version is a real builder one
     await updateCoreWorkflowVersionTrigger({
       coreWorkflowVersionId: builderVersionId,
-      trigger: { ...trigger, nextStepIds: [] },
+      trigger: {
+        name: 'Launch manually',
+        type: 'MANUAL',
+        position: { x: 0, y: 0 },
+        settings: {
+          availability: { type: 'GLOBAL' },
+          outputSchema: {},
+          icon: 'IconHandMove',
+          isPinned: false,
+        },
+      },
     });
-    await createCoreWorkflowVersionStep({
+
+    const createdStep = await createCoreWorkflowVersionStep({
       coreWorkflowVersionId: builderVersionId,
       stepType: 'HTTP_REQUEST',
-      id: step.id,
     });
-    await updateCoreWorkflowVersionTrigger({
-      coreWorkflowVersionId: builderVersionId,
-      trigger,
-    });
+
+    stepId = createdStep.id;
+
     await updateCoreWorkflowVersionStep({
       coreWorkflowVersionId: builderVersionId,
-      step,
+      step: {
+        ...createdStep,
+        settings: {
+          ...createdStep.settings,
+          input: {
+            ...createdStep.settings.input,
+            method: 'POST',
+            url: 'http://localhost:1/before',
+          },
+        },
+      },
     });
     await activateCoreWorkflowVersion({
       coreWorkflowVersionId: builderVersionId,
     });
+
+    const { triggers, steps } = (
+      await global.testDataSource.query(
+        `SELECT triggers, steps FROM core."workflowVersion" WHERE id = $1`,
+        [builderVersionId],
+      )
+    )[0];
+
+    expect(triggers[0]).not.toHaveProperty('universalIdentifier');
+    expect(steps[0]).toMatchObject({ valid: false });
   }, 60000);
 
   afterAll(async () => {
@@ -2223,6 +2250,13 @@ const DIGEST_AGENT_ID = '7e3d1c2b-0303-4a7b-8c9d-0e1f2a3b4c5d';
 const DIGEST_CRON_TRIGGER_ID = '7e3d1c2b-0304-4a7b-8c9d-0e1f2a3b4c5d';
 const DIGEST_EVENT_TRIGGER_ID = '7e3d1c2b-0305-4a7b-8c9d-0e1f2a3b4c5d';
 const TRIAGE_SKILL_ID = '7e3d1c2b-0306-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_TICKET_OBJECT_ID = '7e3d1c2b-0307-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_TICKET_PRIORITY_FIELD_ID = '7e3d1c2b-0308-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_STEPS_WORKFLOW_ID = '7e3d1c2b-0309-4a7b-8c9d-0e1f2a3b4c5d';
+const AI_STEPS_TRIGGER_ID = '7e3d1c2b-0310-4a7b-8c9d-0e1f2a3b4c5d';
+const GENERATE_STEP_ID = '7e3d1c2b-0311-4a7b-8c9d-0e1f2a3b4c5d';
+const AGENT_STEP_ID = '7e3d1c2b-0312-4a7b-8c9d-0e1f2a3b4c5d';
+const UNKNOWN_OBJECT_ID = '7e3d1c2b-0313-4a7b-8c9d-0e1f2a3b4c5d';
 
 const EXPORTED_AGENTS: AgentManifest[] = [
   {
@@ -2277,24 +2311,137 @@ const EXPORTED_SKILLS: SkillManifest[] = [
   },
 ];
 
-const aiManifest = buildBaseManifest({
-  appId: AI_TEST_APP_ID,
-  roleId: AI_TEST_ROLE_ID,
-  overrides: {
-    roles: [
-      {
-        universalIdentifier: AI_TEST_ROLE_ID,
-        label: 'Test Role',
-        description: 'A test role',
-        canBeAssignedToAgents: true,
-      },
-    ],
-    agents: EXPORTED_AGENTS,
-    skills: EXPORTED_SKILLS,
-  },
-});
+type AiAgentStepManifest = Extract<WorkflowStepManifest, { type: 'AI_AGENT' }>;
 
-describe('Application export - agents and skills', () => {
+const GENERATE_STEP: AiAgentStepManifest = {
+  universalIdentifier: GENERATE_STEP_ID,
+  name: 'Rate the ticket',
+  type: 'AI_AGENT',
+  nextStepIds: [AGENT_STEP_ID],
+  input: {
+    prompt: 'Rate the priority of the new ticket',
+    instructions: 'You rate support tickets from low to urgent.',
+    modelId: TEST_AI_MODEL_ID,
+    modelConfiguration: { webSearch: { enabled: false } },
+    responseFormat: {
+      type: 'json',
+      schema: {
+        type: 'object',
+        properties: {
+          priority: { type: 'string', description: 'The rated priority' },
+        },
+        required: ['priority'],
+        additionalProperties: false,
+      },
+    },
+    scope: {
+      objectPermissions: [
+        {
+          objectUniversalIdentifier: AI_TICKET_OBJECT_ID,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+        {
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+          canReadObjectRecords: true,
+        },
+      ],
+      fieldPermissions: [
+        {
+          objectUniversalIdentifier: AI_TICKET_OBJECT_ID,
+          fieldUniversalIdentifier: AI_TICKET_PRIORITY_FIELD_ID,
+          canReadFieldValue: true,
+          canUpdateFieldValue: false,
+        },
+      ],
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag[PermissionFlagType.SEND_EMAIL_TOOL],
+      ],
+    },
+  },
+};
+
+const AGENT_STEP: AiAgentStepManifest = {
+  universalIdentifier: AGENT_STEP_ID,
+  name: 'Triage with the support lead',
+  type: 'AI_AGENT',
+  nextStepIds: [],
+  input: {
+    agentUniversalIdentifier: TRIAGE_AGENT_ID,
+    prompt: 'Assign the new ticket to the right team',
+    humanInputInstructions: 'Ask the support lead when no team fits',
+  },
+};
+
+const AI_STEPS_WORKFLOW: WorkflowManifest = {
+  universalIdentifier: AI_STEPS_WORKFLOW_ID,
+  name: 'Triage new tickets',
+  version: {
+    trigger: {
+      universalIdentifier: AI_STEPS_TRIGGER_ID,
+      type: 'MANUAL',
+      nextStepIds: [GENERATE_STEP_ID],
+    },
+    steps: [GENERATE_STEP, AGENT_STEP],
+  },
+};
+
+const buildAiManifest = (aiSteps: AiAgentStepManifest[]) =>
+  buildBaseManifest({
+    appId: AI_TEST_APP_ID,
+    roleId: AI_TEST_ROLE_ID,
+    overrides: {
+      roles: [
+        {
+          universalIdentifier: AI_TEST_ROLE_ID,
+          label: 'Test Role',
+          description: 'A test role',
+          canBeAssignedToAgents: true,
+        },
+      ],
+      objects: [
+        buildDefaultObjectManifest({
+          universalIdentifier: AI_TICKET_OBJECT_ID,
+          nameSingular: 'exportAiTicket',
+          namePlural: 'exportAiTickets',
+          labelSingular: 'Ticket',
+          labelPlural: 'Tickets',
+          applicationUniversalIdentifier: AI_TEST_APP_ID,
+          additionalFields: [
+            {
+              universalIdentifier: AI_TICKET_PRIORITY_FIELD_ID,
+              name: 'priority',
+              label: 'Priority',
+              type: FieldMetadataType.TEXT,
+            },
+          ],
+        }),
+      ],
+      agents: EXPORTED_AGENTS,
+      skills: EXPORTED_SKILLS,
+      workflows: [
+        {
+          ...AI_STEPS_WORKFLOW,
+          version: { ...AI_STEPS_WORKFLOW.version, steps: aiSteps },
+        },
+      ],
+    },
+  });
+
+const aiManifest = buildAiManifest([GENERATE_STEP, AGENT_STEP]);
+
+const findAiSyncDryRunError = async (aiSteps: AiAgentStepManifest[]) => {
+  const { errors } = await syncApplication({
+    manifest: buildAiManifest(aiSteps),
+    dryRun: true,
+    expectToFail: true,
+  });
+
+  return errors?.[0]?.message;
+};
+
+describe('Application export - agents, skills and AI workflow steps', () => {
   beforeAll(async () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: AI_TEST_APP_ID,
@@ -2331,11 +2478,13 @@ describe('Application export - agents and skills', () => {
 
     expect(exportedManifest.agents).toEqual(EXPORTED_AGENTS);
     expect(exportedManifest.skills).toEqual(EXPORTED_SKILLS);
+    expect(exportedManifest.workflows).toEqual([AI_STEPS_WORKFLOW]);
 
     for (const universalIdentifier of [
       TRIAGE_AGENT_ID,
       DIGEST_AGENT_ID,
       TRIAGE_SKILL_ID,
+      AI_STEPS_WORKFLOW_ID,
       getRoleTargetUniversalIdentifier({
         applicationUniversalIdentifier: AI_TEST_APP_ID,
         agentUniversalIdentifier: TRIAGE_AGENT_ID,
@@ -2362,5 +2511,83 @@ describe('Application export - agents and skills', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('installs a step with its own config and a step on an agent of the same application', async () => {
+    const [{ steps }] = await globalThis.testDataSource.query(
+      `SELECT version.steps FROM core."workflowVersion" version
+       JOIN core."workflow" workflow ON workflow.id = version."coreWorkflowId"
+       WHERE workflow."workspaceId" = $1 AND workflow."universalIdentifier" = $2`,
+      [SEED_APPLE_WORKSPACE_ID, AI_STEPS_WORKFLOW_ID],
+    );
+    const [{ id: triageAgentId }] = await globalThis.testDataSource.query(
+      `SELECT agent.id FROM core."agent" agent
+       JOIN core."application" application ON application.id = agent."applicationId"
+       WHERE application."universalIdentifier" = $1 AND agent."universalIdentifier" = $2`,
+      [AI_TEST_APP_ID, TRIAGE_AGENT_ID],
+    );
+    const {
+      agentUniversalIdentifier: _agentUniversalIdentifier,
+      ...agentStepInput
+    } = AGENT_STEP.input;
+
+    expect(
+      steps.map(
+        ({ settings }: { settings: { input: object } }) => settings.input,
+      ),
+    ).toEqual([
+      GENERATE_STEP.input,
+      { ...agentStepInput, agentId: triageAgentId },
+    ]);
+  }, 60000);
+
+  it('refuses a step on an agent that also carries its own instructions', async () => {
+    expect(
+      await findAiSyncDryRunError([
+        GENERATE_STEP,
+        {
+          ...AGENT_STEP,
+          input: { ...AGENT_STEP.input, instructions: 'Route by product' },
+        },
+      ]),
+    ).toContain(
+      WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
+    );
+  }, 60000);
+
+  it('refuses a step without an agent that keeps a conversation', async () => {
+    expect(
+      await findAiSyncDryRunError([
+        {
+          ...GENERATE_STEP,
+          input: { ...GENERATE_STEP.input, conversation: { scope: 'RUN' } },
+        },
+        AGENT_STEP,
+      ]),
+    ).toContain(
+      WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
+    );
+  }, 60000);
+
+  it('refuses a step scope naming an object the workspace does not have', async () => {
+    expect(
+      await findAiSyncDryRunError([
+        {
+          ...GENERATE_STEP,
+          input: {
+            ...GENERATE_STEP.input,
+            scope: {
+              objectPermissions: [
+                {
+                  objectUniversalIdentifier: UNKNOWN_OBJECT_ID,
+                  canReadObjectRecords: true,
+                },
+              ],
+            },
+          },
+        },
+        AGENT_STEP,
+      ]),
+    ).toContain(`missing object ${UNKNOWN_OBJECT_ID}`);
   }, 60000);
 });

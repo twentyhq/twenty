@@ -183,9 +183,7 @@ export class InboundEmailImportService {
     );
 
     const referencedMessages = await this.workspaceOrmManager
-      .getRepository<MessageWorkspaceEntity>('message', {
-        shouldBypassPermissionChecks: true,
-      })
+      .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>('message')
       .find({
         where: {
           headerMessageId: In(
@@ -200,9 +198,8 @@ export class InboundEmailImportService {
     }
 
     const channelAssociations = await this.workspaceOrmManager
-      .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
-        { shouldBypassPermissionChecks: true },
       )
       .find({
         where: {

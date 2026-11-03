@@ -121,6 +121,10 @@ export class MessageParticipantPersonListener {
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       data,
+      {
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

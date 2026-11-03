@@ -36,7 +36,7 @@ import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-
 import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Injectable()
@@ -91,12 +91,10 @@ export class ActionToolProvider implements ToolProvider {
     const includeSchemas = options?.includeSchemas ?? true;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const hasHttpPermission =
-      await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.HTTP_REQUEST_TOOL,
-      );
+    const hasHttpPermission = await this.permissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      setting: PermissionFlagType.HTTP_REQUEST_TOOL,
+    });
 
     if (hasHttpPermission) {
       descriptors.push(
@@ -109,12 +107,10 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    const hasEmailPermission =
-      await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.SEND_EMAIL_TOOL,
-      );
+    const hasEmailPermission = await this.permissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      setting: PermissionFlagType.SEND_EMAIL_TOOL,
+    });
 
     if (hasEmailPermission) {
       descriptors.push(
@@ -146,11 +142,10 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasCreateCalendarEventPermission =
-      await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
-      );
+      await this.permissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        setting: PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
+      });
 
     if (hasCreateCalendarEventPermission) {
       descriptors.push(
@@ -164,11 +159,10 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasUploadFilePermission =
-      await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.UPLOAD_FILE,
-      );
+      await this.permissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        setting: PermissionFlagType.UPLOAD_FILE,
+      });
 
     if (hasUploadFilePermission) {
       descriptors.push(
@@ -236,11 +230,10 @@ export class ActionToolProvider implements ToolProvider {
 
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      (await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.CODE_INTERPRETER_TOOL,
-      ));
+      (await this.permissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        setting: PermissionFlagType.CODE_INTERPRETER_TOOL,
+      }));
 
     if (hasCodeInterpreterPermission) {
       descriptors.push(
@@ -275,7 +268,6 @@ export class ActionToolProvider implements ToolProvider {
       userWorkspaceId: context.userWorkspaceId,
       agentId: context.agentId,
       threadId: context.threadId,
-      rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });

@@ -26,6 +26,9 @@ export default defineConfig({
     projects: [
       {
         extends: './vite.config.ts',
+        optimizeDeps: {
+          include: ['storybook-addon-mock-date/preview'],
+        },
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),

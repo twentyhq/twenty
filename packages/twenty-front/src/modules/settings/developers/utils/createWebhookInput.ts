@@ -9,6 +9,7 @@ export const createWebhookCreateInput = (formValues: WebhookFormValues) => {
     operations: cleanedOperations,
     description: formValues.description,
     secret: formValues.secret,
+    roleId: formValues.roleId,
   };
 };
 
@@ -20,5 +21,6 @@ export const createWebhookUpdateInput = (formValues: WebhookFormValues) => {
     operations: cleanedOperations,
     description: formValues.description,
     secret: formValues.secret,
+    roleId: formValues.roleId,
   };
 };

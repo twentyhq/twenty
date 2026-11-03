@@ -3,6 +3,7 @@ import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.d
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 const QUEUE = MessageQueue.workspaceQueue;
+const SYSTEM_JOB = { isSystemJob: true } as const;
 
 describe('SyncDriver job snapshots', () => {
   it.each([50, { completed: 5, total: 10 }])(
@@ -22,7 +23,9 @@ describe('SyncDriver job snapshots', () => {
           progress,
         });
       });
-      const [id] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
+      const [id] = await driver.bulkAdd(QUEUE, 'job', [
+        { data: {}, ...SYSTEM_JOB },
+      ]);
 
       expect((await driver.getJobs(QUEUE, [id]))[id]).toMatchObject({
         state: 'completed',
@@ -49,8 +52,8 @@ describe('SyncDriver job snapshots', () => {
 
     await expect(
       driver.bulkAdd(QUEUE, 'job', [
-        { jobId: 'failed-job', data: {} },
-        { jobId: 'completed-job', data: {} },
+        { jobId: 'failed-job', data: {}, ...SYSTEM_JOB },
+        { jobId: 'completed-job', data: {}, ...SYSTEM_JOB },
       ]),
     ).rejects.toBe(error);
     const jobs = await driver.getJobs(QUEUE, ['failed-job', 'completed-job']);
@@ -81,13 +84,14 @@ describe('SyncDriver job snapshots', () => {
       }
     });
     const pendingAdd = driver.bulkAdd(QUEUE, 'job', [
-      { jobId: 'active-job', data: {} },
+      { jobId: 'active-job', data: {}, ...SYSTEM_JOB },
     ]);
     const jobs = Array.from(
       { length: QUEUE_RETENTION.completedMaxCount + 1 },
       (_, index) => ({
         jobId: `job-${index}`,
         data: {},
+        ...SYSTEM_JOB,
       }),
     );
     const ids = await driver.bulkAdd(QUEUE, 'job', jobs);
@@ -110,9 +114,13 @@ describe('SyncDriver job snapshots', () => {
   it('prunes old snapshots when another job finishes', async () => {
     const driver = new SyncDriver();
     driver.work(QUEUE, async () => {});
-    const [oldId] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
+    const [oldId] = await driver.bulkAdd(QUEUE, 'job', [
+      { data: {}, ...SYSTEM_JOB },
+    ]);
     jest.setSystemTime(Date.now() + QUEUE_RETENTION.completedMaxAge * 1000 + 1);
-    const [newId] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
+    const [newId] = await driver.bulkAdd(QUEUE, 'job', [
+      { data: {}, ...SYSTEM_JOB },
+    ]);
     const jobs = await driver.getJobs(QUEUE, [oldId, newId]);
 
     expect(jobs[oldId]).toBeUndefined();

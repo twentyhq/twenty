@@ -18,6 +18,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
@@ -157,6 +158,10 @@ export const AiChatThreadDetailsDropdown = ({
           aria-label={t`Chat details`}
         >
           <StyledDetails>
+            <AiChatThreadDetailsStatus
+              threadId={threadId}
+              dropdownId={dropdownId}
+            />
             {areRecordTargetsAvailable && (
               <DetailsRow
                 labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}

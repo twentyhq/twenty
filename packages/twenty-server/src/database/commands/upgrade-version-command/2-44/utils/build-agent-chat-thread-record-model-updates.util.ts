@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -10,8 +9,6 @@ const TITLE_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.fields.title.universalIdentifier;
 const ID_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.fields.id.universalIdentifier;
-const ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier;
 
 const TARGET_BY_DIRECTION = {
   up: {
@@ -22,7 +19,6 @@ const TARGET_BY_DIRECTION = {
       labelIdentifierFieldUniversalIdentifier: TITLE_FIELD_UNIVERSAL_IDENTIFIER,
     },
     isTitleUIEditable: true,
-    archivedAtWritability: MetadataWritability.SYSTEM,
   },
   down: {
     object: {
@@ -32,7 +28,6 @@ const TARGET_BY_DIRECTION = {
       labelIdentifierFieldUniversalIdentifier: ID_FIELD_UNIVERSAL_IDENTIFIER,
     },
     isTitleUIEditable: false,
-    archivedAtWritability: MetadataWritability.OPEN,
   },
 } as const;
 
@@ -63,10 +58,6 @@ export const buildAgentChatThreadRecordModelUpdates = ({
     flatFieldMetadataMaps.byUniversalIdentifier[
       target.object.labelIdentifierFieldUniversalIdentifier
     ];
-  const archivedAtField =
-    flatFieldMetadataMaps.byUniversalIdentifier[
-      ARCHIVED_AT_FIELD_UNIVERSAL_IDENTIFIER
-    ];
 
   if (
     !isDefined(chatObject) ||
@@ -88,17 +79,6 @@ export const buildAgentChatThreadRecordModelUpdates = ({
     fieldsToUpdate.push({
       ...titleField,
       isUIEditable: target.isTitleUIEditable,
-      updatedAt: now,
-    });
-  }
-
-  if (
-    isDefined(archivedAtField) &&
-    archivedAtField.writability !== target.archivedAtWritability
-  ) {
-    fieldsToUpdate.push({
-      ...archivedAtField,
-      writability: target.archivedAtWritability,
       updatedAt: now,
     });
   }

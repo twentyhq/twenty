@@ -12,16 +12,13 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
 
 const context: ToolProviderContext = {
   workspaceId: 'workspace-id',
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-  },
 };
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
@@ -87,7 +84,7 @@ const pauseWebhookInputSchema = z.object({ id: z.uuid() });
   category: ToolCategory.WEBHOOK,
   description: 'Pause a webhook.',
   requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 })
 class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
   readonly inputSchema = pauseWebhookInputSchema;
@@ -124,7 +121,7 @@ const buildDefinedToolRegistryService = ({
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
     {
-      checkRolesPermissions: jest.fn().mockResolvedValue(isGranted),
+      hasPermissionFlag: jest.fn().mockResolvedValue(isGranted),
     } as unknown as PermissionsService,
     featureFlagService as unknown as FeatureFlagService,
   );
@@ -219,7 +216,7 @@ describe('DefinedToolRegistryService', () => {
           isGranted: true,
           enabledFeatureFlags: [
             FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-            FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
+            FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
           ],
         });
 

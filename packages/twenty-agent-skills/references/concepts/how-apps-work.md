@@ -37,7 +37,7 @@ The API key authenticates the developer against the target workspace. It determi
 
 Connect to an existing Twenty workspace with `twenty auth login --url <twenty-instance-url> --name dev`. This opens browser authentication and saves a remote.
 
-For local development, provision a separate Twenty server through Docker or the repository's development environment, then authenticate against its URL. The standalone CLI does not start containers.
+For local development, run `twenty local start` to create or start the full Twenty environment, then authenticate against `http://localhost:2020`. Docker must be installed and running. Use `--test` for a separate instance on port `2021`. The repository's development environment remains an alternative.
 
 ## App Lifecycle
 
@@ -79,6 +79,8 @@ For microphone or camera capture, declare `requestedCapabilities: ['microphone']
 
 Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
 
+An embedded website such as a phone or video tool needs its exact HTTPS origin declared in `requestedIframeMediaPermissions` in `defineApplication()`, with microphone and camera set separately: `[{ origin: 'https://phone.example.com', microphone: true, camera: false }]`. Declared websites appear during installation for the same workspace-wide approval. Locally synced development apps receive their declared iframe origins automatically. Updates to published apps preserve existing grants and do not automatically grant additional media access. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. This approval uses a native browser confirmation showing the app, website origins, and requested microphone or camera access. After approving, reload open Twenty tabs to apply the updated permissions. Front-component iframes must request the features (`allow="microphone"` or `allow="microphone; camera"`). App-defined `IFRAME` page layout widgets use the owning app's grants instead of workspace security approvals or other apps' grants. Twenty delegates only to granted origins, and only after a member selects the embed's **Enable** control and approves a native browser confirmation showing the app, website origin, and requested microphone or camera access. `srcDoc` iframes and embeds at Twenty's own origin never receive media access.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:
@@ -110,4 +112,4 @@ my-app/
 - **Remotes**: Named connections to Twenty instances. Stored in `~/.twenty/config.json`. Switch with `twenty remote use <name>`.
 - **Sync**: `twenty app apply` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
 - **Publish**: `twenty app publish` packages the app for distribution to other instances or the marketplace. Requires a strictly higher semver version than the previously published version.
-- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` are set by Twenty for every logic function run. A manifest that declares one of them as an application or server variable is rejected on sync and publish.
+- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` are set by Twenty for every logic function run, and every other name starting with `TWENTY_` is kept for variables Twenty adds later. A manifest that declares a reserved name as an application or server variable is rejected on sync and publish.

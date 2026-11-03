@@ -66,8 +66,16 @@
         "outDir": "dist"
       },
       {
+        "include": "engine/core-modules/code-interpreter/sandbox-scripts/**",
+        "outDir": "dist"
+      },
+      {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/builder/**",
+        "outDir": "dist/assets"
       },
       {
         "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
@@ -76,6 +84,10 @@
       {
         "include": "engine/core-modules/application/application-package/constants/yarn-engine/*.cjs",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json",
+        "outDir": "dist/assets"
       }
     ]
   },

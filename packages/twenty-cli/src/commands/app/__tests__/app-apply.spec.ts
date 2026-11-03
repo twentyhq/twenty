@@ -682,6 +682,9 @@ describe('app apply', () => {
       applicationUniversalIdentifier: APPLICATION.universalIdentifier,
       manifest: EXPORTED_MANIFEST,
       sourceFingerprints: {
+        'package.json': createHash('sha256')
+          .update(await readFile(join(appPath, 'package.json')))
+          .digest('hex'),
         'application.ts': createHash('sha256')
           .update('unrelated local edits')
           .digest('hex'),
@@ -725,6 +728,9 @@ describe('app apply', () => {
         await readFile(join(appPath, '.twenty/cli/pull-base.json'), 'utf8'),
       ).sourceFingerprints,
     ).toEqual({
+      'package.json': createHash('sha256')
+        .update(await readFile(join(appPath, 'package.json')))
+        .digest('hex'),
       'locales/fr-FR.json': createHash('sha256')
         .update('{"Pet":"Animal"}')
         .digest('hex'),

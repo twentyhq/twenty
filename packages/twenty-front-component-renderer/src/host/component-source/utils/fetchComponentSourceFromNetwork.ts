@@ -25,13 +25,15 @@ const appendCacheBustQueryParameter = (url: string): string => {
 export const fetchComponentSourceFromNetwork = async ({
   url,
   headers,
+  credentials = 'same-origin',
 }: {
   url: string;
   headers?: Record<string, string>;
+  credentials?: RequestCredentials;
 }): Promise<string> => {
   const response = await fetch(appendCacheBustQueryParameter(url), {
     headers,
-    credentials: 'same-origin',
+    credentials,
   });
 
   if (!response.ok) {

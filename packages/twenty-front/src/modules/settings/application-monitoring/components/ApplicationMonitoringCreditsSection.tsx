@@ -65,15 +65,17 @@ export const ApplicationMonitoringCreditsSection = ({
         <ApplicationMonitoringLineChart
           data={creditChartData.data}
           series={creditChartData.series.map(
-            ({ key, operationType }, index) => {
+            ({ key, operationType, operationLabel }, index) => {
               const operationTypeLabel =
                 getUsageOperationTypeLabel(operationType);
 
               return {
                 key,
-                label: isDefined(operationTypeLabel)
-                  ? i18n._(operationTypeLabel)
-                  : operationType,
+                label:
+                  operationLabel ??
+                  (isDefined(operationTypeLabel)
+                    ? i18n._(operationTypeLabel)
+                    : operationType),
                 color:
                   APPLICATION_MONITORING_CREDIT_SERIES_COLORS[
                     index % APPLICATION_MONITORING_CREDIT_SERIES_COLORS.length

@@ -14,9 +14,6 @@ import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-p
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -34,13 +31,11 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -61,17 +56,15 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
+  protected readonly recordAccessPolicyService: RecordAccessPolicyService;
+  @Inject()
   protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
   protected readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
   @Inject()
-  protected readonly apiKeyRoleService: ApiKeyRoleService;
-  @Inject()
   protected readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder;
-  @Inject()
-  protected readonly userRoleService: UserRoleService;
   @Inject()
   protected readonly accessTokenService: AccessTokenService;
   @Inject()
@@ -85,68 +78,22 @@ export abstract class RestApiBaseHandler {
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
 
-  private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
-    let intersectionOf: RoleIdsBySource;
+  private getPermissionsContext = async (authContext: WorkspaceAuthContext) => {
+    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
 
-    if (isApiKeyAuthContext(authContext)) {
-      intersectionOf = {
-        apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
-          authContext.apiKey.id,
-          authContext.workspace.id,
-        ),
-      };
-    } else if (isUserAuthContext(authContext)) {
-      const userWorkspaceRoleId =
-        await this.userRoleService.getRoleIdForUserWorkspace({
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId: authContext.workspace.id,
-        });
-
-      if (!isDefined(userWorkspaceRoleId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        );
-      }
-
-      intersectionOf = { userWorkspaceRoleId };
-    } else if (
-      isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultRoleId)
-    ) {
-      intersectionOf = {
-        applicationRoleId: authContext.application.defaultRoleId,
-      };
-    } else {
+    if (!isDefined(principals)) {
       throw new PermissionsException(
-        'Authentication context is invalid',
-        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
 
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatApplicationMaps',
-      ],
-    );
-
     return {
-      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-        rolesPermissions,
-        rolePermissionConfig: { intersectionOf },
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatApplicationMaps,
-      }),
+      principals,
+      objectsPermissions:
+        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+          principals,
+        ),
     };
   };
 
@@ -163,11 +110,17 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
-    const { objectsPermissions } =
-      await this.getObjectsPermissions(authContext);
+    const { principals, objectsPermissions } =
+      await this.getPermissionsContext(authContext);
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
+      readableObjectMetadataIds:
+        await this.findRelationReadableObjectMetadataIds({
+          principals,
+          flatObjectMetadataMaps,
+          depth,
+        }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -194,17 +147,42 @@ export abstract class RestApiBaseHandler {
   }): Promise<{
     selectedFields: CommonSelectedFields;
   }> {
-    const { objectsPermissions } =
-      await this.getObjectsPermissions(authContext);
+    const { principals, objectsPermissions } =
+      await this.getPermissionsContext(authContext);
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
+      readableObjectMetadataIds:
+        await this.findRelationReadableObjectMetadataIds({
+          principals,
+          flatObjectMetadataMaps,
+          depth,
+        }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
       requestedFields,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
+    });
+  }
+
+  private async findRelationReadableObjectMetadataIds({
+    principals,
+    flatObjectMetadataMaps,
+    depth,
+  }: Parameters<
+    CommonSelectFieldsBuilder['findReadableObjectMetadataIds']
+  >[0] & {
+    depth: SelectionDepth | undefined;
+  }): Promise<ReadonlySet<string>> {
+    if (!isDefined(depth) || depth === 0) {
+      return new Set();
+    }
+
+    return this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+      principals,
+      flatObjectMetadataMaps,
     });
   }
 

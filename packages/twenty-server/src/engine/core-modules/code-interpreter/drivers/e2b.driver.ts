@@ -3,14 +3,20 @@ import { join } from 'path';
 
 import { Sandbox } from '@e2b/code-interpreter';
 import { Logger } from '@nestjs/common';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT,
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES,
+  DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { getOrCreateSessionSandbox } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
 import { releaseSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/release-session-sandboxes.util';
 import { sweepExpiredSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/sweep-expired-session-sandboxes.util';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
+import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 
 import {
   type CodeExecutionResult,
@@ -23,6 +29,7 @@ import {
 
 export type E2BDriverOptions = {
   apiKey: string;
+  template: string;
   timeoutMs?: number;
   idleTimeoutMs?: number;
 };
@@ -62,7 +69,7 @@ export class E2BDriver implements CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const { apiKey } = this.options;
+    const { apiKey, template } = this.options;
     const sessionId = context?.sessionId;
     const idleTimeoutMs =
       this.options.idleTimeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS;
@@ -78,13 +85,14 @@ export class E2BDriver implements CodeInterpreterDriver {
       ({ sandbox, isReused } = await getOrCreateSessionSandbox({
         sandboxApi: Sandbox,
         apiKey,
+        template,
         sessionId,
         actorKey: context?.actorKey,
         timeoutMs,
         idleTimeoutMs,
       }));
     } else {
-      sandbox = await Sandbox.create({ apiKey, timeoutMs });
+      sandbox = await Sandbox.create(template, { apiKey, timeoutMs });
     }
 
     try {
@@ -95,8 +103,10 @@ export class E2BDriver implements CodeInterpreterDriver {
             SANDBOX_SCRIPTS_PATH,
             '/home/user/scripts',
           );
-        } catch {
-          // Scripts directory might not exist
+        } catch (error) {
+          const reason = error instanceof Error ? error.message : String(error);
+
+          this.logger.warn(`Failed to upload sandbox scripts: ${reason}`);
         }
       }
 
@@ -131,16 +141,21 @@ export class E2BDriver implements CodeInterpreterDriver {
         onStdout: (data) => callbacks?.onStdout?.(data.line),
         onStderr: (data) => callbacks?.onStderr?.(data.line),
         onResult: async (result) => {
-          if (result.png) {
-            const outputFile: OutputFile = {
-              filename: `chart-${chartCounter++}.png`,
-              content: Buffer.from(result.png, 'base64'),
-              mimeType: 'image/png',
-            };
-
-            outputFiles.push(outputFile);
-            await callbacks?.onResult?.(outputFile);
+          if (
+            !isNonEmptyString(result.png) ||
+            outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT
+          ) {
+            return;
           }
+
+          const outputFile: OutputFile = {
+            filename: `chart-${chartCounter++}.png`,
+            content: Buffer.from(result.png, 'base64'),
+            mimeType: 'image/png',
+          };
+
+          outputFiles.push(outputFile);
+          await callbacks?.onResult?.(outputFile);
         },
       });
 
@@ -148,29 +163,42 @@ export class E2BDriver implements CodeInterpreterDriver {
         const outputDir = await sandbox.files.list('/home/user/output');
 
         for (const file of outputDir) {
-          if (file.type === 'file') {
-            const content = await sandbox.files.read(
-              `/home/user/output/${file.name}`,
-              { format: 'bytes' },
-            );
-
-            const outputFile: OutputFile = {
-              filename: file.name,
-              content: Buffer.from(content),
-              mimeType: getMimeType(file.name),
-            };
-
-            outputFiles.push(outputFile);
-            await callbacks?.onResult?.(outputFile);
+          if (outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT) {
+            break;
           }
+
+          if (file.type !== 'file' || isDefined(file.symlinkTarget)) {
+            continue;
+          }
+
+          if (file.size > CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES) {
+            this.logger.warn(
+              `Skipping output file ${file.name}: ${file.size} bytes exceeds the size limit`,
+            );
+            continue;
+          }
+
+          const content = await sandbox.files.read(
+            `/home/user/output/${file.name}`,
+            { format: 'bytes' },
+          );
+
+          const outputFile: OutputFile = {
+            filename: file.name,
+            content: Buffer.from(content),
+            mimeType: getMimeType(file.name),
+          };
+
+          outputFiles.push(outputFile);
+          await callbacks?.onResult?.(outputFile);
         }
       } catch {
         // Output directory doesn't exist - that's fine
       }
 
       return {
-        stdout: execution.logs.stdout.join('\n'),
-        stderr: execution.logs.stderr.join('\n'),
+        stdout: truncateCodeInterpreterOutput(execution.logs.stdout.join('\n')),
+        stderr: truncateCodeInterpreterOutput(execution.logs.stderr.join('\n')),
         exitCode: execution.error ? 1 : 0,
         files: outputFiles,
         error: execution.error?.value,

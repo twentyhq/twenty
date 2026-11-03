@@ -1,15 +1,11 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconBolt,
-  IconLock,
-  IconSettings,
-  IconTerminal,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -143,7 +139,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   ];
 
   const title = agent.label;
-  const AgentIcon = getIcon(formValues.icon || 'IconLego');
+  const AgentIcon = getIcon(getAgentIcon(formValues.icon));
 
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =

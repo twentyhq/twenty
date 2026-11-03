@@ -307,7 +307,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
               runSpec: buildWorkflowAgentRunSpec({
                 step,
-                isApplicationBound: false,
+                applicationId,
               }),
               summary: null,
               continuationCount: 0,

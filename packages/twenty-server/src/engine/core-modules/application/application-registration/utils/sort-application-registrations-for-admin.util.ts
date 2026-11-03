@@ -3,12 +3,7 @@ import { isTwentyApplicationPackage } from 'src/engine/core-modules/application/
 
 type AdminSortableApplicationRegistration = Pick<
   ApplicationRegistrationEntity,
-  | 'id'
-  | 'universalIdentifier'
-  | 'name'
-  | 'sourcePackage'
-  | 'isVetted'
-  | 'isListed'
+  'id' | 'universalIdentifier' | 'name' | 'sourcePackage' | 'isListed'
 >;
 
 export const sortApplicationRegistrationsForAdmin = <
@@ -23,8 +18,8 @@ export const sortApplicationRegistrationsForAdmin = <
   installCountByRegistrationId: Map<string, number>;
 }): TRegistration[] => {
   return [...registrations].sort((left, right) => {
-    if (left.isVetted !== right.isVetted) {
-      return left.isVetted ? -1 : 1;
+    if (left.isListed !== right.isListed) {
+      return left.isListed ? -1 : 1;
     }
 
     const isLeftConfigured = isConfiguredByRegistrationId.get(left.id) ?? false;
@@ -33,10 +28,6 @@ export const sortApplicationRegistrationsForAdmin = <
 
     if (isLeftConfigured !== isRightConfigured) {
       return isLeftConfigured ? 1 : -1;
-    }
-
-    if (left.isListed !== right.isListed) {
-      return left.isListed ? 1 : -1;
     }
 
     const isLeftFromTwenty = isTwentyApplicationPackage(left.sourcePackage);

@@ -46,14 +46,27 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       break;
     case 'AI_AGENT': {
       const { agentUniversalIdentifier, ...rest } = step.input;
-      input = {
-        ...rest,
-        agentId: resolve(
-          references.agentIdByUniversalIdentifier,
-          agentUniversalIdentifier,
-          'application agent',
-        ),
-      };
+
+      // the scope names objects and fields by universal identifier, so it is checked rather than rewritten
+      for (const { objectUniversalIdentifier } of rest.scope
+        ?.objectPermissions ?? []) {
+        objectName(objectUniversalIdentifier);
+      }
+      for (const { objectUniversalIdentifier, fieldUniversalIdentifier } of rest
+        .scope?.fieldPermissions ?? []) {
+        field(fieldUniversalIdentifier, objectUniversalIdentifier);
+      }
+
+      input = isDefined(agentUniversalIdentifier)
+        ? {
+            ...rest,
+            agentId: resolve(
+              references.agentIdByUniversalIdentifier,
+              agentUniversalIdentifier,
+              'application agent',
+            ),
+          }
+        : rest;
       break;
     }
     case 'CREATE_RECORD':
@@ -223,7 +236,9 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     type: step.type,
     valid: true,
     nextStepIds: step.nextStepIds,
-    position: step.position ?? { x: 0, y: (index + 1) * 180 },
+    ...(step.position === null
+      ? {}
+      : { position: step.position ?? { x: 0, y: (index + 1) * 180 } }),
     settings: {
       input: structuredClone(input),
       outputSchema: structuredClone(

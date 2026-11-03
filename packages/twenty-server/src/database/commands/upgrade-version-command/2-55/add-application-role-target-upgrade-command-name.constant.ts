@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddApplicationRoleTargetFastInstanceCommand_1793627583457';

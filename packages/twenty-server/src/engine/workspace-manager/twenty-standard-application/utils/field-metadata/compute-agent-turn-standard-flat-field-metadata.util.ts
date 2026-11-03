@@ -3,7 +3,6 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldActorSource,
   FieldMetadataType,
-  MetadataWritability,
   RelationType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
@@ -42,7 +41,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         defaultValue: 'uuid',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -65,7 +63,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -89,7 +86,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         defaultValue: `'${AgentTurnStatus.COMPLETED}'`,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -112,7 +108,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -135,7 +130,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -158,7 +152,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -181,7 +174,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -207,7 +199,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -233,7 +224,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -259,7 +249,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -288,7 +277,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -314,7 +302,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -340,7 +327,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -368,7 +354,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -392,7 +377,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -416,7 +400,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -439,7 +422,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -458,7 +440,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         ),
         icon: 'IconRelationOneToMany',
         isUIEditable: false,
-        isNullable: false,
+        // a one-shot AI call records its turn without a conversation
+        isNullable: true,
         targetObjectName: 'agentChatThread',
         targetFieldName: 'turns',
         morphId: null,
@@ -469,7 +452,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -498,7 +480,6 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,

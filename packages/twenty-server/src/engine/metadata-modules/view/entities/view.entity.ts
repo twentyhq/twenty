@@ -13,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   AggregateOperations,
   type SerializedRelation,
@@ -61,6 +62,9 @@ export type ViewOverrides = {
   shouldHideEmptyGroups?: boolean;
   kanbanColumnWidth?: number | null;
   groupLoadLimit?: number;
+  translations?: Partial<
+    Record<keyof typeof APP_LOCALES, { name?: string | null }>
+  > | null;
 };
 
 // TODO: make this type dynamic to the view type

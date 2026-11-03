@@ -57,21 +57,6 @@ const HeroActions = styled.div`
   margin-top: ${spacing(2)};
 `;
 
-const VettedBadge = styled.span`
-  align-items: center;
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(4)};
-  color: ${semanticColor.inkMuted};
-  display: inline-flex;
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(2)};
-  font-weight: ${FONT_WEIGHT.medium};
-  gap: ${spacing(2)};
-  letter-spacing: 0.06em;
-  padding: ${spacing(1)} ${spacing(3)};
-  text-transform: uppercase;
-`;
-
 const ContentGrid = styled.div`
   display: grid;
   gap: ${spacing(8)};
@@ -187,7 +172,6 @@ export function AppDetail({ app }: AppDetailProps) {
                 label={i18n._(msg`Install`)}
                 variant="filled"
               />
-              <VettedBadge>{i18n._(msg`Vetted by Twenty`)}</VettedBadge>
             </HeroActions>
           </HeroText>
         </HeroRow>

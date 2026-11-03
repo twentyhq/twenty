@@ -1,10 +1,16 @@
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  getWorkflowAiAgentStepConfigIssues,
+  isWorkflowAiAgentGenerateStep,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
+import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -181,11 +187,24 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
+      // defineWorkflow refuses these, so the export would not apply
+      for (const issueCode of getWorkflowAiAgentStepConfigIssues(
+        action.settings.input,
+      )) {
+        resolvers.markUnsupported(
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
+        );
+      }
 
-      return {
-        ...rest,
-        agentUniversalIdentifier: resolvers.agentUniversalIdentifier(agentId),
-      };
+      resolvers.checkAiRunScopeReferences(action.settings.input.scope);
+
+      return isWorkflowAiAgentGenerateStep(action.settings.input)
+        ? rest
+        : {
+            ...rest,
+            agentUniversalIdentifier:
+              resolvers.agentUniversalIdentifier(agentId),
+          };
     }
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
@@ -228,6 +247,7 @@ const fromActionInput = ({
       };
     }
     case WorkflowActionType.HTTP_REQUEST:
+    case WorkflowActionType.SEND_CHAT_MESSAGE:
     case WorkflowActionType.CLASSIFY:
     case WorkflowActionType.ITERATOR:
     case WorkflowActionType.DELAY:
@@ -264,7 +284,15 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     return { reason: unsupportedReason };
   }
 
-  const { outputSchema, errorHandlingOptions } = action.settings;
+  const { outputSchema } = action.settings;
+  const errorHandlingOptions = isDefined(action.settings.errorHandlingOptions)
+    ? normalizeStoredWorkflowErrorHandlingOptions(
+        action.settings.errorHandlingOptions,
+      )
+    : undefined;
+  const position = isDefined(action.position)
+    ? { x: action.position.x, y: action.position.y }
+    : null;
   const expectedOutputSchema =
     'expectedOutputSchema' in action.settings
       ? action.settings.expectedOutputSchema
@@ -277,10 +305,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ? { logicFunctionUniversalIdentifier }
       : {}),
     nextStepIds: action.nextStepIds ?? [],
-    ...(isDefined(action.position) &&
-    !isEqual(action.position, { x: 0, y: (index + 1) * 180 })
-      ? { position: { x: action.position.x, y: action.position.y } }
-      : {}),
+    ...(isEqual(position, { x: 0, y: (index + 1) * 180 }) ? {} : { position }),
     input,
   } as WorkflowStepManifest;
   const isDefaultOutputSchema = isEqual(
@@ -312,16 +337,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ...(!isDefined(errorHandlingOptions) ||
       isEqual(errorHandlingOptions, DEFAULT_ERROR_HANDLING_OPTIONS)
         ? {}
-        : {
-            errorHandlingOptions: {
-              retryOnFailure: {
-                value: errorHandlingOptions.retryOnFailure.value,
-              },
-              continueOnFailure: {
-                value: errorHandlingOptions.continueOnFailure.value,
-              },
-            },
-          }),
+        : { errorHandlingOptions }),
     },
   };
 };

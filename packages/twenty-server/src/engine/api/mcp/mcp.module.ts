@@ -11,7 +11,7 @@ import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-p
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';

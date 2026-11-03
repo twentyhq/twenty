@@ -12,18 +12,21 @@ import { type GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -71,6 +74,7 @@ export class FrontComponentResolver {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -118,6 +122,25 @@ export class FrontComponentResolver {
     );
   }
 
+  @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
+  async applicationGrantedIframeMediaPermissions(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
+  ): Promise<IframeMediaPermission[]> {
+    const application =
+      await this.applicationService.findReadableInstalledFlatApplication({
+        applicationId: frontComponent.applicationId,
+        workspaceId,
+        workspaceCustomApplicationId,
+        callingApplication,
+      });
+
+    return application?.grantedIframeMediaPermissions ?? [];
+  }
+
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)
   @AllowSuspendedWorkspace()
@@ -134,6 +157,8 @@ export class FrontComponentResolver {
       canCallerReachApplication({
         callingApplication,
         applicationId: frontComponent.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       }),
     );
   }

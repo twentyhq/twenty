@@ -8,6 +8,9 @@ import {
 } from 'twenty-ui/theme';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { doNotTranslate } from 'twenty-shared/i18n';
+// Salesfarce: remove with the theme
+import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
+import { SALESFARCE_PREVIEW_STYLE } from '@/salesfarce/constants/SalesfarcePreviewStyle';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -25,6 +28,7 @@ const StyledSegment = styled.div`
   display: flex;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   padding-inline-start: ${themeCssVariables.spacing[6]};
   padding-top: ${themeCssVariables.spacing[6]};
 
@@ -68,7 +72,8 @@ const StyledContent = styled.div`
 `;
 
 type SettingsAppearancePreviewProps = {
-  colorScheme: ColorScheme;
+  // Salesfarce: on removal, drop the Salesfarce union
+  colorScheme: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE;
 };
 
 export const SettingsAppearancePreview = ({
@@ -93,6 +98,9 @@ export const SettingsAppearancePreview = ({
                 '--appearance-preview-border': grayScale.gray5,
                 '--appearance-preview-content-background': grayScale.gray1,
                 '--appearance-preview-content-color': grayScale.gray12,
+                // Salesfarce: remove with the theme
+                ...(segment === SALESFARCE_APPEARANCE_VALUE &&
+                  SALESFARCE_PREVIEW_STYLE),
               } as CSSProperties
             }
           >

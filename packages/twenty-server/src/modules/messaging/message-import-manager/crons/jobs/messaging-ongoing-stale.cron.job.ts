@@ -45,6 +45,10 @@ export class MessagingOngoingStaleCronJob {
           {
             workspaceId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

@@ -139,12 +139,14 @@ export const createAppProject = async ({
   appName,
   appDisplayName,
   appDescription,
+  shouldIncludeExample = true,
   signal,
 }: {
   appDirectory: string;
   appName: string;
   appDisplayName: string;
   appDescription: string;
+  shouldIncludeExample?: boolean;
   signal: AbortSignal;
 }) => {
   await readAvailableAppDirectory(appDirectory);
@@ -162,6 +164,7 @@ export const createAppProject = async ({
       appName,
       appDisplayName,
       appDescription,
+      shouldIncludeExample,
       appDirectory: stagingDirectory,
     });
     signal.throwIfAborted();

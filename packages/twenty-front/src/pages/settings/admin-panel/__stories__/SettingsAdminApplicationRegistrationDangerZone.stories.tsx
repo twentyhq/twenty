@@ -32,7 +32,6 @@ const REGISTRATION: ApplicationRegistration = {
   isConfigured: true,
   isListed: false,
   isPreInstalled: false,
-  isVetted: false,
   ownerWorkspaceId: '20202020-1a2b-4c3d-8e4f-000000000002',
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
