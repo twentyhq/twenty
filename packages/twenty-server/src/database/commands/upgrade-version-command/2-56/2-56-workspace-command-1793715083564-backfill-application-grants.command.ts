@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildApplicationGrantFlatEntityOperations } from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-flat-entity-operations.util';
+import {
+  APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+  buildApplicationGrantFromToFlatEntityMaps,
+} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-from-to-flat-entity-maps.util';
 import { findApplicationGrantFlatRoleTarget } from 'src/engine/core-modules/application/application-grant/utils/find-application-grant-flat-role-target.util';
 import { isApplicationGrantable } from 'src/engine/core-modules/application/application-grant/utils/is-application-grantable.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -12,16 +15,6 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-
-const GRANT_FLAT_ENTITY_MAPS_KEYS = [
-  'flatRoleMaps',
-  'flatRoleTargetMaps',
-  'flatObjectPermissionMaps',
-  'flatFieldPermissionMaps',
-  'flatRolePermissionFlagMaps',
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-] as const;
 
 @RegisteredWorkspaceCommand('2.56.0', 1793715083564)
 @Command({
@@ -76,15 +69,41 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
 
     for (const flatApplication of flatApplicationsWithoutGrant) {
       // Reloaded for each application so grant labels stay unique across the batch
-      const flatEntityMaps = await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        [...GRANT_FLAT_ENTITY_MAPS_KEYS],
-      );
+      const {
+        featureFlagsMap,
+        billingEntitlements,
+        flatRoleMaps,
+        flatObjectPermissionMaps,
+        flatFieldPermissionMaps,
+        flatRolePermissionFlagMaps,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        ...otherDependencyFlatEntityMaps
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        ...APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+        'flatRoleMaps',
+        'flatObjectPermissionMaps',
+        'flatFieldPermissionMaps',
+        'flatRolePermissionFlagMaps',
+        'flatRowLevelPermissionPredicateMaps',
+        'flatRowLevelPermissionPredicateGroupMaps',
+        'featureFlagsMap',
+        'billingEntitlements',
+      ]);
+
+      const flatEntityMaps = {
+        flatRoleMaps,
+        flatObjectPermissionMaps,
+        flatFieldPermissionMaps,
+        flatRolePermissionFlagMaps,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+      };
 
       const requestedFlatRole = isDefined(flatApplication.defaultRoleId)
         ? findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: flatApplication.defaultRoleId,
-            flatEntityMaps: flatEntityMaps.flatRoleMaps,
+            flatEntityMaps: flatRoleMaps,
           })
         : undefined;
 
@@ -104,23 +123,29 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
       }
 
       const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
           {
             workspaceId,
-            isSystemBuild: true,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-            allFlatEntityOperationByMetadataName:
-              buildApplicationGrantFlatEntityOperations({
-                targetFlatApplication: flatApplication,
-                requestedFlatRole,
-                existingGrantFlatRole: undefined,
-                existingGrantFlatRoleTarget: undefined,
-                workspaceCustomApplicationUniversalIdentifier:
-                  workspaceCustomFlatApplication.universalIdentifier,
-                flatEntityMaps,
-                now: new Date().toISOString(),
-              }),
+            buildOptions: {
+              isSystemBuild: true,
+              inferDeletionFromMissingEntities: true,
+              applicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
+            },
+            fromToAllFlatEntityMaps: buildApplicationGrantFromToFlatEntityMaps({
+              targetFlatApplication: flatApplication,
+              requestedFlatRole,
+              existingGrant: undefined,
+              workspaceCustomApplicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
+              flatEntityMaps,
+              now: new Date().toISOString(),
+            }),
+            dependencyAllFlatEntityMaps: structuredClone({
+              ...otherDependencyFlatEntityMaps,
+              ...flatEntityMaps,
+            }),
+            additionalCacheDataMaps: { featureFlagsMap, billingEntitlements },
           },
         );
 
