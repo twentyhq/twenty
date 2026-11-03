@@ -47,6 +47,7 @@ import { type AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -127,6 +128,16 @@ const findUserMessageTexts = async (threadId: string) =>
       [threadId],
     )
   ).map(({ text }: { text: string }) => text);
+
+const getStoredThread = async (threadId: string) => {
+  const [thread]: AgentChatThreadWorkspaceEntity[] =
+    await global.testDataSource.query(
+      `SELECT * FROM "${schema}"."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+
+  return thread;
+};
 
 const holdConversation = async (threadId: string): Promise<string> => {
   const streamId = randomUUID();
@@ -362,6 +373,8 @@ describe('agent runs that wait (integration)', () => {
 
       context.registerThread(threadId);
 
+      const thread = await getStoredThread(threadId);
+
       const queueMemberMessage = async ({
         text,
         isAssistantMentioned,
@@ -371,12 +384,15 @@ describe('agent runs that wait (integration)', () => {
       }) => {
         const streamId = await holdConversation(threadId);
 
-        await queueService.queueMessage({
-          workspaceId,
-          threadId,
-          userWorkspaceId: context.userWorkspaceId,
-          workspaceMemberId: context.workspaceMemberId,
-          text,
+        await context.memberMessageWriterService.write({
+          actor: {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            workspaceMemberId: context.workspaceMemberId,
+          },
+          thread,
+          message: { text },
+          placement: 'queued',
           assistantReplyContext: {
             isAssistantMentioned,
             isDirectAssistantChat: false,
@@ -516,18 +532,24 @@ describe('agent runs that wait (integration)', () => {
       );
 
       context.registerThread(threadId);
+
+      const thread = await getStoredThread(threadId);
+
       await context.setAssistantModes({
         aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
       });
 
       const streamId = await holdConversation(threadId);
 
-      await queueService.queueMessage({
-        workspaceId,
-        threadId,
-        userWorkspaceId: context.userWorkspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-        text: 'Ada, continue with the approved update',
+      await context.memberMessageWriterService.write({
+        actor: {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+        },
+        thread,
+        message: { text: 'Ada, continue with the approved update' },
+        placement: 'queued',
         assistantReplyContext: {
           isAssistantMentioned: true,
           isDirectAssistantChat: false,
@@ -544,12 +566,15 @@ describe('agent runs that wait (integration)', () => {
         .mockImplementationOnce(async (args) => {
           const allowedMessageIds = await findAllowedQueuedMessageIds(args);
 
-          await queueService.queueMessage({
-            workspaceId,
-            threadId,
-            userWorkspaceId: context.userWorkspaceId,
-            workspaceMemberId: context.workspaceMemberId,
-            text: lateMessageText,
+          await context.memberMessageWriterService.write({
+            actor: {
+              workspaceId,
+              userWorkspaceId: context.userWorkspaceId,
+              workspaceMemberId: context.workspaceMemberId,
+            },
+            thread,
+            message: { text: lateMessageText },
+            placement: 'queued',
             assistantReplyContext: {
               isAssistantMentioned: false,
               isDirectAssistantChat: false,
@@ -628,13 +653,18 @@ describe('agent runs that wait (integration)', () => {
 
       context.registerThread(threadId);
 
+      const thread = await getStoredThread(threadId);
+
       const streamId = await holdConversation(threadId);
-      const message = await queueService.queueMessage({
-        workspaceId,
-        threadId,
-        userWorkspaceId: context.userWorkspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-        text: 'Ada, continue after this update',
+      const message = await context.memberMessageWriterService.write({
+        actor: {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+        },
+        thread,
+        message: { text: 'Ada, continue after this update' },
+        placement: 'queued',
         assistantReplyContext: {
           isAssistantMentioned: true,
           isDirectAssistantChat: false,
