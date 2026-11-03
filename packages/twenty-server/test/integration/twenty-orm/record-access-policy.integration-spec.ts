@@ -24,8 +24,8 @@ describe('RecordAccessPolicyService', () => {
   let recordAccessPolicyService: RecordAccessPolicyService;
   const missingRolePrincipal: PermissionsPrincipalsContext = {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    mainPrincipal: { roleId: randomUUID(), isDeprecatedRoleOnly: true },
-    applicationPrincipal: { isCustomApp: true },
+    mainPrincipal: { type: 'deprecatedRoleOnly', roleId: randomUUID() },
+    applicationPrincipal: { type: 'customApplication' },
   };
 
   // Other suites wipe every person, so the record under test is created here
@@ -71,8 +71,8 @@ describe('RecordAccessPolicyService', () => {
 
     adminPrincipal = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      mainPrincipal: { roleId: adminRoleId, isDeprecatedRoleOnly: true },
-      applicationPrincipal: { isCustomApp: true },
+      mainPrincipal: { type: 'deprecatedRoleOnly', roleId: adminRoleId },
+      applicationPrincipal: { type: 'customApplication' },
     };
   });
 

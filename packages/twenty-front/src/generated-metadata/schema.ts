@@ -2461,7 +2461,6 @@ export enum FeatureFlagKey {
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_PRIVATE_RECORD_ENABLED = 'IS_PRIVATE_RECORD_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -5984,6 +5983,7 @@ export type Query = {
   usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   validationRules: Array<ValidationRule>;
+  validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
 };
@@ -6518,6 +6518,11 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryValidationRulesArgs = {
   objectMetadataId: Scalars['UUID']['input'];
+};
+
+
+export type QueryValidationRulesReadingFieldArgs = {
+  fieldMetadataId: Scalars['UUID']['input'];
 };
 
 

@@ -5,6 +5,6 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 export const getPermissionsPrincipalWorkspaceMemberId = (
   principal: Pick<PermissionsPrincipalsWithRolesContext, 'mainPrincipal'>,
 ): string | undefined =>
-  'workspaceMemberId' in principal.mainPrincipal
+  principal.mainPrincipal.type === 'workspaceMember'
     ? principal.mainPrincipal.workspaceMemberId
     : undefined;

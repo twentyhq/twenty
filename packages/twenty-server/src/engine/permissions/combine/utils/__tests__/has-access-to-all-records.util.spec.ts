@@ -48,15 +48,19 @@ const buildPrincipal = (
   if (!isDefined(applicationId)) {
     return {
       workspaceId: 'workspace-id',
-      mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
-      applicationPrincipal: { isCustomApp: true },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId,
+        workspaceMemberId: 'member-1',
+      },
+      applicationPrincipal: { type: 'customApplication' },
     };
   }
 
   return {
     workspaceId: 'workspace-id',
-    mainPrincipal: { roleId, applicationId },
-    applicationPrincipal: { roleId, applicationId },
+    mainPrincipal: { type: 'application', roleId, applicationId },
+    applicationPrincipal: { type: 'application', roleId, applicationId },
   };
 };
 

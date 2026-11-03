@@ -86,8 +86,8 @@ export class PermissionsService {
       permissionFlags,
       objectsPermissions: computeObjectsPermissionsForRoles({
         principal: {
-          mainPrincipal: { roleId: flatRole.id, isDeprecatedRoleOnly: true },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: flatRole.id },
+          applicationPrincipal: { type: 'customApplication' },
         },
         rolesPermissions,
         flatObjectMetadataMaps,
