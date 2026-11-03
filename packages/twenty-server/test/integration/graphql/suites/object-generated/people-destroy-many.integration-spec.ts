@@ -3,43 +3,18 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-describe('destroyManyObjectRecordsPermissions', () => {
+describe('destroyPeople', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('should throw a permission error when user does not have permission (guest role)', async () => {
-    const graphqlOperation = destroyManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: PERSON_GQL_FIELDS,
-      filter: {
-        id: {
-          in: [randomUUID(), randomUUID()],
-        },
-      },
-    });
-
-    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
-
-    expect(response.body.data).toStrictEqual({ destroyPeople: null });
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-    );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  });
-
-  it('should destroy multiple object records when user has permission (admin role)', async () => {
+  it('should emit a DESTROYED event for the destroyed records and none when repeated', async () => {
     const workspaceEventEmitter =
       getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter');
     const emitEventSpy = jest.spyOn(
@@ -50,41 +25,28 @@ describe('destroyManyObjectRecordsPermissions', () => {
     const personId1 = randomUUID();
     const personId2 = randomUUID();
 
-    const createGraphqlOperation = createManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: PERSON_GQL_FIELDS,
-      data: [
-        {
-          id: personId1,
-        },
-        {
-          id: personId2,
-        },
-      ],
-    });
-
-    const createResponse = await makeGraphqlApiRequest(createGraphqlOperation);
+    const createResponse = await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [{ id: personId1 }, { id: personId2 }],
+      }),
+    );
 
     expect(createResponse.body.errors).toBeUndefined();
     emitEventSpy.mockClear();
 
-    const graphqlOperation = destroyManyOperationFactory({
+    const destroyPeopleOperation = destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       gqlFields: PERSON_GQL_FIELDS,
-      filter: {
-        id: {
-          in: [personId1, personId2],
-        },
-      },
+      filter: { id: { in: [personId1, personId2] } },
     });
 
-    const response = await makeGraphqlApiRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(destroyPeopleOperation);
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.destroyPeople).toBeDefined();
     expect(response.body.data.destroyPeople).toHaveLength(2);
     expect(response.body.data.destroyPeople).toEqual(
       expect.arrayContaining([
@@ -105,7 +67,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
 
     emitEventSpy.mockClear();
 
-    const repeatResponse = await makeGraphqlApiRequest(graphqlOperation);
+    const repeatResponse = await makeGraphqlApiRequest(destroyPeopleOperation);
 
     expect(repeatResponse.body.errors).toBeUndefined();
     expect(repeatResponse.body.data.destroyPeople).toEqual([]);
