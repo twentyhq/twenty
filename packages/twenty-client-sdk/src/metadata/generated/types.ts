@@ -3665,6 +3665,9 @@ export default {
             "position": [
                 6
             ],
+            "systemPageKey": [
+                1
+            ],
             "targetObjectMetadataId": [
                 538
             ],
@@ -9825,6 +9828,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "systemPageKey": [
+                1
             ],
             "targetObjectMetadataId": [
                 538
