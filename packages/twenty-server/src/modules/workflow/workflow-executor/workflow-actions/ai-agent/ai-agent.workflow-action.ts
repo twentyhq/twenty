@@ -15,7 +15,6 @@ import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
-import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import {
   AiException,
   AiExceptionCode,
@@ -49,7 +48,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
-    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async execute({
@@ -131,10 +129,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     );
 
     // only an agent step someone can take part in converses; any other step runs one-shot
-    const hasConversation =
-      !(await this.conversationWriterService.canInsertTurnWithoutThread(
-        workspaceId,
-      )) || hasWorkflowAiAgentConversationConfig(step.settings.input);
+    const hasConversation = hasWorkflowAiAgentConversationConfig(
+      step.settings.input,
+    );
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,

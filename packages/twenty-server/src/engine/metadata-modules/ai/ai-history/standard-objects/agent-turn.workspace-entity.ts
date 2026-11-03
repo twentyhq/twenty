@@ -15,7 +15,6 @@ export class AgentTurnWorkspaceEntity extends BaseWorkspaceEntity {
   agentId: string | null;
   status: AgentTurnStatus;
   error: StreamErrorPayload | null;
-  result: object | null;
   startedAt: string | null;
   endedAt: string | null;
   modelId: string | null;
