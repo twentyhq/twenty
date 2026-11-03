@@ -10,4 +10,5 @@ export type ApplicationAccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   // narrows the token's roles to the agent's; never a caller of its own
   agentId?: string;
   workspaceDeletionRequestTimestamp?: string;
+  aud?: string;
 };

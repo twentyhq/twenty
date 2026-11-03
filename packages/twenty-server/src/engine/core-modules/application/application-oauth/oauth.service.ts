@@ -22,6 +22,7 @@ import { OAuthErrorResponse } from 'src/engine/core-modules/application/applicat
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { resolveOAuthResource } from 'src/engine/core-modules/auth/utils/resolve-oauth-resource.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -56,6 +57,8 @@ export class OAuthService {
     clientSecret?: string;
     codeVerifier?: string;
     redirectUri: string;
+    resource?: string;
+    requestBaseUrl: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
     const {
       authorizationCode,
@@ -63,6 +66,8 @@ export class OAuthService {
       clientSecret,
       codeVerifier,
       redirectUri,
+      resource,
+      requestBaseUrl,
     } = params;
 
     if (!authorizationCode) {
@@ -200,6 +205,16 @@ export class OAuthService {
       );
     }
 
+    const audienceResolution = this.resolveAudience({
+      requestedResource: resource,
+      grantedResource: authCodeToken.context?.resource,
+      requestBaseUrl,
+    });
+
+    if ('error' in audienceResolution) {
+      return audienceResolution;
+    }
+
     // Atomic single-use consume: only the request that flips revokedAt from null proceeds, closing the check-then-use race.
     const consumeResult = await this.appTokenRepository.update(
       { id: authCodeToken.id, revokedAt: IsNull() },
@@ -262,6 +277,7 @@ export class OAuthService {
         applicationId: application.id,
         userId: authCodeToken.userId,
         userWorkspaceId: userWorkspace.id,
+        audience: audienceResolution.audience,
       });
 
     this.logger.log(
@@ -280,8 +296,10 @@ export class OAuthService {
   async clientCredentialsGrant(params: {
     clientId: string;
     clientSecret: string;
+    resource?: string;
+    requestBaseUrl: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
-    const { clientId, clientSecret } = params;
+    const { clientId, clientSecret, resource, requestBaseUrl } = params;
 
     const clientValidation = await this.validateClient(clientId);
 
@@ -298,6 +316,15 @@ export class OAuthService {
 
     if (secretError) {
       return secretError;
+    }
+
+    const audienceResolution = this.resolveAudience({
+      requestedResource: resource,
+      requestBaseUrl,
+    });
+
+    if ('error' in audienceResolution) {
+      return audienceResolution;
     }
 
     const applications = await this.unscopedApplicationRepository.find({
@@ -324,6 +351,7 @@ export class OAuthService {
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId: application.workspaceId,
         applicationId: application.id,
+        audience: audienceResolution.audience,
       });
 
     this.logger.log(
@@ -342,8 +370,11 @@ export class OAuthService {
     refreshToken: string;
     clientId: string;
     clientSecret?: string;
+    resource?: string;
+    requestBaseUrl: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
-    const { refreshToken, clientId, clientSecret } = params;
+    const { refreshToken, clientId, clientSecret, resource, requestBaseUrl } =
+      params;
 
     const clientValidation = await this.validateClient(clientId);
 
@@ -397,6 +428,16 @@ export class OAuthService {
         );
       }
 
+      const audienceResolution = this.resolveAudience({
+        requestedResource: resource,
+        grantedResource: payload.aud,
+        requestBaseUrl,
+      });
+
+      if ('error' in audienceResolution) {
+        return audienceResolution;
+      }
+
       if (isDefined(payload.userId)) {
         const authorizationError = await this.consumeUserAuthorization({
           userId: payload.userId,
@@ -410,7 +451,10 @@ export class OAuthService {
       }
 
       const { applicationAccessToken, applicationRefreshToken } =
-        await this.applicationTokenService.renewApplicationTokens(payload);
+        await this.applicationTokenService.renewApplicationTokens({
+          ...payload,
+          aud: audienceResolution.audience,
+        });
 
       this.logger.log(
         `Refresh token exchanged: client=${clientId} application=${payload.applicationId}`,
@@ -624,6 +668,42 @@ export class OAuthService {
     }
 
     return applicationRegistration;
+  }
+
+  private resolveAudience({
+    requestedResource,
+    grantedResource,
+    requestBaseUrl,
+  }: {
+    requestedResource?: string;
+    grantedResource?: string;
+    requestBaseUrl: string;
+  }): { audience?: string } | OAuthErrorResponse {
+    if (!isDefined(requestedResource)) {
+      return { audience: grantedResource };
+    }
+
+    const audience = resolveOAuthResource({
+      resource: requestedResource,
+      requestBaseUrl,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    if (!isDefined(audience)) {
+      return this.errorResponse(
+        'invalid_target',
+        `Unknown resource '${requestedResource}'`,
+      );
+    }
+
+    if (isDefined(grantedResource) && audience !== grantedResource) {
+      return this.errorResponse(
+        'invalid_target',
+        'resource does not match the one used in the authorization request',
+      );
+    }
+
+    return { audience };
   }
 
   private async validateClientSecret(

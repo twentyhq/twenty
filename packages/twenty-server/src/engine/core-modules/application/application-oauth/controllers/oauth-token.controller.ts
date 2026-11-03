@@ -25,6 +25,7 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 
 const OAUTH_RATE_LIMIT_MAX = 60;
 const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -50,6 +51,8 @@ export class OAuthTokenController {
 
     let result: OAuthTokenResponse | OAuthErrorResponse;
 
+    const requestBaseUrl = getRequestBaseUrl(req);
+
     switch (body.grant_type) {
       case 'authorization_code':
         result = await this.oauthService.exchangeAuthorizationCode({
@@ -58,6 +61,8 @@ export class OAuthTokenController {
           clientSecret: body.client_secret,
           codeVerifier: body.code_verifier,
           redirectUri: body.redirect_uri ?? '',
+          resource: body.resource,
+          requestBaseUrl,
         });
         break;
 
@@ -65,6 +70,8 @@ export class OAuthTokenController {
         result = await this.oauthService.clientCredentialsGrant({
           clientId: body.client_id ?? '',
           clientSecret: body.client_secret ?? '',
+          resource: body.resource,
+          requestBaseUrl,
         });
         break;
 
@@ -73,6 +80,8 @@ export class OAuthTokenController {
           refreshToken: body.refresh_token ?? '',
           clientId: body.client_id ?? '',
           clientSecret: body.client_secret,
+          resource: body.resource,
+          requestBaseUrl,
         });
         break;
 

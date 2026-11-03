@@ -5,6 +5,7 @@ export type AuthorizeAppFactoryInput = {
   clientId: string;
   redirectUrl: string;
   codeChallenge?: string;
+  resource?: string;
 };
 
 export const authorizeAppQueryFactory = ({
@@ -15,11 +16,13 @@ export const authorizeAppQueryFactory = ({
       $clientId: String!
       $redirectUrl: String!
       $codeChallenge: String
+      $resource: String
     ) {
       authorizeApp(
         clientId: $clientId
         redirectUrl: $redirectUrl
         codeChallenge: $codeChallenge
+        resource: $resource
       ) {
         redirectUrl
       }
@@ -29,5 +32,6 @@ export const authorizeAppQueryFactory = ({
     clientId: input.clientId,
     redirectUrl: input.redirectUrl,
     codeChallenge: input.codeChallenge,
+    resource: input.resource,
   },
 });

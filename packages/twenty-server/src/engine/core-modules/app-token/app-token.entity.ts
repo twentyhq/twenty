@@ -107,6 +107,7 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    resource?: string;
     authProvider?: AuthProviderEnum;
     revokedReason?: UserSessionRevokedReason;
     issuedByUserId?: string;
