@@ -20,7 +20,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
 import {
   type PermissionsPrincipalsRoleMaps,
   resolvePermissionsPrincipalsWithRoles,
@@ -43,13 +42,12 @@ const buildRoleMaps = (
   flatApplicationMaps: PermissionsPrincipalsRoleMaps['flatApplicationMaps'] = {
     byId: {},
   },
-): PermissionsPrincipalsRoleMaps =>
-  buildPermissionsPrincipalsRoleMaps({
-    userWorkspaceRoleMap: {},
-    apiKeyRoleMap: {},
-    flatRoleTargetByAgentIdMaps: {},
-    flatApplicationMaps,
-  });
+): PermissionsPrincipalsRoleMaps => ({
+  userWorkspaceRoleMap: {},
+  apiKeyRoleMap: {},
+  flatRoleTargetByAgentIdMaps: {},
+  flatApplicationMaps,
+});
 
 const agentRolePermissions = {
   [OBJECT_ID]: {
@@ -148,7 +146,7 @@ describe('computeObjectsPermissionsForRoles', () => {
   it('should resolve a single role unchanged', () => {
     expect(
       computeForPrincipals({
-        mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'agent-role-id' },
+        mainPrincipal: { type: 'role', roleId: 'agent-role-id' },
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(agentRolePermissions);
@@ -158,11 +156,12 @@ describe('computeObjectsPermissionsForRoles', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         applicationPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'application',
+          applicationId: 'default-application-id',
           roleId: 'default-role-id',
         },
       }),
@@ -173,7 +172,7 @@ describe('computeObjectsPermissionsForRoles', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         limitingPrincipal: {
@@ -190,7 +189,7 @@ describe('computeObjectsPermissionsForRoles', () => {
     expect(
       computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         applicationPrincipal: {
@@ -205,7 +204,7 @@ describe('computeObjectsPermissionsForRoles', () => {
   it('should deny when one of the intersected roles is missing from the cache', () => {
     expect(
       computeForPrincipals({
-        mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'agent-role-id' },
+        mainPrincipal: { type: 'role', roleId: 'agent-role-id' },
         limitingPrincipal: {
           type: 'agent',
           agentId: 'agent-id',
