@@ -28,63 +28,6 @@ export class AgentRunConversationService {
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
   ) {}
 
-  async claimQueuedMessages({
-    workspaceId,
-    threadId,
-    turnId,
-    agentId,
-    createdBy,
-    queuedMessageIds,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    agentId: string | null;
-    createdBy: ActorMetadata;
-    queuedMessageIds: string[];
-  }): Promise<boolean> {
-    if (!isNonEmptyArray(queuedMessageIds)) {
-      return false;
-    }
-
-    return this.conversationWriterService.runInTransaction(
-      workspaceId,
-      async (scope) => {
-        await this.conversationWriterService.insertTurn({
-          workspaceId,
-          threadId,
-          id: turnId,
-          agentId,
-          status: AgentTurnStatus.RUNNING,
-          createdBy,
-          scope,
-        });
-
-        const takenMessageCount = await scope.update(
-          'agentMessage',
-          {
-            id: In(queuedMessageIds),
-            threadId,
-            status: AgentMessageStatus.QUEUED,
-          },
-          {
-            status: AgentMessageStatus.SENT,
-            turnId,
-            processedAt: new Date().toISOString(),
-          },
-        );
-
-        if (takenMessageCount === 0) {
-          await scope.delete('agentTurn', { id: turnId });
-
-          return false;
-        }
-
-        return true;
-      },
-    );
-  }
-
   // A run holds its conversation's stream while it goes on, as a chat reply does, so nothing else
   // writes to the conversation meanwhile. A stream whose worker died is reaped first
   async claimThread({
@@ -143,6 +86,8 @@ export class AgentRunConversationService {
     senderApplicationId,
     createdBy,
     messages,
+    queuedMessageIds,
+    requiresQueuedMessages = isDefined(queuedMessageIds),
   }: {
     workspaceId: string;
     threadId: string;
@@ -152,11 +97,17 @@ export class AgentRunConversationService {
     senderApplicationId: string | null;
     createdBy: ActorMetadata;
     messages: RunAgentMessage[];
+    queuedMessageIds?: string[];
+    requiresQueuedMessages?: boolean;
   }): Promise<{
     turnId: string;
     promptMessageIds: string[];
     hasTakenQueuedMessages: boolean;
-  }> {
+  } | null> {
+    if (requiresQueuedMessages && !isNonEmptyArray(queuedMessageIds)) {
+      return null;
+    }
+
     return this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
@@ -172,13 +123,25 @@ export class AgentRunConversationService {
 
         const takenMessageCount = await scope.update(
           'agentMessage',
-          { threadId, status: AgentMessageStatus.QUEUED },
+          {
+            threadId,
+            status: AgentMessageStatus.QUEUED,
+            ...(isDefined(queuedMessageIds)
+              ? { id: In(queuedMessageIds) }
+              : {}),
+          },
           {
             status: AgentMessageStatus.SENT,
             turnId,
             processedAt: new Date().toISOString(),
           },
         );
+
+        if (requiresQueuedMessages && takenMessageCount === 0) {
+          await scope.delete('agentTurn', { id: turnId });
+
+          return null;
+        }
 
         const promptMessageIds: string[] = [];
 

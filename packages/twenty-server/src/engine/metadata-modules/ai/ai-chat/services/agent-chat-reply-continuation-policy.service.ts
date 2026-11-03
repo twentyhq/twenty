@@ -1,16 +1,16 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { resolveAgentChatMessageWorkspaceMemberId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id.util';
+import { resolveAgentChatMessageWorkspaceMemberIdOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id-or-throw.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -25,23 +25,16 @@ export class AgentChatReplyContinuationPolicyService {
     AgentChatReplyContinuationPolicyService.name,
   );
 
-  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
-  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
-
-  @Inject(getAgentHistoryRepositoryToken('agentMessage'))
-  private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>;
-
-  @Inject(UserWorkspaceAuthContextService)
-  private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService;
-
-  @Inject(AgentChatReplyExecutionPolicyService)
-  private readonly replyExecutionPolicyService: AgentChatReplyExecutionPolicyService;
-
-  @Inject(AgentConversationWriterService)
-  private readonly conversationWriterService: AgentConversationWriterService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
+    private readonly replyExecutionPolicyService: AgentChatReplyExecutionPolicyService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+  ) {}
 
   async findAllowedQueuedMessageIds({
     workspaceId,
@@ -100,7 +93,7 @@ export class AgentChatReplyContinuationPolicyService {
         })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Could not publish workspace-policy queue-updated event for thread ${threadId}: ${formatErrorWithCause(error)}`,
+            `Could not publish workspace-policy queue-updated event for workspace ${workspaceId}, thread ${threadId}: ${formatErrorWithCause(error)}`,
           ),
         );
     }
@@ -123,10 +116,12 @@ export class AgentChatReplyContinuationPolicyService {
     ownerWorkspaceMemberId: string | null;
   }): Promise<boolean> {
     try {
-      const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberId({
-        message,
-        ownerWorkspaceMemberId,
-      });
+      const workspaceMemberId = resolveAgentChatMessageWorkspaceMemberIdOrThrow(
+        {
+          message,
+          ownerWorkspaceMemberId,
+        },
+      );
       const { userWorkspaceId } =
         await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
           workspaceId,

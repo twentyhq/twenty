@@ -5,6 +5,7 @@ import {
   type AskQuestionItem,
 } from 'twenty-shared/ai';
 import { FieldActorSource } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
 
@@ -282,7 +283,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const { turnId } = await this.agentRunConversationService.openTurn({
+          const openedTurn = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
             agentId: agent.id,
@@ -295,6 +296,10 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
                 workflowRunId,
               }),
           });
+
+          assertIsDefinedOrThrow(openedTurn);
+
+          const { turnId } = openedTurn;
 
           await this.agentRunSuspensionService.suspend({
             workspaceId,

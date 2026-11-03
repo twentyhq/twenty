@@ -76,22 +76,4 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       },
     );
   });
-
-  it('keeps a resolved wake-up separate from a queued message that policy can reject', async () => {
-    const { service, messageQueueService } = buildService({
-      payload: { runSpec: { agentId: 'agent-a' } },
-    });
-
-    await service.scheduleContinuation(jobData);
-    await service.scheduleContinuation({
-      ...jobData,
-      outcome: { type: 'ANSWERED', answer: { result: {} } },
-    });
-
-    const deduplicationIds = messageQueueService.add.mock.calls.map(
-      ([, , options]) => options.deduplication.id,
-    );
-
-    expect(new Set(deduplicationIds).size).toBe(2);
-  });
 });

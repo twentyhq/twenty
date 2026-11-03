@@ -25,6 +25,7 @@ import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-ag
 import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { buildAgentRunContinuationDeduplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-deduplication.util';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -146,19 +147,14 @@ export class AgentRunSuspensionService {
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
-    const deduplication =
-      jobData.outcome.type === 'MESSAGE_RECEIVED'
-        ? {
-            id: `continue-agent-run-${jobData.wakeUpId}-message`,
-            keepLastIfActive: true,
-          }
-        : { id: `continue-agent-run-${jobData.wakeUpId}` };
-
     await this.messageQueueService.add<ContinueAgentRunJobData>(
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication,
+        deduplication: buildAgentRunContinuationDeduplication({
+          wakeUpId: jobData.wakeUpId,
+          outcomeType: jobData.outcome.type,
+        }),
         ...(await this.resolveContinuationJobScope(jobData)),
       },
     );

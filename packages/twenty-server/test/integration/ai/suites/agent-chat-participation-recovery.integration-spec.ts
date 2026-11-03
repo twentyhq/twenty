@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
 import { isArray } from '@sniptt/guards';
+import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { runWithRejectedChatWrite } from 'test/integration/ai/utils/run-with-rejected-chat-write.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -13,6 +14,7 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -32,26 +34,81 @@ describe('Chat message participation with real storage', () => {
     }
   });
 
-  it('rolls back the Ada selection and turn when storing the message fails', async () => {
+  it.each([true, false])(
+    'rolls back the Ada selection and turn when storing the message fails with inbox enabled %s',
+    async (isInboxEnabled) => {
+      configureChatParticipationModels();
+      await context.featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId: context.workspaceId,
+        featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        value: isInboxEnabled,
+      });
+      const threadId = await context.createThread(false);
+      const messageId = randomUUID();
+
+      await context.setConversationType({
+        threadId,
+        conversationType: 'DIRECT_MESSAGE',
+      });
+      const response = await runWithRejectedChatWrite({
+        workspaceId: context.workspaceId,
+        threadId,
+        operation: 'message',
+        work: async () =>
+          sendChatParticipationMessage({
+            threadId,
+            messageId,
+            isAssistantMentioned: true,
+            shouldAssistantReply: false,
+            recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+          }),
+      });
+
+      expect(response.body.errors).toBeDefined();
+      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+        false,
+      );
+      expect(
+        await global.testDataSource.query(
+          `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([]);
+      expect(
+        await global.testDataSource.query(
+          `SELECT id FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([]);
+      expect(await context.readParticipants(threadId)).toEqual([
+        expect.objectContaining({
+          workspaceMemberId: context.workspaceMemberId,
+        }),
+      ]);
+    },
+  );
+
+  it('keeps Ada participation unchanged when a legacy chat send fails preflight', async () => {
     const threadId = await context.createThread(false);
-    const messageId = randomUUID();
 
     await context.setConversationType({
       threadId,
       conversationType: 'DIRECT_MESSAGE',
     });
-    const response = await runWithRejectedChatWrite({
+    await context.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId: context.workspaceId,
+      featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      value: false,
+    });
+    const modelRegistry = getAppProviderByClassName<AiModelRegistryService>(
+      'AiModelRegistryService',
+    );
+
+    jest.spyOn(modelRegistry, 'getAvailableModels').mockReturnValue([]);
+
+    const response = await sendChatParticipationMessage({
       threadId,
-      operation: 'message',
-      work: async () =>
-        sendChatParticipationMessage({
-          threadId,
-          messageId,
-          isAssistantMentioned: true,
-          shouldAssistantReply: false,
-          recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-        }),
+      isAssistantMentioned: true,
     });
 
     expect(response.body.errors).toBeDefined();
@@ -59,20 +116,11 @@ describe('Chat message participation with real storage', () => {
       false,
     );
     expect(
-      await global.testDataSource.query(
-        `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
-        [threadId],
-      ),
-    ).toEqual([]);
-    expect(
-      await global.testDataSource.query(
-        `SELECT id FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
-        [threadId],
-      ),
-    ).toEqual([]);
-    expect(await context.readParticipants(threadId)).toEqual([
-      expect.objectContaining({ workspaceMemberId: context.workspaceMemberId }),
-    ]);
+      await context.chatService.hasMessages({
+        workspaceId: context.workspaceId,
+        threadId,
+      }),
+    ).toBe(false);
   });
 
   it('keeps the accepted message and Ada selection when initial recipient delivery fails', async () => {
