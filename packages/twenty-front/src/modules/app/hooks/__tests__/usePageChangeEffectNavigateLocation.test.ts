@@ -552,6 +552,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
           ['nonExistingObjectInParam:metadataNotReady'].length +
+          ['legacyWorkflowsIndexInParam'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
           [

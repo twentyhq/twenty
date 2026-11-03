@@ -2798,14 +2798,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         });
       }
       const [{ workspaceWorkflowCount }] = await global.testDataSource.query(
-        `SELECT (SELECT count(*) FROM "${freshSchema}"."workflow")::int + (SELECT count(*) FROM "${freshSchema}"."workflowVersion")::int AS "workspaceWorkflowCount"`,
+        `SELECT count(*)::int AS "workspaceWorkflowCount" FROM "${freshSchema}"."workflowVersion"`,
       );
       expect(workspaceWorkflowCount).toBe(0);
       const relationFields = await global.testDataSource.query(
-        `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name IN ('workflow', 'workflowVersion')`,
+        `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name = 'workflowVersion'`,
         [freshWorkspaceId],
       );
-      expect(relationFields).toHaveLength(2);
+      expect(relationFields).toHaveLength(1);
       expect(
         relationFields.every(
           (field: { isNullable: boolean }) => field.isNullable,

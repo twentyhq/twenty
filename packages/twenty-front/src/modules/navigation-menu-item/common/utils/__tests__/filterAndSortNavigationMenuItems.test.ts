@@ -22,24 +22,6 @@ describe('filterAndSortNavigationMenuItems', () => {
     key: ViewKey.INDEX,
   };
 
-  const mockWorkflowObjectMetadataItem = {
-    id: 'workflow-metadata-id',
-    nameSingular: 'workflow',
-    namePlural: 'workflows',
-    labelPlural: 'Workflows',
-    icon: 'IconSettingsAutomation',
-    isActive: true,
-  } as EnrichedObjectMetadataItem;
-
-  const workflowRecordItem = {
-    id: 'workflow-favorite-id',
-    type: NavigationMenuItemType.RECORD,
-    position: 0,
-    targetRecordId: 'workflow-record-id',
-    targetObjectMetadataId: 'workflow-metadata-id',
-    targetRecordIdentifier: { id: 'workflow-record-id', name: 'My workflow' },
-  } as unknown as NavigationMenuItem;
-
   it('keeps system page items with a known key only', () => {
     const workflowsSystemPageItem = {
       id: 'workflows-system-page-id',
@@ -62,16 +44,6 @@ describe('filterAndSortNavigationMenuItems', () => {
     ).toEqual([workflowsSystemPageItem]);
   });
 
-  it('hides workflow record items', () => {
-    expect(
-      filterAndSortNavigationMenuItems(
-        [workflowRecordItem],
-        [],
-        [mockWorkflowObjectMetadataItem],
-      ),
-    ).toEqual([]);
-  });
-
   it('hides chat record items, which the chat menu lists', () => {
     const chatObjectMetadataItem = {
       id: 'chat-metadata-id',
@@ -79,12 +51,13 @@ describe('filterAndSortNavigationMenuItems', () => {
       isActive: true,
     } as EnrichedObjectMetadataItem;
     const chatRecordItem = {
-      ...workflowRecordItem,
       id: 'chat-favorite-id',
+      type: NavigationMenuItemType.RECORD,
+      position: 0,
       targetRecordId: 'chat-record-id',
       targetObjectMetadataId: 'chat-metadata-id',
       targetRecordIdentifier: { id: 'chat-record-id', labelIdentifier: 'Chat' },
-    } as NavigationMenuItem;
+    } as unknown as NavigationMenuItem;
 
     expect(
       filterAndSortNavigationMenuItems(

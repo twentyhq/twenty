@@ -41,11 +41,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
             nameSingular: 'new',
           },
           {
-            id: 'workflow-object',
-            namePlural: 'workflows',
-            nameSingular: 'workflow',
-          },
-          {
             id: 'chat-object',
             namePlural: 'agentChatThreads',
             nameSingular: 'agentChatThread',
@@ -79,11 +74,13 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
   RouteContextStoreProviderEffect: ({
     viewId,
     objectMetadataItem,
+    coreObjectName,
     isRecordIndexPage,
     isRecordShowPage,
   }: {
     viewId?: string;
     objectMetadataItem?: { id: string };
+    coreObjectName?: string | null;
     isRecordIndexPage: boolean;
     isRecordShowPage: boolean;
   }) => (
@@ -91,6 +88,7 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
       data-testid="route-context-store"
       data-view-id={viewId}
       data-object-metadata-id={objectMetadataItem?.id}
+      data-core-object-name={coreObjectName ?? undefined}
       data-is-record-index-page={isRecordIndexPage}
       data-is-record-show-page={isRecordShowPage}
     />
@@ -194,8 +192,11 @@ describe('RouteContextStoreProvider', () => {
     renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
+      'data-core-object-name',
+      'workflow',
+    );
+    expect(screen.getByTestId('route-context-store')).not.toHaveAttribute(
       'data-object-metadata-id',
-      'workflow-object',
     );
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-is-record-index-page',
