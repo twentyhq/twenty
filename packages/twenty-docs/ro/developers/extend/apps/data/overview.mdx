@@ -34,7 +34,7 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
     <CardTitle>Obiectele</CardTitle>
     `defineObject` - declara noi tipuri de înregistrări cu propriile lor câmpuri.
   </Card>
-  <Card href="/ro/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+  <Card href="/dezvoltatori/extindere/aplicații/date/extindere/obiecte" img="/images/ghid/halfton/card-page-extenending-obiects.svg">
     <CardTitle>Extinderea obiectelor</CardTitle>
     `defineField` - adaugă câmpuri la obiectele standard sau alte aplicații.
   </Card>
@@ -45,6 +45,10 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
   <Card href="/ro/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
     <CardTitle>Tipuri de activitate de cronologie</CardTitle>
     Definiți evenimentele automate de audit și evenimentele aplicației explicite pentru cronologii înregistrate.
+  </Card>
+  <Card href="/ro/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Reguli de validare</CardTitle>
+    `defineValidationRule` — declară condițiile pe care trebuie să le îndeplinească o înregistrare înainte de a putea fi salvată.
   </Card>
 </CardGroup>
 
@@ -58,8 +62,9 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
 | **Indice**                          | Un indice de bază de date pentru a accelera o interogare recurentă asupra unuia dintre obiectele tale                                 | `defineIndex()`                         |
 | **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor                             | `defineTimelineActivityType()`          |
 | **Cale de înregistrări asociate**   | Un lanț de până la trei relații prin care accesul la o înregistrare se extinde la înregistrările sale asociate                        | `defineRelatedRecordPath()`             |
+| **Regulă de validare**              | O condiție pe care trebuie să o îndeplinească o înregistrare înainte de a putea fi salvată                                            | `defineValidationRule()`                |
 
-CLI-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` și `src/related-record-paths/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
+CLI-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/validation-rules/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` și `src/related-record-paths/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
 
 ## Indici (opțional)
 

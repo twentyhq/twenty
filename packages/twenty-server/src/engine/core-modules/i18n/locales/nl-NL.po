@@ -1119,11 +1119,6 @@ msgstr "Er bestaat al een agent met deze naam"
 msgid "An agent with this name already exists."
 msgstr "Er bestaat al een agent met deze naam."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "Een AI-stap kan de agent niet wijzigen. Maak in plaats daarvan een nieuwe stap."
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
@@ -17917,9 +17912,8 @@ msgid "You do not have access to this message folder."
 msgstr "Je hebt geen toegang tot deze berichtenmap."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "U heeft geen toestemming om toegang te krijgen tot deze functie. Neem contact op met uw werkruimtebeheerder voor toegang."
 
