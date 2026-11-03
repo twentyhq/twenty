@@ -1,3 +1,4 @@
+import { ConditionalDisplayRecordFiltersInitializationResetEffect } from '@/conditional-display/components/ConditionalDisplayRecordFiltersInitializationResetEffect';
 import { ConditionalDisplayRuleModeSelect } from '@/conditional-display/components/ConditionalDisplayRuleModeSelect';
 import { type ConditionalDisplayRuleMode } from '@/conditional-display/types/ConditionalDisplayRuleMode';
 import { getConditionalDisplaySettingsLabel } from '@/conditional-display/utils/getConditionalDisplaySettingsLabel';
@@ -9,7 +10,6 @@ import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filte
 import { type FieldSelectLeadingSection } from '@/object-record/advanced-filter/types/FieldSelectLeadingSection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { hasInitializedRecordFiltersComponentState } from '@/object-record/record-filter/states/hasInitializedRecordFiltersComponentState';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
@@ -17,7 +17,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   type ConditionalDisplay,
   type ConditionalDisplaySurface,
@@ -78,16 +78,6 @@ export const ConditionalDisplaySettingsContent = ({
 
   const store = useStore();
 
-  const setHasInitializedRecordFilters = useSetAtomComponentState(
-    hasInitializedRecordFiltersComponentState,
-    instanceId,
-  );
-
-  useEffect(
-    () => () => setHasInitializedRecordFilters(false),
-    [setHasInitializedRecordFilters],
-  );
-
   const { addRootRecordFilterGroup } = useAddRootRecordFilterGroup({
     objectMetadataItem,
     fieldSelectLeadingSections,
@@ -146,6 +136,9 @@ export const ConditionalDisplaySettingsContent = ({
 
   return (
     <>
+      <ConditionalDisplayRecordFiltersInitializationResetEffect
+        instanceId={instanceId}
+      />
       <ConditionalDisplayRuleModeSelect
         dropdownId={`${instanceId}-rule-mode`}
         label={getConditionalDisplaySettingsLabel(surface)}
