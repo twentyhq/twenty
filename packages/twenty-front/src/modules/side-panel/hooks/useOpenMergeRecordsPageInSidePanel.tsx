@@ -12,12 +12,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
+import { useLingui } from '@lingui/react/macro';
 
 type UseOpenMergeRecordsPageInSidePanelProps = {
   objectNameSingular: string;
@@ -26,6 +27,7 @@ type UseOpenMergeRecordsPageInSidePanelProps = {
 export const useOpenMergeRecordsPageInSidePanel = ({
   objectNameSingular,
 }: UseOpenMergeRecordsPageInSidePanelProps) => {
+  const { t } = useLingui();
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { enqueueToast } = useToast();
@@ -100,6 +102,7 @@ export const useOpenMergeRecordsPageInSidePanel = ({
       navigateSidePanel,
       updateSidePanelNavigationMorphItemsByPage,
       store,
+      t,
     ],
   );
 

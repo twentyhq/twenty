@@ -12,7 +12,6 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,10 +19,12 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useOpenWidgetSettingsInSidePanel = (
   pageLayoutIdFromProps?: string,
 ) => {
+  const { t } = useLingui();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -169,6 +170,7 @@ export const useOpenWidgetSettingsInSidePanel = (
       setPageLayoutTabSettingsOpenTabId,
       navigatePageLayoutSidePanel,
       closeSidePanelMenu,
+      t,
     ],
   );
 

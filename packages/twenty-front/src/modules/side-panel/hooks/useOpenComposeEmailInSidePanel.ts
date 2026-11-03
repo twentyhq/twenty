@@ -12,7 +12,7 @@ import { composeEmailContextRecordComponentState } from '@/side-panel/pages/comp
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type OpenComposeEmailParams = {
   threadId?: string;
@@ -26,6 +26,7 @@ type OpenComposeEmailParams = {
 };
 
 export const useOpenComposeEmailInSidePanel = () => {
+  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -77,7 +78,7 @@ export const useOpenComposeEmailInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, t],
   );
 
   return { openComposeEmailInSidePanel };

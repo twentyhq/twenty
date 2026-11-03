@@ -1,7 +1,6 @@
 import { CREATE_CALENDAR_EVENT } from '@/activities/calendar/graphql/mutations/createCalendarEvent';
 import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -9,8 +8,10 @@ import {
   type CreateCalendarEventOutput,
   type MutationCreateCalendarEventArgs,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateCalendarEvent = () => {
+  const { t } = useLingui();
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
   const { enqueueToast } = useToast();
 
@@ -58,7 +59,12 @@ export const useCreateCalendarEvent = () => {
         return { success: false };
       }
     },
-    [refetchTimelineCalendarEvents, createCalendarEventMutation, enqueueToast],
+    [
+      refetchTimelineCalendarEvents,
+      createCalendarEventMutation,
+      enqueueToast,
+      t,
+    ],
   );
 
   return { createCalendarEvent, loading };

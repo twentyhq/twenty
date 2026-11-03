@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,8 +21,10 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { useLingui } from '@lingui/react/macro';
 
 export const useGetBrowsingContext = () => {
+  const { t } = useLingui();
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
@@ -175,7 +176,7 @@ export const useGetBrowsingContext = () => {
     }
 
     return null;
-  }, [store]);
+  }, [store, t]);
 
   return { getBrowsingContext };
 };

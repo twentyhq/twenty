@@ -5,7 +5,6 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -14,8 +13,10 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { useLingui } from '@lingui/react/macro';
 
 export const useOpenAskAiPageInSidePanel = () => {
+  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -62,6 +63,7 @@ export const useOpenAskAiPageInSidePanel = () => {
       setAgentChatUISessionStartTime,
       isWorkspaceSuspended,
       store,
+      t,
     ],
   );
 

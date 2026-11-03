@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -6,6 +5,7 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { addCharactersToAvoidPasswordManagers } from '@/object-record/record-field/ui/meta-types/input/utils/addCharactersToAvoidPasswordManagers';
 import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Field } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type FormFullNameFieldInputProps = {
   label?: string;
@@ -24,6 +24,7 @@ export const FormFullNameFieldInput = ({
   VariablePicker,
   subFieldPlaceholders,
 }: FormFullNameFieldInputProps) => {
+  const { t } = useLingui();
   const handleFirstNameChange = (newText: string) => {
     onChange({
       lastName: defaultValue?.lastName ?? '',

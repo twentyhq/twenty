@@ -12,7 +12,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
-import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,8 +22,10 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { type UiScale } from '@/ui/theme/types/UiScale';
+import { useLingui } from '@lingui/react/macro';
 
 export const useLoadCurrentUser = () => {
+  const { t } = useLingui();
   const setCurrentUser = useSetAtomState(currentUserState);
   const setAvailableWorkspaces = useSetAtomState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetAtomState(
@@ -152,6 +153,7 @@ export const useLoadCurrentUser = () => {
     setLastAuthenticateWorkspaceDomain,
     authProviders,
     setWorkspaceAuthBypassProviders,
+    t,
   ]);
 
   return {

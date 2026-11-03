@@ -1,5 +1,4 @@
 import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
-import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
 
@@ -10,6 +9,7 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { DropZone } from './components/DropZone';
+import { useLingui } from '@lingui/react/macro';
 
 type UploadStepProps = {
   setUploadedFile: (file: File) => void;
@@ -28,6 +28,7 @@ export const UploadStep = ({
   setPreviousStepState,
   currentStepState,
 }: UploadStepProps) => {
+  const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
   const { maxRecords, uploadStepHook, selectHeaderStepHook, selectHeader } =
     useSpreadsheetImportInternal();
@@ -97,6 +98,7 @@ export const UploadStep = ({
       currentStepState,
       uploadStepHook,
       computeColumnSuggestionsAndAutoMatch,
+      t,
     ],
   );
 

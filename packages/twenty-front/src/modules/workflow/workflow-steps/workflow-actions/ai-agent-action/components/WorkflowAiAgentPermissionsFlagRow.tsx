@@ -1,12 +1,12 @@
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useTheme } from 'twenty-ui/theme';
 import { IconTrash } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -25,6 +25,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const isClickable = !readonly && !isEnabled && isDefined(onAdd);
   const isDisabled = isEnabled && !shouldShowDeleteButton;

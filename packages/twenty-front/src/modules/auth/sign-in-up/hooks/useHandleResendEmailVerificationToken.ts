@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
 import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useHandleResendEmailVerificationToken = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [resendEmailVerificationToken, { loading }] = useMutation(
     ResendEmailVerificationTokenDocument,
@@ -43,7 +44,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [enqueueToast, resendEmailVerificationToken, origin],
+    [enqueueToast, resendEmailVerificationToken, origin, t],
   );
 
   return { handleResendEmailVerificationToken, loading };

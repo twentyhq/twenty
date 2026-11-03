@@ -19,7 +19,6 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -30,6 +29,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCalendarEventComposer = ({
   initialValues,
@@ -38,6 +38,7 @@ export const useCalendarEventComposer = ({
   initialValues: CalendarEventComposerInitialValues | null;
   onCreated: () => void;
 }) => {
+  const { t } = useLingui();
   const { accounts, loading: accountsLoading } = useMyConnectedAccounts();
   const { createCalendarEvent, loading: isCreating } = useCreateCalendarEvent();
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
@@ -307,6 +308,7 @@ export const useCalendarEventComposer = ({
     targets,
     timeZone,
     title,
+    t,
   ]);
 
   return {

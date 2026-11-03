@@ -7,11 +7,12 @@ import {
   formatValueForCSV,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDownloadFakeRecords = () => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const availableFieldMetadataItems =

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { v4 } from 'uuid';
@@ -20,6 +19,7 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 type UseCreateJunctionRecordWithNestedTargetArgs = {
   sourceRecordId: string;
@@ -34,6 +34,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   sourceObjectMetadataItem,
   junctionConfig,
 }: UseCreateJunctionRecordWithNestedTargetArgs) => {
+  const { t } = useLingui();
   const store = useStore();
   const [isCreatePending, setIsCreatePending] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -163,6 +164,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
       sourceFieldName,
       sourceRecordId,
       store,
+      t,
     ],
   );
 

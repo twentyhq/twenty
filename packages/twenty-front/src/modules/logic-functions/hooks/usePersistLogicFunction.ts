@@ -9,7 +9,6 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -21,8 +20,10 @@ import {
   type UpdateOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
 import { getOperationName } from '~/utils/getOperationName';
+import { useLingui } from '@lingui/react/macro';
 
 export const usePersistLogicFunction = () => {
+  const { t } = useLingui();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueToast } = useToast();
 
@@ -76,7 +77,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [createLogicFunctionMutation, handleMetadataError, enqueueToast],
+    [createLogicFunctionMutation, handleMetadataError, enqueueToast, t],
   );
 
   const updateLogicFunction = useCallback(
@@ -112,7 +113,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [updateLogicFunctionSourceMutation, handleMetadataError, enqueueToast],
+    [updateLogicFunctionSourceMutation, handleMetadataError, enqueueToast, t],
   );
 
   const deleteLogicFunction = useCallback(
@@ -152,7 +153,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [deleteLogicFunctionMutation, handleMetadataError, enqueueToast],
+    [deleteLogicFunctionMutation, handleMetadataError, enqueueToast, t],
   );
 
   return {

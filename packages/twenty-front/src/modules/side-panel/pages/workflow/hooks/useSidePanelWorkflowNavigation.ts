@@ -7,7 +7,6 @@ import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/wor
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunSidePanelTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunSidePanelTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +18,10 @@ import {
 } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
+import { useLingui } from '@lingui/react/macro';
 
 export const useSidePanelWorkflowNavigation = () => {
+  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { setInitialWorkflowRunSidePanelTab } =
@@ -44,7 +45,7 @@ export const useSidePanelWorkflowNavigation = () => {
         pageId,
       });
     },
-    [navigateSidePanel, store],
+    [navigateSidePanel, store, t],
   );
 
   const openWorkflowCreateStepInSidePanel = useCallback(
@@ -65,7 +66,7 @@ export const useSidePanelWorkflowNavigation = () => {
         pageId,
       });
     },
-    [navigateSidePanel, store],
+    [navigateSidePanel, store, t],
   );
 
   const openWorkflowEditStepInSidePanel = useCallback(
@@ -158,7 +159,7 @@ export const useSidePanelWorkflowNavigation = () => {
         pageId,
       });
     },
-    [navigateSidePanel, store],
+    [navigateSidePanel, store, t],
   );
 
   const openWorkflowEditStepTypeInSidePanel = useCallback(
@@ -179,7 +180,7 @@ export const useSidePanelWorkflowNavigation = () => {
         pageId,
       });
     },
-    [navigateSidePanel, store],
+    [navigateSidePanel, store, t],
   );
 
   const openWorkflowViewStepInSidePanel = useCallback(

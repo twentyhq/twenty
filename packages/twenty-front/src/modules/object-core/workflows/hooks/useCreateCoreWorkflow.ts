@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
@@ -16,8 +15,10 @@ import {
 } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateCoreWorkflow = () => {
+  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
 
   const canCreateCoreWorkflow = useHasPermissionFlag(
@@ -80,6 +81,7 @@ export const useCreateCoreWorkflow = () => {
     navigate,
     enqueueToast,
     isCreatingCoreWorkflow,
+    t,
   ]);
 
   return { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow };

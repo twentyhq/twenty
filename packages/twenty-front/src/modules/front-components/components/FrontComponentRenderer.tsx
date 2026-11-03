@@ -12,7 +12,6 @@ import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprint
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
@@ -26,6 +25,7 @@ import {
   type FindOneFrontComponentQuery,
   GetApplicationSdkClientChecksumsDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -117,6 +117,7 @@ const FrontComponentRendererContent = ({
   unavailableFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
+  const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
@@ -168,7 +169,7 @@ const FrontComponentRendererContent = ({
         children: t`Failed to load front component: ${error.message}`,
       });
     },
-    [enqueueToast],
+    [enqueueToast, t],
   );
 
   const [initialApplicationVariables] = useState(

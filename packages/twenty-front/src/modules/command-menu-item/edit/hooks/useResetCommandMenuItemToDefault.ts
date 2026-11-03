@@ -1,6 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -15,8 +14,10 @@ import {
   type ResetCommandMenuItemMutation,
   type ResetCommandMenuItemMutationVariables,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useResetCommandMenuItemToDefault = () => {
+  const { t } = useLingui();
   const store = useStore();
   const [resetCommandMenuItem] = useMutation<
     ResetCommandMenuItemMutation,
@@ -68,6 +69,7 @@ export const useResetCommandMenuItemToDefault = () => {
       store,
       handleMetadataError,
       enqueueToast,
+      t,
     ],
   );
 

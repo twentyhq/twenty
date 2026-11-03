@@ -9,7 +9,6 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { computeViewGroupsReplacementForView } from '@/views/utils/computeViewGroupsReplacementForView';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +18,10 @@ import {
   type UpdateViewMutationVariables,
   UpdateViewDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const usePerformViewApiUpdate = () => {
+  const { t } = useLingui();
   const [updateViewMutation] = useMutation(UpdateViewDocument);
 
   const { updateInDraft, addToDraft, removeFromDraft, applyChanges } =
@@ -130,6 +131,7 @@ export const usePerformViewApiUpdate = () => {
       applyChanges,
       syncViewGroupsFromMutationResult,
       store,
+      t,
     ],
   );
 

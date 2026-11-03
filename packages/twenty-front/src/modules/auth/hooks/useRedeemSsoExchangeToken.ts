@@ -2,15 +2,16 @@ import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedire
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const useRedeemSsoExchangeToken = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const markSessionActive = useMarkSessionActive();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
@@ -49,6 +50,7 @@ export const useRedeemSsoExchangeToken = () => {
       markSessionActive,
       setIsAppEffectRedirectEnabled,
       enqueueToast,
+      t,
     ],
   );
 

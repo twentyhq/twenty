@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -13,8 +12,10 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { CreateOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateCoreAgent = () => {
+  const { t } = useLingui();
   const canCreateCoreAgent = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
@@ -79,6 +80,7 @@ export const useCreateCoreAgent = () => {
     navigate,
     enqueueToast,
     isCreatingCoreAgent,
+    t,
   ]);
 
   return { createCoreAgent, canCreateCoreAgent, isCreatingCoreAgent };

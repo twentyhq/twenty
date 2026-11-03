@@ -3,14 +3,15 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { ViewType, WidgetType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreatePendingFieldsWidgetViews = () => {
+  const { t } = useLingui();
   const { performViewApiCreate } = usePerformViewApiPersist();
   const store = useStore();
 
@@ -90,7 +91,7 @@ export const useCreatePendingFieldsWidgetViews = () => {
         }
       }
     },
-    [performViewApiCreate, store],
+    [performViewApiCreate, store, t],
   );
 
   return { createPendingFieldsWidgetViews };

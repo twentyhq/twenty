@@ -1,9 +1,9 @@
 import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledLinksFieldEditInputsContainer = styled.div`
   display: flex;
@@ -33,6 +33,7 @@ export const LinksFieldEditInputs = ({
   onEscape,
   onUrlBlur,
 }: LinksFieldEditInputsProps) => {
+  const { t } = useLingui();
   const scrollIntoViewOnMount = useCallback((node: HTMLDivElement | null) => {
     node?.scrollIntoView({ block: 'nearest' });
   }, []);

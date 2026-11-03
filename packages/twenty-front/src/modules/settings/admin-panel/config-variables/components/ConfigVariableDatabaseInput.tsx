@@ -6,7 +6,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -14,6 +13,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ConfigVariableType } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledJsonEditorContainer = styled.div`
   display: flex;
@@ -48,6 +48,7 @@ export const ConfigVariableDatabaseInput = ({
   disabled,
   placeholder,
 }: ConfigVariableDatabaseInputProps) => {
+  const { t } = useLingui();
   const selectOptions =
     options && Array.isArray(options)
       ? options.map((option) => ({

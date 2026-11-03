@@ -1,9 +1,10 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconBoxMultiple } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type UseOpenUpdateMultipleRecordsPageInSidePanelProps = {
   contextStoreInstanceId: string;
@@ -12,6 +13,7 @@ type UseOpenUpdateMultipleRecordsPageInSidePanelProps = {
 export const useOpenUpdateMultipleRecordsPageInSidePanel = ({
   contextStoreInstanceId,
 }: UseOpenUpdateMultipleRecordsPageInSidePanelProps) => {
+  const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
 
   const openUpdateMultipleRecordsPageInSidePanel = useCallback(async () => {
@@ -21,7 +23,7 @@ export const useOpenUpdateMultipleRecordsPageInSidePanel = ({
       pageIcon: IconBoxMultiple,
       pageId: contextStoreInstanceId,
     });
-  }, [navigateSidePanel, contextStoreInstanceId]);
+  }, [navigateSidePanel, contextStoreInstanceId, t]);
 
   return {
     openUpdateMultipleRecordsPageInSidePanel,

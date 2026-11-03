@@ -1,14 +1,15 @@
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pages/compose-calendar-event/states/composeCalendarEventInitialValuesComponentState';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useLingui } from '@lingui/react/macro';
 
 export const useOpenComposeCalendarEventInSidePanel = () => {
+  const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -30,7 +31,7 @@ export const useOpenComposeCalendarEventInSidePanel = () => {
         pageId,
       });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, t],
   );
 
   return { openComposeCalendarEventInSidePanel };

@@ -2,12 +2,12 @@ import { MediaAccessSessionRow } from '@/media-access/components/MediaAccessSess
 import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Popover } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDot = styled.span<{ isCapturing: boolean }>`
   background: ${({ isCapturing }) =>
@@ -34,6 +34,7 @@ const StyledApplications = styled.div`
 `;
 
 export const MediaAccessIndicator = () => {
+  const { t } = useLingui();
   const mediaAccessSessions = useAtomStateValue(mediaAccessSessionsState);
 
   if (!isNonEmptyArray(mediaAccessSessions)) {

@@ -18,7 +18,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -39,8 +38,10 @@ import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/consta
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/StandardApplicationIllustrations';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAvailableApplicationDetails = () => {
+  const { t } = useLingui();
   const { availableApplicationId = '' } = useParams<{
     availableApplicationId: string;
   }>();

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactNode } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledChip = styled.div<{
   deletable: boolean;
@@ -121,6 +121,7 @@ export const BaseChip = ({
   maxWidth,
   leftIcon,
 }: BaseChipProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const isDeletable = onRemove !== undefined;
 

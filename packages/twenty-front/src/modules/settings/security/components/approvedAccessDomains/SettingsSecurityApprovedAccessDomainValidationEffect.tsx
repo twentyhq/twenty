@@ -1,14 +1,15 @@
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { ValidateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
+  const { t } = useLingui();
   const [validateApprovedAccessDomainMutation] = useMutation(
     ValidateApprovedAccessDomainDocument,
   );
@@ -56,7 +57,7 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
     }
     // Validate approved access domain only needs to run once at mount
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   return <></>;
 };
