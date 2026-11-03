@@ -262,7 +262,7 @@ export class ObjectMetadataService {
       )
     ) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'rolesRecordsPermissions',
+        'rolesPermissions',
       ]);
     }
 

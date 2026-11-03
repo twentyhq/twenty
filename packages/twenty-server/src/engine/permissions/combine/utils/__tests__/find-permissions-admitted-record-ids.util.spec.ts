@@ -154,7 +154,7 @@ const findAdmitted = ({
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-      rolesRecordsPermissions: {
+      rolesPermissions: {
         [MEMBER_ROLE_ID]: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: { [flatObjectMetadata.id]: fullAccess },

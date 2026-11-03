@@ -8,9 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import {
-  validateOperationIsPermittedOrThrow,
-} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -76,7 +74,7 @@ const defaultRolePermissions = buildRoleRecordsPermissions({
   },
 });
 
-const rolesRecordsPermissions: Record<string, RoleRecordsPermissions> = {
+const rolesPermissions: Record<string, RoleRecordsPermissions> = {
   'agent-role-id': agentRolePermissions,
   'default-role-id': defaultRolePermissions,
 };
@@ -84,7 +82,7 @@ const rolesRecordsPermissions: Record<string, RoleRecordsPermissions> = {
 const computeForPrincipals = (principals: PrincipalsWithRoles) =>
   computePrincipalsRecordsPermissions({
     principals,
-    rolesRecordsPermissions,
+    rolesPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
     flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
     flatApplicationMaps: { byId: {} },
@@ -137,7 +135,7 @@ const computeForAuthContext = ({
   return isDefined(principals)
     ? computePrincipalsRecordsPermissions({
         principals,
-        rolesRecordsPermissions,
+        rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
         flatApplicationMaps: roleMaps.flatApplicationMaps,
@@ -575,7 +573,7 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
     ({ principals, canDestroy }) => {
       const invoicePermissions = computePrincipalsRecordsPermissions({
         principals,
-        rolesRecordsPermissions: disabledActionRolesPermissions,
+        rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
@@ -659,7 +657,7 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
         },
         applicationPrincipal: { type: 'customApplication' },
       },
-      rolesRecordsPermissions: {
+      rolesPermissions: {
         'user-role-id': buildRoleRecordsPermissions({
           [INVOICE_ID]: FULL_ACCESS,
           [COMPANY_ID]: FULL_ACCESS,
@@ -751,7 +749,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     return isDefined(principals)
       ? computePrincipalsRecordsPermissions({
           principals,
-          rolesRecordsPermissions: rolesPermissionsWithPredicate,
+          rolesPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           flatApplicationMaps,

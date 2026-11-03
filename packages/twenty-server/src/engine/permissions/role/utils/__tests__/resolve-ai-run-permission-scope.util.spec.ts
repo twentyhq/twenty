@@ -299,7 +299,7 @@ describe('resolveAiRunPermissionScope', () => {
           metadataMaps: {
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-            rolesRecordsPermissions: {
+            rolesPermissions: {
               'member-role-id': {
                 ...NO_ROLE_RECORDS_PERMISSIONS,
                 objects: {

@@ -48,7 +48,10 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
-@WorkspaceCache('rolesRecordsPermissions', { packingPonderation: 2 })
+@WorkspaceCache('rolesPermissions', {
+  packingPonderation: 2,
+  storageVersion: 2,
+})
 export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<
   Record<string, RoleRecordsPermissions>
 > {

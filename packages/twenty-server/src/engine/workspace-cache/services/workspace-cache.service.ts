@@ -120,6 +120,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheKeyName,
     number
   >();
+  private readonly storageVersionByKey = new Map<
+    WorkspaceCacheKeyName,
+    number
+  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -173,6 +177,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             workspaceCacheKeyName,
             options.packingPonderation,
           );
+
+          if (isDefined(options.storageVersion)) {
+            this.storageVersionByKey.set(
+              workspaceCacheKeyName,
+              options.storageVersion,
+            );
+          }
         }
       }
 
@@ -1024,6 +1035,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
   ): string {
-    return `${keyName}:${workspaceId}`;
+    const storageVersion = this.storageVersionByKey.get(keyName);
+
+    return isDefined(storageVersion)
+      ? `${keyName}:v${storageVersion}:${workspaceId}`
+      : `${keyName}:${workspaceId}`;
   }
 }

@@ -24,7 +24,7 @@ export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-  rolesRecordsPermissions: Record<string, RoleRecordsPermissions>;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;

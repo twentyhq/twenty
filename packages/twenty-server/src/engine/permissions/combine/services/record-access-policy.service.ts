@@ -257,7 +257,7 @@ export class RecordAccessPolicyService {
       flatObjectMetadataMaps,
       flatFieldMetadataMapsOrm,
       featureFlagsMap,
-      rolesRecordsPermissions,
+      rolesPermissions,
       flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
@@ -265,7 +265,7 @@ export class RecordAccessPolicyService {
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
       'featureFlagsMap',
-      'rolesRecordsPermissions',
+      'rolesPermissions',
       'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
@@ -275,7 +275,7 @@ export class RecordAccessPolicyService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       featureFlagsMap,
-      rolesRecordsPermissions,
+      rolesPermissions,
       flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
@@ -416,7 +416,7 @@ export class RecordAccessPolicyService {
         if (
           getPermissionsPrincipalsRoleIds(principals).some(
             (roleId) =>
-              !isDefined(principalMetadataMaps.rolesRecordsPermissions[roleId]),
+              !isDefined(principalMetadataMaps.rolesPermissions[roleId]),
           )
         ) {
           return [];

@@ -123,7 +123,7 @@ export class WorkspaceDataSourceService
       billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
-      rolesRecordsPermissions: workspaceContext.permissionsPerRoleId,
+      rolesPermissions: workspaceContext.permissionsPerRoleId,
       flatRoleTargetByAgentIdMaps: workspaceContext.flatRoleTargetByAgentIdMaps,
       flatApplicationMaps: workspaceContext.flatApplicationMaps,
       eventEmitterService: this.workspaceEventEmitter,

@@ -119,7 +119,7 @@ export class RecordSharePrincipalService {
 
       if (
         !isDefined(roleId) ||
-        !isDefined(metadataMaps.rolesRecordsPermissions[roleId])
+        !isDefined(metadataMaps.rolesPermissions[roleId])
       ) {
         continue;
       }

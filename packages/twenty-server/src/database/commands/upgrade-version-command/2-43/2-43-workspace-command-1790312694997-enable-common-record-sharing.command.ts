@@ -115,7 +115,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
       });
     });
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesRecordsPermissions',
+      'rolesPermissions',
     ]);
     // Later upgrades turn legacy SYSTEM access into disabled actions, which would lock existing chats away
     await this.dataSource.query(

@@ -9,6 +9,8 @@ import {
 export type WorkspaceCacheOptions = {
   packingPonderation: number;
   localDataOnly?: boolean;
+  // Bump when the cached shape changes, so pods on either side of a deploy never read each other's entries
+  storageVersion?: number;
 };
 
 export const WORKSPACE_CACHE_KEY = 'WORKSPACE_CACHE_KEY';

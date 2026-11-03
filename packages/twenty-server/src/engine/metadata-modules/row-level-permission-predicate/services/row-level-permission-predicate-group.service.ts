@@ -75,7 +75,7 @@ export class RowLevelPermissionPredicateGroupService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesRecordsPermissions',
+      'rolesPermissions',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);

@@ -33,7 +33,7 @@ export interface WorkspaceInternalContext {
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatApplicationMaps: FlatApplicationCacheMaps;
-  rolesRecordsPermissions: Record<string, RoleRecordsPermissions>;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   recordStock: Pick<
     WorkspaceRecordStockService,

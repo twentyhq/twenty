@@ -132,20 +132,25 @@ describe('computePermissionIntersection', () => {
       );
     });
 
-    it('should require ALL roles to grant the role-level defaults', () => {
-      const result = computePermissionIntersection([
-        buildRoleRecordsPermissions({}),
-        { ...buildRoleRecordsPermissions({}), canUpdateAllRecords: false },
-      ]);
+    it.each([
+      'canReadAllRecords',
+      'canUpdateAllRecords',
+      'canSoftDeleteAllRecords',
+      'canDestroyAllRecords',
+    ] as const)(
+      'should require ALL roles to grant the role-level %s',
+      (roleLevelGrant) => {
+        const result = computePermissionIntersection([
+          buildRoleRecordsPermissions({}),
+          { ...buildRoleRecordsPermissions({}), [roleLevelGrant]: false },
+        ]);
 
-      expect(result).toEqual({
-        canReadAllRecords: true,
-        canUpdateAllRecords: false,
-        canSoftDeleteAllRecords: true,
-        canDestroyAllRecords: true,
-        objects: {},
-      });
-    });
+        expect(result).toEqual({
+          ...buildRoleRecordsPermissions({}),
+          [roleLevelGrant]: false,
+        });
+      },
+    );
   });
 
   describe('multiple objects', () => {
@@ -414,6 +419,32 @@ describe('computePermissionIntersection', () => {
         },
       });
     });
+
+    it.each([
+      ['canRead', 'canReadRecords'],
+      ['canUpdate', 'canUpdateRecords'],
+      ['canSoftDelete', 'canSoftDeleteRecords'],
+      ['canDestroy', 'canDestroyRecords'],
+    ] as const)(
+      'should not reach records through row-level permissions when another role denies %s',
+      (deniedGrant, rowLevelGrant) => {
+        const result = computePermissionIntersection([
+          buildPermissions('user-role-id', ['field-1']),
+          buildPermissions('application-role-id', [], {
+            ...ALL_GRANTED,
+            [deniedGrant]: false,
+          }),
+        ]);
+
+        expect(result.objects[objectMetadataId1]?.rls).toMatchObject({
+          canReadRecords: deniedGrant !== 'canRead',
+          canUpdateRecords: deniedGrant !== 'canUpdate',
+          canSoftDeleteRecords: deniedGrant !== 'canSoftDelete',
+          canDestroyRecords: deniedGrant !== 'canDestroy',
+          [rowLevelGrant]: false,
+        });
+      },
+    );
 
     it('should leave a single role untouched', () => {
       const permissions = buildPermissions('user-role-id', ['field-1']);

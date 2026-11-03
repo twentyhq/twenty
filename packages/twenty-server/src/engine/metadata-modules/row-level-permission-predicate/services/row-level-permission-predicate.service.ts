@@ -483,7 +483,7 @@ export class RowLevelPermissionPredicateService {
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesRecordsPermissions',
+      'rolesPermissions',
     ]);
   }
 
