@@ -4,13 +4,37 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import { type Manifest } from 'twenty-shared/application';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  NavigationMenuItemType,
+  PageLayoutType,
+  ViewType,
+} from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_FOLDER_ID = uuidv4();
 const TEST_CHILD_ID = uuidv4();
+const TEST_ITEM_ID = uuidv4();
+const TEST_VIEW_ID = uuidv4();
+const TEST_PAGE_LAYOUT_ID = uuidv4();
+
+const TEST_VIEW: Manifest['views'][number] = {
+  universalIdentifier: TEST_VIEW_ID,
+  name: 'Paying companies',
+  objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
+  type: ViewType.TABLE,
+  icon: 'IconCreditCard',
+  position: 1,
+};
+
+const TEST_PAGE_LAYOUT: Manifest['pageLayouts'][number] = {
+  universalIdentifier: TEST_PAGE_LAYOUT_ID,
+  name: 'Funnel',
+  type: PageLayoutType.STANDALONE_PAGE,
+  tabs: [{ universalIdentifier: uuidv4(), title: 'Overview', position: 0 }],
+};
 
 const NAV_ITEM_GQL_FIELDS = `
   id
@@ -20,13 +44,18 @@ const NAV_ITEM_GQL_FIELDS = `
   link
   position
   folderId
+  viewId
+  pageLayoutId
+  targetObjectMetadataId
   applicationId
 `;
 
 let testApplicationId: string;
 
 const buildManifest = (
-  overrides?: Partial<Pick<Manifest, 'navigationMenuItems'>>,
+  overrides?: Partial<
+    Pick<Manifest, 'navigationMenuItems' | 'views' | 'pageLayouts'>
+  >,
 ) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -287,6 +316,111 @@ describe('Manifest update - navigation menu items', () => {
     expect(itemsAfterSecondSync[0]).toMatchObject({
       type: NavigationMenuItemType.FOLDER,
       name: 'Test Folder',
+    });
+  }, 60000);
+  it('should re-point an object item to a view on the same item', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        views: [TEST_VIEW],
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_ITEM_ID,
+            type: NavigationMenuItemType.OBJECT,
+            name: 'Companies',
+            position: 0,
+            targetObjectUniversalIdentifier:
+              STANDARD_OBJECTS.company.universalIdentifier,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const [itemAfterFirstSync] = await findAppNavigationMenuItems();
+
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        views: [TEST_VIEW],
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_ITEM_ID,
+            type: NavigationMenuItemType.VIEW,
+            name: 'Paying',
+            position: 0,
+            viewUniversalIdentifier: TEST_VIEW_ID,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const [viewRow] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."view" WHERE "universalIdentifier" = $1`,
+      [TEST_VIEW_ID],
+    );
+    const itemsAfterSecondSync = await findAppNavigationMenuItems();
+
+    expect(itemsAfterSecondSync).toHaveLength(1);
+    expect(itemsAfterSecondSync[0]).toMatchObject({
+      id: itemAfterFirstSync.id,
+      type: NavigationMenuItemType.VIEW,
+      name: 'Paying',
+      viewId: viewRow.id,
+      targetObjectMetadataId: null,
+    });
+  }, 60000);
+
+  it('should re-point a link item to a page layout on the same item', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayouts: [TEST_PAGE_LAYOUT],
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_ITEM_ID,
+            type: NavigationMenuItemType.LINK,
+            name: 'Funnel',
+            position: 0,
+            link: 'https://example.com/dashboard',
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const [itemAfterFirstSync] = await findAppNavigationMenuItems();
+
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        pageLayouts: [TEST_PAGE_LAYOUT],
+        navigationMenuItems: [
+          {
+            universalIdentifier: TEST_ITEM_ID,
+            type: NavigationMenuItemType.PAGE_LAYOUT,
+            name: 'Funnel',
+            position: 0,
+            pageLayoutUniversalIdentifier: TEST_PAGE_LAYOUT_ID,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const [pageLayoutRow] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."pageLayout" WHERE "universalIdentifier" = $1`,
+      [TEST_PAGE_LAYOUT_ID],
+    );
+    const itemsAfterSecondSync = await findAppNavigationMenuItems();
+
+    expect(itemsAfterSecondSync).toHaveLength(1);
+    expect(itemsAfterSecondSync[0]).toMatchObject({
+      id: itemAfterFirstSync.id,
+      type: NavigationMenuItemType.PAGE_LAYOUT,
+      link: null,
+      pageLayoutId: pageLayoutRow.id,
     });
   }, 60000);
 });

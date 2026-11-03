@@ -1,4 +1,5 @@
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { type NavigationMenuItemManifest } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import {
   eachTestingContextFilter,
@@ -7,10 +8,12 @@ import {
 import {
   FieldMetadataType,
   type FromTo,
+  NavigationMenuItemType,
   PageLayoutTabLayoutMode,
 } from 'twenty-shared/types';
 
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
+import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
@@ -61,6 +64,27 @@ const buildViewField = ({ position }: { position: number }) =>
       position,
     },
     viewUniversalIdentifier: 'view-universal-identifier',
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    now: NOW,
+  });
+
+const buildNavigationMenuItem = (
+  target: Pick<
+    NavigationMenuItemManifest,
+    | 'type'
+    | 'link'
+    | 'viewUniversalIdentifier'
+    | 'targetObjectUniversalIdentifier'
+    | 'pageLayoutUniversalIdentifier'
+  >,
+) =>
+  fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
+    navigationMenuItemManifest: {
+      universalIdentifier: 'navigation-menu-item-universal-identifier',
+      name: 'Paying',
+      position: 2,
+      ...target,
+    },
     applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     now: NOW,
   });
@@ -136,6 +160,54 @@ describe('compareTwoFlatEntity', () => {
       );
     },
   );
+
+  describe('navigation menu item targets', () => {
+    it('should update an object item re-pointed to a view', () => {
+      expect(
+        compareTwoFlatEntity({
+          fromUniversalFlatEntity: buildNavigationMenuItem({
+            type: NavigationMenuItemType.OBJECT,
+            targetObjectUniversalIdentifier: 'object-universal-identifier',
+          }),
+          toUniversalFlatEntity: buildNavigationMenuItem({
+            type: NavigationMenuItemType.VIEW,
+            viewUniversalIdentifier: 'view-universal-identifier',
+          }),
+          metadataName: 'navigationMenuItem',
+        }),
+      ).toEqual({
+        update: {
+          type: NavigationMenuItemType.VIEW,
+          viewUniversalIdentifier: 'view-universal-identifier',
+          targetObjectMetadataUniversalIdentifier: null,
+        },
+        nonUpdatablePropertyDivergences: [],
+      });
+    });
+
+    it('should update a link item re-pointed to a page layout', () => {
+      expect(
+        compareTwoFlatEntity({
+          fromUniversalFlatEntity: buildNavigationMenuItem({
+            type: NavigationMenuItemType.LINK,
+            link: 'https://example.com/dashboard',
+          }),
+          toUniversalFlatEntity: buildNavigationMenuItem({
+            type: NavigationMenuItemType.PAGE_LAYOUT,
+            pageLayoutUniversalIdentifier: 'page-layout-universal-identifier',
+          }),
+          metadataName: 'navigationMenuItem',
+        }),
+      ).toEqual({
+        update: {
+          type: NavigationMenuItemType.PAGE_LAYOUT,
+          link: null,
+          pageLayoutUniversalIdentifier: 'page-layout-universal-identifier',
+        },
+        nonUpdatablePropertyDivergences: [],
+      });
+    });
+  });
 
   describe('non-updatable property divergences', () => {
     it('should report a page layout tab moved to another page layout', () => {

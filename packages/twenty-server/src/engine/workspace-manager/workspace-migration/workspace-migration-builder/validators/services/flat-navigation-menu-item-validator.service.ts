@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -242,8 +243,11 @@ export class FlatNavigationMenuItemValidatorService {
   public validateFlatNavigationMenuItemUpdate({
     universalIdentifier,
     flatEntityUpdate,
+    finalFlatEntityMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
@@ -292,7 +296,31 @@ export class FlatNavigationMenuItemValidatorService {
       ...validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: toFlatNavigationMenuItem,
       }),
+      ...this.getUnresolvedReferenceValidationErrors({
+        flatNavigationMenuItem: toFlatNavigationMenuItem,
+        flatObjectMetadataMaps,
+        flatViewMaps,
+      }),
     );
+
+    const isLeavingFolderType =
+      fromFlatNavigationMenuItem.type === NavigationMenuItemType.FOLDER &&
+      toFlatNavigationMenuItem.type !== NavigationMenuItemType.FOLDER;
+
+    if (
+      isLeavingFolderType &&
+      Object.values(finalFlatEntityMaps.byUniversalIdentifier).some(
+        (flatNavigationMenuItem) =>
+          flatNavigationMenuItem?.folderUniversalIdentifier ===
+          universalIdentifier,
+      )
+    ) {
+      validationResult.errors.push({
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`A folder that still contains items cannot change type`,
+        userFriendlyMessage: msg`Move or remove the items in this folder before changing its type`,
+      });
+    }
 
     const folderUniversalIdentifierUpdate =
       flatEntityUpdate.folderUniversalIdentifier;
