@@ -304,7 +304,14 @@ export class AgentChatResolver {
           participation,
         });
 
-      return { ...savedMessage, queued: false };
+      return {
+        messageId: savedMessage.messageId,
+        queued: false,
+        mentionedParticipantWorkspaceMemberIds:
+          savedMessage.mentionedParticipantWorkspaceMemberIds,
+        recipientParticipantWorkspaceMemberIds:
+          savedMessage.recipientParticipantWorkspaceMemberIds,
+      };
     }
 
     const result = await this.agentChatStreamingService.streamAgentChat({
@@ -328,7 +335,14 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return { ...result, queued: true };
+      return {
+        messageId: result.messageId,
+        queued: true,
+        mentionedParticipantWorkspaceMemberIds:
+          result.mentionedParticipantWorkspaceMemberIds,
+        recipientParticipantWorkspaceMemberIds:
+          result.recipientParticipantWorkspaceMemberIds,
+      };
     }
 
     tagAiChatStreamScope({
