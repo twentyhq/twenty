@@ -89,8 +89,7 @@ export class UpdateAgentInput {
   isActive?: boolean;
 
   @IsArray()
-  @IsObject({ each: true })
   @IsOptional()
-  @Field(() => [GraphQLJSON], { nullable: true })
+  @Field(() => [GraphQLJSON], { nullable: 'itemsAndList' })
   triggers?: AgentTrigger[];
 }

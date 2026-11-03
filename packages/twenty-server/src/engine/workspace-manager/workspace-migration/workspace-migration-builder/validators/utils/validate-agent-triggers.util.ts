@@ -1,6 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { isBoolean, isNonEmptyString, isNull, isString } from '@sniptt/guards';
 import { CronExpressionParser } from 'cron-parser';
+import isEqual from 'lodash.isequal';
 import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
@@ -162,11 +163,16 @@ const validateAgentTrigger = (
   }
 };
 
-// Triggers arrive as raw JSON from the API or a manifest, so nothing about their shape is assumed
+const isSupportedTriggerType = (trigger: unknown): boolean =>
+  isPlainObject(trigger) &&
+  AGENT_TRIGGER_TYPES.some((type) => type === trigger.type);
+
 export const validateAgentTriggers = ({
   triggers,
+  persistedTriggers,
 }: {
   triggers: unknown;
+  persistedTriggers?: unknown;
 }): AgentTriggerValidationError[] => {
   if (!Array.isArray(triggers)) {
     return [buildInvalidTriggerError(t`Agent triggers must be a list`)];
@@ -182,7 +188,28 @@ export const validateAgentTriggers = ({
     ];
   }
 
-  const errors = triggers.flatMap((trigger) => validateAgentTrigger(trigger));
+  const persistedUnsupportedTriggers = Array.isArray(persistedTriggers)
+    ? persistedTriggers.filter((trigger) => !isSupportedTriggerType(trigger))
+    : [];
+  const retainedIndices = new Set<number>();
+  const errors = triggers.flatMap((trigger) => {
+    if (isSupportedTriggerType(trigger)) {
+      return validateAgentTrigger(trigger);
+    }
+
+    const persistedIndex = persistedUnsupportedTriggers.findIndex(
+      (persistedTrigger, index) =>
+        !retainedIndices.has(index) && isEqual(persistedTrigger, trigger),
+    );
+
+    if (persistedIndex === -1) {
+      return validateAgentTrigger(trigger);
+    }
+
+    retainedIndices.add(persistedIndex);
+
+    return [];
+  });
 
   const triggerIds = triggers
     .filter(isPlainObject)

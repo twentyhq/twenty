@@ -1,3 +1,6 @@
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
+import { UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -20,6 +23,91 @@ const CRON_TRIGGER: AgentTrigger = {
 };
 
 describe('validateAgentTriggers', () => {
+  it('lets central validation decide whether an opaque API payload was already saved', () => {
+    const input = plainToInstance(UpdateAgentInput, {
+      id: CRON_TRIGGER.id,
+      triggers: [null],
+    });
+
+    expect(validateSync(input)).toEqual([]);
+    expect(validateAgentTriggers({ triggers: input.triggers })).not.toEqual([]);
+    expect(
+      validateAgentTriggers({
+        triggers: input.triggers,
+        persistedTriggers: [null],
+      }),
+    ).toEqual([]);
+  });
+
+  const unsupportedTrigger = {
+    id: '6b7599da-a959-4e71-87c7-1338dcf02361',
+    type: 'WEBHOOK',
+    settings: { nested: { futureOption: true } },
+  };
+
+  it('retains opaque persisted payloads while recognized triggers are edited or removed', () => {
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: [unsupportedTrigger, CRON_TRIGGER, null],
+        triggers: [
+          null,
+          {
+            ...unsupportedTrigger,
+            settings: { nested: { futureOption: true } },
+          },
+          { ...CRON_TRIGGER, isActive: false },
+        ],
+      }),
+    ).toEqual([]);
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: [unsupportedTrigger],
+        triggers: [],
+      }),
+    ).toEqual([]);
+  });
+
+  it('rejects newly authored, modified, and duplicated opaque payloads', () => {
+    expect(
+      validateAgentTriggers({ triggers: [unsupportedTrigger] }),
+    ).not.toEqual([]);
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: [unsupportedTrigger],
+        triggers: [
+          {
+            ...unsupportedTrigger,
+            settings: { nested: { futureOption: false } },
+          },
+        ],
+      }),
+    ).not.toEqual([]);
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: [null],
+        triggers: [null, null],
+      }),
+    ).not.toEqual([]);
+  });
+
+  it('validates known types and the total limit even when opaque payloads are retained', () => {
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: [unsupportedTrigger, CRON_TRIGGER],
+        triggers: [
+          unsupportedTrigger,
+          { ...CRON_TRIGGER, settings: { pattern: '0 9 *' } },
+        ],
+      }),
+    ).not.toEqual([]);
+    expect(
+      validateAgentTriggers({
+        persistedTriggers: Array(21).fill(null),
+        triggers: Array(21).fill(null),
+      }),
+    ).toHaveLength(1);
+  });
+
   it('should accept an empty list', () => {
     expect(validateAgentTriggers({ triggers: [] })).toEqual([]);
   });

@@ -1,7 +1,10 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
-import { type AgentTrigger } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  AGENT_TRIGGER_TYPES,
+  type AgentTrigger,
+} from 'twenty-shared/application';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
@@ -151,7 +154,10 @@ export class AgentTriggerRunnerService
 
     const agent = resolveEffectiveAgent(agentRow);
     const trigger = agent.triggers.find(
-      (agentTrigger) => agentTrigger.id === triggerId,
+      (agentTrigger) =>
+        isPlainObject(agentTrigger) &&
+        AGENT_TRIGGER_TYPES.some((type) => type === agentTrigger.type) &&
+        agentTrigger.id === triggerId,
     );
 
     return agent.isActive && isDefined(trigger) && trigger.isActive
