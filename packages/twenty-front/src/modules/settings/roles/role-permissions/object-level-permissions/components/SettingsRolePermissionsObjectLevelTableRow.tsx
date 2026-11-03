@@ -5,11 +5,10 @@ import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/set
 import { SettingsRolePermissionsObjectLevelTableRowOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
+import { useRolePermissionSettingsNavigation } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useRolePermissionSettingsNavigation';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -34,18 +33,17 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const theme = useTheme();
   const objectLabelPlural = objectMetadataItem.labelPlural;
-  const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
-    roleId: roleId,
-    objectMetadataId: objectMetadataItem.id,
-  });
-
-  const navigationUrl = fromAgentId
-    ? `${navigationPath}?fromAgent=${fromAgentId}`
-    : navigationPath;
+  const { navigationUrl, handleNavigationClick } =
+    useRolePermissionSettingsNavigation({
+      roleId,
+      objectMetadataId: objectMetadataItem.id,
+      fromAgentId,
+    });
 
   return (
     <TableRow
       to={isEditable ? navigationUrl : undefined}
+      onClick={isEditable ? handleNavigationClick : undefined}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <TableCell
@@ -89,6 +87,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
+          onNavigate={handleNavigationClick}
           isEditable={isEditable}
         />
       </TableCell>

@@ -27,7 +27,7 @@ type Agent {
   prompt: String!
   responseFormat: JSON
   roleId: UUID
-  triggers: [JSON!]!
+  triggers: [JSON]!
   updatedAt: DateTime!
 }
 
@@ -5058,7 +5058,7 @@ input UpdateAgentInput {
   prompt: String
   responseFormat: JSON
   roleId: UUID
-  triggers: [JSON!]
+  triggers: [JSON]
 }
 
 input UpdateApiKeyInput {

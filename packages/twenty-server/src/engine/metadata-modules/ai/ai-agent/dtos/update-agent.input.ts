@@ -90,6 +90,6 @@ export class UpdateAgentInput {
 
   @IsArray()
   @IsOptional()
-  @Field(() => [GraphQLJSON], { nullable: true })
+  @Field(() => [GraphQLJSON], { nullable: 'itemsAndList' })
   triggers?: AgentTrigger[];
 }

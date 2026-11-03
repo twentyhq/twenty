@@ -5,7 +5,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 const StyledTableRow = styled.div<{
   isSelected?: boolean;
   isExpanded?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   to?: string;
   gridAutoColumns?: string;
   gridTemplateColumns?: string;
@@ -59,7 +59,7 @@ type TableRowProps = {
   isSelected?: boolean;
   isExpanded?: boolean;
   isClickable?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   role?: React.AriaRole;
   tabIndex?: number;

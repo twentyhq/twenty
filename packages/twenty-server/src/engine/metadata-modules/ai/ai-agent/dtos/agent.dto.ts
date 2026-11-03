@@ -7,7 +7,6 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -76,6 +75,6 @@ export class AgentDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   modelConfiguration?: ModelConfiguration;
 
-  @Field(() => [GraphQLJSON])
-  triggers: AgentTrigger[];
+  @Field(() => [GraphQLJSON], { nullable: 'items' })
+  triggers: unknown[];
 }
