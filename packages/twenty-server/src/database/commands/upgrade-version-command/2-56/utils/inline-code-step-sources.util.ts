@@ -1,19 +1,41 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
+
+const buildThrowingCode = (errorMessage: string) =>
+  `export const main = async () => {
+  throw new Error('${errorMessage}');
+};
+`;
+
+export const UNRECOVERABLE_CODE_STEP_SOURCE = buildThrowingCode(
+  'The source of this code step could not be recovered during the upgrade; rewrite it.',
+);
+
+export const OVERSIZED_CODE_STEP_SOURCE = buildThrowingCode(
+  'The source of this code step exceeded the size limit during the upgrade; rewrite it.',
+);
+
+export type InlinedCodeStep = {
+  stepId: unknown;
+  logicFunctionId: string;
+};
 
 const getLegacyCodeStepLogicFunctionId = (
   step: StoredWorkflowStep,
 ): string | undefined => {
   const input = step.settings?.input;
 
-  return step.type === 'CODE' &&
-    isDefined(input) &&
-    !isString(input.code) &&
-    isString(input.logicFunctionId)
-    ? input.logicFunctionId
-    : undefined;
+  if (step.type !== 'CODE' || !isDefined(input)) {
+    return undefined;
+  }
+
+  if (isNonEmptyString(input.code) || !isString(input.logicFunctionId)) {
+    return undefined;
+  }
+
+  return input.logicFunctionId;
 };
 
 export const inlineCodeStepSources = ({
@@ -22,23 +44,23 @@ export const inlineCodeStepSources = ({
 }: {
   steps: StoredWorkflowStep[];
   sourceByLogicFunctionId: ReadonlyMap<string, string>;
-}): { steps: StoredWorkflowStep[]; hasChanged: boolean } => {
-  let hasChanged = false;
+}): { steps: StoredWorkflowStep[]; inlinedCodeSteps: InlinedCodeStep[] } => {
+  const inlinedCodeSteps: InlinedCodeStep[] = [];
 
   const rewrittenSteps = steps.map((step) => {
     const logicFunctionId = getLegacyCodeStepLogicFunctionId(step);
-    const code = isDefined(logicFunctionId)
-      ? sourceByLogicFunctionId.get(logicFunctionId)
-      : undefined;
 
-    if (!isDefined(code)) {
+    if (!isDefined(logicFunctionId)) {
       return step;
     }
 
-    hasChanged = true;
+    inlinedCodeSteps.push({ stepId: step.id, logicFunctionId });
 
     const { logicFunctionId: _logicFunctionId, ...input } =
       step.settings?.input ?? {};
+    const code =
+      sourceByLogicFunctionId.get(logicFunctionId) ??
+      UNRECOVERABLE_CODE_STEP_SOURCE;
 
     return {
       ...step,
@@ -46,5 +68,5 @@ export const inlineCodeStepSources = ({
     };
   });
 
-  return { steps: rewrittenSteps, hasChanged };
+  return { steps: rewrittenSteps, inlinedCodeSteps };
 };

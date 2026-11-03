@@ -334,7 +334,9 @@ describe('Workflow version step type change into Code (e2e)', () => {
     );
 
     expect(rebuiltCodeStep.type).toBe('CODE');
-    expect(rebuiltCodeStep.settings.input.code).toEqual(expect.any(String));
+    expect(rebuiltCodeStep.settings.input.code).toEqual(
+      expect.stringContaining('export const main'),
+    );
     expect(rebuiltCodeStep.settings.input.logicFunctionId).toBeUndefined();
     expect(publishedCodeStep.type).toBe('CODE');
   });

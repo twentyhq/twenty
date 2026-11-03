@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -16,10 +21,14 @@ import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-func
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type InlineCodeStepSourcesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793717835616-inline-code-step-sources.command';
+import { UNRECOVERABLE_CODE_STEP_SOURCE } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+
+const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER = randomUUID();
+const OTHER_APPLICATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER = randomUUID();
 
 const MANUAL_TRIGGER = {
   name: 'Manual Trigger',
@@ -49,22 +58,29 @@ type LegacyCodeStepWorkflow = {
 };
 
 const inlinedStepOf = ({
-  settings: {
-    input: { logicFunctionId: _logicFunctionId, ...input },
-    ...settings
+  step: {
+    settings: {
+      input: { logicFunctionId: _logicFunctionId, ...input },
+      ...settings
+    },
+    ...step
   },
-  ...step
-}: CodeStep): CodeStep => ({
+  code = SOURCE,
+}: {
+  step: CodeStep;
+  code?: string;
+}): CodeStep => ({
   ...step,
-  settings: { ...settings, input: { ...input, code: SOURCE } },
+  settings: { ...settings, input: { ...input, code } },
 });
 
 describe('2-56 workspace command - inline code step sources (integration)', () => {
   let command: InlineCodeStepSourcesCommand;
   let legacyWorkflow: LegacyCodeStepWorkflow;
   let inFlightWorkflow: LegacyCodeStepWorkflow;
+  let missingFunctionWorkflow: LegacyCodeStepWorkflow;
+  let otherApplicationWorkflow: LegacyCodeStepWorkflow;
   let orphanLogicFunctionId: string;
-  let userLogicFunctionId: string;
   const inFlightRunId = randomUUID();
   const coreWorkflowIds: string[] = [];
   const workspaceWorkflowIds: string[] = [];
@@ -124,9 +140,70 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     return logicFunctionId;
   };
 
-  const createLegacyCodeStepWorkflow = async (
-    name: string,
-  ): Promise<LegacyCodeStepWorkflow> => {
+  const createOtherApplicationLogicFunction = async (): Promise<string> => {
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      name: 'Inline code step sources test app',
+      description: 'Owns a function a legacy code step references',
+      sourcePath: 'inline-code-step-sources-test-app',
+    });
+
+    jest.useRealTimers();
+
+    for (const { fileFolder, filePath } of [
+      { fileFolder: 'Source', filePath: 'src/greet.ts' },
+      { fileFolder: 'BuiltLogicFunction', filePath: 'src/greet.mjs' },
+    ]) {
+      await uploadApplicationFile({
+        applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+        fileFolder,
+        filePath,
+        fileBuffer: Buffer.from(SOURCE),
+        filename: filePath.split('/').pop() ?? filePath,
+        contentType: 'text/plain',
+        expectToFail: false,
+      });
+    }
+
+    await syncApplication({
+      manifest: buildBaseManifest({
+        appId: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+        roleId: randomUUID(),
+        overrides: {
+          logicFunctions: [
+            {
+              universalIdentifier:
+                OTHER_APPLICATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+              name: 'A Code Step',
+              sourceHandlerPath: 'src/greet.ts',
+              builtHandlerPath: 'src/greet.mjs',
+              builtHandlerChecksum: 'checksum',
+              handlerName: 'main',
+            },
+          ],
+        },
+      }),
+      expectToFail: false,
+    });
+
+    const [{ id }] = await global.testDataSource.query(
+      `SELECT id FROM core."logicFunction" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [
+        OTHER_APPLICATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        SEED_APPLE_WORKSPACE_ID,
+      ],
+    );
+
+    return id;
+  };
+
+  const createLegacyCodeStepWorkflow = async ({
+    name,
+    logicFunctionId,
+  }: {
+    name: string;
+    logicFunctionId: string;
+  }): Promise<LegacyCodeStepWorkflow> => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name,
     });
@@ -142,7 +219,6 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       coreWorkflowVersionId,
       stepType: 'CODE',
     });
-    const logicFunctionId = await createLogicFunction('A Code Step');
 
     // the builder no longer gives a step its own logic function, so the legacy shape is written as it left it
     const {
@@ -194,12 +270,23 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       'InlineCodeStepSourcesCommand',
     );
 
-    legacyWorkflow = await createLegacyCodeStepWorkflow('Greet with code');
-    inFlightWorkflow = await createLegacyCodeStepWorkflow(
-      'Greet with code while running',
-    );
+    legacyWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with code',
+      logicFunctionId: await createLogicFunction('A Code Step'),
+    });
+    inFlightWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with code while running',
+      logicFunctionId: await createLogicFunction('A Code Step'),
+    });
+    missingFunctionWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with lost code',
+      logicFunctionId: randomUUID(),
+    });
+    otherApplicationWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with application code',
+      logicFunctionId: await createOtherApplicationLogicFunction(),
+    });
     orphanLogicFunctionId = await createLogicFunction('A Code Step');
-    userLogicFunctionId = await createLogicFunction('Greet someone');
 
     await global.testDataSource.query(
       `INSERT INTO ${SCHEMA}."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position)
@@ -240,6 +327,10 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
         });
       }
     }
+
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
   });
 
   it('changes nothing in a dry run', async () => {
@@ -254,13 +345,15 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     expect(await logicFunctionExists(legacyWorkflow.logicFunctionId)).toBe(
       true,
     );
-    expect(await logicFunctionExists(orphanLogicFunctionId)).toBe(true);
+    expect(
+      await readCoreSteps(missingFunctionWorkflow.coreWorkflowVersionId),
+    ).toEqual([missingFunctionWorkflow.step]);
   });
 
   it('moves the source of a legacy code step into the step and deletes its function', async () => {
     await runCommand();
 
-    const inlinedStep = inlinedStepOf(legacyWorkflow.step);
+    const inlinedStep = inlinedStepOf({ step: legacyWorkflow.step });
 
     expect(await readCoreSteps(legacyWorkflow.coreWorkflowVersionId)).toEqual([
       inlinedStep,
@@ -275,19 +368,38 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
 
   it('keeps the function an in-flight run still references', async () => {
     expect(await readCoreSteps(inFlightWorkflow.coreWorkflowVersionId)).toEqual(
-      [inlinedStepOf(inFlightWorkflow.step)],
+      [inlinedStepOf({ step: inFlightWorkflow.step })],
     );
     expect(await logicFunctionExists(inFlightWorkflow.logicFunctionId)).toBe(
       true,
     );
   });
 
-  it('deletes a code step function no step references anymore, but not a function of the user', async () => {
-    expect(await logicFunctionExists(orphanLogicFunctionId)).toBe(false);
-    expect(await logicFunctionExists(userLogicFunctionId)).toBe(true);
+  it('replaces a step whose function is missing with code that throws', async () => {
+    expect(
+      await readCoreSteps(missingFunctionWorkflow.coreWorkflowVersionId),
+    ).toEqual([
+      inlinedStepOf({
+        step: missingFunctionWorkflow.step,
+        code: UNRECOVERABLE_CODE_STEP_SOURCE,
+      }),
+    ]);
   });
 
-  it('deletes the function of an in-flight run once the run is over', async () => {
+  it('inlines the source of a function owned by another application, and keeps the function', async () => {
+    expect(
+      await readCoreSteps(otherApplicationWorkflow.coreWorkflowVersionId),
+    ).toEqual([inlinedStepOf({ step: otherApplicationWorkflow.step })]);
+    expect(
+      await logicFunctionExists(otherApplicationWorkflow.logicFunctionId),
+    ).toBe(true);
+  });
+
+  it('keeps a function no step references, whatever its name', async () => {
+    expect(await logicFunctionExists(orphanLogicFunctionId)).toBe(true);
+  });
+
+  it('changes nothing on a second run', async () => {
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."workflowRun" SET status = 'COMPLETED' WHERE id = $1`,
       [inFlightRunId],
@@ -295,12 +407,12 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
 
     await runCommand();
 
-    expect(await logicFunctionExists(inFlightWorkflow.logicFunctionId)).toBe(
-      false,
-    );
     expect(await readCoreSteps(legacyWorkflow.coreWorkflowVersionId)).toEqual([
-      inlinedStepOf(legacyWorkflow.step),
+      inlinedStepOf({ step: legacyWorkflow.step }),
     ]);
+    expect(await logicFunctionExists(inFlightWorkflow.logicFunctionId)).toBe(
+      true,
+    );
   });
 
   it('runs the inlined step', async () => {

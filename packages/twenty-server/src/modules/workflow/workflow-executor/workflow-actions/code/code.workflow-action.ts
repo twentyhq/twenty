@@ -97,7 +97,7 @@ export class CodeWorkflowAction implements WorkflowAction {
     return { result: result.data || {} };
   }
 
-  // runs started before upgrade:2-56:inline-code-step-sources, and steps it could not inline
+  // runs started before upgrade:2-56:inline-code-step-sources
   private async executeLegacyLogicFunction({
     logicFunctionId,
     workspaceId,

@@ -183,6 +183,9 @@ describe('CodeWorkflowAction', () => {
 
     expect(
       logicFunctionFromSourceService.buildOneFromSource,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      logicFunctionFromSourceService.buildOneFromSource,
     ).toHaveBeenCalledWith({
       id: 'logic-function-id',
       workspaceId: 'workspace-id',

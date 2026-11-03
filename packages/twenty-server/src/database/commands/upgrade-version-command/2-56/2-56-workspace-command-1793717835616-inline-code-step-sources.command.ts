@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -8,10 +9,16 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { WORKFLOW_CODE_STEP_LOGIC_FUNCTION_NAMES } from 'src/database/commands/upgrade-version-command/2-56/constants/workflow-code-step-logic-function-names.constant';
-import { inlineCodeStepSources } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
-import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
+import {
+  inlineCodeStepSources,
+  OVERSIZED_CODE_STEP_SOURCE,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
+import {
+  rewriteJsonbRowsWithCompareAndSet,
+  type StoredJsonbRow,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   FileStorageException,
@@ -51,8 +58,7 @@ type StepLogicFunctionReference = {
   isLegacyCodeStep: boolean;
 };
 
-// in-flight runs keep their step definitions, which still run the legacy step by
-// logicFunctionId, so the functions they reference are kept
+// in-flight runs still execute the legacy step by logicFunctionId, so their functions are kept
 @RegisteredWorkspaceCommand('2.56.0', 1793717835616)
 @Command({
   name: 'upgrade:2-56:inline-code-step-sources',
@@ -111,47 +117,6 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
       });
     }
 
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatLogicFunctionMaps',
-        'flatApplicationMaps',
-      ]);
-
-    const [{ workspaceCustomApplicationId }]: {
-      workspaceCustomApplicationId: string | null;
-    }[] = await dataSource.query(
-      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-      [workspaceId],
-    );
-    const workspaceCustomFlatApplication = isDefined(
-      workspaceCustomApplicationId,
-    )
-      ? flatApplicationMaps.byId[workspaceCustomApplicationId]
-      : undefined;
-
-    // code steps only ever created their functions in the custom application
-    if (!isDefined(workspaceCustomFlatApplication)) {
-      return;
-    }
-
-    const customFlatLogicFunctionById = new Map(
-      Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(
-          ({ applicationId, deletedAt }) =>
-            applicationId === workspaceCustomFlatApplication.id &&
-            !isDefined(deletedAt),
-        )
-        .map((flatLogicFunction) => [flatLogicFunction.id, flatLogicFunction]),
-    );
-
-    // steps converted inline by the editor left these behind without deleting them
-    const workflowCreatedLogicFunctionIds = [
-      ...customFlatLogicFunctionById.values(),
-    ]
-      .filter(({ name }) => WORKFLOW_CODE_STEP_LOGIC_FUNCTION_NAMES.has(name))
-      .map(({ id }) => id);
-
     const versionReferences = await this.findReferences({
       dataSource,
       sources: workflowVersionSources,
@@ -165,42 +130,38 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
       ),
     ];
 
-    if (
-      legacyLogicFunctionIds.length === 0 &&
-      workflowCreatedLogicFunctionIds.length === 0
-    ) {
+    if (legacyLogicFunctionIds.length === 0) {
       return;
     }
 
-    const flatLogicFunctionsToInline: FlatLogicFunction[] = [];
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+        'flatApplicationMaps',
+      ]);
 
-    for (const logicFunctionId of legacyLogicFunctionIds) {
-      const flatLogicFunction =
-        customFlatLogicFunctionById.get(logicFunctionId);
+    const flatLogicFunctionById = new Map(
+      Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(({ deletedAt }) => !isDefined(deletedAt))
+        .map((flatLogicFunction) => [flatLogicFunction.id, flatLogicFunction]),
+    );
 
-      if (isDefined(flatLogicFunction)) {
-        flatLogicFunctionsToInline.push(flatLogicFunction);
-      } else {
-        this.logger.warn(
-          `Workspace ${workspaceId}: code step function ${logicFunctionId} is missing or not owned by the workspace, its steps are left as they are`,
-        );
-      }
-    }
+    const flatLogicFunctionsToInline = legacyLogicFunctionIds
+      .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
+      .filter(isDefined);
 
     const sourceByLogicFunctionId = await this.readSources({
       workspaceId,
-      workspaceCustomFlatApplication,
+      flatApplicationMaps,
       flatLogicFunctions: flatLogicFunctionsToInline,
     });
 
-    const inlineSteps = ({ value }: { value: StoredWorkflowStep[] }) => {
-      const { steps, hasChanged } = inlineCodeStepSources({
-        steps: value,
-        sourceByLogicFunctionId,
-      });
-
-      return { value: steps, hasChanged };
-    };
+    const recoveredLogicFunctionIds = new Set(
+      [...sourceByLogicFunctionId.entries()]
+        .filter(([, source]) => source !== OVERSIZED_CODE_STEP_SOURCE)
+        .map(([logicFunctionId]) => logicFunctionId),
+    );
 
     const rewrittenRowCounts: number[] = [];
 
@@ -213,7 +174,22 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
           columnName: 'steps',
           whereClause: `${source.whereClause} AND steps @> '[{"type":"CODE"}]'`,
           whereParameters: source.whereParameters,
-          mapRow: inlineSteps,
+          mapRow: ({ id, value }: StoredJsonbRow<StoredWorkflowStep[]>) => {
+            const { steps, inlinedCodeSteps } = inlineCodeStepSources({
+              steps: value,
+              sourceByLogicFunctionId,
+            });
+
+            for (const { stepId, logicFunctionId } of inlinedCodeSteps) {
+              if (!recoveredLogicFunctionIds.has(logicFunctionId)) {
+                this.logger.warn(
+                  `Workspace ${workspaceId}: the source of code step ${String(stepId)} in ${source.tableName} ${id} is ${sourceByLogicFunctionId.has(logicFunctionId) ? 'over the size limit' : 'missing'} (function ${logicFunctionId}), replaced with code that throws`,
+                );
+              }
+            }
+
+            return { value: steps, hasChanged: inlinedCodeSteps.length > 0 };
+          },
         }),
       );
     }
@@ -236,34 +212,45 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
         workflowVersionSources,
         versionReferencesBeforeRewrite: isDryRun
           ? versionReferences.filter(
-              ({ logicFunctionId, isLegacyCodeStep }) =>
-                !isLegacyCodeStep ||
-                !sourceByLogicFunctionId.has(logicFunctionId),
+              ({ isLegacyCodeStep }) => !isLegacyCodeStep,
             )
           : undefined,
       },
     );
 
-    const flatLogicFunctionsToDelete = [
-      ...new Set([
-        ...sourceByLogicFunctionId.keys(),
-        ...workflowCreatedLogicFunctionIds,
-      ]),
-    ]
+    const [{ workspaceCustomApplicationId }]: {
+      workspaceCustomApplicationId: string | null;
+    }[] = await dataSource.query(
+      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
+      [workspaceId],
+    );
+    const workspaceCustomFlatApplication = isDefined(
+      workspaceCustomApplicationId,
+    )
+      ? flatApplicationMaps.byId[workspaceCustomApplicationId]
+      : undefined;
+
+    // other applications own the functions they declare, only the custom application's are code step functions
+    const flatLogicFunctionsToDelete = [...recoveredLogicFunctionIds]
       .filter(
         (logicFunctionId) => !referencedLogicFunctionIds.has(logicFunctionId),
       )
-      .map((logicFunctionId) => customFlatLogicFunctionById.get(logicFunctionId))
+      .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
       .filter(isDefined)
+      .filter(
+        ({ applicationId }) =>
+          applicationId === workspaceCustomFlatApplication?.id,
+      )
       .filter(hasNoTriggerOutsideWorkflows);
 
-    const deletedLogicFunctionCount = isDryRun
-      ? flatLogicFunctionsToDelete.length
-      : await this.deleteLogicFunctions({
-          workspaceId,
-          workspaceCustomFlatApplication,
-          flatLogicFunctionsToDelete,
-        });
+    const deletedLogicFunctionCount =
+      isDryRun || !isDefined(workspaceCustomFlatApplication)
+        ? flatLogicFunctionsToDelete.length
+        : await this.deleteLogicFunctions({
+            workspaceId,
+            workspaceCustomFlatApplication,
+            flatLogicFunctionsToDelete,
+          });
 
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the code of ${coreWorkflowVersionCount} core workflow version(s) and ${workflowVersionCount} workflow version(s), and deleted ${deletedLogicFunctionCount} code step function(s)`,
@@ -272,39 +259,44 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
 
   private async readSources({
     workspaceId,
-    workspaceCustomFlatApplication,
+    flatApplicationMaps,
     flatLogicFunctions,
   }: {
     workspaceId: string;
-    workspaceCustomFlatApplication: FlatApplication;
+    flatApplicationMaps: FlatApplicationCacheMaps;
     flatLogicFunctions: FlatLogicFunction[];
   }): Promise<Map<string, string>> {
     const sourceByLogicFunctionId = new Map<string, string>();
 
     for (const batch of chunk(flatLogicFunctions, SOURCE_READ_BATCH_SIZE)) {
       const sources = await Promise.all(
-        batch.map((flatLogicFunction) =>
-          this.readSource({
-            workspaceId,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-            sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-          }),
-        ),
+        batch.map(({ applicationId, sourceHandlerPath }) => {
+          const applicationUniversalIdentifier =
+            flatApplicationMaps.byId[applicationId]?.universalIdentifier;
+
+          return isDefined(applicationUniversalIdentifier)
+            ? this.readSource({
+                workspaceId,
+                applicationUniversalIdentifier,
+                sourceHandlerPath,
+              })
+            : null;
+        }),
       );
 
       batch.forEach(({ id }, index) => {
         const source = sources[index];
 
-        if (!isDefined(source) || source.length > CODE_STEP_SOURCE_MAX_LENGTH) {
-          this.logger.warn(
-            `Workspace ${workspaceId}: the source of code step function ${id} is ${isDefined(source) ? 'too long' : 'missing'}, its steps are left as they are`,
-          );
-
+        if (!isNonEmptyString(source)) {
           return;
         }
 
-        sourceByLogicFunctionId.set(id, source);
+        sourceByLogicFunctionId.set(
+          id,
+          source.length > CODE_STEP_SOURCE_MAX_LENGTH
+            ? OVERSIZED_CODE_STEP_SOURCE
+            : source,
+        );
       });
     }
 
@@ -410,7 +402,8 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
         `SELECT DISTINCT
            step->'settings'->'input'->>'logicFunctionId' AS "logicFunctionId",
            (step->>'type' = 'CODE'
-             AND jsonb_typeof(step->'settings'->'input'->'code') IS DISTINCT FROM 'string') AS "isLegacyCodeStep"
+             AND (jsonb_typeof(step->'settings'->'input'->'code') IS DISTINCT FROM 'string'
+               OR step->'settings'->'input'->>'code' = '')) AS "isLegacyCodeStep"
          FROM ${tableName}
          CROSS JOIN LATERAL jsonb_array_elements(
            CASE WHEN jsonb_typeof(${stepsExpression}) = 'array' THEN ${stepsExpression} ELSE '[]'::jsonb END
@@ -505,10 +498,10 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
   }
 }
 
-// a function also triggered outside workflows is something a user relies on beyond the step
 const hasNoTriggerOutsideWorkflows = (flatLogicFunction: FlatLogicFunction) =>
   !isDefined(flatLogicFunction.cronTriggerSettings) &&
   !isDefined(flatLogicFunction.databaseEventTriggerSettings) &&
   !isDefined(flatLogicFunction.httpRouteTriggerSettings) &&
   !isDefined(flatLogicFunction.serverRouteTriggerSettings) &&
-  !isDefined(flatLogicFunction.toolTriggerSettings);
+  !isDefined(flatLogicFunction.toolTriggerSettings) &&
+  !isDefined(flatLogicFunction.workflowActionTriggerSettings);

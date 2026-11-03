@@ -1,12 +1,18 @@
-import { inlineCodeStepSources } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
+import {
+  inlineCodeStepSources,
+  UNRECOVERABLE_CODE_STEP_SOURCE,
+} from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
 const SOURCE = 'export const main = async () => ({ done: true });';
 
-const buildStep = (
-  input: Record<string, unknown>,
+const buildStep = ({
+  input,
   type = 'CODE',
-): StoredWorkflowStep => ({
+}: {
+  input: Record<string, unknown>;
+  type?: string;
+}): StoredWorkflowStep => ({
   id: 'step-id',
   type,
   name: 'Compute',
@@ -24,40 +30,78 @@ describe('inlineCodeStepSources', () => {
     expect(
       inline([
         buildStep({
-          logicFunctionId: 'logic-function-id',
-          logicFunctionInput: { a: '{{trigger.a}}' },
+          input: {
+            logicFunctionId: 'logic-function-id',
+            logicFunctionInput: { a: '{{trigger.a}}' },
+          },
         }),
       ]),
     ).toEqual({
       steps: [
-        buildStep({ logicFunctionInput: { a: '{{trigger.a}}' }, code: SOURCE }),
+        buildStep({
+          input: { logicFunctionInput: { a: '{{trigger.a}}' }, code: SOURCE },
+        }),
       ],
-      hasChanged: true,
+      inlinedCodeSteps: [
+        { stepId: 'step-id', logicFunctionId: 'logic-function-id' },
+      ],
     });
   });
 
-  it('leaves a step whose function source is unknown', () => {
-    const step = buildStep({
-      logicFunctionId: 'unknown-logic-function-id',
-      logicFunctionInput: {},
-    });
+  it('treats an empty code as legacy', () => {
+    expect(
+      inline([
+        buildStep({
+          input: {
+            code: '',
+            logicFunctionId: 'logic-function-id',
+            logicFunctionInput: {},
+          },
+        }),
+      ]).steps,
+    ).toEqual([buildStep({ input: { code: SOURCE, logicFunctionInput: {} } })]);
+  });
 
-    expect(inline([step])).toEqual({ steps: [step], hasChanged: false });
+  it('replaces a step whose function source is unknown with code that throws', () => {
+    expect(
+      inline([
+        buildStep({
+          input: {
+            logicFunctionId: 'unknown-logic-function-id',
+            logicFunctionInput: {},
+          },
+        }),
+      ]),
+    ).toEqual({
+      steps: [
+        buildStep({
+          input: {
+            logicFunctionInput: {},
+            code: UNRECOVERABLE_CODE_STEP_SOURCE,
+          },
+        }),
+      ],
+      inlinedCodeSteps: [
+        { stepId: 'step-id', logicFunctionId: 'unknown-logic-function-id' },
+      ],
+    });
   });
 
   it('leaves code steps that already carry their code and logic function steps', () => {
     const steps = [
       buildStep({
-        code: 'export const main = async () => ({});',
-        logicFunctionId: 'logic-function-id',
-        logicFunctionInput: {},
+        input: {
+          code: 'export const main = async () => ({});',
+          logicFunctionId: 'logic-function-id',
+          logicFunctionInput: {},
+        },
       }),
-      buildStep(
-        { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
-        'LOGIC_FUNCTION',
-      ),
+      buildStep({
+        input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
+        type: 'LOGIC_FUNCTION',
+      }),
     ];
 
-    expect(inline(steps)).toEqual({ steps, hasChanged: false });
+    expect(inline(steps)).toEqual({ steps, inlinedCodeSteps: [] });
   });
 });
