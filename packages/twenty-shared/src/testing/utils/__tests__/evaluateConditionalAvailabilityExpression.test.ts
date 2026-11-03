@@ -9,6 +9,7 @@ const buildContext = (
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,
   favoriteRecordIds: [],
+  areAllSelectedRecordsFavorites: false,
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
   numberOfSelectedRecords: 0,

@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type EvaluationContext } from 'expr-eval-fork';
 
-import { conditionalAvailabilityParser } from './conditionalAvailabilityParser';
+import { conditionalAvailabilityParser } from '@/utils/command-menu-items/conditionalAvailabilityParser';
 
 export const evaluateConditionalAvailabilityExpression = (
   expression: string | null | undefined,

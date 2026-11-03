@@ -8,6 +8,7 @@ export type CommandMenuContextApi = {
   isDashboardPageLayoutInEditMode: boolean;
   isLayoutCustomizationModeEnabled: boolean;
   favoriteRecordIds: string[];
+  areAllSelectedRecordsFavorites: boolean;
   isSelectAll: boolean;
   hasAnySoftDeleteFilterOnView: boolean;
   numberOfSelectedRecords: number;

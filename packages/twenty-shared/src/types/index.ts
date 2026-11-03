@@ -68,6 +68,19 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ConditionalAvailabilityExpressionNode } from './conditional-display/ConditionalAvailabilityExpressionNode';
+export type { ConditionalDisplay } from './conditional-display/ConditionalDisplay';
+export type { ConditionalDisplayAdminContextKey } from './conditional-display/ConditionalDisplayAdminContextKey';
+export type { ConditionalDisplayConditionNode } from './conditional-display/ConditionalDisplayConditionNode';
+export type { ConditionalDisplayContextKey } from './conditional-display/ConditionalDisplayContextKey';
+export type { ConditionalDisplayContextKeyDefinition } from './conditional-display/ConditionalDisplayContextKeyDefinition';
+export type { ConditionalDisplayDevice } from './conditional-display/ConditionalDisplayDevice';
+export type { ConditionalDisplayRecordFilter } from './conditional-display/ConditionalDisplayRecordFilter';
+export type { ConditionalDisplayRecordFilterGroup } from './conditional-display/ConditionalDisplayRecordFilterGroup';
+export type { ConditionalDisplaySelectedRecordsMatch } from './conditional-display/ConditionalDisplaySelectedRecordsMatch';
+export type { ConditionalDisplaySurface } from './conditional-display/ConditionalDisplaySurface';
+export type { ConditionalDisplayVirtualField } from './conditional-display/ConditionalDisplayVirtualField';
+export type { UniversalConditionalDisplay } from './conditional-display/UniversalConditionalDisplay';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
@@ -213,7 +226,6 @@ export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfi
 export type { GridPosition } from './page-layout/GridPosition';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export { PageLayoutType } from './page-layout/PageLayoutType';
-export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type {
   AggregateChartConfiguration,
   PieChartConfiguration,
