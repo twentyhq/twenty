@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type LinkedinCounterpartResolver } from 'src/logic-functions/types/linkedin-counterpart-resolver.type';
@@ -17,16 +16,20 @@ export const createLinkedinCounterpartResolver = (
       return resolvedCounterpart;
     }
 
+    let isLookupDeclined = false;
     const counterpart = await withLinkedinPublicIdentifier({
       unipileAccountId,
       user,
-      shouldLookUp,
+      shouldLookUp: isDefined(shouldLookUp)
+        ? async () => {
+            isLookupDeclined = !(await shouldLookUp());
+
+            return !isLookupDeclined;
+          }
+        : undefined,
     });
 
-    if (
-      !isDefined(shouldLookUp) ||
-      isNonEmptyString(counterpart.public_identifier)
-    ) {
+    if (!isLookupDeclined) {
       resolvedCounterpartById.set(user.id, counterpart);
     }
 

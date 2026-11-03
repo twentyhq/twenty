@@ -211,6 +211,26 @@ describe('ingestLinkedinMessages', () => {
     });
   });
 
+  it('links a group member found by their profile URL instead of creating them', async () => {
+    resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        ({ acopriya: 'priya-id', acosam: 'sam-id' })[
+          user.public_identifier ?? ''
+        ],
+    );
+
+    await expect(
+      ingest({ chat: GROUP_CHAT, counterparts: [UNRESOLVED_PRIYA, SAM] }),
+    ).resolves.toMatchObject({ matchedPersonCount: 2, createdPersonCount: 0 });
+    expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
+    expect(ingestedParticipantPersonIds()).toContain('sam-id');
+  });
+
   it('ingests under the public profile URL of the resolved counterpart', async () => {
     mocks.resolveCounterpart.mockResolvedValue(PRIYA);
 

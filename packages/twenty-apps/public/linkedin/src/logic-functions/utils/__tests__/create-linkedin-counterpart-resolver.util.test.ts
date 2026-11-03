@@ -19,6 +19,14 @@ const { UnipileRateLimitError } =
 
 const DELETED_MEMBER = { id: 'ACoGONE', display_name: 'LinkedIn Member' };
 
+const askBeforeReturning =
+  (result: typeof DELETED_MEMBER) =>
+  async ({ shouldLookUp }: { shouldLookUp?: () => Promise<boolean> }) => {
+    await shouldLookUp?.();
+
+    return result;
+  };
+
 describe('createLinkedinCounterpartResolver', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -44,7 +52,7 @@ describe('createLinkedinCounterpartResolver', () => {
     const resolvedMember = { ...DELETED_MEMBER, public_identifier: 'member' };
 
     mocks.withLinkedinPublicIdentifier
-      .mockResolvedValueOnce(DELETED_MEMBER)
+      .mockImplementationOnce(askBeforeReturning(DELETED_MEMBER))
       .mockResolvedValueOnce(resolvedMember);
     const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
 
@@ -59,6 +67,22 @@ describe('createLinkedinCounterpartResolver', () => {
       resolvedMember,
     );
     expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledTimes(2);
+  });
+
+  it('looks up once a profile LinkedIn could not resolve after an allowed lookup', async () => {
+    mocks.withLinkedinPublicIdentifier.mockImplementation(
+      askBeforeReturning(DELETED_MEMBER),
+    );
+    const resolveCounterpart = createLinkedinCounterpartResolver('acc_1');
+
+    await resolveCounterpart(DELETED_MEMBER, {
+      shouldLookUp: async () => true,
+    });
+    await resolveCounterpart(DELETED_MEMBER, {
+      shouldLookUp: async () => true,
+    });
+
+    expect(mocks.withLinkedinPublicIdentifier).toHaveBeenCalledOnce();
   });
 
   it('looks up a profile again after LinkedIn rate limited it', async () => {

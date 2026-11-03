@@ -75,7 +75,7 @@ const resolvePersonIdByHandle = async ({
     return undefined;
   }
 
-  const matchedPersonCount = personIdByHandle.size;
+  let matchedPersonCount = personIdByHandle.size;
 
   if (
     !isLinkedinContactCreationAllowed({
@@ -99,19 +99,37 @@ const resolvePersonIdByHandle = async ({
     ),
   );
 
-  for (const counterpart of creatableCounterparts) {
+  let createdPersonCount = 0;
+
+  for (const [index, counterpart] of creatableCounterparts.entries()) {
+    const handle = buildLinkedinProfileHandle(counterpart);
+    const personId =
+      counterpart.public_identifier ===
+      unmatchedCounterparts[index].public_identifier
+        ? undefined
+        : await matchLinkedinParticipantPersonId({
+            user: counterpart,
+            isNameMatchingEnabled: settings.isNameMatchingEnabled,
+          });
+
+    if (isDefined(personId)) {
+      personIdByHandle.set(handle, personId);
+      matchedPersonCount += 1;
+
+      continue;
+    }
+
     const { firstName, lastName } = splitLinkedinUserName(counterpart);
 
     if (
       isNonEmptyString(firstName) &&
       isNonEmptyString(counterpart.public_identifier)
     ) {
-      const handle = buildLinkedinProfileHandle(counterpart);
-
       personIdByHandle.set(
         handle,
         await createLinkedinPerson({ firstName, lastName, handle }),
       );
+      createdPersonCount += 1;
     }
   }
 
@@ -124,7 +142,7 @@ const resolvePersonIdByHandle = async ({
     ),
     personIdByHandle,
     matchedPersonCount,
-    createdPersonCount: personIdByHandle.size - matchedPersonCount,
+    createdPersonCount,
   };
 };
 
