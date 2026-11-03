@@ -25,6 +25,7 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -51,6 +52,7 @@ export class AgentChatThreadService {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly channelAccessService: AgentChatChannelAccessService,
     private readonly channelGrantService: AgentChatChannelGrantService,
+    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async createThread({
@@ -480,7 +482,6 @@ export class AgentChatThreadService {
     await this.saveAssistantParticipation({
       workspaceId: args.workspaceId,
       participation,
-      shouldEmitEvent: true,
     });
 
     return participation;
@@ -502,33 +503,51 @@ export class AgentChatThreadService {
     });
   }
 
-  async saveAssistantParticipationInTransaction({
+  async saveAssistantParticipation({
     workspaceId,
     participation: { threadBefore, thread },
+    shouldEmitEvent = true,
     scope,
   }: {
     workspaceId: string;
-    participation: AgentChatAssistantParticipation;
-    scope: AgentHistoryTransactionScope;
+    participation: Pick<
+      AgentChatAssistantParticipation,
+      'threadBefore' | 'thread'
+    >;
+    shouldEmitEvent?: boolean;
+    scope?: AgentHistoryTransactionScope;
   }): Promise<void> {
     if (threadBefore.isAssistantParticipant === thread.isAssistantParticipant) {
       return;
     }
 
-    const updatedThreadCount = await scope.update(
-      'agentChatThread',
-      { id: thread.id, isAssistantParticipant: !thread.isAssistantParticipant },
-      { isAssistantParticipant: thread.isAssistantParticipant },
-    );
-
-    if (updatedThreadCount > 0) {
-      scope.afterCommit(() =>
-        this.threadRecordEventService.emitThreadUpdated({
-          workspaceId,
-          threadBefore,
-        }),
+    const write = async (transactionScope: AgentHistoryTransactionScope) => {
+      const updatedThreadCount = await transactionScope.update(
+        'agentChatThread',
+        {
+          id: thread.id,
+          isAssistantParticipant: !thread.isAssistantParticipant,
+        },
+        { isAssistantParticipant: thread.isAssistantParticipant },
       );
+
+      if (updatedThreadCount > 0 && shouldEmitEvent) {
+        transactionScope.afterCommit(() =>
+          this.threadRecordEventService.emitThreadUpdated({
+            workspaceId,
+            threadBefore,
+          }),
+        );
+      }
+    };
+
+    if (isDefined(scope)) {
+      await write(scope);
+
+      return;
     }
+
+    await this.conversationWriterService.runInTransaction(workspaceId, write);
   }
 
   private async reconcileAssistantParticipation({
@@ -599,33 +618,6 @@ export class AgentChatThreadService {
       isInitialMessage,
       assistantPolicy,
     };
-  }
-
-  private async saveAssistantParticipation({
-    workspaceId,
-    participation: { threadBefore, thread },
-    shouldEmitEvent,
-  }: {
-    workspaceId: string;
-    participation: AgentChatAssistantParticipation;
-    shouldEmitEvent: boolean;
-  }): Promise<void> {
-    if (threadBefore.isAssistantParticipant === thread.isAssistantParticipant) {
-      return;
-    }
-
-    const { affected } = await this.threadRepository.update(
-      workspaceId,
-      { id: thread.id, isAssistantParticipant: !thread.isAssistantParticipant },
-      { isAssistantParticipant: thread.isAssistantParticipant },
-    );
-
-    if (affected > 0 && shouldEmitEvent) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-      });
-    }
   }
 
   // An assignee who could not reply is given edit access, as Front lets an

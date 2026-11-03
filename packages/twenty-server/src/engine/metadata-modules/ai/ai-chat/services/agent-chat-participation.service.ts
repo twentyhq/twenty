@@ -100,7 +100,7 @@ export class AgentChatParticipationService {
         });
 
         if (isDefined(assistantParticipation)) {
-          await this.threadService.saveAssistantParticipationInTransaction({
+          await this.threadService.saveAssistantParticipation({
             workspaceId: args.workspaceId,
             participation: assistantParticipation,
             scope,
