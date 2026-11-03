@@ -1,3 +1,4 @@
+import { WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS } from '@/settings/ai/constants/WorkspaceInstructionsSaveDebounceMilliseconds';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
@@ -14,7 +15,8 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { sleep } from '~/utils/sleep';
 
-const WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS = 1500;
+const WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS =
+  WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS * 2;
 
 const fixture = createSettingsAiIntegrationStoryFixture();
 

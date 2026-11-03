@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS } from '@/settings/ai/constants/WorkspaceInstructionsSaveDebounceMilliseconds';
 import { settingsAiWorkspaceInstructionsSaveFamilyState } from '@/settings/ai/states/settingsAiWorkspaceInstructionsSaveFamilyState';
 import { type SettingsAiWorkspaceInstructionsDraft } from '@/settings/ai/types/SettingsAiWorkspaceInstructionsDraft';
 import { getSettingsAiWorkspaceInstructionsDraftAfterSave } from '@/settings/ai/utils/getSettingsAiWorkspaceInstructionsDraftAfterSave';
@@ -17,8 +18,6 @@ import {
   PermissionFlagType,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-
-const WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS = 1000;
 
 export const useSettingsAiWorkspaceInstructions = () => {
   const { enqueueToast } = useToast();
