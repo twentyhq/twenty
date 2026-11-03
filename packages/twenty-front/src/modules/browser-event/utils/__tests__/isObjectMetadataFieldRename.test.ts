@@ -1,4 +1,4 @@
-import { isObjectMetadataFieldRename } from '@/sse-db-event/utils/isObjectMetadataFieldRename';
+import { isObjectMetadataFieldRename } from '@/browser-event/utils/isObjectMetadataFieldRename';
 
 const fieldRecord = {
   id: 'field-id',

@@ -2,12 +2,12 @@ import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { isObjectMetadataFieldRename } from '@/sse-db-event/utils/isObjectMetadataFieldRename';
+import { isObjectMetadataFieldRename } from '@/browser-event/utils/isObjectMetadataFieldRename';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { AllMetadataName } from '~/generated-metadata/graphql';
 
-export const SSEStaleRecordQueriesEvictionEffect = () => {
+export const RecordCacheStaleQueriesSSEEffect = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
 
