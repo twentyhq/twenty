@@ -116,11 +116,7 @@ export class AgentChatStreamingService {
     const workspaceId = workspace.id;
 
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
-    await this.fileAccessService.assertFilesReadableOrThrow({
-      workspaceId,
-      workspaceMemberId,
-      fileIds: fileAttachments?.map(({ id }) => id) ?? [],
-    });
+    await this.assertAttachmentsReadableOrThrow(options);
 
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
       this.agentRunSuspensionService.findConversationWait({
@@ -201,11 +197,7 @@ export class AgentChatStreamingService {
   async saveMessageWithoutReply(
     options: MemberMessageOptions,
   ): Promise<{ messageId: string }> {
-    await this.fileAccessService.assertFilesReadableOrThrow({
-      workspaceId: options.workspace.id,
-      workspaceMemberId: options.workspaceMemberId,
-      fileIds: options.fileAttachments?.map(({ id }) => id) ?? [],
-    });
+    await this.assertAttachmentsReadableOrThrow(options);
 
     const savedMessage = await this.addMemberMessage({
       ...options,
@@ -786,6 +778,21 @@ export class AgentChatStreamingService {
       })),
       ...uiMessages,
     ];
+  }
+
+  private async assertAttachmentsReadableOrThrow({
+    workspace,
+    workspaceMemberId,
+    fileAttachments,
+  }: Pick<
+    MemberMessageOptions,
+    'workspace' | 'workspaceMemberId' | 'fileAttachments'
+  >): Promise<void> {
+    await this.fileAccessService.assertFilesReadableOrThrow({
+      workspaceId: workspace.id,
+      workspaceMemberId,
+      fileIds: fileAttachments?.map(({ id }) => id) ?? [],
+    });
   }
 
   private async buildFilePartsFromAttachments(
