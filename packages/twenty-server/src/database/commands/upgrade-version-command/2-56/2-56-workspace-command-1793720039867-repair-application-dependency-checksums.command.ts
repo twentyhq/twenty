@@ -45,50 +45,72 @@ export class RepairApplicationDependencyChecksumsCommand extends ProvisionedWork
     );
 
     for (const flatApplication of flatApplications) {
-      const applicationIdentifier = {
-        workspaceId,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      };
-
-      const isPackageJsonStored = await this.fileStorageService.checkFileExists(
-        {
-          ...applicationIdentifier,
-          fileFolder: FileFolder.Dependencies,
-          resourcePath: 'package.json',
-        },
-      );
-
-      if (!isPackageJsonStored) {
-        continue;
-      }
-
-      const { packageJsonContent, yarnLockContent } =
-        await this.applicationDependencyFilesService.getDependencyContents(
-          applicationIdentifier,
+      try {
+        await this.repairApplicationDependencyChecksums({
+          workspaceId,
+          flatApplication,
+          isDryRun: options.dryRun ?? false,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Workspace ${workspaceId}: failed to repair dependency checksums of application ${flatApplication.universalIdentifier}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
-
-      const repairedChecksums = computeRepairedDependencyChecksums({
-        declaredChecksums: flatApplication,
-        packageJsonContent,
-        yarnLockContent,
-      });
-
-      if (!isDefined(repairedChecksums)) {
-        continue;
       }
+    }
+  }
 
-      this.logger.log(
-        `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: application ${flatApplication.universalIdentifier} package.json checksum ${flatApplication.packageJsonChecksum} -> ${repairedChecksums.packageJsonChecksum}, yarn.lock checksum ${flatApplication.yarnLockChecksum} -> ${repairedChecksums.yarnLockChecksum}`,
+  private async repairApplicationDependencyChecksums({
+    workspaceId,
+    flatApplication,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    isDryRun: boolean;
+  }): Promise<void> {
+    const applicationIdentifier = {
+      workspaceId,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    };
+
+    const isPackageJsonStored = await this.fileStorageService.checkFileExists({
+      ...applicationIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+
+    if (!isPackageJsonStored) {
+      return;
+    }
+
+    const { packageJsonContent, yarnLockContent } =
+      await this.applicationDependencyFilesService.getDependencyContents(
+        applicationIdentifier,
       );
 
-      if (options.dryRun) {
-        continue;
-      }
+    const repairedChecksums = computeRepairedDependencyChecksums({
+      declaredChecksums: flatApplication,
+      packageJsonContent,
+      yarnLockContent,
+    });
 
-      await this.applicationService.update(flatApplication.id, {
-        workspaceId,
-        ...repairedChecksums,
-      });
+    if (!isDefined(repairedChecksums)) {
+      return;
     }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: application ${flatApplication.universalIdentifier} package.json checksum ${flatApplication.packageJsonChecksum} -> ${repairedChecksums.packageJsonChecksum}, yarn.lock checksum ${flatApplication.yarnLockChecksum} -> ${repairedChecksums.yarnLockChecksum}`,
+    );
+
+    if (isDryRun) {
+      return;
+    }
+
+    await this.applicationService.update(flatApplication.id, {
+      workspaceId,
+      ...repairedChecksums,
+    });
   }
 }
