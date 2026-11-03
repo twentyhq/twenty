@@ -8,7 +8,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   showLabel?: boolean;
   labelWidth?: number;
 };
@@ -44,7 +44,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     relationObjectMetadataNamePlural:
       relationObjectMetadataItem?.namePlural ?? '',
     relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
-    objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
+    objectMetadataNameSingular: objectMetadataItem?.nameSingular ?? '',
     targetFieldMetadataName: field.relation?.targetFieldMetadata?.name ?? '',
     options: field.options,
     settings: field.settings,

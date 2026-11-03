@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { buildDeviceConditionalDisplay } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -11,6 +13,10 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
 }));
 jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
   useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
+}));
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: jest.fn(),
 }));
 
 const FOLDER: NavigationMenuItem = {
@@ -61,5 +67,28 @@ describe('useReadableNavigationMenuItems', () => {
     );
     expect(result.current.displayTopLevelItems).toEqual([folder]);
     expect(result.current.displayFolderChildrenById.get(folder.id)).toEqual([]);
+  });
+
+  it('shows a mobile-only item on mobile and hides it on desktop', () => {
+    const mobileOnlyLink: NavigationMenuItem = {
+      ...FOLDER,
+      id: 'mobile-only-link',
+      type: NavigationMenuItemType.LINK,
+      conditionalDisplay: buildDeviceConditionalDisplay('MOBILE'),
+    };
+
+    const renderForDevice = (isMobile: boolean) => {
+      jest.mocked(useIsMobile).mockReturnValue(isMobile);
+
+      return renderHook(() =>
+        useReadableNavigationMenuItems({
+          topLevelItems: [mobileOnlyLink],
+          folderChildrenById: new Map(),
+        }),
+      ).result.current.displayTopLevelItems;
+    };
+
+    expect(renderForDevice(true)).toEqual([mobileOnlyLink]);
+    expect(renderForDevice(false)).toEqual([]);
   });
 });

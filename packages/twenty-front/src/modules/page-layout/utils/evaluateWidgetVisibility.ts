@@ -1,34 +1,32 @@
-import jsonLogic, { type RulesLogic } from 'json-logic-js';
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 
+import { evaluateConditionalDisplayWithObjectMetadata } from '@/conditional-display/utils/evaluateConditionalDisplayWithObjectMetadata';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 
 type EvaluateWidgetVisibilityParams = {
-  conditionalAvailabilityExpression: string | null | undefined;
-  conditionalDisplay: RulesLogic | undefined;
+  conditionalAvailability: ConditionalDisplay | null | undefined;
+  conditionalDisplay: ConditionalDisplay | null | undefined;
   context: WidgetVisibilityContext;
 };
 
 export const evaluateWidgetVisibility = ({
-  conditionalAvailabilityExpression,
+  conditionalAvailability,
   conditionalDisplay,
   context,
 }: EvaluateWidgetVisibilityParams): boolean => {
-  if (isDefined(conditionalAvailabilityExpression)) {
-    return evaluateConditionalAvailabilityExpression(
-      conditionalAvailabilityExpression,
+  const evaluateForWidget = (
+    conditionalDisplayToEvaluate: ConditionalDisplay | null | undefined,
+  ) =>
+    evaluateConditionalDisplayWithObjectMetadata({
+      conditionalDisplay: conditionalDisplayToEvaluate,
       context,
-    );
-  }
+      records: context.selectedRecords,
+      objectMetadataItem: context.objectMetadataItem,
+      objectMetadataItems: context.objectMetadataItems,
+    });
 
-  if (!isDefined(conditionalDisplay)) {
-    return true;
-  }
-
-  const isVisible = jsonLogic.apply(conditionalDisplay, context) === true;
-
-  return isVisible;
+  return (
+    evaluateForWidget(conditionalAvailability) &&
+    evaluateForWidget(conditionalDisplay)
+  );
 };

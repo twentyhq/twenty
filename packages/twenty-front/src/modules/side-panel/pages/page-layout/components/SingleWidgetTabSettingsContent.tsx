@@ -1,16 +1,9 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
-import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
-import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -25,8 +18,7 @@ const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
   'reset-single-widget-tab-to-default-menu-item';
 
 type SingleWidgetTabSettingsContentProps = {
-  pageLayoutId: string;
-  singleWidget: PageLayoutWidget;
+  visibilityLabel: string;
   canSetAsPinned: boolean;
   canUnpin: boolean;
   canMoveLeft: boolean;
@@ -37,13 +29,13 @@ type SingleWidgetTabSettingsContentProps = {
   onMoveRight: () => void;
   onSetAsPinned: () => void;
   onUnpin: () => void;
+  onOpenVisibility: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
 };
 
 export const SingleWidgetTabSettingsContent = ({
-  pageLayoutId,
-  singleWidget,
+  visibilityLabel,
   canSetAsPinned,
   canUnpin,
   canMoveLeft,
@@ -54,16 +46,12 @@ export const SingleWidgetTabSettingsContent = ({
   onMoveRight,
   onSetAsPinned,
   onUnpin,
+  onOpenVisibility,
   onResetToDefault,
   onDelete,
 }: SingleWidgetTabSettingsContentProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { openDropdown } = useOpenDropdown();
-
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    singleWidget.conditionalAvailabilityExpression,
-  );
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
@@ -97,40 +85,17 @@ export const SingleWidgetTabSettingsContent = ({
         <SidePanelGroup heading={t`Manage`}>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-            onEnter={() =>
-              openDropdown({
-                dropdownComponentInstanceIdFromProps:
-                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-              })
-            }
+            onEnter={onOpenVisibility}
           >
-            <DropdownRoot
-              dropdownId={
-                TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-              }
-              type="picker"
-            >
-              <CommandMenuItemDropdownTrigger
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-                label={t`Visibility restriction`}
-                Icon={IconEyeX}
-                description={visibilityLabel}
-                contextualTextPosition="right"
-              />
-              <DropdownContent
-                side="bottom"
-                align="end"
-                collisionPadding={{ left: 0, right: 0 }}
-              >
-                <SingleWidgetTabVisibilityDropdownContent
-                  widgetId={singleWidget.id}
-                  currentExpression={
-                    singleWidget.conditionalAvailabilityExpression
-                  }
-                  pageLayoutId={pageLayoutId}
-                />
-              </DropdownContent>
-            </DropdownRoot>
+            <CommandMenuItem
+              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+              label={t`Visibility restriction`}
+              Icon={IconEyeX}
+              hasSubMenu
+              onClick={onOpenVisibility}
+              description={visibilityLabel}
+              contextualTextPosition="right"
+            />
           </SelectableListItem>
           <Tooltip
             delay={TooltipDelay.mediumDelay}

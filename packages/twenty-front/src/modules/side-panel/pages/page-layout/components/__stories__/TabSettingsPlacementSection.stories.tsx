@@ -11,9 +11,7 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
-import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
-import { EXPRESSION_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceDesktop';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
@@ -35,6 +33,7 @@ const meta: Meta<typeof RegularTabSettingsContent> = {
   component: RegularTabSettingsContent,
   decorators: [ComponentDecorator, MemoryRouterDecorator, ToastDecorator],
   args: {
+    visibilityLabel: 'Everyone',
     canSetAsPinned: true,
     canUnpin: false,
     canMoveLeft: true,
@@ -46,6 +45,7 @@ const meta: Meta<typeof RegularTabSettingsContent> = {
     onMoveLeft: fn(),
     onMoveRight: fn(),
     onDuplicate: fn(),
+    onOpenVisibility: fn(),
     onResetToDefault: fn(),
     onDelete: fn(),
   },
@@ -134,13 +134,7 @@ export const Pinned: Story = {
 };
 
 export const SingleWidget: Story = {
-  render: (args) => (
-    <SingleWidgetTabSettingsContent
-      {...args}
-      pageLayoutId="tab-settings-story"
-      singleWidget={makeWidget('widget-id', 0)}
-    />
-  ),
+  render: (args) => <SingleWidgetTabSettingsContent {...args} />,
   play: Regular.play,
 };
 
@@ -233,57 +227,5 @@ export const NoEligibleTabs: Story = {
     ).toBeDisabled();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).toHaveFocus());
-  },
-};
-
-export const WidgetVisibility: Story = {
-  render: () => (
-    <PageLayoutSidePanelTargetProvider
-      pageLayoutId={WIDGET_SETTINGS_STORY_LAYOUT_ID}
-      targetRecordIdentifier={{
-        id: 'placement-record',
-        targetObjectNameSingular: 'company',
-      }}
-    >
-      <SidePanelList
-        selectableItemIds={[
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
-        ]}
-      >
-        <WidgetSettingsManageSection
-          pageLayoutId={WIDGET_SETTINGS_STORY_LAYOUT_ID}
-        />
-      </SidePanelList>
-    </PageLayoutSidePanelTargetProvider>
-  ),
-  play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', {
-      name: /^Visibility Restriction/,
-    });
-    await userEvent.click(trigger);
-    expect(
-      await body.findByRole('option', { name: 'Any device' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.click(body.getByRole('option', { name: 'Desktop' }));
-    await waitFor(() => {
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-      expect(trigger).toHaveFocus();
-    });
-    expect(
-      jotaiStore.get(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID,
-        }),
-      ).tabs[0].widgets[0].conditionalAvailabilityExpression,
-    ).toBe(EXPRESSION_DEVICE_DESKTOP);
-    await userEvent.click(trigger);
-    expect(
-      await body.findByRole('option', { name: 'Desktop' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.keyboard('{Escape}');
   },
 };

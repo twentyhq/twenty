@@ -1,3 +1,4 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   formatFieldMetadataItemAsFieldDefinition,
   type FieldMetadataItemAsFieldDefinitionProps,
@@ -8,6 +9,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 
 type FieldMetadataItemAsColumnDefinitionProps = {
   position: number;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 } & FieldMetadataItemAsFieldDefinitionProps;
 
 export const formatFieldMetadataItemAsColumnDefinition = ({

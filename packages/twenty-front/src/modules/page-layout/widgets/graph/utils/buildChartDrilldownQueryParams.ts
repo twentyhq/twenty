@@ -4,7 +4,7 @@ import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/bu
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
-import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
+import { sanitizeRecordFilters } from '@/object-record/record-filter/utils/sanitizeRecordFilters';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildChartDrilldownQueryParams = ({
@@ -18,8 +18,8 @@ export const buildChartDrilldownQueryParams = ({
   const drilldownQueryParams = new URLSearchParams();
 
   if (isDefined(configuration.filter)) {
-    const { recordFilters, recordFilterGroups } = sanitizeChartRecordFilters({
-      chartFilters: configuration.filter,
+    const { recordFilters, recordFilterGroups } = sanitizeRecordFilters({
+      recordFiltersWithGroups: configuration.filter,
       fieldMetadataItems: objectMetadataItem.fields,
     });
 

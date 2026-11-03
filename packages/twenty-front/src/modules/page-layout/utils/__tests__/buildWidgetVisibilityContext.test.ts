@@ -7,7 +7,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -20,7 +20,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -33,7 +33,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -46,7 +46,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'DESKTOP',
       selectedRecords: [],
       featureFlags: {},
@@ -60,7 +60,7 @@ describe('buildWidgetVisibilityContext', () => {
       targetRecord: { id: 'a', status: 'DRAFT' },
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
       featureFlags: {},

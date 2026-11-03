@@ -3,6 +3,7 @@ import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-f
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { findFieldSelectLeadingFieldMetadataItem } from '@/object-record/advanced-filter/utils/findFieldSelectLeadingFieldMetadataItem';
 import { getAdvancedFilterFieldSubPage } from '@/object-record/advanced-filter/utils/getAdvancedFilterFieldSubPage';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
@@ -34,9 +35,11 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { goToPage } = useDropdownPage();
   const { getIcon } = useIcons();
   const { t } = useLingui();
-  const { objectMetadataItem } = useContext(AdvancedFilterContext);
+  const { objectMetadataItem, fieldSelectLeadingSections } = useContext(
+    AdvancedFilterContext,
+  );
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-    objectMetadataItem.id,
+    objectMetadataItem?.id ?? '',
   );
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -44,12 +47,14 @@ export const AdvancedFilterFieldSelectMenu = ({
   const visibleFieldMetadataItemIds = visibleRecordFields.map(
     (recordField) => recordField.fieldMetadataItemId,
   );
+  const isFieldMetadataItemMatchingSearchInput = (
+    fieldMetadataItem: FieldMetadataItem,
+  ) =>
+    fieldMetadataItem.label
+      .toLocaleLowerCase()
+      .includes(searchInput.toLocaleLowerCase());
   const filteredSearchInputFieldMetadataItems =
-    filterableFieldMetadataItems.filter((fieldMetadataItem) =>
-      fieldMetadataItem.label
-        .toLocaleLowerCase()
-        .includes(searchInput.toLocaleLowerCase()),
-    );
+    filterableFieldMetadataItems.filter(isFieldMetadataItemMatchingSearchInput);
   const visibleFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .filter((fieldMetadataItem) =>
       visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
@@ -72,10 +77,20 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { pushFocusForLeafFieldValuePicker } =
     usePushFocusForLeafFieldValuePicker();
 
+  const getFieldSubPage = (fieldMetadataItem: FieldMetadataItem) =>
+    isDefined(
+      findFieldSelectLeadingFieldMetadataItem({
+        fieldSelectLeadingSections,
+        fieldMetadataId: fieldMetadataItem.id,
+      }),
+    )
+      ? null
+      : getAdvancedFilterFieldSubPage(fieldMetadataItem);
+
   const handleFieldMetadataItemSelect = (
     fieldMetadataItem: FieldMetadataItem,
   ) => {
-    const subPage = getAdvancedFilterFieldSubPage(fieldMetadataItem);
+    const subPage = getFieldSubPage(fieldMetadataItem);
 
     if (isDefined(subPage)) {
       onSubPageFieldMetadataItemSelect(fieldMetadataItem);
@@ -92,7 +107,23 @@ export const AdvancedFilterFieldSelectMenu = ({
   };
 
   const hasVisibleFields = isNonEmptyArray(visibleFieldMetadataItems);
+
+  let hiddenFieldsSectionLabel: string | undefined;
+
+  if (hasVisibleFields) {
+    hiddenFieldsSectionLabel = t`Hidden fields`;
+  } else if (isNonEmptyArray(fieldSelectLeadingSections)) {
+    hiddenFieldsSectionLabel = objectMetadataItem?.labelSingular;
+  }
+
   const sections = [
+    ...(fieldSelectLeadingSections ?? []).map((fieldSelectLeadingSection) => ({
+      id: fieldSelectLeadingSection.id,
+      label: fieldSelectLeadingSection.label,
+      fields: fieldSelectLeadingSection.fieldMetadataItems.filter(
+        isFieldMetadataItemMatchingSearchInput,
+      ),
+    })),
     {
       id: 'visible',
       label: t`Visible fields`,
@@ -100,7 +131,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     },
     {
       id: 'hidden',
-      label: hasVisibleFields ? t`Hidden fields` : undefined,
+      label: hiddenFieldsSectionLabel,
       fields: hiddenFieldMetadataItems,
     },
   ].filter((section) => isNonEmptyArray(section.fields));
@@ -127,9 +158,7 @@ export const AdvancedFilterFieldSelectMenu = ({
                 startIcon={
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                 }
-                hasSubmenu={isDefined(
-                  getAdvancedFilterFieldSubPage(fieldMetadataItem),
-                )}
+                hasSubmenu={isDefined(getFieldSubPage(fieldMetadataItem))}
               >
                 {fieldMetadataItem.label}
               </Dropdown.OptionItem>

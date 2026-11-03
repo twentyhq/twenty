@@ -1,3 +1,4 @@
+import { useCommandMenuItemRuleFieldMetadataIds } from '@/command-menu-item/hooks/useCommandMenuItemRuleFieldMetadataIds';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -77,6 +78,9 @@ export const RecordTableWidgetProvider = ({
     objectMetadataItem,
     recordIndexId,
   );
+
+  const commandMenuItemRuleFieldMetadataIds =
+    useCommandMenuItemRuleFieldMetadataIds(objectMetadataItem.id);
 
   const indexIdentifierUrl = useCallback(
     (recordId: string) => {
@@ -164,6 +168,8 @@ export const RecordTableWidgetProvider = ({
             fieldMetadataItemByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
             recordLimit,
+            additionalFieldMetadataIdsToFetch:
+              commandMenuItemRuleFieldMetadataIds,
           }}
         >
           <ViewComponentInstanceContext.Provider

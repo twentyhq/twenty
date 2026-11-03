@@ -255,7 +255,7 @@ export const THEME_LIGHT = {
       yellow: 'color(display-p3 0.6 0.44 0)',
     },
     background: {
-      gray: 'color(display-p3 0.976 0.976 0.976)',
+      gray: 'color(display-p3 0.945 0.945 0.945)',
       mauve: 'color(display-p3 0.946 0.938 0.952)',
       slate: 'color(display-p3 0.94 0.941 0.953)',
       sage: 'color(display-p3 0.935 0.944 0.94)',

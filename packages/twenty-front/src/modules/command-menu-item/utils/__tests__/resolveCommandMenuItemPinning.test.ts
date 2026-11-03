@@ -1,45 +1,63 @@
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  type ConditionalDisplay,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
+import { type ConditionalDisplayEvaluationContext } from '@/conditional-display/types/ConditionalDisplayEvaluationContext';
+
+const STATUS_IS_SENT: ConditionalDisplay = {
+  recordFilters: [
+    {
+      id: 'status-is-sent',
+      contextKey: 'selectedRecords',
+      subFieldName: 'status',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify('SENT'),
+    },
+  ],
+};
 
 const COMMAND_MENU_ITEM = {
   isPinned: true,
-  conditionalPinnedExpression: 'everyEquals(selectedRecords, "status", "SENT")',
+  conditionalPinned: STATUS_IS_SENT,
 };
 
-const buildContextApi = (status: string) =>
-  ({
-    selectedRecords: [{ id: 'campaign-id', status }],
-  }) as unknown as CommandMenuContextApi;
+const buildContext = (status: string): ConditionalDisplayEvaluationContext => ({
+  selectedRecords: [{ id: 'campaign-id', status }],
+});
+
+const resolvePinning = (
+  commandMenuItem: {
+    isPinned: boolean;
+    conditionalPinned: ConditionalDisplay | null;
+  },
+  status: string,
+) =>
+  resolveCommandMenuItemPinning({
+    commandMenuItem,
+    conditionalDisplayContext: buildContext(status),
+    objectMetadataItems: [],
+  });
 
 describe('resolveCommandMenuItemPinning', () => {
-  it('keeps the pin while the expression holds', () => {
-    expect(
-      resolveCommandMenuItemPinning(COMMAND_MENU_ITEM, buildContextApi('SENT'))
-        .isPinned,
-    ).toBe(true);
+  it('keeps the pin while the pinned condition holds', () => {
+    expect(resolvePinning(COMMAND_MENU_ITEM, 'SENT').isPinned).toBe(true);
   });
 
-  it('unpins without hiding when the expression fails', () => {
-    expect(
-      resolveCommandMenuItemPinning(COMMAND_MENU_ITEM, buildContextApi('DRAFT'))
-        .isPinned,
-    ).toBe(false);
+  it('unpins without hiding when the pinned condition fails', () => {
+    expect(resolvePinning(COMMAND_MENU_ITEM, 'DRAFT').isPinned).toBe(false);
   });
 
-  it('leaves an item without an expression alone', () => {
-    const item = { ...COMMAND_MENU_ITEM, conditionalPinnedExpression: null };
+  it('leaves an item without a pinned condition alone', () => {
+    const item = { ...COMMAND_MENU_ITEM, conditionalPinned: null };
 
-    expect(
-      resolveCommandMenuItemPinning(item, buildContextApi('DRAFT')).isPinned,
-    ).toBe(true);
+    expect(resolvePinning(item, 'DRAFT').isPinned).toBe(true);
   });
 
   it('never pins an item that is not pinned to begin with', () => {
     const item = { ...COMMAND_MENU_ITEM, isPinned: false };
 
-    expect(
-      resolveCommandMenuItemPinning(item, buildContextApi('SENT')).isPinned,
-    ).toBe(false);
+    expect(resolvePinning(item, 'SENT').isPinned).toBe(false);
   });
 });

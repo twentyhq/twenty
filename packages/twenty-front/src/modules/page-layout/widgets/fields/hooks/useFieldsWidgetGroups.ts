@@ -80,6 +80,7 @@ export const useFieldsWidgetGroups = ({
                 position: viewField.position,
                 isVisible: viewField.isVisible,
                 globalIndex: globalIndex++,
+                conditionalDisplay: viewField.conditionalDisplay,
               };
 
               return field;
@@ -119,6 +120,7 @@ export const useFieldsWidgetGroups = ({
             position: viewField.position,
             isVisible: viewField.isVisible,
             globalIndex: globalIndex++,
+            conditionalDisplay: viewField.conditionalDisplay,
           };
         })
         .filter(isDefined);

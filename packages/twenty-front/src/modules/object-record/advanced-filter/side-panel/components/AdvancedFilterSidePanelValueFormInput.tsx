@@ -2,6 +2,7 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterSidePanelValueFormCompositeFieldInput } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormCompositeFieldInput';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { findFieldSelectLeadingFieldMetadataItem } from '@/object-record/advanced-filter/utils/findFieldSelectLeadingFieldMetadataItem';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { shouldShowFilterTextInput } from '@/object-record/advanced-filter/utils/shouldShowFilterTextInput';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -44,6 +45,7 @@ export const AdvancedFilterSidePanelValueFormInput = ({
     VariablePicker,
     objectMetadataItem,
     isWorkflowFindRecords,
+    fieldSelectLeadingSections,
   } = useContext(AdvancedFilterContext);
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -103,7 +105,12 @@ export const AdvancedFilterSidePanelValueFormInput = ({
   });
 
   const fieldMetadataItemForValueInput =
-    relationTargetFieldMetadataItem ?? fieldMetadataItemUsedInDropdown;
+    relationTargetFieldMetadataItem ??
+    fieldMetadataItemUsedInDropdown ??
+    findFieldSelectLeadingFieldMetadataItem({
+      fieldSelectLeadingSections,
+      fieldMetadataId: recordFilter?.fieldMetadataId,
+    });
 
   const objectMetadataItemForValueInput =
     relationTargetObjectMetadataItem ?? objectMetadataItem;

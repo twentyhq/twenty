@@ -1,3 +1,4 @@
+import { useCommandMenuItemConditionalDisplay } from '@/command-menu-item/hooks/useCommandMenuItemConditionalDisplay';
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
@@ -8,7 +9,6 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
-import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
@@ -26,7 +26,6 @@ import {
   CoreObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
@@ -85,7 +84,6 @@ export const CommandMenuContextProviderContent = ({
     pageLayoutIdFromContext === undefined
       ? currentPageLayoutId
       : pageLayoutIdFromContext;
-
   const commandMenuContextApiForAvailability = useMemo(
     () =>
       getCommandMenuContextApiForContainerType({
@@ -94,6 +92,9 @@ export const CommandMenuContextProviderContent = ({
       }),
     [commandMenuContextApi, containerType],
   );
+
+  const { isCommandMenuItemShown, resolvePinnedCommandMenuItem } =
+    useCommandMenuItemConditionalDisplay(commandMenuContextApiForAvailability);
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
@@ -138,23 +139,15 @@ export const CommandMenuContextProviderContent = ({
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
-      .filter((item) =>
-        evaluateConditionalAvailabilityExpression(
-          item.conditionalAvailabilityExpression,
-          commandMenuContextApiForAvailability,
-        ),
-      )
+      .filter(isCommandMenuItemShown)
       .map((item) =>
-        resolveCommandMenuItemPinning(
-          {
-            ...item,
-            isPinned:
-              item.isPinned ||
-              (isAiChatInboxHeader &&
-                item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
-          },
-          commandMenuContextApiForAvailability,
-        ),
+        resolvePinnedCommandMenuItem({
+          ...item,
+          isPinned:
+            item.isPinned ||
+            (isAiChatInboxHeader &&
+              item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
+        }),
       );
 
     return mergeGlobalRecordCreationCommandMenuItems({
@@ -168,7 +161,7 @@ export const CommandMenuContextProviderContent = ({
   }, [
     containerType,
     commandMenuContextApi,
-    commandMenuContextApiForAvailability,
+    resolvePinnedCommandMenuItem,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
     isCoreWorkflow,
@@ -178,6 +171,7 @@ export const CommandMenuContextProviderContent = ({
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
     isCoreWorkflowIndex,
+    isCommandMenuItemShown,
   ]);
 
   return (

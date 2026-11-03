@@ -1,271 +1,96 @@
-import { type RulesLogic } from 'json-logic-js';
+import {
+  type ConditionalDisplay,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import { buildDeviceConditionalDisplay } from 'twenty-shared/utils';
 
+import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
+
+const buildContext = (
+  device: WidgetVisibilityContext['device'],
+  featureFlags: WidgetVisibilityContext['featureFlags'] = {},
+): WidgetVisibilityContext => ({
+  device,
+  selectedRecords: [],
+  featureFlags,
+  currentRoleId: null,
+  currentWorkspaceMemberId: null,
+  objectMetadataItems: [],
+});
+
+const FEATURE_ENABLED_AVAILABILITY: ConditionalDisplay = {
+  recordFilters: [
+    {
+      id: 'feature-flag-filter',
+      contextKey: 'featureFlags',
+      subFieldName: 'IS_FEATURE_ENABLED',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify(true),
+    },
+  ],
+};
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
     const result = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
+      conditionalAvailability: undefined,
       conditionalDisplay: undefined,
-      context: {
-        device: 'DESKTOP',
-        selectedRecords: [],
-        featureFlags: {},
-      },
+      context: buildContext('DESKTOP'),
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return true (visible) when condition evaluates to true for MOBILE device', () => {
-    const conditionalDisplay: RulesLogic = {
-      and: [
-        {
-          '===': [{ var: 'device' }, 'MOBILE'],
-        },
-      ],
-    };
-
+  it('should return true (visible) when the device rule matches MOBILE', () => {
     const result = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'MOBILE',
-        selectedRecords: [],
-        featureFlags: {},
-      },
+      conditionalAvailability: undefined,
+      conditionalDisplay: buildDeviceConditionalDisplay('MOBILE'),
+      context: buildContext('MOBILE'),
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false (hidden) when condition evaluates to false for DESKTOP device', () => {
-    const conditionalDisplay: RulesLogic = {
-      and: [
-        {
-          '===': [{ var: 'device' }, 'MOBILE'],
-        },
-      ],
-    };
-
+  it('should return false (hidden) when the device rule does not match DESKTOP', () => {
     const result = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'DESKTOP',
-        selectedRecords: [],
-        featureFlags: {},
-      },
+      conditionalAvailability: undefined,
+      conditionalDisplay: buildDeviceConditionalDisplay('MOBILE'),
+      context: buildContext('DESKTOP'),
     });
 
     expect(result).toBe(false);
   });
 
-  it('should return true (visible) when condition evaluates to true for DESKTOP device', () => {
-    const conditionalDisplay: RulesLogic = {
-      and: [
-        {
-          '===': [{ var: 'device' }, 'DESKTOP'],
-        },
-      ],
-    };
-
-    const result = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'DESKTOP',
-        selectedRecords: [],
-        featureFlags: {},
-      },
-    });
-
-    expect(result).toBe(true);
-  });
-
-  it('should return false (hidden) when condition evaluates to false for MOBILE device', () => {
-    const conditionalDisplay: RulesLogic = {
-      and: [
-        {
-          '===': [{ var: 'device' }, 'DESKTOP'],
-        },
-      ],
-    };
-
-    const result = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'MOBILE',
-        selectedRecords: [],
-        featureFlags: {},
-      },
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('should handle OR conditions', () => {
-    const conditionalDisplay: RulesLogic = {
-      or: [
-        {
-          '===': [{ var: 'device' }, 'MOBILE'],
-        },
-        {
-          '===': [{ var: 'device' }, 'DESKTOP'],
-        },
-      ],
-    };
-
-    const resultMobile = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'MOBILE',
-        selectedRecords: [],
-        featureFlags: {},
-      },
-    });
-
-    const resultDesktop = evaluateWidgetVisibility({
-      conditionalAvailabilityExpression: undefined,
-      conditionalDisplay,
-      context: {
-        device: 'DESKTOP',
-        selectedRecords: [],
-        featureFlags: {},
-      },
-    });
-
-    expect(resultMobile).toBe(true);
-    expect(resultDesktop).toBe(true);
-  });
-
-  it('should throw error for invalid operator', () => {
-    const invalidConditionalDisplay = {
-      invalidOperator: 'test',
-    } as unknown as RulesLogic;
-
-    expect(() => {
-      evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: undefined,
-        conditionalDisplay: invalidConditionalDisplay,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
-      });
-    }).toThrow();
-  });
-
-  describe('conditionalAvailabilityExpression', () => {
-    it('should return true when expression matches MOBILE device', () => {
+  describe('conditionalAvailability', () => {
+    it('should return true when the feature flag of the availability is on', () => {
       const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalAvailability: FEATURE_ENABLED_AVAILABILITY,
         conditionalDisplay: undefined,
-        context: {
-          device: 'MOBILE',
-          selectedRecords: [],
-          featureFlags: {},
-        },
+        context: buildContext('DESKTOP', { IS_FEATURE_ENABLED: true }),
       });
 
       expect(result).toBe(true);
     });
 
-    it('should return false when expression does not match MOBILE device', () => {
+    it('should hide the widget when the availability fails even if conditionalDisplay matches', () => {
       const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: 'device == "MOBILE"',
-        conditionalDisplay: undefined,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
+        conditionalAvailability: FEATURE_ENABLED_AVAILABILITY,
+        conditionalDisplay: buildDeviceConditionalDisplay('DESKTOP'),
+        context: buildContext('DESKTOP'),
       });
 
       expect(result).toBe(false);
     });
 
-    it('should return true when expression matches DESKTOP device', () => {
+    it('should fall through to conditionalDisplay when the availability is null', () => {
       const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: 'device == "DESKTOP"',
-        conditionalDisplay: undefined,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
-      });
-
-      expect(result).toBe(true);
-    });
-
-    it('should take priority over conditionalDisplay when both are set', () => {
-      const conditionalDisplay: RulesLogic = {
-        and: [
-          {
-            '===': [{ var: 'device' }, 'DESKTOP'],
-          },
-        ],
-      };
-
-      const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: 'device == "MOBILE"',
-        conditionalDisplay,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
+        conditionalAvailability: null,
+        conditionalDisplay: buildDeviceConditionalDisplay('MOBILE'),
+        context: buildContext('DESKTOP'),
       });
 
       expect(result).toBe(false);
-    });
-
-    it('should fall through to conditionalDisplay when expression is null', () => {
-      const conditionalDisplay: RulesLogic = {
-        and: [
-          {
-            '===': [{ var: 'device' }, 'MOBILE'],
-          },
-        ],
-      };
-
-      const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: null,
-        conditionalDisplay,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
-      });
-
-      expect(result).toBe(false);
-    });
-
-    it('should fall through to conditionalDisplay when expression is undefined', () => {
-      const conditionalDisplay: RulesLogic = {
-        and: [
-          {
-            '===': [{ var: 'device' }, 'DESKTOP'],
-          },
-        ],
-      };
-
-      const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: undefined,
-        conditionalDisplay,
-        context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
-        },
-      });
-
-      expect(result).toBe(true);
     });
   });
 });

@@ -3,7 +3,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
-import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { type RecordFiltersWithGroups } from '@/object-record/record-filter/types/RecordFiltersWithGroups';
 import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -32,7 +32,7 @@ const buildRecordFilter = (
 
 const buildChartFilters = (
   recordFilters: PersistedRecordFilter[],
-): ChartFilters => ({
+): RecordFiltersWithGroups => ({
   recordFilters,
   recordFilterGroups: [],
 });
@@ -98,7 +98,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
-      filter: ChartFilters;
+      filter: RecordFiltersWithGroups;
     };
 
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([validFilter]);
@@ -126,7 +126,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
-      filter: ChartFilters;
+      filter: RecordFiltersWithGroups;
     };
 
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([validFilter]);
@@ -152,7 +152,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
               logicalOperator: RecordFilterGroupLogicalOperator.AND,
             },
           ],
-        } satisfies ChartFilters,
+        } satisfies RecordFiltersWithGroups,
       },
     });
 
@@ -164,7 +164,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
-      filter: ChartFilters;
+      filter: RecordFiltersWithGroups;
     };
 
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([]);
@@ -209,7 +209,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {
-      filter: ChartFilters;
+      filter: RecordFiltersWithGroups;
     };
 
     expect(sanitizedConfiguration.filter.recordFilters).toEqual([

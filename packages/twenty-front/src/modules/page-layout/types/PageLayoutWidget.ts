@@ -1,5 +1,5 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { type Nullable } from 'twenty-shared/types';
+import { type ConditionalDisplay, type Nullable } from 'twenty-shared/types';
 import {
   type FieldsConfiguration,
   type PageLayoutWidget as PageLayoutWidgetGenerated,
@@ -8,9 +8,13 @@ import {
 
 export type PageLayoutWidget = Omit<
   PageLayoutWidgetGenerated,
-  'objectMetadataId' | 'configuration'
+  | 'objectMetadataId'
+  | 'configuration'
+  | 'conditionalAvailability'
+  | 'conditionalDisplay'
 > & {
   objectMetadataId?: Nullable<string>;
   configuration: WidgetConfiguration | FieldsConfiguration | FieldConfiguration;
-  conditionalAvailabilityExpression?: Nullable<string>;
+  conditionalAvailability?: Nullable<ConditionalDisplay>;
+  conditionalDisplay?: Nullable<ConditionalDisplay>;
 };

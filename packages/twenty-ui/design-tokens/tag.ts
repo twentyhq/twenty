@@ -34,7 +34,7 @@ export const TAG_TOKENS = {
     yellow: COLOR_TOKENS.yellow11,
   },
   background: {
-    gray: GRAY_SCALE_TOKENS.gray3,
+    gray: GRAY_SCALE_TOKENS.gray4,
     mauve: COLOR_TOKENS.mauve3,
     slate: COLOR_TOKENS.slate3,
     sage: COLOR_TOKENS.sage3,

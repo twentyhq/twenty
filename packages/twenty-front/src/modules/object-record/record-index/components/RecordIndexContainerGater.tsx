@@ -1,5 +1,6 @@
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 
+import { useCommandMenuItemRuleFieldMetadataIds } from '@/command-menu-item/hooks/useCommandMenuItemRuleFieldMetadataIds';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -66,6 +67,9 @@ export const RecordIndexContainerGater = memo(() => {
     recordIndexId,
   );
 
+  const commandMenuItemRuleFieldMetadataIds =
+    useCommandMenuItemRuleFieldMetadataIds(objectMetadataItem.id);
+
   const indexContent = (
     <StyledIndexContainer className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}>
       {hasObjectReadPermissions ? (
@@ -94,6 +98,7 @@ export const RecordIndexContainerGater = memo(() => {
         labelIdentifierFieldMetadataItem,
         fieldMetadataItemByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,
+        additionalFieldMetadataIdsToFetch: commandMenuItemRuleFieldMetadataIds,
       }}
     >
       <ViewComponentInstanceContext.Provider

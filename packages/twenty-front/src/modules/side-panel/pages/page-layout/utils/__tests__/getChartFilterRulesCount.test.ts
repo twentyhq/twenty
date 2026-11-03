@@ -1,4 +1,4 @@
-import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { type RecordFiltersWithGroups } from '@/object-record/record-filter/types/RecordFiltersWithGroups';
 import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
 
 describe('getChartFilterRulesCount', () => {
@@ -7,7 +7,7 @@ describe('getChartFilterRulesCount', () => {
   });
 
   it('should return 0 when no root group exists', () => {
-    const filter: ChartFilters = {
+    const filter: RecordFiltersWithGroups = {
       recordFilters: [],
       recordFilterGroups: [],
     };
@@ -16,7 +16,7 @@ describe('getChartFilterRulesCount', () => {
   });
 
   it('should return count of filters in root group', () => {
-    const filter: ChartFilters = {
+    const filter: RecordFiltersWithGroups = {
       recordFilterGroups: [
         { id: 'root', parentRecordFilterGroupId: undefined },
       ],
@@ -24,13 +24,13 @@ describe('getChartFilterRulesCount', () => {
         { id: 'filter-1', recordFilterGroupId: 'root' },
         { id: 'filter-2', recordFilterGroupId: 'root' },
       ],
-    } as ChartFilters;
+    } as RecordFiltersWithGroups;
 
     expect(getChartFilterRulesCount(filter)).toBe(2);
   });
 
   it('should count both direct filters and nested groups as children', () => {
-    const filter: ChartFilters = {
+    const filter: RecordFiltersWithGroups = {
       recordFilterGroups: [
         { id: 'root', parentRecordFilterGroupId: undefined },
         { id: 'nested-group', parentRecordFilterGroupId: 'root' },
@@ -39,7 +39,7 @@ describe('getChartFilterRulesCount', () => {
         { id: 'filter-1', recordFilterGroupId: 'root' },
         { id: 'filter-2', recordFilterGroupId: 'nested-group' },
       ],
-    } as ChartFilters;
+    } as RecordFiltersWithGroups;
 
     expect(getChartFilterRulesCount(filter)).toBe(2);
   });

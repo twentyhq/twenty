@@ -1,7 +1,7 @@
 import { NavigationMenuItemMenuModeEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemMenuModeEffect';
 import { type ComponentProps, type ReactElement, type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown, type DropdownType } from 'twenty-ui/components/navigation';
 import { useTheme } from 'twenty-ui/theme';
@@ -25,6 +25,7 @@ const DROPDOWN_TYPE_BY_MENU_MODE: Record<
 > = {
   actions: 'menu',
   edit: 'panel',
+  visibility: 'panel',
   add: 'picker',
 };
 
@@ -80,7 +81,22 @@ export const NavigationMenuItemMenu = ({
   const close = () => closeDropdown(dropdownId);
   const isAdding = mode.type === 'add';
   const isEditing = mode.type === 'edit';
-  const menuAriaLabel = isEditing ? t`Edit link` : t`Menu item actions`;
+  const dropdownType = DROPDOWN_TYPE_BY_MENU_MODE[mode.type];
+  const isPanel = dropdownType === 'panel';
+  const getMenuAriaLabel = () => {
+    switch (mode.type) {
+      case 'edit':
+        return t`Edit link`;
+      case 'visibility':
+        return t`Visibility restriction`;
+      case 'actions':
+      case 'add':
+        return t`Menu item actions`;
+      default:
+        return assertUnreachable(mode);
+    }
+  };
+  const menuAriaLabel = getMenuAriaLabel();
   const openAddMenu = (target: NavigationMenuItemAddTarget) => {
     const { folderId } = target;
 
@@ -96,7 +112,7 @@ export const NavigationMenuItemMenu = ({
   return (
     <DropdownRoot
       dropdownId={dropdownId}
-      type={DROPDOWN_TYPE_BY_MENU_MODE[mode.type]}
+      type={dropdownType}
       onOpenChange={(open) => {
         if (open) {
           onOpen?.();
@@ -133,7 +149,7 @@ export const NavigationMenuItemMenu = ({
           ),
         );
 
-        if (isEditing || isInsideRow || isInsideRowPopup) {
+        if (isPanel || isInsideRow || isInsideRowPopup) {
           event.preventDefault();
         }
       }}
@@ -152,7 +168,7 @@ export const NavigationMenuItemMenu = ({
             : anchor
         }
         width={
-          isAdding || isEditing
+          isAdding || isPanel
             ? GenericDropdownContentWidth.ExtraLarge
             : GenericDropdownContentWidth.Large
         }

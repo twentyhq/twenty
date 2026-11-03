@@ -17,6 +17,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     agentChatChannelId
     position
     applicationId
+    conditionalDisplay
     createdAt
     updatedAt
   }

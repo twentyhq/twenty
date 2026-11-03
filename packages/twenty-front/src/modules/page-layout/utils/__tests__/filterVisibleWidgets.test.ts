@@ -1,4 +1,8 @@
+import { type ConditionalDisplay } from 'twenty-shared/types';
+import { buildDeviceConditionalDisplay } from 'twenty-shared/utils';
+
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import {
   FieldDisplayMode,
@@ -7,10 +11,21 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
+const buildContext = (
+  device: WidgetVisibilityContext['device'],
+): WidgetVisibilityContext => ({
+  device,
+  selectedRecords: [],
+  featureFlags: {},
+  currentRoleId: null,
+  currentWorkspaceMemberId: null,
+  objectMetadataItems: [],
+});
+
 describe('filterVisibleWidgets', () => {
   const createMockWidget = (
     id: string,
-    conditionalDisplay?: any,
+    conditionalDisplay?: ConditionalDisplay,
   ): PageLayoutTab['widgets'][0] => ({
     isSystemSideEffect: false,
     universalIdentifier: 'universal-identifier-mock',
@@ -50,7 +65,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: buildContext('DESKTOP'),
     });
 
     expect(result).toHaveLength(3);
@@ -60,17 +75,13 @@ describe('filterVisibleWidgets', () => {
   it('should filter out widgets that should be hidden on MOBILE', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
-      createMockWidget('widget-3', {
-        and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-      }),
+      createMockWidget('widget-2', buildDeviceConditionalDisplay('MOBILE')),
+      createMockWidget('widget-3', buildDeviceConditionalDisplay('DESKTOP')),
     ];
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'MOBILE', selectedRecords: [], featureFlags: {} },
+      context: buildContext('MOBILE'),
     });
 
     expect(result).toHaveLength(2);
@@ -80,17 +91,13 @@ describe('filterVisibleWidgets', () => {
   it('should filter out widgets that should be hidden on DESKTOP', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
-      createMockWidget('widget-3', {
-        and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-      }),
+      createMockWidget('widget-2', buildDeviceConditionalDisplay('MOBILE')),
+      createMockWidget('widget-3', buildDeviceConditionalDisplay('DESKTOP')),
     ];
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: buildContext('DESKTOP'),
     });
 
     expect(result).toHaveLength(2);
@@ -100,7 +107,7 @@ describe('filterVisibleWidgets', () => {
   it('should handle empty widgets array', () => {
     const result = filterVisibleWidgets({
       widgets: [],
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: buildContext('DESKTOP'),
     });
 
     expect(result).toHaveLength(0);
@@ -110,15 +117,13 @@ describe('filterVisibleWidgets', () => {
   it('should not mutate the original widgets array', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
+      createMockWidget('widget-2', buildDeviceConditionalDisplay('MOBILE')),
     ];
     const originalLength = widgets.length;
 
     filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      context: buildContext('DESKTOP'),
     });
 
     expect(widgets).toHaveLength(originalLength);
@@ -146,9 +151,7 @@ describe('filterVisibleWidgets', () => {
           createMockFieldWidget('widget-2', 'field-id-2'),
         ],
         context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
+          ...buildContext('DESKTOP'),
           hiddenFieldMetadataIdsOrNames: ['field-id-1'],
         },
       });
@@ -161,9 +164,7 @@ describe('filterVisibleWidgets', () => {
       const result = filterVisibleWidgets({
         widgets: [createMockFieldWidget('widget-1', 'workflow')],
         context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
+          ...buildContext('DESKTOP'),
           hiddenFieldMetadataIdsOrNames: ['field-id-1', 'workflow'],
         },
       });
@@ -175,9 +176,7 @@ describe('filterVisibleWidgets', () => {
       const result = filterVisibleWidgets({
         widgets: [createMockWidget('widget-1')],
         context: {
-          device: 'DESKTOP',
-          selectedRecords: [],
-          featureFlags: {},
+          ...buildContext('DESKTOP'),
           hiddenFieldMetadataIdsOrNames: ['workflow'],
         },
       });
@@ -191,7 +190,7 @@ describe('filterVisibleWidgets', () => {
           createMockFieldWidget('widget-1', 'field-id-1'),
           createMockFieldWidget('widget-2', 'field-id-2'),
         ],
-        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+        context: buildContext('DESKTOP'),
       });
 
       expect(result).toHaveLength(2);

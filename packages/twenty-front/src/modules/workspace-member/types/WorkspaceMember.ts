@@ -2,6 +2,7 @@ import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import {
+  type Role,
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
@@ -31,6 +32,7 @@ export type WorkspaceMember = {
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
   numberFormat?: WorkspaceMemberNumberFormatEnum | null;
   calendarStartDay?: number | null;
+  roles?: Pick<Role, 'id' | 'canBeAssignedToUsers'>[] | null;
 };
 
 export type WorkspaceInvitation = {

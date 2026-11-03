@@ -58,8 +58,8 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
         hotKeys: null,
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
         availabilityObjectMetadataId: null,
-        conditionalAvailabilityExpression: null,
-        conditionalPinnedExpression: null,
+        conditionalAvailability: null,
+        conditionalPinned: null,
         navigationTargetObjectMetadataId: null,
         creationTargetObjectMetadataId: objectMetadataItem.id,
       };

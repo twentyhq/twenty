@@ -1,3 +1,4 @@
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -6,6 +7,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -15,7 +17,8 @@ type SettingsApplicationCommandMenuItemSettingsTabProps = {
   icon?: string | null;
   isPinned: boolean;
   availabilityType: string;
-  conditionalAvailabilityExpression?: string | null;
+  conditionalAvailability?: ConditionalDisplay | null;
+  conditionalDisplay?: ConditionalDisplay | null;
   frontComponentName?: string | null;
   universalIdentifier?: string | null;
   createdAt: string;
@@ -47,7 +50,8 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
   icon,
   isPinned,
   availabilityType,
-  conditionalAvailabilityExpression,
+  conditionalAvailability,
+  conditionalDisplay,
   frontComponentName,
   universalIdentifier,
   createdAt,
@@ -80,13 +84,20 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
       value: <StyledMonoText>{availabilityType}</StyledMonoText>,
     },
     {
-      key: 'conditionalAvailabilityExpression',
+      key: 'conditionalAvailability',
       label: t`Conditional availability`,
-      value: conditionalAvailabilityExpression ? (
-        <StyledMonoText>{conditionalAvailabilityExpression}</StyledMonoText>
-      ) : (
-        t`Not set`
-      ),
+      value: getConditionalDisplaySummaryLabel({
+        conditionName: 'conditionalAvailability',
+        conditionalDisplay: conditionalAvailability,
+      }),
+    },
+    {
+      key: 'conditionalDisplay',
+      label: t`Visibility`,
+      value: getConditionalDisplaySummaryLabel({
+        conditionName: 'conditionalDisplay',
+        conditionalDisplay,
+      }),
     },
     {
       key: 'frontComponent',

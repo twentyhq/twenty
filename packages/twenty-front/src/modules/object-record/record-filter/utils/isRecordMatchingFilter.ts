@@ -53,6 +53,20 @@ import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { isMatchingFieldReferenceFilter } from '@/object-record/record-filter/utils/isMatchingFieldReferenceFilter';
 
+type MatchedFieldMetadataItem = Pick<
+  FieldMetadataItem,
+  'name' | 'type' | 'relation' | 'morphRelations'
+> & {
+  options?: { value: string; position: number }[] | null;
+};
+
+type MatchedObjectMetadataItem = Pick<
+  EnrichedObjectMetadataItem,
+  'nameSingular'
+> & {
+  fields: MatchedFieldMetadataItem[];
+};
+
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is LeafObjectRecordFilter => {
@@ -70,7 +84,7 @@ const isMorphRelationJoinColumnKey = ({
   fieldMetadataItem,
   key,
 }: {
-  fieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItem: MatchedFieldMetadataItem;
   key: string;
 }): boolean => {
   if (!fieldMetadataItem.morphRelations?.length) {
@@ -219,7 +233,7 @@ export const isRecordMatchingFilter = ({
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: MatchedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isWithinNegatedFilter?: boolean;
   parentRecord?: Record<string, unknown>;

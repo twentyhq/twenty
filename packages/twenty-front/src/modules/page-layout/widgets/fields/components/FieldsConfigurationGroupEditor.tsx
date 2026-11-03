@@ -193,6 +193,7 @@ export const FieldsConfigurationGroupEditor = ({
                         fieldMetadataId: field.fieldMetadataItem.id,
                         position: field.position,
                         isVisible: field.isVisible,
+                        conditionalDisplay: field.conditionalDisplay,
                       }}
                       fieldMetadata={field.fieldMetadataItem}
                       onToggleVisibility={() => {

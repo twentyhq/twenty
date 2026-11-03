@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useQuery } from '@apollo/client/react';
 import {
-  type WorkspaceMember,
+  type WorkspaceMemberQueryFragmentFragment,
   GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
@@ -129,7 +129,7 @@ export const UserMetadataProviderInitialEffect = () => {
     } = userQueryData.currentUser;
 
     const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
-      workspaceMember: WorkspaceMember,
+      workspaceMember: WorkspaceMemberQueryFragmentFragment,
     ) => {
       return {
         ...workspaceMember,

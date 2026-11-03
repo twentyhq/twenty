@@ -2,7 +2,7 @@ import { DraggableListRow } from '@/ui/layout/draggable-list/components/Draggabl
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
-import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
+import { CommandMenuItemRowActions } from '@/command-menu-item/edit/components/CommandMenuItemRowActions';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
@@ -24,11 +24,8 @@ import { useLingui } from '@lingui/react/macro';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { IconDotsVertical, IconPin, IconPinnedOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from 'twenty-ui/utilities';
@@ -242,36 +239,21 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           dragHandleVisibility="hover"
                           actionsVisibility="always"
                           actions={
-                            <ButtonGroup
-                              attached={false}
-                              aria-label={t`Menu item actions`}
-                            >
-                              <CommandMenuItemOptionsDropdown
-                                itemId={item.id}
-                                shortLabel={item.shortLabel}
-                                serverShortLabel={
-                                  serverItemsById.get(item.id)?.shortLabel ??
-                                  null
-                                }
-                                iconButton={
-                                  <LightIconButton aria-label={t`More options`}>
-                                    <IconDotsVertical />
-                                  </LightIconButton>
-                                }
-                              />
-                              <LightIconButton
-                                aria-label={t`Unpin`}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleTogglePin({
-                                    itemId: item.id,
-                                    currentlyPinned: true,
-                                  });
-                                }}
-                              >
-                                <IconPinnedOff />
-                              </LightIconButton>
-                            </ButtonGroup>
+                            <CommandMenuItemRowActions
+                              itemId={item.id}
+                              shortLabel={item.shortLabel}
+                              isPinned
+                              conditionalDisplay={item.conditionalDisplay}
+                              serverShortLabel={
+                                serverItemsById.get(item.id)?.shortLabel ?? null
+                              }
+                              onTogglePin={() =>
+                                handleTogglePin({
+                                  itemId: item.id,
+                                  currentlyPinned: true,
+                                })
+                              }
+                            />
                           }
                         >
                           {getDisplayLabel(item)}
@@ -307,17 +289,21 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       />
                     }
                     actions={
-                      <LightIconButton
-                        aria-label={t`Pin`}
-                        onClick={() =>
+                      <CommandMenuItemRowActions
+                        itemId={item.id}
+                        shortLabel={item.shortLabel}
+                        isPinned={false}
+                        conditionalDisplay={item.conditionalDisplay}
+                        serverShortLabel={
+                          serverItemsById.get(item.id)?.shortLabel ?? null
+                        }
+                        onTogglePin={() =>
                           handleTogglePin({
                             itemId: item.id,
                             currentlyPinned: false,
                           })
                         }
-                      >
-                        <IconPin />
-                      </LightIconButton>
+                      />
                     }
                   >
                     {getDisplayLabel(item)}

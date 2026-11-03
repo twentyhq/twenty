@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { useContext } from 'react';
 import {
+  type ConditionalDisplay,
   ContextStorePageType,
   CoreObjectNameSingular,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -13,6 +15,7 @@ import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/u
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   EngineComponentKey,
@@ -50,10 +53,22 @@ jest.mock('@/page-layout/states/currentPageLayoutIdState', () => ({
   PageLayoutIdContext: jest.requireActual('react').createContext(undefined),
 }));
 
-const REQUIRES_UPDATE =
-  'noneEquals(selectedRecords, "recordPermissions.canUpdate", false)';
-const REQUIRES_SOFT_DELETE =
-  'noneEquals(selectedRecords, "recordPermissions.canSoftDelete", false)';
+const buildRecordPermissionRequirement = (
+  recordPermissionName: string,
+): ConditionalDisplay => ({
+  recordFilters: [
+    {
+      id: recordPermissionName,
+      contextKey: 'selectedRecords',
+      subFieldName: `recordPermissions.${recordPermissionName}`,
+      operand: ViewFilterOperand.IS_NOT,
+      value: JSON.stringify(false),
+    },
+  ],
+});
+
+const REQUIRES_UPDATE = buildRecordPermissionRequirement('canUpdate');
+const REQUIRES_SOFT_DELETE = buildRecordPermissionRequirement('canSoftDelete');
 
 const COMMANDS = (
   [
@@ -63,14 +78,14 @@ const COMMANDS = (
     [EngineComponentKey.TIDY_UP_WORKFLOW, 'Tidy up', REQUIRES_UPDATE],
     [EngineComponentKey.DELETE_RECORDS, 'Delete', REQUIRES_SOFT_DELETE],
   ] as const
-).map(([engineComponentKey, label, expression], position) => ({
+).map(([engineComponentKey, label, conditionalAvailability], position) => ({
   id: engineComponentKey,
   engineComponentKey,
   label,
   position,
   isPinned: true,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-  conditionalAvailabilityExpression: expression,
+  conditionalAvailability,
 })) as CommandMenuItemDefinition[];
 
 const CURRENT_WORKSPACE = {
@@ -93,6 +108,10 @@ const renderWorkflowCommands = (applicationId: string) => {
   jest.mocked(useAtomStateValue).mockImplementation((state) => {
     if (state === commandMenuItemsSelector) {
       return COMMANDS;
+    }
+
+    if (state === objectMetadataItemsWithFieldsSelector) {
+      return [];
     }
 
     return state === currentWorkspaceState ? CURRENT_WORKSPACE : null;

@@ -1,18 +1,15 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
-import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -60,11 +57,8 @@ export const WidgetSettingsManageSection = ({
   const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
   const { openDialog } = useDialog();
-  const { openDropdown } = useOpenDropdown();
 
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    widgetInEditMode?.conditionalAvailabilityExpression,
-  );
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
@@ -86,6 +80,10 @@ export const WidgetSettingsManageSection = ({
     resetPageLayoutWidgetToDefault(pageLayoutEditingWidgetId);
   };
 
+  const handleNavigateToVisibility = () => {
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutWidgetVisibility);
+  };
+
   const handleDeleteWidget = () => {
     deletePageLayoutWidget(pageLayoutEditingWidgetId);
   };
@@ -95,34 +93,20 @@ export const WidgetSettingsManageSection = ({
       <SidePanelGroup heading={t`Manage`}>
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-          onEnter={() =>
-            openDropdown({
-              dropdownComponentInstanceIdFromProps:
-                WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-            })
-          }
+          onEnter={handleNavigateToVisibility}
         >
-          <DropdownRoot
-            dropdownId={
-              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-            }
-            type="picker"
-          >
-            <CommandMenuItemDropdownTrigger
-              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-              label={t`Visibility Restriction`}
-              Icon={IconEyeX}
-              description={visibilityLabel}
-              contextualTextPosition="right"
-            />
-            <DropdownContent
-              side="bottom"
-              align="end"
-              collisionPadding={{ left: 0, right: 0 }}
-            >
-              <WidgetVisibilityDropdownContent />
-            </DropdownContent>
-          </DropdownRoot>
+          <CommandMenuItem
+            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            label={t`Visibility Restriction`}
+            Icon={IconEyeX}
+            hasSubMenu
+            onClick={handleNavigateToVisibility}
+            description={getConditionalDisplaySummaryLabel({
+              conditionName: 'conditionalDisplay',
+              conditionalDisplay: widgetInEditMode?.conditionalDisplay,
+            })}
+            contextualTextPosition="right"
+          />
         </SelectableListItem>
         <Tooltip
           delay={TooltipDelay.mediumDelay}

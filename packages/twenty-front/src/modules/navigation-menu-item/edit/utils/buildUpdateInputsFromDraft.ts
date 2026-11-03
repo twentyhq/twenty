@@ -7,6 +7,7 @@ import {
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -47,6 +48,10 @@ export const buildUpdateInputsFromDraft = ({
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
+    const conditionalDisplayChanged = !isDeeplyEqual(
+      original.conditionalDisplay ?? null,
+      draftItem.conditionalDisplay ?? null,
+    );
 
     if (
       !positionChanged &&
@@ -54,7 +59,8 @@ export const buildUpdateInputsFromDraft = ({
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
-      !colorChanged
+      !colorChanged &&
+      !conditionalDisplayChanged
     ) {
       continue;
     }
@@ -86,6 +92,9 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (colorChanged) {
       updatePayload.color = draftItem.color ?? null;
+    }
+    if (conditionalDisplayChanged) {
+      updatePayload.conditionalDisplay = draftItem.conditionalDisplay ?? null;
     }
 
     updateInputs.push({

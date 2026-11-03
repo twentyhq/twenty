@@ -1,4 +1,6 @@
+import { useConditionalDisplayCurrentUserContext } from '@/conditional-display/hooks/useConditionalDisplayCurrentUserContext';
 import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
@@ -15,10 +17,19 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const featureFlags = useWorkspaceFeatureFlagsMap();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { currentRoleId, currentWorkspaceMemberId } =
+    useConditionalDisplayCurrentUserContext();
 
   const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     targetRecordIdentifier?.id ?? '',
+  );
+
+  const targetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular ===
+      targetRecordIdentifier?.targetObjectNameSingular,
   );
 
   // TODO: remove with the workspace workflow and workflowVersion objects once the core migration owns them.
@@ -34,6 +45,10 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
         isInSidePanel,
         targetRecord: isDefined(recordStore) ? recordStore : undefined,
         featureFlags,
+        currentRoleId,
+        currentWorkspaceMemberId,
+        objectMetadataItem: targetObjectMetadataItem,
+        objectMetadataItems,
       }),
       hiddenFieldMetadataIdsOrNames,
     }),
@@ -43,6 +58,10 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
       recordStore,
       hiddenFieldMetadataIdsOrNames,
       featureFlags,
+      currentRoleId,
+      currentWorkspaceMemberId,
+      targetObjectMetadataItem,
+      objectMetadataItems,
     ],
   );
 };

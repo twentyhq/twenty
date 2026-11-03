@@ -2,7 +2,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
+import { sanitizeRecordFilters } from '@/object-record/record-filter/utils/sanitizeRecordFilters';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
@@ -48,8 +48,8 @@ export const useGraphWidgetQueryCommon = ({
     flattenedFieldMetadataItemsSelector,
   );
 
-  const { recordFilters: sanitizedRecordFilters } = sanitizeChartRecordFilters({
-    chartFilters: configuration.filter ?? {},
+  const { recordFilters: sanitizedRecordFilters } = sanitizeRecordFilters({
+    recordFiltersWithGroups: configuration.filter ?? {},
     fieldMetadataItems: objectMetadataItem.fields,
   });
 

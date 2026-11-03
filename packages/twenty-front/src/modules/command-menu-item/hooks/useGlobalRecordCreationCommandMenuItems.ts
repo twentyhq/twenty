@@ -1,3 +1,5 @@
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
+import { useCommandMenuItemConditionalDisplay } from '@/command-menu-item/hooks/useCommandMenuItemConditionalDisplay';
 import { buildGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/buildGlobalRecordCreationCommandMenuItems';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -13,15 +15,20 @@ export const useGlobalRecordCreationCommandMenuItems = (
   const { t } = useLingui();
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { doesCommandMenuItemMatchConditionalDisplay } =
+    useCommandMenuItemConditionalDisplay(EMPTY_COMMAND_MENU_CONTEXT_API);
   const createRecordCommand = commandMenuItems.find(
     (item) =>
       item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
       !isDefined(item.availabilityObjectMetadataId),
   );
+  const isCreateRecordCommandDisplayed =
+    isDefined(createRecordCommand) &&
+    doesCommandMenuItemMatchConditionalDisplay(createRecordCommand);
 
-  const hasGlobalRecordCreationCommandTemplate = isDefined(createRecordCommand);
+  const hasGlobalRecordCreationCommandTemplate = isCreateRecordCommandDisplayed;
   const globalRecordCreationCommandMenuItems = useMemo(() => {
-    if (!isDefined(createRecordCommand)) {
+    if (!isDefined(createRecordCommand) || !isCreateRecordCommandDisplayed) {
       return [];
     }
 
@@ -33,6 +40,7 @@ export const useGlobalRecordCreationCommandMenuItems = (
     });
   }, [
     createRecordCommand,
+    isCreateRecordCommandDisplayed,
     activeObjectMetadataItems,
     objectPermissionsByObjectMetadataId,
     t,

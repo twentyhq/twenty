@@ -1,10 +1,10 @@
 import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
-import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
+import { RecordFiltersSettingsInitializeStateEffect } from '@/object-record/record-filter/components/RecordFiltersSettingsInitializeStateEffect';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
 import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
-import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
+import { sanitizeRecordFilters } from '@/object-record/record-filter/utils/sanitizeRecordFilters';
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -80,8 +80,8 @@ export const ChartFiltersSettings = ({
     const {
       recordFilters: sanitizedRecordFilters,
       recordFilterGroups: sanitizedRecordFilterGroups,
-    } = sanitizeChartRecordFilters({
-      chartFilters: {
+    } = sanitizeRecordFilters({
+      recordFiltersWithGroups: {
         recordFilters: mapRecordFiltersToPersistedRecordFilters(
           existingRecordFilters,
         ),
@@ -119,8 +119,8 @@ export const ChartFiltersSettings = ({
               objectMetadataItem={objectMetadataItem}
               isWorkflowFindRecords={false}
             />
-            <ChartFiltersSettingsInitializeStateEffect
-              initialChartFilters={chartWidgetConfiguration.filter}
+            <RecordFiltersSettingsInitializeStateEffect
+              initialRecordFilters={chartWidgetConfiguration.filter}
             />
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordFilterGroupsComponentInstanceContext.Provider>

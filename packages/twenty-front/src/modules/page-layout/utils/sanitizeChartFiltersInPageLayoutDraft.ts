@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
+import { type RecordFiltersWithGroups } from '@/object-record/record-filter/types/RecordFiltersWithGroups';
+import { sanitizeRecordFilters } from '@/object-record/record-filter/utils/sanitizeRecordFilters';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,7 +27,7 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
         }
 
         const chartFilters = widget.configuration.filter as
-          | ChartFilters
+          | RecordFiltersWithGroups
           | null
           | undefined;
 
@@ -43,8 +43,8 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
           return widget;
         }
 
-        const sanitizedChartFilters = sanitizeChartRecordFilters({
-          chartFilters,
+        const sanitizedChartFilters = sanitizeRecordFilters({
+          recordFiltersWithGroups: chartFilters,
           fieldMetadataItems,
         });
 

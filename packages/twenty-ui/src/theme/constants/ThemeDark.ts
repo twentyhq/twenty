@@ -256,7 +256,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       yellow: 'color(display-p3 0.948 0.885 0.392)',
     },
     background: {
-      gray: 'color(display-p3 0.098 0.098 0.098)',
+      gray: 'color(display-p3 0.114 0.114 0.114)',
       mauve: 'color(display-p3 0.138 0.134 0.144)',
       slate: 'color(display-p3 0.13 0.135 0.145)',
       sage: 'color(display-p3 0.128 0.135 0.131)',

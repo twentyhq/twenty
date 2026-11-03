@@ -1,6 +1,10 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
+import { useConditionalDisplayCurrentUserContext } from '@/conditional-display/hooks/useConditionalDisplayCurrentUserContext';
+import { evaluateConditionalDisplayWithObjectMetadata } from '@/conditional-display/utils/evaluateConditionalDisplayWithObjectMetadata';
+import { getConditionalDisplayDevice } from '@/conditional-display/utils/getConditionalDisplayDevice';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
@@ -24,6 +28,23 @@ export const useReadableNavigationMenuItems = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const currentUserContext = useConditionalDisplayCurrentUserContext();
+  const isMobile = useIsMobile();
+
+  const isItemVisibleToCurrentUser = (item: NavigationMenuItem) =>
+    isDefined(item.userWorkspaceId) ||
+    evaluateConditionalDisplayWithObjectMetadata({
+      conditionalDisplay: item.conditionalDisplay,
+      context: {
+        ...currentUserContext,
+        device: getConditionalDisplayDevice({
+          isMobile,
+          isInSidePanel: false,
+        }),
+      },
+      records: [],
+      objectMetadataItems,
+    });
 
   const isItemReadable = (item: NavigationMenuItem) =>
     isNavigationMenuItemReadable({
@@ -31,7 +52,7 @@ export const useReadableNavigationMenuItems = ({
       objectMetadataItems,
       views,
       objectPermissionsByObjectMetadataId,
-    });
+    }) && isItemVisibleToCurrentUser(item);
 
   const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();
   for (const [folderId, children] of folderChildrenById) {
@@ -40,8 +61,9 @@ export const useReadableNavigationMenuItems = ({
 
   const filteredTopLevelItems = topLevelItems.filter((item) =>
     isNavigationMenuItemFolder(item)
-      ? isDefined(item.userWorkspaceId) ||
-        (filteredFolderChildrenById.get(item.id) ?? []).length > 0
+      ? isItemVisibleToCurrentUser(item) &&
+        (isDefined(item.userWorkspaceId) ||
+          (filteredFolderChildrenById.get(item.id) ?? []).length > 0)
       : isItemReadable(item),
   );
 

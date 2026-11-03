@@ -19508,13 +19508,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-logic-js@npm:^2":
-  version: 2.0.8
-  resolution: "@types/json-logic-js@npm:2.0.8"
-  checksum: 10c0/b1fc0b39242b8f1f939c86f47bfda213e1eb57686ee4dfbe11057df88fad0dbe0abc3582b72429975e8fb07b0267959d98341e5079ba945345931973538d2f43
-  languageName: node
-  linkType: hard
-
 "@types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.5":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -34178,13 +34171,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-logic-js@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "json-logic-js@npm:2.0.5"
-  checksum: 10c0/c80d96a9f704dac2f4488c7119d9c94cbf67adbd93cb47eaa5b7eadc4947f18ed6d62fd5555f245cc2f87525f9e8d7bd5f70bd9e7fba2c70366e63bd68010f23
-  languageName: node
-  linkType: hard
-
 "json-metaschema@npm:1.3.0":
   version: 1.3.0
   resolution: "json-metaschema@npm:1.3.0"
@@ -45923,7 +45909,6 @@ __metadata:
     "@types/file-saver": "npm:^2.0.7"
     "@types/jest": "npm:^30.0.0"
     "@types/js-cookie": "npm:^3.0.3"
-    "@types/json-logic-js": "npm:^2"
     "@types/uuid": "npm:^9.0.2"
     "@vitejs/plugin-react-swc": "npm:^4.3.1"
     "@vitest/coverage-istanbul": "npm:^4.1.0"
@@ -45957,7 +45942,6 @@ __metadata:
     jest-fetch-mock: "npm:^3.0.3"
     jotai: "npm:^2.17.1"
     js-cookie: "npm:^3.0.5"
-    json-logic-js: "npm:^2.0.5"
     libphonenumber-js: "npm:^1.10.26"
     lightningcss: "npm:^1.32.0"
     linkify-react: "npm:^4.1.3"

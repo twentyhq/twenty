@@ -236,7 +236,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       );
     }
 
-    if (!isDefined(recordFilter) || !isDefined(fieldMetadataItem)) {
+    if (
+      !isDefined(recordFilter) ||
+      !isDefined(fieldMetadataItem) ||
+      !isDefined(objectMetadataItem)
+    ) {
       return null;
     }
 

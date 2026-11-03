@@ -2,6 +2,7 @@ import { type RecordBoardFieldDefinition } from '@/object-record/record-board/ty
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 
 export type ViewField = {
   id: string;
@@ -10,6 +11,7 @@ export type ViewField = {
   position: number;
   isActive: boolean;
   isVisible: boolean;
+  conditionalDisplay?: ConditionalDisplay | null;
   size: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: string | null;

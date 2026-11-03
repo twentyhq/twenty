@@ -26,6 +26,7 @@ export type RecordIndexContextValue = {
     ColumnDefinition<FieldMetadata>
   >;
   recordLimit?: number;
+  additionalFieldMetadataIdsToFetch?: string[];
 };
 
 export const [RecordIndexContextProvider, useRecordIndexContextOrThrow] =

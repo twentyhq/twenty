@@ -1477,12 +1477,8 @@ export type CommandMenuItem = {
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
-  /** @deprecated Use `conditionalAvailability` instead. */
-  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   conditionalPinned?: Maybe<Scalars['JSON']['output']>;
-  /** @deprecated Use `conditionalPinned` instead. */
-  conditionalPinnedExpression?: Maybe<Scalars['String']['output']>;
   coreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   engineComponentKey: EngineComponentKey;
@@ -3450,6 +3446,7 @@ export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
   collectionHashes: Array<CollectionHash>;
   objectMetadataItems: Array<MinimalObjectMetadata>;
+  roles: Array<MinimalRole>;
   views: Array<MinimalView>;
 };
 
@@ -3465,6 +3462,13 @@ export type MinimalObjectMetadata = {
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
+};
+
+export type MinimalRole = {
+  __typename?: 'MinimalRole';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
 };
 
 export type MinimalView = {
@@ -5608,8 +5612,6 @@ export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
   applicationId: Scalars['UUID']['output'];
   conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
-  /** @deprecated Use `conditionalDisplay` instead. */
-  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];

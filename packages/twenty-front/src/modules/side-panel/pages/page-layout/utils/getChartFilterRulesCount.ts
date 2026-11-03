@@ -1,8 +1,8 @@
-import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { type RecordFiltersWithGroups } from '@/object-record/record-filter/types/RecordFiltersWithGroups';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getChartFilterRulesCount = (
-  filter: ChartFilters | undefined,
+  filter: RecordFiltersWithGroups | undefined,
 ): number => {
   if (!isDefined(filter)) {
     return 0;

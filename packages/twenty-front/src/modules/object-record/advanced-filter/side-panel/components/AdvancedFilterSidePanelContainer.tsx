@@ -6,6 +6,7 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
+import { type FieldSelectLeadingSection } from '@/object-record/advanced-filter/types/FieldSelectLeadingSection';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -30,8 +31,9 @@ const StyledChildContainer = styled.div`
 export type AdvancedFilterSidePanelContainerProps = {
   readonly?: boolean;
   onUpdate?: () => void;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
+  fieldSelectLeadingSections?: FieldSelectLeadingSection[];
   isWorkflowFindRecords?: boolean;
 };
 
@@ -40,6 +42,7 @@ export const AdvancedFilterSidePanelContainer = ({
   onUpdate,
   objectMetadataItem,
   VariablePicker,
+  fieldSelectLeadingSections,
   isWorkflowFindRecords,
 }: AdvancedFilterSidePanelContainerProps) => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
@@ -58,6 +61,7 @@ export const AdvancedFilterSidePanelContainer = ({
         isWorkflowFindRecords,
         readonly,
         VariablePicker,
+        fieldSelectLeadingSections,
         objectMetadataItem,
       }}
     >

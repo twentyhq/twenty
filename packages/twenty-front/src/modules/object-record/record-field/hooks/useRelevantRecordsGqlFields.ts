@@ -33,8 +33,10 @@ export const useRelevantRecordsGqlFields = ({
     currentRecordFiltersComponentState,
   );
 
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    additionalFieldMetadataIdsToFetch = [],
+  } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -57,7 +59,10 @@ export const useRelevantRecordsGqlFields = ({
     )
     .filter(isDefined);
 
-  const additionalFieldMetadataItems = additionalFieldMetadataIds
+  const additionalFieldMetadataItems = [
+    ...additionalFieldMetadataIdsToFetch,
+    ...additionalFieldMetadataIds,
+  ]
     .filter(isDefined)
     .map(
       (fieldMetadataId) =>

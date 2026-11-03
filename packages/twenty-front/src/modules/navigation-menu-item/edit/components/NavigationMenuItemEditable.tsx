@@ -26,6 +26,7 @@ import { NavigationMenuItemTypeTooltip } from '@/navigation-menu-item/edit/compo
 import { NavigationMenuItemLinkEditorOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemLinkEditorOpenEffect';
 import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
+import { NavigationMenuItemVisibilityEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemVisibilityEditor';
 
 const StyledRow = styled.div`
   min-width: 0;
@@ -136,22 +137,31 @@ export const NavigationMenuItemEditable = ({
           selectedId === item.id ? null : selectedId,
         )
       }
-      renderMenu={({ onClose, onAdd }) =>
-        mode.type === 'edit' && item.type === NavigationMenuItemType.LINK ? (
-          <NavigationMenuItemLinkEditor
-            item={item}
-            dropdownId={dropdownId}
-            onClose={onClose}
-          />
-        ) : (
+      renderMenu={({ onClose, onAdd }) => {
+        if (mode.type === 'edit' && item.type === NavigationMenuItemType.LINK) {
+          return (
+            <NavigationMenuItemLinkEditor
+              item={item}
+              dropdownId={dropdownId}
+              onClose={onClose}
+            />
+          );
+        }
+
+        if (mode.type === 'visibility') {
+          return <NavigationMenuItemVisibilityEditor item={item} />;
+        }
+
+        return (
           <NavigationMenuItemActions
             item={item}
             section={isWorkspace ? 'workspace' : 'favorite'}
             onClose={onClose}
             onAdd={onAdd}
+            onOpenVisibility={() => setMode({ type: 'visibility' })}
           />
-        )
-      }
+        );
+      }}
     >
       {row}
     </NavigationMenuItemMenu>

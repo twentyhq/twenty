@@ -223,7 +223,7 @@
     --t-tag-text-orange: color(display-p3 0.76 0.34 0);
     --t-tag-text-amber: color(display-p3 0.64 0.4 0);
     --t-tag-text-yellow: color(display-p3 0.6 0.44 0);
-    --t-tag-background-gray: color(display-p3 0.976 0.976 0.976);
+    --t-tag-background-gray: color(display-p3 0.945 0.945 0.945);
     --t-tag-background-mauve: color(display-p3 0.946 0.938 0.952);
     --t-tag-background-slate: color(display-p3 0.94 0.941 0.953);
     --t-tag-background-sage: color(display-p3 0.935 0.944 0.94);

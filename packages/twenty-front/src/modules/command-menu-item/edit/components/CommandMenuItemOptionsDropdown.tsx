@@ -1,18 +1,23 @@
 import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
+import { commandMenuItemVisibilityEditItemIdState } from '@/command-menu-item/edit/states/commandMenuItemVisibilityEditItemIdState';
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconRefresh, IconTag } from 'twenty-ui/icon';
+import { IconEyeX, IconRefresh, IconTag } from 'twenty-ui/icon';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
   CommandMenuItemFieldsFragment,
-  'shortLabel'
+  'shortLabel' | 'isPinned' | 'conditionalDisplay'
 > & {
   itemId: string;
   serverShortLabel: string | null | undefined;
@@ -24,6 +29,8 @@ const getCommandMenuItemOptionsDropdownId = (itemId: string) =>
 
 export const CommandMenuItemOptionsDropdown = ({
   itemId,
+  isPinned,
+  conditionalDisplay,
   shortLabel,
   serverShortLabel,
   iconButton,
@@ -33,6 +40,10 @@ export const CommandMenuItemOptionsDropdown = ({
   const dropdownId = getCommandMenuItemOptionsDropdownId(itemId);
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { resetCommandMenuItemToDefault } = useResetCommandMenuItemToDefault();
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
+  const setCommandMenuItemVisibilityEditItemId = useSetAtomState(
+    commandMenuItemVisibilityEditItemIdState,
+  );
 
   const normalizedServerShortLabel = serverShortLabel ?? null;
   const normalizedShortLabel = shortLabel ?? null;
@@ -46,21 +57,40 @@ export const CommandMenuItemOptionsDropdown = ({
     });
   };
 
+  const handleOpenVisibility = () => {
+    setCommandMenuItemVisibilityEditItemId(itemId);
+    navigateToSidePanelSubPage(SidePanelSubPages.CommandMenuItemVisibility);
+  };
+
   return (
     <DropdownRoot dropdownId={dropdownId} type="panel">
       <Dropdown.Trigger render={iconButton} />
       <DropdownContent align="end">
         <Dropdown.Section>
-          <SettingsRow
-            startElement={<IconTag />}
-            disabled={hasNoShortLabel}
-            checked={isLabelHidden || hasNoShortLabel}
-            onCheckedChange={handleHiddenLabelChange}
-          >{t`Hide label`}</SettingsRow>
+          {isPinned && (
+            <SettingsRow
+              startElement={<IconTag />}
+              disabled={hasNoShortLabel}
+              checked={isLabelHidden || hasNoShortLabel}
+              onCheckedChange={handleHiddenLabelChange}
+            >{t`Hide label`}</SettingsRow>
+          )}
           <Dropdown.ActionItem
-            startIcon={<IconRefresh />}
-            onClick={() => resetCommandMenuItemToDefault(itemId)}
-          >{t`Reset to default`}</Dropdown.ActionItem>
+            startIcon={<IconEyeX />}
+            hasSubmenu
+            description={getConditionalDisplaySummaryLabel({
+              conditionName: 'conditionalDisplay',
+              conditionalDisplay,
+            })}
+            descriptionPlacement="end"
+            onClick={handleOpenVisibility}
+          >{t`Visibility restriction`}</Dropdown.ActionItem>
+          {isPinned && (
+            <Dropdown.ActionItem
+              startIcon={<IconRefresh />}
+              onClick={() => resetCommandMenuItemToDefault(itemId)}
+            >{t`Reset to default`}</Dropdown.ActionItem>
+          )}
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

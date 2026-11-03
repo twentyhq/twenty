@@ -17,6 +17,7 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
     }
     pageLayoutId
     isActive
+    conditionalDisplay
     createdAt
     updatedAt
   }

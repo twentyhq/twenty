@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useContext } from 'react';
 import { expect, within } from 'storybook/test';
+import { NEVER_AVAILABLE_CONDITIONAL_DISPLAY } from 'twenty-shared/constants';
 import {
   type CommandMenuContextApi,
   ContextStorePageType,
@@ -57,9 +58,11 @@ const meta: Meta<typeof CommandMenuContextProviderContent> = {
           ...mockedCommandMenuItems[0],
           engineComponentKey: EngineComponentKey.SHARE_RECORD,
           isPinned: false,
-          conditionalAvailabilityExpression:
-            parameters.isSharingAvailable === false ? 'false' : null,
-          conditionalPinnedExpression: null,
+          conditionalAvailability:
+            parameters.isSharingAvailable === false
+              ? NEVER_AVAILABLE_CONDITIONAL_DISPLAY
+              : null,
+          conditionalPinned: null,
           availabilityObjectMetadataId: null,
         },
       ],
