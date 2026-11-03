@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createPlaceFrontComponentTool } from 'src/modules/dashboard/tools/place-front-component.tool';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -17,9 +18,10 @@ const TAB_ID = '20202020-1111-4111-8111-111111111111';
 const WIDGET_ID = '20202020-3333-4333-8333-333333333333';
 const CONTEXT = {
   workspaceId: 'workspace',
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'role' },
-  },
+  authContext: {
+    type: 'user',
+    workspace: { id: 'workspace' },
+  } as WorkspaceAuthContext,
 };
 const CONFIGURATION = {
   configurationType: WidgetConfigurationType.FRONT_COMPONENT,
