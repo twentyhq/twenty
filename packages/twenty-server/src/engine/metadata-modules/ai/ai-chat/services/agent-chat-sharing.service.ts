@@ -324,22 +324,21 @@ export class AgentChatSharingService {
       (
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
-            const memberAuthContext = await this.userAuthContextService
-              .resolveWorkspaceMember({
-                workspaceId,
-                workspaceMemberId: memberId,
-                applicationId: null,
-              })
-              .catch((error) => {
-                if (error instanceof AuthException) {
-                  return undefined;
-                }
+            let memberAuthContext: UserWorkspaceAuthContext;
 
-                throw error;
-              });
+            try {
+              memberAuthContext =
+                await this.userAuthContextService.resolveWorkspaceMember({
+                  workspaceId,
+                  workspaceMemberId: memberId,
+                  applicationId: null,
+                });
+            } catch (error) {
+              if (error instanceof AuthException) {
+                return undefined;
+              }
 
-            if (!isDefined(memberAuthContext)) {
-              return undefined;
+              throw error;
             }
 
             const grants = await Promise.all(

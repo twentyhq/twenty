@@ -6,6 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
@@ -156,19 +157,21 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const memberAuthContext = await this.userWorkspaceAuthContextService
-        .resolveWorkspaceMember({
-          workspaceId,
-          workspaceMemberId: principal.principalId,
-          applicationId: null,
-        })
-        .catch((error) => {
-          if (error instanceof AuthException) {
-            return undefined;
-          }
+      let memberAuthContext: UserWorkspaceAuthContext | undefined;
 
+      try {
+        memberAuthContext =
+          await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
+            workspaceId,
+            workspaceMemberId: principal.principalId,
+            applicationId: null,
+          });
+      } catch (error) {
+        if (!(error instanceof AuthException)) {
           throw error;
-        });
+        }
+      }
+
       const hasGrant =
         isDefined(memberAuthContext) &&
         (await this.recordAccessPolicyService.hasAccessToRecords({

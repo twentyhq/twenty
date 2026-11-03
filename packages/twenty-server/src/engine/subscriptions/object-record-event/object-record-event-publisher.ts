@@ -182,12 +182,16 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const authContext = await this.findSubscriberAuthContext({
-      subscriberAuthContexts,
-      workspaceId: workspaceEventBatch.workspaceId,
-      userWorkspaceId,
-      applicationId: subscriberAuthContext.applicationId,
-    }).catch((error) => {
+    let authContext: WorkspaceAuthContext;
+
+    try {
+      authContext = await this.findSubscriberAuthContext({
+        subscriberAuthContexts,
+        workspaceId: workspaceEventBatch.workspaceId,
+        userWorkspaceId,
+        applicationId: subscriberAuthContext.applicationId,
+      });
+    } catch (error) {
       if (!(error instanceof AuthException)) {
         this.logger.warn(
           `Failed to resolve the subscriber of stream ${streamChannelId} for ${workspaceEventBatch.name} in workspace ${workspaceEventBatch.workspaceId}, skipping it: ${
@@ -197,10 +201,6 @@ export class ObjectRecordEventPublisher {
         );
       }
 
-      return undefined;
-    });
-
-    if (!isDefined(authContext)) {
       return;
     }
 
