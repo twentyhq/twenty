@@ -16,7 +16,7 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
   const {
     canEditInstructions,
     workspaceInstructions,
-    originalInstructions,
+    workspaceId,
     handleInstructionsChange,
   } = useSettingsAiWorkspaceInstructions();
 
@@ -28,10 +28,10 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
       />
       <StyledInstructionsContainer>
         <FormAdvancedTextFieldInput
-          key={originalInstructions}
+          key={workspaceId}
           readonly={!canEditInstructions}
           aria-label={t`Workspace Instructions`}
-          defaultValue={workspaceInstructions}
+          value={workspaceInstructions}
           profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
           onChange={handleInstructionsChange}
           enableFullScreen={true}

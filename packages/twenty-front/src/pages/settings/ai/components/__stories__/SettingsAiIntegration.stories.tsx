@@ -83,6 +83,10 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     });
     expect(instructions).toHaveAttribute('contenteditable', 'true');
     await userEvent.type(instructions, 'Use concise replies.');
+    await userEvent.keyboard('{Home}{ArrowRight}{ArrowRight}{ArrowRight}');
+    const caretOffset =
+      canvasElement.ownerDocument.getSelection()?.anchorOffset;
+    expect(caretOffset).toBeGreaterThan(0);
     expect(fixture.saveInstructions).not.toHaveBeenCalled();
 
     await waitFor(
@@ -92,6 +96,11 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
     expect(fixture.saveInstructions).toHaveBeenCalledWith({
       aiAdditionalInstructions: expect.stringContaining('Use concise replies.'),
     });
+    await fixture.reloadWorkspace();
+    expect(instructions).toHaveFocus();
+    expect(canvasElement.ownerDocument.getSelection()?.anchorOffset).toBe(
+      caretOffset,
+    );
 
     await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
     await canvas.findByRole('heading', { name: 'Models' });

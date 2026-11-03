@@ -169,7 +169,7 @@ export const useSettingsAiWorkspaceInstructions = () => {
   return {
     canEditInstructions,
     workspaceInstructions,
-    originalInstructions,
+    workspaceId: currentWorkspace?.id,
     handleInstructionsChange,
   };
 };
