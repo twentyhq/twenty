@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -13,6 +12,7 @@ import {
   AiModelTier as GraphqlAiModelTier,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 // Typed with the generated enum so one object is both the optimistic workspace patch and the mutation input;
 // the enum's keys are the shared tier literals, which keeps the GraphqlAiModelTier[tier] lookups total
@@ -27,6 +27,7 @@ type WorkspaceAiModelSettingsChanges = Partial<
 >;
 
 export const useSettingsAiModelsActions = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,

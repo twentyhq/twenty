@@ -44,7 +44,6 @@ export const computeObjectsPermissionsForRoles = ({
 
   const actingApplicationId = getPermissionsPrincipalsActingApplicationId({
     principals,
-    flatApplicationMaps,
   });
 
   const actingApplicationRoleId = isDefined(actingApplicationId)

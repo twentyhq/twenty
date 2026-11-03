@@ -7,12 +7,12 @@ import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/uti
 import { normalizeCronExpression } from '~/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 const getNextExecutions = (
   cronExpression: string,
@@ -94,6 +94,7 @@ export const CronExpressionHelper = ({
   isScheduleVisible = true,
   isUpcomingExecutionVisible = true,
 }: CronExpressionHelperProps) => {
+  const { t } = useLingui();
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
   const dateLocale = useAtomStateValue(dateLocaleState);
 

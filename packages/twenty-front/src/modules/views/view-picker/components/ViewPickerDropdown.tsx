@@ -14,12 +14,12 @@ import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpda
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, IconList } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledIconContainer = styled.span`
   display: flex;
@@ -49,6 +49,7 @@ const StyledViewName = styled.span`
 `;
 
 export const ViewPickerDropdown = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { currentView } = useGetCurrentViewOnly();
 

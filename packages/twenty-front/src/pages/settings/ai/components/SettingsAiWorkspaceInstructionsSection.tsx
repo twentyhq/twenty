@@ -2,9 +2,9 @@ import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/Fo
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { useSettingsAiWorkspaceInstructions } from '@/settings/ai/hooks/useSettingsAiWorkspaceInstructions';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledInstructionsContainer = styled.div`
   display: flex;
@@ -13,6 +13,7 @@ const StyledInstructionsContainer = styled.div`
 `;
 
 export const SettingsAiWorkspaceInstructionsSection = () => {
+  const { t } = useLingui();
   const {
     canEditInstructions,
     workspaceInstructions,

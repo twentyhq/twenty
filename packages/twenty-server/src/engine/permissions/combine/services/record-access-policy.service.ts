@@ -16,7 +16,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { getPermissionsPrincipalsObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-objects-permissions.util';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
@@ -87,7 +87,7 @@ export class RecordAccessPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly permissionsService: PermissionsService,
+    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
   ) {}
 
   forAuthContext(
@@ -466,7 +466,9 @@ export class RecordAccessPolicyService {
   private resolvePrincipalsWithRoles(
     authContext: PermissionsAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
-    return this.permissionsService.findPrincipalsWithRoles(authContext);
+    return this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      authContext,
+    );
   }
 
   private findPrincipalsMetadataMaps(

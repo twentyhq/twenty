@@ -8,7 +8,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -17,6 +17,7 @@ import {
   type SendMessageCampaignMutationVariables,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { useLingui } from '@lingui/react/macro';
 
 type SendMessageCampaignParams = {
   campaignId: string;
@@ -25,6 +26,7 @@ type SendMessageCampaignParams = {
 };
 
 export const useSendMessageCampaign = () => {
+  const { t } = useLingui();
   const [sendMessageCampaignMutation, { loading }] = useMutation<
     SendMessageCampaignMutation,
     SendMessageCampaignMutationVariables

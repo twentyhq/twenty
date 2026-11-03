@@ -37,10 +37,10 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -52,6 +52,7 @@ type FieldWidgetProps = {
 };
 
 export const FieldWidget = ({ widget }: FieldWidgetProps) => {
+  const { t } = useLingui();
   assertFieldWidgetOrThrow(widget);
 
   const targetRecord = useTargetRecord();

@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
@@ -7,8 +5,10 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 export const ChatThreadsCard = () => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const {
     threads,
