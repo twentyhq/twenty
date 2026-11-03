@@ -1,5 +1,4 @@
 import { isDefined } from 'twenty-shared/utils';
-import { parseAiModelVariantId } from 'twenty-shared/ai';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
@@ -21,10 +20,5 @@ export const useResolvedAiModel = (
     return tiers.find((resolvedTier) => resolvedTier.tier === tier)?.model;
   }
 
-  const { modelId: baseModelId } = parseAiModelVariantId(modelId ?? '');
-
-  return (
-    aiModels.find((model) => model.modelId === modelId) ??
-    aiModels.find((model) => model.modelId === baseModelId)
-  );
+  return aiModels.find((model) => model.modelId === modelId);
 };

@@ -1,5 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { type ModelConfiguration } from 'twenty-shared/ai';
+import {
+  type ModelConfiguration,
+  parseAiModelVariantId,
+} from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
@@ -20,7 +23,8 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const selectedModel = useResolvedAiModel(selectedModelId);
+  const { modelId: baseModelId } = parseAiModelVariantId(selectedModelId);
+  const selectedModel = useResolvedAiModel(baseModelId);
 
   if (
     !selectedModel?.nativeCapabilities?.webSearch &&
