@@ -9,11 +9,11 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 
 export const DashboardWidgetPlaceholder = () => {
+  const { t } = useLingui();
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
   );

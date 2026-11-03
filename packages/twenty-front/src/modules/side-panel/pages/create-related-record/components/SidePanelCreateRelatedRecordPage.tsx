@@ -8,8 +8,8 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { createRelatedRecordTargetComponentState } from '@/side-panel/pages/create-related-record/states/createRelatedRecordTargetComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelCreateRelatedRecordActionListProps = {
   actionBindings: RelatedRecordActionBinding[];
@@ -18,6 +18,7 @@ type SidePanelCreateRelatedRecordActionListProps = {
 export const SidePanelCreateRelatedRecordActionList = ({
   actionBindings,
 }: SidePanelCreateRelatedRecordActionListProps) => {
+  const { t } = useLingui();
   const visibleActionBindings = actionBindings.filter(
     ({ action }) => action.isVisible,
   );

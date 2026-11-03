@@ -16,14 +16,15 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const workflowId = useSidePanelWorkflowIdOrThrow();

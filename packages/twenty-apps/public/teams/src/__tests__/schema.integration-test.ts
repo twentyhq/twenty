@@ -103,7 +103,7 @@ describe('App installation', () => {
     );
   });
 
-  it('registers Microsoft OAuth under Teams without configured credentials', async () => {
+  it('registers workspace-shared and personal Microsoft OAuth under Teams without configured credentials', async () => {
     const client = new MetadataApiClient();
 
     const result = await client.query({
@@ -130,6 +130,7 @@ describe('App installation', () => {
         name: true,
         displayName: true,
         type: true,
+        scope: true,
         oauth: {
           scopes: true,
           isClientCredentialsConfigured: true,
@@ -137,20 +138,33 @@ describe('App installation', () => {
       },
     });
 
-    expect(applicationConnectionProviders).toEqual([
-      {
-        applicationId: application.id,
-        name: 'microsoft-teams',
-        displayName: 'Microsoft Teams',
-        type: 'oauth',
-        oauth: {
-          scopes: expect.arrayContaining([
-            'offline_access',
-            'https://graph.microsoft.com/OnlineMeetingTranscript.Read.All',
-          ]),
-          isClientCredentialsConfigured: false,
-        },
+    const buildExpectedProvider = ({
+      name,
+      scope,
+    }: {
+      name: string;
+      scope: 'USER' | 'WORKSPACE';
+    }) => ({
+      applicationId: application.id,
+      name,
+      displayName: 'Microsoft Teams',
+      type: 'oauth',
+      scope,
+      oauth: {
+        scopes: expect.arrayContaining([
+          'offline_access',
+          'https://graph.microsoft.com/OnlineMeetingTranscript.Read.All',
+        ]),
+        isClientCredentialsConfigured: false,
       },
-    ]);
+    });
+
+    expect(applicationConnectionProviders).toHaveLength(2);
+    expect(applicationConnectionProviders).toEqual(
+      expect.arrayContaining([
+        buildExpectedProvider({ name: 'microsoft-teams', scope: 'WORKSPACE' }),
+        buildExpectedProvider({ name: 'microsoft-teams-user', scope: 'USER' }),
+      ]),
+    );
   });
 });

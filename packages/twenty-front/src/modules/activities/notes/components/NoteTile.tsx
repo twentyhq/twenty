@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
@@ -12,6 +10,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getRichTextFieldTextLines } from '@/object-record/record-field/ui/utils/getRichTextFieldTextLines';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -74,6 +73,7 @@ export const NoteTile = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
+  const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getRichTextFieldTextLines(note?.bodyV2).join('\n');
