@@ -191,13 +191,13 @@ export class WorkflowVersionStepResolver {
 
   @Query(() => graphqlTypeJson)
   async workflowCodeStepAvailablePackages(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ): Promise<Record<string, string>> {
     const { flatApplication } = await this.findWorkflowApplicationOrThrow({
-      workspaceId,
+      workspace,
       userWorkspaceId,
       workflowVersionId,
     });
@@ -207,7 +207,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
   async testWorkflowCodeStep(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input')
@@ -215,7 +215,7 @@ export class WorkflowVersionStepResolver {
   ): Promise<LogicFunctionExecutionResultDTO> {
     const { flatApplication, workflowId } =
       await this.findWorkflowApplicationOrThrow({
-        workspaceId,
+        workspace,
         userWorkspaceId,
         workflowVersionId,
       });
@@ -233,11 +233,11 @@ export class WorkflowVersionStepResolver {
   }
 
   private async findWorkflowApplicationOrThrow({
-    workspaceId,
+    workspace: { id: workspaceId, workspaceCustomApplicationId },
     userWorkspaceId,
     workflowVersionId,
   }: {
-    workspaceId: string;
+    workspace: WorkspaceEntity;
     userWorkspaceId: string;
     workflowVersionId: string;
   }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
@@ -266,9 +266,11 @@ export class WorkflowVersionStepResolver {
       flatEntityMaps: flatWorkflowMaps,
     });
 
-    const flatApplication = isDefined(flatWorkflow)
-      ? flatApplicationMaps.byId[flatWorkflow.applicationId]
-      : undefined;
+    // inline code runs with its application's token and variables, so only builder workflows may test it
+    const flatApplication =
+      flatWorkflow?.applicationId === workspaceCustomApplicationId
+        ? flatApplicationMaps.byId[workspaceCustomApplicationId]
+        : undefined;
 
     if (!isDefined(flatApplication)) {
       throw new WorkflowVersionStepException(
