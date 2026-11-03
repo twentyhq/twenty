@@ -55,11 +55,20 @@ export class AgentChatInboxDeliveryService {
       }
     }
 
-    if (isNonEmptyArray(initialRecipientWorkspaceMemberIds)) {
+    const deliveredMentionWorkspaceMemberIdSet = new Set(
+      deliveredMentionWorkspaceMemberIds,
+    );
+    const remainingInitialRecipientWorkspaceMemberIds =
+      initialRecipientWorkspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !deliveredMentionWorkspaceMemberIdSet.has(workspaceMemberId),
+      );
+
+    if (isNonEmptyArray(remainingInitialRecipientWorkspaceMemberIds)) {
       try {
         deliveredRecipientWorkspaceMemberIds = await this.addMembers({
           ...access,
-          workspaceMemberIds: initialRecipientWorkspaceMemberIds,
+          workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
           reason: 'recipient',
         });
       } catch (error) {
@@ -71,9 +80,18 @@ export class AgentChatInboxDeliveryService {
       }
     }
 
+    const deliveredWorkspaceMemberIdSet = new Set([
+      ...deliveredMentionWorkspaceMemberIds,
+      ...deliveredRecipientWorkspaceMemberIds,
+    ]);
+
     return {
       deliveredMentionWorkspaceMemberIds,
-      deliveredRecipientWorkspaceMemberIds,
+      deliveredRecipientWorkspaceMemberIds: [
+        ...new Set(initialRecipientWorkspaceMemberIds),
+      ].filter((workspaceMemberId) =>
+        deliveredWorkspaceMemberIdSet.has(workspaceMemberId),
+      ),
     };
   }
 

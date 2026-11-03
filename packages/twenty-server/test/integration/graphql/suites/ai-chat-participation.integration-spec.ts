@@ -3,10 +3,14 @@ import { randomUUID } from 'node:crypto';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Chat participation through the authenticated API', () => {
@@ -160,6 +164,53 @@ describe('Chat participation through the authenticated API', () => {
     expect(participants).not.toContainEqual(
       expect.objectContaining({
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
+      }),
+    );
+  });
+
+  it('delivers a member selected and mentioned once while acknowledging both selections', async () => {
+    const threadId = await context.createThread(false);
+    const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JONY;
+    const emitter = getAppProviderByClassName<WorkspaceEventEmitter>(
+      'WorkspaceEventEmitter',
+    );
+    const emit = jest.spyOn(emitter, 'emitDatabaseBatchEvent');
+    const response = await sendChatParticipationMessage({
+      threadId,
+      isAssistantParticipant: false,
+      shouldAssistantReply: false,
+      mentionedWorkspaceMemberIds: [workspaceMemberId],
+      recipientWorkspaceMemberIds: [workspaceMemberId],
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage).toMatchObject({
+      mentionedParticipantWorkspaceMemberIds: [workspaceMemberId],
+      recipientParticipantWorkspaceMemberIds: [workspaceMemberId],
+    });
+    const [participant] = await global.testDataSource.query<{ id: string }[]>(
+      `SELECT id FROM "${context.schema}"."agentChatThreadParticipant"
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, workspaceMemberId],
+    );
+
+    assertIsDefinedOrThrow(participant);
+    const actions = emit.mock.calls
+      .filter(
+        ([event]) =>
+          isDefined(event) &&
+          event.objectMetadataNameSingular === 'agentChatThreadParticipant' &&
+          event.events.some(({ recordId }) => recordId === participant.id),
+      )
+      .map(([event]) => event?.action);
+
+    expect(actions).toEqual([DatabaseEventAction.CREATED]);
+    expect(await context.readParticipants(threadId)).toContainEqual(
+      expect.objectContaining({
+        workspaceMemberId,
+        lastReadAt: null,
+        isSubscribed: true,
+        lastMentionedAt: expect.anything(),
       }),
     );
   });
