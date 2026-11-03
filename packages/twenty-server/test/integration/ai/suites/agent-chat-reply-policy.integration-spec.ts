@@ -339,6 +339,7 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('executes a persisted explicit mention under mention-only mode', async () => {
+    models.enableEvaluation();
     const threadId = await createGroup();
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
@@ -358,6 +359,7 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('executes a persisted structured answer under mention-only mode', async () => {
+    models.enableEvaluation();
     const threadId = await createGroup();
     const { messageId } = await saveMessageWithReplyContext({
       threadId,

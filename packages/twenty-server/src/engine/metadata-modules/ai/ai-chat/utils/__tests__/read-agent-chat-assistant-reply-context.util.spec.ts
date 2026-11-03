@@ -4,26 +4,38 @@ import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadat
 import { readAgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-agent-chat-assistant-reply-context.util';
 
 describe('readAgentChatAssistantReplyContext', () => {
-  it.each([false, true])(
-    'reads persisted continuation flag %s',
-    (isStructuredRequestContinuation) => {
-      const context = {
-        isAssistantMentioned: false,
-        isDirectAssistantChat: false,
-        isStructuredRequestContinuation,
-      };
-
-      expect(
-        readAgentChatAssistantReplyContext([
-          {
-            type: 'text',
-            providerMetadata:
-              buildAgentChatAssistantReplyProviderMetadata(context) ?? null,
-          },
-        ]),
-      ).toEqual(context);
+  it.each([
+    {
+      isAssistantMentioned: false,
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: false,
     },
-  );
+    {
+      isAssistantMentioned: true,
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: false,
+    },
+    {
+      isAssistantMentioned: false,
+      isDirectAssistantChat: true,
+      isStructuredRequestContinuation: false,
+    },
+    {
+      isAssistantMentioned: false,
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: true,
+    },
+  ])('reads persisted policy context %j', (context) => {
+    expect(
+      readAgentChatAssistantReplyContext([
+        {
+          type: 'text',
+          providerMetadata:
+            buildAgentChatAssistantReplyProviderMetadata(context) ?? null,
+        },
+      ]),
+    ).toEqual(context);
+  });
 
   it('leaves legacy text without policy provenance unclassified', () => {
     expect(
