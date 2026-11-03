@@ -300,6 +300,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -325,6 +326,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -343,6 +345,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -394,6 +397,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -421,6 +425,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -439,6 +444,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: true,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -478,6 +484,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 

@@ -14,12 +14,8 @@ export const buildAgentChatAssistantReplyProviderMetadata = (
       assistantReplyContext: {
         isAssistantMentioned: context.isAssistantMentioned,
         isDirectAssistantChat: context.isDirectAssistantChat,
-        ...(isDefined(context.isStructuredRequestContinuation)
-          ? {
-              isStructuredRequestContinuation:
-                context.isStructuredRequestContinuation,
-            }
-          : {}),
+        isStructuredRequestContinuation:
+          context.isStructuredRequestContinuation,
       },
     },
   };

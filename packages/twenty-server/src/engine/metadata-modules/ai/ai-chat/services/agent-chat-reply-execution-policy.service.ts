@@ -84,8 +84,7 @@ export class AgentChatReplyExecutionPolicyService {
       );
     }
 
-    const isStructuredRequestContinuation =
-      context.isStructuredRequestContinuation ?? false;
+    const { isStructuredRequestContinuation } = context;
     const effectiveAssistantPolicy = {
       ...assistantPolicy,
       isDirectAssistantChat:

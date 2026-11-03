@@ -259,6 +259,7 @@ export class AgentChatResolver {
     const assistantReplyContext = {
       isAssistantMentioned: isAssistantMentioned ?? false,
       isDirectAssistantChat: assistantPolicy.isDirectAssistantChat,
+      isStructuredRequestContinuation: false,
     };
     const isAssistantReplying = await this.replyPolicyService.shouldReply({
       isAiChatInboxEnabled,

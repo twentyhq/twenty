@@ -1,5 +1,5 @@
 import { isBoolean } from '@sniptt/guards';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -29,8 +29,7 @@ export const readAgentChatAssistantReplyContext = (
     if (
       !isBoolean(isAssistantMentioned) ||
       !isBoolean(isDirectAssistantChat) ||
-      (isDefined(isStructuredRequestContinuation) &&
-        !isBoolean(isStructuredRequestContinuation))
+      !isBoolean(isStructuredRequestContinuation)
     ) {
       continue;
     }
@@ -38,9 +37,7 @@ export const readAgentChatAssistantReplyContext = (
     return {
       isAssistantMentioned,
       isDirectAssistantChat,
-      ...(isBoolean(isStructuredRequestContinuation)
-        ? { isStructuredRequestContinuation }
-        : {}),
+      isStructuredRequestContinuation,
     };
   }
 
