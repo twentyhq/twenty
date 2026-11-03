@@ -20,4 +20,5 @@ export type SettingsMenuItemManifest = SyncableEntityOptions & {
   icon?: string;
   position?: number;
   scope?: SettingsMenuItemScope;
+  slug?: string;
 };

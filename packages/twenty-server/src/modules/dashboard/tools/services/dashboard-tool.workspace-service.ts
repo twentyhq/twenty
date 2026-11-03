@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -9,7 +10,6 @@ import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-ta
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
@@ -45,10 +45,10 @@ export class DashboardToolWorkspaceService {
 
   generateDashboardTools(
     workspaceId: string,
-    rolePermissionConfig: RolePermissionConfig,
+    authContext: WorkspaceAuthContext,
   ): ToolSet {
     const context = { workspaceId };
-    const contextWithPermissions = { workspaceId, rolePermissionConfig };
+    const contextWithPermissions = { workspaceId, authContext };
 
     const createCompleteDashboard = createCreateCompleteDashboardTool(
       this.deps,

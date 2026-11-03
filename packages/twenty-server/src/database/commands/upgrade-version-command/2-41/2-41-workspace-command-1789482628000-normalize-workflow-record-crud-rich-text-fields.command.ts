@@ -78,10 +78,8 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     }
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion');
 
     const allVersions = await workflowVersionRepository.find();
 

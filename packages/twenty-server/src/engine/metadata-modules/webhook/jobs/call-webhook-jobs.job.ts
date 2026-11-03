@@ -94,8 +94,9 @@ export class CallWebhookJobsJob {
       const admittedRecordIds =
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
         eventRecordAccessGate.resolveAdmittedRecordIds({
-          workspaceId: workspaceEventBatch.workspaceId,
-          intersectionOf: { webhookRoleId },
+          type: 'webhook',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          webhook,
         });
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);

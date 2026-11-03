@@ -15,10 +15,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
-import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
@@ -281,7 +281,6 @@ describe('A restricted record on an object open by default', () => {
   });
 
   it('should leave it out of the events delivered to others', async () => {
-    const memberRole = await findOneRoleByLabel({ label: 'Member' });
     const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
@@ -308,13 +307,12 @@ describe('A restricted record on an object open by default', () => {
             properties: { after: { id: recordId } },
           })) as ObjectRecordEvent[],
         })
-        .resolveAdmittedRecordIds({
-          workspaceId: workspaceId,
-          intersectionOf: { userWorkspaceRoleId: memberRole.id },
-          workspaceMember: {
-            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
-        });
+        .resolveAdmittedRecordIds(
+          await resolveWorkspaceMemberAuthContext({
+            workspaceId,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          }),
+        );
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
   });

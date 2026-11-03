@@ -5,11 +5,11 @@ import { type FaqQuestion } from './faq.data';
 export const AFFILIATE_PROGRAM_FAQ_QUESTIONS: readonly FaqQuestion[] = [
   {
     question: msg`Which plans count?`,
-    answer: msg`Organization and Enterprise plans on Twenty Cloud. Self-hosted Organization is coming soon. Pro plans and AI credits are not included.`,
+    answer: msg`Organization and Enterprise plans on Twenty Cloud. Pro plans and AI credits are not included.`,
   },
   {
     question: msg`How long does my link work?`,
-    answer: msg`60 days after the click. If the visitor starts a Cloud Organization or Enterprise plan within that time, the commission is yours. If they later click another partner's link, that partner gets the credit.`,
+    answer: msg`30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit.`,
   },
   {
     question: msg`When do I get paid?`,

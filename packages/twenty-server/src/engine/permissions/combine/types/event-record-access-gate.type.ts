@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 export type EventRecordAccessGate = {
   resolveAdmittedRecordIds: (
-    principal: PermissionsPrincipal,
+    authContext: PermissionsAuthContext,
   ) => Promise<Set<string>>;
 };

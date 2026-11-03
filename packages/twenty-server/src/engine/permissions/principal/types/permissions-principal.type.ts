@@ -1,16 +1,53 @@
 /* @license Enterprise */
 
-import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-export type PermissionsPrincipalWorkspaceMember = Pick<
-  WorkspaceMemberWorkspaceEntity,
-  'id'
-> &
-  Partial<WorkspaceMemberWorkspaceEntity>;
-
-export type PermissionsPrincipal = {
-  workspaceId: string;
-  intersectionOf: RoleIdsBySource;
-  workspaceMember?: PermissionsPrincipalWorkspaceMember;
+// TODO(@charlesBochet): drop deprecatedRoleOnly once every caller names the principal holding the role
+export type PermissionsDeprecatedRoleOnlyPrincipal = {
+  type: 'deprecatedRoleOnly';
+  roleId: string;
 };
+
+export type PermissionsWorkspaceMemberPrincipal = {
+  type: 'workspaceMember';
+  workspaceMemberId: string;
+};
+
+export type PermissionsApiKeyPrincipal = {
+  type: 'apiKey';
+  apiKeyId: string;
+};
+
+export type PermissionsAgentPrincipal = {
+  type: 'agent';
+  agentId: string;
+};
+
+export type PermissionsWebhookPrincipal = {
+  type: 'webhook';
+  webhookId: string;
+};
+
+export type PermissionsApplicationIdPrincipal = {
+  type: 'application';
+  applicationId: string;
+};
+
+export type PermissionsCustomApplicationPrincipal = {
+  type: 'customApplication';
+};
+
+export type PermissionsMainPrincipal =
+  | PermissionsWorkspaceMemberPrincipal
+  | PermissionsApiKeyPrincipal
+  | PermissionsAgentPrincipal
+  | PermissionsWebhookPrincipal
+  | PermissionsApplicationIdPrincipal
+  | PermissionsDeprecatedRoleOnlyPrincipal;
+
+export type PermissionsLimitingPrincipal =
+  | PermissionsAgentPrincipal
+  | PermissionsDeprecatedRoleOnlyPrincipal;
+
+export type PermissionsApplicationPrincipal =
+  | PermissionsApplicationIdPrincipal
+  | PermissionsCustomApplicationPrincipal
+  | PermissionsDeprecatedRoleOnlyPrincipal;

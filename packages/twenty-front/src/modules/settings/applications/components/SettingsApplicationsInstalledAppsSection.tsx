@@ -23,6 +23,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
   );
   const {
     statusesById,
+    isLoading: isLoadingStatuses,
     error: statusError,
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusesById({
@@ -54,6 +55,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
       statusesById={statusesById}
+      isLoadingStatuses={isLoadingStatuses}
     />
   );
 };

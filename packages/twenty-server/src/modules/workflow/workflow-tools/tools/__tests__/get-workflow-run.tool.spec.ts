@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { StepStatus } from 'twenty-shared/workflow';
 
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
@@ -6,7 +7,10 @@ import { createGetWorkflowRunTool } from '../get-workflow-run.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const WORKFLOW_RUN_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
-const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const buildDeps = (findOneResult: unknown) => ({
   workspaceOrmManager: {
@@ -19,11 +23,11 @@ const buildDeps = (findOneResult: unknown) => ({
 
 const buildContext = () => ({
   workspaceId: WORKSPACE_ID,
-  rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: ROLE_ID } },
+  authContext: AUTH_CONTEXT,
 });
 
 describe('get_workflow_run tool', () => {
-  it('should pass rolePermissionConfig to getRepository', async () => {
+  it('should read as the caller rather than bypassing permissions', async () => {
     const deps = buildDeps({ id: WORKFLOW_RUN_ID, state: {}, stepLogs: {} });
     const context = buildContext();
 
@@ -36,8 +40,10 @@ describe('get_workflow_run tool', () => {
 
     expect(deps.workspaceOrmManager.getRepository).toHaveBeenCalledWith(
       'workflowRun',
-      context.rolePermissionConfig,
     );
+    expect(
+      deps.workspaceOrmManager.executeInWorkspaceContext,
+    ).toHaveBeenCalledWith(expect.any(Function), AUTH_CONTEXT);
   });
 
   it('should return workflow run details on success', async () => {

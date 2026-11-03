@@ -1,10 +1,12 @@
 /* @license Enterprise */
 
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { hasAccessToAllRecords } from 'src/engine/permissions/combine/utils/has-access-to-all-records.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
@@ -17,6 +19,10 @@ const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
 const READ_ONLY_ROLE_ID = 'read-only-role';
 const OTHER_APPLICATION_ROLE_ID = 'other-application-role';
+const APPLICATION_ID_BY_ROLE_ID: Record<string, string> = {
+  [APPLICATION_ROLE_ID]: APPLICATION_ID,
+  [OTHER_APPLICATION_ROLE_ID]: 'other-application-id',
+};
 
 const flatObjectMetadata = {
   ...COMPANY_FLAT_OBJECT_MOCK,
@@ -34,6 +40,30 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
+const buildPrincipal = (
+  roleId: string,
+): PermissionsPrincipalsWithRolesContext => {
+  const applicationId = APPLICATION_ID_BY_ROLE_ID[roleId];
+
+  if (!isDefined(applicationId)) {
+    return {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId,
+        workspaceMemberId: 'member-1',
+      },
+      applicationPrincipal: { type: 'customApplication' },
+    };
+  }
+
+  return {
+    workspaceId: 'workspace-id',
+    mainPrincipal: { type: 'application', roleId, applicationId },
+    applicationPrincipal: { type: 'application', roleId, applicationId },
+  };
+};
+
 const hasAccess = ({
   roleId = READ_ONLY_ROLE_ID,
   operationType = 'select',
@@ -44,14 +74,7 @@ const hasAccess = ({
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
 }) => {
   const request: PermissionsObjectAccessRequest = {
-    principal: {
-      workspaceId: 'workspace-id',
-      intersectionOf: [APPLICATION_ROLE_ID, OTHER_APPLICATION_ROLE_ID].includes(
-        roleId,
-      )
-        ? { applicationRoleId: roleId }
-        : { userWorkspaceRoleId: roleId },
-    },
+    principal: buildPrincipal(roleId),
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),

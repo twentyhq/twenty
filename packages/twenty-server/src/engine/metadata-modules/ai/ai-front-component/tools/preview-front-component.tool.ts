@@ -12,11 +12,7 @@ export const createPreviewFrontComponentTool = ({
   aiFrontComponentService: Pick<AiFrontComponentService, 'createDraft'>;
   context: Pick<
     ToolProviderContext,
-    | 'workspaceId'
-    | 'userWorkspaceId'
-    | 'threadId'
-    | 'authContext'
-    | 'rolePermissionConfig'
+    'workspaceId' | 'userWorkspaceId' | 'threadId' | 'authContext'
   >;
 }) =>
   tool({

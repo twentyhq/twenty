@@ -91,11 +91,11 @@ export class MessageSuppressionService {
   }> {
     const [records, totalCount] =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const suppressionRepository = this.workspaceOrmManager.getRepository(
-          MessageSuppressionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        );
+        const suppressionRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            MessageSuppressionWorkspaceEntity,
+            { shouldSkipEventEmission: true },
+          );
         return suppressionRepository.findAndCount({
           where: {
             ...(isDefined(reason) ? { reason } : {}),
@@ -129,11 +129,11 @@ export class MessageSuppressionService {
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository = this.workspaceOrmManager.getRepository(
-        MessageSuppressionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
+      const suppressionRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageSuppressionWorkspaceEntity,
+          { shouldSkipEventEmission: true },
+        );
       return suppressionRepository.find({
         where: [
           {
@@ -163,11 +163,11 @@ export class MessageSuppressionService {
 
     const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const suppressionRepository = this.workspaceOrmManager.getRepository(
-          MessageSuppressionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        );
+        const suppressionRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            MessageSuppressionWorkspaceEntity,
+            { shouldSkipEventEmission: true },
+          );
 
         return suppressionRepository.find({
           where: {
@@ -224,11 +224,11 @@ export class MessageSuppressionService {
     }
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository = this.workspaceOrmManager.getRepository(
-        MessageSuppressionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
+      const suppressionRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageSuppressionWorkspaceEntity,
+          { shouldSkipEventEmission: true },
+        );
 
       await suppressionRepository.delete({
         emailAddress: normalizedEmailAddress,
@@ -267,11 +267,11 @@ export class MessageSuppressionService {
           };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository = this.workspaceOrmManager.getRepository(
-        MessageSuppressionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
+      const suppressionRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageSuppressionWorkspaceEntity,
+          { shouldSkipEventEmission: true },
+        );
       const escalateExisting = async (): Promise<boolean> => {
         const existing = await suppressionRepository.findOneBy(whereKey);
 
@@ -335,11 +335,11 @@ export class MessageSuppressionService {
 
     const suppression =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const suppressionRepository = this.workspaceOrmManager.getRepository(
-          MessageSuppressionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        );
+        const suppressionRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            MessageSuppressionWorkspaceEntity,
+            { shouldSkipEventEmission: true },
+          );
         return suppressionRepository.findOneBy({
           emailAddress: this.normalizeEmailAddress(emailAddress),
           unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
@@ -363,11 +363,11 @@ export class MessageSuppressionService {
     suppressionId,
   }: RemoveSuppressionArgs): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository = this.workspaceOrmManager.getRepository(
-        MessageSuppressionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
+      const suppressionRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageSuppressionWorkspaceEntity,
+          { shouldSkipEventEmission: true },
+        );
       const suppression = await suppressionRepository.findOneBy({
         id: suppressionId,
       });
@@ -412,11 +412,11 @@ export class MessageSuppressionService {
 
     const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const suppressionRepository = this.workspaceOrmManager.getRepository(
-          MessageSuppressionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        );
+        const suppressionRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            MessageSuppressionWorkspaceEntity,
+            { shouldSkipEventEmission: true },
+          );
         return suppressionRepository.find({
           where: [
             {
@@ -552,11 +552,11 @@ export class MessageSuppressionService {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository = this.workspaceOrmManager.getRepository(
-        MessageSuppressionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
+      const suppressionRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageSuppressionWorkspaceEntity,
+          { shouldSkipEventEmission: true },
+        );
       return suppressionRepository.delete({
         emailAddress: normalizedEmailAddress,
         unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)

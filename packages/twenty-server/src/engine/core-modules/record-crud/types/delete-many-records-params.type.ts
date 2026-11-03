@@ -1,11 +1,9 @@
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type DeleteManyRecordsParams = {
   objectName: string;
   filter: Partial<ObjectRecordFilter>;
   authContext: WorkspaceAuthContext;
-  rolePermissionConfig?: RolePermissionConfig;
 };

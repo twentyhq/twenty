@@ -13,6 +13,7 @@ type SandboxApiMock = {
 type ListedSandbox = { sandboxId: string; metadata: Record<string, string> };
 
 const apiKey = 'test-api-key';
+const template = 'test-template';
 const sessionId = 'workspace-1:thread-1';
 const timeoutMs = 600_000;
 const idleTimeoutMs = 300_000;
@@ -73,6 +74,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -102,13 +104,14 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
     });
 
     expect(result).toEqual({ sandbox, isReused: false });
-    expect(mock.create).toHaveBeenCalledWith({
+    expect(mock.create).toHaveBeenCalledWith(template, {
       apiKey,
       timeoutMs: aliveTimeoutMs,
       lifecycle: { onTimeout: 'pause', autoResume: true },
@@ -133,6 +136,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -158,6 +162,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -183,6 +188,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -207,6 +213,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -235,6 +242,7 @@ describe('getOrCreateSessionSandbox', () => {
     const result = await getOrCreateSessionSandbox({
       sandboxApi: api,
       apiKey,
+      template,
       sessionId,
       timeoutMs,
       idleTimeoutMs,
@@ -263,6 +271,7 @@ describe('Participant isolation', () => {
       const result = await getOrCreateSessionSandbox({
         sandboxApi: api,
         apiKey,
+        template,
         sessionId,
         timeoutMs,
         idleTimeoutMs,
@@ -272,6 +281,7 @@ describe('Participant isolation', () => {
       expect(mock.connect).not.toHaveBeenCalled();
       expect(mock.kill).toHaveBeenCalledWith('old-sandbox', { apiKey });
       expect(mock.create).toHaveBeenCalledWith(
+        template,
         expect.objectContaining({
           metadata: {
             [SESSION_SANDBOX_METADATA_KEY]: sessionId,
@@ -293,6 +303,7 @@ describe('Participant isolation', () => {
       getOrCreateSessionSandbox({
         sandboxApi: api,
         apiKey,
+        template,
         sessionId,
         timeoutMs,
         idleTimeoutMs,
