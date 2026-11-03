@@ -73,11 +73,11 @@ export const useSettingsAiWorkspaceInstructions = () => {
       const requestId = saveState.latestRequestId + 1;
       const pendingSave = Promise.resolve(saveState.pendingSave).then(
         async () => {
-          try {
-            const isActiveWorkspaceAtDispatch =
-              store.get(currentWorkspaceState.atom)?.id === workspaceId;
+          const isActiveWorkspace = () =>
+            store.get(currentWorkspaceState.atom)?.id === workspaceId;
 
-            if (!isActiveWorkspaceAtDispatch) {
+          try {
+            if (!isActiveWorkspace()) {
               return;
             }
 
@@ -86,12 +86,9 @@ export const useSettingsAiWorkspaceInstructions = () => {
                 input: { aiAdditionalInstructions: newValue || null },
               },
             });
-            const isActiveWorkspaceAtConfirmation =
-              store.get(currentWorkspaceState.atom)?.id === workspaceId;
-
             if (
               data?.updateWorkspace.id !== workspaceId ||
-              !isActiveWorkspaceAtConfirmation
+              !isActiveWorkspace()
             ) {
               return;
             }
@@ -117,10 +114,7 @@ export const useSettingsAiWorkspaceInstructions = () => {
           } catch (error) {
             const isLatestRequest =
               requestId === store.get(saveStateAtom).latestRequestId;
-            const isActiveWorkspace =
-              store.get(currentWorkspaceState.atom)?.id === workspaceId;
-
-            if (!isLatestRequest || !isActiveWorkspace) {
+            if (!isLatestRequest || !isActiveWorkspace()) {
               return;
             }
 
