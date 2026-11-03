@@ -25,8 +25,7 @@ const WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
     )
   )`;
 
-// Every converted item opens the same page, so keep one per member: the
-// standard item first, then workspace-wide items, then the oldest.
+// One per member, since all open the same page: standard, then workspace-wide, then oldest.
 const DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
   WITH ranked AS (
     SELECT
