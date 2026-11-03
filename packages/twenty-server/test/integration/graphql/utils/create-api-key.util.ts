@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { createApiKeyOperationFactory } from 'test/integration/graphql/utils/create-api-key-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const createApiKey = async ({
@@ -11,17 +11,8 @@ export const createApiKey = async ({
   expiresAt: string;
   roleId: string;
   accessToken: string;
-}) => {
-  const mutation = gql`
-    mutation CreateApiKey($input: CreateApiKeyInput!) {
-      createApiKey(input: $input) {
-        id
-      }
-    }
-  `;
-
-  return await makeMetadataApiRequest(
-    { query: mutation, variables: { input: { name, expiresAt, roleId } } },
+}) =>
+  makeMetadataApiRequest(
+    createApiKeyOperationFactory({ name, expiresAt, roleId }),
     accessToken,
   );
-};
