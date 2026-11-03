@@ -61,7 +61,10 @@ import {
   AgentChatStreamRecoveryService,
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
-import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import {
+  type AgentTurnStreamResult,
+  AgentTurnStreamService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -436,39 +439,28 @@ export class AgentRunnerService {
           return recoveredContinuation;
         }
 
-        let messageContinuation: MessageContinuation | undefined;
-
-        if (outcome.type === 'MESSAGE_RECEIVED') {
-          const queuedMessageIds =
-            await this.replyContinuationPolicyService.findAllowedQueuedMessageIds(
-              {
-                workspaceId,
-                threadId,
-              },
-            );
-
-          if (!isNonEmptyArray(queuedMessageIds)) {
-            await this.publishContinuationEvent({
-              workspaceId,
-              threadId,
-              eventType: 'stream-ended',
-            });
-
-            return null;
-          }
-
-          messageContinuation = { turnId, wakeUpId, queuedMessageIds };
-        }
-
-        const result = await this.continueSuspendedRun({
+        const messageContinuation = await this.findMessageContinuation({
           workspaceId,
           threadId,
-          suspension: currentSuspension,
-          isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
-          outcome,
-          stream,
-          messageContinuation,
+          turnId,
+          wakeUpId,
+          outcomeType: outcome.type,
         });
+        const result:
+          | AgentRunnerResult
+          | typeof MESSAGE_CONTINUATION_REJECTED
+          | null =
+          messageContinuation === MESSAGE_CONTINUATION_REJECTED
+            ? MESSAGE_CONTINUATION_REJECTED
+            : await this.continueSuspendedRun({
+                workspaceId,
+                threadId,
+                suspension: currentSuspension,
+                isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
+                outcome,
+                stream,
+                messageContinuation,
+              });
 
         if (result === MESSAGE_CONTINUATION_REJECTED) {
           await this.publishContinuationEvent({
@@ -511,6 +503,38 @@ export class AgentRunnerService {
         summary: continued.summary,
       });
     }
+  }
+
+  private async findMessageContinuation({
+    workspaceId,
+    threadId,
+    turnId,
+    wakeUpId,
+    outcomeType,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    wakeUpId: string;
+    outcomeType: ContinueAgentRunJobData['outcome']['type'];
+  }): Promise<
+    MessageContinuation | typeof MESSAGE_CONTINUATION_REJECTED | undefined
+  > {
+    if (outcomeType !== 'MESSAGE_RECEIVED') {
+      return undefined;
+    }
+
+    const queuedMessageIds =
+      await this.replyContinuationPolicyService.findAllowedQueuedMessageIds({
+        workspaceId,
+        threadId,
+      });
+
+    if (!isNonEmptyArray(queuedMessageIds)) {
+      return MESSAGE_CONTINUATION_REJECTED;
+    }
+
+    return { turnId, wakeUpId, queuedMessageIds };
   }
 
   private async recoverMessageContinuation({
@@ -968,17 +992,19 @@ export class AgentRunnerService {
       caller,
       runSpec,
     });
-    const hasClaimedMessages =
-      await this.agentRunConversationService.claimQueuedMessages({
-        workspaceId,
-        threadId,
-        turnId,
-        queuedMessageIds,
-        agentId: execution.persona.agentId,
-        createdBy: execution.executionContext.turnCreatedBy,
-      });
+    const openedTurn = await this.agentRunConversationService.openTurn({
+      workspaceId,
+      threadId,
+      turnId,
+      queuedMessageIds,
+      agentId: execution.persona.agentId,
+      createdBy: execution.executionContext.turnCreatedBy,
+      senderUserWorkspaceId: null,
+      senderApplicationId: null,
+      messages: [],
+    });
 
-    if (!hasClaimedMessages) {
+    if (!isDefined(openedTurn)) {
       return MESSAGE_CONTINUATION_REJECTED;
     }
 
@@ -988,7 +1014,7 @@ export class AgentRunnerService {
       eventType: 'queue-updated',
     });
 
-    return { ...execution, turnId, wakeUpId };
+    return { ...execution, turnId: openedTurn.turnId, wakeUpId };
   }
 
   private async resolveContinuationExecution({
@@ -1125,46 +1151,18 @@ export class AgentRunnerService {
             : undefined;
           // a stop can land after the stream ended; read once so the turn and its caller agree
           const isAborted = streamed.isAborted || abortSignal?.aborted === true;
-          let continuationCompletion:
-            | AgentRunContinuationCompletion
-            | undefined;
-
-          if (isDefined(continuationWakeUpId) && isDefined(suspension)) {
-            const awaitingParts = findAwaitingPausingToolParts(
-              streamed.replyParts,
-            );
-            const isAwaitingAnswer =
-              isNonEmptyArray(awaitingParts) &&
-              awaitingParts.every(({ isAnswerable }) => isAnswerable);
-
-            continuationCompletion = {
-              turnId,
-              execution: {
-                result: execution.result,
-                stopReason: execution.stopReason,
-                isPaused: execution.isPaused,
-              },
-              summary: sumAgentRunSummaries({
-                previousSummary: suspension.summary,
-                nextSummary: buildAgentRunSummary({
-                  execution,
-                  durationMs: Date.now() - startedAtMs,
-                }),
-              }),
-              waitCondition: wait?.condition ?? null,
-              isAborted,
-              isAwaitingAnswer,
-              questionMessageId: isAwaitingAnswer
-                ? streamed.assistantMessageId
-                : null,
-            };
-
-            await this.pendingWakeUpService.updatePayload({
+          const continuationCompletion =
+            await this.recordContinuationCompletion({
               workspaceId,
               wakeUpId: continuationWakeUpId,
-              payload: { ...suspension, continuationCompletion },
+              suspension,
+              turnId,
+              execution,
+              startedAtMs,
+              streamed,
+              waitCondition: wait?.condition ?? null,
+              isAborted,
             });
-          }
 
           return {
             execution,
@@ -1215,6 +1213,64 @@ export class AgentRunnerService {
     return { summary, outcome, continuationCompletion };
   }
 
+  private async recordContinuationCompletion({
+    workspaceId,
+    wakeUpId,
+    suspension,
+    turnId,
+    execution,
+    startedAtMs,
+    streamed,
+    waitCondition,
+    isAborted,
+  }: {
+    workspaceId: string;
+    wakeUpId?: string;
+    suspension: AgentRunSuspension | null;
+    turnId: string;
+    execution: AgentExecutionResult;
+    startedAtMs: number;
+    streamed: Pick<AgentTurnStreamResult, 'assistantMessageId' | 'replyParts'>;
+    waitCondition: PendingWakeUpCondition | null;
+    isAborted: boolean;
+  }): Promise<AgentRunContinuationCompletion | undefined> {
+    if (!isDefined(wakeUpId) || !isDefined(suspension)) {
+      return undefined;
+    }
+
+    const awaitingParts = findAwaitingPausingToolParts(streamed.replyParts);
+    const isAwaitingAnswer =
+      isNonEmptyArray(awaitingParts) &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
+    const continuationCompletion: AgentRunContinuationCompletion = {
+      turnId,
+      execution: {
+        result: execution.result,
+        stopReason: execution.stopReason,
+        isPaused: execution.isPaused,
+      },
+      summary: sumAgentRunSummaries({
+        previousSummary: suspension.summary,
+        nextSummary: buildAgentRunSummary({
+          execution,
+          durationMs: Date.now() - startedAtMs,
+        }),
+      }),
+      waitCondition,
+      isAborted,
+      isAwaitingAnswer,
+      questionMessageId: isAwaitingAnswer ? streamed.assistantMessageId : null,
+    };
+
+    await this.pendingWakeUpService.updatePayload({
+      workspaceId,
+      wakeUpId,
+      payload: { ...suspension, continuationCompletion },
+    });
+
+    return continuationCompletion;
+  }
+
   private async openTurn({
     input: {
       workspaceId,
@@ -1260,11 +1316,7 @@ export class AgentRunnerService {
       });
     }
 
-    const {
-      turnId: openedTurnId,
-      promptMessageIds,
-      hasTakenQueuedMessages,
-    } = await this.agentRunConversationService.openTurn({
+    const openedTurn = await this.agentRunConversationService.openTurn({
       workspaceId,
       threadId,
       agentId: persona.agentId,
@@ -1274,6 +1326,14 @@ export class AgentRunnerService {
       createdBy: executionContext.turnCreatedBy,
       messages: prompt?.messages ?? [],
     });
+
+    assertIsDefinedOrThrow(openedTurn);
+
+    const {
+      turnId: openedTurnId,
+      promptMessageIds,
+      hasTakenQueuedMessages,
+    } = openedTurn;
 
     if (hasTakenQueuedMessages) {
       await this.eventPublisherService.publish({

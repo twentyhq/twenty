@@ -448,17 +448,18 @@ describe('agent runs that wait (integration)', () => {
         getAppProviderByClassName<AgentRunConversationService>(
           'AgentRunConversationService',
         );
-      const claimQueuedMessages =
-        conversationService.claimQueuedMessages.bind(conversationService);
+      const openTurn = conversationService.openTurn.bind(conversationService);
 
       jest
-        .spyOn(conversationService, 'claimQueuedMessages')
+        .spyOn(conversationService, 'openTurn')
         .mockImplementationOnce(async (queuedMessageClaim) => {
+          assertIsDefinedOrThrow(queuedMessageClaim.queuedMessageIds);
+
           for (const messageId of queuedMessageClaim.queuedMessageIds) {
             await queueService.deleteQueuedMessage({ workspaceId, messageId });
           }
 
-          return claimQueuedMessages(queuedMessageClaim);
+          return openTurn(queuedMessageClaim);
         });
 
       const removedStreamId = await queueMemberMessage({
@@ -699,13 +700,16 @@ describe('agent runs that wait (integration)', () => {
 
         await getAppProviderByClassName<AgentRunConversationService>(
           'AgentRunConversationService',
-        ).claimQueuedMessages({
+        ).openTurn({
           workspaceId,
           threadId,
           turnId,
           agentId,
           createdBy: executionContext.turnCreatedBy,
           queuedMessageIds: [message.id],
+          senderUserWorkspaceId: null,
+          senderApplicationId: null,
+          messages: [],
         });
         await suspensionService.recordWaitOutcome({
           workspaceId,
