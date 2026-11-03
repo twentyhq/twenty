@@ -25,7 +25,9 @@ type GlobalTestContext = {
 type TestContext = {
   token: (globalContext: GlobalTestContext) => string;
   runAsWorkspaceMemberId?: string;
-  expectedCaller: Record<string, unknown>;
+  expectedCaller:
+    | { type: 'user'; workspaceMemberId: string }
+    | { type: 'apiKey'; apiKey: { id: string } };
 };
 
 const callerRunTestCases: EachTestingContext<TestContext>[] = [
@@ -66,7 +68,7 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
       token: () => API_KEY_ACCESS_TOKEN,
       expectedCaller: {
         type: 'apiKey',
-        apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
+        apiKey: { id: API_KEY_DATA_SEED_IDS.ID_1 },
       },
     },
   },

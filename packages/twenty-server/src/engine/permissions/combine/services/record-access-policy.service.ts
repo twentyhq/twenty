@@ -219,7 +219,6 @@ export class RecordAccessPolicyService {
     return objectsPermissions;
   }
 
-  // undefined when the auth context holds no role
   async findObjectsPermissions(
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectsPermissions | undefined> {

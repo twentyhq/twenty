@@ -53,6 +53,19 @@ type StreamPermissionsContext = {
 
 const SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY = 10;
 
+const isStreamQueryingObject = ({
+  streamData,
+  objectNameSingular,
+}: {
+  streamData: EventStreamData;
+  objectNameSingular: string;
+}): boolean =>
+  Object.values(streamData.queries).some(
+    (operationSignature) =>
+      isRecordGqlOperationSignature(operationSignature) &&
+      operationSignature.objectNameSingular === objectNameSingular,
+  );
+
 @Injectable()
 export class ObjectRecordEventPublisher {
   private readonly logger = new Logger(ObjectRecordEventPublisher.name);
@@ -177,13 +190,7 @@ export class ObjectRecordEventPublisher {
 
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
-    if (
-      !Object.values(streamData.queries).some(
-        (operationSignature) =>
-          isRecordGqlOperationSignature(operationSignature) &&
-          operationSignature.objectNameSingular === objectNameSingular,
-      )
-    ) {
+    if (!isStreamQueryingObject({ streamData, objectNameSingular })) {
       return;
     }
 
@@ -398,18 +405,17 @@ export class ObjectRecordEventPublisher {
     subscriberAuthContexts,
   }: {
     streamsData: Map<string, EventStreamData | undefined>;
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    workspaceEventBatch: Pick<
+      WorkspaceEventBatch<ObjectRecordEvent>,
+      'workspaceId' | 'objectMetadata'
+    >;
     subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
   }): Promise<void> {
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
     const subscribers = [...streamsData.values()]
       .filter(isDefined)
       .filter((streamData) =>
-        Object.values(streamData.queries).some(
-          (operationSignature) =>
-            isRecordGqlOperationSignature(operationSignature) &&
-            operationSignature.objectNameSingular === objectNameSingular,
-        ),
+        isStreamQueryingObject({ streamData, objectNameSingular }),
       )
       .flatMap(({ authContext: { userWorkspaceId, applicationId } }) =>
         isDefined(userWorkspaceId) ? [{ userWorkspaceId, applicationId }] : [],
