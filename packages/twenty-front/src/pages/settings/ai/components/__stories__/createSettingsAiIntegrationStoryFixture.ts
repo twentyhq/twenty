@@ -129,6 +129,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     const releaseSave = () => {
       resolveSave?.();
       instructionsSaveReleases.delete(releaseSave);
+
+      if (nextInstructionsSave?.releaseSave === releaseSave) {
+        nextInstructionsSave = undefined;
+      }
     };
     instructionsSaveReleases.add(releaseSave);
     nextInstructionsSave = { pendingSave, releaseSave };

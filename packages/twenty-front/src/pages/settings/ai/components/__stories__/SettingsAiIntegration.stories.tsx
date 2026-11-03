@@ -374,8 +374,13 @@ export const QueuedInstructionsSavesPersistLatestDraft: Story = {
     const instructions = await canvas.findByRole('textbox', {
       name: 'Workspace Instructions',
     });
+    const releaseUnusedSave = fixture.pauseInstructionsSave();
+
+    releaseUnusedSave();
+    releaseUnusedSave();
     const releaseEarlierSave = fixture.pauseInstructionsSave();
 
+    releaseUnusedSave();
     await userEvent.type(instructions, 'Use concise replies.');
     await waitFor(
       () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
