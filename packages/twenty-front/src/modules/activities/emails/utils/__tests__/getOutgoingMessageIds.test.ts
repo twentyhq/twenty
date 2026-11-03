@@ -3,13 +3,16 @@ import { getOutgoingMessageIds } from '@/activities/emails/utils/getOutgoingMess
 const VIEWER_CHANNEL_ID = 'viewer-channel';
 const TEAMMATE_CHANNEL_ID = 'teammate-channel';
 
-const buildMessage = (
-  id: string,
+const buildMessage = ({
+  id,
+  associations,
+}: {
+  id: string;
   associations: {
     messageChannelId: string;
     direction: 'INCOMING' | 'OUTGOING';
-  }[],
-) => ({
+  }[];
+}) => ({
   id,
   messageChannelMessageAssociations: associations.map((association, index) => ({
     id: `${id}-${index}`,
@@ -22,12 +25,18 @@ describe('getOutgoingMessageIds', () => {
     expect(
       getOutgoingMessageIds({
         messages: [
-          buildMessage('sent', [
-            { messageChannelId: VIEWER_CHANNEL_ID, direction: 'OUTGOING' },
-          ]),
-          buildMessage('received', [
-            { messageChannelId: VIEWER_CHANNEL_ID, direction: 'INCOMING' },
-          ]),
+          buildMessage({
+            id: 'sent',
+            associations: [
+              { messageChannelId: VIEWER_CHANNEL_ID, direction: 'OUTGOING' },
+            ],
+          }),
+          buildMessage({
+            id: 'received',
+            associations: [
+              { messageChannelId: VIEWER_CHANNEL_ID, direction: 'INCOMING' },
+            ],
+          }),
         ],
         viewerMessageChannelIds: new Set([VIEWER_CHANNEL_ID]),
       }),
@@ -38,10 +47,13 @@ describe('getOutgoingMessageIds', () => {
     expect(
       getOutgoingMessageIds({
         messages: [
-          buildMessage('teammate-sent', [
-            { messageChannelId: TEAMMATE_CHANNEL_ID, direction: 'OUTGOING' },
-            { messageChannelId: VIEWER_CHANNEL_ID, direction: 'INCOMING' },
-          ]),
+          buildMessage({
+            id: 'teammate-sent',
+            associations: [
+              { messageChannelId: TEAMMATE_CHANNEL_ID, direction: 'OUTGOING' },
+              { messageChannelId: VIEWER_CHANNEL_ID, direction: 'INCOMING' },
+            ],
+          }),
         ],
         viewerMessageChannelIds: new Set([VIEWER_CHANNEL_ID]),
       }),
