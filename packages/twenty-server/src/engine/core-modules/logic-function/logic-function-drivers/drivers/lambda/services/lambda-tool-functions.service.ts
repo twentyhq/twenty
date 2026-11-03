@@ -7,6 +7,7 @@ import {
   PublishLayerVersionCommand,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
@@ -186,6 +187,9 @@ export class LambdaToolFunctionsService {
       throw new FrontComponentException(
         'Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size.',
         FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        {
+          userFriendlyMessage: msg`Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size.`,
+        },
       );
     }
     const isDependenciesBuild = input.action === 'buildDependencies';
