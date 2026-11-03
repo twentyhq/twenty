@@ -4,6 +4,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
+import { AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-execution-decision.enum';
 import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { readAgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-agent-chat-assistant-reply-context.util';
@@ -62,16 +64,15 @@ export class AgentChatReplyExecutionPolicyService {
     }
 
     const context = readAgentChatAssistantReplyContext(message?.parts);
-    const decision = await this.assistantPolicyService.resolveExecutionDecision(
-      {
+    const decision =
+      await this.assistantPolicyService.resolveReplyExecutionDecision({
         workspaceId,
         thread,
         context,
-      },
-    );
+      });
 
-    if (decision !== 'REEVALUATE') {
-      return decision === 'EXECUTE';
+    if (decision !== AgentChatReplyExecutionDecision.REEVALUATE) {
+      return decision === AgentChatReplyExecutionDecision.EXECUTE;
     }
 
     const text = (message?.parts ?? [])
@@ -80,7 +81,7 @@ export class AgentChatReplyExecutionPolicyService {
       .join('\n');
 
     return this.replyPolicyService.shouldReply({
-      decision: 'EVALUATE',
+      decision: AgentChatReplyDecision.EVALUATE,
       threadId,
       pendingQuestionMessageId: thread.pendingQuestionMessageId,
       workspaceId,

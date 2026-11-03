@@ -4,9 +4,9 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
-import { type AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-reason.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
@@ -24,7 +24,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class AgentChatInboxDeliveryWriterService {
+export class AgentChatInboxParticipantWriterService {
   constructor(
     private readonly sharingService: AgentChatSharingService,
     private readonly participantEventService: AgentChatThreadParticipantEventService,
@@ -34,7 +34,7 @@ export class AgentChatInboxDeliveryWriterService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  async write({
+  async writeParticipantInboxState({
     workspaceMemberIds,
     reason,
     ...access
@@ -42,15 +42,20 @@ export class AgentChatInboxDeliveryWriterService {
     workspaceMemberIds: string[];
     reason: AgentChatInboxDeliveryReason;
   }): Promise<void> {
-    const memberIds = [...new Set(workspaceMemberIds)].filter(
-      (memberId) => memberId !== access.workspaceMemberId,
+    const participantWorkspaceMemberIds = [
+      ...new Set(workspaceMemberIds),
+    ].filter(
+      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
     );
 
-    if (!isNonEmptyArray(memberIds)) {
+    if (!isNonEmptyArray(participantWorkspaceMemberIds)) {
       return;
     }
 
-    await this.assertCanDeliverToMembers({ ...access, memberIds });
+    await this.assertCanDeliverToWorkspaceMembers({
+      ...access,
+      memberIds: participantWorkspaceMemberIds,
+    });
 
     const { workspaceId, threadId } = access;
 
@@ -67,32 +72,33 @@ export class AgentChatInboxDeliveryWriterService {
         'agentChatThreadParticipant',
       ) ?? throwAgentChatThreadNotFound();
 
-    const writes = await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
-          this.writeParticipants({
-            scope,
-            workspaceId,
-            threadId,
-            memberIds,
-            reason,
-            participantObjectMetadata,
-          }),
-        ),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
-    );
+    const participantWrites =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
+            this.upsertParticipantInboxState({
+              scope,
+              workspaceId,
+              threadId,
+              memberIds: participantWorkspaceMemberIds,
+              reason,
+              participantObjectMetadata,
+            }),
+          ),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
 
-    for (const write of writes) {
+    for (const participantWrite of participantWrites) {
       await this.participantEventService.emitParticipantWritten({
         workspaceId,
-        ...write,
+        ...participantWrite,
       });
     }
   }
 
-  private async assertCanDeliverToMembers({
-    memberIds,
+  private async assertCanDeliverToWorkspaceMembers({
+    memberIds: participantWorkspaceMemberIds,
     ...access
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
@@ -102,23 +108,25 @@ export class AgentChatInboxDeliveryWriterService {
       operationType: 'update',
     });
 
-    const eligibleMemberIds =
+    const eligibleWorkspaceMemberIds =
       await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
         ...access,
-        memberIds,
+        memberIds: participantWorkspaceMemberIds,
         shouldConsiderNewShares: false,
       });
 
-    if (eligibleMemberIds.length !== memberIds.length) {
+    if (
+      eligibleWorkspaceMemberIds.length !== participantWorkspaceMemberIds.length
+    ) {
       throwAgentChatThreadNotFound();
     }
   }
 
-  private async writeParticipants({
+  private async upsertParticipantInboxState({
     scope,
     workspaceId,
     threadId,
-    memberIds,
+    memberIds: participantWorkspaceMemberIds,
     reason,
     participantObjectMetadata,
   }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
@@ -135,24 +143,32 @@ export class AgentChatInboxDeliveryWriterService {
     const findParticipants = () =>
       participantRepository.find({
         select: AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES,
-        where: { threadId, workspaceMemberId: In(memberIds) },
+        where: {
+          threadId,
+          workspaceMemberId: In(participantWorkspaceMemberIds),
+        },
         withDeleted: true,
       });
 
     let participantsBefore = await findParticipants();
-    const existingMemberIds = new Set(
+    const existingParticipantWorkspaceMemberIds = new Set(
       participantsBefore.map(({ workspaceMemberId }) => workspaceMemberId),
     );
-    const missingMemberIds = memberIds.filter(
-      (memberId) => !existingMemberIds.has(memberId),
-    );
+    const missingParticipantWorkspaceMemberIds =
+      participantWorkspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !existingParticipantWorkspaceMemberIds.has(workspaceMemberId),
+      );
     const insertedParticipantIds = new Set<string>();
-    const isMention = reason === 'mention';
+    const shouldMarkAsMentioned =
+      reason === AgentChatInboxDeliveryReason.MENTION;
 
-    if (isNonEmptyArray(missingMemberIds)) {
-      const lastMentionedAt = isMention ? new Date().toISOString() : null;
+    if (isNonEmptyArray(missingParticipantWorkspaceMemberIds)) {
+      const lastMentionedAt = shouldMarkAsMentioned
+        ? new Date().toISOString()
+        : null;
       const { identifiers } = await participantRepository.insert(
-        missingMemberIds.map((workspaceMemberId) => ({
+        missingParticipantWorkspaceMemberIds.map((workspaceMemberId) => ({
           threadId,
           workspaceMemberId,
           lastMentionedAt,
@@ -175,13 +191,13 @@ export class AgentChatInboxDeliveryWriterService {
       participantsBefore = await findParticipants();
     }
 
-    const participantBeforeByMemberId = new Map(
+    const participantBeforeByWorkspaceMemberId = new Map(
       participantsBefore
         .filter(({ id }) => !insertedParticipantIds.has(id))
         .map((participant) => [participant.workspaceMemberId, participant]),
     );
 
-    for (const participantBefore of participantBeforeByMemberId.values()) {
+    for (const participantBefore of participantBeforeByWorkspaceMemberId.values()) {
       await participantRepository.update(
         { id: participantBefore.id },
         {
@@ -189,7 +205,7 @@ export class AgentChatInboxDeliveryWriterService {
           archivedAt: null,
           snoozedUntil: null,
           isSubscribed: true,
-          ...(isMention
+          ...(shouldMarkAsMentioned
             ? {
                 lastMentionedAt:
                   buildNextAgentChatLastMentionedAt(participantBefore),
@@ -215,8 +231,9 @@ export class AgentChatInboxDeliveryWriterService {
 
     return participantsAfter.map((participantAfter) => ({
       before:
-        participantBeforeByMemberId.get(participantAfter.workspaceMemberId) ??
-        null,
+        participantBeforeByWorkspaceMemberId.get(
+          participantAfter.workspaceMemberId,
+        ) ?? null,
       after: participantAfter,
     }));
   }

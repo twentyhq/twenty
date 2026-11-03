@@ -1,3 +1,4 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -825,17 +826,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
       };
-      const message = await memberMessageWriter.write({
+      const message = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
         message: { text: 'Live message after upgrade' },
-        placement: 'running',
+        placement: AgentChatMemberMessagePlacement.RUNNING,
       });
-      const queued = await memberMessageWriter.write({
+      const queued = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
         message: { text: 'Queued after upgrade' },
-        placement: 'queued',
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
       await queue.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,

@@ -73,11 +73,11 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    return this.streamClaimService.run({
+    return this.streamClaimService.claimAndStartStream({
       threadId,
       workspaceId,
       modelId,
-      start: async (streamId) => {
+      startStream: async (streamId) => {
         if (
           await this.agentChatService.hasMessages({ threadId, workspaceId })
         ) {
@@ -146,11 +146,11 @@ export class AgentChatStreamingService {
       userWorkspaceId,
     });
 
-    const started = await this.streamClaimService.run({
+    const started = await this.streamClaimService.claimAndStartStream({
       threadId,
       workspaceId,
       modelId,
-      start: async (streamId) => {
+      startStream: async (streamId) => {
         // the latest turn may have changed while claiming, and its output is not ours to delete
         const claimedTurn = await this.turnRecorderService.findLatestTurn({
           threadId,
@@ -249,10 +249,10 @@ export class AgentChatStreamingService {
       return;
     }
 
-    await this.streamClaimService.run({
+    await this.streamClaimService.claimAndStartStream({
       threadId,
       workspaceId,
-      start: async (streamId) => {
+      startStream: async (streamId) => {
         const turnId = await this.agentChatQueueService.promoteQueuedMessage({
           messageId: message.id,
           threadId,
@@ -470,7 +470,7 @@ export class AgentChatStreamingService {
     const uiMessages = await Promise.all(
       sentMessages.map(async (message) => ({
         id: message.id,
-        role: message.role as 'user' | 'assistant' | 'system',
+        role: message.role,
         parts: await this.conversationReaderService.signFileParts({
           workspaceId,
           parts: mapDBPartsToUIMessageParts(message.parts ?? []),

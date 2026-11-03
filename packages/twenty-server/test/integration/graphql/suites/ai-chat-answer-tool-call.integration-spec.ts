@@ -1,3 +1,4 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
@@ -143,19 +144,19 @@ describe('Answering a chat tool call', () => {
   const markAsMentioned = async () => {
     const inboxDeliveryService = getInboxDeliveryService();
 
-    await inboxDeliveryService.addMembers({
+    await inboxDeliveryService.deliverThreadToMemberInboxes({
       workspaceId,
       workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'recipient',
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     });
-    await inboxDeliveryService.addMembers({
+    await inboxDeliveryService.deliverThreadToMemberInboxes({
       workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       threadId,
       workspaceMemberIds: [workspaceMemberId],
-      reason: 'mention',
+      reason: AgentChatInboxDeliveryReason.MENTION,
     });
   };
 
@@ -306,12 +307,12 @@ describe('Answering a chat tool call', () => {
 
   it('resolves only the answering member while another request remains pending', async () => {
     await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
-    await getInboxDeliveryService().addMembers({
+    await getInboxDeliveryService().deliverThreadToMemberInboxes({
       workspaceId,
       workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'mention',
+      reason: AgentChatInboxDeliveryReason.MENTION,
     });
     await markAsMentioned();
 

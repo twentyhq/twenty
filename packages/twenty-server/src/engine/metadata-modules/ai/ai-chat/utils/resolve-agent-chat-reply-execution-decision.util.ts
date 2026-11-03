@@ -2,8 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
-import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
-import { type AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-execution-decision.type';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
+import { AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-execution-decision.enum';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 
 export const resolveAgentChatReplyExecutionDecision = ({
@@ -18,16 +19,17 @@ export const resolveAgentChatReplyExecutionDecision = ({
   context?: AgentChatAssistantReplyContext;
 }): AgentChatReplyExecutionDecision => {
   if (!isDefined(context)) {
-    return audience === 'assistant-chat' || mode !== AiChatAssistantMode.NEVER
-      ? 'EXECUTE'
-      : 'SKIP';
+    return audience === AgentChatAudience.ASSISTANT_CHAT ||
+      mode !== AiChatAssistantMode.NEVER
+      ? AgentChatReplyExecutionDecision.EXECUTE
+      : AgentChatReplyExecutionDecision.SKIP;
   }
 
   const hasAssistantChatExemption =
     context.isDirectAssistantChat || context.isStructuredRequestContinuation;
   const effectiveAudience =
-    audience === 'assistant-chat' && !hasAssistantChatExemption
-      ? 'conversation'
+    audience === AgentChatAudience.ASSISTANT_CHAT && !hasAssistantChatExemption
+      ? AgentChatAudience.CONVERSATION
       : audience;
   const replyDecision = resolveAgentChatReplyDecision({
     mode,
@@ -37,13 +39,15 @@ export const resolveAgentChatReplyExecutionDecision = ({
       context.isAssistantMentioned || context.isStructuredRequestContinuation,
   });
 
-  if (replyDecision === 'SKIP') {
-    return 'SKIP';
+  if (replyDecision === AgentChatReplyDecision.SKIP) {
+    return AgentChatReplyExecutionDecision.SKIP;
   }
 
-  if (replyDecision !== 'EVALUATE') {
-    return 'EXECUTE';
+  if (replyDecision !== AgentChatReplyDecision.EVALUATE) {
+    return AgentChatReplyExecutionDecision.EXECUTE;
   }
 
-  return context.isDirectAssistantChat ? 'REEVALUATE' : 'EXECUTE';
+  return context.isDirectAssistantChat
+    ? AgentChatReplyExecutionDecision.REEVALUATE
+    : AgentChatReplyExecutionDecision.EXECUTE;
 };

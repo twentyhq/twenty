@@ -1,9 +1,11 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 
 const DEFAULT_REPLY_CONTEXT = {
   mode: AiChatAssistantMode.AUTOMATIC,
-  audience: 'conversation',
+  audience: AgentChatAudience.CONVERSATION,
   isAssistantParticipant: true,
   isAssistantMentioned: false,
 } satisfies Parameters<typeof resolveAgentChatReplyDecision>[0];
@@ -16,11 +18,11 @@ describe('resolveAgentChatReplyDecision', () => {
         resolveAgentChatReplyDecision({
           ...DEFAULT_REPLY_CONTEXT,
           mode,
-          audience: 'assistant-chat',
+          audience: AgentChatAudience.ASSISTANT_CHAT,
           isAssistantParticipant: false,
           isReplyRequested: false,
         }),
-      ).toBe('ASSISTANT_CHAT_REPLY');
+      ).toBe(AgentChatReplyDecision.ASSISTANT_CHAT_REPLY);
     },
   );
 
@@ -31,7 +33,7 @@ describe('resolveAgentChatReplyDecision', () => {
         isAssistantMentioned: true,
         isReplyRequested: false,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyDecision.SKIP);
   });
 
   it('skips a mention under Never', () => {
@@ -41,7 +43,7 @@ describe('resolveAgentChatReplyDecision', () => {
         mode: AiChatAssistantMode.NEVER,
         isAssistantMentioned: true,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyDecision.SKIP);
   });
 
   it.each([AiChatAssistantMode.MENTION_ONLY, AiChatAssistantMode.AUTOMATIC])(
@@ -54,7 +56,7 @@ describe('resolveAgentChatReplyDecision', () => {
           isAssistantParticipant: false,
           isAssistantMentioned: true,
         }),
-      ).toBe('REPLY');
+      ).toBe(AgentChatReplyDecision.REPLY);
     },
   );
 
@@ -64,7 +66,7 @@ describe('resolveAgentChatReplyDecision', () => {
         ...DEFAULT_REPLY_CONTEXT,
         mode: AiChatAssistantMode.MENTION_ONLY,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyDecision.SKIP);
   });
 
   it('skips an unmentioned automatic message while Ada is absent', () => {
@@ -73,12 +75,18 @@ describe('resolveAgentChatReplyDecision', () => {
         ...DEFAULT_REPLY_CONTEXT,
         isAssistantParticipant: false,
       }),
-    ).toBe('SKIP');
+    ).toBe(AgentChatReplyDecision.SKIP);
   });
 
   it.each([
-    { audience: 'conversation', isAssistantParticipant: true },
-    { audience: 'direct-message', isAssistantParticipant: false },
+    {
+      audience: AgentChatAudience.CONVERSATION,
+      isAssistantParticipant: true,
+    },
+    {
+      audience: AgentChatAudience.DIRECT_MESSAGE,
+      isAssistantParticipant: false,
+    },
   ] as const)(
     'evaluates an unmentioned automatic message with %o',
     (participation) => {
@@ -87,7 +95,7 @@ describe('resolveAgentChatReplyDecision', () => {
           ...DEFAULT_REPLY_CONTEXT,
           ...participation,
         }),
-      ).toBe('EVALUATE');
+      ).toBe(AgentChatReplyDecision.EVALUATE);
     },
   );
 });

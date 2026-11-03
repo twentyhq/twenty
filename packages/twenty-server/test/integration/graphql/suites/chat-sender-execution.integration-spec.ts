@@ -1,3 +1,4 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
@@ -64,7 +65,7 @@ describe('Persisted chat senders', () => {
         parts: [{ type: 'text', text: 'Hello' }],
       },
     });
-    const queued = await memberMessageWriter.write({
+    const queued = await memberMessageWriter.writeMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,
@@ -72,7 +73,7 @@ describe('Persisted chat senders', () => {
         threadId,
       }),
       message: { text: 'Next' },
-      placement: 'queued',
+      placement: AgentChatMemberMessagePlacement.QUEUED,
     });
     for (const messageId of [message.id, queued.id]) {
       await expect(
@@ -115,7 +116,7 @@ describe('Persisted chat senders', () => {
   });
 
   it('retains the queued sender through promotion and rejects a different executor', async () => {
-    const queued = await memberMessageWriter.write({
+    const queued = await memberMessageWriter.writeMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,
@@ -123,7 +124,7 @@ describe('Persisted chat senders', () => {
         threadId,
       }),
       message: { text: 'Next attributed message' },
-      placement: 'queued',
+      placement: AgentChatMemberMessagePlacement.QUEUED,
     });
     const turnId = await queue.promoteQueuedMessage({
       workspaceId,

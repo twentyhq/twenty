@@ -42,6 +42,7 @@ import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { buildAgentRunContinuationTurnId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-turn-id.util';
 import { readAgentRunSuspensionOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-agent-run-suspension-or-throw.util';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatReplyContinuationPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-continuation-policy.service';
@@ -392,7 +393,7 @@ describe('agent runs that wait (integration)', () => {
       }) => {
         const streamId = await holdConversation(threadId);
 
-        await context.memberMessageWriterService.write({
+        await context.memberMessageWriterService.writeMemberMessage({
           actor: {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -400,7 +401,7 @@ describe('agent runs that wait (integration)', () => {
           },
           thread,
           message: { text },
-          placement: 'queued',
+          placement: AgentChatMemberMessagePlacement.QUEUED,
           assistantReplyContext: {
             isAssistantMentioned,
             isDirectAssistantChat: false,
@@ -559,7 +560,7 @@ describe('agent runs that wait (integration)', () => {
 
         const thread = await getStoredThread(threadId);
 
-        await context.memberMessageWriterService.write({
+        await context.memberMessageWriterService.writeMemberMessage({
           actor: {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -567,7 +568,7 @@ describe('agent runs that wait (integration)', () => {
           },
           thread,
           message: { text: 'Ada, continue with the approved update' },
-          placement: 'queued',
+          placement: AgentChatMemberMessagePlacement.QUEUED,
           assistantReplyContext: {
             isAssistantMentioned: true,
             isDirectAssistantChat: false,
@@ -593,7 +594,7 @@ describe('agent runs that wait (integration)', () => {
             const allowedMessageIds =
               await findAllowedQueuedMessageIds(replyPolicyRequest);
 
-            await context.memberMessageWriterService.write({
+            await context.memberMessageWriterService.writeMemberMessage({
               actor: {
                 workspaceId,
                 userWorkspaceId: context.userWorkspaceId,
@@ -601,7 +602,7 @@ describe('agent runs that wait (integration)', () => {
               },
               thread,
               message: { text: lateMessageText },
-              placement: 'queued',
+              placement: AgentChatMemberMessagePlacement.QUEUED,
               assistantReplyContext: {
                 isAssistantMentioned: false,
                 isDirectAssistantChat: false,
@@ -701,21 +702,22 @@ describe('agent runs that wait (integration)', () => {
         const thread = await getStoredThread(threadId);
 
         const streamId = await holdConversation(threadId);
-        const message = await context.memberMessageWriterService.write({
-          actor: {
-            workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
-            workspaceMemberId: context.workspaceMemberId,
-          },
-          thread,
-          message: { text: 'Ada, continue after this update' },
-          placement: 'queued',
-          assistantReplyContext: {
-            isAssistantMentioned: true,
-            isDirectAssistantChat: false,
-            isStructuredRequestContinuation: false,
-          },
-        });
+        const message =
+          await context.memberMessageWriterService.writeMemberMessage({
+            actor: {
+              workspaceId,
+              userWorkspaceId: context.userWorkspaceId,
+              workspaceMemberId: context.workspaceMemberId,
+            },
+            thread,
+            message: { text: 'Ada, continue after this update' },
+            placement: AgentChatMemberMessagePlacement.QUEUED,
+            assistantReplyContext: {
+              isAssistantMentioned: true,
+              isDirectAssistantChat: false,
+              isStructuredRequestContinuation: false,
+            },
+          });
         const executionContext =
           await getAppProviderByClassName<AgentTriggerRunnerService>(
             'AgentTriggerRunnerService',
@@ -900,7 +902,7 @@ describe('agent runs that wait (integration)', () => {
 
       const thread = await getStoredThread(threadId);
 
-      await context.memberMessageWriterService.write({
+      await context.memberMessageWriterService.writeMemberMessage({
         actor: {
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,
@@ -908,7 +910,7 @@ describe('agent runs that wait (integration)', () => {
         },
         thread,
         message: { text: 'Ada, continue with this update' },
-        placement: 'queued',
+        placement: AgentChatMemberMessagePlacement.QUEUED,
         assistantReplyContext: {
           isAssistantMentioned: true,
           isDirectAssistantChat: false,

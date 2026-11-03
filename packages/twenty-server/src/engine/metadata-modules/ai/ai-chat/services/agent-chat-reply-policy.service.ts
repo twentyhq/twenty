@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AiEvaluationService } from 'src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -37,11 +37,14 @@ export class AgentChatReplyPolicyService {
     userWorkspaceId: string;
     text: string;
   }): Promise<boolean> {
-    if (decision === 'REPLY' || decision === 'ASSISTANT_CHAT_REPLY') {
+    if (
+      decision === AgentChatReplyDecision.REPLY ||
+      decision === AgentChatReplyDecision.ASSISTANT_CHAT_REPLY
+    ) {
       return true;
     }
 
-    if (decision === 'SKIP') {
+    if (decision === AgentChatReplyDecision.SKIP) {
       return false;
     }
 

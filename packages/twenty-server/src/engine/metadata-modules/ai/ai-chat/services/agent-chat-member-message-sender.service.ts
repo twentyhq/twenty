@@ -1,5 +1,7 @@
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -33,12 +35,12 @@ import {
 @Injectable()
 export class AgentChatMemberMessageSenderService {
   constructor(
-    private readonly threadService: AgentChatThreadService,
-    private readonly participationService: AgentChatAssistantParticipationService,
-    private readonly messageWriterService: AgentChatMemberMessageWriterService,
+    private readonly chatThreadService: AgentChatThreadService,
+    private readonly assistantParticipationService: AgentChatAssistantParticipationService,
+    private readonly memberMessageWriterService: AgentChatMemberMessageWriterService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
-    private readonly streamingService: AgentChatStreamingService,
-    private readonly queueService: AgentChatQueueService,
+    private readonly chatStreamingService: AgentChatStreamingService,
+    private readonly chatMessageQueueService: AgentChatQueueService,
     private readonly streamClaimService: AgentChatStreamClaimService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
@@ -50,7 +52,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly replyPolicyService: AgentChatReplyPolicyService,
   ) {}
 
-  async send({
+  async sendMemberMessage({
     actor,
     target,
     message,
@@ -58,7 +60,7 @@ export class AgentChatMemberMessageSenderService {
     assistant,
     execution,
   }: AgentChatMemberMessageSendArgs): Promise<AgentChatMemberMessageResult> {
-    const access = {
+    const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
       threadId: target.threadId,
@@ -67,7 +69,7 @@ export class AgentChatMemberMessageSenderService {
       FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
       actor.workspaceId,
     );
-    const participationIntent = {
+    const assistantParticipationInput = {
       isAssistantMentioned: assistant.isMentioned,
       isInitialAssistantParticipant: assistant.isInitiallyIncluded,
       mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
@@ -75,23 +77,24 @@ export class AgentChatMemberMessageSenderService {
         addressing.initialRecipientWorkspaceMemberIds,
     };
 
-    await this.threadService.createThreadIfMissing({
-      ...access,
+    await this.chatThreadService.createThreadIfMissing({
+      ...threadAccess,
       channelId: target.channelId,
       shouldApplyAssistantParticipation: false,
-      ...participationIntent,
     });
 
-    const thread = await this.threadService.getWritableThread(access);
-    const participation = await this.participationService.resolve({
-      ...actor,
-      thread,
-      ...participationIntent,
-      isReplyRequested: assistant.isReplyRequested,
-    });
+    const thread = await this.chatThreadService.getWritableThread(threadAccess);
+    const participation =
+      await this.assistantParticipationService.resolveAssistantParticipation({
+        workspaceId: actor.workspaceId,
+        workspaceMemberId: actor.workspaceMemberId,
+        thread,
+        ...assistantParticipationInput,
+        isReplyRequested: assistant.isReplyRequested,
+      });
 
     const replyDecision = participation.replyDecision;
-    const shouldReply =
+    const shouldGenerateAssistantReply =
       !isInboxEnabled ||
       (await this.replyPolicyService.shouldReply({
         decision: replyDecision,
@@ -102,7 +105,7 @@ export class AgentChatMemberMessageSenderService {
         text: message.text,
       }));
 
-    if (shouldReply) {
+    if (shouldGenerateAssistantReply) {
       const workspace = await this.coreEntityCacheService.get(
         'workspaceEntity',
         actor.workspaceId,
@@ -118,19 +121,20 @@ export class AgentChatMemberMessageSenderService {
     }
 
     if (isDefined(thread.deletedAt)) {
-      await this.threadService.restoreThread(access);
+      await this.chatThreadService.restoreThread(threadAccess);
     }
 
-    const interruptedError = await this.streamRecoveryService.reapDeadStream({
-      thread,
-      workspaceId: actor.workspaceId,
-    });
+    const interruptedStreamError =
+      await this.streamRecoveryService.reapDeadStream({
+        thread,
+        workspaceId: actor.workspaceId,
+      });
 
-    if (isDefined(interruptedError)) {
+    if (isDefined(interruptedStreamError)) {
       thread.activeStreamId = null;
     }
 
-    const write = {
+    const memberMessageWriteInput = {
       actor,
       thread,
       message,
@@ -138,35 +142,41 @@ export class AgentChatMemberMessageSenderService {
       participation,
       assistantReplyContext: {
         isAssistantMentioned: assistant.isMentioned,
-        isDirectAssistantChat: replyDecision === 'ASSISTANT_CHAT_REPLY',
+        isDirectAssistantChat:
+          replyDecision === AgentChatReplyDecision.ASSISTANT_CHAT_REPLY,
         isStructuredRequestContinuation: false,
       },
     };
-    const result: AgentChatMemberMessageResult = shouldReply
-      ? await this.sendWithReply({ ...write, execution })
-      : await this.messageWriterService
-          .write({
-            ...write,
-            placement: 'completed',
+    const result: AgentChatMemberMessageResult = shouldGenerateAssistantReply
+      ? await this.sendMessageWithAssistantReply({
+          ...memberMessageWriteInput,
+          execution,
+        })
+      : await this.memberMessageWriterService
+          .writeMemberMessage({
+            ...memberMessageWriteInput,
+            placement: AgentChatMemberMessagePlacement.COMPLETED,
           })
-          .then((savedMessage) => ({
-            messageId: savedMessage.id,
+          .then((persistedMessage) => ({
+            messageId: persistedMessage.id,
             queued: false,
-            delivery: savedMessage.delivery,
+            delivery: persistedMessage.delivery,
           }));
 
     if (!isInboxEnabled) {
-      result.delivery = await this.inboxDeliveryService.deliver({
-        ...access,
-        messageId: result.messageId,
-        mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
-        initialRecipientWorkspaceMemberIds: [],
-      });
+      result.delivery = await this.inboxDeliveryService.deliverMessageToInboxes(
+        {
+          ...threadAccess,
+          messageId: result.messageId,
+          mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
+          initialRecipientWorkspaceMemberIds: [],
+        },
+      );
     }
 
     if (isDefined(result.streamId) && isDefined(result.turnId)) {
       tagAiChatStreamScope({
-        ...access,
+        ...threadAccess,
         streamId: result.streamId,
         turnId: result.turnId,
       });
@@ -175,7 +185,7 @@ export class AgentChatMemberMessageSenderService {
     return result;
   }
 
-  private async sendWithReply({
+  private async sendMessageWithAssistantReply({
     actor,
     thread,
     message,
@@ -192,10 +202,16 @@ export class AgentChatMemberMessageSenderService {
       'isAssistantParticipant' | 'isInitialMessage'
     >;
   }): Promise<AgentChatMemberMessageResult> {
-    const access = { workspaceId: actor.workspaceId, threadId: thread.id };
+    const threadAccess = {
+      workspaceId: actor.workspaceId,
+      threadId: thread.id,
+    };
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
-      this.runSuspensionService.findConversationWait({ ...access, thread }),
-      this.queueService.hasQueuedMessages(access),
+      this.runSuspensionService.findConversationWait({
+        ...threadAccess,
+        thread,
+      }),
+      this.chatMessageQueueService.hasQueuedMessages(threadAccess),
     ]);
 
     if (conversationWait.hasPostedCall) {
@@ -207,14 +223,14 @@ export class AgentChatMemberMessageSenderService {
 
     if (isDefined(conversationWait.pendingQuestionMessageId)) {
       await this.threadLifecycleService.closePendingQuestion({
-        ...access,
+        ...threadAccess,
         messageId: conversationWait.pendingQuestionMessageId,
         activeStreamId: null,
         turnStatus: AgentTurnStatus.COMPLETED,
       });
     }
 
-    const write = {
+    const memberMessageWriteInput = {
       actor,
       thread,
       message,
@@ -222,67 +238,69 @@ export class AgentChatMemberMessageSenderService {
       participation,
       assistantReplyContext,
     };
-    const started =
+    const startedAssistantReply =
       hasQueuedBacklog || isDefined(conversationWait.suspendedRun)
         ? null
-        : await this.streamClaimService.run({
-            ...access,
+        : await this.streamClaimService.claimAndStartStream({
+            ...threadAccess,
             modelId: execution.modelId,
-            start: async (streamId) => {
-              const savedMessage = await this.messageWriterService.write({
-                ...write,
-                placement: 'running',
-              });
+            startStream: async (streamId) => {
+              const persistedMessage =
+                await this.memberMessageWriterService.writeMemberMessage({
+                  ...memberMessageWriteInput,
+                  placement: AgentChatMemberMessagePlacement.RUNNING,
+                });
 
-              assertIsDefinedOrThrow(savedMessage.turnId);
+              assertIsDefinedOrThrow(persistedMessage.turnId);
 
-              await this.streamingService.enqueueStreamJob({
+              await this.chatStreamingService.enqueueStreamJob({
                 ...actor,
-                ...access,
+                ...threadAccess,
                 ...execution,
                 streamId,
-                turnId: savedMessage.turnId,
-                messageId: savedMessage.id,
+                turnId: persistedMessage.turnId,
+                messageId: persistedMessage.id,
               });
 
               return {
-                messageId: savedMessage.id,
+                messageId: persistedMessage.id,
                 queued: false,
                 streamId,
-                turnId: savedMessage.turnId,
-                delivery: savedMessage.delivery,
+                turnId: persistedMessage.turnId,
+                delivery: persistedMessage.delivery,
               };
             },
           });
 
-    if (isDefined(started)) {
-      return started;
+    if (isDefined(startedAssistantReply)) {
+      return startedAssistantReply;
     }
 
-    const queuedMessage = await this.messageWriterService.write({
-      ...write,
-      placement: 'queued',
-    });
+    const queuedMemberMessage =
+      await this.memberMessageWriterService.writeMemberMessage({
+        ...memberMessageWriteInput,
+        placement: AgentChatMemberMessagePlacement.QUEUED,
+      });
 
     if (isDefined(conversationWait.suspendedRun)) {
       await this.runSuspensionService.scheduleContinuation({
-        ...access,
+        ...threadAccess,
         wakeUpId: conversationWait.suspendedRun.id,
         outcome: { type: 'MESSAGE_RECEIVED' },
       });
     } else {
-      await this.streamingService.flushNextQueuedMessage(access);
+      await this.chatStreamingService.flushNextQueuedMessage(threadAccess);
     }
 
     await this.eventPublisherService.publish({
-      ...access,
+      ...threadAccess,
       event: { type: 'queue-updated' },
     });
 
     return {
-      messageId: queuedMessage.id,
+      messageId: queuedMemberMessage.id,
       queued: true,
-      delivery: queuedMessage.delivery,
+      delivery: queuedMemberMessage.delivery,
     };
   }
 }

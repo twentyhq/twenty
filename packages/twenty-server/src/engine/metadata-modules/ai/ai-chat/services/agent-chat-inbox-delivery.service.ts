@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Equal, IsNull } from 'typeorm';
 
-import { AgentChatInboxDeliveryWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery-writer.service';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
-import { type AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-reason.type';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -22,11 +23,11 @@ export class AgentChatInboxDeliveryService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
-    private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService,
+    private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
-  async deliver({
+  async deliverMessageToInboxes({
     messageId,
     mentionedWorkspaceMemberIds,
     initialRecipientWorkspaceMemberIds,
@@ -41,11 +42,12 @@ export class AgentChatInboxDeliveryService {
 
     if (isNonEmptyArray(mentionedWorkspaceMemberIds)) {
       try {
-        deliveredMentionWorkspaceMemberIds = await this.addMembers({
-          ...access,
-          workspaceMemberIds: mentionedWorkspaceMemberIds,
-          reason: 'mention',
-        });
+        deliveredMentionWorkspaceMemberIds =
+          await this.deliverThreadToMemberInboxes({
+            ...access,
+            workspaceMemberIds: mentionedWorkspaceMemberIds,
+            reason: AgentChatInboxDeliveryReason.MENTION,
+          });
       } catch (error) {
         this.logger.warn(
           doNotTranslate(
@@ -66,11 +68,12 @@ export class AgentChatInboxDeliveryService {
 
     if (isNonEmptyArray(remainingInitialRecipientWorkspaceMemberIds)) {
       try {
-        deliveredRecipientWorkspaceMemberIds = await this.addMembers({
-          ...access,
-          workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
-          reason: 'recipient',
-        });
+        deliveredRecipientWorkspaceMemberIds =
+          await this.deliverThreadToMemberInboxes({
+            ...access,
+            workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
+            reason: AgentChatInboxDeliveryReason.RECIPIENT,
+          });
       } catch (error) {
         this.logger.warn(
           doNotTranslate(
@@ -95,7 +98,7 @@ export class AgentChatInboxDeliveryService {
     };
   }
 
-  async addMembers({
+  async deliverThreadToMemberInboxes({
     workspaceMemberIds,
     reason,
     ...access
@@ -111,52 +114,88 @@ export class AgentChatInboxDeliveryService {
       ...access,
       operationType: 'update',
     });
-    const candidateMemberIds = [...new Set(workspaceMemberIds)].filter(
-      (memberId) => memberId !== access.workspaceMemberId,
+    const candidateWorkspaceMemberIds = [...new Set(workspaceMemberIds)].filter(
+      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
     );
 
-    if (!isNonEmptyArray(candidateMemberIds)) {
+    if (!isNonEmptyArray(candidateWorkspaceMemberIds)) {
       return [];
     }
 
-    const deliveredMemberIds = await this.sharingService.shareThreadWithMembers(
-      {
+    const deliveredWorkspaceMemberIds =
+      await this.sharingService.shareThreadWithMembers({
         ...access,
-        memberIds: candidateMemberIds,
-      },
-    );
+        memberIds: candidateWorkspaceMemberIds,
+      });
 
-    if (!isNonEmptyArray(deliveredMemberIds)) {
-      return deliveredMemberIds;
+    if (!isNonEmptyArray(deliveredWorkspaceMemberIds)) {
+      return deliveredWorkspaceMemberIds;
     }
 
-    await this.deliveryWriterService.write({
+    await this.inboxParticipantWriterService.writeParticipantInboxState({
       ...access,
-      workspaceMemberIds: deliveredMemberIds,
+      workspaceMemberIds: deliveredWorkspaceMemberIds,
       reason,
     });
 
-    await this.threadRepository.query(
-      access.workspaceId,
-      ({ manager, table }) =>
-        manager.query(
-          `UPDATE ${table('agentChatThread')}
-           SET "updatedAt" = now(),
-             "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
-               SELECT member_id FROM unnest($2::text[]) AS member_id
-               WHERE NOT member_id = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
-                 AND member_id IS DISTINCT FROM "workspaceMemberId"::text
-             )
-           WHERE id = $1`,
-          [access.threadId, deliveredMemberIds],
-        ),
-    );
+    await this.appendDeliveredWriterWorkspaceMemberIds({
+      workspaceId: access.workspaceId,
+      threadId: access.threadId,
+      workspaceMemberIds: deliveredWorkspaceMemberIds,
+    });
 
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId: access.workspaceId,
       threadBefore: thread,
     });
 
-    return deliveredMemberIds;
+    return deliveredWorkspaceMemberIds;
+  }
+
+  private async appendDeliveredWriterWorkspaceMemberIds({
+    workspaceId,
+    threadId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    while (true) {
+      const thread = await this.threadRepository.findOneOrFail(workspaceId, {
+        where: { id: threadId },
+        select: ['id', 'workspaceMemberId', 'writerWorkspaceMemberIds'],
+      });
+      const existingWriterWorkspaceMemberIdSet = new Set(
+        thread.writerWorkspaceMemberIds ?? [],
+      );
+      const newWriterWorkspaceMemberIds = [
+        ...new Set(workspaceMemberIds),
+      ].filter(
+        (workspaceMemberId) =>
+          workspaceMemberId !== thread.workspaceMemberId &&
+          !existingWriterWorkspaceMemberIdSet.has(workspaceMemberId),
+      );
+      const result = await this.threadRepository.update(
+        workspaceId,
+        {
+          id: threadId,
+          workspaceMemberId: thread.workspaceMemberId ?? IsNull(),
+          writerWorkspaceMemberIds: isDefined(thread.writerWorkspaceMemberIds)
+            ? Equal(thread.writerWorkspaceMemberIds)
+            : IsNull(),
+        },
+        {
+          writerWorkspaceMemberIds: [
+            ...(thread.writerWorkspaceMemberIds ?? []),
+            ...newWriterWorkspaceMemberIds,
+          ],
+        },
+      );
+
+      if (result.affected > 0) {
+        return;
+      }
+    }
   }
 }

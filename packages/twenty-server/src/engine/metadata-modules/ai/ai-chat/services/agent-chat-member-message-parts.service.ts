@@ -23,7 +23,7 @@ export class AgentChatMemberMessagePartsService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
 
-  async build({
+  async buildMessageParts({
     workspaceId,
     message: { text, attachments },
     assistantReplyContext,
@@ -32,7 +32,7 @@ export class AgentChatMemberMessagePartsService {
     message: Pick<AgentChatMemberMessage, 'text' | 'attachments'>;
     assistantReplyContext?: AgentChatAssistantReplyContext;
   }): Promise<ExtendedUIMessagePart[]> {
-    const textPart: ExtendedUIMessagePart = {
+    const messageTextPart: ExtendedUIMessagePart = {
       type: 'text',
       text,
       providerMetadata: buildAgentChatAssistantReplyProviderMetadata(
@@ -41,24 +41,29 @@ export class AgentChatMemberMessagePartsService {
     };
 
     if (!isNonEmptyArray(attachments)) {
-      return [textPart];
+      return [messageTextPart];
     }
 
-    const files = await this.fileRepository.find(workspaceId, {
+    const uploadedChatFiles = await this.fileRepository.find(workspaceId, {
       where: {
         id: In(attachments.map(({ id }) => id)),
         path: Like(`${FileFolder.AgentChat}/%`),
         status: FILE_STATUS.UPLOADED,
       },
     });
-    const filesById = new Map(files.map((file) => [file.id, file]));
+    const uploadedChatFilesById = new Map(
+      uploadedChatFiles.map((uploadedChatFile) => [
+        uploadedChatFile.id,
+        uploadedChatFile,
+      ]),
+    );
 
     return [
-      textPart,
+      messageTextPart,
       ...attachments.map(({ id, filename }) => {
-        const file = filesById.get(id);
+        const uploadedChatFile = uploadedChatFilesById.get(id);
 
-        if (!isDefined(file)) {
+        if (!isDefined(uploadedChatFile)) {
           throw new AiException(
             `Attachment ${id} is not an uploaded ${FileFolder.AgentChat} file in this workspace`,
             AiExceptionCode.INVALID_AGENT_INPUT,
@@ -69,7 +74,7 @@ export class AgentChatMemberMessagePartsService {
           type: 'file' as const,
           fileId: id,
           filename,
-          mediaType: file.mimeType,
+          mediaType: uploadedChatFile.mimeType,
           url: '',
         };
       }),

@@ -4,6 +4,7 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -325,12 +326,12 @@ export class AgentInboxService {
     }
 
     const deliveredWorkspaceMemberIds =
-      await this.inboxDeliveryService.addMembers({
+      await this.inboxDeliveryService.deliverThreadToMemberInboxes({
         workspaceId,
         threadId: thread.id,
         workspaceMemberId: thread.workspaceMemberId,
         workspaceMemberIds: newWorkspaceMemberIds,
-        reason: 'recipient',
+        reason: AgentChatInboxDeliveryReason.RECIPIENT,
       });
 
     if (deliveredWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {

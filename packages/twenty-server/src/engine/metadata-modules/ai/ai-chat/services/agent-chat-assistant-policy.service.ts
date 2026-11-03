@@ -10,8 +10,8 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatAssistantDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-decision.type';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
-import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
-import { type AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-execution-decision.type';
+import { type AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-execution-decision.enum';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
@@ -38,7 +38,7 @@ export class AgentChatAssistantPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  async resolve({
+  async resolveAssistantMessageDecision({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],
@@ -55,24 +55,26 @@ export class AgentChatAssistantPolicyService {
     isInitialMessage: boolean;
     isReplyRequested?: boolean;
   }): Promise<AgentChatAssistantDecision> {
-    const mode = await this.resolveMode({ workspaceId, thread });
-    const audience = await this.resolveAudience({
+    const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
+      workspaceId,
+      thread,
+    });
+    const chatAudience = await this.resolveChatAudience({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
     });
-
     const isAssistantParticipant = resolveAgentChatAssistantParticipation({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant: thread.isAssistantParticipant,
       isAssistantMentioned,
       isInitialAssistantParticipant,
       isInitialMessage,
     });
     const replyDecision = resolveAgentChatReplyDecision({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant,
       isAssistantMentioned,
       isReplyRequested,
@@ -81,7 +83,7 @@ export class AgentChatAssistantPolicyService {
     return { isAssistantParticipant, replyDecision };
   }
 
-  async resolveExecutionDecision({
+  async resolveReplyExecutionDecision({
     workspaceId,
     thread,
     context,
@@ -90,22 +92,25 @@ export class AgentChatAssistantPolicyService {
     thread: AssistantPolicyThread;
     context?: AgentChatAssistantReplyContext;
   }): Promise<AgentChatReplyExecutionDecision> {
-    const mode = await this.resolveMode({ workspaceId, thread });
-    const audience = await this.resolveAudience({
+    const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
+      workspaceId,
+      thread,
+    });
+    const chatAudience = await this.resolveChatAudience({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds: [],
     });
 
     return resolveAgentChatReplyExecutionDecision({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant: thread.isAssistantParticipant,
       context,
     });
   }
 
-  private async resolveMode({
+  private async resolveWorkspaceAssistantMode({
     workspaceId,
     thread,
   }: {
@@ -125,7 +130,7 @@ export class AgentChatAssistantPolicyService {
       : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
   }
 
-  private async resolveAudience({
+  private async resolveChatAudience({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
@@ -135,7 +140,7 @@ export class AgentChatAssistantPolicyService {
     candidateWorkspaceMemberIds: string[];
   }): Promise<AgentChatAudience> {
     if (thread.conversationType === 'DIRECT_MESSAGE') {
-      return 'direct-message';
+      return AgentChatAudience.DIRECT_MESSAGE;
     }
 
     if (
@@ -144,7 +149,7 @@ export class AgentChatAssistantPolicyService {
       isDefined(thread.channelId) ||
       !isDefined(thread.workspaceMemberId)
     ) {
-      return 'conversation';
+      return AgentChatAudience.CONVERSATION;
     }
 
     const { flatObjectMetadataMaps } =
@@ -157,10 +162,10 @@ export class AgentChatAssistantPolicyService {
     );
 
     if (!isDefined(threadObjectMetadata)) {
-      return 'conversation';
+      return AgentChatAudience.CONVERSATION;
     }
 
-    const [shares, memberCount] = await Promise.all([
+    const [threadShares, audienceMemberCount] = await Promise.all([
       this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
@@ -176,14 +181,14 @@ export class AgentChatAssistantPolicyService {
         ],
       }),
     ]);
-    const hasSharedAudience = shares.some(
+    const hasSharedAudience = threadShares.some(
       ({ principalType, principalId }) =>
         principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
         principalId !== thread.workspaceMemberId,
     );
 
-    return !hasSharedAudience && memberCount <= 1
-      ? 'assistant-chat'
-      : 'conversation';
+    return !hasSharedAudience && audienceMemberCount <= 1
+      ? AgentChatAudience.ASSISTANT_CHAT
+      : AgentChatAudience.CONVERSATION;
   }
 }
