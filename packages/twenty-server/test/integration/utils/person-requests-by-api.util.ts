@@ -15,7 +15,11 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 
 export type RecordApi = 'graphql' | 'rest';
 
-type PersonData = { id: string; jobTitle?: string };
+type PersonData = {
+  id: string;
+  name?: { firstName: string };
+  jobTitle?: string;
+};
 
 type PersonRequestInput = { api: RecordApi; token: string };
 

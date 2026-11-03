@@ -1,18 +1,17 @@
+import { randomUUID } from 'node:crypto';
+
 import {
-  createApiKeyWithObjectRecordGrants,
-  deleteApiKeysWithObjectRecordGrants,
   type ApiKeyWithObjectRecordGrants,
+  createApiKeyWithObjectRecordGrants,
 } from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
-import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permissions/utils/delete-api-keys-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied-response.util';
 import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
-import {
-  createPersonRecords,
-  deletePersonRecords,
-  findPersonRecordStates,
-  reservePersonRecordIds,
-  PERSON_RECORD_SEEDED_JOB_TITLE,
-} from 'test/integration/utils/person-record-fixtures.util';
+import { createPersonRecords } from 'test/integration/utils/create-person-records.util';
+import { destroyPersonRecordsByFirstName } from 'test/integration/utils/destroy-person-records-by-first-name.util';
+import { findPersonRecordStates } from 'test/integration/utils/find-person-record-states.util';
+import { PERSON_RECORD_FIXTURE } from 'test/integration/utils/person-record-fixture.constant';
 
 const UPDATED_JOB_TITLE = 'Updated job title';
 
@@ -34,17 +33,17 @@ describe('update grant on object records', () => {
 
   afterAll(async () => {
     await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
-    await deletePersonRecords();
+    await destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName);
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {
     it('denies createOne without the grant', async () => {
-      const [id] = reservePersonRecordIds(1);
+      const [id] = [randomUUID()];
 
       const response = await personRequestsByApi.createOne({
         api,
         token: withoutGrant.token,
-        data: { id },
+        data: { id, name: { firstName: PERSON_RECORD_FIXTURE.firstName } },
       });
 
       expectPermissionDeniedResponse({ api, response });
@@ -54,12 +53,12 @@ describe('update grant on object records', () => {
     });
 
     it('allows createOne with the grant', async () => {
-      const [id] = reservePersonRecordIds(1);
+      const [id] = [randomUUID()];
 
       const response = await personRequestsByApi.createOne({
         api,
         token: withGrant.token,
-        data: { id },
+        data: { id, name: { firstName: PERSON_RECORD_FIXTURE.firstName } },
       });
 
       expectPermissionGrantedResponse({ api, response });
@@ -69,12 +68,15 @@ describe('update grant on object records', () => {
     });
 
     it('denies createMany without the grant', async () => {
-      const ids = reservePersonRecordIds(2);
+      const ids = [randomUUID(), randomUUID()];
 
       const response = await personRequestsByApi.createMany({
         api,
         token: withoutGrant.token,
-        data: ids.map((id) => ({ id })),
+        data: ids.map((id) => ({
+          id,
+          name: { firstName: PERSON_RECORD_FIXTURE.firstName },
+        })),
       });
 
       expectPermissionDeniedResponse({ api, response });
@@ -85,12 +87,15 @@ describe('update grant on object records', () => {
     });
 
     it('allows createMany with the grant', async () => {
-      const ids = reservePersonRecordIds(2);
+      const ids = [randomUUID(), randomUUID()];
 
       const response = await personRequestsByApi.createMany({
         api,
         token: withGrant.token,
-        data: ids.map((id) => ({ id })),
+        data: ids.map((id) => ({
+          id,
+          name: { firstName: PERSON_RECORD_FIXTURE.firstName },
+        })),
       });
 
       expectPermissionGrantedResponse({ api, response });
@@ -112,7 +117,7 @@ describe('update grant on object records', () => {
 
       expectPermissionDeniedResponse({ api, response });
       expect(await findPersonRecordStates([id])).toEqual([
-        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
+        { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle },
       ]);
     });
 
@@ -144,8 +149,8 @@ describe('update grant on object records', () => {
 
       expectPermissionDeniedResponse({ api, response });
       expect(await findPersonRecordStates(ids)).toEqual([
-        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
-        { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE },
+        { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle },
+        { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle },
       ]);
     });
 

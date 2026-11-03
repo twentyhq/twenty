@@ -1,22 +1,20 @@
 import {
-  createApiKeyWithObjectRecordGrants,
-  deleteApiKeysWithObjectRecordGrants,
   type ApiKeyWithObjectRecordGrants,
+  createApiKeyWithObjectRecordGrants,
 } from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
-import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permissions/utils/delete-api-keys-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied-response.util';
 import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
-import {
-  createPersonRecords,
-  deletePersonRecords,
-  findPersonRecordStates,
-  PERSON_RECORD_SEEDED_JOB_TITLE,
-} from 'test/integration/utils/person-record-fixtures.util';
+import { createPersonRecords } from 'test/integration/utils/create-person-records.util';
+import { destroyPersonRecordsByFirstName } from 'test/integration/utils/destroy-person-records-by-first-name.util';
+import { findPersonRecordStates } from 'test/integration/utils/find-person-record-states.util';
+import { PERSON_RECORD_FIXTURE } from 'test/integration/utils/person-record-fixture.constant';
 
-const ACTIVE = { status: 'active', jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE };
+const ACTIVE = { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle };
 const SOFT_DELETED = {
   status: 'softDeleted',
-  jobTitle: PERSON_RECORD_SEEDED_JOB_TITLE,
+  jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
 };
 
 describe('soft-delete grant on object records', () => {
@@ -37,7 +35,7 @@ describe('soft-delete grant on object records', () => {
 
   afterAll(async () => {
     await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
-    await deletePersonRecords();
+    await destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName);
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {

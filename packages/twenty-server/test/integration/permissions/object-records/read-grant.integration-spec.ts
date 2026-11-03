@@ -1,19 +1,18 @@
 import { type Response } from 'supertest';
 import {
-  createApiKeyWithObjectRecordGrants,
-  deleteApiKeysWithObjectRecordGrants,
   type ApiKeyWithObjectRecordGrants,
+  createApiKeyWithObjectRecordGrants,
 } from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
-import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied.util';
+import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permissions/utils/delete-api-keys-with-object-record-grants.util';
+import { expectPermissionDeniedResponse } from 'test/integration/permissions/utils/expect-permission-denied-response.util';
 import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import {
   type RecordApi,
   personRequestsByApi,
 } from 'test/integration/utils/person-requests-by-api.util';
-import {
-  createPersonRecords,
-  deletePersonRecords,
-} from 'test/integration/utils/person-record-fixtures.util';
+import { createPersonRecords } from 'test/integration/utils/create-person-records.util';
+import { destroyPersonRecordsByFirstName } from 'test/integration/utils/destroy-person-records-by-first-name.util';
+import { PERSON_RECORD_FIXTURE } from 'test/integration/utils/person-record-fixture.constant';
 
 const getReturnedPersonIds = ({
   api,
@@ -44,7 +43,7 @@ describe('read grant on object records', () => {
 
   afterAll(async () => {
     await deleteApiKeysWithObjectRecordGrants([withGrant, withoutGrant]);
-    await deletePersonRecords();
+    await destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName);
   });
 
   describe.each(['graphql', 'rest'] as const)('%s', (api) => {

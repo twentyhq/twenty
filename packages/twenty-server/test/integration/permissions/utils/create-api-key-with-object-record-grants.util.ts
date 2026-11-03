@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
@@ -63,15 +63,10 @@ export const createApiKeyWithObjectRecordGrants = async (
 
   const apiKeyId: string = createApiKeyResponse.body.data.createApiKey.id;
 
-  const generateTokenResponse = await makeMetadataApiRequest({
-    query: gql`
-      mutation GenerateApiKeyToken($apiKeyId: UUID!, $expiresAt: String!) {
-        generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
-          token
-        }
-      }
-    `,
-    variables: { apiKeyId, expiresAt: API_KEY_EXPIRES_AT },
+  const generateTokenResponse = await generateApiKeyToken({
+    apiKeyId,
+    accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    expiresAt: API_KEY_EXPIRES_AT,
   });
 
   return {
@@ -79,25 +74,4 @@ export const createApiKeyWithObjectRecordGrants = async (
     apiKeyId,
     token: generateTokenResponse.body.data.generateApiKeyToken.token,
   };
-};
-
-export const deleteApiKeysWithObjectRecordGrants = async (
-  testApiKeys: ApiKeyWithObjectRecordGrants[],
-) => {
-  for (const { roleId, apiKeyId } of testApiKeys) {
-    const revokeResponse = await makeMetadataApiRequest({
-      query: gql`
-        mutation RevokeApiKey($input: RevokeApiKeyInput!) {
-          revokeApiKey(input: $input) {
-            id
-          }
-        }
-      `,
-      variables: { input: { id: apiKeyId } },
-    });
-
-    expect(revokeResponse.body.errors).toBeUndefined();
-
-    await deleteOneRole({ input: { idToDelete: roleId }, expectToFail: false });
-  }
 };
