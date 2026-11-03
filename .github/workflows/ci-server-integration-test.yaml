@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
     services:
       postgres:
         image: postgres:18
@@ -84,7 +84,7 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 16
+      SHARD_COUNTER: 24
       INTEGRATION_TEST_DB_RESET_STATUS_FILE: ${{ github.workspace }}/.cache/integration-db-reset-status
     steps:
       - name: Fetch custom Github Actions and base branch history
