@@ -166,8 +166,10 @@ for (const runtime of ['react', 'preact']) {
     const anchorBeforeMove = await readBounds(trigger);
     const popupBeforeMove = await readBounds(menu);
 
-    await trigger.evaluate((node) => {
-      node.style.transform = 'translateX(65px)';
+    const anchorTranslationX = await trigger.evaluate((node) => {
+      const translationX = -65;
+      node.style.transform = `translateX(${translationX}px)`;
+      return translationX;
     });
     await expect
       .poll(async () => {
@@ -179,7 +181,7 @@ for (const runtime of ['react', 'preact']) {
         const side = await menu.getAttribute('data-side');
         return (
           isPopupAttachedToAnchor({ anchor, popup, side }) &&
-          Math.abs(anchor.x - anchorBeforeMove.x - 65) < 1
+          Math.abs(anchor.x - anchorBeforeMove.x - anchorTranslationX) < 1
         );
       })
       .toBe(true);
@@ -189,7 +191,8 @@ for (const runtime of ['react', 'preact']) {
       .poll(async () => {
         const popup = await menu.boundingBox();
         return (
-          isDefined(popup) && Math.abs(popup.x - popupBeforeMove.x - 65) < 1
+          isDefined(popup) &&
+          Math.abs(popup.x - popupBeforeMove.x - anchorTranslationX) < 1
         );
       })
       .toBe(true);
