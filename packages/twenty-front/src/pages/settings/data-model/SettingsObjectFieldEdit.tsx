@@ -393,7 +393,7 @@ export const SettingsObjectFieldEdit = () => {
             <SaveAndCancelButtons
               isLoading={isSubmitting}
               isSaveDisabled={!canSave || isFieldPropertiesReadonly}
-              isCancelDisabled={isSubmitting || isFieldPropertiesReadonly}
+              isCancelDisabled={isSubmitting || readonly}
               onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
             />
