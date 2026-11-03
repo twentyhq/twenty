@@ -1,3 +1,4 @@
+import { RowLevelPermissionPredicateGroupExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception';
 import { getNestedPredicateGroupOperationErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util';
 
 const NO_OPERATIONS = {
@@ -7,13 +8,15 @@ const NO_OPERATIONS = {
   canDestroyRecords: false,
 };
 
+const OPERATIONS = Object.keys(NO_OPERATIONS) as (keyof typeof NO_OPERATIONS)[];
+
 describe('getNestedPredicateGroupOperationErrors', () => {
-  it('lets a root group grant operations', () => {
+  it.each(OPERATIONS)('lets a root group grant %s', (operation) => {
     expect(
       getNestedPredicateGroupOperationErrors({
         flatPredicateGroup: {
           ...NO_OPERATIONS,
-          canReadRecords: true,
+          [operation]: true,
           parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
         },
       }),
@@ -32,16 +35,20 @@ describe('getNestedPredicateGroupOperationErrors', () => {
     ).toEqual([]);
   });
 
-  it('rejects a nested group that grants an operation', () => {
+  it.each(OPERATIONS)('rejects a nested group that grants %s', (operation) => {
     expect(
       getNestedPredicateGroupOperationErrors({
         flatPredicateGroup: {
           ...NO_OPERATIONS,
-          canDestroyRecords: true,
+          [operation]: true,
           parentRowLevelPermissionPredicateGroupUniversalIdentifier:
             'parent-group',
         },
       }),
-    ).toHaveLength(1);
+    ).toEqual([
+      expect.objectContaining({
+        code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+      }),
+    ]);
   });
 });

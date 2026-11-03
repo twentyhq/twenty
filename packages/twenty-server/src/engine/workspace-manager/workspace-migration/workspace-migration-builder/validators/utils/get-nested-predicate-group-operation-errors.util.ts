@@ -7,7 +7,6 @@ import { RowLevelPermissionPredicateGroupExceptionCode } from 'src/engine/metada
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-// Only the root group of a role's predicates on an object grants operations
 export const getNestedPredicateGroupOperationErrors = ({
   flatPredicateGroup,
 }: {

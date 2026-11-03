@@ -129,7 +129,13 @@ export const convertRecordFilterGroupToPredicateGroup = ({
   filterGroup: RecordFilterGroup;
   roleId: string;
   objectMetadataId: string;
-  existingPredicateGroup?: RowLevelPermissionPredicateGroup;
+  existingPredicateGroup?: Pick<
+    RowLevelPermissionPredicateGroup,
+    | 'canReadRecords'
+    | 'canUpdateRecords'
+    | 'canSoftDeleteRecords'
+    | 'canDestroyRecords'
+  >;
 }): RowLevelPermissionPredicateGroup => {
   return {
     __typename: 'RowLevelPermissionPredicateGroup',
