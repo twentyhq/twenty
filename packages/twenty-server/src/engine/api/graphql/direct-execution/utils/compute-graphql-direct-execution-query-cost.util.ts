@@ -4,9 +4,9 @@ import {
   Kind,
   type SelectionNode,
 } from 'graphql';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -117,11 +117,7 @@ const getRequestedRowCount = ({
     return 1;
   }
 
-  const requestedRowCount = args.first ?? args.last;
-
-  return typeof requestedRowCount === 'number'
-    ? Math.max(requestedRowCount, 0)
-    : QUERY_MAX_RECORDS;
+  return Math.max(getFindManyPageSize(args), 0);
 };
 
 export const computeGraphQLDirectExecutionQueryCost = ({
