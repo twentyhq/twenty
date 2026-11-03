@@ -1,6 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -9,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
 import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { isAgentBackingWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/is-agent-backing-workflow-step.util';
 import {
@@ -24,8 +23,7 @@ const deleteAgentInputSchema = z.object({
 @DefineTool({
   name: 'delete_agent',
   category: ToolCategory.AGENT,
-  requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
   description: `Delete an AI agent and its triggers, for example once it is no longer useful. Use list_agents first if you don't know the id.`,
 })
 export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {

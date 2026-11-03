@@ -9,7 +9,9 @@ import {
 } from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -47,7 +49,9 @@ describe('SettingsPermissionGuard', () => {
 
     const GuardClass = SettingsPermissionGuard(PermissionFlagType.WORKSPACE);
 
-    guard = new GuardClass(mockPermissionsService);
+    guard = new GuardClass(
+      new AccessPolicyService(mockPermissionsService, {} as FeatureFlagService),
+    );
   });
 
   afterEach(() => {
@@ -183,7 +187,9 @@ describe('SettingsPermissionGuard', () => {
 
       const GuardClass = SettingsPermissionGuard(PermissionFlagType.LAYOUTS);
 
-      guard = new GuardClass(permissionsService);
+      guard = new GuardClass(
+        new AccessPolicyService(permissionsService, {} as FeatureFlagService),
+      );
     });
 
     it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
