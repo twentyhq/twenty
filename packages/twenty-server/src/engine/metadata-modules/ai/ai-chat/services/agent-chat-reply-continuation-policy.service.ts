@@ -108,7 +108,7 @@ export class AgentChatReplyContinuationPolicyService {
         })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Could not publish workspace-policy queue-updated event for thread ${threadId}: ${formatErrorWithCause(error)}`,
+            `Could not publish workspace-policy queue-updated event for workspace ${workspaceId}, thread ${threadId}: ${formatErrorWithCause(error)}`,
           ),
         );
     }

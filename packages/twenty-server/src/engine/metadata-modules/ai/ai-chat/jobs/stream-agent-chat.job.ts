@@ -339,7 +339,7 @@ export class StreamAgentChatJob {
       })
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not publish workspace-policy stream-ended event for stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+          `Could not publish workspace-policy stream-ended event for workspace ${workspaceId}, stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
         ),
       );
     await this.eventPublisherService
@@ -350,7 +350,7 @@ export class StreamAgentChatJob {
       })
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not publish workspace-policy queue-updated event for stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+          `Could not publish workspace-policy queue-updated event for workspace ${workspaceId}, stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
         ),
       );
   }

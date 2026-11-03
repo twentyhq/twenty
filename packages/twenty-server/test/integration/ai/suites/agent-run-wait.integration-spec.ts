@@ -18,12 +18,14 @@ import {
   mockAgentRunTurns,
 } from 'test/utils/mock-agent-run-turns.util';
 import { type AgentTrigger } from 'twenty-shared/application';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -34,6 +36,8 @@ import { type AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { type AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentRunContinuationCompletion } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-continuation-completion.type';
+import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { buildAgentRunContinuationTurnId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-turn-id.util';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
@@ -47,6 +51,8 @@ import { type AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -60,6 +66,7 @@ const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 
 const replyingResult = buildAgentExecutionResult({
+  isPaused: false,
   result: { response: 'Followed up' },
   steps: [
     { content: [{ type: 'text', text: 'Followed up' }] },
@@ -430,12 +437,12 @@ describe('agent runs that wait (integration)', () => {
 
       jest
         .spyOn(conversationService, 'claimQueuedMessages')
-        .mockImplementationOnce(async (args) => {
-          for (const messageId of args.queuedMessageIds) {
+        .mockImplementationOnce(async (queuedMessageClaim) => {
+          for (const messageId of queuedMessageClaim.queuedMessageIds) {
             await queueService.deleteQueuedMessage({ workspaceId, messageId });
           }
 
-          return claimQueuedMessages(args);
+          return claimQueuedMessages(queuedMessageClaim);
         });
 
       const removedStreamId = await queueMemberMessage({
@@ -541,8 +548,9 @@ describe('agent runs that wait (integration)', () => {
 
       jest
         .spyOn(continuationPolicy, 'findAllowedQueuedMessageIds')
-        .mockImplementationOnce(async (args) => {
-          const allowedMessageIds = await findAllowedQueuedMessageIds(args);
+        .mockImplementationOnce(async (replyPolicyRequest) => {
+          const allowedMessageIds =
+            await findAllowedQueuedMessageIds(replyPolicyRequest);
 
           await queueService.queueMessage({
             workspaceId,
@@ -597,7 +605,197 @@ describe('agent runs that wait (integration)', () => {
     }
   });
 
-  it('settles a retried message continuation after its input was already promoted', async () => {
+  it.each([
+    { title: 'an unfinished turn', hasRecordedWait: false },
+    { title: 'a recorded wait', hasRecordedWait: true },
+  ])(
+    'recovers $title after continuation input was promoted',
+    async ({ hasRecordedWait }) => {
+      const context = await createChatParticipationTestContext();
+      const runTurn = mockAgent(
+        buildWaitingAgentExecutionResult({
+          toolName: 'wait_for_event',
+          wait: {
+            type: 'EVENT',
+            eventName: 'opportunity.deleted',
+            recordId: randomUUID(),
+          },
+        }),
+      );
+      const queueService = getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      );
+      const suspensionService =
+        getAppProviderByClassName<AgentRunSuspensionService>(
+          'AgentRunSuspensionService',
+        );
+      const caller = { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } };
+      const pendingWakeUpService =
+        getAppProviderByClassName<PendingWakeUpService>('PendingWakeUpService');
+      const nextWaitCondition = {
+        type: 'EVENT' as const,
+        eventName: 'opportunity.created',
+        recordId: randomUUID(),
+      };
+
+      try {
+        await runTrigger();
+
+        const { id: wakeUpId, threadId } = await findSuspensionEventually(
+          'AGENT_TRIGGER',
+          agentId,
+        );
+
+        context.registerThread(threadId);
+
+        const streamId = await holdConversation(threadId);
+        const message = await queueService.queueMessage({
+          workspaceId,
+          threadId,
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          text: 'Ada, continue after this update',
+          assistantReplyContext: {
+            isAssistantMentioned: true,
+            isDirectAssistantChat: false,
+            isStructuredRequestContinuation: false,
+          },
+        });
+        const executionContext =
+          await getAppProviderByClassName<AgentTriggerRunnerService>(
+            'AgentTriggerRunnerService',
+          ).buildExecutionContext({ workspaceId, caller });
+        const turnId = buildAgentRunContinuationTurnId(wakeUpId);
+
+        await getAppProviderByClassName<AgentRunConversationService>(
+          'AgentRunConversationService',
+        ).claimQueuedMessages({
+          workspaceId,
+          threadId,
+          turnId,
+          agentId,
+          createdBy: executionContext.turnCreatedBy,
+          queuedMessageIds: [message.id],
+        });
+        await suspensionService.recordWaitOutcome({
+          workspaceId,
+          threadId,
+          outcome: { type: 'MESSAGE_RECEIVED' },
+        });
+
+        if (hasRecordedWait) {
+          const wakeUp = await pendingWakeUpService.find({
+            workspaceId,
+            wakeUpId,
+          });
+
+          assertIsDefinedOrThrow(wakeUp);
+
+          const suspension = wakeUp.payload as AgentRunSuspension;
+
+          assertIsDefinedOrThrow(suspension.summary);
+
+          const continuationCompletion: AgentRunContinuationCompletion = {
+            turnId,
+            execution: { result: {}, stopReason: null, isPaused: true },
+            summary: suspension.summary,
+            waitCondition: nextWaitCondition,
+            isAborted: false,
+            isAwaitingAnswer: false,
+            questionMessageId: null,
+          };
+
+          await pendingWakeUpService.updatePayload({
+            workspaceId,
+            wakeUpId,
+            payload: { ...suspension, continuationCompletion },
+          });
+          await getAppProviderByClassName<AgentTurnRecorderService>(
+            'AgentTurnRecorderService',
+          ).finish({
+            workspaceId,
+            turnId,
+            status: AgentTurnStatus.WAITING_FOR_INPUT,
+          });
+        }
+
+        await getAppProviderByClassName<AgentChatStreamHeartbeatService>(
+          'AgentChatStreamHeartbeatService',
+        ).clear(streamId);
+
+        await getAppProviderByClassName<AgentRunnerService>(
+          'AgentRunnerService',
+        ).continue({
+          workspaceId,
+          threadId,
+          wakeUpId,
+          outcome: { type: 'MESSAGE_RECEIVED' },
+        });
+
+        expect(runTurn).toHaveBeenCalledTimes(1);
+        expect(
+          await queueService.getQueuedMessages({ workspaceId, threadId }),
+        ).toEqual([]);
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+
+        if (hasRecordedWait) {
+          const [nextSuspension] = await findSuspensions(
+            'AGENT_TRIGGER',
+            agentId,
+          );
+
+          expect(nextSuspension.id).not.toBe(wakeUpId);
+          expect(nextSuspension.condition).toEqual(nextWaitCondition);
+          expect(await findTurnStatuses(threadId)).toEqual([
+            'completed',
+            'waiting_for_input',
+          ]);
+
+          const nextWakeUp = await pendingWakeUpService.find({
+            workspaceId,
+            wakeUpId: nextSuspension.id,
+          });
+
+          expect(
+            (nextWakeUp?.payload as AgentRunSuspension).continuationCompletion,
+          ).toBeUndefined();
+
+          await getAppProviderByClassName<AgentRunnerService>(
+            'AgentRunnerService',
+          ).continue({
+            workspaceId,
+            threadId,
+            wakeUpId,
+            outcome: { type: 'MESSAGE_RECEIVED' },
+          });
+
+          expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([
+            expect.objectContaining({ id: nextSuspension.id }),
+          ]);
+
+          return;
+        }
+
+        expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'completed',
+          'failed',
+        ]);
+
+        const [retriedTurn] = await global.testDataSource.query(
+          `SELECT error FROM "${schema}"."agentTurn" WHERE id = $1`,
+          [turnId],
+        );
+
+        expect(retriedTurn.error).toEqual(AGENT_TURN_INTERRUPTED_ERROR);
+      } finally {
+        await suspensionService.releaseForCaller({ workspaceId, caller });
+        await context.cleanup();
+      }
+    },
+  );
+
+  it('replays a completed continuation after checkpoint and delivery failures without overwriting success', async () => {
     const context = await createChatParticipationTestContext();
     const runTurn = mockAgent(
       buildWaitingAgentExecutionResult({
@@ -608,89 +806,156 @@ describe('agent runs that wait (integration)', () => {
           recordId: randomUUID(),
         },
       }),
+      replyingResult,
     );
-    const queueService = getAppProviderByClassName<AgentChatQueueService>(
-      'AgentChatQueueService',
-    );
+    const runOnThread = await buildRunOnThread();
+    const pendingWakeUpService =
+      getAppProviderByClassName<PendingWakeUpService>('PendingWakeUpService');
+    const runner =
+      getAppProviderByClassName<AgentRunnerService>('AgentRunnerService');
+    const settlementService =
+      getAppProviderByClassName<AgentRunSettlementService>(
+        'AgentRunSettlementService',
+      );
     const suspensionService =
       getAppProviderByClassName<AgentRunSuspensionService>(
         'AgentRunSuspensionService',
       );
-    const caller = { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } };
+    let caller: AgentRunSuspension['caller'] | undefined;
 
     try {
-      await runTrigger();
-
+      const waitingRun = await runOnThread('Wait for an update');
       const { id: wakeUpId, threadId } = await findSuspensionEventually(
-        'AGENT_TRIGGER',
+        'AGENT_API_RUN',
         agentId,
       );
 
       context.registerThread(threadId);
 
-      const streamId = await holdConversation(threadId);
-      const message = await queueService.queueMessage({
+      const wakeUp = await pendingWakeUpService.find({ workspaceId, wakeUpId });
+
+      assertIsDefinedOrThrow(wakeUp);
+      caller = (wakeUp.payload as AgentRunSuspension).caller;
+
+      await getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      ).queueMessage({
         workspaceId,
         threadId,
         userWorkspaceId: context.userWorkspaceId,
         workspaceMemberId: context.workspaceMemberId,
-        text: 'Ada, continue after this update',
+        text: 'Ada, continue with this update',
         assistantReplyContext: {
           isAssistantMentioned: true,
           isDirectAssistantChat: false,
           isStructuredRequestContinuation: false,
         },
       });
-      const executionContext =
-        await getAppProviderByClassName<AgentTriggerRunnerService>(
-          'AgentTriggerRunnerService',
-        ).buildExecutionContext({ workspaceId, caller });
-      const turnId = buildAgentRunContinuationTurnId(wakeUpId);
 
-      await getAppProviderByClassName<AgentRunConversationService>(
-        'AgentRunConversationService',
-      ).claimQueuedMessages({
-        workspaceId,
-        threadId,
-        turnId,
-        agentId,
-        createdBy: executionContext.turnCreatedBy,
-        queuedMessageIds: [message.id],
-      });
-      await suspensionService.recordWaitOutcome({
-        workspaceId,
-        threadId,
-        outcome: { type: 'MESSAGE_RECEIVED' },
-      });
-      await getAppProviderByClassName<AgentChatStreamHeartbeatService>(
-        'AgentChatStreamHeartbeatService',
-      ).clear(streamId);
+      const updatePayload =
+        pendingWakeUpService.updatePayload.bind(pendingWakeUpService);
+      const checkpointError = new Error(
+        'Completed checkpoint write unavailable',
+      );
+      let hasRejectedFinishedCheckpoint = false;
 
-      await getAppProviderByClassName<AgentRunnerService>(
-        'AgentRunnerService',
-      ).continue({
+      jest
+        .spyOn(pendingWakeUpService, 'updatePayload')
+        .mockImplementation(async (checkpointWrite) => {
+          const completion = (checkpointWrite.payload as AgentRunSuspension)
+            .continuationCompletion;
+
+          if (
+            !hasRejectedFinishedCheckpoint &&
+            isDefined(completion?.settledOutcome)
+          ) {
+            hasRejectedFinishedCheckpoint = true;
+
+            throw checkpointError;
+          }
+
+          return updatePayload(checkpointWrite);
+        });
+
+      const continuation = {
         workspaceId,
         threadId,
         wakeUpId,
-        outcome: { type: 'MESSAGE_RECEIVED' },
+        outcome: { type: 'MESSAGE_RECEIVED' as const },
+      };
+
+      await expect(runner.continue(continuation)).rejects.toBe(checkpointError);
+      expect(await findTurnStatuses(threadId)).toEqual([
+        'completed',
+        'completed',
+      ]);
+
+      const persistedWakeUp = await pendingWakeUpService.find({
+        workspaceId,
+        wakeUpId,
       });
 
-      expect(runTurn).toHaveBeenCalledTimes(1);
-      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
-      expect(await findTurnStatuses(threadId)).toEqual(['completed', 'failed']);
       expect(
-        await queueService.getQueuedMessages({ workspaceId, threadId }),
-      ).toEqual([]);
-      expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+        (persistedWakeUp?.payload as AgentRunSuspension).continuationCompletion,
+      ).toMatchObject({
+        turnId: buildAgentRunContinuationTurnId(wakeUpId),
+        execution: { result: replyingResult.result },
+      });
+      expect(
+        await settlementService.waitFor({
+          runId: waitingRun.runId,
+          timeoutMs: 1000,
+        }),
+      ).toMatchObject({
+        status: 'SUSPENDED',
+      });
 
-      const [retriedTurn] = await global.testDataSource.query(
-        `SELECT error FROM "${schema}"."agentTurn" WHERE id = $1`,
-        [turnId],
+      const claimError = new Error(
+        'Worker stopped before claiming the completed wake-up',
       );
 
-      expect(retriedTurn.error).toEqual(AGENT_TURN_INTERRUPTED_ERROR);
+      jest
+        .spyOn(pendingWakeUpService, 'claim')
+        .mockRejectedValueOnce(claimError);
+
+      await expect(runner.continue(continuation)).rejects.toBe(claimError);
+      expect(
+        await settlementService.waitFor({
+          runId: waitingRun.runId,
+          timeoutMs: 1000,
+        }),
+      ).toMatchObject({
+        status: 'COMPLETED',
+        result: replyingResult.result,
+        error: null,
+      });
+
+      await runner.continue({
+        ...continuation,
+        outcome: { type: 'TIME_ELAPSED' },
+      });
+
+      expect(
+        await settlementService.waitFor({
+          runId: waitingRun.runId,
+          timeoutMs: 1000,
+        }),
+      ).toMatchObject({
+        status: 'COMPLETED',
+        result: replyingResult.result,
+        error: null,
+      });
+      expect(runTurn).toHaveBeenCalledTimes(2);
+      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
+      expect(await findTurnStatuses(threadId)).toEqual([
+        'completed',
+        'completed',
+      ]);
+      expect((await context.readThread(threadId)).activeStreamId).toBeNull();
     } finally {
-      await suspensionService.releaseForCaller({ workspaceId, caller });
+      if (isDefined(caller)) {
+        await suspensionService.releaseForCaller({ workspaceId, caller });
+      }
       await context.cleanup();
     }
   });
