@@ -1754,6 +1754,7 @@ export type CreateMessageSuppressionInput = {
 
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
+  agentId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -1767,6 +1768,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateObjectInput = {
@@ -5205,6 +5207,7 @@ export type NativeModelCapabilities = {
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
+  agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -5222,16 +5225,19 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export enum NavigationMenuItemType {
+  AGENT = 'AGENT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type NotesConfiguration = {

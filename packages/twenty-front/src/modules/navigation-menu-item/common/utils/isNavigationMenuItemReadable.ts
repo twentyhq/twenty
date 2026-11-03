@@ -1,6 +1,9 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  type NavigationMenuItem,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -14,6 +17,7 @@ type IsNavigationMenuItemReadableArgs = {
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];
+  permissionFlagMap: Record<PermissionFlagType, boolean>;
 };
 
 export const isNavigationMenuItemReadable = ({
@@ -21,6 +25,7 @@ export const isNavigationMenuItemReadable = ({
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
+  permissionFlagMap,
 }: IsNavigationMenuItemReadableArgs): boolean => {
   const itemType = item.type;
 
@@ -30,6 +35,14 @@ export const isNavigationMenuItemReadable = ({
     itemType === NavigationMenuItemType.PAGE_LAYOUT
   ) {
     return true;
+  }
+
+  if (itemType === NavigationMenuItemType.WORKFLOW) {
+    return permissionFlagMap[PermissionFlagType.WORKFLOWS];
+  }
+
+  if (itemType === NavigationMenuItemType.AGENT) {
+    return permissionFlagMap[PermissionFlagType.AI];
   }
 
   if (

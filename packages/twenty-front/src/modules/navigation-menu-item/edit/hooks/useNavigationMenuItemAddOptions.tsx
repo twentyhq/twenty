@@ -9,6 +9,7 @@ import {
   IconFolder,
   IconLink,
   IconPerspective,
+  IconSettingsAutomation,
   IconTable,
   useIcons,
 } from 'twenty-ui/icon';
@@ -19,12 +20,14 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
+import { AUTOMATION_OBJECT_NAMES_SINGULAR } from '@/navigation-menu-item/common/constants/AutomationObjectNamesSingular';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -93,6 +96,16 @@ export const useNavigationMenuItemAddOptions = ({
     currentItems,
     skip: step !== 'record' && !isSearchingAllItems,
   });
+  const { hasAutomationAccess, automationItemGroups, automationLoading } =
+    useNavigationMenuItemAutomationOptions({
+      search,
+      skip: step !== 'automation' && !isSearchingAllItems,
+      currentItems,
+      objectMetadataItems,
+      objectMetadataIdsWithIndexView,
+      objectMetadataIdsAlreadyAdded,
+      addItem,
+    });
   const {
     availableObjectMetadataItems,
     availableSystemObjectMetadataItems,
@@ -137,6 +150,21 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('record'),
           hasSubMenu: true,
         },
+        ...(hasAutomationAccess
+          ? [
+              {
+                id: 'automation',
+                label: t`Automations`,
+                icon: (
+                  <TintedIconTile
+                    icon={<IconSettingsAutomation size={theme.icon.size.md} />}
+                  />
+                ),
+                onClick: () => navigateToStep('automation'),
+                hasSubMenu: true,
+              },
+            ]
+          : []),
         {
           id: 'folder',
           label: t`Folder`,
@@ -199,7 +227,10 @@ export const useNavigationMenuItemAddOptions = ({
           ? [
               ...availableObjectMetadataItems,
               ...availableSystemObjectMetadataItems,
-            ]
+            ].filter(
+              (object) =>
+                !AUTOMATION_OBJECT_NAMES_SINGULAR.includes(object.nameSingular),
+            )
           : [
               ...objectMetadataItemsWithViews,
               ...availableSystemObjectMetadataItemsForView,
@@ -322,6 +353,9 @@ export const useNavigationMenuItemAddOptions = ({
             firstPage.label.localeCompare(secondPage.label),
         );
     }
+    if (targetStep === 'automation') {
+      return automationItemGroups.flatMap((group) => group.items);
+    }
     if (targetStep === 'record') {
       return navigationMenuItemSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
@@ -365,6 +399,8 @@ export const useNavigationMenuItemAddOptions = ({
 
   return {
     getItems,
+    automationItemGroups,
+    automationLoading,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,

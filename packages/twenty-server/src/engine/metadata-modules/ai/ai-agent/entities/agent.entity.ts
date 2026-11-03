@@ -3,7 +3,9 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,6 +19,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/model-configuration.type';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import {
   type AgentAvatarColor,
   type AgentAvatarShape,
@@ -121,6 +124,12 @@ export class AgentEntity
   })
   @Column({ nullable: false, type: 'jsonb', default: [] })
   triggers: JsonbProperty<AgentTrigger[]>;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem: NavigationMenuItemEntity) => navigationMenuItem.agent,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 
   @WasRemovedInUpgrade({
     upgradeCommandName: DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME,

@@ -142,6 +142,20 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'agentChatChannelUniversalIdentifier',
     },
+    workflow: {
+      metadataName: 'workflow',
+      foreignKey: 'workflowId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'workflowUniversalIdentifier',
+    },
+    agent: {
+      metadataName: 'agent',
+      foreignKey: 'agentId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'agentUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {

@@ -75,6 +75,12 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
         'A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type',
       ],
     },
+    {
+      type: NavigationMenuItemType.WORKFLOW,
+      expectedMessages: [
+        'A valid workflowUniversalIdentifier is required for WORKFLOW type',
+      ],
+    },
   ])(
     'should report every missing property for $type type',
     ({ type, expectedMessages }) => {
@@ -117,6 +123,18 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.WORKFLOW,
+      overrides: { workflowUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.AGENT,
+      overrides: { agentUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.AGENT,
+      overrides: { agentUniversalIdentifier: null },
     },
   ])(
     'should not report any error when $type type properties are valid',
@@ -183,6 +201,19 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
 
     expect(errors.map(({ message }) => message)).toEqual([
       'A valid viewUniversalIdentifier is required for VIEW type',
+    ]);
+  });
+
+  it('should report an error when an AGENT item points at an invalid agent universal identifier', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.AGENT,
+        agentUniversalIdentifier: 'not-a-uuid',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'agentUniversalIdentifier must be a valid UUID for AGENT type',
     ]);
   });
 });

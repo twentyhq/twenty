@@ -51,4 +51,37 @@ describe('buildCreateNavigationMenuItemInput', () => {
 
     expect(input.link).toBe(expectedLink);
   });
+
+  it.each([
+    [
+      'a workflow',
+      NavigationMenuItemType.WORKFLOW,
+      { workflowId: 'workflow-id', name: 'Lead routing' },
+    ],
+    [
+      'an agent',
+      NavigationMenuItemType.AGENT,
+      { agentId: 'agent-id', name: 'Helper' },
+    ],
+    ['the agents page', NavigationMenuItemType.AGENT, {}],
+  ])('saves %s', (_, type, target) => {
+    const input = buildCreateNavigationMenuItemInput(
+      {
+        id: 'navigation-item',
+        type,
+        ...target,
+        position: 0,
+        createdAt: '',
+        updatedAt: '',
+      },
+      () => 'saved-folder',
+    );
+
+    expect(input).toEqual({
+      id: 'navigation-item',
+      type,
+      position: 0,
+      ...target,
+    });
+  });
 });

@@ -541,6 +541,7 @@ export class CoreWorkflowMutationWorkspaceService {
               ...coreWorkflow,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
+              navigationMenuItemUniversalIdentifiers: [],
             },
           ],
           flatEntityToDelete: [],

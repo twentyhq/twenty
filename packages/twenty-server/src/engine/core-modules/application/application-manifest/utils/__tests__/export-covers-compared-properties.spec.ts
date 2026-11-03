@@ -383,6 +383,7 @@ const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
       ...universalFlatWorkflow,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
+      navigationMenuItemIds: [],
     },
     flatWorkflowVersion: {
       ...flatUniversalWorkflowVersion,

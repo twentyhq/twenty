@@ -124,6 +124,10 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   pageLayoutUniversalIdentifier: null,
   agentChatChannelId: null,
   agentChatChannelUniversalIdentifier: null,
+  workflowId: null,
+  workflowUniversalIdentifier: null,
+  agentId: null,
+  agentUniversalIdentifier: null,
   position: 0,
 };
 
@@ -148,6 +152,8 @@ const AGENT: FlatAgent = {
   isSystem: true,
   isActive: true,
   overrides: null,
+  navigationMenuItemIds: [],
+  navigationMenuItemUniversalIdentifiers: [],
   deletedAt: null,
 };
 

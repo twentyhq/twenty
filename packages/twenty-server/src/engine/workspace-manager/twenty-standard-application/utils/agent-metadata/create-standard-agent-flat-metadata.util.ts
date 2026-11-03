@@ -62,6 +62,8 @@ export const createStandardAgentFlatMetadata = ({
     triggers: [],
     isActive: true,
     overrides: null,
+    navigationMenuItemIds: [],
+    navigationMenuItemUniversalIdentifiers: [],
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

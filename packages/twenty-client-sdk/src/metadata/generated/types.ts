@@ -3626,6 +3626,9 @@ export default {
             "agentChatChannelId": [
                 528
             ],
+            "agentId": [
+                528
+            ],
             "color": [
                 1
             ],
@@ -3663,6 +3666,9 @@ export default {
                 528
             ],
             "viewId": [
+                528
+            ],
+            "workflowId": [
                 528
             ],
             "__typename": [
@@ -9535,6 +9541,9 @@ export default {
             "agentChatChannelId": [
                 528
             ],
+            "agentId": [
+                528
+            ],
             "applicationId": [
                 528
             ],
@@ -9584,6 +9593,9 @@ export default {
                 528
             ],
             "viewId": [
+                528
+            ],
+            "workflowId": [
                 528
             ],
             "__typename": [

@@ -1,3 +1,4 @@
+import { getAutomationNavigationMenuItemLabel } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemLabel';
 import { getFolderNavigationMenuItemLabel } from '@/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import { getObjectNavigationMenuItemLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemLabel';
@@ -27,6 +28,9 @@ export const getNavigationMenuItemLabel = (
       return getRecordNavigationMenuItemLabel(item);
     case NavigationMenuItemType.FOLDER:
       return getFolderNavigationMenuItemLabel(item);
+    case NavigationMenuItemType.WORKFLOW:
+    case NavigationMenuItemType.AGENT:
+      return getAutomationNavigationMenuItemLabel(item);
     default:
       return item.name ?? '';
   }

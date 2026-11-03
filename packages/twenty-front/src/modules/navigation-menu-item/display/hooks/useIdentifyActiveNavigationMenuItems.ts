@@ -5,7 +5,9 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { AUTOMATION_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/AutomationNavigationMenuItemTypes';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
+import { getAutomationNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { isLinkNavigationMenuItemActive } from '@/navigation-menu-item/display/link/utils/isLinkNavigationMenuItemActive';
@@ -105,11 +107,14 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       const matchingLinkNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
-            item.type === NavigationMenuItemType.LINK &&
-            isLinkNavigationMenuItemActive({
-              computedLink: getLinkNavigationMenuItemComputedLink(item),
-              location: { pathname: currentPath, search: currentSearch },
-            }),
+            (item.type === NavigationMenuItemType.LINK &&
+              isLinkNavigationMenuItemActive({
+                computedLink: getLinkNavigationMenuItemComputedLink(item),
+                location: { pathname: currentPath, search: currentSearch },
+              })) ||
+            (AUTOMATION_NAVIGATION_MENU_ITEM_TYPES.includes(item.type) &&
+              getAutomationNavigationMenuItemComputedLink(item) ===
+                currentPath),
         )
         .map((item) => item.id);
 

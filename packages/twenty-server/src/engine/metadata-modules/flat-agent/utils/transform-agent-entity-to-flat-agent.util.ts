@@ -44,5 +44,9 @@ export const transformAgentEntityToFlatAgent = ({
     isActive: agentEntity.isActive,
     overrides: agentEntity.overrides,
     applicationUniversalIdentifier,
+    navigationMenuItemIds: agentEntity.navigationMenuItems.map(({ id }) => id),
+    navigationMenuItemUniversalIdentifiers: agentEntity.navigationMenuItems.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
   };
 };

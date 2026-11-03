@@ -40,6 +40,7 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     isSystem: agentManifest.isSystem ?? false,
     isActive: true,
     overrides: null,
+    navigationMenuItemUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

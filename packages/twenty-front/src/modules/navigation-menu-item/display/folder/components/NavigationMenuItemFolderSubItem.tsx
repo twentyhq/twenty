@@ -25,8 +25,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
-type NavigationMenuItemFolderSubItemProps = {
+export type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
+  label?: string;
   index: number;
   arrayLength: number;
   selectedIndex: number;
@@ -48,6 +49,7 @@ export const NavigationMenuItemFolderSubItem = ({
   rightOptions,
   onClick,
   onNavigationMenuItemClick,
+  label: labelOverride,
 }: NavigationMenuItemFolderSubItemProps) => {
   const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
@@ -68,11 +70,9 @@ export const NavigationMenuItemFolderSubItem = ({
 
   const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
-  const label = getNavigationMenuItemLabel(
-    navigationMenuItem,
-    objectMetadataItems,
-    views,
-  );
+  const label =
+    labelOverride ??
+    getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views);
   const computedLink = getNavigationMenuItemComputedLink({
     item: navigationMenuItem,
     objectMetadataItems,

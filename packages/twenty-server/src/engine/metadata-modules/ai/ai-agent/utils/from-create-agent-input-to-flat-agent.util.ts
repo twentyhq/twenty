@@ -62,6 +62,8 @@ export const fromCreateAgentInputToFlatAgent = ({
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     triggers: createAgentInput.triggers ?? [],
+    navigationMenuItemIds: [],
+    navigationMenuItemUniversalIdentifiers: [],
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,

@@ -6,4 +6,6 @@ export enum NavigationMenuItemType {
   RECORD = 'RECORD',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
+  WORKFLOW = 'WORKFLOW',
+  AGENT = 'AGENT',
 }
