@@ -31,7 +31,10 @@ export const buildRoleSaveSnapshotOrThrow = ({
       canUpdateFieldValue === false,
   );
   const normalizedDraftRole = { ...draftRole, fieldPermissions };
-  const dirtyFields = getRoleDirtyFields(normalizedDraftRole, persistedRole);
+  const dirtyFields = getRoleDirtyFields({
+    draftRole: normalizedDraftRole,
+    persistedRole,
+  });
   const fieldPermissionsToUpsert =
     dirtyFields.fieldPermissions?.filter((fieldPermission) =>
       newFieldPermissionsFilter(

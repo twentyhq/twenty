@@ -21,7 +21,9 @@ const savedRole = {
 
 describe('getRoleDirtyFields', () => {
   it('treats saved flags as clean despite generated IDs and GraphQL metadata', () => {
-    expect(getRoleDirtyFields(draftRole, savedRole)).toEqual({});
+    expect(getRoleDirtyFields({ draftRole, persistedRole: savedRole })).toEqual(
+      {},
+    );
   });
 
   it('ignores flag ordering without modifying either role', () => {
@@ -29,7 +31,9 @@ describe('getRoleDirtyFields', () => {
     const draft = { ...role, permissionFlags: [draftFlag, otherFlag] };
     const persisted = { ...role, permissionFlags: [otherFlag, draftFlag] };
 
-    expect(getRoleDirtyFields(draft, persisted)).toEqual({});
+    expect(
+      getRoleDirtyFields({ draftRole: draft, persistedRole: persisted }),
+    ).toEqual({});
     expect(draft.permissionFlags).toEqual([draftFlag, otherFlag]);
     expect(persisted.permissionFlags).toEqual([otherFlag, draftFlag]);
   });
@@ -38,35 +42,46 @@ describe('getRoleDirtyFields', () => {
     const otherFlag = { ...draftFlag, id: 'other-id', flag: 'APP_CONFIGURE' };
     const draft = { ...draftRole, permissionFlags: [draftFlag, otherFlag] };
 
-    expect(getRoleDirtyFields(draft, savedRole)).toEqual({
+    expect(
+      getRoleDirtyFields({ draftRole: draft, persistedRole: savedRole }),
+    ).toEqual({
       permissionFlags: draft.permissionFlags,
     });
-    expect(getRoleDirtyFields(draftRole, savedRole)).toEqual({});
+    expect(getRoleDirtyFields({ draftRole, persistedRole: savedRole })).toEqual(
+      {},
+    );
   });
 
   it('detects flag removals and replacements', () => {
-    expect(getRoleDirtyFields(role, savedRole)).toEqual({
+    expect(
+      getRoleDirtyFields({ draftRole: role, persistedRole: savedRole }),
+    ).toEqual({
       permissionFlags: [],
     });
     const replacement = { ...draftFlag, flag: 'APP_CONFIGURE' };
     expect(
-      getRoleDirtyFields(
-        { ...role, permissionFlags: [replacement] },
-        savedRole,
-      ),
+      getRoleDirtyFields({
+        draftRole: { ...role, permissionFlags: [replacement] },
+        persistedRole: savedRole,
+      }),
     ).toEqual({ permissionFlags: [replacement] });
   });
 
   it('keeps failed flag changes and unrelated edits dirty', () => {
-    expect(getRoleDirtyFields(draftRole, role)).toEqual({
+    expect(getRoleDirtyFields({ draftRole, persistedRole: role })).toEqual({
       permissionFlags: [draftFlag],
     });
     expect(
-      getRoleDirtyFields({ ...draftRole, label: 'Unsaved label' }, savedRole),
+      getRoleDirtyFields({
+        draftRole: { ...draftRole, label: 'Unsaved label' },
+        persistedRole: savedRole,
+      }),
     ).toEqual({ label: 'Unsaved label' });
   });
 
   it('retains new-role fields when there is no persisted role', () => {
-    expect(getRoleDirtyFields(draftRole, undefined)).toEqual(draftRole);
+    expect(getRoleDirtyFields({ draftRole, persistedRole: undefined })).toEqual(
+      draftRole,
+    );
   });
 });
