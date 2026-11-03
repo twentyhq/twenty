@@ -49,6 +49,7 @@ export enum SidePanelPages {
   WorkflowCoreFilters = 'workflow-core-filters',
   AgentCoreFilters = 'agent-core-filters',
   AgentCoreTrigger = 'agent-core-trigger',
+  AgentCoreDataAccess = 'agent-core-data-access',
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
   AssignAiChat = 'assign-ai-chat',
