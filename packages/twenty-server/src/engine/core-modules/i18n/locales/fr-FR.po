@@ -10869,11 +10869,6 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Type de principal"
 
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Les enregistrements privés ne sont pas encore disponibles dans cet espace de travail."
-
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"

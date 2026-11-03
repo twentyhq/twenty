@@ -16362,11 +16362,6 @@ msgstr ""
 msgid "Let each member decide for themselves"
 msgstr "אפשר לכל חבר צוות להחליט בעצמו"
 
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "אפשר לאנשים להפוך רשומה לגלויה רק ליוצר שלה ולאנשים שאיתה היא משותפת."
-
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -21975,11 +21970,6 @@ msgstr "מדיניות הפרטיות"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "פרטי"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "רשומות פרטיות"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

@@ -16362,11 +16362,6 @@ msgstr ""
 msgid "Let each member decide for themselves"
 msgstr "Har bir a’zoning o‘zi qaror qilishiga ruxsat bering"
 
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "Odamlar yozuvni faqat uning yaratuvchisi va u ulashilgan odamlarga ko‘rinadigan qilishlariga ruxsat bering."
-
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -21975,11 +21970,6 @@ msgstr "Maxfiylik siyosati"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Shaxsiy"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "Shaxsiy yozuvlar"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
