@@ -375,6 +375,14 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "minLength": 1,
               "type": "string",
             },
+            "nativePageKey": {
+              "description": "Built-in page to pin: workflows or agents",
+              "enum": [
+                "workflows",
+                "agents",
+              ],
+              "type": "string",
+            },
             "position": {
               "description": "Position among siblings; defaults to the end.",
               "type": "number",
@@ -384,14 +392,6 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "enum": [
                 "workspace",
                 "user",
-              ],
-              "type": "string",
-            },
-            "nativePageKey": {
-              "description": "Built-in page to pin: workflows or agents",
-              "enum": [
-                "workflows",
-                "agents",
               ],
               "type": "string",
             },
