@@ -109,15 +109,16 @@ export const planFrontComponentWrites = async ({
       const previousFingerprint =
         remoteSourceFingerprints[previous.sourceComponentPath];
       if (
-        isDefined(previousFingerprint) &&
-        !manifest.frontComponents?.some(
+        !isDefined(previousFingerprint) ||
+        manifest.frontComponents?.some(
           (component) =>
             component.universalIdentifier.toLowerCase() ===
             previous.universalIdentifier.toLowerCase(),
         )
       ) {
-        fingerprints[previous.sourceComponentPath] = previousFingerprint;
+        continue;
       }
+      fingerprints[previous.sourceComponentPath] = previousFingerprint;
       continue;
     }
     const existing = scannedFiles.find(

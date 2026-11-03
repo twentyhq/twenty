@@ -6,7 +6,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 
 export const fromFlatFrontComponentToFrontComponentManifest = (
-  component: FlatFrontComponent,
+  component: Pick<
+    FlatFrontComponent,
+    | 'universalIdentifier'
+    | 'name'
+    | 'description'
+    | 'sourceComponentPath'
+    | 'builtComponentPath'
+    | 'builtComponentChecksum'
+    | 'componentName'
+    | 'isHeadless'
+    | 'usesSdkClient'
+    | 'universalWidgetAvailability'
+  >,
 ): FrontComponentManifest | undefined => {
   const availability = component.universalWidgetAvailability;
   const pageLayoutType = availability[0]?.pageLayoutType;
