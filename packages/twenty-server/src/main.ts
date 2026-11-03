@@ -38,6 +38,8 @@ const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
+    // Lets app.close() destroy sockets the drain cannot close, such as ones mid TLS handshake.
+    forceCloseConnections: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {

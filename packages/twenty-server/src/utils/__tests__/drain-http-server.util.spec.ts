@@ -1,11 +1,14 @@
 import { once } from 'events';
 import { createServer, type Server, type ServerResponse } from 'http';
+import { connect } from 'net';
+import { type Duplex } from 'stream';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { drainHttpServer } from 'src/utils/drain-http-server.util';
 
 const servers: Server[] = [];
+const sockets: Duplex[] = [];
 
 const listen = async (server: Server): Promise<string> => {
   servers.push(server);
@@ -31,6 +34,10 @@ describe('drainHttpServer', () => {
   });
 
   afterEach(async () => {
+    for (const socket of sockets.splice(0)) {
+      socket.destroy();
+    }
+
     for (const server of servers.splice(0)) {
       server.closeAllConnections();
       await new Promise<void>((resolve) => server.close(() => resolve()));
@@ -70,4 +77,29 @@ describe('drainHttpServer', () => {
     await drainHttpServer({ server, drainTimeoutMs: 50 });
     await bodyRejected;
   });
+
+  it('stops waiting at the deadline for sockets the HTTP layer no longer tracks', async () => {
+    const server = createServer();
+
+    server.on('upgrade', (_request, socket) => {
+      sockets.push(socket);
+      socket.write(
+        'HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: test\r\n\r\n',
+      );
+    });
+
+    const url = new URL(await listen(server));
+    const client = connect(Number(url.port), url.hostname);
+
+    sockets.push(client);
+
+    const upgraded = once(client, 'data');
+
+    client.write(
+      'GET / HTTP/1.1\r\nHost: localhost\r\nConnection: Upgrade\r\nUpgrade: test\r\n\r\n',
+    );
+    await upgraded;
+
+    await drainHttpServer({ server, drainTimeoutMs: 50 });
+  }, 3_000);
 });
