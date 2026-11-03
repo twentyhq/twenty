@@ -1,3 +1,4 @@
+import { CoreAgentMetadataEventsEffect } from '@/object-core/agents/components/CoreAgentMetadataEventsEffect';
 import { CoreAgentEditingScope } from '@/object-core/agents/components/CoreAgentEditingScope';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -24,6 +25,7 @@ export const AgentCoreShowPage = () => {
     variables: { id: agentId },
   });
 
+  const metadataEffect = <CoreAgentMetadataEventsEffect agentId={agentId} />;
   const agent = data?.findOneAgent;
   const hasFailedToLoad = !loading && !isDefined(agent);
 
@@ -34,31 +36,38 @@ export const AgentCoreShowPage = () => {
   });
 
   if (hasFailedToLoad) {
-    return null;
+    return metadataEffect;
   }
 
   if (!isDefined(agent)) {
     const AgentIcon = getIcon('IconLego');
 
     return (
-      <SettingsPageLayout
-        title={t`Agent`}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
-        links={getCoreAgentBreadcrumbLinks()}
-      >
-        <SettingsPageContainer>
-          <Section.Root>
-            <CoreAgentDetailSkeletonLoader />
-          </Section.Root>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
+      <>
+        {metadataEffect}
+        <SettingsPageLayout
+          title={t`Agent`}
+          icon={
+            <AgentIcon
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          }
+          links={getCoreAgentBreadcrumbLinks()}
+        >
+          <SettingsPageContainer>
+            <Section.Root>
+              <CoreAgentDetailSkeletonLoader />
+            </Section.Root>
+          </SettingsPageContainer>
+        </SettingsPageLayout>
+      </>
     );
   }
 
   return (
     <CoreAgentEditingScope key={agent.id} agentId={agent.id}>
+      {metadataEffect}
       <CoreAgentFormContent agent={agent} />
     </CoreAgentEditingScope>
   );
