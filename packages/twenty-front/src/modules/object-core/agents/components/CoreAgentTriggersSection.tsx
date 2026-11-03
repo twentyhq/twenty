@@ -2,7 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { AGENT_TRIGGER_LIMITS } from 'twenty-shared/application';
 import { SidePanelPages } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
-import { IconBolt, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconBolt, IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { CoreAgentSectionList } from '@/object-core/agents/components/CoreAgentSectionList';

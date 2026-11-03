@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { SidePanelPages } from 'twenty-shared/types';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
 import { CORE_AGENT_ADDITIONAL_RECORD_TRIGGER_EVENTS } from '@/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents';
