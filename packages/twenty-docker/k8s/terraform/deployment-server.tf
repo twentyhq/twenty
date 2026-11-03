@@ -39,6 +39,14 @@ resource "kubernetes_deployment" "twentycrm_server" {
           stdin = true
           tty   = true
 
+          lifecycle {
+            pre_stop {
+              exec {
+                command = ["sleep", "20"]
+              }
+            }
+          }
+
           env {
             name  = "NODE_PORT"
             value = "3000"

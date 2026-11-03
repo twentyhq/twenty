@@ -33,6 +33,10 @@ spec:
         - name: twentycrm
           image: twentycrm/twenty:latest
           imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "20"]
           env:
             - name: NODE_PORT
               value: 3000

@@ -132,6 +132,10 @@ spec:
           {{- $img := include "twenty.server.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "20"]
           env:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
