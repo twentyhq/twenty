@@ -118,8 +118,8 @@ describe('linkedinSyncHistoryHandler', () => {
     await syncHistory();
 
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
-    expect((mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId).toBe(
-      'run-1',
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ runId: 'run-1', status: 'COMPLETED' }),
     );
   });
 

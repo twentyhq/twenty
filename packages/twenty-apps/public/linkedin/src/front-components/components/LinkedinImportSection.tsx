@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconHistory, IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -94,11 +95,19 @@ export const LinkedinImportSection = ({
           title={t('Past conversations')}
           description={t('Most recent conversations imported on sync')}
           options={LINKEDIN_HISTORY_CONVERSATION_LIMITS.map((limit) => ({
-            value: limit,
+            value: String(limit),
             label: limit === 0 ? t('None') : String(limit),
           }))}
-          value={historyConversationLimit}
-          onChange={onHistoryConversationLimitChange}
+          value={String(historyConversationLimit)}
+          onChange={(value) => {
+            const limit = LINKEDIN_HISTORY_CONVERSATION_LIMITS.find(
+              (candidate) => String(candidate) === value,
+            );
+
+            if (isDefined(limit)) {
+              onHistoryConversationLimitChange(limit);
+            }
+          }}
         />
       </StyledSettingsCard>
       {(historyConversationLimit > 0 ||

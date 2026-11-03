@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { useId } from 'react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-
 import {
   SegmentedControl,
   type SegmentedControlOption,
-} from 'src/front-components/components/SegmentedControl';
+} from 'twenty-ui/components/input';
+import { type IconComponent } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
 import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
@@ -21,9 +21,7 @@ const StyledControlContainer = styled.div`
   margin-left: auto;
 `;
 
-type SettingsOptionCardContentSegmentedControlProps<
-  TValue extends string | number,
-> = {
+type SettingsOptionCardContentSegmentedControlProps<TValue extends string> = {
   Icon?: IconComponent;
   title: string;
   description?: string;
@@ -33,7 +31,7 @@ type SettingsOptionCardContentSegmentedControlProps<
 };
 
 export const SettingsOptionCardContentSegmentedControl = <
-  TValue extends string | number,
+  TValue extends string,
 >({
   Icon,
   title,
@@ -61,10 +59,11 @@ export const SettingsOptionCardContentSegmentedControl = <
       </StyledSettingsCardTextContainer>
       <StyledControlContainer>
         <SegmentedControl
+          aria-labelledby={titleId}
+          size="sm"
           options={options}
           value={value}
-          aria-labelledby={titleId}
-          onChange={onChange}
+          onValueChange={onChange}
         />
       </StyledControlContainer>
     </StyledSettingsCardContent>
