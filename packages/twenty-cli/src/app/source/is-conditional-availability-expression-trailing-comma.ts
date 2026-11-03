@@ -13,7 +13,9 @@ export const isConditionalAvailabilityExpressionTrailingComma = ({
 
   while (
     tokens[nextIndex]?.kind === ts.SyntaxKind.WhitespaceTrivia ||
-    tokens[nextIndex]?.kind === ts.SyntaxKind.NewLineTrivia
+    tokens[nextIndex]?.kind === ts.SyntaxKind.NewLineTrivia ||
+    tokens[nextIndex]?.kind === ts.SyntaxKind.SingleLineCommentTrivia ||
+    tokens[nextIndex]?.kind === ts.SyntaxKind.MultiLineCommentTrivia
   ) {
     nextIndex++;
   }
