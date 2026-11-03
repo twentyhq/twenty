@@ -1,5 +1,6 @@
 import { isBoolean } from '@sniptt/guards';
 
+import { LINKEDIN_HISTORY_CONVERSATION_LIMITS } from 'src/constants/linkedin-history-conversation-limits.constant';
 import { type LinkedinContactAutoCreationPolicy } from 'src/types/linkedin-contact-auto-creation-policy.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
@@ -15,8 +16,8 @@ const CONTACT_AUTO_CREATION_POLICIES: LinkedinContactAutoCreationPolicy[] = [
 
 const VISIBILITIES: LinkedinVisibility[] = ['SHARE_EVERYTHING', 'METADATA'];
 
-const isOneOf = <TValue extends string>(
-  values: TValue[],
+const isOneOf = <TValue extends string | number>(
+  values: readonly TValue[],
   value: unknown,
 ): value is TValue => values.some((candidate) => candidate === value);
 
@@ -39,6 +40,15 @@ export const parseLinkedinSettingsUpdate = (
 
   if (isBoolean(body?.areGroupChatsImported)) {
     update.areGroupChatsImported = body.areGroupChatsImported;
+  }
+
+  if (
+    isOneOf(
+      LINKEDIN_HISTORY_CONVERSATION_LIMITS,
+      body?.historyConversationLimit,
+    )
+  ) {
+    update.historyConversationLimit = body.historyConversationLimit;
   }
 
   if (isBoolean(body?.isNameMatchingEnabled)) {

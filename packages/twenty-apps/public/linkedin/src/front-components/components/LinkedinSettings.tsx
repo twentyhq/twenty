@@ -227,6 +227,7 @@ export const LinkedinSettings = () => {
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
               areGroupChatsImported={view.settings.areGroupChatsImported}
+              historyConversationLimit={view.settings.historyConversationLimit}
               historyImport={view.historyImport}
               syncProgress={
                 syncProgress?.runId === view.historyImport?.runId
@@ -240,6 +241,9 @@ export const LinkedinSettings = () => {
               }
               onGroupChatsImportChange={(areGroupChatsImported) =>
                 handleSettingsChange({ areGroupChatsImported })
+              }
+              onHistoryConversationLimitChange={(historyConversationLimit) =>
+                handleSettingsChange({ historyConversationLimit })
               }
               onSync={handleSync}
               onCancelSync={handleCancelSync}

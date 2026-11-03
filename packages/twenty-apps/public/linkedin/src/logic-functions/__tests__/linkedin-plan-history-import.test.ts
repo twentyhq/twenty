@@ -256,6 +256,61 @@ describe('linkedinPlanHistoryImportHandler', () => {
     );
   });
 
+  it('stops listing at the conversation limit of the run', async () => {
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, conversationLimit: 30 });
+    mockChatPages([20, 20, 5]);
+
+    await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'PLANNED',
+      chunkCount: 2,
+    });
+
+    expect(mocks.listUnipileChats).toHaveBeenCalledTimes(2);
+    expect(mocks.listUnipileChats).toHaveBeenLastCalledWith(
+      expect.objectContaining({ cursor: 'cursor-1', limit: 10 }),
+    );
+    expect(getStoredChatIds(1)).toEqual(buildChatIds(10, 20));
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
+      expect.objectContaining({
+        chunkCount: 2,
+        plannedConversationCount: 30,
+        reportedConversationCount: 30,
+      }),
+    );
+  });
+
+  it('keeps only the most recent chats of a page longer than the limit', async () => {
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, conversationLimit: 10 });
+    mockChatPages([20]);
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(getStoredChatIds(0)).toEqual(buildChatIds(10));
+  });
+
+  it('shows the limit as the total when the inbox holds more conversations', async () => {
+    let stateWhileListing: unknown;
+
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, conversationLimit: 20 });
+    mocks.listUnipileChats
+      .mockResolvedValueOnce({
+        items: buildChatIds(10).map((id) => ({ id })),
+        nextCursor: 'cursor-1',
+        totalCount: 340,
+      })
+      .mockImplementationOnce(async () => {
+        stateWhileListing = mocks.kvStore.get(PLANNING_KEY);
+
+        return { items: [{ id: 'chat-10' }], nextCursor: undefined };
+      });
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(stateWhileListing).toEqual(
+      expect.objectContaining({ reportedConversationCount: 20 }),
+    );
+  });
+
   it('records a run with no conversations as fully listed', async () => {
     mockChatPages([0]);
 

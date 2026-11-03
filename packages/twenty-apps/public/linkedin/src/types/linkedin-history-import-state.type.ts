@@ -1,9 +1,12 @@
+import { type LinkedinHistoryConversationLimit } from 'src/types/linkedin-history-conversation-limit.type';
 import { type LinkedinHistoryImportErrorCode } from 'src/types/linkedin-history-import-error-code.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 
 export type LinkedinHistoryImportState = {
   runId: string;
   importPolicy: LinkedinImportPolicy;
+  // Absent on runs started before the limit existed, which list every conversation.
+  conversationLimit?: LinkedinHistoryConversationLimit;
   status: 'IMPORTING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
   importedConversationCount: number;
   processedConversationCount: number;

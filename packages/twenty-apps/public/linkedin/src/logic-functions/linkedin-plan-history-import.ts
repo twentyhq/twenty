@@ -161,6 +161,7 @@ const finishPlanning = async ({
 
 const planHistoryImport = async (
   payload: LinkedinPlanHistoryImportJobPayload,
+  conversationLimit: number | undefined,
 ): Promise<LinkedinPlanHistoryImportResult> => {
   const { connectedAccountId, runId } = payload;
   const startedAt = Date.now();
@@ -221,6 +222,17 @@ const planHistoryImport = async (
   }
 
   while (inboxIndex < inboxIds.length) {
+    const remainingConversationCount = isDefined(conversationLimit)
+      ? conversationLimit - conversationCount
+      : undefined;
+
+    if (
+      isDefined(remainingConversationCount) &&
+      remainingConversationCount <= 0
+    ) {
+      break;
+    }
+
     if (
       Date.now() - startedAt >
       LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS
@@ -233,7 +245,10 @@ const planHistoryImport = async (
         accountId: unipileAccountId,
         inboxId: inboxIds[inboxIndex],
         cursor,
-        limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+        limit: Math.min(
+          LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+          remainingConversationCount ?? LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+        ),
       }),
     );
 
@@ -246,10 +261,16 @@ const planHistoryImport = async (
       !isDefined(cursor) &&
       isDefined(page.totalCount)
     ) {
-      reportedConversationCount = page.totalCount;
+      reportedConversationCount = Math.min(
+        page.totalCount,
+        conversationLimit ?? page.totalCount,
+      );
     }
 
-    const chats = sortUnipileChatsByLastMessage(page.items);
+    const chats = sortUnipileChatsByLastMessage(page.items).slice(
+      0,
+      remainingConversationCount,
+    );
 
     console.log(
       `[linkedin] history run ${runId}: inbox ${inboxIndex + 1} of ${inboxIds.length}, ${chats.length} chats listed (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'})${isDefined(page.totalCount) ? `, ${page.totalCount} in inbox` : ''}`,
@@ -292,12 +313,14 @@ export const linkedinPlanHistoryImportHandler = async (
   payload: LinkedinPlanHistoryImportJobPayload,
   context?: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
 ): Promise<LinkedinPlanHistoryImportResult> => {
-  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
+  const state = await getActiveLinkedinHistoryImportState(payload);
+
+  if (state === null) {
     return { status: 'CANCELLED' };
   }
 
   try {
-    return await planHistoryImport(payload);
+    return await planHistoryImport(payload, state.conversationLimit);
   } catch (error) {
     return failLinkedinHistoryImportJob({
       error,
@@ -323,7 +346,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the past LinkedIn conversations of a connection, most recent first, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
+    'Lists the most recent past LinkedIn conversations of a connection, up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });
