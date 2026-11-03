@@ -612,25 +612,14 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     return turn;
   };
 
-  it('records a step without a conversation as one turn, outside any thread', async () => {
+  it('records an Agent step without conversation settings in a conversation', async () => {
     mockModelCallingFindTool();
 
     expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
-    const turn = await findLatestAgentTurn();
-
-    expect(turn).toMatchObject({
-      threadId: null,
-      status: AgentTurnStatus.COMPLETED,
-    });
-    expect(
-      await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentMessage" WHERE "turnId" = $1`,
-        [turn.id],
-      ),
-    ).toEqual([]);
+    expect((await findLatestAgentTurn()).threadId).not.toBeNull();
   });
 
   it('runs a Generate step one-shot, outside any thread', async () => {
@@ -663,11 +652,13 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   it('fails a step without a conversation when the provider keeps failing', async () => {
     mockModelCallingFindTool({ providerFailure: 'EVERY_CALL' });
 
-    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
-      'FAILED',
-    );
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({ canReadAllObjectRecords: true }),
+      ),
+    ).toBe('FAILED');
 
-    expect(await findLatestAgentTurn()).toMatchObject({
+    expect(await findLatestAgentTurn(null)).toMatchObject({
       threadId: null,
       status: AgentTurnStatus.FAILED,
     });
@@ -676,11 +667,13 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   it('keeps the usage of the steps a failed run without a conversation spent', async () => {
     mockModelCallingFindTool({ providerFailure: 'EVERY_ANSWER' });
 
-    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
-      'FAILED',
-    );
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({ canReadAllObjectRecords: true }),
+      ),
+    ).toBe('FAILED');
 
-    const turn = await findLatestAgentTurn();
+    const turn = await findLatestAgentTurn(null);
 
     expect(turn).toMatchObject({
       threadId: null,

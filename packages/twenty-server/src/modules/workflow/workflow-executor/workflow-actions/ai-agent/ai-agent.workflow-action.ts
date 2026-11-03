@@ -4,7 +4,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
-  hasWorkflowAiAgentConversationConfig,
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -128,10 +128,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       },
     );
 
-    // only an agent step someone can take part in converses; any other step runs one-shot
-    const hasConversation = hasWorkflowAiAgentConversationConfig(
-      step.settings.input,
-    );
+    // an Agent step converses so it keeps its wait tools; a Generate step runs one-shot
+    const hasConversation = !isWorkflowAiAgentGenerateStep(step.settings.input);
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,
