@@ -12,14 +12,20 @@ describe('isIframeMediaPermissionCovered', () => {
     ).toBe(true);
   });
 
-  it('is no longer covered when a delegated capability is revoked', () => {
-    expect(
-      isIframeMediaPermissionCovered({
-        permission: { origin: ORIGIN, microphone: true, camera: true },
-        coveringPermission: { origin: ORIGIN, microphone: true, camera: false },
-      }),
-    ).toBe(false);
-  });
+  it.each([
+    { origin: ORIGIN, microphone: true, camera: false },
+    { origin: ORIGIN, microphone: false, camera: true },
+  ])(
+    'is no longer covered when a delegated capability is revoked: %o',
+    (coveringPermission) => {
+      expect(
+        isIframeMediaPermissionCovered({
+          permission: { origin: ORIGIN, microphone: true, camera: true },
+          coveringPermission,
+        }),
+      ).toBe(false);
+    },
+  );
 
   it.each([
     null,

@@ -9,7 +9,7 @@ import {
   type PermissionsDeprecatedRoleOnlyPrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
-} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+} from 'src/engine/permissions/principal/types/permissions-principal.type';
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 

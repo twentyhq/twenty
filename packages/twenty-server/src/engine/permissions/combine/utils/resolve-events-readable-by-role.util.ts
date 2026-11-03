@@ -1,6 +1,7 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
@@ -12,18 +13,18 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
 >({
-  applicationId,
-  roleId,
+  application,
   workspaceEventBatch,
   eventRecordAccessGate,
   metadataMaps,
 }: {
-  applicationId: string;
-  roleId: string | null;
+  application: Pick<FlatApplication, 'id' | 'defaultRoleId'>;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
   metadataMaps: PermissionsMetadataMaps;
 }): Promise<TEvent[]> => {
+  const { id: applicationId, defaultRoleId: roleId } = application;
+
   if (!isDefined(roleId) || !isDefined(metadataMaps.rolesPermissions[roleId])) {
     return [];
   }
@@ -39,9 +40,9 @@ export const resolveEventsReadableByRole = async <
   });
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds({
-      workspaceId: workspaceEventBatch.workspaceId,
-      mainPrincipal: { type: 'application', applicationId },
-      applicationPrincipal: { type: 'application', applicationId },
+      type: 'application',
+      workspace: { id: workspaceEventBatch.workspaceId },
+      application,
     });
 
   return workspaceEventBatch.events

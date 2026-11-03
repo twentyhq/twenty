@@ -1,19 +1,31 @@
 import { useCallback } from 'react';
-import { FrontComponentInputFocusContext } from 'twenty-front-component-renderer';
+import {
+  FrontComponentInputFocusContext,
+  FrontComponentIframeHostContext,
+} from 'twenty-front-component-renderer';
 
 import { FrontComponentInputFocusCleanupEffect } from '@/front-components/components/FrontComponentInputFocusCleanupEffect';
+import { FrontComponentManagedIframe } from '@/front-components/media-session/components/FrontComponentManagedIframe';
+import { FrontComponentIframeOwnerProvider } from '@/front-components/media-session/contexts/FrontComponentIframeOwnerContext';
 import { FrontComponentInstanceContext } from '@/front-components/states/contexts/FrontComponentInstanceContext';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 
 type FrontComponentRendererProviderProps = {
   frontComponentId: string;
+  applicationId: string;
+  applicationName: string;
+  applicationGrantedIframeMediaPermissions: readonly IframeMediaPermission[];
   children: React.ReactNode;
 };
 
 export const FrontComponentRendererProvider = ({
   frontComponentId,
+  applicationId,
+  applicationName,
+  applicationGrantedIframeMediaPermissions,
   children,
 }: FrontComponentRendererProviderProps) => {
   const focusId = `front-component-input-focus-${frontComponentId}`;
@@ -48,7 +60,22 @@ export const FrontComponentRendererProvider = ({
     >
       <FrontComponentInputFocusContext.Provider value={setEditableFocused}>
         <FrontComponentInputFocusCleanupEffect focusId={focusId} />
-        {children}
+        <FrontComponentIframeOwnerProvider
+          value={{
+            owner: {
+              type: 'application',
+              id: applicationId,
+              name: applicationName,
+            },
+            iframeMediaPermissions: applicationGrantedIframeMediaPermissions,
+          }}
+        >
+          <FrontComponentIframeHostContext.Provider
+            value={FrontComponentManagedIframe}
+          >
+            {children}
+          </FrontComponentIframeHostContext.Provider>
+        </FrontComponentIframeOwnerProvider>
       </FrontComponentInputFocusContext.Provider>
     </FrontComponentInstanceContext.Provider>
   );
