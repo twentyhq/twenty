@@ -17,6 +17,7 @@ export type RecordApi = 'graphql' | 'rest';
 
 type PersonData = {
   id: string;
+  companyId?: string;
   name?: { firstName: string };
   jobTitle?: string;
   intro?: string;
@@ -165,13 +166,18 @@ export const personRequestsByApi = {
     token,
     ids,
     data,
-  }: PersonRequestInput & { ids: string[]; data: Omit<PersonData, 'id'> }) => {
+    gqlFields = PERSON_FIELDS,
+  }: PersonRequestInput &
+    GraphqlSelectionInput & {
+      ids: string[];
+      data: Omit<PersonData, 'id'>;
+    }) => {
     if (api === 'graphql') {
       return makeGraphqlApiRequest(
         updateManyOperationFactory({
           objectMetadataSingularName: PERSON_SINGULAR_NAME,
           objectMetadataPluralName: PERSON_PLURAL_NAME,
-          gqlFields: PERSON_FIELDS,
+          gqlFields,
           filter: { id: { in: ids } },
           data,
         }),

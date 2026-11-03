@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -12,6 +14,7 @@ import { expectFieldPermissionDeniedResponse } from 'test/integration/permission
 import { expectPermissionGrantedResponse } from 'test/integration/permissions/utils/expect-permission-granted-response.util';
 import { createPersonRecords } from 'test/integration/utils/create-person-records.util';
 import { destroyPersonRecordsByFirstName } from 'test/integration/utils/destroy-person-records-by-first-name.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { findPersonRecordStates } from 'test/integration/utils/find-person-record-states.util';
 import { PERSON_RECORD_FIXTURE } from 'test/integration/utils/person-record-fixture.constant';
 import { personRequestsByApi } from 'test/integration/utils/person-requests-by-api.util';
@@ -25,12 +28,47 @@ const ABSENT = { status: 'absent' };
 
 const PERSON_FIELDS_WITH_INTRO = 'id jobTitle intro';
 
+const findSavedIntros = async (ids: string[]) => {
+  const people = await findRecordNodesByFilter<{ id: string; intro: string }>(
+    'person',
+    'people',
+    'id intro',
+    { id: { in: ids } },
+  );
+
+  return ids.map((id) => people.find((person) => person.id === id)?.intro);
+};
+
 describe('field permissions on person.intro', () => {
   let readRestricted: ApiKeyWithObjectRecordGrants;
   let updateRestricted: ApiKeyWithObjectRecordGrants;
   let updateRestrictedInPredicate: ApiKeyWithObjectRecordGrants;
+  const companyId = randomUUID();
 
   beforeAll(async () => {
+    const createCompanyResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data: { id: companyId, name: PERSON_RECORD_FIXTURE.firstName },
+      }),
+    );
+
+    expect(createCompanyResponse.body.errors).toBeUndefined();
+
+    const createPersonResponse = await personRequestsByApi.createOne({
+      api: 'graphql',
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      data: {
+        id: randomUUID(),
+        name: { firstName: PERSON_RECORD_FIXTURE.firstName },
+        jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+        companyId,
+      },
+    });
+
+    expect(createPersonResponse.body.errors).toBeUndefined();
+
     [readRestricted, updateRestricted, updateRestrictedInPredicate] =
       await Promise.all([
         createApiKeyWithFieldPermission({
@@ -60,6 +98,13 @@ describe('field permissions on person.intro', () => {
         updateRestrictedInPredicate,
       ]),
       destroyPersonRecordsByFirstName(PERSON_RECORD_FIXTURE.firstName),
+      makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'company',
+          gqlFields: 'id',
+          recordId: companyId,
+        }),
+      ),
     ]);
   });
 
@@ -150,6 +195,44 @@ describe('field permissions on person.intro', () => {
       expect(await findPersonRecordStates([id])).toEqual([ACTIVE_UPDATED]);
     });
 
+    it('denies updateMany selecting it, and does not write', async () => {
+      const ids = await createPersonRecords({ count: 2 });
+
+      const response = await personRequestsByApi.updateMany({
+        api: 'graphql',
+        token: readRestricted.token,
+        ids,
+        data: { jobTitle: UPDATED_JOB_TITLE },
+        gqlFields: PERSON_FIELDS_WITH_INTRO,
+      });
+
+      expectFieldPermissionDeniedResponse({
+        api: 'graphql',
+        response,
+        access: 'read',
+        objectNameSingular: 'person',
+        fieldName: 'intro',
+      });
+      expect(await findPersonRecordStates(ids)).toEqual([ACTIVE, ACTIVE]);
+    });
+
+    it('allows updateMany not selecting it', async () => {
+      const ids = await createPersonRecords({ count: 2 });
+
+      const response = await personRequestsByApi.updateMany({
+        api: 'graphql',
+        token: readRestricted.token,
+        ids,
+        data: { jobTitle: UPDATED_JOB_TITLE },
+      });
+
+      expectPermissionGrantedResponse({ api: 'graphql', response });
+      expect(await findPersonRecordStates(ids)).toEqual([
+        ACTIVE_UPDATED,
+        ACTIVE_UPDATED,
+      ]);
+    });
+
     it('denies filtering on it', async () => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
@@ -170,7 +253,7 @@ describe('field permissions on person.intro', () => {
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
           gqlFields: 'id people { edges { node { id intro } } }',
-          first: 1,
+          filter: { id: { eq: companyId } },
         }),
         readRestricted.token,
       );
@@ -267,7 +350,7 @@ describe('field permissions on person.intro', () => {
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
           gqlFields: 'id people { percentageEmptyIntro }',
-          first: 1,
+          filter: { id: { eq: companyId } },
         }),
         readRestricted.token,
       );
@@ -349,12 +432,15 @@ describe('field permissions on person.intro', () => {
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
           gqlFields: 'id people { edges { node { id intro } } }',
-          first: 1,
+          filter: { id: { eq: companyId } },
         }),
         updateRestricted.token,
       );
 
       expectPermissionGrantedResponse({ api: 'graphql', response });
+      expect(
+        response.body.data.companies.edges[0].node.people.edges,
+      ).toHaveLength(1);
     });
   });
 
@@ -488,6 +574,9 @@ describe('field permissions on person.intro', () => {
 
         expectPermissionGrantedResponse({ api, response });
         expect(await findPersonRecordStates([id])).toEqual([ACTIVE]);
+        expect(await findSavedIntros([id])).toEqual(
+          [id].map(() => RESTRICTED_INTRO),
+        );
       });
 
       it('allows createMany writing it when it is in a row-level predicate', async () => {
@@ -506,6 +595,9 @@ describe('field permissions on person.intro', () => {
 
         expectPermissionGrantedResponse({ api, response });
         expect(await findPersonRecordStates(ids)).toEqual([ACTIVE, ACTIVE]);
+        expect(await findSavedIntros(ids)).toEqual(
+          ids.map(() => RESTRICTED_INTRO),
+        );
       });
     },
   );
