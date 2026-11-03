@@ -6,12 +6,7 @@ import {
   updateProgress,
   useRecordId,
 } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-client-sdk/core';
-
-const SYSTEM_PROMPT =
-  'You are a postcard writing assistant. Write a short, warm postcard message ' +
-  'under 150 words. Use a personal tone. Output ONLY the postcard message ' +
-  'text, nothing else — no greeting label, no sign-off label, just the message.';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const GeneratePostCardEffect = () => {
   const recordId = useRecordId();
@@ -28,56 +23,14 @@ const GeneratePostCardEffect = () => {
 
     const generate = async () => {
       try {
-        const client = new CoreApiClient();
+        const result = await new RestApiClient().post<{
+          success: boolean;
+          error?: string;
+        }>('/s/post-cards/generate', { recordId });
 
-        const userPrompt = 'Write a postcard message for a friend.';
-
-        const apiBaseUrl = process.env.TWENTY_API_URL;
-        const token =
-          process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-
-        if (!apiBaseUrl || !token) {
-          throw new Error('API configuration missing');
+        if (!result.success) {
+          throw new Error(result.error ?? 'Failed to generate content');
         }
-
-        const response = await fetch(`${apiBaseUrl}/rest/ai/generate-text`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            systemPrompt: SYSTEM_PROMPT,
-            userPrompt,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-
-          if (errorBody.includes('No AI models are available')) {
-            throw new Error(
-              'No AI models configured. Go to Settings > Admin Panel > AI to add a provider API key.',
-            );
-          }
-
-          throw new Error(`AI request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as { text?: string };
-        const generatedContent = data.text ?? '';
-
-        await updateProgress(0.7);
-
-        await client.mutation({
-          updatePostCard: {
-            __args: {
-              id: recordId,
-              data: { content: generatedContent },
-            },
-            id: true,
-          },
-        });
 
         await updateProgress(1);
 

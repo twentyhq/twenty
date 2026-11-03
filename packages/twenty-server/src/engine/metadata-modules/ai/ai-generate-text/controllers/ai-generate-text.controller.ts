@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Header,
+  Post,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -60,7 +67,9 @@ export class AiGenerateTextController {
     private readonly aiBillingService: AiBillingService,
   ) {}
 
+  // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
   @Post('generate-text')
+  @Header('Deprecation', 'true')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async handleGenerateText(
     @Body() body: GenerateTextInput,
