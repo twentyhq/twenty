@@ -144,7 +144,15 @@ const buildRepository = ({
         },
       },
     },
-    rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
+    permissionsPrincipal: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'apiKey',
+        apiKeyId: 'api-key-id',
+        roleId: ROLE_ID,
+      },
+      applicationPrincipal: { type: 'customApplication' },
+    },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,

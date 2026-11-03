@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -11,7 +12,6 @@ import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflo
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
@@ -77,17 +77,17 @@ export class WorkflowToolWorkspaceService {
 
   generateWorkflowTools({
     workspaceId,
-    rolePermissionConfig,
+    authContext,
     userWorkspaceId,
   }: {
     workspaceId: string;
-    rolePermissionConfig: RolePermissionConfig;
+    authContext: WorkspaceAuthContext;
     userWorkspaceId?: string;
   }): ToolSet {
     const context: WorkflowToolContext = {
       workspaceId,
-      rolePermissionConfig,
       userWorkspaceId,
+      authContext,
     };
 
     const tools = [

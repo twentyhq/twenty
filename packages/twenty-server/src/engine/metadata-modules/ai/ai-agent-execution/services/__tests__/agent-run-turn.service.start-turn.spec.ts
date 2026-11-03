@@ -36,9 +36,9 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
       assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
     } as never,
     {
-      resolveRolePermissionConfig: jest
+      resolveRunAuthContext: jest
         .fn()
-        .mockResolvedValue({ intersectionOf: {} }),
+        .mockResolvedValue({ type: 'application' }),
     } as never,
     {} as never,
     { findOneBy: jest.fn().mockResolvedValue(null) } as never,

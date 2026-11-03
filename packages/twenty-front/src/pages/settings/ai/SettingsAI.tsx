@@ -25,6 +25,7 @@ import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
 import { SettingsMcpSetup } from '@/settings/mcp/components/SettingsMcpSetup';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
+import { SettingsAiWorkspaceBehaviorSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceBehaviorSection';
 import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
@@ -68,6 +69,7 @@ export const SettingsAI = () => {
     return (
       <SettingsAiOverview
         secondaryBar={secondaryBar}
+        behaviorSection={<SettingsAiWorkspaceBehaviorSection />}
         mcpSection={<SettingsAiMcpSection />}
         workspaceInstructionsSection={
           <SettingsAiWorkspaceInstructionsSection />

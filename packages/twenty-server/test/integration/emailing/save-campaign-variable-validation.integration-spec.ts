@@ -1,6 +1,7 @@
 import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
@@ -29,7 +30,7 @@ const saveDraftWithVariables = (...variables: string[]) =>
     'MessageCampaignDraftService',
   ).saveDraft({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    rolePermissionConfig: { shouldBypassPermissionChecks: true },
+    authContext: buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     subject: 'Hello',
     body: buildBodyWithVariables(variables),
   });

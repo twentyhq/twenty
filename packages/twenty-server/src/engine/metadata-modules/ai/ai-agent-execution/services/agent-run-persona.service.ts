@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentRunPersonaSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
+import { buildAgentRunAuthContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-auth-context.util';
 import { buildRoleExplicitObjectGrants } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-role-explicit-object-grants.util';
 import { resolveAgentRunPersonaFromAgent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-agent.util';
 import { resolveAgentRunPersonaFromInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-inline-config.util';
@@ -18,7 +19,6 @@ import {
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -82,29 +82,32 @@ export class AgentRunPersonaService {
     });
   }
 
-  // What the run reads and acts with, for its tools as for the records that wake it up. Null when it may read nothing
-  async resolveRolePermissionConfig({
+  // What the run reads and acts with, for its tools as for the records that wake it up. Undefined when it may read nothing
+  async resolveRunAuthContext({
     workspaceId,
     persona: {
-      permissions: { agentRoleId, scope, explicitObjectGrants },
+      agentId,
+      permissions: { scope, explicitObjectGrants },
     },
-    agentRunRoleIds,
+    authContext,
   }: {
     workspaceId: string;
-    persona: Pick<ResolvedAgentRunPersona, 'permissions'>;
-    agentRunRoleIds: AgentRunRoleIds | undefined;
-  }): Promise<RolePermissionConfig | null> {
-    if (!isDefined(explicitObjectGrants)) {
-      return null;
+    persona: Pick<ResolvedAgentRunPersona, 'agentId' | 'permissions'>;
+    authContext: WorkspaceAuthContext | undefined;
+  }): Promise<WorkspaceAuthContext | undefined> {
+    if (!isDefined(authContext) || !isDefined(explicitObjectGrants)) {
+      return undefined;
     }
 
-    const intersectionOf = {
-      ...agentRunRoleIds,
-      ...(isDefined(agentRoleId) ? { agentRoleId } : {}),
-    };
+    if (!isDefined(agentId) && !isDefined(scope)) {
+      return authContext;
+    }
 
     if (!isDefined(scope)) {
-      return { intersectionOf };
+      return buildAgentRunAuthContext({
+        authContext,
+        agentId: agentId ?? undefined,
+      });
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -115,14 +118,15 @@ export class AgentRunPersonaService {
         },
       );
 
-    return {
-      intersectionOf,
-      scope: resolveAiRunPermissionScope({
+    return buildAgentRunAuthContext({
+      authContext,
+      agentId: agentId ?? undefined,
+      permissionScope: resolveAiRunPermissionScope({
         scope,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
-    };
+    });
   }
 
   // like a deleted agent, a deleted application fails the run rather than letting it act for the workspace

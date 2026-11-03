@@ -33,6 +33,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
@@ -496,10 +497,9 @@ describe('Conversation sharing through the authenticated API', () => {
           },
         });
 
-        expect(senderAuthorization?.rolePermissionConfig).toEqual({
-          intersectionOf: {
-            userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
-          },
+        expect(senderAuthorization?.authContext).toMatchObject({
+          type: 'user',
+          userWorkspaceId: sender.userWorkspaceId,
         });
         await expect(
           actors.authorizeJob({
@@ -994,11 +994,12 @@ describe('Conversations through the record API', () => {
         'RecordAccessPolicyService',
       )
         .buildEventRecordAccessGate(batch)
-        .resolveAdmittedRecordIds({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          mainPrincipal: { type: 'workspaceMember', workspaceMemberId },
-          applicationPrincipal: { type: 'customApplication' },
-        });
+        .resolveAdmittedRecordIds(
+          await resolveWorkspaceMemberAuthContext({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspaceMemberId,
+          }),
+        );
 
     return admittedRecordIds.has(threadId);
   };

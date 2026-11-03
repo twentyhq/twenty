@@ -198,11 +198,7 @@ export class AiFrontComponentService {
     draftInput: FrontComponentDraftInput;
     context: Pick<
       ToolProviderContext,
-      | 'workspaceId'
-      | 'userWorkspaceId'
-      | 'threadId'
-      | 'authContext'
-      | 'rolePermissionConfig'
+      'workspaceId' | 'userWorkspaceId' | 'threadId' | 'authContext'
     >;
   }) {
     const { userWorkspaceId, threadId } = context;
@@ -236,7 +232,6 @@ export class AiFrontComponentService {
     const objectNamePlural = await this.getQueryObjectNamePluralOrThrow({
       query: input.query,
       authContext: context.authContext,
-      rolePermissionConfig: context.rolePermissionConfig,
     });
     validateFrontComponentSampleRecordsOrThrow({
       sampleRecords: input.sampleRecords,
@@ -414,7 +409,6 @@ export class AiFrontComponentService {
       | 'authContext'
       | 'approvedToolName'
       | 'threadId'
-      | 'rolePermissionConfig'
     >;
   }) {
     const { workspaceId, userWorkspaceId, authContext } = context;
@@ -508,7 +502,6 @@ export class AiFrontComponentService {
           await this.getQueryObjectNamePluralOrThrow({
             query: draft.query,
             authContext,
-            rolePermissionConfig: context.rolePermissionConfig,
           });
           await this.saveDraft({
             workspaceId,
@@ -598,17 +591,14 @@ export class AiFrontComponentService {
   private async getQueryObjectNamePluralOrThrow({
     query,
     authContext,
-    rolePermissionConfig,
   }: {
     query: FrontComponentQuery;
     authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
   }) {
     const { selectedFields, flatObjectMetadata } =
       await this.queryContext.build({
         authContext,
         objectName: query.objectName,
-        rolePermissionConfig,
       });
 
     for (const fieldName of query.select) {

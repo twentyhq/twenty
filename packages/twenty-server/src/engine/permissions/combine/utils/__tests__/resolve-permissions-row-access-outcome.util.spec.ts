@@ -168,6 +168,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
             canReadObjectRecords,
           },
         },
+        permissionFlags: {},
       },
     });
 

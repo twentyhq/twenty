@@ -9,7 +9,7 @@ import {
   type PermissionsDeprecatedRoleOnlyPrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
-} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+} from 'src/engine/permissions/principal/types/permissions-principal.type';
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
@@ -36,5 +36,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  scope?: Pick<PermissionScope, 'objectsPermissions'>;
+  scope?: PermissionScope;
 };

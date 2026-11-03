@@ -144,7 +144,7 @@ Punti chiave:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -308,6 +308,188 @@ Qualsiasi altra cosa — una semplice sessione utente, una chiave API senza un t
   membro sconosciuto o rimosso, o uno senza ruolo. Non ricorre mai al
   ruolo proprio dell'agente, poiché ciò concederebbe più accesso di quanto richiesto dal chiamante.
 </Warning>
+
+### Seguire una conversazione
+
+Un'app legge le conversazioni che intrattiene con i propri agenti tramite la stessa API
+della chat: `listConversationMessages()` restituisce la relativa cronologia e
+`streamConversation()` produce i relativi eventi in tempo reale, token per token. Assegna un nome alla
+conversazione tramite l'agente e la chiave `thread` che passi a `runAgent()`; puoi
+iniziare a seguirla prima che la prima esecuzione la raggiunga.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+* Gli eventi sono quelli della chat stessa: `stream-chunk` contiene un
+  `UIMessageChunk` dell'AI SDK e un `seq`, e notifiche quali `message-persisted`
+  (un messaggio è stato salvato: quello di un membro o la risposta, che contiene il
+  proprio `turnId`), `credits-exhausted` (la risposta si è interrotta quando lo spazio di lavoro ha
+  esaurito i crediti), `queue-updated` o `stream-error` indicano quando
+  leggere nuovamente la cronologia. Un `keepalive` arriva una volta stabilita la connessione, poi ogni
+  pochi secondi: leggi la cronologia al primo, poiché ciò che è accaduto prima
+  si trova lì.
+* Per trasformare i chunk in messaggi come fa la chat, inviali a
+  `readUIMessageStream()` dal pacchetto `ai`.
+* `listConversationMessages()` restituisce `{ messages, streamCatchup }`: i messaggi
+  salvati come `UIMessage` dell'AI SDK, come li costruisce la chat, e i chunk di
+  una risposta ancora in streaming. Mostra tali chunk, poi ignora i chunk in tempo reale il cui
+  `seq` è al massimo `streamCatchup.maxSeq`, poiché li ripetono.
+* `runAgent()` restituisce `runId`, il turno aperto dalla chiamata: i messaggi di tale esecuzione
+  lo contengono come `metadata.turnId`. Un'esecuzione in attesa prosegue nei turni successivi
+  della conversazione.
+* Lo stream rimane aperto finché non interrompi il relativo `signal` o usi `break`, e genera un errore se
+  la connessione cade: avvia nuovamente lo streaming per riprendere.
+* Un'app legge solo le proprie conversazioni. I turni che un membro ha aperto altrove,
+  ad esempio nella chat, mostrano solo il proprio testo, nella cronologia, in tempo reale e nella
+  successiva esecuzione dell'agente: in tempo reale, gli altri chunk arrivano come chunk
+  `message-metadata` vuoti, così `seq` rimane senza lacune. I turni eseguiti dalla tua app come
+  membro (vedi sopra) rimangono integri quando li legge autonomamente.
+* Richiede `"engines": { "twenty": ">=2.56.0" }`.
+
+</Accordion>
+<Accordion title="ai.generate" description="Chiama un modello da una funzione logica, senza un agente">
+
+`ai.generate()` chiama un modello da una funzione logica. A differenza di
+`runAgent()`, non ha bisogno di `defineAgent()`: la chiamata porta le proprie istruzioni
+e non apre conversazioni. Usalo per un lavoro one-shot come la classificazione, la sintesi o l'estrazione di
+.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+* `input` è una stringa o un elenco di messaggi
+  `{ role: 'user' | 'assistant', content }`.
+* `instructions` (opzionale) aggiunge le istruzioni di sistema del chiamante.
+* `modelId` (opzionale) sceglie il modello. Senza di esso, la chiamata utilizza il modello predefinito del workspace
+  .
+* `responseFormat` (opzionale) funziona come in `runAgent()`. Con
+  `{ type: 'json', schema }`, lo schema va sulla richiesta del modello stesso, così
+  una risposta JSON richiede una richiesta (più passaggi dello strumento quando un `scope` concede strumenti
+  ).
+* `scope` (opzionale) consente alla chiamata di utilizzare il database, come descritto di seguito.
+
+Si risolve a `{ successo, testo, oggetto, errore, runId, use }`:
+
+* `text` è la risposta di una risposta testuale e `null` per una JSON.
+* `object` è il risultato di una risposta JSON, e `null` altrimenti.
+* `error` spiega un'esecuzione fallita, quando `success` è `false`. Una corsa che fallisce
+  risolve questo modo piuttosto che lanciare; una chiamata che non può avviare un'esecuzione, come
+  come una con input non valido, lancia.
+* `runId` identifica l'esecuzione registrata, con il suo modello, utilizzo e crediti.
+* `usage` è `{ inputTokens, outputTokens }`: quello che è stato speso, inclusi i passaggi
+  che sono terminati prima di un fallimento.
+
+La chiamata agisce come chi lo ha fatto: il membro a cui appartiene un token di ambito utente,
+altrimenti la tua applicazione, altrimenti la chiave API. Da una funzione logica
+segue i client predefiniti: agisce come la persona che ha innescato l'esecuzione, o come
+la tua applicazione quando nessuno lo ha fatto. Non supera mai il ruolo della tua applicazione, e
+un'applicazione senza un ruolo predefinito non può chiamarla.
+
+Senza `scope`, la chiamata legge e non scrive alcun record. Per permettergli di utilizzare il database
+, passare un `scope`, scritto come permessi di un ruolo:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+Un ambito si restringe soltanto: non concede nulla che il chiamante non abbia già.
+
+Per mostrare la risposta mentre è scritta, passare `onChunk`. La chiamata risolve ancora
+allo stesso risultato, una volta che l'ultimo pezzo è stato consegnato a `onChunk`. Se la fine del flusso
+non arriva mai, smette di aspettare una volta che il risultato è in e 5 s
+passare senza un nuovo chunk, e ancora consegna su ogni pezzo ricevuto da allora:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+* La chiamata segue la corsa attraverso lo stesso abbonamento di
+  `streamConversation()`: si iscrive prima, aspetta fino a quando l'abbonamento è
+  live, poi inizia la run, quindi non manca nessun chunk.
+* I chunks sono di proprietà della chat: li incanalano in `readUIMessageStream()` dal pacchetto `ai`
+  per costruire il messaggio.
+* `signal` interrompe la chiamata: rifiuta con l'errore di abort e chiude il flusso
+  . La corsa stessa continua, e viene registrata come al solito.
+* Una volta che lo stream è live, un guasto di esso ferma solo i chunk: la chiamata
+  si risolve ancora con il risultato della corsa, che è fatturata in entrambi i modi. La chiamata
+  rifiuta quando l'abbonamento fallisce prima che vada in diretta, quindi la corsa non
+  inizia mai, o quando `onChunk` lancia.
+* Un'app segue solo le sue funzioni, quindi `onChunk` ha bisogno di un token di app.
+* Richiede `"engines": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  `ai.generate()` richiede il flag dei permessi AI sul ruolo predefinito dell'app,
+  come `runAgent()`.
+</Note>
 
 </Accordion>
 <Accordion title="sendInboxMessage" description="Avvia o continua una conversazione nelle chat dei membri">

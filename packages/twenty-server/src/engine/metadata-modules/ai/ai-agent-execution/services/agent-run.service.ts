@@ -555,6 +555,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         ? { callerWorkspaceMemberId: ref.runAsWorkspaceMemberId }
         : ref,
       requestUserWorkspaceId: ref.requestUserWorkspaceId,
+      agentId: ref.agentId,
       application,
       callerApplication,
     });

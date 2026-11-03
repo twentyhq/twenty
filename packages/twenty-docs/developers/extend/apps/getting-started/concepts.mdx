@@ -88,7 +88,7 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-- **`twenty app dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
+- **`twenty app dev`** — watches your source files and live-syncs changes to a connected Twenty server. After a successful sync, it regenerates the typed API client when the schema or installed generator package changed, or generated client files are missing or changed. To refresh types after changing the workspace in the UI, run `twenty app generate-client`.
 - **`twenty app build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
 - **Pre/post-install and uninstall hooks** — optional functions that run during installation or right before removal. See [Install Hooks](/developers/extend/apps/config/install-hooks) for details.
 

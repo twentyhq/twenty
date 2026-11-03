@@ -22,14 +22,8 @@ export class MergeManyRecordsService {
   ) {}
 
   async execute(params: MergeManyRecordsParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      ids,
-      conflictPriorityIndex,
-      dryRun,
-      authContext,
-      rolePermissionConfig,
-    } = params;
+    const { objectName, ids, conflictPriorityIndex, dryRun, authContext } =
+      params;
 
     try {
       const {
@@ -40,7 +34,6 @@ export class MergeManyRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       if (
