@@ -45,15 +45,18 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
     });
-    const participation = await context.assistantParticipationService.resolve({
-      thread,
-      workspaceId: context.workspaceId,
-      workspaceMemberId: context.workspaceMemberId,
-      isAssistantMentioned: isAssistantMentionedInMessage,
-      isReplyRequested: shouldAssistantReply,
-    });
+    const participation =
+      await context.assistantParticipationService.resolveAssistantParticipation(
+        {
+          thread,
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          isAssistantMentioned: isAssistantMentionedInMessage,
+          isReplyRequested: shouldAssistantReply,
+        },
+      );
 
-    await context.assistantParticipationService.save({
+    await context.assistantParticipationService.persistAssistantParticipation({
       thread,
       workspaceId: context.workspaceId,
       participation,
@@ -73,7 +76,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     });
   };
   const addJonyAsParticipant = (threadId: string) =>
-    context.inboxDeliveryService.addMembers({
+    context.inboxDeliveryService.deliverThreadToMemberInboxes({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       threadId,
@@ -94,21 +97,22 @@ describe('Assistant reply selection with stored conversation participants', () =
     threadId: string;
     assistantReplyContext: AgentChatAssistantReplyContext;
   }) => {
-    const savedMessage = await context.memberMessageWriterService.write({
-      actor: {
-        workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-        userWorkspaceId: context.userWorkspaceId,
-      },
-      thread: await context.threadService.getWritableThread({
-        threadId,
-        workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-      }),
-      message: { text: 'Continue the task with this answer.' },
-      placement: 'completed',
-      assistantReplyContext,
-    });
+    const savedMessage =
+      await context.memberMessageWriterService.writeMemberMessage({
+        actor: {
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          userWorkspaceId: context.userWorkspaceId,
+        },
+        thread: await context.threadService.getWritableThread({
+          threadId,
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+        }),
+        message: { text: 'Continue the task with this answer.' },
+        placement: 'completed',
+        assistantReplyContext,
+      });
 
     return { messageId: savedMessage.id };
   };

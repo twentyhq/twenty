@@ -17,37 +17,37 @@ export class AgentChatStreamClaimService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  async run<TResult>({
+  async claimAndStartStream<TResult>({
     threadId,
     workspaceId,
     modelId,
-    start,
+    startStream,
   }: {
     threadId: string;
     workspaceId: string;
     modelId?: string;
-    start: (streamId: string) => Promise<TResult | null>;
+    startStream: (streamId: string) => Promise<TResult | null>;
   }): Promise<TResult | null> {
-    const claim = { threadId, workspaceId, streamId: generateId() };
+    const streamClaim = { threadId, workspaceId, streamId: generateId() };
 
-    if (!(await this.streamRecoveryService.tryClaimStream(claim))) {
+    if (!(await this.streamRecoveryService.tryClaimStream(streamClaim))) {
       return null;
     }
 
     try {
-      const started = await start(claim.streamId);
+      const streamStartResult = await startStream(streamClaim.streamId);
 
-      if (!isDefined(started)) {
+      if (!isDefined(streamStartResult)) {
         await this.streamRecoveryService.release({
-          ...claim,
+          ...streamClaim,
           shouldFlush: true,
         });
       }
 
-      return started;
+      return streamStartResult;
     } catch (error) {
       await this.streamRecoveryService.release({
-        ...claim,
+        ...streamClaim,
         turnError: mapErrorToStreamError(error),
         shouldFlush: true,
       });

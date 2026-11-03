@@ -470,7 +470,7 @@ describe('Conversation sharing through the authenticated API', () => {
         const queued =
           await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
             'AgentChatMemberMessageWriterService',
-          ).write({
+          ).writeMemberMessage({
             actor: sender,
             thread: await getAgentChatThreadService().getWritableThread({
               ...sender,

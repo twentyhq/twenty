@@ -38,7 +38,7 @@ export class AgentChatAssistantPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  async resolve({
+  async resolveAssistantMessageDecision({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],
@@ -55,24 +55,26 @@ export class AgentChatAssistantPolicyService {
     isInitialMessage: boolean;
     isReplyRequested?: boolean;
   }): Promise<AgentChatAssistantDecision> {
-    const mode = await this.resolveMode({ workspaceId, thread });
-    const audience = await this.resolveAudience({
+    const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
+      workspaceId,
+      thread,
+    });
+    const chatAudience = await this.resolveChatAudience({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
     });
-
     const isAssistantParticipant = resolveAgentChatAssistantParticipation({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant: thread.isAssistantParticipant,
       isAssistantMentioned,
       isInitialAssistantParticipant,
       isInitialMessage,
     });
     const replyDecision = resolveAgentChatReplyDecision({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant,
       isAssistantMentioned,
       isReplyRequested,
@@ -81,7 +83,7 @@ export class AgentChatAssistantPolicyService {
     return { isAssistantParticipant, replyDecision };
   }
 
-  async resolveExecutionDecision({
+  async resolveReplyExecutionDecision({
     workspaceId,
     thread,
     context,
@@ -90,22 +92,25 @@ export class AgentChatAssistantPolicyService {
     thread: AssistantPolicyThread;
     context?: AgentChatAssistantReplyContext;
   }): Promise<AgentChatReplyExecutionDecision> {
-    const mode = await this.resolveMode({ workspaceId, thread });
-    const audience = await this.resolveAudience({
+    const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
+      workspaceId,
+      thread,
+    });
+    const chatAudience = await this.resolveChatAudience({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds: [],
     });
 
     return resolveAgentChatReplyExecutionDecision({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant: thread.isAssistantParticipant,
       context,
     });
   }
 
-  private async resolveMode({
+  private async resolveWorkspaceAssistantMode({
     workspaceId,
     thread,
   }: {
@@ -125,7 +130,7 @@ export class AgentChatAssistantPolicyService {
       : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
   }
 
-  private async resolveAudience({
+  private async resolveChatAudience({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
@@ -160,7 +165,7 @@ export class AgentChatAssistantPolicyService {
       return 'conversation';
     }
 
-    const [shares, memberCount] = await Promise.all([
+    const [threadShares, audienceMemberCount] = await Promise.all([
       this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
@@ -176,13 +181,13 @@ export class AgentChatAssistantPolicyService {
         ],
       }),
     ]);
-    const hasSharedAudience = shares.some(
+    const hasSharedAudience = threadShares.some(
       ({ principalType, principalId }) =>
         principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
         principalId !== thread.workspaceMemberId,
     );
 
-    return !hasSharedAudience && memberCount <= 1
+    return !hasSharedAudience && audienceMemberCount <= 1
       ? 'assistant-chat'
       : 'conversation';
   }

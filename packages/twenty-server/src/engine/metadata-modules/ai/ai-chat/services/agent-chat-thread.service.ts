@@ -391,9 +391,11 @@ export class AgentChatThreadService {
       shouldEmitEvent: boolean;
     }): Promise<AgentChatThreadWorkspaceEntity> {
     const participation =
-      await this.assistantParticipationService.resolve(args);
+      await this.assistantParticipationService.resolveAssistantParticipation(
+        args,
+      );
 
-    await this.assistantParticipationService.save({
+    await this.assistantParticipationService.persistAssistantParticipation({
       workspaceId: args.workspaceId,
       thread: args.thread,
       participation,

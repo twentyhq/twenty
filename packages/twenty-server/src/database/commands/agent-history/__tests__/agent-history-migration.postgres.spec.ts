@@ -825,13 +825,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
       };
-      const message = await memberMessageWriter.write({
+      const message = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
         message: { text: 'Live message after upgrade' },
         placement: 'running',
       });
-      const queued = await memberMessageWriter.write({
+      const queued = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
         message: { text: 'Queued after upgrade' },

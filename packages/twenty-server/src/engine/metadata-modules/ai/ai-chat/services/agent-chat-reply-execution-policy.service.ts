@@ -62,13 +62,12 @@ export class AgentChatReplyExecutionPolicyService {
     }
 
     const context = readAgentChatAssistantReplyContext(message?.parts);
-    const decision = await this.assistantPolicyService.resolveExecutionDecision(
-      {
+    const decision =
+      await this.assistantPolicyService.resolveReplyExecutionDecision({
         workspaceId,
         thread,
         context,
-      },
-    );
+      });
 
     if (decision !== 'REEVALUATE') {
       return decision === 'EXECUTE';
