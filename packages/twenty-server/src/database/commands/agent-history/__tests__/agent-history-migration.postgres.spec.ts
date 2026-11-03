@@ -221,47 +221,35 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         }),
       } as never,
     );
-    const chatThreadService = new AgentChatThreadService();
-
-    Object.assign(chatThreadService, {
-      threadRepository: threads,
-      sharingService: chatSharing,
-      threadRecordEventService: chatRecordEvents,
-      participantService: {
+    const chatThreadService = new AgentChatThreadService(
+      threads,
+      chatSharing as never,
+      chatRecordEvents as never,
+      {
         recordMemberActivity: jest.fn().mockResolvedValue({
           lastActivityAt: new Date(),
           updatedAt: new Date(),
         }),
-      },
-    });
+      } as never,
+      {} as never,
+      {} as never,
+      {} as never,
+    );
 
-    const createChatService = (messageRepository: typeof messages) => {
-      const chatService = new AgentChatService();
-
-      Object.assign(chatService, {
-        threadRepository: threads,
-        turnRepository: turns,
+    const createChatService = (messageRepository: typeof messages) =>
+      new AgentChatService(
+        threads,
+        turns,
         messageRepository,
-        sharingService: chatSharing,
-        threadRecordEventService: chatRecordEvents,
-        conversationWriterService: conversationWriter,
-        threadService: chatThreadService,
-      });
+        {} as never,
+        chatSharing as never,
+        chatRecordEvents as never,
+        conversationWriter,
+        chatThreadService,
+      );
 
-      return chatService;
-    };
-
-    const createQueueService = (messageRepository: typeof messages) => {
-      const queueService = new AgentChatQueueService();
-
-      Object.assign(queueService, {
-        turnRepository: turns,
-        messageRepository,
-        conversationWriterService: conversationWriter,
-      });
-
-      return queueService;
-    };
+    const createQueueService = (messageRepository: typeof messages) =>
+      new AgentChatQueueService(turns, messageRepository, conversationWriter);
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(
@@ -822,18 +810,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
         threadId: thread.id,
       });
-      const memberMessageWriter = new AgentChatMemberMessageWriterService();
-
-      Object.assign(memberMessageWriter, {
-        chatService: chat,
-        threadService: chatThreadService,
-        participantService: { resolveMentionInTransaction: jest.fn() },
-        conversationWriterService: conversationWriter,
-        messagePartsService: new AgentChatMemberMessagePartsService(
-          {} as never,
-        ),
-        eventPublisherService: { publish: jest.fn() },
-      });
+      const memberMessageWriter = new AgentChatMemberMessageWriterService(
+        chat,
+        chatThreadService,
+        { resolveMentionInTransaction: jest.fn() } as never,
+        {} as never,
+        conversationWriter,
+        new AgentChatMemberMessagePartsService({} as never),
+        {} as never,
+        { publish: jest.fn() } as never,
+      );
       const actor = {
         workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,

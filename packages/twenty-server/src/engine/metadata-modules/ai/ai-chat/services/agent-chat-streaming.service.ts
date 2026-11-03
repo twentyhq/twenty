@@ -6,9 +6,9 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { type TextUIPart } from 'ai';
 
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -37,41 +37,22 @@ import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-hist
 
 @Injectable()
 export class AgentChatStreamingService {
-  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
-  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
-
-  @InjectMessageQueue(MessageQueue.aiStreamQueue)
-  private readonly messageQueueService: MessageQueueService;
-
-  @Inject(AgentChatService)
-  private readonly agentChatService: AgentChatService;
-
-  @Inject(AgentChatQueueService)
-  private readonly agentChatQueueService: AgentChatQueueService;
-
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
-
-  @Inject(AgentConversationReaderService)
-  private readonly conversationReaderService: AgentConversationReaderService;
-
-  @Inject(AgentChatStreamRecoveryService)
-  private readonly streamRecoveryService: AgentChatStreamRecoveryService;
-
-  @Inject(AgentChatActorService)
-  private readonly actorService: AgentChatActorService;
-
-  @Inject(AgentTurnRecorderService)
-  private readonly turnRecorderService: AgentTurnRecorderService;
-
-  @Inject(AgentRunSuspensionService)
-  private readonly agentRunSuspensionService: AgentRunSuspensionService;
-
-  @Inject(AgentChatStreamClaimService)
-  private readonly streamClaimService: AgentChatStreamClaimService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.aiStreamQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly agentChatService: AgentChatService,
+    private readonly agentChatQueueService: AgentChatQueueService,
+    private readonly threadService: AgentChatThreadService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly conversationReaderService: AgentConversationReaderService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly actorService: AgentChatActorService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly streamClaimService: AgentChatStreamClaimService,
+  ) {}
 
   // the agent speaks first, from a context in place of a user message
   async startOpeningTurn({

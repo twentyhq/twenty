@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,29 +23,16 @@ import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-hi
 
 @Injectable()
 export class AgentChatMemberMessageWriterService {
-  @Inject(AgentChatService)
-  private readonly chatService: AgentChatService;
-
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
-
-  @Inject(AgentChatThreadParticipantService)
-  private readonly participantService: AgentChatThreadParticipantService;
-
-  @Inject(AgentChatAssistantParticipationService)
-  private readonly assistantParticipationService: AgentChatAssistantParticipationService;
-
-  @Inject(AgentConversationWriterService)
-  private readonly conversationWriterService: AgentConversationWriterService;
-
-  @Inject(AgentChatMemberMessagePartsService)
-  private readonly messagePartsService: AgentChatMemberMessagePartsService;
-
-  @Inject(AgentChatInboxDeliveryService)
-  private readonly inboxDeliveryService: AgentChatInboxDeliveryService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
+  constructor(
+    private readonly chatService: AgentChatService,
+    private readonly threadService: AgentChatThreadService,
+    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly assistantParticipationService: AgentChatAssistantParticipationService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly messagePartsService: AgentChatMemberMessagePartsService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+  ) {}
 
   async write({
     actor,

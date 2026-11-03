@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { generateId } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,11 +12,10 @@ import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history
 export class AgentChatStreamClaimService {
   private readonly logger = new Logger(AgentChatStreamClaimService.name);
 
-  @Inject(AgentChatStreamRecoveryService)
-  private readonly streamRecoveryService: AgentChatStreamRecoveryService;
-
-  @Inject(MetricsService)
-  private readonly metricsService: MetricsService;
+  constructor(
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   async run<TResult>({
     threadId,

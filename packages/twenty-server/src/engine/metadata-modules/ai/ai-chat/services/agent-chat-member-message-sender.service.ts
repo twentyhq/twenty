@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -30,47 +30,22 @@ import {
 
 @Injectable()
 export class AgentChatMemberMessageSenderService {
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
-
-  @Inject(AgentChatAssistantParticipationService)
-  private readonly participationService: AgentChatAssistantParticipationService;
-
-  @Inject(AgentChatMemberMessageWriterService)
-  private readonly messageWriterService: AgentChatMemberMessageWriterService;
-
-  @Inject(AgentChatInboxDeliveryService)
-  private readonly inboxDeliveryService: AgentChatInboxDeliveryService;
-
-  @Inject(AgentChatStreamingService)
-  private readonly streamingService: AgentChatStreamingService;
-
-  @Inject(AgentChatQueueService)
-  private readonly queueService: AgentChatQueueService;
-
-  @Inject(AgentChatStreamClaimService)
-  private readonly streamClaimService: AgentChatStreamClaimService;
-
-  @Inject(AgentChatStreamRecoveryService)
-  private readonly streamRecoveryService: AgentChatStreamRecoveryService;
-
-  @Inject(AgentChatTurnPreflightService)
-  private readonly turnPreflightService: AgentChatTurnPreflightService;
-
-  @Inject(AgentChatThreadLifecycleService)
-  private readonly threadLifecycleService: AgentChatThreadLifecycleService;
-
-  @Inject(AgentRunSuspensionService)
-  private readonly runSuspensionService: AgentRunSuspensionService;
-
-  @Inject(AgentChatEventPublisherService)
-  private readonly eventPublisherService: AgentChatEventPublisherService;
-
-  @Inject(FeatureFlagService)
-  private readonly featureFlagService: FeatureFlagService;
-
-  @Inject(CoreEntityCacheService)
-  private readonly coreEntityCacheService: CoreEntityCacheService;
+  constructor(
+    private readonly threadService: AgentChatThreadService,
+    private readonly participationService: AgentChatAssistantParticipationService,
+    private readonly messageWriterService: AgentChatMemberMessageWriterService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
+    private readonly streamingService: AgentChatStreamingService,
+    private readonly queueService: AgentChatQueueService,
+    private readonly streamClaimService: AgentChatStreamClaimService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly turnPreflightService: AgentChatTurnPreflightService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly runSuspensionService: AgentRunSuspensionService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+  ) {}
 
   async send({
     actor,

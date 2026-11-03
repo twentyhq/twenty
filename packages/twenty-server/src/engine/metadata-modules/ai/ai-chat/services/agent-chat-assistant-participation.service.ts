@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
@@ -18,21 +18,13 @@ import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/a
 
 @Injectable()
 export class AgentChatAssistantParticipationService {
-  @Inject(AgentChatAssistantPolicyService)
-  private readonly assistantPolicyService: AgentChatAssistantPolicyService;
-
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentConversationWriterService)
-  private readonly conversationWriterService: AgentConversationWriterService;
-
-  @Inject(AgentChatThreadRecordEventService)
-  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
-
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly assistantPolicyService: AgentChatAssistantPolicyService,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
   async resolve({

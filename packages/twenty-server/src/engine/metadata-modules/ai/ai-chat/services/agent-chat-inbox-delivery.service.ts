@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -18,18 +18,12 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 export class AgentChatInboxDeliveryService {
   private readonly logger = new Logger(AgentChatInboxDeliveryService.name);
 
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatInboxDeliveryWriterService)
-  private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService;
-
-  @Inject(AgentChatThreadRecordEventService)
-  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
   async deliver({
