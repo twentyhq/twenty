@@ -9,9 +9,6 @@ import { In } from 'typeorm';
 
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import {
   COMPANY_ENRICHMENT_ATTEMPT_KEY,
   type CompanyEnrichmentAttemptKeyValueTypeMap,
@@ -23,10 +20,6 @@ import {
 import { GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE } from 'src/engine/core-modules/getting-started/constants/getting-started-step-action-keys-by-profile.constant';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
-import {
-  GettingStartedException,
-  GettingStartedExceptionCode,
-} from 'src/engine/core-modules/getting-started/getting-started.exception';
 import {
   GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX,
   GETTING_STARTED_HIDDEN_USER_VARIABLE_KEY,
@@ -47,7 +40,6 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type WorkspaceEnrichmentKeyValueTypeMap = CompanyEnrichmentKeyValueTypeMap &
   CompanyEnrichmentAttemptKeyValueTypeMap;
@@ -70,8 +62,6 @@ export class GettingStartedService {
     private readonly permissionsService: PermissionsService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly keyValuePairService: KeyValuePairService<WorkspaceEnrichmentKeyValueTypeMap>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
@@ -191,16 +181,6 @@ export class GettingStartedService {
   }: GettingStartedScope & {
     input: UpdateGettingStartedInput;
   }): Promise<GettingStartedProgress> {
-    if (
-      input.isHidden === true &&
-      !(await this.hasPaymentMethod(workspaceId))
-    ) {
-      throw new GettingStartedException(
-        'Getting started cannot be hidden without a payment method',
-        GettingStartedExceptionCode.HIDE_NOT_ALLOWED,
-      );
-    }
-
     if (isDefined(input.selectedStepActionKey)) {
       await this.userVarsService.set({
         userId,
@@ -259,23 +239,6 @@ export class GettingStartedService {
       key: `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
       value: { completedAt: new Date().toISOString() },
     });
-  }
-
-  private async hasPaymentMethod(workspaceId: string): Promise<boolean> {
-    const [{ currentBillingSubscription }, billingCustomer] = await Promise.all(
-      [
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]),
-        this.billingSubscriptionService.getBillingCustomer(workspaceId),
-      ],
-    );
-
-    return (
-      (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
-        isSendInvoiceSubscription(currentBillingSubscription)) ||
-      billingCustomer?.hasPaymentMethod !== false
-    );
   }
 
   private async getOrSaveAssignedStepActionKeys({
