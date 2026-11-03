@@ -12,7 +12,7 @@ export const workflowCodeActionSettingsSchema =
           .max(256_000)
           .optional()
           .describe(
-            'The TypeScript source of the step. It must export a `main` function, which receives logicFunctionInput as its only argument and returns an object.',
+            'The TypeScript source of the step. It must export `main` as an async arrow function, `export const main = async (params: { ... }) => { ... }`: params receives logicFunctionInput, its type declares the step inputs, and it returns an object.',
           ),
         logicFunctionId: z
           .string()
