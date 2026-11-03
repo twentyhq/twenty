@@ -4,7 +4,7 @@ import {
   CoreObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { isDefined, isSystemPageKey } from 'twenty-shared/utils';
+import { isDefined, isNativePageKey } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const filterAndSortNavigationMenuItems = (
@@ -38,8 +38,8 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.LINK) {
         return true;
       }
-      if (item.type === NavigationMenuItemType.SYSTEM_PAGE) {
-        return isSystemPageKey(item.systemPageKey);
+      if (item.type === NavigationMenuItemType.NATIVE_PAGE) {
+        return isNativePageKey(item.nativePageKey);
       }
       if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {
         return isDefined(item.pageLayoutId);

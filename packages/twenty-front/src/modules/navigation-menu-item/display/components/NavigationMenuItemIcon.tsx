@@ -19,7 +19,7 @@ import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
-import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
+import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/display/native-page/utils/getNativePageNavigationMenuItemConfig';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -112,16 +112,16 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
-  if (navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE) {
-    const systemPageConfig =
-      getSystemPageNavigationMenuItemConfig(navigationMenuItem);
+  if (navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE) {
+    const nativePageConfig =
+      getNativePageNavigationMenuItemConfig(navigationMenuItem);
 
     return (
       <ColoredIcon
         Icon={
           isDefined(navigationMenuItem.icon)
             ? getIcon(navigationMenuItem.icon)
-            : (systemPageConfig?.Icon ?? IconCompass)
+            : (nativePageConfig?.Icon ?? IconCompass)
         }
         color={getNavigationMenuItemColor(navigationMenuItem)}
       />

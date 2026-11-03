@@ -4,10 +4,10 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.56.0', 1793720312475)
-export class AddSystemPageNavigationMenuItemFastInstanceCommand implements FastInstanceCommand {
+export class AddNativePageNavigationMenuItemFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" ADD "systemPageKey" text',
+      'ALTER TABLE "core"."navigationMenuItem" ADD "nativePageKey" text',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
@@ -16,7 +16,7 @@ export class AddSystemPageNavigationMenuItemFastInstanceCommand implements FastI
       'ALTER TYPE "core"."navigationMenuItem_type_enum" RENAME TO "navigationMenuItem_type_enum_old"',
     );
     await queryRunner.query(
-      "CREATE TYPE \"core\".\"navigationMenuItem_type_enum\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'AGENT_CHAT_CHANNEL', 'SYSTEM_PAGE')",
+      "CREATE TYPE \"core\".\"navigationMenuItem_type_enum\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'AGENT_CHAT_CHANNEL', 'NATIVE_PAGE')",
     );
     await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" DROP DEFAULT',
@@ -28,7 +28,7 @@ export class AddSystemPageNavigationMenuItemFastInstanceCommand implements FastI
       'DROP TYPE "core"."navigationMenuItem_type_enum_old"',
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL) OR ("type" = 'SYSTEM_PAGE' AND "systemPageKey" IS NOT NULL))`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL) OR ("type" = 'NATIVE_PAGE' AND "nativePageKey" IS NOT NULL))`,
     );
   }
 
@@ -37,7 +37,7 @@ export class AddSystemPageNavigationMenuItemFastInstanceCommand implements FastI
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
     );
     await queryRunner.query(
-      'DELETE FROM "core"."navigationMenuItem" WHERE "type" = \'SYSTEM_PAGE\'',
+      'DELETE FROM "core"."navigationMenuItem" WHERE "type" = \'NATIVE_PAGE\'',
     );
     await queryRunner.query(
       "CREATE TYPE \"core\".\"navigationMenuItem_type_enum_old\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'AGENT_CHAT_CHANNEL')",
@@ -56,7 +56,7 @@ export class AddSystemPageNavigationMenuItemFastInstanceCommand implements FastI
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'AGENT_CHAT_CHANNEL' AND "agentChatChannelId" IS NOT NULL))`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "systemPageKey"',
+      'ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "nativePageKey"',
     );
   }
 }

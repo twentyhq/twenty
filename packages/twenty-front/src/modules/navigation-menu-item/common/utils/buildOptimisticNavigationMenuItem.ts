@@ -18,7 +18,7 @@ export const buildOptimisticNavigationMenuItem = (
   folderId: input.folderId ?? null,
   name: input.name ?? null,
   link: input.link ?? null,
-  systemPageKey: input.systemPageKey ?? null,
+  nativePageKey: input.nativePageKey ?? null,
   icon: input.icon ?? null,
   color: input.color ?? null,
   applicationId: null,

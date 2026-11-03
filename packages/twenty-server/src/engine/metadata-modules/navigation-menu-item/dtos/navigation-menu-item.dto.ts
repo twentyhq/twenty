@@ -1,6 +1,6 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
-import { type SystemPageKey } from 'twenty-shared/types';
+import { type NativePageKey } from 'twenty-shared/types';
 import {
   IsDateString,
   IsNotEmpty,
@@ -56,7 +56,7 @@ export class NavigationMenuItemDTO {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  systemPageKey?: SystemPageKey | null;
+  nativePageKey?: NativePageKey | null;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

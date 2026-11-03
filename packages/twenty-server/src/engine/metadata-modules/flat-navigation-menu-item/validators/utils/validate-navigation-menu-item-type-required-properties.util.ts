@@ -7,7 +7,7 @@ import {
 import {
   isDefined,
   isSafeInternalPath,
-  isSystemPageKey,
+  isNativePageKey,
   isValidUrl,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -55,7 +55,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
-    systemPageKey,
+    nativePageKey,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -130,13 +130,13 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         userFriendlyMessage: msg`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
       });
     }
-    case NavigationMenuItemType.SYSTEM_PAGE: {
-      return isSystemPageKey(systemPageKey)
+    case NavigationMenuItemType.NATIVE_PAGE: {
+      return isNativePageKey(nativePageKey)
         ? []
         : [
             buildInvalidInputError(
-              t`A valid systemPageKey is required for SYSTEM_PAGE type`,
-              msg`A valid systemPageKey is required for SYSTEM_PAGE type`,
+              t`A valid nativePageKey is required for NATIVE_PAGE type`,
+              msg`A valid nativePageKey is required for NATIVE_PAGE type`,
             ),
           ];
     }

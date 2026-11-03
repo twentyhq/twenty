@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getFolderNavigationMenuItemLabel } from '@/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import { getObjectNavigationMenuItemLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemLabel';
-import { getSystemPageNavigationMenuItemConfig } from '@/navigation-menu-item/display/system-page/utils/getSystemPageNavigationMenuItemConfig';
+import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/display/native-page/utils/getNativePageNavigationMenuItemConfig';
 import { getRecordNavigationMenuItemLabel } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemLabel';
 import { getViewNavigationMenuItemLabel } from '@/navigation-menu-item/display/view/utils/getViewNavigationMenuItemLabel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -32,17 +32,17 @@ export const getNavigationMenuItemLabel = (
       return getRecordNavigationMenuItemLabel(item);
     case NavigationMenuItemType.FOLDER:
       return getFolderNavigationMenuItemLabel(item);
-    case NavigationMenuItemType.SYSTEM_PAGE: {
+    case NavigationMenuItemType.NATIVE_PAGE: {
       const trimmedName = item.name?.trim();
 
       if (isNonEmptyString(trimmedName)) {
         return trimmedName;
       }
 
-      const systemPageLabel =
-        getSystemPageNavigationMenuItemConfig(item)?.label;
+      const nativePageLabel =
+        getNativePageNavigationMenuItemConfig(item)?.label;
 
-      return isDefined(systemPageLabel) ? i18n._(systemPageLabel) : '';
+      return isDefined(nativePageLabel) ? i18n._(nativePageLabel) : '';
     }
     default:
       return item.name ?? '';

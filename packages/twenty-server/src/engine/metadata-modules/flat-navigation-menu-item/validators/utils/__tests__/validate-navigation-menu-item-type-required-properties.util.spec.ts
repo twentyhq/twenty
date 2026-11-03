@@ -14,7 +14,7 @@ const buildFlatNavigationMenuItem = (
     universalIdentifier: VALID_UUID,
     name: null,
     link: null,
-    systemPageKey: null,
+    nativePageKey: null,
     icon: null,
     color: null,
     position: 0,
@@ -77,9 +77,9 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       ],
     },
     {
-      type: NavigationMenuItemType.SYSTEM_PAGE,
+      type: NavigationMenuItemType.NATIVE_PAGE,
       expectedMessages: [
-        'A valid systemPageKey is required for SYSTEM_PAGE type',
+        'A valid nativePageKey is required for NATIVE_PAGE type',
       ],
     },
   ])(
@@ -126,8 +126,8 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
     {
-      type: NavigationMenuItemType.SYSTEM_PAGE,
-      overrides: { systemPageKey: 'workflows' as const },
+      type: NavigationMenuItemType.NATIVE_PAGE,
+      overrides: { nativePageKey: 'workflows' as const },
     },
   ])(
     'should not report any error when $type type properties are valid',
@@ -143,17 +143,17 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     },
   );
 
-  it('should report an error when the system page key is unknown', () => {
+  it('should report an error when the native page key is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
-        type: NavigationMenuItemType.SYSTEM_PAGE,
-        systemPageKey:
-          'settings' as UniversalFlatNavigationMenuItem['systemPageKey'],
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey:
+          'settings' as UniversalFlatNavigationMenuItem['nativePageKey'],
       }),
     });
 
     expect(errors.map(({ message }) => message)).toEqual([
-      'A valid systemPageKey is required for SYSTEM_PAGE type',
+      'A valid nativePageKey is required for NATIVE_PAGE type',
     ]);
   });
 

@@ -684,7 +684,7 @@ export class ObjectMetadataService {
       agentChatChannelUniversalIdentifier: null,
       name: null,
       link: null,
-      systemPageKey: null,
+      nativePageKey: null,
       icon: null,
       color: null,
       position: nextPosition,

@@ -7,7 +7,7 @@ import { MakeAgentTurnThreadOptionalCommand } from 'src/database/commands/upgrad
 import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
 import { RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793707166734-rename-emails-tab-to-messages.command';
 import { RepairApplicationDependencyChecksumsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720039867-repair-application-dependency-checksums.command';
-import { ConvertWorkflowNavigationMenuItemsToSystemPageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720614286-convert-workflow-navigation-menu-items-to-system-page.command';
+import { ConvertWorkflowNavigationMenuItemsToNativePageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793720614286-convert-workflow-navigation-menu-items-to-native-page.command';
 import { ScopeWorkflowCommandMenuItemsToCoreObjectCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793721085167-scope-workflow-command-menu-items-to-core-object.command';
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793724401314-drop-workspace-workflow-object.command';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
@@ -34,7 +34,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     InlineWorkflowStepAgentsCommand,
     RenameEmailsTabToMessagesCommand,
     RepairApplicationDependencyChecksumsCommand,
-    ConvertWorkflowNavigationMenuItemsToSystemPageCommand,
+    ConvertWorkflowNavigationMenuItemsToNativePageCommand,
     ScopeWorkflowCommandMenuItemsToCoreObjectCommand,
     DropWorkspaceWorkflowObjectCommand,
   ],

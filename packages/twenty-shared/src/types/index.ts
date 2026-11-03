@@ -181,6 +181,8 @@ export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignat
 export { MetadataReadability } from './MetadataReadability';
 export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NativePageKey } from './NativePageKey';
+export { NATIVE_PAGE_KEYS } from './NativePageKey';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -336,8 +338,6 @@ export type {
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit';
-export type { SystemPageKey } from './SystemPageKey';
-export { SYSTEM_PAGE_KEYS } from './SystemPageKey';
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';

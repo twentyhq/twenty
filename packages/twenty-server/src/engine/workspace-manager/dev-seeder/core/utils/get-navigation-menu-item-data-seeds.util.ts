@@ -51,7 +51,7 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       ),
       agentChatChannelId: null,
       agentChatChannelUniversalIdentifier: null,
-      systemPageKey: null,
+      nativePageKey: null,
       createdAt: now,
       updatedAt: now,
     },

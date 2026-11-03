@@ -1652,9 +1652,9 @@ input CreateNavigationMenuItemInput {
   id: UUID
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float
-  systemPageKey: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   type: NavigationMenuItemType!
@@ -3642,9 +3642,9 @@ type NavigationMenuItem {
   id: UUID!
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float!
-  systemPageKey: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
@@ -3658,10 +3658,10 @@ enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL
   FOLDER
   LINK
+  NATIVE_PAGE
   OBJECT
   PAGE_LAYOUT
   RECORD
-  SYSTEM_PAGE
   VIEW
 }
 

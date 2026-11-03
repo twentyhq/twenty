@@ -1,5 +1,4 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
-import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,7 +47,6 @@ export const NavigationMenuItemFolderSubItem = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemFolderSubItemProps) => {
-  const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -98,7 +96,7 @@ export const NavigationMenuItemFolderSubItem = ({
   const isEditable =
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.type === NavigationMenuItemType.LINK ||
-      navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE ||
+      navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE ||
       isDefined(objectMetadataItem));
 
   const handleClick =
@@ -124,8 +122,8 @@ export const NavigationMenuItemFolderSubItem = ({
       : undefined;
 
   const secondaryLabel =
-    navigationMenuItem.type === NavigationMenuItemType.SYSTEM_PAGE
-      ? t`System`
+    navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE
+      ? undefined
       : viewSecondaryLabel;
 
   return (
