@@ -136,6 +136,10 @@ export const convertRecordFilterGroupToPredicateGroup = (
         : RowLevelPermissionPredicateGroupLogicalOperator.OR,
     positionInRowLevelPermissionPredicateGroup:
       filterGroup.positionInRecordFilterGroup ?? null,
+    canReadRecords: false,
+    canUpdateRecords: false,
+    canSoftDeleteRecords: false,
+    canDestroyRecords: false,
     roleId,
     objectMetadataId,
   };

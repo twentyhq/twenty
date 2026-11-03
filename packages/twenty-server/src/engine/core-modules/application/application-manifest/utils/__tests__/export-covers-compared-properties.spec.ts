@@ -326,6 +326,10 @@ const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicate
     parentPredicateGroupUniversalIdentifier:
       PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
     position: 1,
+    canReadRecords: true,
+    canUpdateRecords: true,
+    canSoftDeleteRecords: true,
+    canDestroyRecords: true,
   };
 
 const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManifest =

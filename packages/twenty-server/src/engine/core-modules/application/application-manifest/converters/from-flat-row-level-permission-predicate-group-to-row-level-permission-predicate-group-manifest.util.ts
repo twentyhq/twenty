@@ -30,4 +30,16 @@ export const fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredica
             flatRowLevelPermissionPredicateGroup.positionInRowLevelPermissionPredicateGroup,
         }
       : {}),
+    ...(flatRowLevelPermissionPredicateGroup.canReadRecords
+      ? { canReadRecords: true }
+      : {}),
+    ...(flatRowLevelPermissionPredicateGroup.canUpdateRecords
+      ? { canUpdateRecords: true }
+      : {}),
+    ...(flatRowLevelPermissionPredicateGroup.canSoftDeleteRecords
+      ? { canSoftDeleteRecords: true }
+      : {}),
+    ...(flatRowLevelPermissionPredicateGroup.canDestroyRecords
+      ? { canDestroyRecords: true }
+      : {}),
   });

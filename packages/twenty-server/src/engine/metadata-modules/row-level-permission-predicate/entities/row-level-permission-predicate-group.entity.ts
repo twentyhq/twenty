@@ -55,6 +55,18 @@ export class RowLevelPermissionPredicateGroupEntity
   @Column({ nullable: true, type: 'double precision' })
   positionInRowLevelPermissionPredicateGroup: number | null;
 
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canReadRecords: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canUpdateRecords: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canSoftDeleteRecords: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canDestroyRecords: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;
 
