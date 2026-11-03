@@ -306,15 +306,15 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
 
       it('fails when the manifest names a new field in place of one the app owns', () => {
         const maps = buildRenamedMaps();
-        const employeesField =
-          maps.existingAllFlatEntityMaps.flatFieldMetadataMaps
-            .byUniversalIdentifier.employees;
 
         maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
-          employeesField && {
-            ...employeesField,
+          buildField({
+            universalIdentifier: 'employees',
+            name: 'headcount',
+            type: FieldMetadataType.NUMBER,
+            objectMetadataUniversalIdentifier: 'company',
             applicationId: OWNER_APPLICATION.id,
-          };
+          });
 
         expect(() => sync(maps)).toThrow('Unknown field "employees"');
       });
