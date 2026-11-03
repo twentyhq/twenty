@@ -220,6 +220,13 @@ describe('Code interpreter sandbox token', () => {
       } as WorkspaceAuthContext,
     ],
     ['no auth context', undefined],
+    [
+      'a run limited by an inline AI run scope',
+      buildUserContext({
+        application: { id: CALLING_APPLICATION_ID },
+        aiRunScope: { objectsPermissions: {}, permissionFlags: {} },
+      }),
+    ],
   ])('hands the sandbox no token for %s', async (_, authContext) => {
     const { signAsyncOrThrow, sandboxContext } =
       await runInterpreter(authContext);

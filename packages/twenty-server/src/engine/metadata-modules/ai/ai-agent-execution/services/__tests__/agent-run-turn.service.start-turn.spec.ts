@@ -97,7 +97,7 @@ describe('AgentRunTurnService.startTurn', () => {
       true,
     );
     expect(isOffered('send_email', ToolCategory.ACTION)).toBe(true);
-    expect(isOffered('code_interpreter', ToolCategory.ACTION)).toBe(false);
+    expect(isOffered('code_interpreter', ToolCategory.ACTION)).toBe(true);
     expect(isOffered('send_campaign', ToolCategory.ACTION)).toBe(false);
   });
 });

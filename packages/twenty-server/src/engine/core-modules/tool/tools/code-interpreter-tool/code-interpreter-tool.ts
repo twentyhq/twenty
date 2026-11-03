@@ -143,15 +143,20 @@ export class CodeInterpreterTool implements Tool {
       );
 
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
-      const sandboxPrincipal = await this.resolveSandboxPrincipal(
-        workspaceAuthContextStorage.getStore(),
-      );
-      const sandboxToken = isDefined(sandboxPrincipal)
-        ? await this.generateSandboxToken({
-            ...sandboxPrincipal,
-            agentId: context.agentId,
-          })
-        : undefined;
+      const authContext = workspaceAuthContextStorage.getStore();
+      const sandboxPrincipal = await this.resolveSandboxPrincipal(authContext);
+      // a token cannot carry an inline AI run scope, so a scoped run's sandbox gets no API access
+      const isAiRunScoped =
+        isDefined(authContext) &&
+        'aiRunScope' in authContext &&
+        isDefined(authContext.aiRunScope);
+      const sandboxToken =
+        isDefined(sandboxPrincipal) && !isAiRunScoped
+          ? await this.generateSandboxToken({
+              ...sandboxPrincipal,
+              agentId: context.agentId,
+            })
+          : undefined;
 
       this.logger.debug(
         `MCP session: workspaceId=${workspaceId}, applicationId=${sandboxPrincipal?.applicationId}, userWorkspaceId=${sandboxPrincipal?.userWorkspaceId}, serverUrl=${serverUrl}`,

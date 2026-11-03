@@ -9,4 +9,5 @@ export const SCOPED_AGENT_RUN_ACTION_TOOL_NAMES: ReadonlySet<string> =
     'find_connected_accounts',
     'create_calendar_event',
     'save_campaign',
+    'code_interpreter',
   ]);
