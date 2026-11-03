@@ -54,7 +54,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const text = `${await inboxMention({ workspaceMemberId })}, the report is ready.`;
   ```
 
-- **`sendInboxMessage` addresses channels and existing conversations, mentions members and attaches records.** `threadId` adds the message to a conversation your app may write to, in place of `threadKey`; `channelId` with `threadKey` files a new conversation in a channel the app's default role reaches, with no owner when no member is listed; `mentionedWorkspaceMemberIds` lists the members who must answer, while `workspaceMemberIds` only delivers; `recordTargets` attaches records before the message is written. `workspaceMemberIds` and `title` are optional, and the result adds `messageId`, `isNewThread` and `isDismissed`.
+- **`sendInboxMessage` addresses channels and existing conversations, mentions members and attaches records.** `threadId` adds the message to a conversation your app may write to, in place of `threadKey`; `channelId` with `threadKey` files a new conversation in a channel the app's default role reaches, with no owner when no member is listed; `mentionedWorkspaceMemberIds` lists the members who must answer, while `workspaceMemberIds` only delivers; `recordTargets` attaches records before the message is written. `workspaceMemberIds` is optional. `title` is required with `threadKey`; it is optional and ignored with `threadId`. The result adds `messageId`, `isNewThread` and `isDismissed`.
 
   ```ts
   import { sendInboxMessage } from 'twenty-sdk/logic-function';

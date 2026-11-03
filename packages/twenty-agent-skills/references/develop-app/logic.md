@@ -85,7 +85,10 @@ When adding AI behavior:
 `runAgent` (from `twenty-sdk/logic-function`) returns `{ threadId, runId, status, result, error, success }`; `runId` is the turn the call opens, which its messages carry as `turnId`. An app follows a conversation it holds with its agent through the chat's own API, named by the agent and the `thread` key it passes to `runAgent`:
 
 ```ts
-import { listConversationMessages, streamConversation } from 'twenty-sdk/logic-function';
+import {
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
 
 const conversation = { agentUniversalIdentifier, threadKey: 'deal-42' };
 let maxCatchupSeq: number | undefined;
@@ -93,12 +96,14 @@ let maxCatchupSeq: number | undefined;
 // subscribe before reading the history, so nothing streamed in between is lost
 for await (const event of streamConversation({ ...conversation, signal })) {
   if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
-    const { messages, streamCatchup } = await listConversationMessages(conversation);
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
     showMessages(messages);
     for (const chunk of streamCatchup.chunks) showChunk(chunk);
     maxCatchupSeq = streamCatchup.maxSeq;
   }
-  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) showChunk(event.chunk);
+  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0))
+    showChunk(event.chunk);
 }
 ```
 
@@ -147,9 +152,9 @@ const { object } = await ai.generate({
 `sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.
 
 - `workspaceMemberIds` lists the members who receive it, and `text` is the message, in markdown. The first member of a new conversation owns it and the others follow it; a later send with the same key that lists new members adds them. Recipients find it unread with nothing to answer; `mentionedWorkspaceMemberIds` lists the members who must answer (they are added to the recipients, and `inboxMention` in `text` only renders).
-- `threadKey` picks the conversation per app, shared by every member it is sent to: a new key starts one titled `title`, a known key adds to it; `title` is required with `threadKey`, even for a known key (`INVALID_INBOX_MESSAGE_INPUT` otherwise). `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it. It returns `{ threadId, messageId, isNewThread, isDismissed }`.
-- `threadId` instead of `threadKey` adds the message to an existing conversation, under the access of `attachRecordToInboxThread` (`THREAD_NOT_FOUND` otherwise), with no `title`, `channelId` or opening message. `channelId` with `threadKey` files a new conversation in a channel the app's default role reaches (`CHAT_CHANNEL_NOT_FOUND` otherwise); without recipients or mentions it has no owner and the channel's roles read it. A message needs a recipient, a mention, a channel or an existing conversation (`INVALID_INBOX_MESSAGE_INPUT` otherwise).
-- `recordTargets` (`objectNameSingular` and `recordId`) attaches records before the message is written; a record the app cannot read fails the call with `RECORD_NOT_FOUND`.
+- `threadKey` picks the conversation per app, shared by every member it is sent to: a new key starts one titled `title`, a known key adds to it; `title` is required with `threadKey`, even for a known key (`INVALID_INBOX_MESSAGE_INPUT` otherwise). `idempotencyKey` identifies the message in it, so retries never duplicate the message. A retry can still deliver the conversation to newly listed recipients. It returns `{ threadId, messageId, isNewThread, isDismissed }`.
+- `threadId` instead of `threadKey` adds the message to an existing conversation, under the access of `attachRecordToInboxThread` (`THREAD_NOT_FOUND` otherwise); `title` is ignored, `channelId` is refused, and no opening message is added. `channelId` with `threadKey` files a new conversation in a channel the app's default role reaches (`CHAT_CHANNEL_NOT_FOUND` otherwise); without recipients or mentions it has no owner and the channel's roles read it. A message needs a recipient, a mention, a channel or an existing conversation (`INVALID_INBOX_MESSAGE_INPUT` otherwise).
+- `recordTargets` (`objectNameSingular` and `recordId`) attaches records before the message is written; a record unreadable with the call's member or application access fails the call with `RECORD_NOT_FOUND`.
 - `toolCall` (optional) ends the message on `ask_question` (one multiple-choice question), `request_form` or `propose_tool_call`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
 - `propose_tool_call` takes `toolName`, `arguments` and a one-sentence `summary`. The tool must be one the app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with `id`), or `send_email` / `draft_email` (`recipients`, `subject` and an HTML `body`), which need no permission of the app. The member reviews the call, edits it if they want, and the approved call runs with their own access.
 - Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
