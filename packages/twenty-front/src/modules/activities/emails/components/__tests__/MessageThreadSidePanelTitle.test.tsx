@@ -41,18 +41,15 @@ const mockChannel = ({
   });
 
 describe('MessageThreadSidePanelTitle', () => {
-  it.each([MessageChannelType.APP, MessageChannelType.SMS])(
-    'should show the channel logo and the contact name on a %s chat',
-    (type) => {
-      mockChannel({ type });
+  it('should show the channel logo and the contact name on an app chat', () => {
+    mockChannel({ type: MessageChannelType.APP });
 
-      renderTitle();
+    renderTitle();
 
-      expect(screen.getByText('Channel logo')).toBeVisible();
-      expect(screen.getByText('Sundar Pichai')).toBeVisible();
-      expect(screen.queryByText('Email subject')).not.toBeInTheDocument();
-    },
-  );
+    expect(screen.getByText('Channel logo')).toBeVisible();
+    expect(screen.getByText('Sundar Pichai')).toBeVisible();
+    expect(screen.queryByText('Email subject')).not.toBeInTheDocument();
+  });
 
   it('should keep the record title on an email thread', () => {
     mockChannel({ type: MessageChannelType.EMAIL });

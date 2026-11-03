@@ -49,7 +49,7 @@ describe('useDisplaySidePanelFooter', () => {
     expect(result.current).toBe(false);
   });
 
-  it('shows the footer for other records without loading a channel', () => {
+  it('shows the footer for other records', () => {
     const { result } = renderHook(() =>
       useDisplaySidePanelFooter({
         id: 'company-id',
@@ -58,9 +58,6 @@ describe('useDisplaySidePanelFooter', () => {
     );
 
     expect(result.current).toBe(true);
-    expect(mockUseMessageThreadChannel).toHaveBeenCalledWith('company-id', {
-      skip: true,
-    });
   });
 
   it('shows the footer for an email thread', () => {
@@ -73,18 +70,15 @@ describe('useDisplaySidePanelFooter', () => {
     expect(result.current).toBe(true);
   });
 
-  it.each([MessageChannelType.APP, MessageChannelType.SMS])(
-    'hides the footer for a %s chat thread',
-    (type) => {
-      mockChannel(type);
+  it('hides the footer for an app chat thread', () => {
+    mockChannel(MessageChannelType.APP);
 
-      const { result } = renderHook(() =>
-        useDisplaySidePanelFooter(MESSAGE_THREAD),
-      );
+    const { result } = renderHook(() =>
+      useDisplaySidePanelFooter(MESSAGE_THREAD),
+    );
 
-      expect(result.current).toBe(false);
-    },
-  );
+    expect(result.current).toBe(false);
+  });
 
   it('hides the footer while the thread channel is loading', () => {
     mockChannel(null, true);

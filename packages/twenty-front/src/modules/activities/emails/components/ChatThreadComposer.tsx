@@ -116,8 +116,23 @@ export const ChatThreadComposer = ({
       return;
     }
 
-    await onMessageSent().catch(() => undefined);
-    setPendingMessageStatus(pendingMessage.id, null);
+    const isRefetched = await onMessageSent().then(
+      () => true,
+      () => false,
+    );
+
+    if (isRefetched) {
+      setPendingMessages((currentPendingMessages) =>
+        currentPendingMessages.filter(
+          (message) =>
+            message.id !== pendingMessage.id && message.status !== 'sent',
+        ),
+      );
+
+      return;
+    }
+
+    setPendingMessageStatus(pendingMessage.id, 'sent');
   };
 
   const handleSubmit = () => {

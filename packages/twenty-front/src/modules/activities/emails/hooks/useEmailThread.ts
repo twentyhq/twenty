@@ -9,6 +9,7 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import {
   CoreObjectNameSingular,
@@ -17,6 +18,7 @@ import {
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { channels: viewerMessageChannels } = useMyMessageChannels();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
 
@@ -124,7 +126,14 @@ export const useEmailThread = (threadId: string | null) => {
     skip: !lastMessageId || !isMessagesFetchComplete,
   });
 
-  const lastMessageAssociation = messageChannelMessageAssociations[0];
+  const viewerMessageChannelIds = new Set(
+    viewerMessageChannels.map(({ id }) => id),
+  );
+
+  const lastMessageAssociation =
+    messageChannelMessageAssociations.find(({ messageChannelId }) =>
+      viewerMessageChannelIds.has(messageChannelId),
+    ) ?? messageChannelMessageAssociations[0];
   const messageThreadExternalId =
     lastMessageAssociation?.messageThreadExternalId ?? null;
   const lastMessageExternalId =

@@ -1,18 +1,18 @@
-import { useMemo } from 'react';
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
+import { useChatThreadCounterparts } from '@/activities/emails/hooks/useChatThreadCounterparts';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { useOutgoingMessageIds } from '@/activities/emails/hooks/useOutgoingMessageIds';
-import { getChatThreadCounterpartNames } from '@/activities/emails/utils/getChatThreadCounterpartNames';
 
 export const useChatThreadTitle = (messageThreadId: string) => {
   const { messages } = useEmailThread(messageThreadId);
-  const messageIds = useMemo(() => messages.map(({ id }) => id), [messages]);
-  const outgoingMessageIds = useOutgoingMessageIds(messageIds);
+  const counterparts = useChatThreadCounterparts(messages);
 
-  if (isNull(outgoingMessageIds)) {
+  if (counterparts === null) {
     return null;
   }
 
-  return getChatThreadCounterpartNames(messages, outgoingMessageIds).join(', ');
+  return counterparts
+    .map(({ displayName }) => displayName)
+    .filter(isNonEmptyString)
+    .join(', ');
 };

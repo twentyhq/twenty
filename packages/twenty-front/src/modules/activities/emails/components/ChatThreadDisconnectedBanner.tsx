@@ -9,6 +9,7 @@ type ChatThreadDisconnectedBannerProps = {
   connectionProviderName: string;
   channelName: string;
   connectedAccountId: string;
+  canReconnect: boolean;
 };
 
 export const ChatThreadDisconnectedBanner = ({
@@ -16,6 +17,7 @@ export const ChatThreadDisconnectedBanner = ({
   connectionProviderName,
   channelName,
   connectedAccountId,
+  canReconnect,
 }: ChatThreadDisconnectedBannerProps) => {
   const { t } = useLingui();
   const { triggerAppOAuth } = useTriggerAppOAuth();
@@ -33,9 +35,9 @@ export const ChatThreadDisconnectedBanner = ({
       componentInstanceId={`chat-thread-disconnected-${connectedAccountId}`}
       status="error"
       message={t`${channelName} is disconnected.`}
-      buttonTitle={t`Reconnect`}
+      buttonTitle={canReconnect ? t`Reconnect` : undefined}
       buttonIcon={IconRefresh}
-      buttonOnClick={handleReconnect}
+      buttonOnClick={canReconnect ? handleReconnect : undefined}
     />
   );
 };
