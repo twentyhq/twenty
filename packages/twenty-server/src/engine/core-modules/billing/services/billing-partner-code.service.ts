@@ -39,10 +39,13 @@ export class BillingPartnerCodeService {
       this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
     ]);
 
-    return { partnerCode, isEditable: !hasPaidInvoice };
+    return {
+      partnerCode,
+      isEditable: !isDefined(partnerCode) && !hasPaidInvoice,
+    };
   }
 
-  // Last code wins until the first payment; after it only the Twenty team changes it, in Stripe.
+  // A code can only be added while none is set and before the first payment; any later change is made by the Twenty team, in Stripe.
   async setPartnerCode({
     workspaceId,
     partnerCode,
@@ -64,9 +67,14 @@ export class BillingPartnerCodeService {
 
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
 
-    if (await this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId)) {
+    const [existingPartnerCode, hasPaidInvoice] = await Promise.all([
+      this.stripeCustomerService.getCustomerPartner(stripeCustomerId),
+      this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
+    ]);
+
+    if (isDefined(existingPartnerCode) || hasPaidInvoice) {
       throw new BillingException(
-        `Partner code of workspace ${workspaceId} is locked after the first payment`,
+        `Partner code of workspace ${workspaceId} is locked`,
         BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
       );
     }
@@ -76,7 +84,7 @@ export class BillingPartnerCodeService {
       normalizedPartnerCode,
     );
 
-    return { partnerCode: normalizedPartnerCode, isEditable: true };
+    return { partnerCode: normalizedPartnerCode, isEditable: false };
   }
 
   private async getStripeCustomerIdOrThrow(workspaceId: string) {

@@ -52,19 +52,19 @@ const renderForm = (mocks: ReadonlyArray<unknown>) =>
   );
 
 describe('SettingsBillingPartnerCodeForm', () => {
-  it('should prefill the code and let the customer replace it before the first payment', async () => {
+  it('should let the customer add a code when the workspace has none', async () => {
     const setPartnerCodeResult = jest.fn(() => ({
       data: {
         setBillingPartnerCode: {
           __typename: 'BillingPartnerCode',
           partnerCode: 'acme',
-          isEditable: true,
+          isEditable: false,
         },
       },
     }));
 
     renderForm([
-      buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: true }),
+      buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
       {
         request: {
           query: SetBillingPartnerCodeDocument,
@@ -72,19 +72,18 @@ describe('SettingsBillingPartnerCodeForm', () => {
         },
         result: setPartnerCodeResult,
       },
-      buildPartnerCodeMock({ partnerCode: 'acme', isEditable: true }),
+      buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
     ]);
 
-    const input = await screen.findByDisplayValue('NORTHWIND');
+    const input = await screen.findByLabelText('Partner code');
 
-    await userEvent.clear(input);
     await userEvent.type(input, 'ACME');
     await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
 
     await waitFor(() => expect(setPartnerCodeResult).toHaveBeenCalled());
   });
 
-  it('should lock the code after the first payment', async () => {
+  it('should lock a code that is already set', async () => {
     renderForm([
       buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false }),
     ]);

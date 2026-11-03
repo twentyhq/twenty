@@ -50,11 +50,11 @@ export const SettingsBillingPartnerCodeForm = ({
   const displayedPartnerCode = draftPartnerCode ?? savedPartnerCode;
   const trimmedPartnerCode = displayedPartnerCode.trim();
 
-  const canApply =
-    isEditable &&
-    !loading &&
-    trimmedPartnerCode !== '' &&
-    trimmedPartnerCode.toLowerCase() !== partnerCode;
+  const canApply = isEditable && !loading && trimmedPartnerCode !== '';
+
+  const lockedHint = isDefined(partnerCode)
+    ? t`Your workspace is linked to this partner. Contact support to change it.`
+    : t`A partner code can no longer be added after the first payment. Contact support to add one.`;
 
   const handleApply = async () => {
     if (!canApply) {
@@ -82,11 +82,7 @@ export const SettingsBillingPartnerCodeForm = ({
         onChange={setDraftPartnerCode}
         onInputEnter={handleApply}
         disabled={!isEditable}
-        hint={
-          isEditable
-            ? undefined
-            : t`The partner code is locked after the first payment. Contact support to change it.`
-        }
+        hint={isEditable ? t`Once applied, the code cannot be changed.` : lockedHint}
       />
       {isEditable && (
         <Button

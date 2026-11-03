@@ -107,7 +107,7 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_FOUND:
       return msg`This partner code does not exist.`;
     case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
-      return msg`The partner code can no longer be changed after the first payment. Please contact support.`;
+      return msg`The partner code can no longer be added or changed. Please contact support.`;
     default:
       assertUnreachable(code);
   }

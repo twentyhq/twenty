@@ -8,7 +8,7 @@ export class BillingPartnerCodeDTO {
   partnerCode: string | null;
 
   @Field(() => Boolean, {
-    description: 'False once the workspace has made its first payment',
+    description: 'True while no code is set and the workspace has not paid yet',
   })
   isEditable: boolean;
 }
