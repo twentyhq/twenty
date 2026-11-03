@@ -1,9 +1,10 @@
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 
 const DEFAULT_PARTICIPATION = {
   mode: AiChatAssistantMode.MENTION_ONLY,
-  audience: 'conversation',
+  audience: AgentChatAudience.CONVERSATION,
   isAssistantParticipant: false,
   isAssistantMentioned: false,
 } satisfies Parameters<typeof resolveAgentChatAssistantParticipation>[0];
@@ -16,7 +17,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         resolveAgentChatAssistantParticipation({
           ...DEFAULT_PARTICIPATION,
           mode,
-          audience: 'assistant-chat',
+          audience: AgentChatAudience.ASSISTANT_CHAT,
           isInitialAssistantParticipant: false,
         }),
       ).toBe(true);
@@ -40,7 +41,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
         mode: AiChatAssistantMode.AUTOMATIC,
-        audience: 'direct-message',
+        audience: AgentChatAudience.DIRECT_MESSAGE,
         isInitialAssistantParticipant: false,
       }),
     ).toBe(true);
@@ -50,7 +51,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        audience: 'direct-message',
+        audience: AgentChatAudience.DIRECT_MESSAGE,
         isInitialMessage: true,
         isInitialAssistantParticipant: true,
       }),
@@ -61,7 +62,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        audience: 'direct-message',
+        audience: AgentChatAudience.DIRECT_MESSAGE,
         isAssistantParticipant: true,
         isInitialMessage: true,
         isInitialAssistantParticipant: true,
@@ -73,7 +74,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
     expect(
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
-        audience: 'direct-message',
+        audience: AgentChatAudience.DIRECT_MESSAGE,
         isAssistantParticipant: true,
       }),
     ).toBe(true);

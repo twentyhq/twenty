@@ -8,7 +8,7 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -61,7 +61,7 @@ export class AgentChatAssistantPolicyService {
       candidateWorkspaceMemberIds,
     });
     const workspaceAssistantMode =
-      chatAudience === 'direct-message'
+      chatAudience === AgentChatAudience.DIRECT_MESSAGE
         ? (workspace.aiChatDirectMessageAssistantMode ??
           AiChatAssistantMode.MENTION_ONLY)
         : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
@@ -86,7 +86,7 @@ export class AgentChatAssistantPolicyService {
     candidateWorkspaceMemberIds: string[];
   }): Promise<AgentChatAudience> {
     if (thread.conversationType === 'DIRECT_MESSAGE') {
-      return 'direct-message';
+      return AgentChatAudience.DIRECT_MESSAGE;
     }
 
     if (
@@ -95,7 +95,7 @@ export class AgentChatAssistantPolicyService {
       isDefined(thread.channelId) ||
       !isDefined(thread.workspaceMemberId)
     ) {
-      return 'conversation';
+      return AgentChatAudience.CONVERSATION;
     }
 
     const { flatObjectMetadataMaps } =
@@ -108,7 +108,7 @@ export class AgentChatAssistantPolicyService {
     );
 
     if (!isDefined(threadObjectMetadata)) {
-      return 'conversation';
+      return AgentChatAudience.CONVERSATION;
     }
 
     const [threadShares, audienceMemberCount] = await Promise.all([
@@ -134,7 +134,7 @@ export class AgentChatAssistantPolicyService {
     );
 
     return !hasSharedAudience && audienceMemberCount <= 1
-      ? 'assistant-chat'
-      : 'conversation';
+      ? AgentChatAudience.ASSISTANT_CHAT
+      : AgentChatAudience.CONVERSATION;
   }
 }
