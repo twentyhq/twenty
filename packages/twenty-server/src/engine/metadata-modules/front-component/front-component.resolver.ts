@@ -35,8 +35,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
@@ -45,20 +43,9 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { FRONT_COMPONENT_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   FrontComponentGraphqlApiExceptionInterceptor,
@@ -142,7 +129,10 @@ export class FrontComponentResolver {
   }
 
   @Query(() => [FrontComponentDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(FRONT_COMPONENT_ACCESS_POLICY),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async frontComponents(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -165,16 +155,19 @@ export class FrontComponentResolver {
 
   @Query(() => FrontComponentDTO, { nullable: true })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -220,16 +213,19 @@ export class FrontComponentResolver {
 
   @Mutation(() => ApplicationTokenPairDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: false,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [],
     }),
     NoPermissionGuard,
   )
@@ -251,18 +247,20 @@ export class FrontComponentResolver {
 
   @Mutation(() => FrontComponentDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   async createFrontComponent(
     @Args('input') input: CreateFrontComponentInput,
@@ -278,18 +276,20 @@ export class FrontComponentResolver {
 
   @Mutation(() => FrontComponentDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   async updateFrontComponent(
     @Args('input') input: UpdateFrontComponentInput,
@@ -306,18 +306,20 @@ export class FrontComponentResolver {
 
   @Mutation(() => FrontComponentDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
     }),
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   async deleteFrontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,

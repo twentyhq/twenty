@@ -12,8 +12,6 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -28,21 +26,8 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
@@ -66,6 +51,22 @@ export class AgentResolver {
   }
 
   @Query(() => [AgentDTO])
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.AI],
+    }),
+  )
   async findManyAgents(
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
@@ -88,7 +89,23 @@ export class AgentResolver {
   }
 
   @Query(() => AgentDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.AI],
+    }),
+    ApplicationTargetGuard,
+  )
   async findOneAgent(
     @ApplicationTargetArg<AgentIdInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -108,7 +125,25 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [
+        PermissionFlagType.AI,
+        PermissionFlagType.AI_SETTINGS,
+      ],
+    }),
+  )
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -127,7 +162,23 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [
+        PermissionFlagType.AI,
+        PermissionFlagType.AI_SETTINGS,
+      ],
+    }),
     ApplicationTargetGuard,
   )
   async updateOneAgent(
@@ -154,7 +205,23 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [
+        PermissionFlagType.AI,
+        PermissionFlagType.AI_SETTINGS,
+      ],
+    }),
     ApplicationTargetGuard,
   )
   async deleteOneAgent(

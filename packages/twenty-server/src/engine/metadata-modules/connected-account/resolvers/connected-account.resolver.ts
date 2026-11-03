@@ -15,8 +15,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
@@ -25,20 +23,8 @@ import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metad
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -48,7 +34,23 @@ export class ConnectedAccountResolver {
   ) {}
 
   @Query(() => [ConnectedAccountPublicDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    NoPermissionGuard,
+  )
   @AllowSuspendedWorkspace()
   async myConnectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -65,7 +67,20 @@ export class ConnectedAccountResolver {
 
   @Query(() => [ApplicationConnectedAccountDTO])
   @UseGuards(
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+    }),
     ApplicationTargetGuard,
   )
   async applicationConnectedAccounts(
@@ -94,7 +109,23 @@ export class ConnectedAccountResolver {
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    CustomPermissionGuard,
+  )
   async deleteConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -118,7 +149,23 @@ export class ConnectedAccountResolver {
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    CustomPermissionGuard,
+  )
   async disconnectConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

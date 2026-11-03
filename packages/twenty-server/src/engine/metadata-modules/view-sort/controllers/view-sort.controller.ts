@@ -20,7 +20,6 @@ import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/pa
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -38,20 +37,11 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/permissions/view/guards/view-child-entity-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+
 @Controller(`${ApiPath.Rest}/metadata/viewSorts`)
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
+@UseGuards(AccessPolicyGuard(VIEW_SORT_ACCESS_POLICY))
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ViewSortRestApiExceptionFilter,

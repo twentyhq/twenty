@@ -12,8 +12,6 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
-
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -26,8 +24,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
@@ -38,23 +34,13 @@ import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout-widget/constants/page-layout-widget-read-access-policy.constant';
+import { PAGE_LAYOUT_WIDGET_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout-widget/constants/page-layout-widget-write-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver(() => PageLayoutWidgetDTO)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UsePipes(ResolverValidationPipe)
 export class PageLayoutWidgetResolver {
   constructor(
@@ -126,7 +112,10 @@ export class PageLayoutWidgetResolver {
   }
 
   @Query(() => [PageLayoutWidgetDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY),
+    NoPermissionGuard,
+  )
   async getPageLayoutWidgets(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('pageLayoutTabId', { type: () => String }) pageLayoutTabId: string,
@@ -138,7 +127,10 @@ export class PageLayoutWidgetResolver {
   }
 
   @Query(() => PageLayoutWidgetDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(PAGE_LAYOUT_WIDGET_READ_ACCESS_POLICY),
+    NoPermissionGuard,
+  )
   async getPageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -150,7 +142,7 @@ export class PageLayoutWidgetResolver {
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_WIDGET_WRITE_ACCESS_POLICY))
   async createPageLayoutWidget(
     @Args('input') input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -162,7 +154,7 @@ export class PageLayoutWidgetResolver {
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_WIDGET_WRITE_ACCESS_POLICY))
   async updatePageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutWidgetInput,
@@ -176,7 +168,7 @@ export class PageLayoutWidgetResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  @UseGuards(AccessPolicyGuard(PAGE_LAYOUT_WIDGET_WRITE_ACCESS_POLICY))
   async destroyPageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
