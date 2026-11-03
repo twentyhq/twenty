@@ -116,6 +116,11 @@ export class AgentChatStreamingService {
     const workspaceId = workspace.id;
 
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
+    await this.fileAccessService.assertFilesReadableOrThrow({
+      workspaceId,
+      workspaceMemberId,
+      fileIds: fileAttachments?.map(({ id }) => id) ?? [],
+    });
 
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
       this.agentRunSuspensionService.findConversationWait({
@@ -196,6 +201,12 @@ export class AgentChatStreamingService {
   async saveMessageWithoutReply(
     options: MemberMessageOptions,
   ): Promise<{ messageId: string }> {
+    await this.fileAccessService.assertFilesReadableOrThrow({
+      workspaceId: options.workspace.id,
+      workspaceMemberId: options.workspaceMemberId,
+      fileIds: options.fileAttachments?.map(({ id }) => id) ?? [],
+    });
+
     const savedMessage = await this.addMemberMessage({
       ...options,
       turnStatus: AgentTurnStatus.COMPLETED,
@@ -509,11 +520,10 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const fileParts = await this.buildFilePartsFromAttachments({
+    const fileParts = await this.buildFilePartsFromAttachments(
       fileAttachments,
       workspaceId,
-      workspaceMemberId,
-    });
+    );
 
     const savedMessage =
       await this.agentChatService.addMessageAndResolveMention({
@@ -778,26 +788,15 @@ export class AgentChatStreamingService {
     ];
   }
 
-  private async buildFilePartsFromAttachments({
-    fileAttachments,
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    fileAttachments: AiChatFileAttachment[] | undefined;
-    workspaceId: string;
-    workspaceMemberId: string;
-  }): Promise<ExtendedUIMessagePart[]> {
+  private async buildFilePartsFromAttachments(
+    fileAttachments: AiChatFileAttachment[] | undefined,
+    workspaceId: string,
+  ): Promise<ExtendedUIMessagePart[]> {
     if (!fileAttachments || fileAttachments.length === 0) {
       return [];
     }
 
     const fileIds = fileAttachments.map((attachment) => attachment.id);
-
-    await this.fileAccessService.assertFilesReadableOrThrow({
-      workspaceId,
-      workspaceMemberId,
-      fileIds,
-    });
 
     const validFiles = await this.fileRepository.find(workspaceId, {
       where: {
