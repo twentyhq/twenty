@@ -1,41 +1,62 @@
 /* @license Enterprise */
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import {
+  type ApiKeyWorkspaceAuthContext,
+  type ApplicationWorkspaceAuthContext,
+  type PendingActivationUserWorkspaceAuthContext,
+  type SystemWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 
-type PermissionsAuthContextBase = {
-  workspace: Pick<FlatWorkspace, 'id'>;
+type PermissionsWorkspace = Pick<UserWorkspaceAuthContext['workspace'], 'id'>;
+
+type PermissionsApplication = Pick<
+  ApplicationWorkspaceAuthContext['application'],
+  'id'
+>;
+
+type PermissionsUserAuthContext = Pick<
+  UserWorkspaceAuthContext,
+  'type' | 'workspaceMemberId' | 'agentId' | 'permissionScope'
+> & {
+  workspace: PermissionsWorkspace;
+  application?: PermissionsApplication;
 };
 
-type PermissionsRunNarrowing = {
-  agentId?: string;
-  permissionScope?: PermissionScope;
+type PermissionsApiKeyAuthContext = Pick<
+  ApiKeyWorkspaceAuthContext,
+  'type' | 'agentId' | 'permissionScope'
+> & {
+  workspace: PermissionsWorkspace;
+  apiKey: Pick<ApiKeyWorkspaceAuthContext['apiKey'], 'id'>;
+  application?: PermissionsApplication;
+};
+
+type PermissionsApplicationAuthContext = Pick<
+  ApplicationWorkspaceAuthContext,
+  'type' | 'agentId' | 'permissionScope'
+> & {
+  workspace: PermissionsWorkspace;
+  application: PermissionsApplication;
+};
+
+type PermissionsWebhookAuthContext = {
+  type: 'webhook';
+  workspace: PermissionsWorkspace;
+  webhook: Pick<FlatWebhook, 'id'>;
+};
+
+type PermissionsWithoutActorAuthContext = Pick<
+  SystemWorkspaceAuthContext | PendingActivationUserWorkspaceAuthContext,
+  'type'
+> & {
+  workspace: PermissionsWorkspace;
 };
 
 export type PermissionsAuthContext =
-  | (PermissionsAuthContextBase &
-      PermissionsRunNarrowing & {
-        type: 'user';
-        workspaceMemberId: string;
-        application?: Pick<FlatApplication, 'id'>;
-      })
-  | (PermissionsAuthContextBase &
-      PermissionsRunNarrowing & {
-        type: 'apiKey';
-        apiKey: { id: string };
-        application?: Pick<FlatApplication, 'id'>;
-      })
-  | (PermissionsAuthContextBase &
-      PermissionsRunNarrowing & {
-        type: 'application';
-        application: Pick<FlatApplication, 'id'>;
-      })
-  | (PermissionsAuthContextBase & {
-      type: 'webhook';
-      webhook: Pick<FlatWebhook, 'id'>;
-    })
-  | (PermissionsAuthContextBase & {
-      type: 'system' | 'pendingActivationUser';
-    });
+  | PermissionsUserAuthContext
+  | PermissionsApiKeyAuthContext
+  | PermissionsApplicationAuthContext
+  | PermissionsWebhookAuthContext
+  | PermissionsWithoutActorAuthContext;
