@@ -60,6 +60,16 @@ const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
     { kind: 'application', variant: 'withUser', withAgent: false },
   ],
   [
+    'a member token bound to an agent of an installed application as that application with a user and an agent',
+    {
+      type: 'user',
+      ...memberFields,
+      application: installedApplication,
+      agentId: 'agent-id',
+    },
+    { kind: 'application', variant: 'withUser', withAgent: true },
+  ],
+  [
     'a member acting through an OAuth client as that client with a user',
     { type: 'user', ...memberFields, application: oauthClient },
     { kind: 'oauthClient', variant: 'withUser' },
@@ -86,6 +96,16 @@ const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
       workspace,
       application: installedApplication,
       actingAgent: { id: 'agent-id', label: 'Agent' },
+    },
+    { kind: 'application', variant: 'withoutUser', withAgent: true },
+  ],
+  [
+    'an application token bound to an agent as that application with an agent',
+    {
+      type: 'application',
+      workspace,
+      application: installedApplication,
+      agentId: 'agent-id',
     },
     { kind: 'application', variant: 'withoutUser', withAgent: true },
   ],
