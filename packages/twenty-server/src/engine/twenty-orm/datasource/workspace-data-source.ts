@@ -290,11 +290,13 @@ export class WorkspaceDataSource {
   private resolvePermissionsPrincipal():
     | PermissionsPrincipalsWithRolesContext
     | undefined {
-    this.permissionsPrincipal ??=
-      resolvePermissionsPrincipalsWithRoles({
-        authContext: this.authContext,
-        roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
-      }) ?? null;
+    if (this.permissionsPrincipal === undefined) {
+      this.permissionsPrincipal =
+        resolvePermissionsPrincipalsWithRoles({
+          authContext: this.authContext,
+          roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
+        }) ?? null;
+    }
 
     return this.permissionsPrincipal ?? undefined;
   }
