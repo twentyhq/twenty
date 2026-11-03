@@ -6802,6 +6802,10 @@ export type RowLevelPermissionPredicate = {
 
 export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['String']['output'];
@@ -6811,6 +6815,10 @@ export type RowLevelPermissionPredicateGroup = {
 };
 
 export type RowLevelPermissionPredicateGroupInput = {
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['UUID']['input'];

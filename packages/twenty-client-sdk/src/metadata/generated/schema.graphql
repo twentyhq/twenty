@@ -4508,6 +4508,10 @@ type RowLevelPermissionPredicate {
 }
 
 type RowLevelPermissionPredicateGroup {
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
   id: String!
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   objectMetadataId: String!
@@ -4517,6 +4521,10 @@ type RowLevelPermissionPredicateGroup {
 }
 
 input RowLevelPermissionPredicateGroupInput {
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
   id: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   objectMetadataId: UUID!
