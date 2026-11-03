@@ -1652,6 +1652,7 @@ input CreateNavigationMenuItemInput {
   name: String
   pageLayoutId: UUID
   position: Float
+  systemPageKey: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   type: NavigationMenuItemType!
@@ -3641,6 +3642,7 @@ type NavigationMenuItem {
   name: String
   pageLayoutId: UUID
   position: Float!
+  systemPageKey: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
@@ -3657,6 +3659,7 @@ enum NavigationMenuItemType {
   OBJECT
   PAGE_LAYOUT
   RECORD
+  SYSTEM_PAGE
   VIEW
 }
 
