@@ -209,6 +209,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const chatRecordEvents = {
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
+    const conversationWriter = new AgentConversationWriterService(
+      turns as never,
+      new AgentHistoryTransactionService(orm as never),
+      {
+        getOrRecompute: async () => ({
+          flatWorkspaceMemberMaps: {
+            idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
+          },
+        }),
+      } as never,
+    );
     const chatThreadService = new AgentChatThreadService(
       threads as never,
       messages as never,
@@ -222,17 +233,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       } as never,
       {} as never,
       {} as never,
-    );
-    const conversationWriter = new AgentConversationWriterService(
-      turns as never,
-      new AgentHistoryTransactionService(orm as never),
-      {
-        getOrRecompute: async () => ({
-          flatWorkspaceMemberMaps: {
-            idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
-          },
-        }),
-      } as never,
+      conversationWriter,
     );
 
     const participationService = new AgentChatParticipationService(
