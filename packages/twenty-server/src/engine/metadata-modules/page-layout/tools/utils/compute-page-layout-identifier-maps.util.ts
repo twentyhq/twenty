@@ -1,20 +1,20 @@
 import { buildFieldIdByNameMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-id-by-name-maps.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
+import { type PageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-identifier-maps.type';
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
-export const computeDashboardIdentifierMaps = async (
+export const computePageLayoutIdentifierMaps = async (
   deps: {
     flatEntityMapsCacheService: Pick<
-      DashboardToolDependencies['flatEntityMapsCacheService'],
+      PageLayoutToolDependencies['flatEntityMapsCacheService'],
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >;
   },
-  context: DashboardToolContext,
-): Promise<DashboardIdentifierMaps> => {
+  context: PageLayoutToolContext,
+): Promise<PageLayoutIdentifierMaps> => {
   const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
     await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {

@@ -4,22 +4,22 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 export const createListRecordPageLayoutsTool = (
   deps: {
     pageLayoutService: Pick<
-      DashboardToolDependencies['pageLayoutService'],
+      PageLayoutToolDependencies['pageLayoutService'],
       'findBy'
     >;
     flatEntityMapsCacheService: Pick<
-      DashboardToolDependencies['flatEntityMapsCacheService'],
+      PageLayoutToolDependencies['flatEntityMapsCacheService'],
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >;
   },
-  context: DashboardToolContext,
+  context: PageLayoutToolContext,
 ) => ({
   name: 'list_record_page_layouts' as const,
   description:

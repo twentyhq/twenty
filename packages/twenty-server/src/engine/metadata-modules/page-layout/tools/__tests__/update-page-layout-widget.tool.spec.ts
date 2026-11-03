@@ -6,8 +6,8 @@ import {
 } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { createUpdatePageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/update-page-layout-widget.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const WIDGET_ID = '20202020-ffff-4d02-bf25-6aeccf7ea419';
@@ -74,9 +74,9 @@ const buildDeps = () => ({
 });
 
 const createTool = (deps: ReturnType<typeof buildDeps>) =>
-  createUpdateDashboardWidgetTool(
+  createUpdatePageLayoutWidgetTool(
     deps as unknown as Pick<
-      DashboardToolDependencies,
+      PageLayoutToolDependencies,
       | 'pageLayoutWidgetService'
       | 'flatEntityMapsCacheService'
       | 'pageLayoutTabService'
@@ -85,7 +85,7 @@ const createTool = (deps: ReturnType<typeof buildDeps>) =>
     { workspaceId: WORKSPACE_ID },
   );
 
-describe('update_dashboard_widget tool', () => {
+describe('update_page_layout_widget tool', () => {
   it('resolves filter field names using the existing widget object when the object is not changed', async () => {
     const deps = buildDeps();
     const tool = createTool(deps);

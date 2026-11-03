@@ -3,6 +3,7 @@ import {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
@@ -272,7 +273,7 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
     },
   );
 
-export const widgetPositionSchema = z.object({
+export const widgetGridPositionSchema = z.object({
   layoutMode: z.literal(PageLayoutTabLayoutMode.GRID),
   row: z.number().min(0).describe('Row position (0-based)'),
   column: z
@@ -287,6 +288,17 @@ export const widgetPositionSchema = z.object({
     .max(12)
     .describe('Number of columns the widget spans (1-12)'),
 });
+
+export const widgetPositionSchema = z.discriminatedUnion('layoutMode', [
+  widgetGridPositionSchema,
+  z.object({
+    layoutMode: z.literal(PageLayoutTabLayoutMode.VERTICAL_LIST),
+    index: z.number().int().min(0),
+    heightBehavior: z
+      .enum(PageLayoutWidgetVerticalListHeightBehavior)
+      .optional(),
+  }),
+]);
 
 export const widgetTypeSchema = z.enum([
   WidgetType.VIEW,

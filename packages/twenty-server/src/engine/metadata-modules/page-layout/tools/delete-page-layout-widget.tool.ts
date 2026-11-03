@@ -1,21 +1,21 @@
 import { z } from 'zod';
 
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
-const deleteDashboardWidgetSchema = z.object({
+const deletePageLayoutWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to delete'),
 });
 
-export const createDeleteDashboardWidgetTool = (
-  deps: Pick<DashboardToolDependencies, 'pageLayoutWidgetService'>,
-  context: DashboardToolContext,
+export const createDeletePageLayoutWidgetTool = (
+  deps: Pick<PageLayoutToolDependencies, 'pageLayoutWidgetService'>,
+  context: PageLayoutToolContext,
 ) => ({
-  name: 'delete_dashboard_widget' as const,
-  description: `Delete a widget from a dashboard. Use get_dashboard first to find the widgetId.`,
-  inputSchema: deleteDashboardWidgetSchema,
+  name: 'delete_page_layout_widget' as const,
+  description: `Delete a widget from a page layout (dashboard or record page). Use get_dashboard or list_record_page_layouts first to find the widgetId. Record-page changes affect the shared layout for that object, not only the currently open record.`,
+  inputSchema: deletePageLayoutWidgetSchema,
   execute: async (parameters: { widgetId: string }) => {
     try {
       const widget = await deps.pageLayoutWidgetService.findByIdOrThrow({

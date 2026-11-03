@@ -7,16 +7,16 @@ import {
 
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
-import { type WidgetIdentifiersInput } from 'src/modules/dashboard/tools/types/widget-identifiers-input.type';
-import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+import { type PageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-identifier-maps.type';
+import { type WidgetIdentifiersInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-identifiers-input.type';
+import { resolveWidgetFieldNamesToIds } from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
 const OBJECT_ID = '11111111-1111-4111-8111-111111111111';
 const AMOUNT_FIELD_ID = '22222222-2222-4222-8222-222222222222';
 const STAGE_FIELD_ID = '33333333-3333-4333-8333-333333333333';
 const CREATED_AT_FIELD_ID = '44444444-4444-4444-8444-444444444444';
 
-const buildMaps = (): DashboardIdentifierMaps => ({
+const buildMaps = (): PageLayoutIdentifierMaps => ({
   objectIdByName: { opportunity: OBJECT_ID, opportunities: OBJECT_ID },
   fieldIdByObjectIdAndName: new Map([
     [buildFieldByObjectIdAndNameKey(OBJECT_ID, 'amount'), AMOUNT_FIELD_ID],

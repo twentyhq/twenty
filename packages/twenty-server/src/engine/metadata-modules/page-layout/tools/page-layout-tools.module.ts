@@ -2,13 +2,13 @@ import { Global, Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
-import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
+import { PAGE_LAYOUT_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/page-layout-tool-service.token';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PageLayoutTabModule } from 'src/engine/metadata-modules/page-layout-tab/page-layout-tab.module';
 import { PageLayoutWidgetModule } from 'src/engine/metadata-modules/page-layout-widget/page-layout-widget.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 
-import { DashboardToolWorkspaceService } from './services/dashboard-tool.workspace-service';
+import { PageLayoutToolService } from './services/page-layout-tool.service';
 
 @Global()
 @Module({
@@ -21,12 +21,12 @@ import { DashboardToolWorkspaceService } from './services/dashboard-tool.workspa
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
-    DashboardToolWorkspaceService,
+    PageLayoutToolService,
     {
-      provide: DASHBOARD_TOOL_SERVICE_TOKEN,
-      useExisting: DashboardToolWorkspaceService,
+      provide: PAGE_LAYOUT_TOOL_SERVICE_TOKEN,
+      useExisting: PageLayoutToolService,
     },
   ],
-  exports: [DashboardToolWorkspaceService, DASHBOARD_TOOL_SERVICE_TOKEN],
+  exports: [PageLayoutToolService, PAGE_LAYOUT_TOOL_SERVICE_TOKEN],
 })
-export class DashboardToolsModule {}
+export class PageLayoutToolsModule {}

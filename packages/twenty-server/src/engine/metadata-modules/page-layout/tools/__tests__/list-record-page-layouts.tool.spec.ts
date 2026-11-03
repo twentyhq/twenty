@@ -1,6 +1,6 @@
 import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
-import { createListRecordPageLayoutsTool } from 'src/modules/dashboard/tools/list-record-page-layouts.tool';
+import { createListRecordPageLayoutsTool } from 'src/engine/metadata-modules/page-layout/tools/list-record-page-layouts.tool';
 
 const buildDependencies = () => ({
   flatEntityMapsCacheService: {

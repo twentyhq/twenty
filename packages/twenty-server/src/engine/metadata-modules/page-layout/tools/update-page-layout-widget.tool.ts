@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 import {
-  type PageLayoutWidgetGridPosition,
+  type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -12,26 +12,28 @@ import {
   widgetPositionSchema,
   widgetConfigurationSchemaWithoutDefaults,
   widgetTypeSchema,
-} from 'src/modules/dashboard/tools/schemas/widget.schema';
+} from 'src/engine/metadata-modules/page-layout/tools/schemas/widget.schema';
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
-import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/modules/dashboard/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
-import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
+import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/engine/metadata-modules/page-layout/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
+import { computePageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/utils/compute-page-layout-identifier-maps.util';
 import {
   getObjectMetadataId,
   resolveConfigurationFieldNamesToIds,
-} from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+} from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
-const updateDashboardWidgetSchema = z.object({
+const updatePageLayoutWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to update'),
   title: z.string().optional().describe('New widget title'),
   type: widgetTypeSchema.optional().describe('New widget type'),
   position: widgetPositionSchema
     .optional()
-    .describe('New position and size in the grid layout'),
+    .describe(
+      'New position matching the tab layoutMode: grid coordinates or vertical-list index',
+    ),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -45,30 +47,30 @@ const updateDashboardWidgetSchema = z.object({
   configuration: widgetConfigurationSchemaWithoutDefaults.optional(),
 });
 
-export const createUpdateDashboardWidgetTool = (
+export const createUpdatePageLayoutWidgetTool = (
   deps: Pick<
-    DashboardToolDependencies,
+    PageLayoutToolDependencies,
     | 'pageLayoutWidgetService'
     | 'flatEntityMapsCacheService'
     | 'pageLayoutTabService'
     | 'pageLayoutService'
   >,
-  context: DashboardToolContext,
+  context: PageLayoutToolContext,
 ) => ({
-  name: 'update_dashboard_widget' as const,
-  description: `Update an existing widget's properties, position, or configuration.
+  name: 'update_page_layout_widget' as const,
+  description: `Update a widget's properties, position, or configuration in a page layout (dashboard or record page).
 
-Use get_dashboard first to find the widgetId.
+Use get_dashboard or list_record_page_layouts first to find the widgetId and tab layoutMode. Record-page changes affect the shared layout for that object, not only the currently open record.
 
 You can reference the object and fields by NAME instead of UUID: pass objectName and the *FieldName variants in configuration (aggregateFieldName, primaryAxisGroupByFieldName, secondaryAxisGroupByFieldName, groupByFieldName) and fieldName inside filter recordFilters. They are resolved server-side against the widget object, falling back to the widget's existing object when you don't change it. UUID variants still work and take precedence.
 
 Only provide fields you want to change - others remain unchanged.`,
-  inputSchema: updateDashboardWidgetSchema,
+  inputSchema: updatePageLayoutWidgetSchema,
   execute: async (parameters: {
     widgetId: string;
     title?: string;
     type?: WidgetType;
-    position?: PageLayoutWidgetGridPosition;
+    position?: PageLayoutWidgetPosition;
     objectMetadataId?: string;
     objectName?: string;
     configuration?: WidgetConfigurationInput;
@@ -103,7 +105,7 @@ Only provide fields you want to change - others remain unchanged.`,
       }
 
       if (shouldResolveIdentifiers) {
-        const identifierMaps = await computeDashboardIdentifierMaps(
+        const identifierMaps = await computePageLayoutIdentifierMaps(
           deps,
           context,
         );

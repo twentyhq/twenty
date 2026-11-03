@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
-const addDashboardTabSchema = z.object({
+const addPageLayoutTabSchema = z.object({
   pageLayoutId: z
     .string()
     .uuid()
     .describe(
-      'The page layout UUID of the dashboard (from get_dashboard result)',
+      'Page layout UUID from get_dashboard or list_record_page_layouts',
     ),
   title: z.string().describe('Title for the new tab'),
   position: z
@@ -23,19 +23,19 @@ const addDashboardTabSchema = z.object({
     ),
 });
 
-export const createAddDashboardTabTool = (
+export const createAddPageLayoutTabTool = (
   deps: Pick<
-    DashboardToolDependencies,
+    PageLayoutToolDependencies,
     'pageLayoutTabService' | 'pageLayoutService'
   >,
-  context: DashboardToolContext,
+  context: PageLayoutToolContext,
 ) => ({
-  name: 'add_dashboard_tab' as const,
-  description: `Add a new tab to an existing dashboard.
+  name: 'add_page_layout_tab' as const,
+  description: `Add a new tab to an existing page layout (dashboard or record page).
 
-Use get_dashboard first to get the pageLayoutId and see existing tabs.
-After creating a tab, use add_dashboard_widget with the returned tab ID to add widgets.`,
-  inputSchema: addDashboardTabSchema,
+Use get_dashboard or list_record_page_layouts first to get the pageLayoutId and see existing tabs. Record-page changes affect the shared layout for that object, not only the currently open record.
+After creating a tab, use add_page_layout_widget with the returned tab ID to add widgets.`,
+  inputSchema: addPageLayoutTabSchema,
   execute: async (parameters: {
     pageLayoutId: string;
     title: string;
@@ -61,7 +61,7 @@ After creating a tab, use add_dashboard_widget with the returned tab ID to add w
 
       return {
         success: true,
-        message: `Tab "${parameters.title}" added to dashboard`,
+        message: `Tab "${parameters.title}" added to page layout`,
         result: {
           pageLayoutTabId: tab.id,
           title: tab.title,

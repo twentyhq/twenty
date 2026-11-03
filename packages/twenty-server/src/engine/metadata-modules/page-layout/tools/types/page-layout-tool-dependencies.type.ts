@@ -7,7 +7,7 @@ import type { PageLayoutService } from 'src/engine/metadata-modules/page-layout/
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-export type DashboardToolDependencies = {
+export type PageLayoutToolDependencies = {
   pageLayoutService: PageLayoutService;
   pageLayoutTabService: PageLayoutTabService;
   pageLayoutWidgetService: PageLayoutWidgetService;
@@ -17,10 +17,10 @@ export type DashboardToolDependencies = {
   applicationService: ApplicationService;
 };
 
-export type DashboardToolContext = {
+export type PageLayoutToolContext = {
   workspaceId: string;
 };
 
-export type DashboardToolContextWithPermissions = DashboardToolContext & {
+export type PageLayoutToolContextWithPermissions = PageLayoutToolContext & {
   authContext: WorkspaceAuthContext;
 };

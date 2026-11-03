@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
+  type PageLayoutToolContext,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
 
 export const assertFrontComponentWidgetAvailableOnPageLayoutOrThrow = async ({
   configuration,
@@ -21,19 +21,19 @@ export const assertFrontComponentWidgetAvailableOnPageLayoutOrThrow = async ({
   position?: PageLayoutWidgetPosition;
   deps: {
     flatEntityMapsCacheService: Pick<
-      DashboardToolDependencies['flatEntityMapsCacheService'],
+      PageLayoutToolDependencies['flatEntityMapsCacheService'],
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >;
     pageLayoutTabService: Pick<
-      DashboardToolDependencies['pageLayoutTabService'],
+      PageLayoutToolDependencies['pageLayoutTabService'],
       'findByIdOrThrow'
     >;
     pageLayoutService: Pick<
-      DashboardToolDependencies['pageLayoutService'],
+      PageLayoutToolDependencies['pageLayoutService'],
       'findByIdOrThrow'
     >;
   };
-  context: DashboardToolContext;
+  context: PageLayoutToolContext;
 }): Promise<void> => {
   if (
     !isDefined(configuration) ||

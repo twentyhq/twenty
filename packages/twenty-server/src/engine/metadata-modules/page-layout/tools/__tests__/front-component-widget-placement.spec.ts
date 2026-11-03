@@ -1,5 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { createPlaceFrontComponentTool } from 'src/modules/dashboard/tools/place-front-component.tool';
+import { createPlaceFrontComponentTool } from 'src/engine/metadata-modules/page-layout/tools/place-front-component.tool';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
@@ -8,10 +8,10 @@ import {
 } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
+import { createAddPageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
-import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { createUpdatePageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/update-page-layout-widget.tool';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const COMPONENT_ID = '20202020-2222-4222-8222-222222222222';
 const TAB_ID = '20202020-1111-4111-8111-111111111111';
@@ -131,17 +131,17 @@ describe.each(['add', 'update', 'create'] as const)(
             };
           }) = WIDGET,
     ) => {
-      const deps = dependencies as unknown as DashboardToolDependencies;
+      const deps = dependencies as unknown as PageLayoutToolDependencies;
 
       if (operation === 'add') {
-        const tool = createAddDashboardWidgetTool(deps, CONTEXT);
+        const tool = createAddPageLayoutWidgetTool(deps, CONTEXT);
 
         return tool.execute(
           tool.inputSchema.parse({ ...widget, pageLayoutTabId: TAB_ID }),
         );
       }
       if (operation === 'update') {
-        const tool = createUpdateDashboardWidgetTool(deps, CONTEXT);
+        const tool = createUpdatePageLayoutWidgetTool(deps, CONTEXT);
 
         const parameters = {
           widgetId: WIDGET_ID,
@@ -226,6 +226,63 @@ describe.each(['add', 'update', 'create'] as const)(
       });
 
       expect(result.success).toBe(true);
+    });
+  },
+);
+
+describe.each(['add', 'update'] as const)(
+  '%s page-layout widget on a record page',
+  (operation) => {
+    it('accepts a vertical-list position through the tool schema', async () => {
+      const dependencies = buildDependencies(PageLayoutType.RECORD_PAGE, {
+        layoutType: PageLayoutType.RECORD_PAGE,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      });
+      const position = {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 2,
+      } as const;
+
+      if (operation === 'add') {
+        const tool = createAddPageLayoutWidgetTool(dependencies, CONTEXT);
+        const result = await tool.execute(
+          tool.inputSchema.parse({
+            ...WIDGET,
+            pageLayoutTabId: TAB_ID,
+            position,
+          }),
+        );
+
+        expect(result).toMatchObject({ success: true, result: { position } });
+        expect(
+          dependencies.pageLayoutWidgetService.create,
+        ).toHaveBeenCalledWith({
+          workspaceId: CONTEXT.workspaceId,
+          input: expect.objectContaining({ position }),
+        });
+      } else {
+        const tool = createUpdatePageLayoutWidgetTool(
+          dependencies as unknown as PageLayoutToolDependencies,
+          CONTEXT,
+        );
+        const parameters = {
+          widgetId: WIDGET_ID,
+          configuration: CONFIGURATION,
+          position,
+        };
+
+        tool.inputSchema.parse(parameters);
+        const result = await tool.execute(parameters);
+
+        expect(result).toMatchObject({ success: true, result: { position } });
+        expect(
+          dependencies.pageLayoutWidgetService.update,
+        ).toHaveBeenCalledWith({
+          id: WIDGET_ID,
+          workspaceId: CONTEXT.workspaceId,
+          updateData: { position, configuration: CONFIGURATION },
+        });
+      }
     });
   },
 );
