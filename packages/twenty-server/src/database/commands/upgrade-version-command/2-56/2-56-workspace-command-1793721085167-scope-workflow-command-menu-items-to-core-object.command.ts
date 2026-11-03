@@ -6,13 +6,10 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { rescopeWorkflowCommandMenuItem } from 'src/database/commands/upgrade-version-command/2-56/utils/rescope-workflow-command-menu-item.util';
 
 const WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
-
-const WORKFLOW_COMMAND_MENU_ITEMS_CONDITION = `
-  c."workspaceId" = $1
-  AND c."availabilityObjectMetadataId" = o.id`;
 
 @RegisteredWorkspaceCommand('2.56.0', 1793721085167)
 @Command({
@@ -37,48 +34,77 @@ export class ScopeWorkflowCommandMenuItemsToCoreObjectCommand extends Provisione
       return;
     }
 
-    const parameters = [workspaceId, WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER];
-
-    if (options.dryRun) {
-      const [{ count }]: { count: string }[] = await dataSource.query(
-        `SELECT COUNT(*) AS count
-         FROM core."commandMenuItem" c
-         JOIN core."objectMetadata" o
-           ON o."workspaceId" = $1 AND o."universalIdentifier" = $2
-         WHERE ${WORKFLOW_COMMAND_MENU_ITEMS_CONDITION}`,
-        parameters,
-      );
-
-      this.logger.log(
-        `[DRY RUN] Would scope ${count} workflow command menu item(s) to the workflow core object for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const [, scopedCount]: [unknown[], number] = await dataSource.query(
-      `UPDATE core."commandMenuItem" c
-       SET "availabilityObjectMetadataId" = NULL,
-           "availabilityCoreObjectName" = 'workflow',
-           "overrides" = NULLIF(c."overrides" - 'availabilityObjectMetadataId', '{}'::jsonb),
-           "updatedAt" = NOW()
-       FROM core."objectMetadata" o
-       WHERE o."workspaceId" = $1
-         AND o."universalIdentifier" = $2
-         AND ${WORKFLOW_COMMAND_MENU_ITEMS_CONDITION}`,
-      parameters,
+    const [workflowObjectMetadata]: { id: string }[] = await dataSource.query(
+      `SELECT id FROM core."objectMetadata"
+       WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+      [workspaceId, WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER],
     );
 
-    if (scopedCount === 0) {
+    if (!isDefined(workflowObjectMetadata)) {
       return;
     }
+
+    const candidateRows: {
+      id: string;
+      availabilityObjectMetadataId: string | null;
+      availabilityCoreObjectName: string | null;
+      overrides: unknown;
+    }[] = await dataSource.query(
+      `SELECT id, "availabilityObjectMetadataId", "availabilityCoreObjectName", overrides
+       FROM core."commandMenuItem"
+       WHERE "workspaceId" = $1
+         AND ("availabilityObjectMetadataId" = $2 OR strpos(overrides::text, $2::text) > 0)`,
+      [workspaceId, workflowObjectMetadata.id],
+    );
+
+    const rescopedRows = candidateRows.flatMap(({ id, ...row }) => {
+      const rescopedRow = rescopeWorkflowCommandMenuItem({
+        row,
+        workflowObjectMetadataId: workflowObjectMetadata.id,
+      });
+
+      return isDefined(rescopedRow) ? [{ id, ...rescopedRow }] : [];
+    });
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would rescope ${rescopedRows.length} workflow command menu item(s) for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    if (rescopedRows.length === 0) {
+      return;
+    }
+
+    await dataSource.transaction(async (entityManager) => {
+      for (const rescopedRow of rescopedRows) {
+        await entityManager.query(
+          `UPDATE core."commandMenuItem"
+           SET "availabilityObjectMetadataId" = $2,
+               "availabilityCoreObjectName" = $3,
+               overrides = $4::jsonb,
+               "updatedAt" = NOW()
+           WHERE id = $1`,
+          [
+            rescopedRow.id,
+            rescopedRow.availabilityObjectMetadataId,
+            rescopedRow.availabilityCoreObjectName,
+            isDefined(rescopedRow.overrides)
+              ? JSON.stringify(rescopedRow.overrides)
+              : null,
+          ],
+        );
+      }
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatCommandMenuItemMaps',
     ]);
 
     this.logger.log(
-      `Scoped ${scopedCount} workflow command menu item(s) to the workflow core object for workspace ${workspaceId}`,
+      `Rescoped ${rescopedRows.length} workflow command menu item(s) for workspace ${workspaceId}`,
     );
   }
 }
