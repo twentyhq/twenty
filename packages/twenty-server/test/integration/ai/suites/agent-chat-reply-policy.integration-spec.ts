@@ -310,13 +310,12 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     await expect(shouldExecute({ threadId, messageId })).resolves.toBe(false);
     expect(
-      await context.chatService.hasMessage({
+      await context.chatService.getMessagesForThread({
         workspaceId: context.workspaceId,
         workspaceMemberId: context.workspaceMemberId,
         threadId,
-        messageId,
       }),
-    ).toBe(true);
+    ).toContainEqual(expect.objectContaining({ id: messageId }));
   });
 
   it('blocks a previously automatic unmentioned message after switching to mention-only', async () => {
@@ -562,6 +561,67 @@ describe('Assistant reply selection with stored conversation participants', () =
           conversation: texts
             .slice(-20)
             .map((text) => ({ role: 'user', text })),
+          message: {
+            text: 'Can Ada help with the latest task?',
+            isAssistantMentioned: false,
+          },
+        },
+      }),
+    );
+  });
+
+  it('passes all visible assistant text in order without tool calls or empty messages', async () => {
+    models.enableEvaluation();
+    const threadId = await createGroup();
+    const toolPart = {
+      type: 'dynamic-tool' as const,
+      toolName: 'search',
+      toolCallId: 'visible-message-tool',
+      state: 'output-available' as const,
+      input: { query: 'Private tool input' },
+      output: { result: 'Private tool output' },
+    };
+
+    await context.chatService.addMessage({
+      threadId,
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+      turnStatus: AgentTurnStatus.COMPLETED,
+      uiMessage: {
+        role: AgentMessageRole.ASSISTANT,
+        parts: [
+          { type: 'text', text: 'I will check the latest status.' },
+          toolPart,
+          { type: 'text', text: 'The task is complete.' },
+          { type: 'text', text: ' \t\n' },
+        ],
+      },
+    });
+    await context.chatService.addMessage({
+      threadId,
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+      turnStatus: AgentTurnStatus.COMPLETED,
+      uiMessage: {
+        role: AgentMessageRole.ASSISTANT,
+        parts: [
+          { ...toolPart, toolCallId: 'tool-only-message' },
+          { type: 'text', text: ' \t\n' },
+        ],
+      },
+    });
+
+    await shouldReply({ threadId });
+
+    expect(models.evaluate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        state: {
+          conversation: [
+            {
+              role: 'assistant',
+              text: 'I will check the latest status.\n\nThe task is complete.',
+            },
+          ],
           message: {
             text: 'Can Ada help with the latest task?',
             isAssistantMentioned: false,

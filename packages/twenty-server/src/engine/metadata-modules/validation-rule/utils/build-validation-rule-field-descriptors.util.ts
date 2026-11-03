@@ -12,18 +12,28 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+
+type ValidationRuleFlatFieldMetadata = OrmFlatFieldMetadata &
+  OverridableFlatEntity;
 
 type BuildValidationRuleFieldDescriptorsArgs = {
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<ValidationRuleFlatFieldMetadata>;
+  // Record writes can't see overrides, and an active rule was checked when saved
+  shouldIncludeInactiveFields?: boolean;
 };
 
-const findActiveFlatFieldMetadatasOfObject = ({
+const findFlatFieldMetadatasOfObject = ({
   objectMetadataId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-}: BuildValidationRuleFieldDescriptorsArgs): OrmFlatFieldMetadata[] => {
+  shouldIncludeInactiveFields = false,
+}: BuildValidationRuleFieldDescriptorsArgs): ValidationRuleFlatFieldMetadata[] => {
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
@@ -41,7 +51,15 @@ const findActiveFlatFieldMetadatasOfObject = ({
       }),
     )
     .filter(isDefined)
-    .filter((flatFieldMetadata) => flatFieldMetadata.isActive);
+    .filter(
+      (flatFieldMetadata) =>
+        shouldIncludeInactiveFields ||
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: flatFieldMetadata,
+          property: 'isActive',
+        }),
+    );
 };
 
 const toScalarFieldDescriptor = (
@@ -55,7 +73,7 @@ const toScalarFieldDescriptor = (
 export const buildValidationRuleFieldDescriptors = (
   args: BuildValidationRuleFieldDescriptorsArgs,
 ): ValidationRuleFieldDescriptor[] =>
-  findActiveFlatFieldMetadatasOfObject(args).map((flatFieldMetadata) => {
+  findFlatFieldMetadatasOfObject(args).map((flatFieldMetadata) => {
     if (
       !isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
     ) {
@@ -72,7 +90,7 @@ export const buildValidationRuleFieldDescriptors = (
       relationTargetFields:
         relationType === RelationType.MANY_TO_ONE &&
         isDefined(relationTargetObjectMetadataId)
-          ? findActiveFlatFieldMetadatasOfObject({
+          ? findFlatFieldMetadatasOfObject({
               ...args,
               objectMetadataId: relationTargetObjectMetadataId,
             }).map(toScalarFieldDescriptor)

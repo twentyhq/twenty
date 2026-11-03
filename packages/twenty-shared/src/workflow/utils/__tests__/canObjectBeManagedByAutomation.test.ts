@@ -32,6 +32,7 @@ describe('canObjectBeManagedByAutomation', () => {
     'workflowAutomatedTrigger',
     'workspaceMember',
     'dashboard',
+    'agentChatThread',
     'message',
     'messageThread',
     'messageChannelMessageAssociation',

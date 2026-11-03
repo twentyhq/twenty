@@ -1,4 +1,5 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from 'twenty-shared/workflow';
 
 import { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
 
@@ -139,5 +140,76 @@ describe('defineWorkflow', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([error]);
+  });
+
+  const withAiAgentStep = (
+    input: Extract<
+      WorkflowManifest['version']['steps'][number],
+      { type: 'AI_AGENT' }
+    >['input'],
+  ): WorkflowManifest => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      steps: [
+        {
+          universalIdentifier: STEP_ID,
+          name: 'Qualify',
+          type: 'AI_AGENT',
+          input,
+          nextStepIds: [],
+        },
+      ],
+    },
+  });
+
+  it('accepts an AI agent step that carries its own config', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          instructions: 'Qualify the lead.',
+          scope: { canReadAllObjectRecords: true },
+          prompt: 'Qualify {{trigger.name}}',
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('refuses an AI agent step that runs an agent with its own config', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+          modelId: 'model-id',
+        }),
+      ).success,
+    ).toBe(false);
+  });
+
+  it('refuses a conversation on an AI agent step without an agent', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          instructions: 'Qualify the lead.',
+          prompt: 'Qualify {{trigger.name}}',
+          conversation: { scope: 'RUN' },
+        }),
+      ).errors,
+    ).toEqual([
+      `version.steps.0.input.agentUniversalIdentifier: ${WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG}`,
+    ]);
+  });
+
+  it('accepts a conversation on an AI agent step running an agent', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+          prompt: 'Qualify {{trigger.name}}',
+          humanInputInstructions: 'Ask when the company is unclear',
+          conversation: { scope: 'RUN' },
+        }),
+      ).success,
+    ).toBe(true);
   });
 });

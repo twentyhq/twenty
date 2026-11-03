@@ -66,7 +66,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   ): Promise<CommonFindManyOutput> {
     const {
       authContext,
-      rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -246,7 +245,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         aggregate: args.selectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
         ...this.getNestedRelationsReadPathOptions(),
       });

@@ -7,50 +7,65 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Overview
 
-Twenty offers flexible pricing to fit teams of all sizes, whether you prefer cloud hosting or self-hosting.
+Twenty offers flexible pricing to fit teams of all sizes, whether you prefer cloud hosting or self-hosting. See current prices on [twenty.com/pricing](https://twenty.com/pricing).
 
 ## Cloud Plans
 
 ### Pro (Cloud)
-For teams ready to scale:
+For one team:
 - All core CRM features
 - Email and calendar sync
 - Workflows and automations
-- Standard support
+- **Admin** and **Member** roles
+- Personal AI usage: about 100 AI tasks per member per week
+- 1 workspace credit per user per month
+- Email and chat support
 
 <Note>
-Premium features (SSO, row-level permissions, AI usage data and more) are not included in the Pro plan.
+Premium features (custom roles, row-level permissions, SSO and more) are not included in the Pro plan.
 </Note>
 
 ### Organization (Cloud)
-For larger teams with advanced needs:
+For several teams that need more AI and control:
 - Everything in Pro
-- **Premium features**: SSO integration, row-level permissions, AI usage data and more
+- 5x more personal AI usage: about 500 AI tasks per member per week
+- 4 workspace credits per user per month
+- **Premium features**: custom roles, row-level permissions, SSO and more
 - Priority support
+
+See [Credits](/user-guide/billing/capabilities/credits) for how personal AI usage and workspace credits work.
+
+### Early Cloud Plans
+Subscriptions that started before the current plans keep their price and terms for as long as they stay on them. The Plans page tags these plans **Early**. Once you switch away from one, you can't pick it again.
+- **Pro (Early)**: custom roles with field-level permissions, email and chat support
+- **Organization (Early)**: everything in Pro (Early), plus the Premium features and priority support
+- Both include 5 workspace credits per month (50 per year on yearly billing) and no personal AI usage
 
 ## Self-Hosted Plans
 
 ### Free (Self-Hosted)
 Host Twenty on your own infrastructure at no cost:
-- All Pro features included
+- All Pro CRM features, plus custom roles
+- AI runs on your own AI provider keys, without personal AI usage or workspace credits
 - Community support via Discord
 - Full control over your data
 
 ### Organization (Self-Hosted)
 For teams who need premium features while self-hosting:
-- All Pro features
-- **Premium features**: SSO integration, row-level permissions, AI usage data and more
+- Everything in Free
+- **Premium features**: row-level permissions, SSO and more
 - Twenty team support
 - No requirement to publish custom code as open-source before distributing
 
 ## Premium Features
 
 Premium features are only available on the Organization plans (Cloud or Self-Hosted):
-- **SSO integration**: Single Sign-On with your identity provider
+- **Custom roles**: Roles beyond Admin and Member, with object and field permissions (on Cloud, Pro (Early) keeps them too; self-hosted instances include them on every plan)
 - **Row-level permissions**: Fine-grained access control at the record level
-- **AI usage data**: Track AI consumption across the workspace
+- **SSO integration**: Single Sign-On with your identity provider
 - **Audit logs**: Check what each workspace member has been doing
-- **Email campaigns**: Plan which emails should be sent (available soon)
+- **Usage limits for members, API keys and apps**: Cap what each of them can spend
+- **Custom domain**: Serve your workspace from your own domain (also available on self-hosted instances)
 - **Unlimited workspaces**: Create as many workspaces as you want (self-hosted only)
 - **Private source code**: No requirement to publish changes to a publicly available repository (self-hosted only)
 
@@ -58,7 +73,7 @@ Premium features are only available on the Organization plans (Cloud or Self-Hos
 
 ### Upgrade to Organization
 1. Go to **Settings → Billing → Plans**
-2. Click **Switch to Organization**
+2. Click **Upgrade to Organization**
 3. Confirm your upgrade
 
 ### Downgrade to Pro
@@ -68,12 +83,12 @@ Premium features are only available on the Organization plans (Cloud or Self-Hos
 
 ### Switch to Yearly Billing
 1. Go to **Settings → Billing**
-2. Click **Upgrade to Yearly**
+2. Click **Switch to annual**
 3. Save with annual billing
 
 ### Switch to Monthly Billing
 1. Go to **Settings → Billing**
-2. Click **Downgrade to Monthly**
+2. Click **Downgrade to monthly**
 3. Save with monthly billing
 
 ## Get an Organization Key

@@ -15,7 +15,10 @@ const sharedDependencies: Parameters<
   exportNamesBySpecifier: new Map([
     [
       'react',
-      { namedExports: ['useEffect', 'useState'], hasDefaultExport: true },
+      {
+        namedExports: ['useEffect', 'useState', 'useSyncExternalStore'],
+        hasDefaultExport: true,
+      },
     ],
     [
       'react/jsx-runtime',
@@ -27,7 +30,10 @@ const sharedDependencies: Parameters<
     ],
     [
       'twenty-ui/theme',
-      { namedExports: ['ThemeProvider'], hasDefaultExport: false },
+      {
+        namedExports: ['ThemeProvider', 'THEME_DARK', 'THEME_LIGHT'],
+        hasDefaultExport: false,
+      },
     ],
     ['twenty-ui/style.css', { namedExports: [], hasDefaultExport: false }],
     [

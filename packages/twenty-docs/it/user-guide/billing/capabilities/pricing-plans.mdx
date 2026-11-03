@@ -7,30 +7,45 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Panoramica
 
-Twenty offre prezzi flessibili per team di ogni dimensione, sia con hosting cloud sia con self‑hosting.
+Twenty offre prezzi flessibili per team di ogni dimensione, sia con hosting cloud sia con self‑hosting. Consulta i prezzi attuali su [twenty.com/pricing](https://twenty.com/pricing).
 
 ## Piani cloud
 
 ### Pro (Cloud)
 
-Per i team pronti a scalare:
+Per un team:
 
 * Tutte le funzionalità CRM di base
 * Sincronizzazione email e calendario
 * Flussi di lavoro e automazioni
-* Supporto standard
+* Ruoli **Admin** e **Member**
+* Utilizzo personale dell'IA: circa 100 attività IA per membro alla settimana
+* 1 credito dello spazio di lavoro per utente al mese
+* Supporto via email e chat
 
 <Note>
-Le funzionalità Premium (SSO, autorizzazioni a livello di riga, dati di utilizzo dell'IA e altro ancora) non sono incluse nel piano Pro.
+Le funzionalità Premium (ruoli personalizzati, autorizzazioni a livello di riga, SSO e altro ancora) non sono incluse nel piano Pro.
 </Note>
 
 ### Organizzazione (Cloud)
 
-Per i team più numerosi con esigenze avanzate:
+Per più team che necessitano di più IA e controllo:
 
 * Tutto ciò che è incluso in Pro
-* **Funzionalità Premium**: integrazione SSO, autorizzazioni a livello di riga, dati di utilizzo dell'IA e altro ancora
+* 5 volte più utilizzo personale dell'IA: circa 500 attività IA per membro alla settimana
+* 4 crediti dello spazio di lavoro per utente al mese
+* **Funzionalità Premium**: ruoli personalizzati, autorizzazioni a livello di riga, SSO e altro ancora
 * Supporto prioritario
+
+Consulta [Crediti](/it/user-guide/billing/capabilities/credits) per scoprire come funzionano l'utilizzo personale dell'IA e i crediti dello spazio di lavoro.
+
+### Piani Cloud Early
+
+Gli abbonamenti iniziati prima dei piani attuali mantengono il loro prezzo e le loro condizioni finché rimangono su tali piani. La pagina Piani contrassegna questi piani come **Early**. Una volta abbandonato uno di essi, non puoi più sceglierlo.
+
+* **Pro (Early)**: ruoli personalizzati con autorizzazioni a livello di campo, supporto via email e chat
+* **Organization (Early)**: tutto ciò che è incluso in Pro (Early), più le funzionalità Premium e il supporto prioritario
+* Entrambi includono 5 crediti dello spazio di lavoro al mese (50 all'anno con fatturazione annuale) e nessun utilizzo personale dell'IA
 
 ## Piani self‑hosted
 
@@ -38,7 +53,8 @@ Per i team più numerosi con esigenze avanzate:
 
 Esegui Twenty sulla tua infrastruttura senza costi:
 
-* Include tutte le funzionalità di Pro
+* Tutte le funzionalità CRM di Pro, più i ruoli personalizzati
+* L'IA viene eseguita con le chiavi del tuo provider IA, senza utilizzo personale dell'IA né crediti dello spazio di lavoro
 * Supporto della community via Discord
 * Pieno controllo sui tuoi dati
 
@@ -46,8 +62,8 @@ Esegui Twenty sulla tua infrastruttura senza costi:
 
 Per i team che necessitano di funzionalità premium con il self‑hosting:
 
-* Tutte le funzionalità di Pro
-* **Funzionalità Premium**: integrazione SSO, autorizzazioni a livello di riga, dati di utilizzo dell'IA e altro ancora
+* Tutto ciò che è incluso in Free
+* **Funzionalità Premium**: autorizzazioni a livello di riga, SSO e altro ancora
 * Supporto del team di Twenty
 * Nessun requisito di pubblicare il codice personalizzato come open source prima della distribuzione
 
@@ -55,11 +71,12 @@ Per i team che necessitano di funzionalità premium con il self‑hosting:
 
 Le funzionalità premium sono disponibili solo nei piani Organizzazione (Cloud o self‑hosted):
 
-* **Integrazione SSO**: Single Sign‑On con il tuo provider di identità
+* **Ruoli personalizzati**: ruoli oltre ad Admin e Member, con autorizzazioni per oggetti e campi (su Cloud, Pro (Early) li include anch'esso; le istanze self-hosted li includono in ogni piano)
 * **Autorizzazioni a livello di riga**: controllo degli accessi granulare a livello di record
-* **Dati di utilizzo dell'IA**: Tieni traccia del consumo dell'IA nel tuo spazio di lavoro
+* **Integrazione SSO**: Single Sign‑On con il tuo provider di identità
 * **Log di controllo**: verifica cosa ha fatto ciascun membro dello spazio di lavoro
-* **Campagne email**: pianifica quali email devono essere inviate (disponibile a breve)
+* **Limiti di utilizzo per membri, chiavi API e app**: limita quanto ciascuno di essi può spendere
+* **Dominio personalizzato**: rendi disponibile il tuo spazio di lavoro dal tuo dominio (disponibile anche sulle istanze self-hosted)
 * **Spazi di lavoro illimitati**: Crea tutti gli spazi di lavoro che desideri (solo self-hosted)
 * **Codice sorgente privato**: nessun obbligo di pubblicare le modifiche in un repository pubblico (solo self-hosted)
 
@@ -68,7 +85,7 @@ Le funzionalità premium sono disponibili solo nei piani Organizzazione (Cloud o
 ### Esegui l'upgrade a Organizzazione
 
 1. Vai a **Impostazioni → Fatturazione → Piani**
-2. Fai clic su **Passa a Organizzazione**
+2. Fai clic su **Passa a Organization**
 3. Conferma l'upgrade
 
 ### Esegui il downgrade a Pro

@@ -7,7 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/permissions/principal/utils/get-role-ids-from-role-permission-config.util';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const deleteRoleInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role to delete'),
@@ -24,18 +24,21 @@ System-managed roles (isEditable=false, like Admin), the workspace default role,
 export class DeleteRoleTool extends BaseTool<typeof deleteRoleInputSchema> {
   readonly inputSchema = deleteRoleInputSchema;
 
-  constructor(private readonly roleService: RoleService) {
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly permissionsService: PermissionsService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, rolePermissionConfig },
+    context: { workspaceId, authContext },
   }: ToolExecuteArgs<typeof deleteRoleInputSchema>): Promise<ToolOutput> {
     const deletedRole = await this.roleService.deleteRole({
       roleId: input.roleId,
       workspaceId,
-      actingRoleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
+      actingRoleIds: await this.permissionsService.getRoleIds(authContext),
     });
 
     return {
