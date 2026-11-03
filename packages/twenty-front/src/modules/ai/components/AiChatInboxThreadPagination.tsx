@@ -3,6 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSnoozedThreadListState } from '@/ai/states/agentChatSnoozedThreadListState';
 import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -24,7 +27,19 @@ export const AiChatInboxThreadPagination = ({
 }: AiChatInboxThreadPaginationProps) => {
   const { t } = useLingui();
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const { fetchMoreAgentChatThreads, fetchMoreAgentChatSnoozedThreads } =
+    useRefreshAgentChatThreads();
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const agentChatSnoozedThreadList = useAtomStateValue(
+    agentChatSnoozedThreadListState,
+  );
+  const isSnoozed =
+    agentChatThreadFilterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED;
+  const personalThreadList = isSnoozed
+    ? agentChatSnoozedThreadList
+    : agentChatThreadList;
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
@@ -41,11 +56,13 @@ export const AiChatInboxThreadPagination = ({
 
   const hasMoreThreads = isDefined(agentChatShownChannelView)
     ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
-    : isDefined(agentChatThreadList) && agentChatThreadList.hasNextPage;
+    : (personalThreadList?.hasNextPage ?? false);
   const fetchMoreThreads = () =>
     isDefined(agentChatShownChannelView)
       ? loadAgentChatChannelThreads('fetch-more')
-      : fetchMoreAgentChatThreads();
+      : isSnoozed
+        ? fetchMoreAgentChatSnoozedThreads()
+        : fetchMoreAgentChatThreads();
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;

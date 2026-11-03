@@ -98,26 +98,32 @@ export class AgentChatChannelThreadsService {
       channelId,
     });
 
+    const isSnoozed = status === AgentChatChannelThreadStatus.SNOOZED;
+    const sortColumn = isSnoozed
+      ? 'thread."channelSnoozedUntil"'
+      : 'thread."lastActivityAt"';
+    const sortDirection = isSnoozed ? 'ASC' : 'DESC';
+
     const rows = await this.queryReadableThreads<{
       id: string;
-      lastActivityAt: string | null;
+      sortAt: string | null;
     }>({
       ...args,
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread.id,
-              to_char(thread."lastActivityAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "lastActivityAt"
+              to_char(${sortColumn} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "sortAt"
             ${fromClause}
             AND thread."channelId" = :channelThreadsChannelId::uuid
             AND ${STATUS[status ?? AgentChatChannelThreadStatus.OPEN]}
             ${ASSIGNMENT_FILTERS[assignment ?? AgentChatChannelAssignmentFilter.ANY]}
             ${THREAD_FILTERS[filter ?? AgentChatChannelThreadFilter.ANY]}
-            ${buildAgentChatChannelThreadCursorFilter(cursor)}
-            ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
+            ${buildAgentChatChannelThreadCursorFilter({ cursor, isSnoozed })}
+            ORDER BY ${sortColumn} ${sortDirection} NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
         parameters: {
           ...parameters,
           channelThreadsChannelId: channelId,
-          channelThreadsCursorLastActivityAt: cursor?.lastActivityAt,
+          channelThreadsCursorSortAt: cursor?.sortAt,
           channelThreadsCursorId: cursor?.id,
           channelThreadsLimit: pageSize + 1,
         },

@@ -14,6 +14,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
+import { AgentChatSnoozedThreadsLoadEffect } from '@/ai/components/AgentChatSnoozedThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
@@ -120,7 +121,8 @@ const AiChatInboxPageContent = () => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const { threads, isLoading } = useAgentChatInboxShownThreads();
+  const { threads, isLoading, isPersonalSnoozedView } =
+    useAgentChatInboxShownThreads();
   const { fetchMoreAgentChatInboxShownThreads } =
     useFetchMoreAgentChatInboxShownThreads();
 
@@ -261,6 +263,7 @@ const AiChatInboxPageContent = () => {
   return (
     <StyledInbox>
       <AgentChatChannelThreadsLoadEffect />
+      <AgentChatSnoozedThreadsLoadEffect />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
         key={selectedThreadId}
@@ -319,7 +322,9 @@ const AiChatInboxPageContent = () => {
                     {isDefined(agentChatShownChannelView) ? (
                       <AgentChatChannelThreadsFetchMoreTrigger />
                     ) : (
-                      <AgentChatThreadsFetchMoreTrigger />
+                      <AgentChatThreadsFetchMoreTrigger
+                        isSnoozed={isPersonalSnoozedView}
+                      />
                     )}
                   </StyledThreadList>
                   {!isMobile && (

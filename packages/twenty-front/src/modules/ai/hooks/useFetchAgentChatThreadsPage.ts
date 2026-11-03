@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -30,9 +31,11 @@ export const useFetchAgentChatThreadsPage = () => {
     async ({
       lastCursor,
       threadIdFilter,
+      isSnoozed = false,
     }: {
       lastCursor: string | null;
       threadIdFilter?: RecordGqlOperationFilter;
+      isSnoozed?: boolean;
     }) => {
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -52,51 +55,180 @@ export const useFetchAgentChatThreadsPage = () => {
         currentWorkspaceMemberState.atom,
       )?.id;
 
-      const result = await apolloCoreClient
-        .query<RecordGqlOperationFindManyResult>({
-          query: generateFindManyRecordsQuery({
-            objectMetadataItem: chatObjectMetadataItem,
-            objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
-            recordGqlFields: AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS,
-            objectPermissionsByObjectMetadataId,
-          }),
-          variables: {
-            filter: isDefined(threadIdFilter)
-              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
-              : AGENT_CHAT_THREAD_LIST_FILTER,
-            orderBy: [{ lastActivityAt: 'DescNullsLast' }],
-            limit: QUERY_MAX_RECORDS,
-            lastCursor,
-          },
-          fetchPolicy: 'network-only',
-        })
-        .catch(() => undefined);
+      let participantCursor = lastCursor;
 
-      const connection = result?.data?.[chatObjectMetadataItem.namePlural];
+      while (true) {
+        let snoozedPage:
+          | {
+              participants: ObjectRecord[];
+              hasNextPage: boolean;
+              endCursor: string | null;
+            }
+          | undefined;
 
-      if (!isDefined(connection)) {
-        return undefined;
-      }
+        if (isSnoozed) {
+          const participantObjectMetadataItem = store.get(
+            objectMetadataItemFamilySelector.selectorFamily({
+              objectName: CoreObjectNameSingular.AgentChatThreadParticipant,
+              objectNameType: 'singular',
+            }),
+          );
 
-      const records = getRecordsFromRecordConnection<
-        AgentChatThreadRecord & { participants?: ObjectRecord[] }
-      >({ recordConnection: connection });
+          if (
+            !isDefined(participantObjectMetadataItem) ||
+            !isDefined(currentWorkspaceMemberId)
+          ) {
+            return undefined;
+          }
 
-      return {
-        threads: records.map(
+          const result = await apolloCoreClient
+            .query<RecordGqlOperationFindManyResult>({
+              query: generateFindManyRecordsQuery({
+                objectMetadataItem: participantObjectMetadataItem,
+                objectMetadataItems: store.get(
+                  objectMetadataItemsSelector.atom,
+                ),
+                recordGqlFields:
+                  AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS.participants,
+                objectPermissionsByObjectMetadataId,
+              }),
+              variables: {
+                filter: {
+                  workspaceMemberId: { eq: currentWorkspaceMemberId },
+                  isSubscribed: { eq: true },
+                  archivedAt: { is: 'NOT_NULL' },
+                  snoozedUntil: { is: 'NOT_NULL' },
+                },
+                orderBy: [
+                  { snoozedUntil: 'AscNullsLast' },
+                  { threadId: 'DescNullsLast' },
+                ],
+                limit: QUERY_MAX_RECORDS,
+                lastCursor: participantCursor,
+              },
+              fetchPolicy: 'network-only',
+            })
+            .catch(() => undefined);
+          const connection =
+            result?.data?.[participantObjectMetadataItem.namePlural];
+
+          if (!isDefined(connection)) {
+            return undefined;
+          }
+
+          snoozedPage = {
+            participants: getRecordsFromRecordConnection<ObjectRecord>({
+              recordConnection: connection,
+            }),
+            hasNextPage: connection.pageInfo.hasNextPage ?? false,
+            endCursor: connection.pageInfo.endCursor ?? null,
+          };
+        }
+
+        const pageThreadIdFilter = isDefined(snoozedPage)
+          ? {
+              id: {
+                in: snoozedPage.participants.map(
+                  (participant) => participant.threadId,
+                ),
+              },
+            }
+          : threadIdFilter;
+        const result = await apolloCoreClient
+          .query<RecordGqlOperationFindManyResult>({
+            query: generateFindManyRecordsQuery({
+              objectMetadataItem: chatObjectMetadataItem,
+              objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
+              recordGqlFields: AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS,
+              objectPermissionsByObjectMetadataId,
+            }),
+            variables: {
+              filter: isDefined(pageThreadIdFilter)
+                ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, pageThreadIdFilter] }
+                : AGENT_CHAT_THREAD_LIST_FILTER,
+              orderBy: [{ lastActivityAt: 'DescNullsLast' }],
+              limit: QUERY_MAX_RECORDS,
+              lastCursor: isSnoozed ? null : lastCursor,
+            },
+            fetchPolicy: 'network-only',
+          })
+          .catch(() => undefined);
+        const connection = result?.data?.[chatObjectMetadataItem.namePlural];
+
+        if (!isDefined(connection)) {
+          return undefined;
+        }
+
+        const records = getRecordsFromRecordConnection<
+          AgentChatThreadRecord & { participants?: ObjectRecord[] }
+        >({ recordConnection: connection });
+        const loadedThreads = records.map(
           ({ participants: _participants, ...thread }) => thread,
-        ),
-        // Roles that read every record get every member's row
-        participants: records
-          .flatMap(({ participants }) => participants ?? [])
+        );
+        const threadsById = new Map(
+          loadedThreads.map((thread) => [thread.id, thread]),
+        );
+        const threads = isDefined(snoozedPage)
+          ? snoozedPage.participants
+              .map((participant) => threadsById.get(participant.threadId))
+              .filter(isDefined)
+          : loadedThreads;
+        const participants = [
+          ...(snoozedPage?.participants ?? []),
+          ...records.flatMap(({ participants }) => participants ?? []),
+        ]
           .filter(
             (participant) =>
               participant.workspaceMemberId === currentWorkspaceMemberId,
           )
-          .map(getAgentChatThreadParticipantFromRecord),
-        hasNextPage: connection.pageInfo.hasNextPage ?? false,
-        endCursor: connection.pageInfo.endCursor ?? null,
-      };
+          .map(getAgentChatThreadParticipantFromRecord);
+        const participantsByThreadId = mergeAgentChatThreadParticipants(
+          {},
+          participants,
+        );
+        const hasVisibleSnoozedThread = threads.some((thread) => {
+          const participant = participantsByThreadId[thread.id];
+
+          return (
+            !isDefined(thread.deletedAt) &&
+            participant?.isSubscribed === true &&
+            isDefined(participant.archivedAt) &&
+            isDefined(participant.snoozedUntil)
+          );
+        });
+
+        if (
+          isDefined(snoozedPage) &&
+          !hasVisibleSnoozedThread &&
+          snoozedPage.hasNextPage
+        ) {
+          if (
+            !isDefined(snoozedPage.endCursor) ||
+            snoozedPage.endCursor === participantCursor
+          ) {
+            return undefined;
+          }
+
+          participantCursor = snoozedPage.endCursor;
+          continue;
+        }
+
+        return {
+          threads,
+          participants,
+          hasNextPage:
+            snoozedPage?.hasNextPage ??
+            connection.pageInfo.hasNextPage ??
+            false,
+          endCursor: isDefined(snoozedPage)
+            ? snoozedPage.endCursor
+            : (connection.pageInfo.endCursor ?? null),
+          lastLoadedSortAt:
+            snoozedPage?.participants.at(-1)?.snoozedUntil ?? null,
+          lastLoadedThreadId:
+            snoozedPage?.participants.at(-1)?.threadId ?? null,
+        };
+      }
     },
     [apolloCoreClient, objectPermissionsByObjectMetadataId, store],
   );

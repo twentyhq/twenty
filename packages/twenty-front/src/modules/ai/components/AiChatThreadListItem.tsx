@@ -35,6 +35,7 @@ type AiChatThreadListItemProps = {
   variant?: AiChatThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
+  snoozedUntil?: string;
   onClick: (
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
@@ -55,6 +56,7 @@ export const AiChatThreadListItem = ({
   variant = 'default',
   isSelected,
   isChecked = false,
+  snoozedUntil,
   onClick,
   onCheckboxClick,
   onContextMenu,
@@ -152,7 +154,11 @@ export const AiChatThreadListItem = ({
         !isRenaming && (
           <StyledActivityTime>
             <AiChatThreadChannelIcon thread={thread} />
-            <AiChatThreadActivityTime thread={thread} variant={variant} />
+            <AiChatThreadActivityTime
+              thread={thread}
+              variant={variant}
+              snoozedUntil={snoozedUntil}
+            />
           </StyledActivityTime>
         )
       }

@@ -195,6 +195,7 @@ export class AgentChatThreadTriageService {
              SET "channelArchivedAt" = NULL, "updatedAt" = now()
              WHERE id = $1 AND "channelSnoozedUntil" = $2
                AND "channelArchivedAt" IS NOT NULL
+               AND "channelSnoozedUntil" <= clock_timestamp()
              RETURNING id
            )
            SELECT id FROM ended_thread`,

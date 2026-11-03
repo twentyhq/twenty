@@ -1,9 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type AgentChatChannelThreadList,
-  agentChatChannelThreadListState,
-} from '@/ai/states/agentChatChannelThreadListState';
+import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
+import { type AgentChatChannelThreadList } from '@/ai/types/AgentChatChannelThreadList';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';

@@ -5,14 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// Activity and archiving have different writers and are compared rather than
-// folded into a status, so a message landing right after an archive brings the
-// thread back whichever write committed last. Snooze is an archive with a
-// wake-up time; the server unarchives the thread when it passes and keeps the
-// snooze as what brought it back. A member who unsubscribed keeps the thread
-// under done whatever happens in it. A chat the member can open but does not
-// follow stays out of their inbox until they take part in it or file it, and
-// only has unread messages once they have opened it.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
@@ -69,6 +61,16 @@ export const getAgentChatThreadInboxStatus = ({
     };
   }
 
+  if (isDefined(snoozedUntil)) {
+    return {
+      scope: 'SNOOZED',
+      isUnread,
+      isSubscribed,
+      isMentioned,
+      event: { type: 'SNOOZED', at: snoozedUntil },
+    };
+  }
+
   if (isDefined(lastActivityAt) && isAfter(lastActivityAt, archivedAt)) {
     return {
       scope: 'INBOX',
@@ -79,21 +81,11 @@ export const getAgentChatThreadInboxStatus = ({
     };
   }
 
-  if (!isDefined(snoozedUntil)) {
-    return {
-      scope: 'ARCHIVED',
-      isUnread,
-      isSubscribed,
-      isMentioned,
-      event: { type: 'DONE', at: archivedAt },
-    };
-  }
-
   return {
-    scope: 'SNOOZED',
+    scope: 'ARCHIVED',
     isUnread,
     isSubscribed,
     isMentioned,
-    event: { type: 'SNOOZED', at: snoozedUntil },
+    event: { type: 'DONE', at: archivedAt },
   };
 };

@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { formatInTimeZone } from 'date-fns-tz';
+import { differenceInCalendarDays } from 'date-fns';
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
@@ -46,5 +47,22 @@ export const useFormatAgentChatThreadDate = () => {
     });
   };
 
-  return { formatAgentChatThreadDay, formatAgentChatThreadDateTime };
+  const formatAgentChatThreadWakeTime = (date: Date) => {
+    const daysUntilWake = differenceInCalendarDays(
+      toZonedTime(date, timeZone),
+      toZonedTime(new Date(), timeZone),
+    );
+    const wakeTimeFormat =
+      daysUntilWake <= 1 ? timeFormat : `EEE · ${timeFormat}`;
+
+    return formatInTimeZone(date, timeZone, wakeTimeFormat, {
+      locale: localeCatalog,
+    });
+  };
+
+  return {
+    formatAgentChatThreadDay,
+    formatAgentChatThreadDateTime,
+    formatAgentChatThreadWakeTime,
+  };
 };

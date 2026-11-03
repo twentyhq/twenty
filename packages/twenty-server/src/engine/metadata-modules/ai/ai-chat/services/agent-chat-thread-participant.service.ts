@@ -53,7 +53,7 @@ const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."up
 
 const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
 
-const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
+const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR (participant."snoozedUntil" IS NULL AND thread."lastActivityAt" > participant."archivedAt")))`;
 
 const PARTICIPANT_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
@@ -73,15 +73,19 @@ const buildSnoozeQuery: BuildParticipantWriteQuery = ({
      "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    RETURNING *`;
 
-const buildMentionResolutionQuery = ({
+const buildResponseParticipantQuery = ({
   participantTable,
 }: {
   participantTable: string;
 }) =>
   `UPDATE ${participantTable} AS participant
-   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+     "archivedAt" = CASE WHEN "snoozedUntil" IS NOT NULL THEN NULL ELSE "archivedAt" END,
+     "snoozedUntil" = NULL,
+     "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    WHERE "threadId" = $1 AND "workspaceMemberId" = $2
-     AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
+     AND (${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
+       OR ("archivedAt" IS NOT NULL AND "snoozedUntil" IS NOT NULL))
    RETURNING *`;
 
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
@@ -306,8 +310,10 @@ export class AgentChatThreadParticipantService {
          VALUES ($1, $2${privateValue})
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "lastReadAt" = NULL,
-           "archivedAt" = NULL,
-           "snoozedUntil" = NULL,
+           "archivedAt" = CASE
+             WHEN participant."snoozedUntil" IS NOT NULL THEN participant."archivedAt"
+             ELSE NULL
+           END,
            "isSubscribed" = true,
            "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,
@@ -322,7 +328,7 @@ export class AgentChatThreadParticipantService {
   }): Promise<void> {
     await this.write(
       { ...args, threadIds: [args.threadId] },
-      buildMentionResolutionQuery,
+      buildResponseParticipantQuery,
       [],
       writeResponse,
     );
@@ -342,7 +348,7 @@ export class AgentChatThreadParticipantService {
       buildAgentChatThreadParticipantLockKey(args),
     ]);
     await scope.executeRawQuery(
-      buildMentionResolutionQuery({
+      buildResponseParticipantQuery({
         participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
       }),
       [args.threadId, args.workspaceMemberId],
@@ -428,6 +434,7 @@ export class AgentChatThreadParticipantService {
          SET "archivedAt" = NULL, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2
            AND "snoozedUntil" = $3 AND "archivedAt" IS NOT NULL
+           AND "snoozedUntil" <= clock_timestamp()
          RETURNING *`,
       [snoozedUntil],
     );

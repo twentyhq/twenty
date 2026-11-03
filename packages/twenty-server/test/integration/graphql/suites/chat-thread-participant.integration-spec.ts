@@ -554,6 +554,51 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(jonyRecordIds).not.toContain(janeParticipant!.id);
   });
 
+  it('pages personal snooze records by deadline through the generic authorized query', async () => {
+    const laterThreadId = await createTestThread();
+    const earlierThreadId = await createTestThread();
+
+    for (const { threadId, delay } of [
+      { threadId: laterThreadId, delay: 60_000 },
+      { threadId: earlierThreadId, delay: 30_000 },
+    ]) {
+      const response = await runInboxAction('SNOOZE', threadId, {
+        snoozedUntil: new Date(Date.now() + delay).toISOString(),
+      });
+
+      expect(response.body.errors).toBeUndefined();
+    }
+
+    const firstPage = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'agentChatThreadParticipant',
+        objectMetadataPluralName: 'agentChatThreadParticipants',
+        gqlFields: 'id threadId snoozedUntil',
+        filter: {
+          workspaceMemberId: { eq: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE },
+          isSubscribed: { eq: true },
+          archivedAt: { is: 'NOT_NULL' },
+          snoozedUntil: { is: 'NOT_NULL' },
+        },
+        orderBy: [
+          { snoozedUntil: 'AscNullsLast' },
+          { threadId: 'DescNullsLast' },
+        ],
+        first: 1,
+      }),
+    );
+
+    expect(firstPage.body.errors).toBeUndefined();
+    expect(
+      firstPage.body.data.agentChatThreadParticipants.edges.map(
+        ({ node }: { node: { threadId: string } }) => node.threadId,
+      ),
+    ).toEqual([earlierThreadId]);
+    expect(
+      firstPage.body.data.agentChatThreadParticipants.pageInfo.hasNextPage,
+    ).toBe(true);
+  });
+
   it('ends a snooze once its time passes by moving the chat back to the inbox', async () => {
     const threadId = await createTestThread();
 

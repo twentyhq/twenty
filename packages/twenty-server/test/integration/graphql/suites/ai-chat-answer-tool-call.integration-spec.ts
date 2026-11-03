@@ -12,6 +12,7 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -140,8 +141,10 @@ describe('Answering a chat tool call', () => {
     const [participant]: {
       lastMentionedAt: Date | null;
       mentionsResolvedAt: Date | null;
+      archivedAt: Date | null;
+      snoozedUntil: Date | null;
     }[] = await global.testDataSource.query(
-      `SELECT "lastMentionedAt", "mentionsResolvedAt" FROM "${schema}"."agentChatThreadParticipant"
+      `SELECT "lastMentionedAt", "mentionsResolvedAt", "archivedAt", "snoozedUntil" FROM "${schema}"."agentChatThreadParticipant"
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, memberId],
     );
@@ -290,6 +293,52 @@ describe('Answering a chat tool call', () => {
     );
     expect(await readToolCallStatus('mention-pending-answer')).toBe('pending');
     expect(await readPendingQuestionMessageId()).not.toBeNull();
+  });
+
+  it('wakes an accepted answer without a mention even if its later message fails', async () => {
+    const toolCallId = 'snoozed-answer-without-mention';
+
+    await pauseOnQuestions(toolCallId);
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."agentChatThreadParticipant"
+       SET "lastMentionedAt" = NULL, "mentionsResolvedAt" = NULL
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, workspaceMemberId],
+    );
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).updateInboxState({
+      workspaceId,
+      workspaceMemberId,
+      threadIds: [threadId],
+      action: AgentChatInboxAction.SNOOZE,
+      snoozedUntil: new Date(Date.now() + 30_000),
+    });
+
+    const before = await readMentionState();
+    const invalidResponse = await answerToolCall({
+      toolCall: { threadId, toolCallId },
+      response: { selectedOptionIndices: [99] },
+    });
+
+    expect(invalidResponse.body.errors).toBeDefined();
+    expect(await readMentionState()).toEqual(before);
+
+    spies.push(
+      jest
+        .spyOn(chat, 'addMessage')
+        .mockRejectedValueOnce(new Error('Answer message unavailable')),
+    );
+
+    const response = await answerQuestions(toolCallId);
+
+    expect(response.body.errors).toBeDefined();
+    expect(await readToolCallStatus(toolCallId)).toBe('answered');
+    expect(await readMentionState()).toMatchObject({
+      lastMentionedAt: null,
+      archivedAt: null,
+      snoozedUntil: null,
+    });
   });
 
   it('preserves a new mention arriving while an accepted approval executes', async () => {

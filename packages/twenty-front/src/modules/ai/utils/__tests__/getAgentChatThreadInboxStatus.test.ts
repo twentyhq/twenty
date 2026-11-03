@@ -129,7 +129,7 @@ describe('getAgentChatThreadInboxStatus', () => {
     ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
-  it('brings a snoozed thread back early when activity follows the snooze', () => {
+  it('keeps a snoozed thread snoozed when later activity makes it unread', () => {
     expect(
       getStatus({
         archivedAt: ARCHIVED_AT,
@@ -138,11 +138,11 @@ describe('getAgentChatThreadInboxStatus', () => {
         lastReadAt: '2026-10-01T09:00:00.000Z',
       }),
     ).toEqual({
-      scope: 'INBOX',
+      scope: 'SNOOZED',
       isUnread: true,
       isSubscribed: true,
       isMentioned: false,
-      event: null,
+      event: { type: 'SNOOZED', at: '2026-10-02T09:00:00.000Z' },
     });
   });
 

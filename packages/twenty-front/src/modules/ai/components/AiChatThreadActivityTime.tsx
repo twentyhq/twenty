@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
@@ -18,11 +19,13 @@ const StyledActivityTime = styled.div`
 type AiChatThreadActivityTimeProps = {
   thread: AgentChatThreadRecord;
   variant?: AiChatThreadListVariant;
+  snoozedUntil?: string;
 };
 
 export const AiChatThreadActivityTime = ({
   thread,
   variant = 'default',
+  snoozedUntil,
 }: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
@@ -30,9 +33,14 @@ export const AiChatThreadActivityTime = ({
     agentChatThreadInboxStatusFamilySelector,
     thread.id,
   );
-  const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
+  const { formatAgentChatThreadDay, formatAgentChatThreadWakeTime } =
+    useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
+    if (isDefined(snoozedUntil)) {
+      return formatAgentChatThreadWakeTime(new Date(snoozedUntil));
+    }
+
     switch (event?.type) {
       case 'SNOOZED': {
         const snoozedUntilDay = formatAgentChatThreadDay(new Date(event.at));

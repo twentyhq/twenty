@@ -1,6 +1,7 @@
 import { createStore } from 'jotai';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { agentChatSnoozedThreadListState } from '@/ai/states/agentChatSnoozedThreadListState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -52,6 +53,7 @@ const THREADS: {
     id: 'snoozed-then-active',
     deletedAt: null,
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
+    pendingQuestionMessageId: 'question',
     participant: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
@@ -188,6 +190,11 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
       ),
     ),
   );
+  store.set(agentChatSnoozedThreadListState.atom, {
+    threadIds: THREADS.map(({ id }) => id),
+    hasNextPage: false,
+    endCursor: null,
+  });
   store.set(agentChatThreadFilterStatusState.atom, filterStatus);
 
   return store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id);
@@ -200,7 +207,6 @@ describe('agentChatVisibleThreadsSelector', () => {
       [
         'read',
         'archived-then-active',
-        'snoozed-then-active',
         'unread',
         'snooze-ended',
         'needs-input',
@@ -209,7 +215,10 @@ describe('agentChatVisibleThreadsSelector', () => {
     ],
     [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT, ['needs-input']],
     [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS, ['mentioned']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
+    [
+      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      ['snoozed-then-active', 'snoozed'],
+    ],
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
       ['archived', 'done-needs-input', 'unsubscribed-then-active'],

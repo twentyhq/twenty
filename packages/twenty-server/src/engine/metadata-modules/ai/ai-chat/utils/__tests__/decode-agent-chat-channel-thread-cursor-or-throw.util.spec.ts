@@ -6,8 +6,8 @@ const THREAD_ID = '20202020-463f-435b-828c-107e007a2711';
 
 describe('decodeAgentChatChannelThreadCursorOrThrow', () => {
   it.each([
-    { lastActivityAt: '2026-10-06T21:33:04.123456Z', id: THREAD_ID },
-    { lastActivityAt: null, id: THREAD_ID },
+    { sortAt: '2026-10-06T21:33:04.123456Z', id: THREAD_ID },
+    { sortAt: null, id: THREAD_ID },
   ])('reads back the cursor it was given', (cursor) => {
     expect(
       decodeAgentChatChannelThreadCursorOrThrow(

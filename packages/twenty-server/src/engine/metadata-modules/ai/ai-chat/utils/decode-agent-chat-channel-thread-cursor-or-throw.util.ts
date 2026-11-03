@@ -8,11 +8,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { tryParseJsonArray } from 'src/utils/try-parse-json-array';
 
-const LAST_ACTIVITY_AT_PATTERN =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/;
+const SORT_AT_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/;
 
 const AGENT_CHAT_CHANNEL_THREAD_CURSOR_SCHEMA = z.tuple([
-  z.string().regex(LAST_ACTIVITY_AT_PATTERN).nullable(),
+  z.string().regex(SORT_AT_PATTERN).nullable(),
   z.string().refine(isValidUuid),
 ]);
 
@@ -30,7 +29,7 @@ export const decodeAgentChatChannelThreadCursorOrThrow = (
     );
   }
 
-  const [lastActivityAt, id] = result.data;
+  const [sortAt, id] = result.data;
 
-  return { lastActivityAt, id };
+  return { sortAt, id };
 };

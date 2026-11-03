@@ -6,10 +6,12 @@ import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { getAgentChatChannelThreadSortAt } from '@/ai/utils/getAgentChatChannelThreadSortAt';
+import { isAgentChatThreadWithinPageBoundary } from '@/ai/utils/isAgentChatThreadWithinPageBoundary';
 import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
 // Chats past the loaded pages wait for them, so the list has no gaps
 export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
@@ -53,18 +55,32 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
       return threads;
     }
 
-    const { lastLoadedActivityAt } = channelThreadList;
+    const { lastLoadedSortAt, lastLoadedThreadId } = channelThreadList;
 
-    if (!isDefined(lastLoadedActivityAt)) {
+    if (!isDefined(lastLoadedSortAt) || !isDefined(lastLoadedThreadId)) {
       return threads;
     }
 
-    const lastLoadedActivityTime = new Date(lastLoadedActivityAt).getTime();
+    const isSnoozedView =
+      channelView.channelStatus === AgentChatChannelThreadStatus.SNOOZED;
 
-    return threads.filter(
-      (thread) =>
-        new Date(getAgentChatThreadLastActivityAt(thread)).getTime() >=
-        lastLoadedActivityTime,
-    );
+    return threads.filter((thread) => {
+      const sortAt = getAgentChatChannelThreadSortAt({
+        thread,
+        channelStatus: channelView.channelStatus,
+      });
+
+      if (!isDefined(sortAt)) {
+        return false;
+      }
+
+      return isAgentChatThreadWithinPageBoundary({
+        threadId: thread.id,
+        sortAt,
+        boundaryThreadId: lastLoadedThreadId,
+        boundarySortAt: lastLoadedSortAt,
+        isAscending: isSnoozedView,
+      });
+    });
   },
 });

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { type AgentChatInboxAction } from 'twenty-shared/ai';
+import { type AgentChatInboxAction as SharedAgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -21,10 +21,12 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { type AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
+import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
@@ -129,7 +131,7 @@ const runThreadMutation = (
   );
 
 const runInboxAction = (
-  action: AgentChatInboxAction,
+  action: SharedAgentChatInboxAction,
   threadId: string,
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   snoozedUntil: string | null = null,
@@ -1321,6 +1323,35 @@ describe('Chat channels through the authenticated API', () => {
       snoozedUntil: expect.anything(),
     });
 
+    const personalOpenCount = await getOpenThreadCount();
+
+    await simulateNewMessageActivity(threadId);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
+      [threadId, randomUUID()],
+    );
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).deliverToInbox({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: JANE,
+      threadId,
+    });
+
+    expect(
+      (await findChannelThreadIds(channelId, { status: 'SNOOZED' })).threadIds,
+    ).toEqual([threadId]);
+    expect(
+      (await findChannelThreadIds(channelId, { status: 'OPEN' })).threadIds,
+    ).toEqual([]);
+    expect(
+      (await getChannelSummaries()).find(
+        (summary) => summary.channelId === channelId,
+      ),
+    ).toMatchObject({ openCount: 0, snoozedCount: 1 });
+    expect(await getOpenThreadCount()).toBe(personalOpenCount);
+    expect((await readMemberCopy(threadId, JANE))?.archivedAt).not.toBeNull();
+
     const snoozedUntil = new Date(Date.now() - 1000);
 
     await global.testDataSource.query(
@@ -1355,6 +1386,89 @@ describe('Chat channels through the authenticated API', () => {
     expect(channelState.channelSnoozedUntil?.getTime()).toBe(
       snoozedUntil.getTime(),
     );
+  });
+
+  it('wakes only the recipient personal copy for mentions, assignment and an assignee reply', async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+    const threadService = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    );
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const snoozedUntil = new Date(buildFutureSnoozedUntil());
+    const actor = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: JANE,
+      threadId,
+    };
+    const snoozeRecipient = () =>
+      participantService.updateInboxState({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: JONY,
+        threadIds: [threadId],
+        action: AgentChatInboxAction.SNOOZE,
+        snoozedUntil,
+      });
+
+    await threadService.mentionParticipants({
+      ...actor,
+      participantWorkspaceMemberIds: [JONY],
+    });
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
+        query: SNOOZE_IN_CHANNEL,
+        variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
+      }),
+    );
+    await snoozeRecipient();
+
+    const channelBefore = await readChannelState(threadId);
+    const ownerBefore = await readMemberCopy(threadId, JANE);
+
+    await threadService.mentionParticipants({
+      ...actor,
+      participantWorkspaceMemberIds: [JONY],
+    });
+
+    expect(await readMemberCopy(threadId, JONY)).toMatchObject({
+      archivedAt: null,
+      snoozedUntil: null,
+    });
+    expect(await readChannelState(threadId)).toEqual(channelBefore);
+    expect(await readMemberCopy(threadId, JANE)).toEqual(ownerBefore);
+
+    await snoozeRecipient();
+    await threadService.assign({
+      ...actor,
+      assigneeWorkspaceMemberId: JONY,
+    });
+
+    expect(await readMemberCopy(threadId, JONY)).toMatchObject({
+      archivedAt: null,
+      snoozedUntil: null,
+    });
+    expect(await readChannelState(threadId)).toEqual(channelBefore);
+    expect(await readMemberCopy(threadId, JANE)).toEqual(ownerBefore);
+
+    await snoozeRecipient();
+    await threadService.notifyThreadActivityUpdated({
+      ...actor,
+      workspaceMemberId: JONY,
+      text: 'I will handle it',
+    });
+
+    expect(await readMemberCopy(threadId, JONY)).toMatchObject({
+      archivedAt: null,
+      snoozedUntil: null,
+    });
+    expect(await readChannelState(threadId)).toEqual(channelBefore);
+    expect(await readMemberCopy(threadId, JANE)).toEqual(ownerBefore);
+    expect(
+      (await findChannelThreadIds(channelId, { status: 'SNOOZED' })).threadIds,
+    ).toEqual([threadId]);
   });
 
   it('moves a chat between channels and back out, starting it open', async () => {
@@ -2054,6 +2168,51 @@ describe('Chat channels through the authenticated API', () => {
         (threadId) => ![channelThreadId, ownThreadId].includes(threadId),
       ),
     );
+  });
+
+  it('pages snoozed channel chats by their wake deadline before their activity', async () => {
+    const channelId = await createChannel();
+    const earlierThreadId = await createThreadInChannel(channelId);
+    const laterThreadId = await createThreadInChannel(channelId);
+    const earlierWakeAt = new Date(Date.now() + 30_000).toISOString();
+    const laterWakeAt = new Date(Date.now() + 60_000).toISOString();
+
+    for (const { threadId, snoozedUntil } of [
+      { threadId: earlierThreadId, snoozedUntil: earlierWakeAt },
+      { threadId: laterThreadId, snoozedUntil: laterWakeAt },
+    ]) {
+      assertGraphQLSuccessfulResponse(
+        await makeMetadataApiRequest({
+          query: SNOOZE_IN_CHANNEL,
+          variables: { threadId, snoozedUntil },
+        }),
+      );
+    }
+    await simulateNewMessageActivity(laterThreadId);
+
+    const firstPage = await findChannelThreadIds(
+      channelId,
+      { status: 'SNOOZED' },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      { first: 1 },
+    );
+
+    expect(firstPage).toMatchObject({
+      threadIds: [earlierThreadId],
+      hasNextPage: true,
+    });
+
+    const secondPage = await findChannelThreadIds(
+      channelId,
+      { status: 'SNOOZED' },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      { first: 1, after: firstPage.endCursor! },
+    );
+
+    expect(secondPage).toMatchObject({
+      threadIds: [laterThreadId],
+      hasNextPage: false,
+    });
   });
 
   it('pages a channel by last activity', async () => {

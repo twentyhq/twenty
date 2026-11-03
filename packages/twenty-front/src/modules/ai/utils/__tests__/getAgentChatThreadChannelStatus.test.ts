@@ -32,12 +32,22 @@ describe('getAgentChatThreadChannelStatus', () => {
     ).toBe(AgentChatChannelThreadStatus.SNOOZED);
   });
 
-  it('should reopen on activity after it was filed', () => {
+  it('keeps the shared snooze when new activity arrives', () => {
     expect(
       getAgentChatThreadChannelStatus({
         lastActivityAt: '2026-01-03T00:00:00.000Z',
         channelArchivedAt: '2026-01-02T00:00:00.000Z',
         channelSnoozedUntil: '2026-01-05T00:00:00.000Z',
+      }),
+    ).toBe(AgentChatChannelThreadStatus.SNOOZED);
+  });
+
+  it('reopens a done shared copy when new activity arrives', () => {
+    expect(
+      getAgentChatThreadChannelStatus({
+        lastActivityAt: '2026-01-03T00:00:00.000Z',
+        channelArchivedAt: '2026-01-02T00:00:00.000Z',
+        channelSnoozedUntil: null,
       }),
     ).toBe(AgentChatChannelThreadStatus.OPEN);
   });

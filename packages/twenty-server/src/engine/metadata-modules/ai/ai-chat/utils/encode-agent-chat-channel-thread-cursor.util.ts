@@ -3,7 +3,6 @@ import { type AgentChatChannelThreadCursor } from 'src/engine/metadata-modules/a
 export const encodeAgentChatChannelThreadCursor = (
   cursor: AgentChatChannelThreadCursor,
 ): string =>
-  Buffer.from(
-    JSON.stringify([cursor.lastActivityAt, cursor.id]),
-    'utf8',
-  ).toString('base64url');
+  Buffer.from(JSON.stringify([cursor.sortAt, cursor.id]), 'utf8').toString(
+    'base64url',
+  );

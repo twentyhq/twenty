@@ -3,6 +3,8 @@ import { atom, createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { agentChatSnoozedThreadListState } from '@/ai/states/agentChatSnoozedThreadListState';
+import { agentChatThreadListRefreshCountState } from '@/ai/states/agentChatThreadListRefreshCountState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
@@ -27,9 +29,19 @@ const chatObjectMetadataItemAtom = atom<unknown>({
   readableFields: [{ name: 'title' }],
 });
 
+const participantObjectMetadataItemAtom = atom<unknown>({
+  id: 'participant-object',
+  nameSingular: 'agentChatThreadParticipant',
+  namePlural: 'agentChatThreadParticipants',
+  readableFields: [{ name: 'threadId' }, { name: 'snoozedUntil' }],
+});
+
 jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   objectMetadataItemFamilySelector: {
-    selectorFamily: () => chatObjectMetadataItemAtom,
+    selectorFamily: ({ objectName }: { objectName: string }) =>
+      objectName === 'agentChatThreadParticipant'
+        ? participantObjectMetadataItemAtom
+        : chatObjectMetadataItemAtom,
   },
 }));
 
@@ -128,6 +140,7 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
+    expect(store.get(agentChatThreadListRefreshCountState.atom)).toBe(1);
   });
 
   it("keeps the member's own inbox state from the page, and newer streamed rows", async () => {
@@ -230,6 +243,145 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)[0]).not.toHaveProperty(
       'participants',
     );
+  });
+
+  it('pages personal snoozes by deadline independently of global activity and inaccessible targets', async () => {
+    const store = buildStore();
+    const globalList = {
+      threadIds: ['recent-global-thread'],
+      hasNextPage: true,
+      endCursor: 'global-page',
+    };
+    const buildParticipant = ({
+      threadId,
+      snoozedUntil,
+    }: {
+      threadId: string;
+      snoozedUntil: string;
+    }) => ({
+      id: `${threadId}-member-id`,
+      threadId,
+      workspaceMemberId: 'member-id',
+      snoozedUntil,
+      archivedAt: '2026-11-03T10:00:00.000Z',
+      isSubscribed: true,
+      updatedAt: '2026-11-03T10:00:00.000Z',
+    });
+    const buildParticipantPage = ({
+      threadIds,
+      hasNextPage,
+      endCursor,
+    }: {
+      threadIds: string[];
+      hasNextPage: boolean;
+      endCursor: string | null;
+    }) => ({
+      data: {
+        agentChatThreadParticipants: {
+          edges: threadIds.map((threadId, index) => ({
+            node: buildParticipant({
+              threadId,
+              snoozedUntil:
+                threadId === 'next-snoozed-thread'
+                  ? '2026-11-05T09:00:00.000Z'
+                  : `2026-11-04T${index === 0 ? '09' : '15'}:00:00.000Z`,
+            }),
+            cursor: threadId,
+          })),
+          pageInfo: { hasNextPage, endCursor },
+        },
+      },
+    });
+
+    store.set(currentWorkspaceMemberState.atom, { id: 'member-id' } as never);
+    store.set(agentChatThreadListState.atom, globalList);
+    queryMock
+      .mockResolvedValueOnce(
+        buildParticipantPage({
+          threadIds: ['inaccessible'],
+          hasNextPage: true,
+          endCursor: 'inaccessible-page',
+        }),
+      )
+      .mockResolvedValueOnce(buildPage([]))
+      .mockResolvedValueOnce(
+        buildParticipantPage({
+          threadIds: ['earliest-old-activity', 'later-new-activity'],
+          hasNextPage: true,
+          endCursor: 'snoozed-page',
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([
+          buildThread('later-new-activity', 'Later'),
+          buildThread('earliest-old-activity', 'Earliest'),
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildParticipantPage({
+          threadIds: ['next-snoozed-thread'],
+          hasNextPage: false,
+          endCursor: null,
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildThread('next-snoozed-thread', 'Next')]),
+      );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatSnoozedThreads();
+    });
+
+    expect(queryMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          filter: {
+            workspaceMemberId: { eq: 'member-id' },
+            isSubscribed: { eq: true },
+            archivedAt: { is: 'NOT_NULL' },
+            snoozedUntil: { is: 'NOT_NULL' },
+          },
+          orderBy: [
+            { snoozedUntil: 'AscNullsLast' },
+            { threadId: 'DescNullsLast' },
+          ],
+          lastCursor: null,
+        }),
+      }),
+    );
+    expect(store.get(agentChatSnoozedThreadListState.atom)).toEqual({
+      threadIds: ['earliest-old-activity', 'later-new-activity'],
+      hasNextPage: true,
+      endCursor: 'snoozed-page',
+      lastLoadedSortAt: '2026-11-04T15:00:00.000Z',
+      lastLoadedThreadId: 'later-new-activity',
+    });
+
+    await act(async () => {
+      await result.current.fetchMoreAgentChatSnoozedThreads();
+    });
+
+    expect(queryMock).toHaveBeenNthCalledWith(
+      5,
+      expect.objectContaining({
+        variables: expect.objectContaining({ lastCursor: 'snoozed-page' }),
+      }),
+    );
+    expect(store.get(agentChatSnoozedThreadListState.atom)).toEqual({
+      threadIds: [
+        'earliest-old-activity',
+        'later-new-activity',
+        'next-snoozed-thread',
+      ],
+      hasNextPage: false,
+      endCursor: null,
+      lastLoadedSortAt: '2026-11-05T09:00:00.000Z',
+      lastLoadedThreadId: 'next-snoozed-thread',
+    });
+    expect(store.get(agentChatThreadListState.atom)).toBe(globalList);
+    expect(store.get(agentChatThreadListRefreshCountState.atom)).toBe(0);
   });
 
   it('appends the next page after the loaded chats', async () => {

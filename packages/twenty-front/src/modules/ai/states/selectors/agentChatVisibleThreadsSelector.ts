@@ -1,3 +1,5 @@
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { agentChatSnoozedThreadsSelector } from '@/ai/states/selectors/agentChatSnoozedThreadsSelector';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
@@ -11,6 +13,10 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
   key: 'agentChatVisibleThreadsSelector',
   get: ({ get }) => {
     const filterStatus = get(agentChatThreadFilterStatusState);
+
+    if (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED) {
+      return get(agentChatSnoozedThreadsSelector);
+    }
 
     return get(agentChatRecentThreadsSelector).filter((thread) =>
       isAgentChatThreadInFilterStatus({

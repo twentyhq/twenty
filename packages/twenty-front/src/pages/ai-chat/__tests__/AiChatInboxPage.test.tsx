@@ -113,6 +113,10 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+jest.mock('@/ai/components/AgentChatSnoozedThreadsLoadEffect', () => ({
+  AgentChatSnoozedThreadsLoadEffect: () => null,
+}));
+
 jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
   AgentChatChannelThreadsLoadEffect: () => null,
 }));

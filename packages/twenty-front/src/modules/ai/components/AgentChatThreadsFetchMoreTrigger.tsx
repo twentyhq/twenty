@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { agentChatSnoozedThreadListState } from '@/ai/states/agentChatSnoozedThreadListState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -12,18 +13,33 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-export const AgentChatThreadsFetchMoreTrigger = () => {
+type AgentChatThreadsFetchMoreTriggerProps = {
+  isSnoozed?: boolean;
+};
+
+export const AgentChatThreadsFetchMoreTrigger = ({
+  isSnoozed = false,
+}: AgentChatThreadsFetchMoreTriggerProps) => {
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const agentChatSnoozedThreadList = useAtomStateValue(
+    agentChatSnoozedThreadListState,
+  );
+  const activeThreadList = isSnoozed
+    ? agentChatSnoozedThreadList
+    : agentChatThreadList;
+  const { fetchMoreAgentChatThreads, fetchMoreAgentChatSnoozedThreads } =
+    useRefreshAgentChatThreads();
   const { ref } = useInView({
     onChange: (inView) => {
       if (inView) {
-        void fetchMoreAgentChatThreads();
+        void (isSnoozed
+          ? fetchMoreAgentChatSnoozedThreads()
+          : fetchMoreAgentChatThreads());
       }
     },
   });
 
-  if (!isDefined(agentChatThreadList) || !agentChatThreadList.hasNextPage) {
+  if (!isDefined(activeThreadList) || !activeThreadList.hasNextPage) {
     return null;
   }
 

@@ -61,7 +61,8 @@ describe('agentChatChannelVisibleThreadsSelector', () => {
       threadIds: ['recent', 'older'],
       hasNextPage: true,
       endCursor: 'cursor',
-      lastLoadedActivityAt: '2026-10-01T10:00:00.000Z',
+      lastLoadedSortAt: '2026-10-01T10:00:00.000Z',
+      lastLoadedThreadId: 'older',
     });
 
     expect(
@@ -69,5 +70,64 @@ describe('agentChatChannelVisibleThreadsSelector', () => {
         .get(agentChatChannelVisibleThreadsSelector.atom)
         .map(({ id }) => id),
     ).toEqual(['recent', 'older']);
+  });
+
+  it('keeps the snoozed page boundary on wake dates despite newer activity', () => {
+    const store = createStore();
+    const snoozedView = {
+      ...CHANNEL_VIEW,
+      channelStatus: AgentChatChannelThreadStatus.SNOOZED,
+    };
+    const threads = [
+      {
+        ...buildThread({
+          id: 'later-page',
+          lastActivityAt: '2026-11-03T12:00:00.000Z',
+        }),
+        channelArchivedAt: '2026-11-03T10:00:00.000Z',
+        channelSnoozedUntil: '2026-11-06T09:00:00.000Z',
+      },
+      {
+        ...buildThread({
+          id: 'loaded',
+          lastActivityAt: '2026-11-03T11:00:00.000Z',
+        }),
+        channelArchivedAt: '2026-11-03T10:00:00.000Z',
+        channelSnoozedUntil: '2026-11-05T09:00:00.000Z',
+      },
+      {
+        ...buildThread({
+          id: 'sooner',
+          lastActivityAt: '2026-11-01T09:00:00.000Z',
+        }),
+        channelArchivedAt: '2026-11-03T10:00:00.000Z',
+        channelSnoozedUntil: '2026-11-04T09:00:00.000Z',
+      },
+    ];
+
+    threads.push(
+      ...['alpha', 'zulu'].map((id) => ({
+        ...buildThread({ id, lastActivityAt: '2026-11-03T09:00:00.000Z' }),
+        channelArchivedAt: '2026-11-03T10:00:00.000Z',
+        channelSnoozedUntil: '2026-11-05T09:00:00.000Z',
+      })),
+    );
+
+    store.set(agentChatChannelViewState.atom, snoozedView);
+    setAgentChatThreadList(store, threads);
+    store.set(agentChatChannelThreadListState.atom, {
+      viewKey: getAgentChatChannelViewKey(snoozedView),
+      threadIds: ['loaded'],
+      hasNextPage: true,
+      endCursor: 'cursor',
+      lastLoadedSortAt: '2026-11-05T09:00:00.000Z',
+      lastLoadedThreadId: 'loaded',
+    });
+
+    expect(
+      store
+        .get(agentChatChannelVisibleThreadsSelector.atom)
+        .map(({ id }) => id),
+    ).toEqual(['loaded', 'sooner', 'zulu']);
   });
 });

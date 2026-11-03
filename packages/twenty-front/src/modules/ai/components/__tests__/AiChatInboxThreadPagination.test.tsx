@@ -150,7 +150,8 @@ describe('AiChatInboxThreadPagination', () => {
       threadIds: THREADS.map(({ id }) => id),
       hasNextPage: true,
       endCursor: null,
-      lastLoadedActivityAt: null,
+      lastLoadedSortAt: null,
+      lastLoadedThreadId: null,
     });
 
     renderPagination({ threadId: 'thread-3', hasNextPage: false });

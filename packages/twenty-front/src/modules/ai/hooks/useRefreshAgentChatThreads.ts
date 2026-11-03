@@ -2,6 +2,8 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { agentChatSnoozedThreadListState } from '@/ai/states/agentChatSnoozedThreadListState';
+import { agentChatThreadListRefreshCountState } from '@/ai/states/agentChatThreadListRefreshCountState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
@@ -26,7 +28,16 @@ export const useRefreshAgentChatThreads = () => {
     useAddAgentChatThreadParticipants();
 
   const loadAgentChatThreads = useCallback(
-    async (mode: 'refresh' | 'fetch-more') => {
+    async ({
+      mode,
+      isSnoozed = false,
+    }: {
+      mode: 'refresh' | 'fetch-more';
+      isSnoozed?: boolean;
+    }) => {
+      const listAtom = isSnoozed
+        ? agentChatSnoozedThreadListState.atom
+        : agentChatThreadListState.atom;
       const workspaceId = store.get(currentWorkspaceState.atom)?.id;
       const userWorkspace = store.get(currentUserWorkspaceState.atom);
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -36,12 +47,12 @@ export const useRefreshAgentChatThreads = () => {
         store.get(currentUserWorkspaceState.atom) === userWorkspace;
 
       for (let attempt = 0; attempt < 2; attempt++) {
-        const listBeforeRequest = store.get(agentChatThreadListState.atom);
+        const listBeforeRequest = store.get(listAtom);
         const updateCountBeforeRequest = store.get(
           agentChatThreadRecordUpdateCountState.atom,
         );
         const hasChangedSinceRequest = () =>
-          store.get(agentChatThreadListState.atom) !== listBeforeRequest ||
+          store.get(listAtom) !== listBeforeRequest ||
           store.get(agentChatThreadRecordUpdateCountState.atom) !==
             updateCountBeforeRequest;
 
@@ -50,6 +61,7 @@ export const useRefreshAgentChatThreads = () => {
         }
 
         const page = await fetchAgentChatThreadsPage({
+          isSnoozed,
           lastCursor:
             mode === 'fetch-more'
               ? (listBeforeRequest?.endCursor ?? null)
@@ -84,7 +96,7 @@ export const useRefreshAgentChatThreads = () => {
         const previousThreadIds =
           mode === 'fetch-more' ? (listBeforeRequest?.threadIds ?? []) : [];
 
-        store.set(agentChatThreadListState.atom, {
+        store.set(listAtom, {
           threadIds: [
             ...previousThreadIds,
             ...pageThreadIds.filter(
@@ -93,7 +105,18 @@ export const useRefreshAgentChatThreads = () => {
           ],
           hasNextPage: page.hasNextPage,
           endCursor: page.endCursor,
+          ...(isSnoozed && {
+            lastLoadedSortAt: page.lastLoadedSortAt,
+            lastLoadedThreadId: page.lastLoadedThreadId,
+          }),
         });
+
+        if (mode === 'refresh' && !isSnoozed) {
+          store.set(
+            agentChatThreadListRefreshCountState.atom,
+            (refreshCount) => refreshCount + 1,
+          );
+        }
 
         return page.threads;
       }
@@ -110,12 +133,22 @@ export const useRefreshAgentChatThreads = () => {
   );
 
   const refreshAgentChatThreads = useCallback(
-    () => loadAgentChatThreads('refresh'),
+    () => loadAgentChatThreads({ mode: 'refresh' }),
     [loadAgentChatThreads],
   );
 
   const fetchMoreAgentChatThreads = useCallback(
-    () => loadAgentChatThreads('fetch-more'),
+    () => loadAgentChatThreads({ mode: 'fetch-more' }),
+    [loadAgentChatThreads],
+  );
+
+  const refreshAgentChatSnoozedThreads = useCallback(
+    () => loadAgentChatThreads({ mode: 'refresh', isSnoozed: true }),
+    [loadAgentChatThreads],
+  );
+
+  const fetchMoreAgentChatSnoozedThreads = useCallback(
+    () => loadAgentChatThreads({ mode: 'fetch-more', isSnoozed: true }),
     [loadAgentChatThreads],
   );
 
@@ -179,6 +212,8 @@ export const useRefreshAgentChatThreads = () => {
   return {
     refreshAgentChatThreads,
     fetchMoreAgentChatThreads,
+    refreshAgentChatSnoozedThreads,
+    fetchMoreAgentChatSnoozedThreads,
     loadAgentChatThread,
   };
 };
