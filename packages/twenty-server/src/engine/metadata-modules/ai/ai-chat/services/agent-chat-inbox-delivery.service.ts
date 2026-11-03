@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { AgentChatInboxDeliveryWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery-writer.service';
+import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-reason.type';
@@ -22,11 +22,11 @@ export class AgentChatInboxDeliveryService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
-    private readonly deliveryWriterService: AgentChatInboxDeliveryWriterService,
+    private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
-  async deliver({
+  async deliverMessageToInboxes({
     messageId,
     mentionedWorkspaceMemberIds,
     initialRecipientWorkspaceMemberIds,
@@ -41,7 +41,7 @@ export class AgentChatInboxDeliveryService {
 
     if (isNonEmptyArray(mentionedWorkspaceMemberIds)) {
       try {
-        deliveredMentionWorkspaceMemberIds = await this.addMembers({
+        deliveredMentionWorkspaceMemberIds = await this.deliverThreadToMemberInboxes({
           ...access,
           workspaceMemberIds: mentionedWorkspaceMemberIds,
           reason: 'mention',
@@ -66,7 +66,7 @@ export class AgentChatInboxDeliveryService {
 
     if (isNonEmptyArray(remainingInitialRecipientWorkspaceMemberIds)) {
       try {
-        deliveredRecipientWorkspaceMemberIds = await this.addMembers({
+        deliveredRecipientWorkspaceMemberIds = await this.deliverThreadToMemberInboxes({
           ...access,
           workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
           reason: 'recipient',
@@ -95,7 +95,7 @@ export class AgentChatInboxDeliveryService {
     };
   }
 
-  async addMembers({
+  async deliverThreadToMemberInboxes({
     workspaceMemberIds,
     reason,
     ...access
@@ -111,28 +111,28 @@ export class AgentChatInboxDeliveryService {
       ...access,
       operationType: 'update',
     });
-    const candidateMemberIds = [...new Set(workspaceMemberIds)].filter(
-      (memberId) => memberId !== access.workspaceMemberId,
+    const candidateWorkspaceMemberIds = [...new Set(workspaceMemberIds)].filter(
+      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
     );
 
-    if (!isNonEmptyArray(candidateMemberIds)) {
+    if (!isNonEmptyArray(candidateWorkspaceMemberIds)) {
       return [];
     }
 
-    const deliveredMemberIds = await this.sharingService.shareThreadWithMembers(
+    const deliveredWorkspaceMemberIds = await this.sharingService.shareThreadWithMembers(
       {
         ...access,
-        memberIds: candidateMemberIds,
+        memberIds: candidateWorkspaceMemberIds,
       },
     );
 
-    if (!isNonEmptyArray(deliveredMemberIds)) {
-      return deliveredMemberIds;
+    if (!isNonEmptyArray(deliveredWorkspaceMemberIds)) {
+      return deliveredWorkspaceMemberIds;
     }
 
-    await this.deliveryWriterService.write({
+    await this.inboxParticipantWriterService.writeParticipantInboxState({
       ...access,
-      workspaceMemberIds: deliveredMemberIds,
+      workspaceMemberIds: deliveredWorkspaceMemberIds,
       reason,
     });
 
@@ -148,7 +148,7 @@ export class AgentChatInboxDeliveryService {
                  AND member_id IS DISTINCT FROM "workspaceMemberId"::text
              )
            WHERE id = $1`,
-          [access.threadId, deliveredMemberIds],
+          [access.threadId, deliveredWorkspaceMemberIds],
         ),
     );
 
@@ -157,6 +157,6 @@ export class AgentChatInboxDeliveryService {
       threadBefore: thread,
     });
 
-    return deliveredMemberIds;
+    return deliveredWorkspaceMemberIds;
   }
 }

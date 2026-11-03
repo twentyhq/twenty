@@ -27,11 +27,11 @@ export class AgentChatAssistantParticipationService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
-  async resolve({
+  async resolveAssistantParticipation({
     workspaceId,
     workspaceMemberId,
     thread,
-    isInitialMessage: initialMessage,
+    isInitialMessage: providedIsInitialMessage,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     recipientWorkspaceMemberIds = [],
@@ -45,12 +45,12 @@ export class AgentChatAssistantParticipationService {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
     const isInitialMessage =
-      initialMessage ??
+      providedIsInitialMessage ??
       !(await this.messageRepository.existsBy(workspaceId, {
         threadId: thread.id,
         role: Not(AgentMessageRole.SYSTEM),
       }));
-    const candidateWorkspaceMemberIds =
+    const eligibleWorkspaceMemberIds =
       await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
         workspaceId,
         workspaceMemberId,
@@ -60,22 +60,23 @@ export class AgentChatAssistantParticipationService {
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
         ],
       });
-    const isAssistantParticipant = await this.assistantPolicyService.resolve({
-      workspaceId,
-      thread,
-      candidateWorkspaceMemberIds: [
-        workspaceMemberId,
-        ...candidateWorkspaceMemberIds,
-      ],
-      isAssistantMentioned,
-      isInitialAssistantParticipant,
-      isInitialMessage,
-    });
+    const isAssistantParticipant =
+      await this.assistantPolicyService.resolveAssistantMessageDecision({
+        workspaceId,
+        thread,
+        candidateWorkspaceMemberIds: [
+          workspaceMemberId,
+          ...eligibleWorkspaceMemberIds,
+        ],
+        isAssistantMentioned,
+        isInitialAssistantParticipant,
+        isInitialMessage,
+      });
 
     return { isAssistantParticipant, isInitialMessage };
   }
 
-  async save({
+  async persistAssistantParticipation({
     workspaceId,
     thread,
     participation,
@@ -97,7 +98,9 @@ export class AgentChatAssistantParticipationService {
       return;
     }
 
-    const write = async (transactionScope: AgentHistoryTransactionScope) => {
+    const persistParticipationWithinTransaction = async (
+      transactionScope: AgentHistoryTransactionScope,
+    ) => {
       const updatedThreadCount = await transactionScope.update(
         'agentChatThread',
         {
@@ -118,11 +121,14 @@ export class AgentChatAssistantParticipationService {
     };
 
     if (isDefined(scope)) {
-      await write(scope);
+      await persistParticipationWithinTransaction(scope);
 
       return;
     }
 
-    await this.conversationWriterService.runInTransaction(workspaceId, write);
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      persistParticipationWithinTransaction,
+    );
   }
 }

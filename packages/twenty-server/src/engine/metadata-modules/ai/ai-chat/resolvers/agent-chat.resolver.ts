@@ -145,7 +145,7 @@ export class AgentChatResolver {
     })
     recipientWorkspaceMemberIds?: string[] | null,
   ): Promise<SendChatMessageResultDTO> {
-    const result = await this.memberMessageSenderService.send({
+    const result = await this.memberMessageSenderService.sendMemberMessage({
       actor: { workspaceId: workspace.id, workspaceMemberId, userWorkspaceId },
       target: { threadId, channelId: channelId ?? undefined },
       message: {

@@ -325,7 +325,7 @@ export class AgentInboxService {
     }
 
     const deliveredWorkspaceMemberIds =
-      await this.inboxDeliveryService.addMembers({
+      await this.inboxDeliveryService.deliverThreadToMemberInboxes({
         workspaceId,
         threadId: thread.id,
         workspaceMemberId: thread.workspaceMemberId,

@@ -43,7 +43,7 @@ describe('Chat participation through the authenticated API', () => {
   });
 
   const addJonyAsParticipant = (threadId: string) =>
-    context.inboxDeliveryService.addMembers({
+    context.inboxDeliveryService.deliverThreadToMemberInboxes({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       threadId,

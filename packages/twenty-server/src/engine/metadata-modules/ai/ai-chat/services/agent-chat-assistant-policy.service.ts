@@ -33,7 +33,7 @@ export class AgentChatAssistantPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  async resolve({
+  async resolveAssistantMessageDecision({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],
@@ -55,20 +55,20 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const audience = await this.resolveAudience({
+    const chatAudience = await this.resolveChatAudience({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
     });
-    const mode =
-      audience === 'direct-message'
+    const workspaceAssistantMode =
+      chatAudience === 'direct-message'
         ? (workspace.aiChatDirectMessageAssistantMode ??
           AiChatAssistantMode.MENTION_ONLY)
         : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
 
     return resolveAgentChatAssistantParticipation({
-      mode,
-      audience,
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
       isAssistantParticipant: thread.isAssistantParticipant,
       isAssistantMentioned,
       isInitialAssistantParticipant,
@@ -76,7 +76,7 @@ export class AgentChatAssistantPolicyService {
     });
   }
 
-  private async resolveAudience({
+  private async resolveChatAudience({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
@@ -111,7 +111,7 @@ export class AgentChatAssistantPolicyService {
       return 'conversation';
     }
 
-    const [shares, memberCount] = await Promise.all([
+    const [threadShares, audienceMemberCount] = await Promise.all([
       this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
@@ -127,13 +127,13 @@ export class AgentChatAssistantPolicyService {
         ],
       }),
     ]);
-    const hasSharedAudience = shares.some(
+    const hasSharedAudience = threadShares.some(
       ({ principalType, principalId }) =>
         principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
         principalId !== thread.workspaceMemberId,
     );
 
-    return !hasSharedAudience && memberCount <= 1
+    return !hasSharedAudience && audienceMemberCount <= 1
       ? 'assistant-chat'
       : 'conversation';
   }

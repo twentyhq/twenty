@@ -90,7 +90,7 @@ const addParticipants = ({
 }) =>
   getAppProviderByClassName<AgentChatInboxDeliveryService>(
     'AgentChatInboxDeliveryService',
-  ).addMembers({
+  ).deliverThreadToMemberInboxes({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     workspaceMemberId,
     threadId,
@@ -1327,7 +1327,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
       'AgentChatMemberMessageWriterService',
-    ).write({
+    ).writeMemberMessage({
       actor: {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -1433,7 +1433,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     const queueReply = async (threadId: string) =>
       getAppProviderByClassName<AgentChatMemberMessageWriterService>(
         'AgentChatMemberMessageWriterService',
-      ).write({
+      ).writeMemberMessage({
         actor: {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -1538,7 +1538,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       reason: 'recipient' as const,
     };
 
-    await inboxDeliveryService.addMembers(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -1559,7 +1559,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    await inboxDeliveryService.addMembers(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),

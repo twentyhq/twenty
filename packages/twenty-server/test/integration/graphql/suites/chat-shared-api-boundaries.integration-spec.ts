@@ -160,7 +160,7 @@ describe('Shared conversation API boundaries', () => {
     const queued =
       await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
         'AgentChatMemberMessageWriterService',
-      ).write({
+      ).writeMemberMessage({
         actor: {
           workspaceId: context.workspaceId,
           workspaceMemberId: context.workspaceMemberId,

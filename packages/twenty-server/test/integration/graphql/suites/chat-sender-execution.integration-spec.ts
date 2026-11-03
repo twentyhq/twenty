@@ -64,7 +64,7 @@ describe('Persisted chat senders', () => {
         parts: [{ type: 'text', text: 'Hello' }],
       },
     });
-    const queued = await memberMessageWriter.write({
+    const queued = await memberMessageWriter.writeMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,
@@ -115,7 +115,7 @@ describe('Persisted chat senders', () => {
   });
 
   it('retains the queued sender through promotion and rejects a different executor', async () => {
-    const queued = await memberMessageWriter.write({
+    const queued = await memberMessageWriter.writeMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,
