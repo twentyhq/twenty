@@ -80,6 +80,48 @@ describe('isCoreAgentMatchingFilterSettings', () => {
     ).toBe(false);
   });
 
+  it('should match names exactly and case sensitively with IS', () => {
+    const filterSettings = {
+      stepFilters: [
+        buildNameStepFilter({
+          operand: ViewFilterOperand.IS,
+          value: 'Lead qualifier',
+        }),
+      ],
+    };
+
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: userAgent, filterSettings }),
+    ).toBe(true);
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: systemAgent, filterSettings }),
+    ).toBe(false);
+    expect(
+      isCoreAgentMatchingFilterSettings({
+        agent: buildAgent({ label: 'lead qualifier' }),
+        filterSettings,
+      }),
+    ).toBe(false);
+  });
+
+  it('should leave out the exact name with IS_NOT', () => {
+    const filterSettings = {
+      stepFilters: [
+        buildNameStepFilter({
+          operand: ViewFilterOperand.IS_NOT,
+          value: 'Lead qualifier',
+        }),
+      ],
+    };
+
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: userAgent, filterSettings }),
+    ).toBe(false);
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: systemAgent, filterSettings }),
+    ).toBe(true);
+  });
+
   it('should honor the root logical operator', () => {
     const [systemStepFilter] =
       CORE_AGENTS_DEFAULT_FILTER_SETTINGS.stepFilters ?? [];

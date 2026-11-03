@@ -71,6 +71,7 @@ export const buildRequiredToolAuthContext = async ({
     user: fromUserEntityToFlat(user),
     workspaceMemberId,
     workspaceMember,
+    userSessionVariant: 'standard',
     application: context.application,
     agentId: context.agentId,
   });

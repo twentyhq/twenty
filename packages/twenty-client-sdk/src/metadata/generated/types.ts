@@ -4943,6 +4943,9 @@ export default {
             "isSystem": [
                 4
             ],
+            "isSystemSideEffect": [
+                4
+            ],
             "isUIEditable": [
                 4
             ],

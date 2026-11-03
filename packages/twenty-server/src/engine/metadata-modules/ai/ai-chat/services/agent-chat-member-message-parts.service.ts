@@ -7,6 +7,7 @@ import { In, Like } from 'typeorm';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { type AgentChatMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message.type';
+import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import {
   AiException,
   AiExceptionCode,
@@ -21,7 +22,19 @@ export class AgentChatMemberMessagePartsService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
 
-  async buildMessageParts({
+  async prepareMemberMessage({
+    workspaceId,
+    message,
+  }: {
+    workspaceId: string;
+    message: AgentChatMemberMessage;
+  }): Promise<AgentChatPreparedMemberMessage> {
+    const parts = await this.buildMessageParts({ workspaceId, message });
+
+    return { id: message.id, text: message.text, parts };
+  }
+
+  private async buildMessageParts({
     workspaceId,
     message: { text, attachments },
   }: {

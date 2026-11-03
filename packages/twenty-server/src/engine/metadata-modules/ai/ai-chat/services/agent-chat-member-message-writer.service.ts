@@ -6,14 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
-import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-actor.type';
-import { type AgentChatMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message.type';
+import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -31,7 +30,6 @@ export class AgentChatMemberMessageWriterService {
     private readonly threadParticipantService: AgentChatThreadParticipantService,
     private readonly assistantParticipationService: AgentChatAssistantParticipationService,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
   ) {}
@@ -46,7 +44,7 @@ export class AgentChatMemberMessageWriterService {
   }: {
     actor: AgentChatMemberMessageActor;
     thread: AgentChatThreadWorkspaceEntity;
-    message: AgentChatMemberMessage;
+    message: AgentChatPreparedMemberMessage;
     placement: AgentChatMemberMessagePlacement;
     participation?: Pick<
       AgentChatAssistantParticipation,
@@ -59,12 +57,6 @@ export class AgentChatMemberMessageWriterService {
       workspaceMemberId: actor.workspaceMemberId,
       threadId: thread.id,
     };
-    const messageParts = await this.memberMessagePartsService.buildMessageParts(
-      {
-        workspaceId: actor.workspaceId,
-        message,
-      },
-    );
     const persistedMessage =
       await this.conversationWriterService.runInTransaction(
         actor.workspaceId,
@@ -90,7 +82,7 @@ export class AgentChatMemberMessageWriterService {
               ...actor,
               threadId: thread.id,
               id: message.id,
-              uiMessage: { role: AgentMessageRole.USER, parts: messageParts },
+              uiMessage: { role: AgentMessageRole.USER, parts: message.parts },
               turnStatus:
                 placement === AgentChatMemberMessagePlacement.RUNNING
                   ? AgentTurnStatus.RUNNING
@@ -113,7 +105,7 @@ export class AgentChatMemberMessageWriterService {
           await transactionScope.insert('agentMessage', queuedMemberMessage);
           await transactionScope.insert(
             'agentMessagePart',
-            mapUIMessagePartsToDBParts(messageParts, queuedMemberMessage.id),
+            mapUIMessagePartsToDBParts(message.parts, queuedMemberMessage.id),
           );
 
           return queuedMemberMessage;

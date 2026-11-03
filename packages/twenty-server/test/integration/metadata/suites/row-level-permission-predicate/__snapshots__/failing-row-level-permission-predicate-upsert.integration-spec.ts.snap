@@ -223,7 +223,7 @@ exports[`Row Level Permission Predicate upsert should fail when the operand is n
           "errors": [
             {
               "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
-              "message": "Operand IS is not supported for field type TEXT",
+              "message": "Operand GREATER_THAN_OR_EQUAL is not supported for field type TEXT",
               "userFriendlyMessage": "This operand is not supported for this field",
             },
           ],

@@ -14,8 +14,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
@@ -27,8 +25,6 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
 import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -60,23 +56,12 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-read-access-policy.constant';
+import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/objects`)
-@UseGuards(
-  JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-)
+@UseGuards(JwtAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ObjectMetadataRestApiExceptionFilter,
@@ -98,6 +83,7 @@ export class ObjectMetadataController {
   ) {}
 
   @Get()
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -137,6 +123,7 @@ export class ObjectMetadataController {
   }
 
   @Get(':id')
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -174,6 +161,7 @@ export class ObjectMetadataController {
   }
 
   @Post()
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   async createOne(
     @Body() input: CreateObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -206,6 +194,7 @@ export class ObjectMetadataController {
   }
 
   @Patch(':id')
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   async updateOnePatch(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateObjectPayload,
@@ -215,6 +204,7 @@ export class ObjectMetadataController {
   }
 
   @Put(':id')
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   async updateOnePut(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateObjectPayload,
@@ -224,6 +214,7 @@ export class ObjectMetadataController {
   }
 
   @Delete(':id')
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   async deleteOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

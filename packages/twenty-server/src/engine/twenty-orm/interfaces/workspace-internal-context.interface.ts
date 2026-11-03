@@ -1,5 +1,8 @@
 import { type DataSource } from 'typeorm';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  type ObjectsPermissionsByRoleId,
+} from 'twenty-shared/types';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
@@ -32,6 +35,7 @@ export interface WorkspaceInternalContext {
   apiKeyRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatApplicationMaps: FlatApplicationCacheMaps;
+  rolesPermissions: ObjectsPermissionsByRoleId;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   recordStock: Pick<
     WorkspaceRecordStockService,

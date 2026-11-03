@@ -20,6 +20,16 @@ const WEBHOOK_TOOL_NAMES = [
   'delete_webhook',
 ];
 
+// GraphQL refuses applications on role writes, and the tools follow the same access policy
+const ROLE_WRITE_TOOL_NAMES = [
+  'create_role',
+  'update_role',
+  'delete_role',
+  'assign_role_to_workspace_member',
+  'upsert_object_permissions',
+  'upsert_row_level_permission_rules',
+];
+
 const executeListWebhooksThroughMcp = (token: string) =>
   callMcpTool({
     toolName: 'execute_tool',
@@ -96,6 +106,29 @@ describe('Tool listings narrow to the delegated application role', () => {
         expect(toolNames.length).toBeGreaterThan(0);
       },
     );
+  });
+
+  describe('the role tools an application is offered', () => {
+    it('should list the roles but offer no role write to an application whose role holds ROLES', async () => {
+      const toolNames = await listDirectModeMcpToolNames({
+        token: delegatedApplications.flaggedApplicationToken,
+      });
+
+      expect(toolNames).toContain('list_roles');
+      expect(
+        toolNames.filter((toolName) =>
+          ROLE_WRITE_TOOL_NAMES.includes(toolName),
+        ),
+      ).toEqual([]);
+    });
+
+    it('should offer every role write to the admin session', async () => {
+      const toolNames = await listDirectModeMcpToolNames({
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(toolNames).toEqual(expect.arrayContaining(ROLE_WRITE_TOOL_NAMES));
+    });
   });
 
   describe('getToolIndex', () => {

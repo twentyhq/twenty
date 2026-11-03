@@ -79,6 +79,29 @@ O aplicație instalată fără acordarea necesară întrerupe captura și afișe
 
 Consultați [Captură media](/ro/developers/extend/apps/layout/front-components#media-capture) pentru comportamentul capturii și indicatorii de înregistrare.
 
+## Acces la conținut media pentru site-uri web încorporate
+
+Setați `requestedIframeMediaPermissions` atunci când o componentă frontală sau un widget de dispunere a paginii `IFRAME` încorporează un site web care necesită microfonul sau camera, cum ar fi un instrument de telefonie sau video. Listați până la 20 de site-uri web, fiecare ca origine HTTPS exactă, cu accesul la microfon și cameră setat separat. Originile trebuie să fie unice, să nu conțină nicio cale sau caracter wildcard și să solicite acces la cel puțin unul dintre microfon sau cameră.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Phone',
+  description: 'Call your contacts from Twenty',
+  requestedIframeMediaPermissions: [
+    { origin: 'https://workspace.aircall.io', microphone: true, camera: false },
+  ],
+});
+```
+
+Site-urile web declarate apar în timpul instalării. Aprobarea necesită un membru al spațiului de lucru care poate gestiona aplicații și se aplică întregului spațiu de lucru, pentru propriile componente frontale și widgeturi iframe ale aplicației. Aprobările de securitate ale spațiului de lucru se aplică numai widgeturilor create în spațiul de lucru. Aplicațiile de dezvoltare sincronizate local primesc site-urile web declarate în manifestul lor. Aceste permisiuni acordate nu înlocuiesc permisiunile browserului sau ale sistemului de operare. Antetele browserului au o limită de dimensiune, astfel încât, dacă site-urile web ale unui spațiu de lucru o depășesc, site-urile web aprobate pentru spațiul de lucru au prioritate, iar site-urile web rămase nu primesc acces la conținut media.
+
+Actualizările aplicațiilor publicate păstrează permisiunile existente și nu acordă automat acces suplimentar la conținut media. Pentru a aproba solicitări noi, un membru care poate gestiona aplicații deschide fila **Generale** a aplicației instalate și selectează **Revizuiește accesul la conținut media** sub **Acces la conținut media pentru site-uri web încorporate**. Această aprobare utilizează o confirmare nativă a browserului care afișează aplicația, originile site-urilor web și accesul solicitat la microfon sau cameră. După aprobare, reîncărcați filele Twenty deschise pentru a aplica permisiunile actualizate.
+
+Consultați [Site-uri web încorporate cu acces la conținut media](/ro/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) pentru cerințele iframe.
+
 ## Tipuri de variabile
 
 Atât `applicationVariables`, cât și `serverVariables` acceptă un câmp opțional `type` (și, pentru `SELECT` / `MULTI_SELECT`, o listă `options`). Tipuri acceptate: `TEXT` (implicit), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.

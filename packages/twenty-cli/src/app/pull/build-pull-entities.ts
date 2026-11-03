@@ -48,6 +48,7 @@ export const PULL_ENTITY_KINDS = [
   'workflow',
   'skill',
   'agent',
+  'validationRule',
   'relatedRecordPath',
 ] as const;
 
@@ -199,6 +200,27 @@ export const buildPullEntities = ({
         fieldLocationByUniversalIdentifier,
       }),
       parentName: objectName,
+    });
+  }
+
+  for (const validationRuleManifest of manifest.validationRules ?? []) {
+    entities.push({
+      kind: 'validationRule',
+      universalIdentifier: validationRuleManifest.universalIdentifier,
+      definer: 'defineValidationRule',
+      config: validationRuleManifest,
+      enumBindings: [],
+      defaultFolder: 'src/validation-rules',
+      fileSuffix: '.validation-rule.ts',
+      fileBaseName: toFileBaseName({
+        segments: [validationRuleManifest.name],
+        universalIdentifier: validationRuleManifest.universalIdentifier,
+      }),
+      parentName: getObjectNameForPullFile({
+        objectUniversalIdentifier:
+          validationRuleManifest.objectUniversalIdentifier,
+        manifest,
+      }),
     });
   }
 
