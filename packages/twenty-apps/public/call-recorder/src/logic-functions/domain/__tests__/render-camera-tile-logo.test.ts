@@ -30,10 +30,24 @@ describe('renderCameraTileLogo', () => {
     vi.restoreAllMocks();
   });
 
-  it('fills the plate with a wide logo and clips it to the rounded corners', async () => {
+  it('covers the plate with the center of a wide logo and clips it to the rounded corners', async () => {
     const wideLogo = await sharp({
-      create: { width: 400, height: 150, channels: 3, background: '#000' },
+      create: { width: 400, height: 150, channels: 3, background: '#f00' },
     })
+      .composite([
+        {
+          input: {
+            create: {
+              width: 200,
+              height: 150,
+              channels: 3,
+              background: '#000',
+            },
+          },
+          left: 100,
+          top: 0,
+        },
+      ])
       .png()
       .toBuffer();
 
@@ -52,6 +66,8 @@ describe('renderCameraTileLogo', () => {
       hasAlpha: true,
     });
     expect(await readPixel({ image, x: 100, y: 5 })).toEqual([0, 0, 0, 255]);
+    expect(await readPixel({ image, x: 10, y: 100 })).toEqual([0, 0, 0, 255]);
+    expect(await readPixel({ image, x: 190, y: 100 })).toEqual([0, 0, 0, 255]);
     expect((await readPixel({ image, x: 0, y: 0 }))[3]).toBe(0);
   });
 
