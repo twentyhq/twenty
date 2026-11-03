@@ -49,6 +49,28 @@ const convertFlatValidationRule = (
   return isDefined(reason) ? { reason } : { manifest };
 };
 
+// Deleting a field keeps its binding and turns the rule off, but the pulled expression would not compile
+const getDeletedBoundFieldReason = ({
+  flatValidationRule,
+  allFlatEntityMaps,
+}: {
+  flatValidationRule: FlatValidationRule;
+  allFlatEntityMaps: AllFlatEntityMaps;
+}): string | undefined => {
+  const deletedFieldPath = Object.entries(flatValidationRule.bindings).find(
+    ([, fieldUniversalIdentifier]) =>
+      !isDefined(
+        allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          fieldUniversalIdentifier
+        ],
+      ),
+  )?.[0];
+
+  return isDefined(deletedFieldPath)
+    ? `The rule reads the field "${deletedFieldPath}", which no longer exists in this workspace.`
+    : undefined;
+};
+
 export const reconstructValidationRulesManifest = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
@@ -91,6 +113,7 @@ export const reconstructValidationRulesManifest = ({
         resolvableReferenceUniversalIdentifiers:
           resolvableFieldUniversalIdentifiers,
       }) ??
+      getDeletedBoundFieldReason({ flatValidationRule, allFlatEntityMaps }) ??
       ('reason' in conversion ? conversion.reason : undefined);
 
     if (isDefined(reason) || 'reason' in conversion) {
