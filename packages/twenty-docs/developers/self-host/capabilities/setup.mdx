@@ -465,7 +465,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+The Lambda driver uploads each app's dependency layer to `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, a bucket you own in the same region as your functions. When it is not set, the driver uses your storage bucket (`STORAGE_S3_NAME`). If neither is set, logic functions fail with a configuration error.
 
 **To disable logic functions:**
 ```bash

@@ -1205,10 +1205,31 @@ Un punct portocaliu în antetul spațiului de lucru indică o captură activă. 
 
 `getUserMedia()` și `MediaRecorder` rulează prin polyfill-uri sandbox, astfel încât codul standard de înregistrare și `MediaRecorder.isTypeSupported()` funcționează nemodificate după aprobare. Obiectele detaliate de constrângeri sunt acceptate, dar nu sunt transmise mai departe. Gazda realizează captura folosind valorile sale implicite pentru tipurile solicitate. Aplicații diferite pot realiza capturi simultan, iar oprirea unei aplicații afectează doar propriile sesiuni. Fiecare componentă front acceptă câte o captură în așteptare sau activă la un moment dat. Stochează un `Blob` înregistrat cu funcția gazdă `uploadFile`.
 
+### Site-uri web încorporate cu acces la conținut media
+
+Pentru a încorpora un instrument de telefonie sau video, declarați originea HTTPS a acestuia în [`requestedIframeMediaPermissions`](/ro/developers/extend/apps/config/application#embedded-website-media-access) din aplicația dvs., cu accesul la microfon și cameră configurat separat. Instalarea aplicației acordă spațiului de lucru acces pentru aceste site-uri web. Actualizările aplicațiilor publicate păstrează permisiunile existente și nu acordă automat acces suplimentar la conținut media. Aplicațiile de dezvoltare sincronizate local primesc automat site-urile web declarate în manifestul lor. Un membru care poate gestiona aplicații poate aproba solicitări noi din fila **General** a aplicației instalate, în **Acces media pentru site-uri web încorporate** > **Revizuiește accesul media**. Această aprobare utilizează o confirmare nativă a browserului care afișează aplicația, originile site-urilor web și accesul solicitat la microfon sau cameră. Twenty citește site-urile web autorizate când se încarcă o filă, deci reîncărcați filele Twenty deschise după instalare sau aprobare.
+
+Solicitați funcțiile corespunzătoare în iframe:
+
+```tsx
+<iframe
+  title="Aircall phone"
+  src="https://workspace.aircall.io?integration=generic"
+  allow="microphone"
+  width={376}
+  height={666}
+/>
+```
+
+Pentru video, utilizați `allow="microphone; camera"` și declarați ambele pentru origine. Twenty deleagă doar accesul media acordat aplicației dvs. pentru acea origine. Membrii trebuie să selecteze controlul **Activează** al elementului încorporat și să aprobe o confirmare nativă a browserului care afișează aplicația, originea site-ului web și accesul solicitat la microfon sau cameră înainte ca acesta să primească acces la conținut media. Permisiunile browserului și ale sistemului de operare se aplică în continuare. `srcDoc` și elementele încorporate la originea proprie a Twenty nu pot primi această delegare. Widgeturile de aspect de pagină `IFRAME` definite de aplicație utilizează originile autorizate ale aplicației proprietare și același flux de confirmare.
+
+Elementele încorporate activate apar în același indicator din antet ca și capturarea nativă, cu **Acces la microfon activat** sau **Acces la cameră activat**, în loc să indice că înregistrarea este activă. Indicatorul rămâne vizibil cât timp accesul este activat, chiar dacă elementul încorporat este ascuns. **Dezactivează** descarcă iframe-ul și îl reîncarcă cu accesul media blocat. Capturarea aplicației prin `getUserMedia()` continuă să raporteze capturarea efectivă și păstrează propriul control **Oprește**.
+
+Conținutul iframe rămâne izolat într-un sandbox. Elementele externe încorporate cu conținut media aprobate își păstrează propria origine după ce membrul activează accesul, permițând site-ului web să își utilizeze sesiunea și să solicite permisiuni media în browser. Alte iframe-uri ale componentelor front-end păstrează o origine sandbox opacă.
+
 ### Alte lacune
 
 * **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
 * **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/ro/developers/extend/apps/logic/logic-functions). Web Crypto înlocuiește `node:crypto`, iar `fetch`, `TextEncoder` și `URL` sunt de asemenea disponibile, vedeți [domeniul global](#global-scope) — dar nimic nu înlocuiește `fs`: sandboxul nu are sistem de fișiere.
-* **`iframe`** este întotdeauna re-sandboxat fără `allow-same-origin`, astfel încât o încorporare care se bazează pe propria sesiune se afișează ca delogat. Nu are nici `onLoad`.
 
 <PageBanner illustration="card-page-front-components" />

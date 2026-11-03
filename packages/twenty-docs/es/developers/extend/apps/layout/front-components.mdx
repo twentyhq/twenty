@@ -1203,10 +1203,31 @@ Un punto naranja en la cabecera del espacio de trabajo indica una captura activa
 
 `getUserMedia()` y `MediaRecorder` se ejecutan mediante polyfills de sandbox, por lo que el código de grabación estándar y `MediaRecorder.isTypeSupported()` funcionan sin cambios tras la aprobación. Se aceptan objetos de restricciones detallados, pero no se reenvían. El anfitrión captura con sus valores predeterminados para los tipos solicitados. Distintas aplicaciones pueden capturar simultáneamente, y detener una aplicación afecta solo a sus propias sesiones. Cada componente frontal admite una captura pendiente o activa a la vez. Almacena un `Blob` grabado con la función host `uploadFile`.
 
+### Sitios web incrustados con acceso a medios
+
+Para incrustar una herramienta de teléfono o video, declare su origen HTTPS en [`requestedIframeMediaPermissions`](/es/developers/extend/apps/config/application#embedded-website-media-access) de su aplicación, con el acceso al micrófono y a la cámara configurados por separado. La instalación de la aplicación concede estos sitios web al espacio de trabajo. Las actualizaciones de las aplicaciones publicadas conservan las concesiones existentes y no conceden automáticamente acceso adicional a medios. Las aplicaciones de desarrollo sincronizadas localmente reciben automáticamente los sitios web declarados en su manifiesto. Un miembro que puede administrar aplicaciones puede aprobar nuevas solicitudes desde la pestaña **General** de la aplicación instalada, en **Acceso a medios de sitios web incrustados** > **Revisar acceso a medios**. Esta aprobación utiliza una confirmación nativa del navegador que muestra la aplicación, los orígenes de los sitios web y el acceso solicitado al micrófono o la cámara. Twenty lee los sitios web autorizados cuando se carga una pestaña, por lo que debe recargar las pestañas abiertas de Twenty después de la instalación o aprobación.
+
+Solicite las funciones correspondientes en el iframe:
+
+```tsx
+<iframe
+  title="Aircall phone"
+  src="https://workspace.aircall.io?integration=generic"
+  allow="microphone"
+  width={376}
+  height={666}
+/>
+```
+
+Para video, use `allow="microphone; camera"` y declare ambos para el origen. Twenty solo delega los medios concedidos a su aplicación para ese origen. Los miembros deben seleccionar el control **Habilitar** de la incrustación y aprobar una confirmación nativa del navegador que muestre la aplicación, el origen del sitio web y el acceso solicitado al micrófono o la cámara antes de que reciba acceso a medios. Los permisos del navegador y del sistema operativo siguen aplicándose. `srcDoc` y las incrustaciones en el propio origen de Twenty no pueden recibir esta delegación. Los widgets de diseño de página `IFRAME` definidos por la aplicación usan los orígenes concedidos de su aplicación propietaria y el mismo flujo de confirmación.
+
+Las incrustaciones habilitadas aparecen en el mismo indicador de encabezado que la captura nativa, con **Acceso al micrófono habilitado** o **Acceso a la cámara habilitado** en lugar de afirmar que la grabación está activa. El indicador permanece visible mientras el acceso está habilitado, incluso si la incrustación está oculta. **Deshabilitar** descarga el iframe y lo vuelve a cargar con los medios bloqueados. La captura de la aplicación mediante `getUserMedia()` sigue informando la captura real y conserva su propio control **Detener**.
+
+El contenido del iframe permanece aislado. Las incrustaciones de medios externos aprobadas conservan su propio origen después de que el miembro habilita el acceso, lo que permite al sitio web usar su sesión y solicitar permisos de medios del navegador. Otros iframes de componentes de interfaz conservan un origen de aislamiento opaco.
+
 ### Otras carencias
 
 * **Cargas útiles de arrastrar y soltar.** Los eventos de arrastre se disparan, pero `event.dataTransfer` es `undefined`.
 * **Integraciones nativas de Node.** `fs`, `path` y `node:crypto` hacen que la compilación falle, así que mueve ese trabajo a una [función de lógica](/es/developers/extend/apps/logic/logic-functions). Web Crypto reemplaza a `node:crypto`, y `fetch`, `TextEncoder` y `URL` también están disponibles; consulta el [ámbito global](#global-scope), pero nada reemplaza a `fs`: el entorno aislado no tiene sistema de archivos.
-* **`iframe`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.
 
 <PageBanner illustration="card-page-front-components" />

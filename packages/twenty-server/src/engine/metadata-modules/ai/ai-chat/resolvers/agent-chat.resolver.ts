@@ -1,7 +1,6 @@
 import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
@@ -24,7 +23,6 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
@@ -45,20 +43,23 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [PermissionFlagType.AI],
   }),
-  SettingsPermissionGuard(PermissionFlagType.AI),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
@@ -167,7 +168,7 @@ export class AgentChatResolver {
 
     return {
       messageId: result.messageId,
-      queued: result.queued,
+      queued: result.isQueued,
       streamId: result.streamId,
       mentionedParticipantWorkspaceMemberIds:
         result.delivery.deliveredMentionWorkspaceMemberIds,

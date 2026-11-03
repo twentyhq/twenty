@@ -1,6 +1,7 @@
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -100,22 +101,21 @@ describe('Assistant reply selection with stored conversation participants', () =
     threadId: string;
     assistantReplyContext: AgentChatAssistantReplyContext;
   }) => {
-    const savedMessage =
-      await context.memberMessageWriterService.writeMemberMessage({
-        actor: {
-          workspaceId: context.workspaceId,
-          workspaceMemberId: context.workspaceMemberId,
-          userWorkspaceId: context.userWorkspaceId,
-        },
-        thread: await context.threadService.getWritableThread({
-          threadId,
-          workspaceId: context.workspaceId,
-          workspaceMemberId: context.workspaceMemberId,
-        }),
-        message: { text: 'Continue the task with this answer.' },
-        placement: AgentChatMemberMessagePlacement.COMPLETED,
-        assistantReplyContext,
-      });
+    const savedMessage = await writeChatMemberMessage({
+      actor: {
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        userWorkspaceId: context.userWorkspaceId,
+      },
+      thread: await context.threadService.getWritableThread({
+        threadId,
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+      }),
+      message: { text: 'Continue the task with this answer.' },
+      placement: AgentChatMemberMessagePlacement.COMPLETED,
+      assistantReplyContext,
+    });
 
     return { messageId: savedMessage.id };
   };

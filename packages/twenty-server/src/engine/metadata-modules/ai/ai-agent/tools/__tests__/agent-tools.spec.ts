@@ -6,6 +6,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
@@ -17,6 +18,7 @@ import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -50,6 +52,11 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
+  authContext: {
+    type: 'user',
+    workspace: { id: workspaceId },
+    userSessionVariant: 'standard',
+  } as UserWorkspaceAuthContext,
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,
@@ -130,7 +137,10 @@ const buildAgentTools = (options?: {
       getProviders: () =>
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
-    permissionsService as unknown as PermissionsService,
+    new AccessPolicyService(
+      permissionsService as unknown as PermissionsService,
+      featureFlagService as unknown as FeatureFlagService,
+    ),
     featureFlagService as unknown as FeatureFlagService,
   );
 
@@ -179,7 +189,6 @@ describe('Agent tools', () => {
       const { listToolNames, permissionsService } = buildAgentTools();
 
       await expect(listToolNames()).resolves.toHaveLength(4);
-      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
       expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
         authContext: context.authContext,
         setting: PermissionFlagType.AI_SETTINGS,

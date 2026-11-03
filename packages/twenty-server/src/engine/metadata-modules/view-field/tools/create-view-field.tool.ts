@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
@@ -8,11 +7,12 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { createViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/create-view-field-input.schema';
 import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 
 @DefineTool({
   name: 'create_view_field',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
   description:
     'Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_field_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.',
 })

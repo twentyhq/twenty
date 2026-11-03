@@ -1,3 +1,4 @@
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
@@ -10,7 +11,6 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
-import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -29,7 +29,6 @@ const otherUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JONY;
 describe('Persisted chat senders', () => {
   let chat: AgentChatService;
   let queue: AgentChatQueueService;
-  let memberMessageWriter: AgentChatMemberMessageWriterService;
   let actors: AgentChatActorService;
   const threadId = randomUUID();
   beforeAll(async () => {
@@ -37,10 +36,6 @@ describe('Persisted chat senders', () => {
     queue = getAppProviderByClassName<AgentChatQueueService>(
       'AgentChatQueueService',
     );
-    memberMessageWriter =
-      getAppProviderByClassName<AgentChatMemberMessageWriterService>(
-        'AgentChatMemberMessageWriterService',
-      );
     actors = getAppProviderByClassName<AgentChatActorService>(
       'AgentChatActorService',
     );
@@ -65,7 +60,7 @@ describe('Persisted chat senders', () => {
         parts: [{ type: 'text', text: 'Hello' }],
       },
     });
-    const queued = await memberMessageWriter.writeMemberMessage({
+    const queued = await writeChatMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,
@@ -116,7 +111,7 @@ describe('Persisted chat senders', () => {
   });
 
   it('retains the queued sender through promotion and rejects a different executor', async () => {
-    const queued = await memberMessageWriter.writeMemberMessage({
+    const queued = await writeChatMemberMessage({
       actor: { workspaceId, userWorkspaceId, workspaceMemberId },
       thread: await getAgentChatThreadService().getWritableThread({
         workspaceId,

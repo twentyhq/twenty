@@ -8,6 +8,11 @@ const AUTH_GUARD_NAMES = [
 
 const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';
 
+const ACCESS_POLICY_GUARD_NAME = 'AccessPolicyGuard';
+
+// A named constant when several entry points share the operation, else an inline policy
+const ACCESS_POLICY_CONSTANT_NAME_PATTERN = /^[A-Z][A-Z0-9_]*_ACCESS_POLICY$/;
+
 // They put the principal on the request, which AuthPrincipalGuard then reads.
 export const AUTHENTICATING_GUARD_NAMES = ['JwtAuthGuard', 'McpAuthGuard'];
 
@@ -33,6 +38,19 @@ const isAuthPrincipalGuardCall = (node: any): boolean =>
   node.type === 'CallExpression' &&
   node.callee.type === 'Identifier' &&
   node.callee.name === AUTH_PRINCIPAL_GUARD_NAME;
+
+const isAccessPolicyGuardCall = (node: any): boolean =>
+  node.type === 'CallExpression' &&
+  node.callee.type === 'Identifier' &&
+  node.callee.name === ACCESS_POLICY_GUARD_NAME;
+
+const isAccessPolicyConstant = (node: any): boolean =>
+  node.type === 'Identifier' &&
+  ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.name);
+
+// Both guards check the principal, so the guards after them only run once it is known
+const isPrincipalCheckingGuardCall = (node: any): boolean =>
+  isAuthPrincipalGuardCall(node) || isAccessPolicyGuardCall(node);
 
 const isBooleanLiteral = (node: any): boolean =>
   node.type === 'Literal' && typeof node.value === 'boolean';
@@ -64,6 +82,30 @@ const getPropertyValue = (objectNode: any, propertyName: string): any =>
   objectNode.properties.find(
     (property: any) => getPropertyName(property) === propertyName,
   )?.value;
+
+const isArrayWithoutSpread = (node: any): boolean =>
+  node.type === 'ArrayExpression' &&
+  node.elements.every((element: any) => element?.type !== 'SpreadElement');
+
+const isInlineAccessPolicy = (node: any): boolean =>
+  node.type === 'ObjectExpression' &&
+  node.properties.every(
+    (property: any) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      !property.shorthand &&
+      (getPropertyName(property) === 'authPrincipals'
+        ? isInlineAuthPrincipalGuardConfig(property.value)
+        : isArrayWithoutSpread(property.value)),
+  ) &&
+  getPropertyValue(node, 'authPrincipals')?.properties.length > 0 &&
+  getPropertyValue(node, 'requiredPermissionFlags') !== undefined;
+
+const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
+  isAccessPolicyGuardCall(node) &&
+  node.arguments.length === 1 &&
+  (isAccessPolicyConstant(node.arguments[0]) ||
+    isInlineAccessPolicy(node.arguments[0]));
 
 const isVariantsConfig = (kindConfig: any): boolean =>
   kindConfig?.type === 'ObjectExpression';
@@ -144,8 +186,18 @@ export const typedTokenHelpers = {
     getUseGuardsArguments(node).some(
       (arg: any) =>
         (arg.type === 'Identifier' && AUTH_GUARD_NAMES.includes(arg.name)) ||
-        isAuthPrincipalGuardWithInlineConfig(arg),
+        isAuthPrincipalGuardWithInlineConfig(arg) ||
+        isAccessPolicyGuardWithPolicy(arg),
     ),
+
+  getAccessPolicyGuardsWithoutPolicy: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(
+      (arg: any) =>
+        isAccessPolicyGuardCall(arg) && !isAccessPolicyGuardWithPolicy(arg),
+    ),
+
+  getAccessPolicyGuards: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(isAccessPolicyGuardCall),
 
   getAuthPrincipalGuardsWithoutInlineConfig: (node: any): any[] =>
     getUseGuardsArguments(node).filter(
@@ -158,7 +210,7 @@ export const typedTokenHelpers = {
     getUseGuardsArgumentLists(node).flatMap((guardArguments) =>
       guardArguments.filter(
         (arg: any, index: number) =>
-          isAuthPrincipalGuardCall(arg) &&
+          isPrincipalCheckingGuardCall(arg) &&
           !isPlacedFirst(guardArguments, index),
       ),
     ),
@@ -180,6 +232,9 @@ export const typedTokenHelpers = {
         decorator.expression.callee.name === 'UseGuards'
       ) {
         return decorator.expression.arguments.some((arg: any) => {
+          if (isAccessPolicyGuardWithPolicy(arg)) {
+            return true;
+          }
           if (arg.type === 'CallExpression') {
             const callee = arg.callee;
             if (callee.type === 'Identifier') {

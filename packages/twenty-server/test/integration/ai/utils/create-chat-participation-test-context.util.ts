@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { type AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { type AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
-import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -74,10 +73,6 @@ export const createChatParticipationTestContext = async () => {
   const assistantParticipationService =
     getAppProviderByClassName<AgentChatAssistantParticipationService>(
       'AgentChatAssistantParticipationService',
-    );
-  const memberMessageWriterService =
-    getAppProviderByClassName<AgentChatMemberMessageWriterService>(
-      'AgentChatMemberMessageWriterService',
     );
   const chatService =
     getAppProviderByClassName<AgentChatService>('AgentChatService');
@@ -278,7 +273,6 @@ export const createChatParticipationTestContext = async () => {
     threadService,
     inboxDeliveryService,
     assistantParticipationService,
-    memberMessageWriterService,
     chatService,
     sharingService,
     replyPolicyService,
