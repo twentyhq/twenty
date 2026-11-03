@@ -3,8 +3,8 @@ import { getNonReadableViewFieldSubTitle } from '@/object-record/record-index/ut
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;
@@ -18,6 +18,7 @@ type RecordIndexEmptyStateNotSharedProps = {
 export const RecordIndexEmptyStateNotShared = ({
   nonReadableViewFieldInfo,
 }: RecordIndexEmptyStateNotSharedProps) => {
+  const { t } = useLingui();
   return (
     <StyledEmptyPlaceholderOuterContainer>
       <EmptyState.Root>

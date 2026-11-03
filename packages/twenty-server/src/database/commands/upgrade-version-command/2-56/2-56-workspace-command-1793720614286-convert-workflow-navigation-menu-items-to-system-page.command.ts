@@ -56,7 +56,7 @@ const DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
       )
   )`;
 
-@RegisteredWorkspaceCommand('2.56.0', 1793717128388)
+@RegisteredWorkspaceCommand('2.56.0', 1793720614286)
 @Command({
   name: 'upgrade:2-56:convert-workflow-navigation-menu-items-to-system-page',
   description:

@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
@@ -16,6 +15,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -99,6 +99,7 @@ export const PageHeader = ({
   children,
   className,
 }: PageHeaderProps) => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();

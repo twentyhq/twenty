@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconCheck, IconX } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
+
 const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`
@@ -18,6 +19,7 @@ const StyledContainer = styled.div`
 `;
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
+  const { t } = useLingui();
   if (value === null || value === undefined) {
     return <StyledContainer />;
   }

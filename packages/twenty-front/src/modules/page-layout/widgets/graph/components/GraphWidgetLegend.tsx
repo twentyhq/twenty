@@ -11,13 +11,13 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -136,6 +136,7 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
