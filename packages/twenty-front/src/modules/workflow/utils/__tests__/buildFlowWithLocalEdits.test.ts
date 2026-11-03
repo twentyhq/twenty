@@ -85,6 +85,27 @@ describe('buildFlowWithLocalEdits', () => {
     ]);
   });
 
+  it('keeps a local step whose code moved inline', () => {
+    const inlineLocalStep: WorkflowCodeAction = {
+      ...buildStep({ id: 'a', name: 'local a' }),
+      settings: {
+        ...buildStep({ id: 'a', name: 'local a' }).settings,
+        input: {
+          code: 'export const main = async () => ({});',
+          logicFunctionInput: {},
+        },
+      },
+    };
+
+    expect(
+      buildFlowWithLocalEdits({
+        serverFlow,
+        localFlow: { ...localFlow, steps: [inlineLocalStep] },
+        localFlowKeys: ['a'],
+      }).steps,
+    ).toEqual([inlineLocalStep, buildStep({ id: 'b', name: 'server b' })]);
+  });
+
   it('returns the server flow when nothing is edited locally', () => {
     expect(
       buildFlowWithLocalEdits({ serverFlow, localFlow, localFlowKeys: [] }),
