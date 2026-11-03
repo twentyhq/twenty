@@ -10,7 +10,7 @@ export const serverAdminActionSchema = z.strictObject({
     operation: z.string(),
     operationType: z.enum(['query', 'mutation']),
     outcome: z.enum(['success', 'failure']),
-    targetIds: z.record(z.string(), z.string()),
+    targetIds: z.record(z.string(), z.union([z.string(), z.array(z.string())])),
   }),
 });
 

@@ -1352,10 +1352,21 @@ const createSettingsRouteElements = ({
 
     {isAdminPageEnabled &&
       (isAdminConsoleEnabled ? (
-        <Route
-          path={`${SettingsPath.AdminPanel}/*`}
-          element={<SettingsAdminConsoleLink />}
-        />
+        <>
+          <Route
+            path={`${SettingsPath.AdminPanel}/*`}
+            element={<SettingsAdminConsoleLink />}
+          />
+          <Route
+            path={SettingsPath.Enterprise}
+            element={
+              <Navigate
+                to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                replace
+              />
+            }
+          />
+        </>
       ) : (
         createSettingsAdminRouteElements()
       ))}

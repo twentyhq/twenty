@@ -1,5 +1,9 @@
+import { Logger } from '@nestjs/common';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JWTVerifyGetKey, jwtVerify } from 'jose';
+
+const logger = new Logger('CloudflareAccessAssertion');
 
 export const verifyCloudflareAccessAssertion = async ({
   assertion,
@@ -27,7 +31,11 @@ export const verifyCloudflareAccessAssertion = async ({
     return isNonEmptyString(payload.email)
       ? payload.email.toLowerCase()
       : undefined;
-  } catch {
+  } catch (error) {
+    logger.warn(
+      `Cloudflare Access assertion rejected: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
     return undefined;
   }
 };

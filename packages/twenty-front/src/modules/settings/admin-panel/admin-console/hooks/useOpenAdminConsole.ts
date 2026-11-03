@@ -36,7 +36,10 @@ export const useOpenAdminConsole = () => {
       'loginToken',
       adminConsoleLoginToken.loginToken,
     );
-    adminConsoleSignInUrl.searchParams.set('returnToPath', location.pathname);
+    adminConsoleSignInUrl.searchParams.set(
+      'returnToPath',
+      `${location.pathname}${location.search}${location.hash}`,
+    );
 
     window.location.assign(adminConsoleSignInUrl.toString());
   };

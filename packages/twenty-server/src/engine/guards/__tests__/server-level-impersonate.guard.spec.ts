@@ -19,15 +19,22 @@ const executionContext = {} as ExecutionContext;
 
 describe('ServerLevelImpersonateGuard', () => {
   it('allows an impersonator whose request passes the server admin access checks', async () => {
-    mockRequest({
+    const serverAdminAccessService = buildServerAdminAccessService(true);
+    const request = {
       user: { canImpersonate: true, email: 'support@example.com' },
-    });
+    };
+
+    mockRequest(request);
 
     await expect(
-      new ServerLevelImpersonateGuard(
-        buildServerAdminAccessService(true),
-      ).canActivate(executionContext),
+      new ServerLevelImpersonateGuard(serverAdminAccessService).canActivate(
+        executionContext,
+      ),
     ).resolves.toBe(true);
+    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith({
+      request,
+      userEmail: 'support@example.com',
+    });
   });
 
   it('applies the server admin access checks to impersonators', async () => {

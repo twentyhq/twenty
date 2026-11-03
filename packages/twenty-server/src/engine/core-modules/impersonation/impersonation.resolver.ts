@@ -66,7 +66,7 @@ export class ImpersonationResolver {
       );
     }
 
-    if (workspaceId !== workspace.id) {
+    if (workspaceId.toLowerCase() !== workspace.id.toLowerCase()) {
       throw new AuthException(
         'Cross-workspace impersonation is only available from the admin panel',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

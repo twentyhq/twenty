@@ -1,9 +1,13 @@
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { isValidElement, type ReactElement } from 'react';
 import { createMemoryRouter, matchRoutes } from 'react-router-dom';
 
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
-import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
+import {
+  createAdminConsoleRouteObjects,
+  createWorkspaceRouteObjects,
+} from '@/app/routing/utils/createWorkspaceRouteObjects';
 import {
   isWorkspaceLocationAvailableOnSurface,
   isWorkspaceLocationExpandableFromSidePanel,
@@ -160,5 +164,53 @@ describe('workspace route objects', () => {
         '/workflow/core-workflow-id',
       ),
     ).toBe(true);
+  });
+});
+
+describe('admin console route objects', () => {
+  const matchedPaths = (pathname: string) =>
+    (matchRoutes(createAdminConsoleRouteObjects(), pathname) ?? []).map(
+      ({ route }) => route.path,
+    );
+
+  it('serves the admin pages under settings', () => {
+    expect(matchedPaths(getSettingsPath(SettingsPath.AdminPanel))).toEqual([
+      SETTINGS_ROOT_PATH,
+      SettingsPath.AdminPanel,
+    ]);
+  });
+
+  it.each([
+    '/',
+    '/objects/companies',
+    getSettingsPath(SettingsPath.ProfilePage),
+  ])('sends %s to the admin panel', (pathname) => {
+    expect(matchedPaths(pathname).at(-1)).toBe(AppPath.NotFoundWildcard);
+  });
+});
+
+describe('workspace settings routes with an admin console', () => {
+  const matchedPaths = (pathname: string) =>
+    (
+      matchRoutes(
+        createWorkspaceRouteObjects({
+          isAdminPageEnabled: true,
+          isAdminConsoleEnabled: true,
+        }),
+        pathname,
+      ) ?? []
+    ).map(({ route }) => route.path);
+
+  it.each([
+    getSettingsPath(SettingsPath.AdminPanel),
+    getSettingsPath(SettingsPath.AdminPanelUserDetail, { userId: 'user-id' }),
+  ])('sends %s to the admin console link', (pathname) => {
+    expect(matchedPaths(pathname).at(-1)).toBe(`${SettingsPath.AdminPanel}/*`);
+  });
+
+  it('keeps the enterprise redirect', () => {
+    expect(matchedPaths(getSettingsPath(SettingsPath.Enterprise)).at(-1)).toBe(
+      SettingsPath.Enterprise,
+    );
   });
 });
