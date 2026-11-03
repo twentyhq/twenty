@@ -331,17 +331,53 @@ const toComparableTokens = (expression: string) =>
     (token) => token.type !== 'whitespace',
   );
 
-// The field-rename side effect rewrote the saved rule, so the manifest still holds the old names
+// The field-rename side effect rewrote the saved rule, so the manifest still holds the old names.
+// Only fields outside the app can be renamed that way: the app names its own fields in the manifest.
 const isSavedExpressionRenamedFromManifest = ({
   manifestExpression,
   existingFlatValidationRule,
+  ownerFlatApplication,
+  existingAllFlatEntityMaps,
 }: {
   manifestExpression: string;
   existingFlatValidationRule: Pick<
     UniversalFlatValidationRule,
     'expression' | 'bindings'
   >;
+  ownerFlatApplication: Pick<FlatApplication, 'id'>;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
 }): boolean => {
+  const isBoundToFieldOutsideApplication = (path: string): boolean => {
+    const boundFieldUniversalIdentifier =
+      existingFlatValidationRule.bindings[path];
+    const boundField = isDefined(boundFieldUniversalIdentifier)
+      ? existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          boundFieldUniversalIdentifier
+        ]
+      : undefined;
+
+    return (
+      isDefined(boundField) &&
+      boundField.applicationId !== ownerFlatApplication.id
+    );
+  };
+
+  const isRenamedPath = (manifestPath: string, savedPath: string): boolean => {
+    const manifestSegments = manifestPath.split('.');
+    const savedSegments = savedPath.split('.');
+
+    return (
+      manifestSegments.length === savedSegments.length &&
+      savedSegments.every(
+        (savedSegment, index) =>
+          savedSegment === manifestSegments[index] ||
+          isBoundToFieldOutsideApplication(
+            savedSegments.slice(0, index + 1).join('.'),
+          ),
+      )
+    );
+  };
+
   const manifestTokens = toComparableTokens(manifestExpression);
   const savedTokens = toComparableTokens(existingFlatValidationRule.expression);
 
@@ -357,7 +393,7 @@ const isSavedExpressionRenamedFromManifest = ({
       return (
         savedToken.text === manifestToken.text ||
         (savedToken.type === 'path' &&
-          isDefined(existingFlatValidationRule.bindings[savedToken.text]))
+          isRenamedPath(manifestToken.text, savedToken.text))
       );
     })
   );
@@ -455,6 +491,8 @@ const resolveCompilationOutcome = ({
     isSavedExpressionRenamedFromManifest({
       manifestExpression: validationRuleManifest.expression,
       existingFlatValidationRule,
+      ownerFlatApplication: fieldLookups.ownerFlatApplication,
+      existingAllFlatEntityMaps: fieldLookups.existingAllFlatEntityMaps,
     })
       ? existingFlatValidationRule.expression
       : validationRuleManifest.expression;

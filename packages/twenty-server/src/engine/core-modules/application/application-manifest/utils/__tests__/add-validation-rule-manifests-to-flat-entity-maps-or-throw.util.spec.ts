@@ -295,6 +295,21 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           }),
         ).toThrow('Unknown field "employees"');
       });
+
+      it('fails when the manifest names a new field in place of one the app owns', () => {
+        const maps = buildRenamedMaps();
+        const employeesField =
+          maps.existingAllFlatEntityMaps.flatFieldMetadataMaps
+            .byUniversalIdentifier.employees;
+
+        maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+          employeesField && {
+            ...employeesField,
+            applicationId: OWNER_APPLICATION.id,
+          };
+
+        expect(() => sync(maps)).toThrow('Unknown field "employees"');
+      });
     });
 
     it('leaves an existing rule inactive when its field left the workspace', () => {
