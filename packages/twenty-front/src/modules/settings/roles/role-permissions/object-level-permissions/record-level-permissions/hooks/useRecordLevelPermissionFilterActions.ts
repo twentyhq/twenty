@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
@@ -27,7 +28,7 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type UseRecordLevelPermissionFilterActionsProps = {
@@ -57,19 +58,20 @@ export const useRecordLevelPermissionFilterActions = ({
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const currentRecordFilters = useAtomComponentStateValue(
+  const store = useStore();
+
+  const currentRecordFiltersCallbackState = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-  );
+  const currentRecordFilterGroupsCallbackState =
+    useAtomComponentStateCallbackState(currentRecordFilterGroupsComponentState);
 
   const getNextChildPosition = (recordFilterGroupId: string) =>
     getLastChildPositionInRecordFilterGroup({
       recordFilterGroupId,
-      recordFilters: currentRecordFilters,
-      recordFilterGroups: currentRecordFilterGroups,
+      recordFilters: store.get(currentRecordFiltersCallbackState),
+      recordFilterGroups: store.get(currentRecordFilterGroupsCallbackState),
     }) + 1;
 
   const getDefaultFieldMetadataItemForRLS = () => {

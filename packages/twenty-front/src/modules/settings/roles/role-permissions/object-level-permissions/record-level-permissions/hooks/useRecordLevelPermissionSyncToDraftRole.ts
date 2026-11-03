@@ -50,7 +50,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         previousPredicateGroups.map((group) => [group.id, group]),
       );
 
-      // Predicates the builder does not edit keep their group chain, even if its rules were removed here
+      // Otherwise removing a group in the builder would orphan relation-backed predicates still pointing at it
       const groupIdsNeededByPredicatesNotManagedByFilters = new Set<string>();
 
       for (const predicate of predicatesNotManagedByFilters) {
