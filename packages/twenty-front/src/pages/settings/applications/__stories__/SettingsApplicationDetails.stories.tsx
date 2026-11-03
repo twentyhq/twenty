@@ -468,7 +468,9 @@ export const MemberHealthCheckReturnsNoWorkspaceBanner: Story = {
     await waitFor(() => expect(saveButton).toBeDisabled());
     expect(updateOneApplicationVariable).toHaveBeenCalledTimes(1);
     expect(canvas.getByDisplayValue('https://new.example.com')).toBeVisible();
-    expect(runApplicationHealthCheck).toHaveBeenCalledTimes(2);
+    await waitFor(() =>
+      expect(runApplicationHealthCheck).toHaveBeenCalledTimes(2),
+    );
     expect(
       canvas.queryByText('Your recorder plan is almost used up'),
     ).not.toBeInTheDocument();

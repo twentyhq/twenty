@@ -44,6 +44,7 @@ const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
   defaultRoleId: null,
   settingsCustomTabFrontComponentId: null,
   healthCheckLogicFunctionId: null,
+  runHealthCheckOnUserPreferences: false,
   availablePackages: {},
   requestedIframeMediaPermissions: [
     {
