@@ -51,6 +51,52 @@ import {
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const BILLING_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.BILLING],
+};
+
+const BILLING_CHECKOUT_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
+
+const BILLING_PLAN_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @MetadataResolver()
 @AllowSuspendedWorkspace()
@@ -71,22 +117,7 @@ export class BillingResolver {
   ) {}
 
   @Query(() => BillingSessionDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async billingPortalSession(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { returnUrlPath, forPaymentMethodUpdate }: BillingSessionInput,
@@ -102,20 +133,7 @@ export class BillingResolver {
 
   @Mutation(() => BillingSessionDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async checkoutSession(
@@ -189,20 +207,7 @@ export class BillingResolver {
 
   @Mutation(() => BillingPaymentIntentDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async createSubscriptionPaymentIntent(
@@ -245,22 +250,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async createBillingPaymentMethodSetupIntent(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingPaymentIntentDTO> {
@@ -270,22 +260,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async switchSubscriptionInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
@@ -304,22 +279,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async switchBillingPlan(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { plan }: BillingSwitchPlanInput,
@@ -339,22 +299,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async cancelSwitchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
     await this.billingSubscriptionUpdateService.cancelSwitchPlan(workspace.id);
 
@@ -371,22 +316,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async cancelSwitchBillingInterval(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
@@ -407,22 +337,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async setResourceCreditSubscriptionPrice(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { priceId }: BillingUpdateSubscriptionItemPriceInput,
@@ -473,20 +388,7 @@ export class BillingResolver {
 
   @Query(() => [BillingPlanDTO])
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async billingPlans(): Promise<BillingPlanDTO[]> {
@@ -499,20 +401,7 @@ export class BillingResolver {
     deprecationReason: 'Use billingPlans instead.',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async listPlans(): Promise<BillingPlanDTO[]> {
@@ -520,22 +409,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingEndTrialPeriodDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingEndTrialPeriodDTO> {
@@ -613,22 +487,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingUpdateDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.BILLING],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
   async cancelSwitchResourceCreditPrice(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {

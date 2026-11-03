@@ -15,6 +15,22 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const EMAILING_DOMAIN_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
 
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
@@ -30,22 +46,7 @@ export class EmailingDomainResolver {
   ) {}
 
   @Mutation(() => EmailingDomainDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_WRITE_ACCESS_POLICY))
   async createEmailingDomain(
     @Args('input') input: CreateEmailingDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -62,22 +63,7 @@ export class EmailingDomainResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_WRITE_ACCESS_POLICY))
   async deleteEmailingDomain(
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -90,22 +76,7 @@ export class EmailingDomainResolver {
   }
 
   @Mutation(() => EmailingDomainDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_WRITE_ACCESS_POLICY))
   async verifyEmailingDomain(
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

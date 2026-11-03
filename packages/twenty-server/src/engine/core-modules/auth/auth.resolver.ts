@@ -123,7 +123,27 @@ import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.d
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
+const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
+
+const AUTH_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 
@@ -650,15 +670,7 @@ export class AuthResolver {
 
   @Query(() => SubdomainAvailabilityDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async checkWorkspaceSubdomainAvailability(
@@ -669,15 +681,7 @@ export class AuthResolver {
 
   @Query(() => WorkspaceCreationDefaultsDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async getWorkspaceCreationDefaults(
@@ -692,15 +696,7 @@ export class AuthResolver {
 
   @Mutation(() => SignUpDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY),
     WorkspaceCreationCaptchaGuard,
     NoPermissionGuard,
   )
@@ -749,15 +745,7 @@ export class AuthResolver {
       'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
@@ -789,15 +777,7 @@ export class AuthResolver {
 
   @Mutation(() => FileUploadTargetDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
@@ -827,15 +807,7 @@ export class AuthResolver {
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
@@ -860,18 +832,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientTokenDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY), NoPermissionGuard)
   async generateTransientToken(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -1159,18 +1120,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY), NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,

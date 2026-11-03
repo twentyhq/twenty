@@ -22,6 +22,37 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
+
+const PROFILE_PICTURE_UPLOAD_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -41,22 +72,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY))
   async uploadWorkspaceLogo(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -79,20 +95,7 @@ export class FileCorePictureResolver {
       'Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(PROFILE_PICTURE_UPLOAD_ACCESS_POLICY),
     UploadProfilePicturePermissionGuard,
   )
   async uploadWorkspaceMemberProfilePicture(
@@ -115,22 +118,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY))
   async completeWorkspaceLogoUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })
@@ -144,20 +132,7 @@ export class FileCorePictureResolver {
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(PROFILE_PICTURE_UPLOAD_ACCESS_POLICY),
     UploadProfilePicturePermissionGuard,
   )
   async completeWorkspaceMemberProfilePictureUpload(

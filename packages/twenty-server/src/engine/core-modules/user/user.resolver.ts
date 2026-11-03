@@ -80,7 +80,17 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
+const USER_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
 
@@ -131,18 +141,7 @@ export class UserResolver {
   }
 
   @Query(() => UserEntity)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY), NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
@@ -422,18 +421,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserWorkspaceEntity)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: true,
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: { withUser: true, withoutUser: false },
-      },
-      requiredPermissionFlags: [],
-    }),
-    CustomPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY), CustomPermissionGuard)
   @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,

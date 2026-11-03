@@ -15,6 +15,22 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const MARKETPLACE_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [],
+};
 
 @MetadataResolver()
 @UseFilters(
@@ -31,22 +47,7 @@ export class MarketplaceResolver {
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(MARKETPLACE_READ_ACCESS_POLICY))
   async findManyMarketplaceApps(
     @Args({
       name: 'universalIdentifiers',
@@ -61,22 +62,7 @@ export class MarketplaceResolver {
   }
 
   @Query(() => MarketplaceAppDetailDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(MARKETPLACE_READ_ACCESS_POLICY))
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {

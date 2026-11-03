@@ -33,6 +33,22 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const WORKSPACE_INVITATION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -76,22 +92,7 @@ export class WorkspaceInvitationResolver {
   }
 
   @Mutation(() => SendInvitationsDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
   async resendWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -142,22 +143,7 @@ export class WorkspaceInvitationResolver {
   }
 
   @Mutation(() => SendInvitationsDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: { withUser: true, withoutUser: false },
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async sendInvitations(
     @Args() sendInviteLinkInput: SendInvitationsInput,

@@ -26,6 +26,22 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const TIMELINE_MESSAGING_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
 
 @ArgsType()
 class GetTimelineThreadsFromObjectRecordArgs {
@@ -112,20 +128,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async getTimelineThreadsFromObjectRecord(
@@ -151,20 +154,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadChannelDTO, { nullable: true })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async getMessageThreadChannel(
@@ -181,20 +171,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadSearchResultDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async searchTimelineThreads(
@@ -216,20 +193,7 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async getTimelineThreadsFromPersonId(
@@ -251,20 +215,7 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async getTimelineThreadsFromCompanyId(
@@ -286,20 +237,7 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async getTimelineThreadsFromOpportunityId(

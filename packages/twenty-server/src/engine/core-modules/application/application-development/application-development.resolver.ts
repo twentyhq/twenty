@@ -36,6 +36,40 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const APPLICATION_DEVELOPMENT_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+};
+
+const APPLICATION_FILE_UPLOAD_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [
+    PermissionFlagType.APPLICATIONS,
+    PermissionFlagType.UPLOAD_FILE,
+  ],
+};
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -49,20 +83,7 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => DevelopmentApplicationDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-    }),
+    AccessPolicyGuard(APPLICATION_DEVELOPMENT_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async createDevelopmentApplication(
@@ -83,20 +104,7 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => WorkspaceMigrationDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
-    }),
+    AccessPolicyGuard(APPLICATION_DEVELOPMENT_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async syncApplication(
@@ -123,23 +131,7 @@ export class ApplicationDevelopmentResolver {
       'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
   })
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.APPLICATIONS,
-        PermissionFlagType.UPLOAD_FILE,
-      ],
-    }),
+    AccessPolicyGuard(APPLICATION_FILE_UPLOAD_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async uploadApplicationFile(
@@ -172,23 +164,7 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CreateApplicationFileUploadsResultDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.APPLICATIONS,
-        PermissionFlagType.UPLOAD_FILE,
-      ],
-    }),
+    AccessPolicyGuard(APPLICATION_FILE_UPLOAD_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async createApplicationFileUploads(
@@ -212,23 +188,7 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CompleteApplicationFileUploadsResultDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [
-        PermissionFlagType.APPLICATIONS,
-        PermissionFlagType.UPLOAD_FILE,
-      ],
-    }),
+    AccessPolicyGuard(APPLICATION_FILE_UPLOAD_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async completeApplicationFileUploads(

@@ -43,6 +43,37 @@ import { TwoFactorAuthenticationRecoveryStatusDTO } from './dto/two-factor-authe
 import { TwoFactorAuthenticationRecoveryTargetInput } from './dto/two-factor-authentication-recovery-target.input';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
+
+const TWO_FACTOR_AUTHENTICATION_RECOVERY_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.SECURITY],
+};
 
 @MetadataResolver()
 @UseFilters(
@@ -177,20 +208,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: false,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY),
     CustomPermissionGuard,
   )
   async deleteTwoFactorAuthenticationMethod(
@@ -230,20 +248,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: false,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [],
-    }),
+    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY),
     NoPermissionGuard,
   )
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
@@ -261,20 +266,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Query(() => TwoFactorAuthenticationRecoveryStatusDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: false,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.SECURITY],
-    }),
+    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_RECOVERY_ACCESS_POLICY),
   )
   async twoFactorAuthenticationRecoveryStatus(
     @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,
@@ -290,20 +282,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => TwoFactorAuthenticationRecoveryCodeDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: false,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.SECURITY],
-    }),
+    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_RECOVERY_ACCESS_POLICY),
   )
   async generateTwoFactorAuthenticationRecoveryCode(
     @Args() { userId, otp }: GenerateTwoFactorAuthenticationRecoveryCodeInput,
@@ -323,20 +302,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: false,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.SECURITY],
-    }),
+    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_RECOVERY_ACCESS_POLICY),
   )
   async revokeTwoFactorAuthenticationRecoveryCode(
     @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,

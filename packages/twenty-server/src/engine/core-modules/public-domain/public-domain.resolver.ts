@@ -28,6 +28,37 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const PUBLIC_DOMAIN_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
+
+const PUBLIC_DOMAIN_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -46,22 +77,7 @@ export class PublicDomainResolver {
   ) {}
 
   @Query(() => [PublicDomainDTO])
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_ACCESS_POLICY))
   async findManyPublicDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO[]> {
@@ -70,20 +86,7 @@ export class PublicDomainResolver {
 
   @Mutation(() => PublicDomainDTO)
   @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
+    AccessPolicyGuard(PUBLIC_DOMAIN_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async createPublicDomain(
@@ -103,22 +106,7 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_WRITE_ACCESS_POLICY))
   async deletePublicDomain(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -132,22 +120,7 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_ACCESS_POLICY))
   async checkPublicDomainValidRecords(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
