@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
+import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 import { AiEvaluationService } from 'src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service';
@@ -41,12 +41,10 @@ export class AgentChatReplyPolicyService {
       AgentChatThreadWorkspaceEntity,
       'id' | 'isAssistantParticipant'
     >;
-    assistantPolicy: Awaited<
-      ReturnType<AgentChatAssistantPolicyService['resolve']>
-    >;
+    assistantPolicy: AgentChatAssistantParticipation['assistantPolicy'];
     workspaceId: string;
     userWorkspaceId: string;
-    isAssistantMentioned?: boolean | null;
+    isAssistantMentioned: boolean;
     text: string;
   }): Promise<boolean> {
     if (!isAiChatInboxEnabled || assistantPolicy.isDirectAssistantChat) {
@@ -60,7 +58,7 @@ export class AgentChatReplyPolicyService {
     const replyDecision = resolveAgentChatReplyDecision({
       ...assistantPolicy,
       isAssistantParticipant: thread.isAssistantParticipant,
-      isAssistantMentioned: isAssistantMentioned ?? false,
+      isAssistantMentioned,
     });
 
     if (replyDecision !== 'EVALUATE') {

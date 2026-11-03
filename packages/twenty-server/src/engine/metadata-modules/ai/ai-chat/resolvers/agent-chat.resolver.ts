@@ -155,6 +155,7 @@ export class AgentChatResolver {
     })
     recipientWorkspaceMemberIds?: string[] | null,
   ): Promise<SendChatMessageResultDTO> {
+    const isAssistantMentionedInMessage = isAssistantMentioned ?? false;
     const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
       workspace.id,
@@ -166,7 +167,7 @@ export class AgentChatResolver {
       workspaceId: workspace.id,
       channelId: channelId ?? undefined,
       shouldApplyAssistantParticipation: !isAiChatInboxEnabled,
-      isAssistantMentioned: isAssistantMentioned ?? false,
+      isAssistantMentioned: isAssistantMentionedInMessage,
       isInitialAssistantParticipant: isAssistantParticipant ?? true,
       recipientWorkspaceMemberIds: recipientWorkspaceMemberIds ?? [],
       mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
@@ -184,7 +185,7 @@ export class AgentChatResolver {
       workspace,
       shouldAssistantReply: shouldAssistantReply ?? true,
       isAiChatInboxEnabled,
-      isAssistantMentioned,
+      isAssistantMentioned: isAssistantMentionedInMessage,
       isInitialAssistantParticipant: isAssistantParticipant ?? true,
       mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
       recipientWorkspaceMemberIds: recipientWorkspaceMemberIds ?? [],
@@ -233,7 +234,7 @@ export class AgentChatResolver {
     workspace: WorkspaceEntity;
     shouldAssistantReply: boolean;
     isAiChatInboxEnabled: boolean;
-    isAssistantMentioned?: boolean | null;
+    isAssistantMentioned: boolean;
     isInitialAssistantParticipant: boolean;
     mentionedWorkspaceMemberIds: string[];
     recipientWorkspaceMemberIds: string[];
@@ -243,7 +244,7 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId: workspace.id,
       isAiChatInboxEnabled,
-      isAssistantMentioned: isAssistantMentioned ?? false,
+      isAssistantMentioned,
       isInitialAssistantParticipant,
       recipientWorkspaceMemberIds,
       mentionedWorkspaceMemberIds,

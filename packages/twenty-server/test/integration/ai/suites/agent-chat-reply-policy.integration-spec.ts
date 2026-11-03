@@ -32,12 +32,13 @@ describe('Assistant reply selection with stored conversation participants', () =
     shouldAssistantReply?: boolean;
     isAiChatInboxEnabled?: boolean;
   }) => {
+    const isAssistantMentionedInMessage = isAssistantMentioned ?? false;
     const { thread, assistantPolicy } =
       await context.threadService.applyAssistantParticipation({
         threadId,
         workspaceId: context.workspaceId,
         workspaceMemberId: context.workspaceMemberId,
-        isAssistantMentioned: isAssistantMentioned ?? false,
+        isAssistantMentioned: isAssistantMentionedInMessage,
       });
 
     return context.replyPolicyService.shouldReply({
@@ -47,7 +48,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantPolicy,
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
-      isAssistantMentioned,
+      isAssistantMentioned: isAssistantMentionedInMessage,
       text: 'Can Ada help with the latest task?',
     });
   };
