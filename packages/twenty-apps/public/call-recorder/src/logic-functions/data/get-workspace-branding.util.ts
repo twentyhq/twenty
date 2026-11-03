@@ -9,17 +9,25 @@ export type WorkspaceBranding = {
 };
 
 const downloadLogo = async (logoUrl: string): Promise<Buffer | undefined> => {
-  const response = await fetchWithTimeout(logoUrl);
+  try {
+    const response = await fetchWithTimeout(logoUrl);
 
-  if (!response.ok) {
+    if (!response.ok) {
+      console.warn(
+        `[call-recorder] failed to download workspace logo: status ${response.status}`,
+      );
+
+      return undefined;
+    }
+
+    return Buffer.from(await response.arrayBuffer());
+  } catch (error) {
     console.warn(
-      `[call-recorder] failed to download workspace logo: status ${response.status}`,
+      `[call-recorder] failed to download workspace logo: ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return undefined;
   }
-
-  return Buffer.from(await response.arrayBuffer());
 };
 
 export const getWorkspaceBranding = async (): Promise<WorkspaceBranding> => {

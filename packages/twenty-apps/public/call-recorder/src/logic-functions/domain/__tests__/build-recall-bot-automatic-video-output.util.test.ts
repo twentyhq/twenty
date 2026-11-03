@@ -144,6 +144,24 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     expect(console.warn).not.toHaveBeenCalled();
   });
 
+  it('keeps the workspace name when the logo download fails', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
+    const assetFetch = fetchMock.getMockImplementation();
+
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url === LOGO_URL) {
+        throw new Error('logo download timed out');
+      }
+
+      return assetFetch?.(url);
+    });
+
+    expect(await buildOutput()).toBeDefined();
+    expect(requestedAssetPaths()).toContain(
+      CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH,
+    );
+  });
+
   it('falls back to the Twenty style when the workspace has neither a logo nor a drawable name', async () => {
     vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
     metadataQueryMock.mockResolvedValue({
