@@ -30,8 +30,11 @@ import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
-import { loadPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/load-permissions-principal-role-maps.util';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import {
+  type PermissionsPrincipalRoleMaps,
+  resolvePermissionsPrincipalsWithRoles,
+} from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -212,7 +215,7 @@ export class PermissionsService {
       : [];
   }
 
-  private async findPrincipalWithRoles(
+  public async findPrincipalWithRoles(
     authContext: WorkspaceAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
     if (!canAuthContextHoldRoles(authContext)) {
@@ -221,11 +224,69 @@ export class PermissionsService {
 
     return resolvePermissionsPrincipalsWithRoles({
       authContext,
-      roleMaps: await loadPermissionsPrincipalRoleMaps({
-        workspaceCacheService: this.workspaceCacheService,
-        authContext,
-      }),
+      roleMaps: await this.loadPrincipalRoleMaps(authContext),
     });
+  }
+
+  private async loadPrincipalRoleMaps(
+    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+  ): Promise<PermissionsPrincipalRoleMaps> {
+    const workspaceId = authContext.workspace.id;
+    const {
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
+    ]);
+
+    return {
+      ...buildPermissionsPrincipalRoleMaps({
+        flatWorkspaceMemberMaps:
+          await this.loadFlatWorkspaceMemberMaps(authContext),
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+        flatApplicationMaps,
+      }),
+      flatRoleTargetMaps: await this.loadFlatRoleTargetMaps(authContext),
+    };
+  }
+
+  private async loadFlatWorkspaceMemberMaps(
+    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+  ) {
+    if (authContext.type !== 'user') {
+      return undefined;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['flatWorkspaceMemberMaps'],
+      );
+
+    return flatWorkspaceMemberMaps;
+  }
+
+  private async loadFlatRoleTargetMaps(
+    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+  ) {
+    if (authContext.type !== 'webhook') {
+      return undefined;
+    }
+
+    const { flatRoleTargetMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['flatRoleTargetMaps'],
+      );
+
+    return flatRoleTargetMaps;
   }
 
   // Like the ORM, a role missing from the cache grants nothing, and every role must grant the flag

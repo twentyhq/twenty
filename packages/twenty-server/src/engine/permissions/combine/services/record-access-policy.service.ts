@@ -16,6 +16,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
@@ -26,9 +27,6 @@ import {
   type PermissionsObjectAccessRequest,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
-import { loadPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/load-permissions-principal-role-maps.util';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
@@ -87,6 +85,7 @@ export class RecordAccessPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   forAuthContext(authContext: WorkspaceAuthContext): ScopedRecordAccessPolicy {
@@ -423,20 +422,10 @@ export class RecordAccessPolicyService {
     );
   }
 
-  private async resolvePrincipalsWithRoles(
+  private resolvePrincipalsWithRoles(
     authContext: WorkspaceAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
-    if (!canAuthContextHoldRoles(authContext)) {
-      return undefined;
-    }
-
-    return resolvePermissionsPrincipalsWithRoles({
-      authContext,
-      roleMaps: await loadPermissionsPrincipalRoleMaps({
-        workspaceCacheService: this.workspaceCacheService,
-        authContext,
-      }),
-    });
+    return this.permissionsService.findPrincipalWithRoles(authContext);
   }
 
   private findPrincipalMetadataMaps(
