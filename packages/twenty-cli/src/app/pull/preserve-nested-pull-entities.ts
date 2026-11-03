@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
+import { getWorkflowCodeStepFolderPath } from '@/app/pull/extract-workflow-code-step-files';
 import {
   type PullEntity,
   type SkippedPullEntity,
@@ -66,6 +67,7 @@ export const preserveNestedPullEntities = ({
   ];
   const skipped: SkippedPullEntity[] = [];
   const skippedPaths = new Set<string>();
+  const skippedCodeStepFolderPaths: string[] = [];
 
   let previousSkippedCount: number;
 
@@ -124,6 +126,13 @@ export const preserveNestedPullEntities = ({
 
       if (isDefined(omittedIdentifier)) {
         skippedPaths.add(change.relativePath);
+
+        if (change.kind === 'workflow') {
+          skippedCodeStepFolderPaths.push(
+            `${getWorkflowCodeStepFolderPath(change.relativePath)}/`,
+          );
+        }
+
         skipped.push({
           kind: change.kind,
           universalIdentifier: change.universalIdentifier,
@@ -133,10 +142,17 @@ export const preserveNestedPullEntities = ({
     }
   } while (skippedPaths.size !== previousSkippedCount);
 
+  // A preserved workflow file still reads its code step files, so they are preserved with it
+  const isPreserved = (relativePath: string) =>
+    skippedPaths.has(relativePath) ||
+    skippedCodeStepFolderPaths.some((folderPath) =>
+      relativePath.startsWith(folderPath),
+    );
+
   return {
-    writes: writes.filter((write) => !skippedPaths.has(write.relativePath)),
+    writes: writes.filter((write) => !isPreserved(write.relativePath)),
     deletions: deletions.filter(
-      (deletion) => !skippedPaths.has(deletion.relativePath),
+      (deletion) => !isPreserved(deletion.relativePath),
     ),
     skipped,
   };

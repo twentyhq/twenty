@@ -26,6 +26,14 @@ const CODE_STEP_SOURCE_IMPORT_STATEMENTS = [
 const getCodeStepFolderName = (workflowRelativePath: string): string =>
   posix.basename(workflowRelativePath).replace(/(\.workflow)?\.tsx?$/, '');
 
+export const getWorkflowCodeStepFolderPath = (
+  workflowRelativePath: string,
+): string =>
+  posix.join(
+    posix.dirname(workflowRelativePath),
+    getCodeStepFolderName(workflowRelativePath),
+  );
+
 const reserveCodeStepFileName = ({
   fileBaseName,
   universalIdentifier,
