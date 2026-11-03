@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -22,15 +23,18 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { type AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { type AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -324,6 +328,116 @@ describe('agent runs that wait (integration)', () => {
       expectToFail: false,
       input: { id: agentId, triggers: [trigger] },
     });
+  });
+
+  it('keeps a triggered run waiting when queued input is blocked and resumes it for a later allowed message', async () => {
+    const context = await createChatParticipationTestContext();
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+      replyingResult,
+    );
+    const queueService = getAppProviderByClassName<AgentChatQueueService>(
+      'AgentChatQueueService',
+    );
+
+    try {
+      await runTrigger();
+
+      const { id: wakeUpId, threadId } = await findSuspensionEventually(
+        'AGENT_TRIGGER',
+        agentId,
+      );
+
+      context.registerThread(threadId);
+
+      const queueMemberMessage = async ({
+        text,
+        isAssistantMentioned,
+      }: {
+        text: string;
+        isAssistantMentioned: boolean;
+      }) => {
+        const streamId = await holdConversation(threadId);
+
+        await queueService.queueMessage({
+          workspaceId,
+          threadId,
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          text,
+          assistantReplyContext: {
+            isAssistantMentioned,
+            isDirectAssistantChat: false,
+            isStructuredRequestContinuation: false,
+          },
+        });
+
+        return streamId;
+      };
+      const blockedMessageText = 'Continue with the queued update';
+      const blockedStreamId = await queueMemberMessage({
+        text: blockedMessageText,
+        isAssistantMentioned: false,
+      });
+
+      await context.setAssistantModes({
+        aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
+      });
+      await releaseConversation(threadId, blockedStreamId);
+
+      await expectEventually(async () => {
+        expect(
+          await queueService.getQueuedMessages({ workspaceId, threadId }),
+        ).toEqual([]);
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'waiting_for_input',
+          'cancelled',
+        ]);
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+      });
+
+      expect(runTurn).toHaveBeenCalledTimes(1);
+      expect(await findWaitCallStatus(threadId)).toBe('pending');
+      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([
+        expect.objectContaining({ id: wakeUpId }),
+      ]);
+      expect(await findUserMessageTexts(threadId)).toContain(
+        blockedMessageText,
+      );
+
+      await context.setAssistantModes({
+        aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+      });
+
+      const allowedStreamId = await queueMemberMessage({
+        text: 'Ada, continue with this update',
+        isAssistantMentioned: true,
+      });
+
+      await releaseConversation(threadId, allowedStreamId);
+
+      await expectEventually(async () => {
+        expect(runTurn).toHaveBeenCalledTimes(2);
+        expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+        expect((await findTurnStatuses(threadId)).at(-1)).toBe('completed');
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+      });
+    } finally {
+      await getAppProviderByClassName<AgentRunSuspensionService>(
+        'AgentRunSuspensionService',
+      ).releaseForCaller({
+        workspaceId,
+        caller: { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } },
+      });
+      await context.cleanup();
+    }
   });
 
   it('starts a runAgent call without waiting when asked not to, its reply landing in its thread', async () => {

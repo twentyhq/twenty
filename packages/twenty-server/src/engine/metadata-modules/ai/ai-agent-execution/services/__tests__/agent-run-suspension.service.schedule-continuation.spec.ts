@@ -48,7 +48,10 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-of-agent-a',
       },
@@ -64,10 +67,31 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
       },
     );
+  });
+
+  it('keeps a resolved wake-up separate from a queued message that policy can reject', async () => {
+    const { service, messageQueueService } = buildService({
+      payload: { runSpec: { agentId: 'agent-a' } },
+    });
+
+    await service.scheduleContinuation(jobData);
+    await service.scheduleContinuation({
+      ...jobData,
+      outcome: { type: 'ANSWERED', answer: { result: {} } },
+    });
+
+    const deduplicationIds = messageQueueService.add.mock.calls.map(
+      ([, , options]) => options.deduplication.id,
+    );
+
+    expect(new Set(deduplicationIds).size).toBe(2);
   });
 });

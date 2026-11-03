@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { randomUUID } from 'node:crypto';
 
@@ -41,6 +41,7 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatReplyContinuationPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-continuation-policy.service';
 import {
   type AgentChatStreamClaim,
   AgentChatStreamRecoveryService,
@@ -76,6 +77,9 @@ type OpenedAgentRunTurn = {
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
+
+  @Inject(AgentChatReplyContinuationPolicyService)
+  private readonly replyContinuationPolicyService: AgentChatReplyContinuationPolicyService;
 
   constructor(
     private readonly agentRunTurnService: AgentRunTurnService,
@@ -380,6 +384,22 @@ export class AgentRunnerService {
             await this.pendingWakeUpService.find({ workspaceId, wakeUpId }),
           )
         ) {
+          return null;
+        }
+
+        if (
+          outcome.type === 'MESSAGE_RECEIVED' &&
+          !(await this.replyContinuationPolicyService.shouldContinue({
+            workspaceId,
+            threadId,
+          }))
+        ) {
+          await this.eventPublisherService.publish({
+            workspaceId,
+            threadId,
+            event: { type: 'stream-ended' },
+          });
+
           return null;
         }
 
