@@ -37,7 +37,9 @@ const workflowEntity = (steps: WorkflowStepManifest[]) => ({
     version: {
       trigger: {
         type: 'MANUAL',
-        nextStepIds: [FORMAT_STEP_UNIVERSAL_IDENTIFIER],
+        nextStepIds: steps
+          .slice(0, 1)
+          .map(({ universalIdentifier }) => universalIdentifier),
       },
       steps,
     },

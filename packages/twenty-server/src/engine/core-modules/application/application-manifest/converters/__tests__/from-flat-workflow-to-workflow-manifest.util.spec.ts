@@ -1405,6 +1405,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step).toMatchObject({ type: 'CODE', input });
+    expect(step.input).not.toHaveProperty('logicFunctionId');
   });
 
   it('exports a step without a position as null', () => {
