@@ -16,6 +16,7 @@ import {
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { ServerAdminAccessService } from 'src/engine/core-modules/server-admin-access/services/server-admin-access.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -35,6 +36,7 @@ export class ClientConfigService {
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
     private maintenanceModeService: MaintenanceModeService,
+    private serverAdminAccessService: ServerAdminAccessService,
   ) {}
 
   private resolveBenchmark(modelConfig: AiModelConfig | undefined): {
@@ -209,7 +211,7 @@ export class ClientConfigService {
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,
       adminConsoleUrl:
-        this.twentyConfigService.get('ADMIN_CONSOLE_URL') ?? null,
+        this.serverAdminAccessService.getAdminConsoleUrl()?.origin ?? null,
       support: {
         supportDriver: supportDriver ? supportDriver : SupportDriver.NONE,
         supportFrontChatId: this.twentyConfigService.get(

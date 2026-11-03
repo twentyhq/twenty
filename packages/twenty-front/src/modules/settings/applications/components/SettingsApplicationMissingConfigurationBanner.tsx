@@ -1,8 +1,8 @@
-import { t } from '@lingui/core/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertCircle } from 'twenty-ui/icon';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { getApplicationVariableDisplayLabel } from '@/settings/applications/utils/getApplicationVariableDisplayLabel';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationMissingConfigurationBannerProps = {
   missingApplicationVariables: Pick<ApplicationVariable, 'key' | 'label'>[];
@@ -13,6 +13,7 @@ export const SettingsApplicationMissingConfigurationBanner = ({
   missingApplicationVariables,
   onConfigure,
 }: SettingsApplicationMissingConfigurationBannerProps) => {
+  const { t } = useLingui();
   const missingLabels = missingApplicationVariables
     .map(getApplicationVariableDisplayLabel)
     .join(', ');

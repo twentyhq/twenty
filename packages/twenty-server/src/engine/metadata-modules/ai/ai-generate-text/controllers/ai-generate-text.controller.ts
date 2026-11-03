@@ -21,8 +21,6 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import {
   AiException,
   AiExceptionCode,
@@ -38,20 +36,24 @@ import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/u
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(
   JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.AI],
   }),
 )
 @UseFilters(
@@ -71,7 +73,6 @@ export class AiGenerateTextController {
   // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
   @Post('generate-text')
   @Header('Deprecation', AI_GENERATE_TEXT_DEPRECATION_HEADER_VALUE)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async handleGenerateText(
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

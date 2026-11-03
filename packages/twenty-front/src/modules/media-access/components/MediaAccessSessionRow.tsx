@@ -1,10 +1,10 @@
 import { type MediaAccessSession } from '@/media-access/types/MediaAccessSession';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMicrophone, IconVideo } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRow = styled.div`
   align-items: center;
@@ -36,6 +36,7 @@ export const MediaAccessSessionRow = ({
 }: {
   sessions: MediaAccessSession[];
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const firstSession = sessions[0];
 

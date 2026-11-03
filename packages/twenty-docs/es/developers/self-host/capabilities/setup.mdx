@@ -475,7 +475,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+El controlador de Lambda carga la capa de dependencias de cada aplicación en `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, un bucket de tu propiedad en la misma región que tus funciones. Cuando no se configura, el controlador usa tu bucket de almacenamiento (`STORAGE_S3_NAME`). Si no se configura ninguno de los dos, las funciones lógicas fallan con un error de configuración.
 
 **Para desactivar las funciones de lógica:**
 

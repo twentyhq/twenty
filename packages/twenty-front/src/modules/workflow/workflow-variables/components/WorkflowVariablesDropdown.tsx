@@ -10,7 +10,6 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -18,6 +17,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;
@@ -52,6 +52,7 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordObjects,
   objectNameSingularsToSelect,
 }: WorkflowVariablesDropdownProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({

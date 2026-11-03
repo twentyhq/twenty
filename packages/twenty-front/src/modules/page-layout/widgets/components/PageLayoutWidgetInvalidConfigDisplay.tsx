@@ -1,10 +1,10 @@
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useLingui } from '@lingui/react/macro';
 
 type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 
@@ -17,6 +17,7 @@ const StyledInvalidConfigContainer = styled.div`
 export const PageLayoutWidgetInvalidConfigDisplay = ({
   error,
 }: PageLayoutWidgetInvalidConfigDisplayProps) => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
   const tooltipId = `widget-invalid-config-tooltip-${widget.id}`;
 

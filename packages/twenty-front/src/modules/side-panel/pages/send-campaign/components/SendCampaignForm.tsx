@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -32,6 +31,7 @@ import { SendCampaignRecipientsCard } from '@/side-panel/pages/send-campaign/com
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -53,6 +53,7 @@ type SendCampaignFormProps = {
 };
 
 export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
+  const { t } = useLingui();
   const isAlreadyScheduled =
     campaign.status === MessageCampaignStatus.SCHEDULED;
   const hasList = isNonEmptyString(campaign.listId);

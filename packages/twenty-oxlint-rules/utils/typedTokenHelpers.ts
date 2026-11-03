@@ -10,7 +10,7 @@ const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';
 
 const ACCESS_POLICY_GUARD_NAME = 'AccessPolicyGuard';
 
-// A named constant, so every entry point of an operation imports the same policy
+// A named constant when several entry points share the operation, else an inline policy
 const ACCESS_POLICY_CONSTANT_NAME_PATTERN = /^[A-Z][A-Z0-9_]*_ACCESS_POLICY$/;
 
 // They put the principal on the request, which AuthPrincipalGuard then reads.
@@ -44,11 +44,9 @@ const isAccessPolicyGuardCall = (node: any): boolean =>
   node.callee.type === 'Identifier' &&
   node.callee.name === ACCESS_POLICY_GUARD_NAME;
 
-const isAccessPolicyGuardWithPolicyConstant = (node: any): boolean =>
-  isAccessPolicyGuardCall(node) &&
-  node.arguments.length === 1 &&
-  node.arguments[0].type === 'Identifier' &&
-  ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.arguments[0].name);
+const isAccessPolicyConstant = (node: any): boolean =>
+  node.type === 'Identifier' &&
+  ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.name);
 
 // Both guards check the principal, so the guards after them only run once it is known
 const isPrincipalCheckingGuardCall = (node: any): boolean =>
@@ -84,6 +82,30 @@ const getPropertyValue = (objectNode: any, propertyName: string): any =>
   objectNode.properties.find(
     (property: any) => getPropertyName(property) === propertyName,
   )?.value;
+
+const isArrayWithoutSpread = (node: any): boolean =>
+  node.type === 'ArrayExpression' &&
+  node.elements.every((element: any) => element?.type !== 'SpreadElement');
+
+const isInlineAccessPolicy = (node: any): boolean =>
+  node.type === 'ObjectExpression' &&
+  node.properties.every(
+    (property: any) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      !property.shorthand &&
+      (getPropertyName(property) === 'authPrincipals'
+        ? isInlineAuthPrincipalGuardConfig(property.value)
+        : isArrayWithoutSpread(property.value)),
+  ) &&
+  getPropertyValue(node, 'authPrincipals')?.properties.length > 0 &&
+  getPropertyValue(node, 'requiredPermissionFlags') !== undefined;
+
+const isAccessPolicyGuardWithPolicy = (node: any): boolean =>
+  isAccessPolicyGuardCall(node) &&
+  node.arguments.length === 1 &&
+  (isAccessPolicyConstant(node.arguments[0]) ||
+    isInlineAccessPolicy(node.arguments[0]));
 
 const isVariantsConfig = (kindConfig: any): boolean =>
   kindConfig?.type === 'ObjectExpression';
@@ -165,14 +187,13 @@ export const typedTokenHelpers = {
       (arg: any) =>
         (arg.type === 'Identifier' && AUTH_GUARD_NAMES.includes(arg.name)) ||
         isAuthPrincipalGuardWithInlineConfig(arg) ||
-        isAccessPolicyGuardWithPolicyConstant(arg),
+        isAccessPolicyGuardWithPolicy(arg),
     ),
 
-  getAccessPolicyGuardsWithoutPolicyConstant: (node: any): any[] =>
+  getAccessPolicyGuardsWithoutPolicy: (node: any): any[] =>
     getUseGuardsArguments(node).filter(
       (arg: any) =>
-        isAccessPolicyGuardCall(arg) &&
-        !isAccessPolicyGuardWithPolicyConstant(arg),
+        isAccessPolicyGuardCall(arg) && !isAccessPolicyGuardWithPolicy(arg),
     ),
 
   getAccessPolicyGuards: (node: any): any[] =>
@@ -211,7 +232,7 @@ export const typedTokenHelpers = {
         decorator.expression.callee.name === 'UseGuards'
       ) {
         return decorator.expression.arguments.some((arg: any) => {
-          if (isAccessPolicyGuardWithPolicyConstant(arg)) {
+          if (isAccessPolicyGuardWithPolicy(arg)) {
             return true;
           }
           if (arg.type === 'CallExpression') {

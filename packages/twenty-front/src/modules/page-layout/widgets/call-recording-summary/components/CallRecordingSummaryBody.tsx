@@ -8,9 +8,9 @@ import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/P
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSummaryContainer = styled.div`
   display: flex;
@@ -36,6 +36,7 @@ export const CallRecordingSummaryBody = ({
   error,
   restriction,
 }: CallRecordingSummaryBodyProps) => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
 
   if (isDefined(restriction)) {

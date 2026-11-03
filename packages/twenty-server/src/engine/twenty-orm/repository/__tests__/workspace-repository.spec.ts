@@ -109,6 +109,18 @@ const buildRepository = ({
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
       roleIdsWithAllRecordsAccess: [ROLE_ID],
+      rolesPermissions: {
+        [ROLE_ID]: {
+          [OBJECT_METADATA_ID]: {
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: true,
+            restrictedFields: {},
+          },
+        },
+      },
+      flatApplicationMaps: { byId: {} },
       flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
       flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
@@ -124,27 +136,7 @@ const buildRepository = ({
         return [];
       },
     },
-    objectRecordsPermissions: {
-      [OBJECT_METADATA_ID]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: {},
-      },
-    },
-    rolesPermissions: {
-      [ROLE_ID]: {
-        [OBJECT_METADATA_ID]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          restrictedFields: {},
-        },
-      },
-    },
-    permissionsPrincipal: {
+    permissionsPrincipals: {
       workspaceId: 'workspace-id',
       mainPrincipal: {
         type: 'apiKey',

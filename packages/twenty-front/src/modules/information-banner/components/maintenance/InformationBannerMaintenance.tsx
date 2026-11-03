@@ -5,10 +5,10 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { useMaintenanceModeBannerDismissal } from '@/information-banner/hooks/useMaintenanceModeBannerDismissal';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { IconExternalLink } from 'twenty-ui/icon';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+import { useLingui } from '@lingui/react/macro';
 
 const formatMaintenanceDateTime = (
   isoString: string,
@@ -27,6 +27,7 @@ const formatMaintenanceDateTime = (
 };
 
 export const InformationBannerMaintenance = () => {
+  const { t } = useLingui();
   const maintenanceMode = useAtomStateValue(maintenanceModeState);
   const { timeZone } = useDateTimeFormat();
   const { dismissBanner, isDismissed, isLoading } =

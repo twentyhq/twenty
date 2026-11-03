@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
@@ -6,6 +5,7 @@ import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsSkillInactiveMenuDropDownProps = {
   isCustomSkill: boolean;
@@ -19,35 +19,38 @@ export const SettingsSkillInactiveMenuDropDown = ({
   onActivate,
   onDelete,
   isCustomSkill,
-}: SettingsSkillInactiveMenuDropDownProps) => (
-  <DropdownRoot
-    type="menu"
-    dropdownId={`${skillId}-settings-skill-inactive-menu-dropdown`}
-  >
-    <Dropdown.Trigger
-      render={
-        <LightIconButton
-          aria-label={t`Inactive Skill Options`}
-          emphasis="subtle"
-        >
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-    />
-    <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
-      <Dropdown.Section>
-        <Dropdown.ActionItem
-          startIcon={<IconArchiveOff />}
-          onClick={onActivate}
-        >{t`Activate`}</Dropdown.ActionItem>
-        {isCustomSkill && (
+}: SettingsSkillInactiveMenuDropDownProps) => {
+  const { t } = useLingui();
+  return (
+    <DropdownRoot
+      type="menu"
+      dropdownId={`${skillId}-settings-skill-inactive-menu-dropdown`}
+    >
+      <Dropdown.Trigger
+        render={
+          <LightIconButton
+            aria-label={t`Inactive Skill Options`}
+            emphasis="subtle"
+          >
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
+        <Dropdown.Section>
           <Dropdown.ActionItem
-            startIcon={<IconTrash />}
-            color="danger"
-            onClick={onDelete}
-          >{t`Delete`}</Dropdown.ActionItem>
-        )}
-      </Dropdown.Section>
-    </DropdownContent>
-  </DropdownRoot>
-);
+            startIcon={<IconArchiveOff />}
+            onClick={onActivate}
+          >{t`Activate`}</Dropdown.ActionItem>
+          {isCustomSkill && (
+            <Dropdown.ActionItem
+              startIcon={<IconTrash />}
+              color="danger"
+              onClick={onDelete}
+            >{t`Delete`}</Dropdown.ActionItem>
+          )}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
+  );
+};

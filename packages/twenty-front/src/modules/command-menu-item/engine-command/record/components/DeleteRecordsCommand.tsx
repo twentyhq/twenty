@@ -1,5 +1,4 @@
 import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
-import { t } from '@lingui/core/macro';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
@@ -16,8 +15,10 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 const DeleteWorkspaceRecordsCommand = () => {
+  const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 

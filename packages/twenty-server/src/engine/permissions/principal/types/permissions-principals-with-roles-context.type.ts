@@ -6,7 +6,7 @@ import {
   type PermissionsApiKeyPrincipal,
   type PermissionsApplicationIdPrincipal,
   type PermissionsCustomApplicationPrincipal,
-  type PermissionsDeprecatedRoleOnlyPrincipal,
+  type PermissionsRolePrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
 } from 'src/engine/permissions/principal/types/permissions-principal.type';
@@ -19,16 +19,14 @@ export type PermissionsMainPrincipalWithRole =
   | WithRoleId<PermissionsAgentPrincipal>
   | WithRoleId<PermissionsWebhookPrincipal>
   | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsRolePrincipal;
 
 export type PermissionsLimitingPrincipalWithRole =
-  | WithRoleId<PermissionsAgentPrincipal>
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  WithRoleId<PermissionsAgentPrincipal>;
 
 export type PermissionsApplicationPrincipalWithRole =
   | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsCustomApplicationPrincipal
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {
   workspaceId: string;

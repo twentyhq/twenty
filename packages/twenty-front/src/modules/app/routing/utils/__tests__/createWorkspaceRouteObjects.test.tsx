@@ -189,9 +189,12 @@ describe('admin console route objects', () => {
     '/',
     '/objects/companies',
     getSettingsPath(SettingsPath.ProfilePage),
-  ])('sends %s to the admin panel', (pathname) => {
-    expect(matchedPaths(pathname).at(-1)).toBe(AppPath.NotFoundWildcard);
-  });
+  ])(
+    'sends %s to the catch-all that redirects to the admin panel',
+    (pathname) => {
+      expect(matchedPaths(pathname).at(-1)).toBe(AppPath.NotFoundWildcard);
+    },
+  );
 });
 
 describe('workspace settings routes with an admin console', () => {
