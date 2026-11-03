@@ -1,5 +1,168 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`CLI manifest fixtures and worker transport > matches the manifest, file paths, errors and warnings for conditional-availability-app 1`] = `
+{
+  "filePaths": {
+    "agents": [],
+    "application": [
+      "application.config.ts",
+    ],
+    "commandMenuItems": [
+      "src/command-menu-items/always-available.command-menu-item.ts",
+      "src/command-menu-items/not-select-all.command-menu-item.ts",
+      "src/command-menu-items/selected-records-count.command-menu-item.ts",
+      "src/command-menu-items/simple-boolean.command-menu-item.ts",
+    ],
+    "connectionProviders": [],
+    "fields": [],
+    "frontComponents": [],
+    "indexes": [],
+    "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
+    "navigationMenuItems": [],
+    "objects": [],
+    "pageLayoutTabs": [],
+    "pageLayoutWidgets": [],
+    "pageLayouts": [],
+    "permissionFlags": [],
+    "publicAssets": [],
+    "roles": [
+      "src/default.role.ts",
+    ],
+    "settingsMenuItems": [],
+    "skills": [],
+    "timelineActivityTypes": [],
+    "viewFields": [],
+    "views": [],
+    "workflows": [],
+  },
+  "manifest": {
+    "agents": [],
+    "application": {
+      "defaultRoleUniversalIdentifier": "c0a1b2c3-0000-4000-8000-000000000002",
+      "description": "Commands gated by conditional availability expressions",
+      "displayName": "Conditional Availability App",
+      "galleryImages": [],
+      "packageJsonChecksum": "",
+      "requiredServerVersionRange": null,
+      "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000001",
+      "yarnLockChecksum": null,
+    },
+    "commandMenuItems": [
+      {
+        "conditionalAvailability": {
+          "recordFilters": [
+            {
+              "contextKey": "isInSidePanel",
+              "id": "9880c046-4871-519b-8821-cfd41773f030",
+              "operand": "IS",
+              "value": "true",
+            },
+          ],
+        },
+        "frontComponentUniversalIdentifier": "c0a1b2c3-0000-4000-8000-000000000021",
+        "label": "Simple boolean",
+        "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000011",
+      },
+      {
+        "conditionalAvailability": {
+          "recordFilters": [
+            {
+              "contextKey": "numberOfSelectedRecords",
+              "id": "41fcc848-16a7-545b-9137-4655164a7756",
+              "operand": "GREATER_THAN_OR_EQUAL",
+              "value": "1",
+            },
+          ],
+        },
+        "conditionalPinned": {
+          "recordFilters": [
+            {
+              "contextKey": "numberOfSelectedRecords",
+              "id": "0bc55c03-ca36-56ad-8eca-1e6da50b571b",
+              "operand": "IS",
+              "value": "1",
+            },
+          ],
+        },
+        "frontComponentUniversalIdentifier": "c0a1b2c3-0000-4000-8000-000000000022",
+        "isPinned": true,
+        "label": "Selected records count",
+        "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000012",
+      },
+      {
+        "conditionalAvailability": {
+          "recordFilters": [
+            {
+              "contextKey": "isSelectAll",
+              "id": "15d675c7-966f-59e1-801c-2766caef8f93",
+              "operand": "IS",
+              "value": "false",
+            },
+          ],
+        },
+        "frontComponentUniversalIdentifier": "c0a1b2c3-0000-4000-8000-000000000023",
+        "label": "Not select all",
+        "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000013",
+      },
+      {
+        "frontComponentUniversalIdentifier": "c0a1b2c3-0000-4000-8000-000000000024",
+        "label": "Always available",
+        "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000014",
+      },
+    ],
+    "connectionProviders": [],
+    "fields": [],
+    "frontComponents": [],
+    "indexes": [],
+    "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
+    "navigationMenuItems": [],
+    "objects": [],
+    "pageLayoutTabs": [],
+    "pageLayoutWidgets": [],
+    "pageLayouts": [],
+    "permissionFlags": [],
+    "publicAssets": [],
+    "roles": [
+      {
+        "canBeAssignedToAgents": false,
+        "canBeAssignedToApiKeys": false,
+        "canBeAssignedToUsers": true,
+        "canDestroyAllObjectRecords": false,
+        "canReadAllObjectRecords": true,
+        "canSoftDeleteAllObjectRecords": false,
+        "canUpdateAllObjectRecords": false,
+        "canUpdateAllSettings": false,
+        "description": "Default role of the conditional availability app",
+        "fieldPermissions": [],
+        "label": "Default role",
+        "objectPermissions": [],
+        "permissionFlagUniversalIdentifiers": [],
+        "rowLevelPermissionPredicateGroups": [],
+        "rowLevelPermissionPredicates": [],
+        "universalIdentifier": "c0a1b2c3-0000-4000-8000-000000000002",
+      },
+    ],
+    "settingsMenuItems": [],
+    "skills": [],
+    "timelineActivityTypes": [],
+    "viewFields": [],
+    "views": [],
+    "workflows": [],
+  },
+  "success": true,
+  "warnings": [
+    "\`defaultRoleUniversalIdentifier\` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.",
+    "src/command-menu-items/selected-records-count.command-menu-item.ts: conditionalPinnedExpression of command menu item "Selected records count" is a formula string; write it as code (for example numberOfSelectedRecords === 1) so the build can check it.",
+    ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
+    ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
+  ],
+}
+`;
+
 exports[`CLI manifest fixtures and worker transport > matches the manifest, file paths, errors and warnings for function-execute-app 1`] = `
 {
   "filePaths": {
@@ -1538,5 +1701,15 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ""twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".",
     ""twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty's injected SDK and should be moved to "devDependencies".",
   ],
+}
+`;
+
+exports[`CLI manifest fixtures and worker transport > matches the manifest, file paths, errors and warnings for unmapped-conditional-availability-app 1`] = `
+{
+  "errors": [
+    "src/command-menu-items/favorite-count.command-menu-item.ts: conditionalAvailabilityExpression of command menu item "Favorite count" cannot be compiled into a conditionalAvailability tree: Cannot compile conditional availability expression "favoriteRecordIds.length > 0": unsupported comparison of favoriteRecordIds.length: write favoriteRecordIds.length == numberOfSelectedRecords when every selected record is a favorite, or favoriteRecordIds.length < numberOfSelectedRecords when at least one is not",
+    "src/command-menu-items/selected-records-pinned.command-menu-item.ts: conditionalPinnedExpression of command menu item "Selected records pinned" cannot be compiled into a conditionalPinned tree: Cannot compile conditional availability expression "arrayLength(selectedRecords) == 1": unsupported call of arrayLength(variable "selectedRecords")",
+  ],
+  "success": false,
 }
 `;

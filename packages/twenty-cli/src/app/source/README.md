@@ -22,7 +22,7 @@ Package boundaries are documented in the
 
 Source discovery covers root and nested `.ts`/`.tsx` files, excluding declarations, `node_modules`, `dist` and `.twenty`. Only a direct top-level `export default defineX(...)` is classified as a definition. Aliases, namespace calls and variable re-exports remain unsupported. Helpers reserve their paths without being evaluated on their own; imported helpers run as dependencies of a definition.
 
-Definitions are bundled using the app's tsconfig and imports, then evaluated with a require rooted at the app. React resolves from the app. UI and generated-client imports use extraction stubs; these are not working UI or client implementations. CSS imports are ignored and conditional-availability expressions are transformed for extraction.
+Definitions are bundled using the app's tsconfig and imports, then evaluated with a require rooted at the app. React resolves from the app. UI and generated-client imports use extraction stubs; these are not working UI or client implementations. CSS imports are ignored, and `conditionalAvailabilityExpression` / `conditionalPinnedExpression` code is parsed with the TypeScript compiler and replaced by its condition tree (or its compile error) before evaluation.
 
 An ordinary extraction failure marks a scanned definition unreadable, retaining its path so reconciliation can avoid overwriting it. SDK validation errors leave the config available for reporting. Reading identity evaluates only application definitions, rejects duplicate or invalid application UUIDs, and returns `null` when no application is declared.
 

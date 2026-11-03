@@ -9,6 +9,7 @@ import {
 } from '@/app/source/extract-define-entity';
 import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
 import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field-option-ids';
+import { fromCommandMenuItemConfigToCommandMenuItemManifest } from '@/app/manifest/utils/from-command-menu-item-config-to-command-menu-item-manifest';
 import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-config-to-role-manifest';
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
@@ -538,11 +539,20 @@ export const buildManifest = async (
           filePath,
         });
 
-        commandMenuItems.push(
-          extract.config as unknown as CommandMenuItemManifest,
-        );
+        const {
+          commandMenuItemManifest,
+          errors: commandMenuItemManifestErrors,
+          warnings: commandMenuItemManifestWarnings,
+        } = fromCommandMenuItemConfigToCommandMenuItemManifest({
+          commandMenuItemConfig: extract.config,
+          sourcePath: relativePath,
+        });
+
+        commandMenuItems.push(commandMenuItemManifest);
         errors.push(...extract.errors);
+        errors.push(...commandMenuItemManifestErrors);
         warnings.push(...(extract.warnings ?? []));
+        warnings.push(...commandMenuItemManifestWarnings);
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }

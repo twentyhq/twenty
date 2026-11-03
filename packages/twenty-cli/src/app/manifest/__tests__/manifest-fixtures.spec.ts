@@ -58,6 +58,13 @@ const FIXTURES = [
   'function-execute-app',
   'shared-dependencies-app',
   'invalid-app',
+  'conditional-availability-app',
+  'unmapped-conditional-availability-app',
+];
+
+const FAILING_FIXTURES = [
+  'invalid-app',
+  'unmapped-conditional-availability-app',
 ];
 
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
@@ -158,6 +165,10 @@ describe('CLI manifest fixtures and worker transport', () => {
     const sdkPath = join(modules, 'twenty-sdk');
     const sourceSdk = join(REPOSITORY_ROOT, 'packages/twenty-sdk');
     const sdkRequire = createRequire(join(sourceSdk, 'package.json'));
+    const sdkResolvedModulePaths: Record<string, string> = {
+      uuid: dirname(sdkRequire.resolve('uuid/package.json')),
+      'twenty-shared': dirname(dirname(sdkRequire.resolve('twenty-shared'))),
+    };
 
     await mkdir(join(modules, '@sniptt'), { recursive: true });
 
@@ -174,9 +185,8 @@ describe('CLI manifest fixtures and worker transport', () => {
       'twenty-ui',
     ]) {
       await symlink(
-        name === 'uuid'
-          ? dirname(sdkRequire.resolve('uuid/package.json'))
-          : join(REPOSITORY_ROOT, 'node_modules', name),
+        sdkResolvedModulePaths[name] ??
+          join(REPOSITORY_ROOT, 'node_modules', name),
         join(modules, name),
       );
     }
@@ -237,7 +247,7 @@ describe('CLI manifest fixtures and worker transport', () => {
       const appPath = await copyFixture(name);
       const result = await compareManifest(appPath);
 
-      expect(result.success).toBe(name !== 'invalid-app');
+      expect(result.success).toBe(!FAILING_FIXTURES.includes(name));
       expect(
         JSON.parse(JSON.stringify(result).replaceAll(appPath, '<app>')),
       ).toMatchSnapshot();

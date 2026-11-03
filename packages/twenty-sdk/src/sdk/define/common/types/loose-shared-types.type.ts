@@ -44,8 +44,7 @@ export type PageLayoutTabManifest =
   LooseEnumValues<SharedApplication.PageLayoutTabManifest>;
 export type PageLayoutWidgetCanvasPosition =
   LooseEnumValues<SharedTypes.PageLayoutWidgetCanvasPosition>;
-export type PageLayoutWidgetConditionalDisplay =
-  LooseEnumValues<SharedTypes.PageLayoutWidgetConditionalDisplay>;
+export type PageLayoutWidgetConditionalDisplay = UniversalConditionalDisplay;
 export type PageLayoutWidgetGridPosition =
   LooseEnumValues<SharedTypes.PageLayoutWidgetGridPosition>;
 export type PageLayoutWidgetManifest =

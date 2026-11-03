@@ -1,9 +1,7 @@
 import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/app/manifest/utils/conditional-availability-variable-names';
+import { CONDITION_EXPRESSION_PROPERTY_NAMES } from '@/app/source/constants/condition-expression-property-names.constant';
 import { isDefined } from 'twenty-shared/utils';
 import ts from 'typescript';
-
-const CONDITIONAL_AVAILABILITY_EXPRESSION_PROPERTY =
-  'conditionalAvailabilityExpression';
 
 const EXPRESSION_VARIABLE_MODULE_SPECIFIERS = [
   'twenty-sdk/define',
@@ -128,7 +126,7 @@ const hasConditionalAvailabilityExpressionProperty = (
       (ts.isPropertyAssignment(node) ||
         ts.isShorthandPropertyAssignment(node)) &&
       (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) &&
-      node.name.text === CONDITIONAL_AVAILABILITY_EXPRESSION_PROPERTY
+      CONDITION_EXPRESSION_PROPERTY_NAMES.includes(node.name.text)
     ) {
       found = true;
       return;
@@ -179,11 +177,14 @@ export const validateConditionalAvailabilityUsage = (
     checker,
   );
 
+  const expressionPropertyNames =
+    CONDITION_EXPRESSION_PROPERTY_NAMES.join(' or ');
+
   return importedExpressionVariables.map(({ importedName, node }) => {
     const { line, character } = sourceFile.getLineAndCharacterOfPosition(
       node.getStart(sourceFile),
     );
 
-    return `${relativePath}:${line + 1}:${character + 1} - "${importedName}" is a conditional-availability expression variable from twenty-sdk but this file has no ${CONDITIONAL_AVAILABILITY_EXPRESSION_PROPERTY}. These variables can only be used inside a command's ${CONDITIONAL_AVAILABILITY_EXPRESSION_PROPERTY}, not at runtime.`;
+    return `${relativePath}:${line + 1}:${character + 1} - "${importedName}" is a conditional-availability expression variable from twenty-sdk but this file has no ${expressionPropertyNames}. These variables can only be used inside a command's ${expressionPropertyNames}, not at runtime.`;
   });
 };

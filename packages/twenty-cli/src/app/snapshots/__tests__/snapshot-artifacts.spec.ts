@@ -49,6 +49,12 @@ const FIXTURES = [
   'function-execute-app',
   'shared-dependencies-app',
   'invalid-app',
+  'conditional-availability-app',
+  'unmapped-conditional-availability-app',
+];
+const FAILING_FIXTURES = [
+  'invalid-app',
+  'unmapped-conditional-availability-app',
 ];
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 const hash = (bytes: Buffer | string) =>
@@ -379,7 +385,7 @@ describe('CLI snapshots produce repeatable artifacts', () => {
     async (name) => {
       const result = await compareSnapshot(await copyFixture(name));
       expect(result.success, JSON.stringify(result)).toBe(
-        name !== 'invalid-app',
+        !FAILING_FIXTURES.includes(name),
       );
     },
     60000,

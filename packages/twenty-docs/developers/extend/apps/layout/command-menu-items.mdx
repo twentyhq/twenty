@@ -60,8 +60,9 @@ The `conditionalAvailabilityExpression` field lets you control when a command is
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import {
   defineCommandMenuItem,
+  noneDefined,
   objectPermissions,
-  everyEquals,
+  selectedRecords,
 } from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
@@ -69,11 +70,9 @@ export default defineCommandMenuItem({
   label: 'Bulk Update',
   availabilityType: 'RECORD_SELECTION',
   frontComponentUniversalIdentifier: '...',
-  conditionalAvailabilityExpression: everyEquals(
-    objectPermissions,
-    'canUpdateObjectRecords',
-    true,
-  ),
+  conditionalAvailabilityExpression:
+    objectPermissions.canUpdateObjectRecords &&
+    noneDefined(selectedRecords, 'deletedAt'),
 });
 ```
 
@@ -81,18 +80,20 @@ export default defineCommandMenuItem({
   `RECORD_SELECTION` already implies a non-empty selection — use `numberOfSelectedRecords` only for specific counts (e.g. `>= 2`).
 </Note>
 
+The build reads `conditionalAvailabilityExpression` and `conditionalPinnedExpression` from your code and compiles them into `conditionalAvailability` and `conditionalPinned` condition trees, and the built manifest carries only those trees. Misuse is a build error naming the command and the expression: an unknown variable, syntax other than variables, member access, the helpers below, `!`, `&&`, `||` and comparisons, or a list operator such as `everyEquals` applied to anything but `selectedRecords`. An app built with an older SDK still installs: Twenty converts its expression strings and logs a warning asking to rebuild it.
+
 ### Context variables
 
 These represent the current state of the page:
 
 | Variable | Type | Description |
 |----------|------|-------------|
-| `pageType` | `string` | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `pageType` | `string` | Current page type (e.g. `'INDEX_PAGE'`, `'RECORD_PAGE'`) |
 | `isInSidePanel` | `boolean` | Whether the component is rendered in a side panel |
 | `numberOfSelectedRecords` | `number` | Number of currently selected records |
 | `isSelectAll` | `boolean` | Whether "select all" is active |
 | `selectedRecords` | `array` | The selected record objects |
-| `favoriteRecordIds` | `array` | IDs of favorited records |
+| `favoriteRecordIds` | `array` | IDs of favorited records, only usable as `favoriteRecordIds.length == numberOfSelectedRecords` (every selected record is a favorite) or `favoriteRecordIds.length < numberOfSelectedRecords` (at least one is not) |
 | `objectPermissions` | `object` | Permissions for the current object type |
 | `targetObjectReadPermissions` | `object` | Read permissions for the target object |
 | `targetObjectWritePermissions` | `object` | Write permissions for the target object |
@@ -107,8 +108,8 @@ Combine variables into boolean expressions:
 | Operator | Description |
 |----------|-------------|
 | `isDefined(value)` | `true` if the value is not null/undefined |
-| `isNonEmptyString(value)` | `true` if the value is a non-empty string |
-| `includes(array, value)` | `true` if the array contains the value |
+| `isNonEmptyString(value)` | `true` if a text context value (`pageType`, `objectMetadataItem.nameSingular`) is a non-empty string |
+| `includes(list, value)` | `true` if a text context value is one of the listed values, e.g. `includes(["INDEX_PAGE", "RECORD_PAGE"], pageType)` |
 | `includesEvery(array, prop, value)` | `true` if every item's property includes the value |
 | `every(array, prop)` | `true` if the property is truthy on every item |
 | `everyDefined(array, prop)` | `true` if the property is defined on every item |

@@ -1,8 +1,10 @@
+import { type CompiledConditionExpression } from '@/app/source/types/compiled-condition-expression.type';
 import { type CommandMenuItemManifest } from 'twenty-shared/application';
 
 export type CommandMenuItemConfig = Omit<
   CommandMenuItemManifest,
-  'conditionalAvailabilityExpression'
+  'conditionalAvailability' | 'conditionalPinned' | 'conditionalDisplay'
 > & {
-  conditionalAvailabilityExpression?: boolean | string;
+  conditionalAvailabilityExpression?: string | CompiledConditionExpression;
+  conditionalPinnedExpression?: string | CompiledConditionExpression;
 };

@@ -8,6 +8,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Breaking Changes
 
+- **Command menu item manifests carry `conditionalAvailability` and `conditionalPinned` trees instead of expression strings.** Keep writing `conditionalAvailabilityExpression` and `conditionalPinnedExpression` in `defineCommandMenuItem()` exactly as before: the build parses each expression with the TypeScript compiler and writes only the resulting condition tree to the manifest. Misuse fails the build with the file, the config key, the command label and the expression as written: an unknown variable, unsupported syntax, or a list helper such as `everyEquals` applied to anything but `selectedRecords`. `conditionalPinnedExpression` now accepts code like `conditionalAvailabilityExpression` does; a formula string such as `'numberOfSelectedRecords == 1'` still builds but warns. Page layout widget `conditionalDisplay` is typed as a `UniversalConditionalDisplay` tree, like tabs, navigation menu items and view fields; a json-logic rule no longer type-checks. Twenty servers still install a manifest built with an older SDK: they convert its `conditionalAvailabilityExpression` and `conditionalPinnedExpression` strings and its json-logic widget rules, and the server logs a warning: "Built with an older SDK. Rebuild to remove this warning."
+
 - **`MetadataApiClient.uploadFile` in `twenty-client-sdk` takes one object and no longer accepts a content type.** The file now goes straight to Twenty's file storage (the API issues an upload target, the client sends the bytes there, then the API confirms the upload) instead of being streamed through the GraphQL API, and the MIME type is detected from the bytes on completion. Update every call:
 
   ```diff
