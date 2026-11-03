@@ -19,7 +19,6 @@ import {
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
-import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -1844,9 +1843,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatObjectMetadata: this.options.flatObjectMetadata,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       recordIds,
-      isPrivateRecordEnabled: isPrivateRecordEnabled(
-        this.options.internalContext.featureFlagsMap,
-      ),
     });
   }
 

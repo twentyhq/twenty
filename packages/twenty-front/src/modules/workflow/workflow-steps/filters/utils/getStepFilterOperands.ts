@@ -24,12 +24,17 @@ export const getStepFilterOperands = ({
 }): readonly ViewFilterOperand[] => {
   switch (filterType) {
     case 'TEXT':
-    case 'EMAILS':
-    case 'FULL_NAME':
-    case 'ADDRESS':
-    case 'LINKS':
-    case 'PHONES':
       return FILTER_OPERANDS_MAP.TEXT;
+    case 'EMAILS':
+      return FILTER_OPERANDS_MAP.EMAILS;
+    case 'FULL_NAME':
+      return FILTER_OPERANDS_MAP.FULL_NAME;
+    case 'ADDRESS':
+      return FILTER_OPERANDS_MAP.ADDRESS;
+    case 'LINKS':
+      return FILTER_OPERANDS_MAP.LINKS;
+    case 'PHONES':
+      return FILTER_OPERANDS_MAP.PHONES;
     case 'CURRENCY': {
       if (subFieldName === 'currencyCode') {
         return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
@@ -69,7 +74,7 @@ export const getStepFilterOperands = ({
       } else if (subFieldName === 'workspaceMemberId') {
         return FILTER_OPERANDS_MAP.RELATION;
       }
-      return FILTER_OPERANDS_MAP.TEXT;
+      return FILTER_OPERANDS_MAP.ACTOR;
     }
     default:
       return defaultOperands;
