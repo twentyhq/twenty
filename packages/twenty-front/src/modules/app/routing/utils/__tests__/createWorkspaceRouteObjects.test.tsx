@@ -1,7 +1,11 @@
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { isValidElement, type ReactElement } from 'react';
-import { createMemoryRouter, matchRoutes } from 'react-router-dom';
+import {
+  createMemoryRouter,
+  matchRoutes,
+  type RouteObject,
+} from 'react-router-dom';
 
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import {
@@ -15,6 +19,9 @@ import {
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
+
+const getMatchedRoutePaths = (routeObjects: RouteObject[], pathname: string) =>
+  (matchRoutes(routeObjects, pathname) ?? []).map(({ route }) => route.path);
 
 describe('workspace route objects', () => {
   it('does not leak generated route IDs into the shared registry', () => {
@@ -169,9 +176,7 @@ describe('workspace route objects', () => {
 
 describe('admin console route objects', () => {
   const matchedPaths = (pathname: string) =>
-    (matchRoutes(createAdminConsoleRouteObjects(), pathname) ?? []).map(
-      ({ route }) => route.path,
-    );
+    getMatchedRoutePaths(createAdminConsoleRouteObjects(), pathname);
 
   it('serves the admin pages under settings', () => {
     expect(matchedPaths(getSettingsPath(SettingsPath.AdminPanel))).toEqual([
@@ -191,15 +196,13 @@ describe('admin console route objects', () => {
 
 describe('workspace settings routes with an admin console', () => {
   const matchedPaths = (pathname: string) =>
-    (
-      matchRoutes(
-        createWorkspaceRouteObjects({
-          isAdminPageEnabled: true,
-          isAdminConsoleEnabled: true,
-        }),
-        pathname,
-      ) ?? []
-    ).map(({ route }) => route.path);
+    getMatchedRoutePaths(
+      createWorkspaceRouteObjects({
+        isAdminPageEnabled: true,
+        isAdminConsoleEnabled: true,
+      }),
+      pathname,
+    );
 
   it.each([
     getSettingsPath(SettingsPath.AdminPanel),
