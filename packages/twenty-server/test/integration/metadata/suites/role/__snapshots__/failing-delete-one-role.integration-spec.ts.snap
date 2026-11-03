@@ -74,12 +74,36 @@ exports[`Role deletion should fail when deleting a role referenced by a conditio
 [
   {
     "extensions": {
-      "code": "FORBIDDEN",
-      "subCode": "ROLE_REFERENCED_BY_CONDITIONAL_DISPLAY_CANNOT_BE_DELETED",
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "role": [
+          {
+            "errors": [
+              {
+                "code": "ROLE_REFERENCED_BY_CONDITIONAL_DISPLAY_CANNOT_BE_DELETED",
+                "message": "Role referenced by a conditional display rule cannot be deleted",
+                "userFriendlyMessage": "This role is used by a visibility rule and cannot be deleted.",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "label": "Role Referenced By Conditional Display",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "role",
+            "status": "fail",
+            "type": "delete",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 role",
+      "summary": {
+        "role": 1,
+        "totalErrors": 1,
+      },
       "userFriendlyMessage": "This role is used by a visibility rule and cannot be deleted.",
     },
-    "message": "Role referenced by a conditional display rule cannot be deleted",
-    "name": "ForbiddenError",
+    "message": "Multiple validation errors occurred while deleting role",
+    "name": "GraphQLError",
   },
 ]
 `;

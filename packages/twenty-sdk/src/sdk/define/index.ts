@@ -237,6 +237,7 @@ export {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
+  RecordFilterGroupLogicalOperator,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -253,4 +254,5 @@ export type {
   PageLayoutWidgetPosition,
   PageLayoutWidgetUniversalConfiguration,
   PageLayoutWidgetVerticalListPosition,
+  UniversalConditionalDisplay,
 } from '@/sdk/define/common/types/loose-shared-types.type';

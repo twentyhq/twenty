@@ -74,7 +74,7 @@ exports[`Page layout widget update should fail Widget configuration validation f
       "pageLayoutWidget": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Conditional display device value is not valid",
+    "userFriendlyMessage": "Conditional display rule uses an option that does not exist",
   },
   "message": "Multiple validation errors occurred while updating page layout widget",
   "name": "GraphQLError",

@@ -4,6 +4,6 @@ import { isConditionalDisplay } from 'src/engine/metadata-modules/flat-condition
 
 export const isLegacyJsonLogicConditionalDisplay = (
   conditionalDisplay: unknown,
-): conditionalDisplay is Record<string, unknown> =>
+): boolean =>
   isPlainObject(conditionalDisplay) &&
   !isConditionalDisplay(conditionalDisplay);

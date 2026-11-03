@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { isArray, isString } from '@sniptt/guards';
+import { isArray, isString, isUndefined } from '@sniptt/guards';
 import { CONDITIONAL_DISPLAY_CONTEXT_KEYS } from 'twenty-shared/constants';
 import { type UniversalConditionalDisplay } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -33,12 +33,19 @@ export const validateConditionalDisplay = ({
   if (
     !isPlainObject(conditionalDisplay) ||
     !isArray(conditionalDisplay.recordFilters) ||
-    !conditionalDisplay.recordFilters.every(isPlainObject)
+    !conditionalDisplay.recordFilters.every(
+      (recordFilter) =>
+        isPlainObject(recordFilter) && isString(recordFilter.id),
+    )
   ) {
     return [formatError];
   }
 
-  const rawRecordFilterGroups = conditionalDisplay.recordFilterGroups ?? [];
+  const rawRecordFilterGroups = isUndefined(
+    conditionalDisplay.recordFilterGroups,
+  )
+    ? []
+    : conditionalDisplay.recordFilterGroups;
 
   if (
     !isArray(rawRecordFilterGroups) ||

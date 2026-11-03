@@ -5,6 +5,7 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -72,6 +73,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     StandardObjectsPrefillModule,
     WorkspaceCacheModule,
+    CoreEntityCacheModule,
     WorkspaceMigrationModule,
     TwentyStandardApplicationModule,
     SdkClientModule,

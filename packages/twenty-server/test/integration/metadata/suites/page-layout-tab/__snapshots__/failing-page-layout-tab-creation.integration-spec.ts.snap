@@ -30,7 +30,7 @@ exports[`Page layout tab creation should fail when conditional display uses a de
       "pageLayoutTab": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Conditional display device value is not valid",
+    "userFriendlyMessage": "Conditional display rule uses an option that does not exist",
   },
   "message": "Multiple validation errors occurred while creating page layout tab",
   "name": "GraphQLError",

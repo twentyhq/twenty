@@ -12,6 +12,19 @@ export const validateConditionalDisplayRecordFilterGroups = ({
   recordFilterGroups: UniversalConditionalDisplayRecordFilterGroup[];
   invalidDataCode: string;
 }): FlatEntityValidationError[] => {
+  const recordFilterGroupIds = recordFilterGroups.map(({ id }) => id);
+
+  if (new Set(recordFilterGroupIds).size !== recordFilterGroupIds.length) {
+    return [
+      {
+        code: invalidDataCode,
+        message: t`Conditional display groups must have unique ids`,
+        userFriendlyMessage: msg`Conditional display groups must have unique ids`,
+        value: recordFilterGroupIds,
+      },
+    ];
+  }
+
   const parentGroupIdByGroupId = new Map(
     recordFilterGroups.map((recordFilterGroup) => [
       recordFilterGroup.id,

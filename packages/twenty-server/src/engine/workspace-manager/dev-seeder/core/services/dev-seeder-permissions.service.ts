@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -46,6 +47,7 @@ export class DevSeederPermissionsService {
     private readonly rolePermissionFlagService: RolePermissionFlagService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   public async initPermissions({
@@ -200,6 +202,11 @@ export class DevSeederPermissionsService {
         defaultRoleId: memberRole.id,
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
 
     return memberRole;
   }

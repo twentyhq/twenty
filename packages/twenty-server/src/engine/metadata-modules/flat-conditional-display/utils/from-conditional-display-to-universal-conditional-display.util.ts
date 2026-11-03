@@ -1,8 +1,9 @@
+import { isArray } from '@sniptt/guards';
 import {
   type ConditionalDisplay,
   type UniversalConditionalDisplay,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { mapConditionalDisplayRoleIdsValue } from 'src/engine/metadata-modules/flat-conditional-display/utils/map-conditional-display-role-ids-value.util';
 
@@ -17,6 +18,15 @@ export const fromConditionalDisplayToUniversalConditionalDisplay = ({
 }): UniversalConditionalDisplay | null => {
   if (!isDefined(conditionalDisplay)) {
     return null;
+  }
+
+  const { recordFilters } = conditionalDisplay;
+
+  if (
+    isDefined(recordFilters) &&
+    (!isArray(recordFilters) || !recordFilters.every(isPlainObject))
+  ) {
+    return conditionalDisplay as UniversalConditionalDisplay;
   }
 
   return {

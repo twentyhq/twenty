@@ -7,8 +7,6 @@ exports[`Failing manifest sync - RECORD_TABLE widget with unknown view universal
     "action": {
       "flatEntity": {
         "applicationUniversalIdentifier": Any<String>,
-        "conditionalAvailabilityExpression": null,
-        "conditionalDisplay": null,
         "createdAt": Any<String>,
         "deletedAt": null,
         "isActive": true,
@@ -24,6 +22,8 @@ exports[`Failing manifest sync - RECORD_TABLE widget with unknown view universal
         },
         "title": "RT test table",
         "type": "RECORD_TABLE",
+        "universalConditionalAvailability": null,
+        "universalConditionalDisplay": null,
         "universalConfiguration": {
           "configurationType": "RECORD_TABLE",
           "viewUniversalIdentifier": Any<String>,

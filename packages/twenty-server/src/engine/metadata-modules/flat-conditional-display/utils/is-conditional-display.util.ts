@@ -1,6 +1,8 @@
-import { isArray, isUndefined } from '@sniptt/guards';
+import { isArray, isString, isUndefined } from '@sniptt/guards';
 import { type ConditionalDisplay } from 'twenty-shared/types';
 import { isEmptyObject, isPlainObject } from 'twenty-shared/utils';
+
+import { CONDITIONAL_DISPLAY_SELECTED_RECORDS_MATCHES } from 'src/engine/metadata-modules/flat-conditional-display/constants/conditional-display-selected-records-matches.constant';
 
 export const isConditionalDisplay = (
   value: unknown,
@@ -21,7 +23,9 @@ export const isConditionalDisplay = (
     (isUndefined(recordFilters) || isArray(recordFilters)) &&
     (isUndefined(recordFilterGroups) || isArray(recordFilterGroups)) &&
     (isUndefined(selectedRecordsMatch) ||
-      selectedRecordsMatch === 'EVERY' ||
-      selectedRecordsMatch === 'SOME')
+      (isString(selectedRecordsMatch) &&
+        Object.keys(CONDITIONAL_DISPLAY_SELECTED_RECORDS_MATCHES).includes(
+          selectedRecordsMatch,
+        )))
   );
 };

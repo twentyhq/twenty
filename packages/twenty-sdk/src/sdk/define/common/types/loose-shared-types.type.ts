@@ -79,6 +79,8 @@ export type TimelineActivityTypeConfig =
   LooseEnumValues<StrictTimelineActivityTypeConfig>;
 export type TimelineActivityTypeManifest =
   LooseEnumValues<SharedApplication.TimelineActivityTypeManifest>;
+export type UniversalConditionalDisplay =
+  LooseEnumValues<SharedTypes.UniversalConditionalDisplay>;
 export type ViewConfig = LooseEnumValues<StrictViewConfig>;
 export type ViewFieldGroupManifest =
   LooseEnumValues<SharedApplication.ViewFieldGroupManifest>;
