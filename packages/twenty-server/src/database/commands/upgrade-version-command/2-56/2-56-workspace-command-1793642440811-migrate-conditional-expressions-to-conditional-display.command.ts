@@ -259,6 +259,19 @@ export class MigrateConditionalExpressionsToConditionalDisplayCommand extends Pr
 
         counts.overrideEntriesConverted += migrated.convertedOverrideEntryCount;
 
+        const universalOverrides =
+          isOverridesChanged && isDefined(migrated.overrides)
+            ? fromPageLayoutWidgetOverridesToUniversalOverrides({
+                overrides: migrated.overrides,
+                pageLayoutTabUniversalIdentifierById:
+                  flatPageLayoutTabMaps.universalIdentifierById,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+                roleUniversalIdentifierById:
+                  flatRoleMaps.universalIdentifierById,
+              })
+            : null;
+
         return [
           {
             ...flatPageLayoutWidget,
@@ -282,18 +295,9 @@ export class MigrateConditionalExpressionsToConditionalDisplayCommand extends Pr
                 })
               : flatPageLayoutWidget.universalConditionalDisplay,
             overrides: migrated.overrides,
-            universalOverrides:
-              isOverridesChanged && isDefined(migrated.overrides)
-                ? fromPageLayoutWidgetOverridesToUniversalOverrides({
-                    overrides: migrated.overrides,
-                    pageLayoutTabUniversalIdentifierById:
-                      flatPageLayoutTabMaps.universalIdentifierById,
-                    fieldMetadataUniversalIdentifierById:
-                      flatFieldMetadataMaps.universalIdentifierById,
-                    roleUniversalIdentifierById:
-                      flatRoleMaps.universalIdentifierById,
-                  })
-                : flatPageLayoutWidget.universalOverrides,
+            universalOverrides: isOverridesChanged
+              ? universalOverrides
+              : flatPageLayoutWidget.universalOverrides,
             updatedAt: now,
           },
         ];
