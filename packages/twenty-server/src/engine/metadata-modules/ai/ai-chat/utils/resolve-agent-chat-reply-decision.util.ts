@@ -1,5 +1,5 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
-import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 
@@ -16,7 +16,7 @@ export const resolveAgentChatReplyDecision = ({
   isAssistantMentioned: boolean;
   isReplyRequested?: boolean;
 }): AgentChatReplyDecision => {
-  if (audience === 'assistant-chat') {
+  if (audience === AgentChatAudience.ASSISTANT_CHAT) {
     return 'ASSISTANT_CHAT_REPLY';
   }
 

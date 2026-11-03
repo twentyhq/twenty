@@ -1,9 +1,10 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 
 const DEFAULT_REPLY_CONTEXT = {
   mode: AiChatAssistantMode.AUTOMATIC,
-  audience: 'conversation',
+  audience: AgentChatAudience.CONVERSATION,
   isAssistantParticipant: true,
   isAssistantMentioned: false,
 } satisfies Parameters<typeof resolveAgentChatReplyDecision>[0];
@@ -16,7 +17,7 @@ describe('resolveAgentChatReplyDecision', () => {
         resolveAgentChatReplyDecision({
           ...DEFAULT_REPLY_CONTEXT,
           mode,
-          audience: 'assistant-chat',
+          audience: AgentChatAudience.ASSISTANT_CHAT,
           isAssistantParticipant: false,
           isReplyRequested: false,
         }),
@@ -77,8 +78,14 @@ describe('resolveAgentChatReplyDecision', () => {
   });
 
   it.each([
-    { audience: 'conversation', isAssistantParticipant: true },
-    { audience: 'direct-message', isAssistantParticipant: false },
+    {
+      audience: AgentChatAudience.CONVERSATION,
+      isAssistantParticipant: true,
+    },
+    {
+      audience: AgentChatAudience.DIRECT_MESSAGE,
+      isAssistantParticipant: false,
+    },
   ] as const)(
     'evaluates an unmentioned automatic message with %o',
     (participation) => {
