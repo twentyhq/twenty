@@ -15,6 +15,26 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
           @Query()
           @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
           testQuery() {}
@@ -540,6 +560,43 @@ ruleTester.run(RULE_NAME, rule, {
         @UseGuards(FeatureFlagGuard, ${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
         class TestResolver {
           @Query()
+          testQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'authPrincipalGuardNotFirst' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard({ authPrincipals: {}, requiredPermissionFlags: [] }))
+          testMutation() {}
+        }
+      `,
+      errors: [
+        { messageId: 'graphqlResolversShouldBeGuarded' },
+        { messageId: 'accessPolicyGuardWithoutPolicyConstant' },
+      ],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      errors: [{ messageId: 'accessPolicyGuardOnClassAndMethod' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @Query()
+          @UseGuards(WorkspaceAuthGuard, AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
           testQuery() {}
         }
       `,
