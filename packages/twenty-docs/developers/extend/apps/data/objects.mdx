@@ -140,7 +140,7 @@ Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name;
 
 ### Select options
 
-For `SELECT` and `MULTI_SELECT`, provide a non-empty `options` array of objects. Each option has a `value`, `label`, and `position`. Its `color` is optional and defaults to `gray` when omitted or null.
+For `SELECT` and `MULTI_SELECT`, provide a non-empty `options` array of objects. Each option has a `value`, `label`, and `position`. Its `color` is optional and defaults to `gray` when omitted or null. Its `description` is optional too: a string of up to 255 characters, shown as a tooltip when people pick the option.
 
 When provided, `color` must be one of: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 

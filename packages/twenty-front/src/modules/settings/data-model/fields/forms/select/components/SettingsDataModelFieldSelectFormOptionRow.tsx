@@ -6,6 +6,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -13,6 +14,7 @@ import {
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
+  IconPencil,
   IconTrash,
   IconX,
 } from 'twenty-ui/icon';
@@ -21,6 +23,8 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
+import { SettingsDataModelFieldSelectFormOptionDescriptionInput } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput';
+import { SettingsDataModelFieldSelectFormOptionLabelIcons } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionLabelIcons';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -93,6 +97,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
 
   const shouldForbidRemoveAsDefault = isDefault && !fieldIsNullable;
+  const hasDescription = isNonEmptyString(option.description?.trim());
 
   const handleInputEnter = () => {
     onInputEnter?.();
@@ -164,7 +169,16 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                 : computeOptionValueFromLabel(label),
             });
           }}
-          RightIcon={isDefault ? IconCheck : undefined}
+          RightIcon={
+            hasDescription || isDefault
+              ? () => (
+                  <SettingsDataModelFieldSelectFormOptionLabelIcons
+                    description={option.description}
+                    isDefault={isDefault}
+                  />
+                )
+              : undefined
+          }
           maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
           onInputEnter={handleInputEnter}
           autoFocusOnMount={isNewRow}
@@ -174,39 +188,51 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
       <DropdownRoot dropdownId={SELECT_ACTIONS_DROPDOWN_ID} type="menu">
         <StyledLightIconButtonContainer>
           <Dropdown.Trigger
-            disabled={shouldForbidRemoveAsDefault}
             render={
-              <LightIconButton
-                emphasis="subtle"
-                disabled={shouldForbidRemoveAsDefault}
-                aria-label={t`More options`}
-              >
+              <LightIconButton emphasis="subtle" aria-label={t`More options`}>
                 <IconDotsVertical />
               </LightIconButton>
             }
           />
         </StyledLightIconButtonContainer>
         <DropdownContent side="right" align="start">
-          <Dropdown.Section>
-            {isDefault ? (
+          <Dropdown.Page id="root">
+            <Dropdown.Section>
+              {!isDefault && (
+                <Dropdown.ActionItem
+                  startIcon={<IconCheck />}
+                  onClick={() => onSetAsDefault?.()}
+                >{t`Set as default`}</Dropdown.ActionItem>
+              )}
+              {isDefault && !shouldForbidRemoveAsDefault && (
+                <Dropdown.ActionItem
+                  startIcon={<IconX />}
+                  onClick={() => onRemoveAsDefault?.()}
+                >{t`Remove as default`}</Dropdown.ActionItem>
+              )}
               <Dropdown.ActionItem
-                startIcon={<IconX />}
-                onClick={() => onRemoveAsDefault?.()}
-              >{t`Remove as default`}</Dropdown.ActionItem>
-            ) : (
-              <Dropdown.ActionItem
-                startIcon={<IconCheck />}
-                onClick={() => onSetAsDefault?.()}
-              >{t`Set as default`}</Dropdown.ActionItem>
-            )}
-            {isDefined(onRemove) && !isDefault && (
-              <Dropdown.ActionItem
-                color="danger"
-                startIcon={<IconTrash />}
-                onClick={() => onRemove()}
-              >{t`Remove option`}</Dropdown.ActionItem>
-            )}
-          </Dropdown.Section>
+                startIcon={<IconPencil />}
+                page="description"
+              >
+                {hasDescription ? t`Edit description` : t`Add description`}
+              </Dropdown.ActionItem>
+              {isDefined(onRemove) && !isDefault && (
+                <Dropdown.ActionItem
+                  color="danger"
+                  startIcon={<IconTrash />}
+                  onClick={() => onRemove()}
+                >{t`Remove option`}</Dropdown.ActionItem>
+              )}
+            </Dropdown.Section>
+          </Dropdown.Page>
+          <Dropdown.Page id="description" type="panel">
+            <Dropdown.Back>{t`Description`}</Dropdown.Back>
+            <SettingsDataModelFieldSelectFormOptionDescriptionInput
+              dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
+              description={option.description}
+              onChange={(description) => onChange({ ...option, description })}
+            />
+          </Dropdown.Page>
         </DropdownContent>
       </DropdownRoot>
     </StyledRow>

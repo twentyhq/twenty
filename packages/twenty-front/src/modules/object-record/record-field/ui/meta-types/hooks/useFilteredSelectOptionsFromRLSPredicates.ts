@@ -66,10 +66,13 @@ const extractAllowedValuesFromPredicate = (
   }
 };
 
-const filterOptionsByPredicates = (
-  options: SelectOption[],
-  predicates: RowLevelPermissionPredicate[],
-): SelectOption[] => {
+const filterOptionsByPredicates = <TOption extends SelectOption>({
+  options,
+  predicates,
+}: {
+  options: TOption[];
+  predicates: RowLevelPermissionPredicate[];
+}): TOption[] => {
   if (predicates.length === 0) {
     return options;
   }
@@ -97,15 +100,17 @@ const filterOptionsByPredicates = (
   return filteredOptions;
 };
 
-export const useFilteredSelectOptionsFromRLSPredicates = ({
+export const useFilteredSelectOptionsFromRLSPredicates = <
+  TOption extends SelectOption,
+>({
   fieldMetadataId,
   objectMetadataNameSingular,
   options,
 }: {
   fieldMetadataId: string;
   objectMetadataNameSingular: string | undefined;
-  options: SelectOption[];
-}): { filteredOptions: SelectOption[]; canSelectEmpty: boolean } => {
+  options: TOption[];
+}): { filteredOptions: TOption[]; canSelectEmpty: boolean } => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectMetadataId = objectMetadataNameSingular
@@ -148,10 +153,10 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
     );
 
     return {
-      filteredOptions: filterOptionsByPredicates(
+      filteredOptions: filterOptionsByPredicates({
         options,
-        restrictingPredicates,
-      ),
+        predicates: restrictingPredicates,
+      }),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
   }, [

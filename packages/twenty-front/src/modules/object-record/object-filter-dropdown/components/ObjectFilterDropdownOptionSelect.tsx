@@ -7,6 +7,7 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -177,23 +178,27 @@ export const ObjectFilterDropdownOptionSelect = ({
           <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           optionsInDropdown?.map((option) => (
-            <ListItemButton
+            <SelectOptionDescriptionTooltip
               key={option.id}
-              focused={option.id === selectedItemId}
-              role="option"
-              aria-selected={option.isSelected}
-              selected={option.isSelected}
-              indicator="checkbox"
-              onClick={() =>
-                handleMultipleOptionSelectChange(option, !option.isSelected)
-              }
+              description={option.description}
             >
-              {isDefined(option.color) ? (
-                <Tag color={option.color}>{option.label}</Tag>
-              ) : (
-                <OverflowingTextWithTooltip text={option.label} />
-              )}
-            </ListItemButton>
+              <ListItemButton
+                focused={option.id === selectedItemId}
+                role="option"
+                aria-selected={option.isSelected}
+                selected={option.isSelected}
+                indicator="checkbox"
+                onClick={() =>
+                  handleMultipleOptionSelectChange(option, !option.isSelected)
+                }
+              >
+                {isDefined(option.color) ? (
+                  <Tag color={option.color}>{option.label}</Tag>
+                ) : (
+                  <OverflowingTextWithTooltip text={option.label} />
+                )}
+              </ListItemButton>
+            </SelectOptionDescriptionTooltip>
           ))
         )}
       </DropdownMenuItemsContainer>

@@ -92,9 +92,27 @@ export const WithSelectForm: Story = {
     );
     await waitFor(() => expect(optionActions).not.toBeInTheDocument());
 
-    await waitFor(() => expect(optionActionsTrigger).toBeDisabled());
     await userEvent.click(optionActionsTrigger);
-    expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    const defaultOptionActions = await body.findByRole('menu', {
+      name: 'More options',
+    });
+
+    expect(
+      within(defaultOptionActions).queryByRole('menuitem', {
+        name: 'Remove as default',
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(defaultOptionActions).queryByRole('menuitem', {
+        name: 'Remove option',
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(defaultOptionActions).getByRole('menuitem', {
+        name: 'Add description',
+      }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
 
     const colorTrigger = canvas.getByRole('button', { name: 'Color' });
 
@@ -138,5 +156,38 @@ export const WithSelectForm: Story = {
         canvas.queryByRole('button', { name: 'Color' }),
       ).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const WithSelectOptionDescription: Story = {
+  args: {
+    existingFieldMetadataId: 'new-field',
+    fieldType: FieldMetadataType.SELECT,
+    objectNameSingular: 'company',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [, optionActionsTrigger] = await canvas.findAllByRole('button', {
+      name: 'More options',
+    });
+
+    await userEvent.click(optionActionsTrigger);
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Add description' }),
+    );
+    await userEvent.keyboard('Shown in pickers');
+    expect(await body.findByPlaceholderText('Add a description')).toHaveValue(
+      'Shown in pickers',
+    );
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(optionActionsTrigger);
+    expect(
+      await body.findByRole('menuitem', { name: 'Edit description' }),
+    ).toBeVisible();
   },
 };

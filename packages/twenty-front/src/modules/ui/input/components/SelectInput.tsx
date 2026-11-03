@@ -4,14 +4,15 @@ import { createElement, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { type SelectOptionWithDescription } from '@/ui/input/types/SelectOptionWithDescription';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 type SelectInputProps = {
-  onOptionSelected: (selectedOption: SelectOption) => void;
-  options: SelectOption[];
+  onOptionSelected: (selectedOption: SelectOptionWithDescription) => void;
+  options: SelectOptionWithDescription[];
   value?: string | null;
   onClear?: () => void;
   clearLabel?: string;
@@ -73,21 +74,27 @@ export const SelectInput = ({
       <Dropdown.Section scrollable>
         {!isSearching && clearOptionItem}
         {optionsInDropdown.map((option) => (
-          <Dropdown.OptionItem
+          <SelectOptionDescriptionTooltip
             key={option.value}
-            onSelect={() => onOptionSelected(option)}
-            selected={option.value === value}
-            closeOnSelect={false}
+            description={option.description}
           >
-            <Tag
-              color={option.color ?? 'transparent'}
-              startIcon={
-                isDefined(option.Icon) ? createElement(option.Icon) : undefined
-              }
+            <Dropdown.OptionItem
+              onSelect={() => onOptionSelected(option)}
+              selected={option.value === value}
+              closeOnSelect={false}
             >
-              {option.label}
-            </Tag>
-          </Dropdown.OptionItem>
+              <Tag
+                color={option.color ?? 'transparent'}
+                startIcon={
+                  isDefined(option.Icon)
+                    ? createElement(option.Icon)
+                    : undefined
+                }
+              >
+                {option.label}
+              </Tag>
+            </Dropdown.OptionItem>
+          </SelectOptionDescriptionTooltip>
         ))}
         {isSearching && clearOptionItem}
         {!shouldShowClearOption && !isNonEmptyArray(optionsInDropdown) && (

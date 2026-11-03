@@ -10,6 +10,7 @@ export type RecordGroupDefinition = {
   title: string;
   value: string | null;
   color: ThemeColor | 'transparent';
+  description?: string | null;
   position: number;
   isVisible: boolean;
 };

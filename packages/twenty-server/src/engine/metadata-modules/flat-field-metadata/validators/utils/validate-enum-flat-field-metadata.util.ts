@@ -1,5 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -20,7 +20,10 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
-import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
+import {
+  IDENTIFIER_MAX_CHAR_LENGTH,
+  OPTION_DESCRIPTION_MAX_CHAR_LENGTH,
+} from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
@@ -169,6 +172,38 @@ const validateMetadataOptionValue = (
   return errors;
 };
 
+const validateMetadataOptionDescription = (
+  sanitizedDescription: unknown,
+): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(sanitizedDescription)) {
+    return [];
+  }
+
+  if (!isString(sanitizedDescription)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option description must be a string`,
+        userFriendlyMessage: msg`Option description format not supported`,
+        value: sanitizedDescription,
+      },
+    ];
+  }
+
+  if (sanitizedDescription.length > OPTION_DESCRIPTION_MAX_CHAR_LENGTH) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option description exceeds ${OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters`,
+        userFriendlyMessage: msg`Option description exceeds ${OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters`,
+        value: sanitizedDescription,
+      },
+    ];
+  }
+
+  return [];
+};
+
 const validateDuplicates = (
   options: FieldMetadataOptions<EnumFieldMetadataType>,
 ) => {
@@ -221,6 +256,7 @@ const validateFieldMetadataInputOptions = (
       validateMetadataOptionId(option.id),
       validateMetadataOptionValue(option.value),
       validateMetadataOptionLabel(option.label),
+      validateMetadataOptionDescription(option.description),
     ].flat(),
   );
 
