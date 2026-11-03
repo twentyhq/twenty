@@ -12,6 +12,7 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+import { PageLayoutWidgetViewportContext } from '@/page-layout/contexts/PageLayoutWidgetViewportContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -307,12 +308,14 @@ const renderWidgetOnPage = ({
   pageLayoutType,
   presentation,
   isInEditMode = false,
+  fillsViewport = false,
   layoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
 }: {
   widget: PageLayoutWidget;
   pageLayoutType: PageLayoutType;
   presentation: TabPresentation;
   isInEditMode?: boolean;
+  fillsViewport?: boolean;
   layoutMode?: PageLayoutTabLayoutMode;
 }): Story['render'] => {
   return () => {
@@ -354,7 +357,9 @@ const renderWidgetOnPage = ({
                   tabId: TAB_ID_OVERVIEW,
                 }}
               >
-                <WidgetRenderer widget={widget} />
+                <PageLayoutWidgetViewportContext.Provider value={fillsViewport}>
+                  <WidgetRenderer widget={widget} />
+                </PageLayoutWidgetViewportContext.Provider>
               </PageLayoutContentProvider>
             </PageLayoutTestWrapper>
           </CoreClientProviderWrapper>
@@ -534,6 +539,7 @@ export const EditingFrontComponentLoading: Story = {
     pageLayoutType: PageLayoutType.DASHBOARD,
     presentation: 'solo',
     isInEditMode: true,
+    fillsViewport: true,
   }),
   play: StackedFrontComponentLoading.play,
 };
@@ -562,6 +568,7 @@ export const FullHeightFrontComponentLoading: Story = {
     widget: FULL_HEIGHT_FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.RECORD_PAGE,
     presentation: 'stack',
+    fillsViewport: true,
   }),
   play: async ({ canvasElement }) => {
     await expectLoadingFrontComponentFrame({
@@ -581,6 +588,7 @@ export const LegacyCanvasFrontComponentLoading: Story = {
     pageLayoutType: PageLayoutType.RECORD_PAGE,
     presentation: 'solo',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    fillsViewport: true,
   }),
   play: FullHeightFrontComponentLoading.play,
 };
