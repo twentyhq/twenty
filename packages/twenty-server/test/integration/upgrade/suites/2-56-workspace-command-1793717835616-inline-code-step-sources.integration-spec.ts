@@ -81,6 +81,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   let legacyWorkflow: LegacyCodeStepWorkflow;
   let missingFunctionWorkflow: LegacyCodeStepWorkflow;
   let oversizedWorkflow: LegacyCodeStepWorkflow;
+  let unreadableSourceWorkflow: LegacyCodeStepWorkflow;
   let otherApplicationWorkflow: LegacyCodeStepWorkflow;
   const coreWorkflowIds: string[] = [];
   const workspaceWorkflowIds: string[] = [];
@@ -140,18 +141,28 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     return logicFunctionId;
   };
 
+  const findSourceLocation = async (
+    logicFunctionId: string,
+  ): Promise<{
+    sourceHandlerPath: string;
+    applicationUniversalIdentifier: string;
+  }> => {
+    const [location] = await global.testDataSource.query(
+      `SELECT "logicFunction"."sourceHandlerPath", application."universalIdentifier" AS "applicationUniversalIdentifier"
+       FROM core."logicFunction" "logicFunction"
+       JOIN core.application application ON application.id = "logicFunction"."applicationId"
+       WHERE "logicFunction".id = $1`,
+      [logicFunctionId],
+    );
+
+    return location;
+  };
+
   // the oversized source is over the test app's 100kb JSON body limit, so it is written to storage directly
   const createOversizedLogicFunction = async (): Promise<string> => {
     const logicFunctionId = await createLogicFunction();
-
-    const [{ sourceHandlerPath, applicationUniversalIdentifier }] =
-      await global.testDataSource.query(
-        `SELECT "logicFunction"."sourceHandlerPath", application."universalIdentifier" AS "applicationUniversalIdentifier"
-         FROM core."logicFunction" "logicFunction"
-         JOIN core.application application ON application.id = "logicFunction"."applicationId"
-         WHERE "logicFunction".id = $1`,
-        [logicFunctionId],
-      );
+    const { sourceHandlerPath, applicationUniversalIdentifier } =
+      await findSourceLocation(logicFunctionId);
 
     await getAppProviderByClassName<FileStorageService>(
       'FileStorageService',
@@ -162,6 +173,23 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       resourcePath: sourceHandlerPath,
       stream: Readable.from(Buffer.from(OVERSIZED_SOURCE)),
       mimeType: 'text/plain',
+    });
+
+    return logicFunctionId;
+  };
+
+  const createLogicFunctionWithoutSource = async (): Promise<string> => {
+    const logicFunctionId = await createLogicFunction();
+    const { sourceHandlerPath, applicationUniversalIdentifier } =
+      await findSourceLocation(logicFunctionId);
+
+    await getAppProviderByClassName<FileStorageService>(
+      'FileStorageService',
+    ).deleteFileObject({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
     });
 
     return logicFunctionId;
@@ -309,6 +337,10 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       name: 'Greet with oversized code',
       logicFunctionId: await createOversizedLogicFunction(),
     });
+    unreadableSourceWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with unreadable code',
+      logicFunctionId: await createLogicFunctionWithoutSource(),
+    });
     otherApplicationWorkflow = await createLegacyCodeStepWorkflow({
       name: 'Greet with application code',
       logicFunctionId: await createOtherApplicationLogicFunction(),
@@ -383,7 +415,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     await expectEveryFunctionKept();
   });
 
-  it('writes code that throws into a step whose function is missing', async () => {
+  it('writes code that throws into a step whose function is gone', async () => {
     expect(
       await readCoreSteps(missingFunctionWorkflow.coreWorkflowVersionId),
     ).toEqual([
@@ -403,6 +435,17 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     ).toEqual([oversizedWorkflow.step]);
   });
 
+  it('leaves a step whose function exists but whose source cannot be read untouched', async () => {
+    expect(
+      await readCoreSteps(unreadableSourceWorkflow.coreWorkflowVersionId),
+    ).toEqual([unreadableSourceWorkflow.step]);
+    expect(
+      await readWorkspaceSteps(
+        unreadableSourceWorkflow.workspaceWorkflowVersionId,
+      ),
+    ).toEqual([unreadableSourceWorkflow.step]);
+  });
+
   it('inlines the source of a function owned by another application', async () => {
     expect(
       await readCoreSteps(otherApplicationWorkflow.coreWorkflowVersionId),
@@ -418,6 +461,9 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     expect(
       await readCoreSteps(oversizedWorkflow.coreWorkflowVersionId),
     ).toEqual([oversizedWorkflow.step]);
+    expect(
+      await readCoreSteps(unreadableSourceWorkflow.coreWorkflowVersionId),
+    ).toEqual([unreadableSourceWorkflow.step]);
     await expectEveryFunctionKept();
   });
 

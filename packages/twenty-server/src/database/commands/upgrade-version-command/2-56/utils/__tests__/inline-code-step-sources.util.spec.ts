@@ -23,7 +23,10 @@ const inline = (steps: StoredWorkflowStep[]) =>
   inlineCodeStepSources({
     steps,
     sourceByLogicFunctionId: new Map([['logic-function-id', SOURCE]]),
-    oversizedLogicFunctionIds: new Set(['oversized-logic-function-id']),
+    existingLogicFunctionIds: new Set([
+      'logic-function-id',
+      'unreadable-logic-function-id',
+    ]),
   });
 
 describe('inlineCodeStepSources', () => {
@@ -75,12 +78,12 @@ describe('inlineCodeStepSources', () => {
     ]);
   });
 
-  it('writes code that throws for a step whose function source is unknown', () => {
+  it('writes code that throws for a step whose function is gone', () => {
     expect(
       inline([
         buildStep({
           input: {
-            logicFunctionId: 'unknown-logic-function-id',
+            logicFunctionId: 'deleted-logic-function-id',
             logicFunctionInput: {},
           },
         }),
@@ -89,23 +92,23 @@ describe('inlineCodeStepSources', () => {
       steps: [
         buildStep({
           input: {
-            logicFunctionId: 'unknown-logic-function-id',
+            logicFunctionId: 'deleted-logic-function-id',
             logicFunctionInput: {},
             code: UNRECOVERABLE_CODE_STEP_SOURCE,
           },
         }),
       ],
       inlinedCodeSteps: [
-        { stepId: 'step-id', logicFunctionId: 'unknown-logic-function-id' },
+        { stepId: 'step-id', logicFunctionId: 'deleted-logic-function-id' },
       ],
     });
   });
 
-  it('leaves oversized sources, code steps that already carry their code and logic function steps', () => {
+  it('leaves steps whose function exists without a usable source, code steps that already carry their code and logic function steps', () => {
     const steps = [
       buildStep({
         input: {
-          logicFunctionId: 'oversized-logic-function-id',
+          logicFunctionId: 'unreadable-logic-function-id',
           logicFunctionInput: {},
         },
       }),

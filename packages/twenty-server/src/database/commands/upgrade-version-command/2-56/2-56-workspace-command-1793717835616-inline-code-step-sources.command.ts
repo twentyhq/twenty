@@ -38,11 +38,6 @@ type StepSource = {
   whereParameters: unknown[];
 };
 
-type FunctionSources = {
-  sourceByLogicFunctionId: Map<string, string>;
-  oversizedLogicFunctionIds: Set<string>;
-};
-
 // expand only: steps keep logicFunctionId and no function is deleted, so a rollback still runs them
 @RegisteredWorkspaceCommand('2.56.0', 1793717835616)
 @Command({
@@ -121,20 +116,14 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
         .map((flatLogicFunction) => [flatLogicFunction.id, flatLogicFunction]),
     );
 
-    const { sourceByLogicFunctionId, oversizedLogicFunctionIds } =
-      await this.readSources({
-        workspaceId,
-        flatApplicationMaps,
-        flatLogicFunctions: legacyLogicFunctionIds
-          .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
-          .filter(isDefined),
-      });
-
-    for (const logicFunctionId of oversizedLogicFunctionIds) {
-      this.logger.warn(
-        `Workspace ${workspaceId}: the source of function ${logicFunctionId} is over the code step size limit, its steps keep running from the function`,
-      );
-    }
+    const sourceByLogicFunctionId = await this.readSources({
+      workspaceId,
+      flatApplicationMaps,
+      flatLogicFunctions: legacyLogicFunctionIds
+        .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
+        .filter(isDefined),
+    });
+    const existingLogicFunctionIds = new Set(flatLogicFunctionById.keys());
 
     const rewrittenRowCounts: number[] = [];
 
@@ -151,13 +140,13 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
             const { steps, inlinedCodeSteps } = inlineCodeStepSources({
               steps: value,
               sourceByLogicFunctionId,
-              oversizedLogicFunctionIds,
+              existingLogicFunctionIds,
             });
 
             for (const { stepId, logicFunctionId } of inlinedCodeSteps) {
               if (!sourceByLogicFunctionId.has(logicFunctionId)) {
                 this.logger.warn(
-                  `Workspace ${workspaceId}: the source of code step ${String(stepId)} in ${source.tableName} ${id} is missing (function ${logicFunctionId}), replaced with code that throws`,
+                  `Workspace ${workspaceId}: function ${logicFunctionId} of code step ${String(stepId)} in ${source.tableName} ${id} is gone, replaced with code that throws`,
                 );
               }
             }
@@ -190,9 +179,8 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     workspaceId: string;
     flatApplicationMaps: Pick<FlatApplicationCacheMaps, 'byId'>;
     flatLogicFunctions: FlatLogicFunction[];
-  }): Promise<FunctionSources> {
+  }): Promise<Map<string, string>> {
     const sourceByLogicFunctionId = new Map<string, string>();
-    const oversizedLogicFunctionIds = new Set<string>();
 
     for (const batch of chunk(flatLogicFunctions, SOURCE_READ_BATCH_SIZE)) {
       const sources = await Promise.all(
@@ -202,7 +190,7 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
 
           if (!isDefined(applicationUniversalIdentifier)) {
             this.logger.warn(
-              `Workspace ${workspaceId}: application ${applicationId} of function ${id} is missing, its code steps get code that throws`,
+              `Workspace ${workspaceId}: application ${applicationId} of function ${id} is missing, its code steps keep running from the function`,
             );
 
             return undefined;
@@ -225,14 +213,16 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
 
         if (!isNonEmptyString(source)) {
           this.logger.warn(
-            `Workspace ${workspaceId}: the source ${sourceHandlerPath} of function ${id} is missing or empty, its code steps get code that throws`,
+            `Workspace ${workspaceId}: the source ${sourceHandlerPath} of function ${id} is missing or empty, its code steps keep running from the function`,
           );
 
           return;
         }
 
         if (source.length > CODE_STEP_SOURCE_MAX_LENGTH) {
-          oversizedLogicFunctionIds.add(id);
+          this.logger.warn(
+            `Workspace ${workspaceId}: the source of function ${id} is over the code step size limit, its code steps keep running from the function`,
+          );
 
           return;
         }
@@ -241,7 +231,7 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
       });
     }
 
-    return { sourceByLogicFunctionId, oversizedLogicFunctionIds };
+    return sourceByLogicFunctionId;
   }
 
   private async readSource({
