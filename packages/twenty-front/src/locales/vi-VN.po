@@ -860,7 +860,7 @@ msgstr "{jobCount, plural, other {Điều này sẽ thử lại các công việ
 #. js-lingui-id: U/izIz
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{keepModelId} (unavailable)"
-msgstr ""
+msgstr "{keepModelId} (không khả dụng)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -31660,7 +31660,7 @@ msgstr "Mặc định của không gian làm việc"
 #. js-lingui-id: bnc50Z
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Workspace default · {workspaceTierLabel}"
-msgstr ""
+msgstr "Mặc định của không gian làm việc · {workspaceTierLabel}"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

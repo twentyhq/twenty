@@ -860,7 +860,7 @@ msgstr "{jobCount, plural, one {זה ינסה להפעיל מחדש את העב�
 #. js-lingui-id: U/izIz
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{keepModelId} (unavailable)"
-msgstr ""
+msgstr "{keepModelId} (לא זמין)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -31660,7 +31660,7 @@ msgstr "ברירת מחדל של מרחב העבודה"
 #. js-lingui-id: bnc50Z
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Workspace default · {workspaceTierLabel}"
-msgstr ""
+msgstr "ברירת מחדל של סביבת העבודה · {workspaceTierLabel}"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

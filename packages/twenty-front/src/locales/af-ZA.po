@@ -860,7 +860,7 @@ msgstr "{jobCount, plural, one {Dit sal die geselekteerde werk herprobeer. Dit s
 #. js-lingui-id: U/izIz
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{keepModelId} (unavailable)"
-msgstr ""
+msgstr "{keepModelId} (onbeskikbaar)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -31660,7 +31660,7 @@ msgstr "Werkruimte se verstek"
 #. js-lingui-id: bnc50Z
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Workspace default · {workspaceTierLabel}"
-msgstr ""
+msgstr "Werkruimte-verstek · {workspaceTierLabel}"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

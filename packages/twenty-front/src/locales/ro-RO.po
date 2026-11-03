@@ -860,7 +860,7 @@ msgstr "{jobCount, plural, one {Aceasta va reîncerca locul de muncă selectat. 
 #. js-lingui-id: U/izIz
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{keepModelId} (unavailable)"
-msgstr ""
+msgstr "{keepModelId} (indisponibil)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -31660,7 +31660,7 @@ msgstr "Implicit pentru spațiul de lucru"
 #. js-lingui-id: bnc50Z
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Workspace default · {workspaceTierLabel}"
-msgstr ""
+msgstr "Implicit pentru spațiul de lucru · {workspaceTierLabel}"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx

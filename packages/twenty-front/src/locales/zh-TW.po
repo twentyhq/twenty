@@ -860,7 +860,7 @@ msgstr "{jobCount, plural, other {這將重試選定的工作。它們將從頭�
 #. js-lingui-id: U/izIz
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{keepModelId} (unavailable)"
-msgstr ""
+msgstr "{keepModelId}（無法使用）"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -31660,7 +31660,7 @@ msgstr "工作區預設值"
 #. js-lingui-id: bnc50Z
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Workspace default · {workspaceTierLabel}"
-msgstr ""
+msgstr "工作區預設值 · {workspaceTierLabel}"
 
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
