@@ -116,6 +116,22 @@ export class CommandMenuItemDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   conditionalPinned?: ConditionalDisplay | null;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Use `conditionalAvailability` instead.',
+  })
+  conditionalAvailabilityExpression?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Use `conditionalPinned` instead.',
+  })
+  conditionalPinnedExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

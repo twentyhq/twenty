@@ -1477,8 +1477,12 @@ export type CommandMenuItem = {
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use `conditionalAvailability` instead. */
+  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   conditionalPinned?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use `conditionalPinned` instead. */
+  conditionalPinnedExpression?: Maybe<Scalars['String']['output']>;
   coreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   engineComponentKey: EngineComponentKey;
@@ -5604,6 +5608,8 @@ export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
   applicationId: Scalars['UUID']['output'];
   conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use `conditionalDisplay` instead. */
+  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];
