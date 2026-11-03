@@ -1,5 +1,6 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { getLastChildPositionInRecordFilterGroup } from '@/object-record/record-filter-group/utils/getLastChildPositionInRecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -54,10 +55,11 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
     return positionA - positionB;
   });
 
-  const lastChildPosition =
-    childRecordFiltersAndRecordFilterGroups[
-      childRecordFiltersAndRecordFilterGroups.length - 1
-    ]?.positionInRecordFilterGroup ?? 0;
+  const lastChildPosition = getLastChildPositionInRecordFilterGroup({
+    recordFilterGroupId: currentRecordFilterGroup.id,
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+  });
 
   return {
     currentRecordFilterGroup,

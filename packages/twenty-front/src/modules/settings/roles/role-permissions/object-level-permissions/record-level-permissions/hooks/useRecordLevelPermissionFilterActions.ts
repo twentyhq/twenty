@@ -17,6 +17,7 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { getLastChildPositionInRecordFilterGroup } from '@/object-record/record-filter-group/utils/getLastChildPositionInRecordFilterGroup';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
@@ -65,19 +66,11 @@ export const useRecordLevelPermissionFilterActions = ({
   );
 
   const getNextChildPosition = (recordFilterGroupId: string) =>
-    Math.max(
-      0,
-      ...[
-        ...currentRecordFilters.filter(
-          (recordFilter) =>
-            recordFilter.recordFilterGroupId === recordFilterGroupId,
-        ),
-        ...currentRecordFilterGroups.filter(
-          (recordFilterGroup) =>
-            recordFilterGroup.parentRecordFilterGroupId === recordFilterGroupId,
-        ),
-      ].map((child) => child.positionInRecordFilterGroup ?? 0),
-    ) + 1;
+    getLastChildPositionInRecordFilterGroup({
+      recordFilterGroupId,
+      recordFilters: currentRecordFilters,
+      recordFilterGroups: currentRecordFilterGroups,
+    }) + 1;
 
   const getDefaultFieldMetadataItemForRLS = () => {
     const availableFieldMetadataItemsForRls =
