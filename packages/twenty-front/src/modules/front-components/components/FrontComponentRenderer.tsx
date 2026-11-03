@@ -249,7 +249,14 @@ const FrontComponentRendererContent = ({
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
-        <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+        <FrontComponentRendererProvider
+          frontComponentId={frontComponentId}
+          applicationId={applicationId}
+          applicationName={resolvedApplicationName}
+          applicationGrantedIframeMediaPermissions={
+            frontComponent.applicationGrantedIframeMediaPermissions ?? []
+          }
+        >
           <SharedFrontComponentRenderer
             colorScheme={colorScheme}
             componentUrl={componentUrl}
