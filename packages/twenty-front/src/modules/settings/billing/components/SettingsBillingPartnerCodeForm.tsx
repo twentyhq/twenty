@@ -14,11 +14,22 @@ import {
   SetBillingPartnerCodeDocument,
 } from '~/generated-metadata/graphql';
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[0.5]};
+  width: 100%;
+`;
+
 const StyledRow = styled.div`
   align-items: flex-end;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
+`;
+
+const StyledHint = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 type SettingsBillingPartnerCodeFormProps = {
@@ -37,9 +48,7 @@ export const SettingsBillingPartnerCodeForm = ({
     { refetchQueries: [BillingPartnerCodeDocument] },
   );
 
-  const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(
-    null,
-  );
+  const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
 
   if (!isDefined(data)) {
     return null;
@@ -73,25 +82,29 @@ export const SettingsBillingPartnerCodeForm = ({
   };
 
   return (
-    <StyledRow>
-      <SettingsTextInput
-        instanceId={instanceId}
-        label={t`Partner code`}
-        placeholder={t`Optional`}
-        value={displayedPartnerCode}
-        onChange={setDraftPartnerCode}
-        onInputEnter={handleApply}
-        disabled={!isEditable}
-        hint={isEditable ? t`Once applied, the code cannot be changed.` : lockedHint}
-      />
-      {isEditable && (
-        <Button
-          variant="outline"
-          onClick={handleApply}
-          disabled={!canApply}
-          loading={loading}
-        >{t`Apply`}</Button>
-      )}
-    </StyledRow>
+    <StyledContainer>
+      <StyledRow>
+        <SettingsTextInput
+          instanceId={instanceId}
+          label={t`Partner code`}
+          placeholder={t`Optional`}
+          value={displayedPartnerCode}
+          onChange={setDraftPartnerCode}
+          onInputEnter={handleApply}
+          disabled={!isEditable}
+        />
+        {isEditable && (
+          <Button
+            variant="outline"
+            onClick={handleApply}
+            disabled={!canApply}
+            loading={loading}
+          >{t`Apply`}</Button>
+        )}
+      </StyledRow>
+      <StyledHint>
+        {isEditable ? t`Once applied, the code cannot be changed.` : lockedHint}
+      </StyledHint>
+    </StyledContainer>
   );
 };
