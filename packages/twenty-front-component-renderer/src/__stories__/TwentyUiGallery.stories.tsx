@@ -52,6 +52,7 @@ import { SelectPageDecorator } from '@/__stories__/twenty-ui-gallery/components/
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
 import { OverflowingListInstancesDecorator } from '@/__stories__/twenty-ui-gallery/components/OverflowingListInstancesDecorator';
 import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
+import { portalZoomTest } from '@/__stories__/twenty-ui-gallery/utils/portalZoomTest';
 
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
@@ -439,6 +440,23 @@ export const PortalBoundsPreact: Story = createGalleryStory({
   decorators: [PortalBoundsDecorator],
   play: portalBoundsTest,
 });
+
+export const PortalZoomPrevention: Story = {
+  ...PortalBoundsReact,
+  args: {
+    ...PortalBoundsReact.args,
+    preventPageZoom: true,
+  },
+  play: portalZoomTest,
+};
+
+export const PortalBrowserZoom: Story = {
+  ...PortalZoomPrevention,
+  args: {
+    ...PortalZoomPrevention.args,
+    preventPageZoom: false,
+  },
+};
 
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
