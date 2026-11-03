@@ -107,11 +107,7 @@ export class AdminConsoleSessionService {
     if (
       !isDefined(userWorkspace) ||
       userWorkspace.user.disabled ||
-      !userHasAdminPrivileges(userWorkspace.user) ||
-      !(await this.serverAdminAccessService.isRequestAllowed({
-        request,
-        userEmail: userWorkspace.user.email,
-      }))
+      !userHasAdminPrivileges(userWorkspace.user)
     ) {
       throw new AuthException(
         'Admin console sign-in refused',

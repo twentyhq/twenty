@@ -12,13 +12,13 @@ const mockRequest = (request: Record<string, unknown>) => {
 
 const buildServerAdminAccessService = (isRequestAllowed: boolean) =>
   ({
-    isRequestAllowed: jest.fn().mockResolvedValue(isRequestAllowed),
+    isRequestAllowed: jest.fn().mockReturnValue(isRequestAllowed),
   }) as unknown as ServerAdminAccessService;
 
 const executionContext = {} as ExecutionContext;
 
 describe('ServerLevelImpersonateGuard', () => {
-  it('allows an impersonator whose request passes the server admin access checks', async () => {
+  it('allows an impersonator whose request is on an allowed host', () => {
     const serverAdminAccessService = buildServerAdminAccessService(true);
     const request = {
       user: { canImpersonate: true, email: 'support@example.com' },
@@ -26,26 +26,25 @@ describe('ServerLevelImpersonateGuard', () => {
 
     mockRequest(request);
 
-    await expect(
+    expect(
       new ServerLevelImpersonateGuard(serverAdminAccessService).canActivate(
         executionContext,
       ),
-    ).resolves.toBe(true);
-    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith({
+    ).toBe(true);
+    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith(
       request,
-      userEmail: 'support@example.com',
-    });
+    );
   });
 
-  it('applies the server admin access checks to impersonators', async () => {
+  it('applies the server admin access checks to impersonators', () => {
     mockRequest({
       user: { canImpersonate: true, email: 'support@example.com' },
     });
 
-    await expect(
+    expect(
       new ServerLevelImpersonateGuard(
         buildServerAdminAccessService(false),
       ).canActivate(executionContext),
-    ).resolves.toBe(false);
+    ).toBe(false);
   });
 });

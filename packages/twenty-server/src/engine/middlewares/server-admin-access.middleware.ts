@@ -9,7 +9,7 @@ import {
 import { ServerAdminAccessService } from 'src/engine/core-modules/server-admin-access/services/server-admin-access.service';
 import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 
-// Backstop for the whole admin schema: when configured, off-host or Access-less requests are refused even without a guard.
+// Backstop for the whole admin schema: once a console is configured, off-host requests are refused even without a guard.
 @Injectable()
 export class ServerAdminAccessMiddleware implements NestMiddleware {
   constructor(
@@ -17,13 +17,8 @@ export class ServerAdminAccessMiddleware implements NestMiddleware {
     private readonly middlewareService: MiddlewareService,
   ) {}
 
-  async use(request: Request, response: Response, next: NextFunction) {
-    if (
-      await this.serverAdminAccessService.isRequestAllowed({
-        request,
-        userEmail: request.user?.email,
-      })
-    ) {
+  use(request: Request, response: Response, next: NextFunction) {
+    if (this.serverAdminAccessService.isRequestAllowed(request)) {
       next();
 
       return;

@@ -2084,28 +2084,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     description:
-      'Cloudflare Access team domain (e.g. https://acme.cloudflareaccess.com). Set with SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE to require a valid Access assertion, matching the user email, on every server admin operation.',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
-  @ValidateIf((env) => env.SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE)
-  SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN: string | undefined;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
-    description:
-      'Audience (AUD tag) of the Cloudflare Access application protecting server administration',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @IsString()
-  @ValidateIf((env) => env.SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN)
-  SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE: string | undefined;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
-    description:
       'Store the visitor location headers Cloudflare adds (cf-ipcountry, ' +
       'cf-region, cf-ipcity) on user sessions. Only enable when every ' +
       'request reaches the server through Cloudflare: otherwise clients ' +

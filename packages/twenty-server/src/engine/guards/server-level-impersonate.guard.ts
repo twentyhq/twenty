@@ -15,7 +15,7 @@ export class ServerLevelImpersonateGuard implements CanActivate {
     private readonly serverAdminAccessService: ServerAdminAccessService,
   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = GqlExecutionContext.create(context).getContext().req;
 
     if (
@@ -25,9 +25,6 @@ export class ServerLevelImpersonateGuard implements CanActivate {
       return false;
     }
 
-    return this.serverAdminAccessService.isRequestAllowed({
-      request,
-      userEmail: request.user.email,
-    });
+    return this.serverAdminAccessService.isRequestAllowed(request);
   }
 }

@@ -12,7 +12,7 @@ const mockRequest = (request: Record<string, unknown>) => {
 
 const buildServerAdminAccessService = (isRequestAllowed: boolean) =>
   ({
-    isRequestAllowed: jest.fn().mockResolvedValue(isRequestAllowed),
+    isRequestAllowed: jest.fn().mockReturnValue(isRequestAllowed),
   }) as unknown as ServerAdminAccessService;
 
 const executionContext = {} as ExecutionContext;
@@ -21,51 +21,50 @@ describe('AdminPanelOrImpersonateGuard', () => {
   it.each([
     { canAccessFullAdminPanel: true, canImpersonate: false },
     { canAccessFullAdminPanel: false, canImpersonate: true },
-  ])('delegates to the server admin access checks for %o', async (flags) => {
+  ])('delegates the host check for %o', (flags) => {
     const serverAdminAccessService = buildServerAdminAccessService(true);
     const request = { user: { ...flags, email: 'admin@example.com' } };
 
     mockRequest(request);
 
-    await expect(
+    expect(
       new AdminPanelOrImpersonateGuard(serverAdminAccessService).canActivate(
         executionContext,
       ),
-    ).resolves.toBe(true);
-    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith({
+    ).toBe(true);
+    expect(serverAdminAccessService.isRequestAllowed).toHaveBeenCalledWith(
       request,
-      userEmail: 'admin@example.com',
-    });
+    );
   });
 
-  it('refuses a request that fails the server admin access checks', async () => {
+  it('refuses a request that is on a refused host', () => {
     mockRequest({
       user: { canImpersonate: true, email: 'support@example.com' },
     });
 
-    await expect(
+    expect(
       new AdminPanelOrImpersonateGuard(
         buildServerAdminAccessService(false),
       ).canActivate(executionContext),
-    ).resolves.toBe(false);
+    ).toBe(false);
   });
 
-  it('refuses a user with neither privilege without checking access', async () => {
+  it('refuses a user with neither privilege without checking access', () => {
     const serverAdminAccessService = buildServerAdminAccessService(true);
 
     mockRequest({
       user: { canAccessFullAdminPanel: false, canImpersonate: false },
     });
 
-    await expect(
+    expect(
       new AdminPanelOrImpersonateGuard(serverAdminAccessService).canActivate(
         executionContext,
       ),
-    ).resolves.toBe(false);
+    ).toBe(false);
     expect(serverAdminAccessService.isRequestAllowed).not.toHaveBeenCalled();
   });
 
-  it('refuses an impersonated session', async () => {
+  it('refuses an impersonated session', () => {
     mockRequest({
       user: { canAccessFullAdminPanel: true },
       impersonationContext: {
@@ -74,10 +73,10 @@ describe('AdminPanelOrImpersonateGuard', () => {
       },
     });
 
-    await expect(
+    expect(
       new AdminPanelOrImpersonateGuard(
         buildServerAdminAccessService(true),
       ).canActivate(executionContext),
-    ).resolves.toBe(false);
+    ).toBe(false);
   });
 });

@@ -46237,7 +46237,6 @@ __metadata:
     ioredis: "npm:5.10.1"
     ioredis-mock: "npm:8.13.1"
     jest: "npm:29.7.0"
-    jose: "npm:^4.15.9"
     jsdom: "npm:^30.0.1"
     json-schema: "npm:0.4.0"
     jsonwebtoken: "npm:9.0.2"
