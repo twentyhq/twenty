@@ -564,11 +564,6 @@ msgstr "Odgovori asistenta {AGENT_CHAT_ASSISTANT_NAME}"
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
 msgstr "{agentCount, plural, one {{agentCount} agent} few {{agentCount} agenta} other {{agentCount} agenata}}"
 
-#. js-lingui-id: WGnqk6
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{agentDisplayName} role ({agentIdPrefix})"
-msgstr "uloga {agentDisplayName} ({agentIdPrefix})"
-
 #. js-lingui-id: lhr2m3
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 msgid "{agentLabel} Agent Role"
@@ -968,15 +963,10 @@ msgstr "{participantNames} kuca…"
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
 msgstr "{peopleCount, plural, one {{formattedPeopleCount} osoba} few {{formattedPeopleCount} osobe} other {{formattedPeopleCount} osoba}} i {companyCount, plural, one {{formattedCompanyCount} kompanija} few {{formattedCompanyCount} kompanije} other {{formattedCompanyCount} kompanija}} u vašem radnom prostoru"
 
-#. js-lingui-id: FaQB54
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{permissionLabel} permission removed"
-msgstr "Dozvola {permissionLabel} je uklonjena"
-
-#. js-lingui-id: VsXMnq
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{permissionLabel} Permission removed"
-msgstr "Dozvola {permissionLabel} je uklonjena"
+#. js-lingui-id: fbTMCq
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "{permissionLabel} (denied)"
+msgstr "{permissionLabel} (odbijeno)"
 
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -2870,8 +2860,7 @@ msgstr "agent"
 
 #. js-lingui-id: iEQQyu
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-#: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
 msgid "Agent"
 msgstr "Agent"
@@ -2910,6 +2899,7 @@ msgstr "Veb pretraga agenta"
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Agents"
@@ -3270,6 +3260,11 @@ msgstr "Sve poruke"
 msgid "All Metadata"
 msgstr "Svi metapodaci"
 
+#. js-lingui-id: vKmC3w
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
+msgid "all objects"
+msgstr "svi objekti"
+
 #. js-lingui-id: zIk4M6
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
@@ -3302,6 +3297,11 @@ msgstr "svi zapisi"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "Sve uloge"
+
+#. js-lingui-id: 2ls1gc
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "All settings"
+msgstr "Sva podešavanja"
 
 #. js-lingui-id: shNsiv
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -3337,6 +3337,11 @@ msgstr "Sve stavke rasporeda definisane u vašem radnom prostoru"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
 msgstr "Svi standardni objekti"
+
+#. js-lingui-id: 35148H
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "All tools"
+msgstr "Sve alatke"
 
 #. js-lingui-id: xYbZZH
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -4205,7 +4210,7 @@ msgid "Ask an admin to raise the limit."
 msgstr "Zamolite administratora da poveća ograničenje."
 
 #. js-lingui-id: g8Yo6T
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
 msgstr "Zatraži ljudski unos"
 
@@ -4564,11 +4569,6 @@ msgstr "Automatsko ažuriranje je omogućeno"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
 msgstr "Automatsko kreiranje"
-
-#. js-lingui-id: HX/jD4
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "Auto-generated role for {agentDisplayName}"
-msgstr "Automatski generisana uloga za {agentDisplayName}"
 
 #. js-lingui-id: /nv0ml
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -9623,8 +9623,13 @@ msgstr "opadajuće"
 msgid "Descending"
 msgstr "Opadajuće"
 
+#. js-lingui-id: 3QTkmB
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
+msgid "Describe the role of the AI and how it should do the task..."
+msgstr "Opišite ulogu AI-ja i kako treba da obavi zadatak..."
+
 #. js-lingui-id: g+5exC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
 msgid "Describe what you want the AI to do..."
 msgstr "Opišite šta želite da AI uradi..."
 
@@ -9793,6 +9798,11 @@ msgstr "Diktiranje nije uspelo. Pokušajte ponovo."
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
 msgstr "Diktiranje nije podržano u ovom pregledaču."
+
+#. js-lingui-id: DVB659
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Direct message pair identity"
+msgstr "Identitet para direktnih poruka"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -12839,6 +12849,11 @@ msgstr "Polje na odredištu"
 msgid "field permission"
 msgstr "dozvola za polje"
 
+#. js-lingui-id: XmkV4U
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "Field permissions on {objectLabel}"
+msgstr "Dozvole polja za {objectLabel}"
+
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field removed from search"
@@ -13654,6 +13669,7 @@ msgid "General settings"
 msgstr "Opšta podešavanja"
 
 #. js-lingui-id: ziAjHi
+#: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction.ts
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate"
 msgstr "Generiši"
@@ -15013,11 +15029,6 @@ msgstr "Početne vrednosti"
 msgid "Input"
 msgstr "Unos"
 
-#. js-lingui-id: /OdOC/
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
-msgid "Input (Prompt)"
-msgstr "Unos (prompt)"
-
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -15197,6 +15208,7 @@ msgstr "Uputstvo za AI"
 
 #. js-lingui-id: NxHkkp
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions"
@@ -20854,6 +20866,11 @@ msgstr "Ostali razgovori u prijemnom sandučetu"
 msgid "Other objects"
 msgstr "Ostali objekti"
 
+#. js-lingui-id: lP+P1l
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+msgid "Other permissions"
+msgstr "Ostale dozvole"
+
 #. js-lingui-id: 9LV44m
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Other security settings"
@@ -21974,6 +21991,7 @@ msgid "Profile Picture"
 msgstr "Slika profila"
 
 #. js-lingui-id: W9uQXX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Prompt"
 msgstr "Upit"
@@ -22394,7 +22412,7 @@ msgstr "Nedavni korisnici"
 
 #. js-lingui-id: I3QpvQ
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Recipient"
 msgstr "Primalac"
@@ -23571,6 +23589,11 @@ msgstr "Vrednost povraćaja"
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Returns an array of records"
 msgstr "Vraća niz zapisa"
+
+#. js-lingui-id: dMc2/b
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
+msgstr "Ponovo koristi isti razgovor kada ista dva člana radnog prostora započnu direktnu poruku. Omogućeno nakon završetka nadogradnje radnog prostora."
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -25482,6 +25505,7 @@ msgstr "Podešavamo vašu <0>bazu podataka</0>..."
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -27366,6 +27390,16 @@ msgstr "To je oko {formattedNewlyEarnedAiActions} AI radnji. Krediti nikada ne i
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Adresa sa koje će vaš radni prostor slati i primati imejlove (npr. support@mycompany.com). Za odlazno slanje potrebno je da domen bude verifikovan u odeljku Odlazni domeni."
+
+#. js-lingui-id: VzRxGM
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
+msgid "The agent sets the instructions, model and permissions."
+msgstr "Agent određuje uputstva, model i dozvole."
+
+#. js-lingui-id: QKWHCt
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "The agent this step runs could not be loaded. It may have been deleted."
+msgstr "Agent koji ovaj korak pokreće nije mogao da se učita. Možda je izbrisan."
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -30587,11 +30621,6 @@ msgstr "pregled"
 msgid "View"
 msgstr "Pregled"
 
-#. js-lingui-id: 8qPdO7
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
-msgid "View Agent"
-msgstr "Prikaži agenta"
-
 #. js-lingui-id: noHthC
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "View AI usage breakdown"
@@ -30679,16 +30708,6 @@ msgstr "Samo pregled — Možete da čitate ovaj razgovor."
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "View original message"
 msgstr "Prikaži originalnu poruku"
-
-#. js-lingui-id: hAAsm/
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "View role"
-msgstr "Prikaži ulogu"
-
-#. js-lingui-id: mzftV9
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
-msgid "View Role"
-msgstr "Prikaži ulogu"
 
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -31237,7 +31256,7 @@ msgid "When off, the event is created with no attendees and nobody is notified."
 msgstr "Kada je isključeno, događaj se kreira bez učesnika i niko ne dobija obaveštenje."
 
 #. js-lingui-id: E2I4La
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
 msgstr "Kada agent treba da se zaustavi i pita vas? Npr. pre slanja bilo kog imejla ili promene iznosa posla. Ostavite prazno da se nikada ne zaustavlja."
 
@@ -31343,7 +31362,7 @@ msgid "With no other channel to move its chats to, only an empty channel can be 
 msgstr "Bez drugog kanala u koji bi se ćaskanja prebacila, može se obrisati samo prazan kanal. Ovo se ne može opozvati."
 
 #. js-lingui-id: tVV1AC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them."
 msgstr "Sa primaocem ili tvorcem toka rada kada je prazno. Ne stiže u njihovo prijemno sanduče dok ih agent ne zatreba."
 

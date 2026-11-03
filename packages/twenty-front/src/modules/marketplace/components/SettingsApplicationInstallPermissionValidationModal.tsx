@@ -4,6 +4,7 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
+import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
@@ -15,6 +16,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
@@ -32,6 +34,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   defaultRole?: RoleManifest;
   appObjects?: MarketplaceAppObject[];
   requestedCapabilities?: string[];
+  requestedIframeMediaPermissions?: readonly IframeMediaPermission[];
   billsCredits?: boolean;
   isListed?: boolean;
   onAuthorize: () => void;
@@ -137,6 +140,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   defaultRole,
   appObjects,
   requestedCapabilities = [],
+  requestedIframeMediaPermissions = [],
   billsCredits = false,
   isListed = false,
   onAuthorize,
@@ -178,10 +182,14 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     return [
       ...rolePermissionItems,
       ...buildApplicationCapabilitySummary(requestedCapabilities),
+      ...buildApplicationIframeMediaPermissionSummary(
+        requestedIframeMediaPermissions,
+      ),
       ...buildApplicationBillingSummary(billsCredits),
     ];
   }, [
     requestedCapabilities,
+    requestedIframeMediaPermissions,
     defaultRole,
     objectLabelsByUniversalIdentifier,
     appObjectUniversalIdentifiers,

@@ -40,6 +40,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   availablePackages: {},
   billing: {},
   grantedCapabilities: [],
+  grantedIframeMediaPermissions: [],
   logicFunctionLayerId: null,
   defaultRoleId: null,
   defaultRole: null,

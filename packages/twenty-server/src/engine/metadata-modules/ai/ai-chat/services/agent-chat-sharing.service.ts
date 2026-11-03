@@ -327,13 +327,10 @@ export class AgentChatSharingService {
             const grants = await Promise.all(
               AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
                 this.recordAccessPolicyService.hasAccessToRecords({
-                  principals: {
-                    workspaceId,
-                    mainPrincipal: {
-                      type: 'workspaceMember',
-                      workspaceMemberId: memberId,
-                    },
-                    applicationPrincipal: { type: 'customApplication' },
+                  authContext: {
+                    type: 'user',
+                    workspace: { id: workspaceId },
+                    workspaceMemberId: memberId,
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],

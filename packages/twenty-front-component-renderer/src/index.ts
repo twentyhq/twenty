@@ -1,6 +1,10 @@
 export { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 export { FrontComponentSourceRenderer } from '@/host/components/FrontComponentSourceRenderer';
 export { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+export { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from '@/constants/FrontComponentHostUiClassName';
+export { FrontComponentIframeHostContext } from '@/host/elements/contexts/FrontComponentIframeHostContext';
+export { type FrontComponentIframeHostProps } from '@/host/elements/types/FrontComponentIframeHostProps';
+export { getRequestedIframeMediaCapabilities } from '@/host/elements/utils/getRequestedIframeMediaCapabilities';
 export { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 export { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 export { componentRegistry } from '@/host/generated/host-component-registry';

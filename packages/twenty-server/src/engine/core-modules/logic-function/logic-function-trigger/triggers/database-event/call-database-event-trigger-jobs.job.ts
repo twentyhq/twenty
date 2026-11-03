@@ -101,8 +101,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const admittedEvents = await resolveEventsReadableByRole({
-        applicationId,
-        roleId: application.defaultRoleId,
+        application,
         workspaceEventBatch,
         eventRecordAccessGate,
         metadataMaps,

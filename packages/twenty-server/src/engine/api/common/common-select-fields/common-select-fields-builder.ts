@@ -18,7 +18,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
@@ -28,20 +28,21 @@ export class CommonSelectFieldsBuilder {
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
   async findReadableObjectMetadataIds({
-    principals,
+    authContext,
     flatObjectMetadataMaps,
   }: {
-    principals: PermissionsPrincipalsContext;
+    authContext: PermissionsAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<Set<string>> {
     const flatObjectMetadatas = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
+    const recordAccessPolicy =
+      this.recordAccessPolicyService.forAuthContext(authContext);
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((flatObjectMetadata) =>
-        this.recordAccessPolicyService.hasAccessToSomeRecords({
-          principals,
+        recordAccessPolicy.hasAccessToSomeRecords({
           flatObjectMetadata,
           operationType: 'select',
         }),

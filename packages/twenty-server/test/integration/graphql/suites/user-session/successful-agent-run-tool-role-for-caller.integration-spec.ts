@@ -1,5 +1,3 @@
-import { type PermissionsMainPrincipal } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { captureAgentRunExecution } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -27,7 +25,9 @@ type GlobalTestContext = {
 type TestContext = {
   token: (globalContext: GlobalTestContext) => string;
   runAsWorkspaceMemberId?: string;
-  mainPrincipal: PermissionsMainPrincipal;
+  expectedCaller:
+    | { type: 'user'; workspaceMemberId: string }
+    | { type: 'apiKey'; apiKey: { id: string } };
 };
 
 const callerRunTestCases: EachTestingContext<TestContext>[] = [
@@ -35,8 +35,8 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     title: 'a member session runs another application agent',
     context: {
       token: () => APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      mainPrincipal: {
-        type: 'workspaceMember',
+      expectedCaller: {
+        type: 'user',
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     },
@@ -45,8 +45,8 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     title: 'an application token issued for a member runs its own agent',
     context: {
       token: (globalContext) => globalContext.janeApplicationToken,
-      mainPrincipal: {
-        type: 'workspaceMember',
+      expectedCaller: {
+        type: 'user',
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       },
     },
@@ -56,8 +56,8 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     context: {
       token: (globalContext) => globalContext.applicationToken,
       runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      mainPrincipal: {
-        type: 'workspaceMember',
+      expectedCaller: {
+        type: 'user',
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     },
@@ -66,7 +66,10 @@ const callerRunTestCases: EachTestingContext<TestContext>[] = [
     title: 'an API key runs an application agent',
     context: {
       token: () => API_KEY_ACCESS_TOKEN,
-      mainPrincipal: { type: 'apiKey', apiKeyId: API_KEY_DATA_SEED_IDS.ID_1 },
+      expectedCaller: {
+        type: 'apiKey',
+        apiKey: { id: API_KEY_DATA_SEED_IDS.ID_1 },
+      },
     },
   },
 ];
@@ -123,16 +126,11 @@ describe('Agent run tools should be limited to the caller role', () => {
         runAsWorkspaceMemberId: context.runAsWorkspaceMemberId,
       });
 
-      expect(
-        getPermissionsPrincipalsFromAuthContext(executionContext.authContext),
-      ).toEqual({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        mainPrincipal: context.mainPrincipal,
-        limitingPrincipal: { type: 'agent', agentId: application.agentId },
-        applicationPrincipal: {
-          type: 'application',
-          applicationId: application.id,
-        },
+      expect(executionContext.authContext).toMatchObject({
+        ...context.expectedCaller,
+        workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
+        agentId: application.agentId,
+        application: expect.objectContaining({ id: application.id }),
       });
     },
   );
@@ -143,16 +141,11 @@ describe('Agent run tools should be limited to the caller role', () => {
       token: globalTestContext.applicationToken,
     });
 
-    expect(
-      getPermissionsPrincipalsFromAuthContext(executionContext.authContext),
-    ).toEqual({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      mainPrincipal: { type: 'application', applicationId: application.id },
-      limitingPrincipal: { type: 'agent', agentId: application.agentId },
-      applicationPrincipal: {
-        type: 'application',
-        applicationId: application.id,
-      },
+    expect(executionContext.authContext).toMatchObject({
+      type: 'application',
+      workspace: expect.objectContaining({ id: SEED_APPLE_WORKSPACE_ID }),
+      agentId: application.agentId,
+      application: expect.objectContaining({ id: application.id }),
     });
   });
 });
