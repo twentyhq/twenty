@@ -172,6 +172,14 @@ describe('isUserFacingToolExecutionError', () => {
       true,
     ],
     [
+      'an inbox message with invalid addressing',
+      new AiException(
+        'Address the message with either threadKey or threadId, not both',
+        AiExceptionCode.INVALID_INBOX_MESSAGE_INPUT,
+      ),
+      true,
+    ],
+    [
       'an agent run that failed',
       new AiException(
         'Agent execution failed',
