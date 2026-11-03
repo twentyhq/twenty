@@ -3,6 +3,8 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
+import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -79,7 +81,14 @@ const openGroupMenu = async ({
     { name: 'More options' },
     { timeout: 3000 },
   );
-  const groupMenuTrigger = groupMenuTriggers.at(groupIndex);
+  const fieldMenuTriggers = within(canvasElement)
+    .queryAllByRole('group', { name: 'Field actions' })
+    .flatMap((fieldActions) =>
+      within(fieldActions).queryAllByRole('button', { name: 'More options' }),
+    );
+  const groupMenuTrigger = groupMenuTriggers
+    .filter((trigger) => !fieldMenuTriggers.includes(trigger))
+    .at(groupIndex);
 
   if (groupMenuTrigger === undefined) {
     throw new Error(`Group ${groupIndex} has no menu`);
@@ -130,9 +139,23 @@ const meta: Meta<typeof FieldsConfigurationEditor> = {
   decorators: [
     (Story) => (
       <StrictMode>
-        <SidePanel>
-          <Story />
-        </SidePanel>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: PAGE_LAYOUT_ID }}
+        >
+          <PageLayoutSidePanelTargetContext.Provider
+            value={{
+              pageLayoutId: PAGE_LAYOUT_ID,
+              targetRecordIdentifier: {
+                targetObjectNameSingular: CoreObjectNameSingular.Company,
+                id: 'story-record',
+              },
+            }}
+          >
+            <SidePanel>
+              <Story />
+            </SidePanel>
+          </PageLayoutSidePanelTargetContext.Provider>
+        </SidePanelPageComponentInstanceContext.Provider>
       </StrictMode>
     ),
     ComponentDecorator,
@@ -177,7 +200,7 @@ export const Default: Story = {
     expect(canvas.getByText('Details')).toBeVisible();
     expect(
       canvas.getAllByRole('button', { name: 'More options' }),
-    ).toHaveLength(2);
+    ).toHaveLength(3);
   },
 };
 

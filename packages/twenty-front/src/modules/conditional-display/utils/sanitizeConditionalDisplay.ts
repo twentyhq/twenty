@@ -49,13 +49,17 @@ export const sanitizeConditionalDisplay = ({
   );
 
   const validRecordFilters = recordFilters.flatMap((recordFilter) => {
-    if (isConditionalDisplayAdminContextKey(recordFilter.fieldMetadataId)) {
-      return isRecordFilterValueValid({
+    if (
+      !isRecordFilterValueValid({
         operand: recordFilter.operand,
         value: recordFilter.value ?? '',
       })
-        ? [recordFilter]
-        : [];
+    ) {
+      return [];
+    }
+
+    if (isConditionalDisplayAdminContextKey(recordFilter.fieldMetadataId)) {
+      return [recordFilter];
     }
 
     const sanitizedRecordFilter = sanitizedFieldRecordFilterById.get(

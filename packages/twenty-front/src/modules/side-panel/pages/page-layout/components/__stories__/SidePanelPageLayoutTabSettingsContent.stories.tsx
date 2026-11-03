@@ -15,6 +15,7 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -156,12 +157,16 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
             },
           }}
         >
-          <TabListComponentInstanceContext.Provider
-            value={{ instanceId: TAB_LIST_INSTANCE_ID }}
+          <SidePanelPageComponentInstanceContext.Provider
+            value={{ instanceId: PAGE_LAYOUT_ID }}
           >
-            <Story />
-            <TabSelectionPreview />
-          </TabListComponentInstanceContext.Provider>
+            <TabListComponentInstanceContext.Provider
+              value={{ instanceId: TAB_LIST_INSTANCE_ID }}
+            >
+              <Story />
+              <TabSelectionPreview />
+            </TabListComponentInstanceContext.Provider>
+          </SidePanelPageComponentInstanceContext.Provider>
         </LayoutRenderingProvider>
       </MemoryRouter>
     ),

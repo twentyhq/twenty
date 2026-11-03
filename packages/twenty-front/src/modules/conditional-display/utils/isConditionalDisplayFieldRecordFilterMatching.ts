@@ -1,10 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ConditionalDisplayRecordFilter } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isEmptyObject,
 } from 'twenty-shared/utils';
 
 type IsConditionalDisplayFieldRecordFilterMatchingParams = {
@@ -33,7 +35,11 @@ export const isConditionalDisplayFieldRecordFilterMatching = ({
       fieldMetadataItem.id === fieldMetadataId && fieldMetadataItem.isActive,
   );
 
-  if (!isDefined(fieldMetadataId) || !isActiveFieldOfObject) {
+  if (
+    !isDefined(fieldMetadataId) ||
+    !isActiveFieldOfObject ||
+    (isNonEmptyString(subFieldName) && !isValidSubFieldName(subFieldName))
+  ) {
     return false;
   }
 
@@ -59,6 +65,10 @@ export const isConditionalDisplayFieldRecordFilterMatching = ({
       currentWorkspaceMemberId: currentWorkspaceMemberId ?? undefined,
     },
   });
+
+  if (isEmptyObject(filter)) {
+    return false;
+  }
 
   return isRecordMatchingFilter({
     record,

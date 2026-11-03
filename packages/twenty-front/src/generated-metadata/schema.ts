@@ -3446,7 +3446,6 @@ export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
   collectionHashes: Array<CollectionHash>;
   objectMetadataItems: Array<MinimalObjectMetadata>;
-  roles: Array<MinimalRole>;
   views: Array<MinimalView>;
 };
 
@@ -3462,13 +3461,6 @@ export type MinimalObjectMetadata = {
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
-};
-
-export type MinimalRole = {
-  __typename?: 'MinimalRole';
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  label: Scalars['String']['output'];
 };
 
 export type MinimalView = {

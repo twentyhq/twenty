@@ -3167,7 +3167,8 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": false,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": null,
+    "conditionalAvailability": null,
+    "conditionalPinned": null,
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "navigationTargetObjectMetadataId": null,
@@ -3228,7 +3229,26 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": true,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "pageType == \"INDEX_PAGE\"",
+    "conditionalAvailability": {
+      "recordFilters": [
+        {
+          "id": "8ec62229-ee83-5d7e-b27c-fc1337c95555",
+          "value": "[\"INDEX_PAGE\"]",
+          "operand": "IS",
+          "contextKey": "pageType"
+        }
+      ]
+    },
+    "conditionalPinned": {
+      "recordFilters": [
+        {
+          "id": "d7dcba01-724a-5a9f-ac3a-feefb2e78263",
+          "value": "0",
+          "operand": "IS",
+          "contextKey": "numberOfSelectedRecords"
+        }
+      ]
+    },
     "availabilityType": "GLOBAL_OBJECT_CONTEXT",
     "availabilityObjectMetadataId": "e5c52c5f-caa7-4e0c-9148-66c792e129a8",
     "navigationTargetObjectMetadataId": null,
@@ -4510,8 +4530,22 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "position": 84,
     "isPinned": false,
     "payload": null,
-    "hotKeys": null,
-    "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageCampaign",
+    "hotKeys": [
+      "G",
+      "O"
+    ],
+    "conditionalAvailability": {
+      "recordFilters": [
+        {
+          "id": "46e9381c-1452-4bf7-a341-fac40f184302",
+          "value": "true",
+          "operand": "IS",
+          "contextKey": "targetObjectReadPermissions",
+          "subFieldName": "opportunity"
+        }
+      ]
+    },
+    "conditionalPinned": null,
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "navigationTargetObjectMetadataId": "1e504af1-5e0d-423b-ad2f-a2fde63a9a9f",
@@ -4532,8 +4566,22 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "position": 85,
     "isPinned": false,
     "payload": null,
-    "hotKeys": null,
-    "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageList",
+    "hotKeys": [
+      "G",
+      "P"
+    ],
+    "conditionalAvailability": {
+      "recordFilters": [
+        {
+          "id": "d805ee8a-fb91-4080-a7ea-9da84b3dd6c1",
+          "value": "true",
+          "operand": "IS",
+          "contextKey": "targetObjectReadPermissions",
+          "subFieldName": "person"
+        }
+      ]
+    },
+    "conditionalPinned": null,
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "navigationTargetObjectMetadataId": "be84f510-e44f-45f8-baa7-63ed01fb2d0a",

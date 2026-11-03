@@ -22,19 +22,19 @@ export const getTabsWithVisibleWidgets = ({
 
   const tabsWithFilteredWidgets = activeTabs.map((tab) => ({
     ...tab,
-    widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
+    widgets: evaluateConditionalDisplayWithObjectMetadata({
+      conditionalDisplay: tab.conditionalDisplay,
+      context,
+      records: context.selectedRecords,
+      objectMetadataItem: context.objectMetadataItem,
+      objectMetadataItems: context.objectMetadataItems,
+    })
+      ? filterVisibleWidgets({ widgets: tab.widgets, context })
+      : [],
   }));
 
   const tabsWithVisibleWidgets = tabsWithFilteredWidgets.filter(
-    (tab) =>
-      tab.widgets.length > 0 &&
-      evaluateConditionalDisplayWithObjectMetadata({
-        conditionalDisplay: tab.conditionalDisplay,
-        context,
-        records: context.selectedRecords,
-        objectMetadataItem: context.objectMetadataItem,
-        objectMetadataItems: context.objectMetadataItems,
-      }),
+    (tab) => tab.widgets.length > 0,
   );
 
   if (tabsWithVisibleWidgets.length === 0 && activeTabs.length > 0) {

@@ -7,10 +7,13 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      currentRoleId: null,
+      currentWorkspaceMemberId: null,
+      objectMetadataItems: [],
     });
   });
 
@@ -20,10 +23,13 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      currentRoleId: null,
+      currentWorkspaceMemberId: null,
+      objectMetadataItems: [],
     });
   });
 
@@ -33,10 +39,13 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
+      currentRoleId: null,
+      currentWorkspaceMemberId: null,
+      objectMetadataItems: [],
     });
   });
 
@@ -46,10 +55,13 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [],
       featureFlags: {},
+      currentRoleId: null,
+      currentWorkspaceMemberId: null,
+      objectMetadataItems: [],
     });
   });
 
@@ -60,10 +72,13 @@ describe('buildWidgetVisibilityContext', () => {
       targetRecord: { id: 'a', status: 'DRAFT' },
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
       featureFlags: {},
+      currentRoleId: null,
+      currentWorkspaceMemberId: null,
+      objectMetadataItems: [],
     });
   });
 

@@ -50,6 +50,10 @@ export const evaluateConditionalDisplay = <TRecord>({
           .map(isRecordFilterGroupMatching),
       ];
 
+      if (!isNonEmptyArray(childMatches)) {
+        return false;
+      }
+
       return recordFilterGroup.logicalOperator ===
         RecordFilterGroupLogicalOperator.OR
         ? childMatches.some((childMatch) => childMatch)

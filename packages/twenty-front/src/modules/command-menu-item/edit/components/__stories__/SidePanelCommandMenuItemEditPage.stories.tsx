@@ -4,6 +4,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -93,10 +94,12 @@ const meta: Meta<typeof SidePanelCommandMenuItemEditPage> = {
       );
 
       return (
-        <>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: 'story-side-panel-page' }}
+        >
           <RecordIndexSelectionListener />
           <Story />
-        </>
+        </SidePanelPageComponentInstanceContext.Provider>
       );
     },
     ComponentDecorator,
@@ -210,13 +213,13 @@ export const CommandMenuItemOptions: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(
-      await canvas.findByRole(
-        'button',
-        { name: 'More options' },
-        { timeout: 3000 },
-      ),
+    const [pinnedItemOptionsTrigger] = await canvas.findAllByRole(
+      'button',
+      { name: 'More options' },
+      { timeout: 3000 },
     );
+
+    await userEvent.click(pinnedItemOptionsTrigger);
 
     const options = await body.findByRole('dialog', { name: 'More options' });
 

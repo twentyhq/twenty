@@ -1,3 +1,4 @@
+import { evaluateConditionalDisplayWithObjectMetadata } from '@/conditional-display/utils/evaluateConditionalDisplayWithObjectMetadata';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
@@ -25,10 +26,18 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
 
     const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
+    const isTabDisplayed = evaluateConditionalDisplayWithObjectMetadata({
+      conditionalDisplay: tab.conditionalDisplay,
+      context: widgetVisibilityContext,
+      records: widgetVisibilityContext.selectedRecords,
+      objectMetadataItem: widgetVisibilityContext.objectMetadataItem,
+      objectMetadataItems: widgetVisibilityContext.objectMetadataItems,
+    });
+
     const widgets = isPageLayoutInEditMode
       ? activeWidgets
       : filterVisibleWidgets({
-          widgets: activeWidgets,
+          widgets: isTabDisplayed ? activeWidgets : [],
           context: widgetVisibilityContext,
         });
 

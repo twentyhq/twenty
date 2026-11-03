@@ -215,6 +215,25 @@ describe('getTabsWithVisibleWidgets', () => {
 
       expect(result.map((tab) => tab.id)).toEqual(['mobile-only', 'always']);
     });
+
+    it('should return the first tab without widgets when every tab rule fails', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          {
+            ...createMockTab('mobile-only', [createMockWidget('widget-1')]),
+            conditionalDisplay: MOBILE_ONLY_CONDITIONAL_DISPLAY,
+          },
+        ],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].widgets).toHaveLength(0);
+    });
   });
 
   describe('in edit mode', () => {
