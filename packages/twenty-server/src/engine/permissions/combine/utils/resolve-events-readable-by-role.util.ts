@@ -5,18 +5,20 @@ import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
 >({
+  applicationId,
   roleId,
   workspaceEventBatch,
   eventRecordAccessGate,
   metadataMaps,
 }: {
+  applicationId: string;
   roleId: string | null;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
@@ -26,16 +28,21 @@ export const resolveEventsReadableByRole = async <
     return [];
   }
 
-  const principal: PermissionsPrincipal = {
+  const principal: PermissionsPrincipalsWithRolesContext = {
     workspaceId: workspaceEventBatch.workspaceId,
-    intersectionOf: { applicationRoleId: roleId },
+    mainPrincipal: { type: 'application', roleId, applicationId },
+    applicationPrincipal: { type: 'application', roleId, applicationId },
   };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,
     metadataMaps,
   });
   const admittedRecordIds =
-    await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
+    await eventRecordAccessGate.resolveAdmittedRecordIds({
+      workspaceId: workspaceEventBatch.workspaceId,
+      mainPrincipal: { type: 'application', applicationId },
+      applicationPrincipal: { type: 'application', applicationId },
+    });
 
   return workspaceEventBatch.events
     .filter((event) => admittedRecordIds.has(event.recordId))

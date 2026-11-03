@@ -19,7 +19,9 @@ const buildService = ({
     executeInWorkspaceContext: jest.fn((callback: () => Promise<void>) =>
       callback(),
     ),
-    getRepository: jest.fn(() => messageThreadTargetRepository),
+    getRepositoryWithoutPermissionChecks: jest.fn(
+      () => messageThreadTargetRepository,
+    ),
   };
   const recordPermissionsService = {
     getPermissionsForRecords: jest

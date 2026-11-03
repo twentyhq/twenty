@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -29,28 +29,14 @@ export class CallRecordingService {
   ): Promise<string | undefined> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceContext = getWorkspaceContext();
-      const rolePermissionConfig = resolveRolePermissionConfig({
-        authContext: workspaceContext.authContext,
-        userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-        apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps:
-          workspaceContext.flatRoleTargetByAgentIdMaps,
-      });
-
-      if (!isDefined(rolePermissionConfig)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
 
       const { objectRecordsPermissions, shouldBypassPermissionChecks } =
         resolveObjectRecordsPermissions({
-          rolePermissionConfig,
+          authContext: workspaceContext.authContext,
+          roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
           flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
           flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
-          flatApplicationMaps: workspaceContext.flatApplicationMaps,
         });
       const callRecordingObjectMetadataId =
         workspaceContext.objectIdByNameSingular.callRecording;
@@ -70,7 +56,6 @@ export class CallRecordingService {
       const callRecordingRepository =
         this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
           'callRecording',
-          rolePermissionConfig,
         );
 
       const callRecordingsByCreation = await callRecordingRepository.find({

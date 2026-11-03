@@ -496,10 +496,9 @@ describe('Conversation sharing through the authenticated API', () => {
           },
         });
 
-        expect(senderAuthorization?.rolePermissionConfig).toEqual({
-          intersectionOf: {
-            userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
-          },
+        expect(senderAuthorization?.authContext).toMatchObject({
+          type: 'user',
+          userWorkspaceId: sender.userWorkspaceId,
         });
         await expect(
           actors.authorizeJob({
@@ -985,9 +984,7 @@ describe('Conversations through the record API', () => {
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
       ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['userWorkspaceRoleMap']);
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
-
-    if (!isDefined(roleId)) {
+    if (!isDefined(userWorkspaceRoleMap[userWorkspaceId])) {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
@@ -998,10 +995,8 @@ describe('Conversations through the record API', () => {
         .buildEventRecordAccessGate(batch)
         .resolveAdmittedRecordIds({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
-          intersectionOf: { userWorkspaceRoleId: roleId },
-          workspaceMember: {
-            id: workspaceMemberId,
-          },
+          mainPrincipal: { type: 'workspaceMember', workspaceMemberId },
+          applicationPrincipal: { type: 'customApplication' },
         });
 
     return admittedRecordIds.has(threadId);

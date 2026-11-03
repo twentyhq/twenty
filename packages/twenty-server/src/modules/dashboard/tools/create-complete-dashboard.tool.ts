@@ -7,7 +7,6 @@ import {
   type PageLayoutWidgetGridPosition,
   type WidgetType,
 } from 'twenty-shared/types';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   widgetPositionSchema,
   widgetConfigurationSchema,
@@ -261,13 +260,9 @@ const createDashboardRecord = async ({
   title,
   pageLayoutId,
 }: CreateDashboardRecordParams): Promise<string> => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
-
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository = deps.workspaceOrmManager.getRepository(
-      'dashboard',
-      context.rolePermissionConfig,
-    );
+    const dashboardRepository =
+      deps.workspaceOrmManager.getRepository('dashboard');
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',
@@ -280,5 +275,5 @@ const createDashboardRecord = async ({
     await dashboardRepository.insert(dashboard);
 
     return dashboard.id;
-  }, authContext);
+  }, context.authContext);
 };

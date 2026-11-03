@@ -80,6 +80,68 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
+### Following An Agent Conversation
+
+`runAgent` (from `twenty-sdk/logic-function`) returns `{ threadId, runId, status, result, error, success }`; `runId` is the turn the call opens, which its messages carry as `turnId`. An app follows a conversation it holds with its agent through the chat's own API, named by the agent and the `thread` key it passes to `runAgent`:
+
+```ts
+import { listConversationMessages, streamConversation } from 'twenty-sdk/logic-function';
+
+const conversation = { agentUniversalIdentifier, threadKey: 'deal-42' };
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({ ...conversation, signal })) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } = await listConversationMessages(conversation);
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) showChunk(event.chunk);
+}
+```
+
+- Events are the chat's `AgentChatSubscriptionEvent`s: `stream-chunk` (an AI SDK `UIMessageChunk` with a `seq`), notifications such as `message-persisted`, `queue-updated` and `stream-error`, and a periodic `keepalive`. Pipe chunks into `readUIMessageStream()` from `ai` to build messages as the chat does.
+- Messages come as AI SDK `UIMessage`s, as the chat builds them, with the run in `metadata.turnId`. `streamCatchup` holds the chunks of a reply still streaming: show them, then skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
+- The first event once connected is a `keepalive`: read the history then. The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; stream again to resume. It can start before the first run reaches the conversation.
+- Both need an application token and reach only the app's own conversations. Turns a member opened elsewhere, such as in the chat, show only their text, in the history, live and in the agent's next run, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless. Turns the app ran as a member stay whole when the app reads on its own. Requires `"engines": { "twenty": ">=2.56.0" }`.
+
+## AI Generate
+
+`ai.generate` calls a model with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  input: 'Is Acme a good fit for us?', // or RunAgentMessage[] ({ role, content })
+  instructions: 'Qualify leads for Twenty in one sentence.',
+});
+```
+
+For JSON, pass a `responseFormat`: the schema goes on the model request itself, so the answer takes one request (plus tool steps when a `scope` grants tools), and comes back in `object`:
+
+```ts
+const { object } = await ai.generate({
+  input: 'Is Acme a good fit for us?',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { fit: { type: 'boolean' }, reason: { type: 'string' } },
+    },
+  },
+});
+```
+
+- Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach.
+- The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. From a logic function it follows the default clients: the person who triggered the run, within the app's role, or the app when nobody did. The app needs a default role with the AI permission flag.
+- `modelId` is optional; the workspace default model is used when unset.
+- It returns `{ success, text, object, error, runId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `runId` for the recorded run and `usage` as `{ inputTokens, outputTokens }`, which counts the steps that finished before a failure too. A run that fails comes back as `success: false` rather than a throw (a call that cannot start a run, such as invalid input, still throws), so check `success`.
+- To stream the reply, pass `onChunk` (and optionally `signal`): the SDK subscribes to the run first, waits until the subscription is live, then starts it, hands each AI SDK `UIMessageChunk` to `onChunk`, and resolves with the same result once the last chunk is delivered. If the stream's end never arrives, it stops reading after 5 s without a new chunk once the result is in, then still delivers every chunk already received; once the stream is live, a failure of it only stops the chunks, and the call still resolves with the billed result. The call rejects when the subscription fails before it goes live, so the run never starts, or when `onChunk` throws. Aborting `signal` rejects the call and closes the stream; the run itself goes on.
+- An app follows only its own runs, so `onChunk` needs an app token. Requires `"engines": { "twenty": ">=2.56.0" }`.
+
 ## Inbox Messages
 
 `sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.

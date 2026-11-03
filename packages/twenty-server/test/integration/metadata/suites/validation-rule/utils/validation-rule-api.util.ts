@@ -77,3 +77,23 @@ export const findValidationRules = async (objectMetadataId: string) => {
     isActive: boolean;
   }[];
 };
+
+export const findValidationRulesReadingField = async (
+  fieldMetadataId: string,
+) => {
+  const response = await makeMetadataApiRequest({
+    query: gql`
+      query ValidationRulesReadingField($fieldMetadataId: UUID!) {
+        validationRulesReadingField(fieldMetadataId: $fieldMetadataId) {
+          ${VALIDATION_RULE_GQL_FIELDS}
+        }
+      }
+    `,
+    variables: { fieldMetadataId },
+  });
+
+  const validationRules: { name: string }[] =
+    response.body.data.validationRulesReadingField;
+
+  return validationRules;
+};

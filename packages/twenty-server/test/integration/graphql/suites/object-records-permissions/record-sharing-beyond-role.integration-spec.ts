@@ -34,6 +34,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 const OBJECT_NAME = 'beyondRoleRecord';
 const OBJECT_PLURAL = 'beyondRoleRecords';
@@ -254,15 +255,18 @@ describe('Records shared beyond the role that can access their object', () => {
       throw new Error('The object under test is not cached');
     }
 
-    const buildJonyPrincipal = () => ({
+    const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
       workspaceId,
-      intersectionOf: { userWorkspaceRoleId: memberRoleId },
-      workspaceMember: { id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+      applicationPrincipal: { type: 'customApplication' },
     });
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal: buildJonyPrincipal(),
+        principals: buildJonyPrincipal(),
         flatObjectMetadata,
         operationType: 'select',
       }),
@@ -270,25 +274,25 @@ describe('Records shared beyond the role that can access their object', () => {
 
     await setShare({ principal: JONY });
 
-    const principal = buildJonyPrincipal();
+    const principals = buildJonyPrincipal();
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
       }),
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'update',
       }),
     ).toBe(false);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID],
@@ -296,7 +300,7 @@ describe('Records shared beyond the role that can access their object', () => {
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
@@ -520,10 +524,11 @@ describe('Records shared beyond the role that can access their object', () => {
         })
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
-          intersectionOf: { userWorkspaceRoleId: memberRoleId },
-          workspaceMember: {
-            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          mainPrincipal: {
+            type: 'workspaceMember',
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
+          applicationPrincipal: { type: 'customApplication' },
         });
     };
 

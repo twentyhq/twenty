@@ -87,7 +87,7 @@ export class AgentChatThreadTargetService {
   }
 
   private getThreadTargetRepository() {
-    return this.workspaceOrmManager.getRepositoryWithContextPermissions(
+    return this.workspaceOrmManager.getRepository(
       AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
     );
   }
@@ -97,7 +97,7 @@ export class AgentChatThreadTargetService {
     recordId,
   }: RecordReference): Promise<void> {
     const record = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions(objectNameSingular)
+      .getRepository(objectNameSingular)
       .findOne({ where: { id: recordId }, select: { id: true } })
       .catch((error: unknown) => {
         if (

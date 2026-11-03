@@ -1,8 +1,12 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
-const ROLE_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const buildDeps = () => {
   const getRepository = jest.fn().mockReturnValue({
@@ -23,22 +27,21 @@ const buildDeps = () => {
 };
 
 describe('createListDashboardsTool', () => {
-  it('reads dashboards through the caller role rather than bypassing permissions', async () => {
+  it('reads dashboards as the caller rather than bypassing permissions', async () => {
     const { deps, getRepository } = buildDeps();
 
     const tool = createListDashboardsTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
-      },
+      authContext: AUTH_CONTEXT,
     });
 
     const result = await tool.execute({});
 
     expect(result.success).toBe(true);
     expect(getRepository).toHaveBeenCalledTimes(1);
-    expect(getRepository).toHaveBeenCalledWith('dashboard', {
-      intersectionOf: { userWorkspaceRoleId: ROLE_ID },
-    });
+    expect(getRepository).toHaveBeenCalledWith('dashboard');
+    expect(
+      deps.workspaceOrmManager.executeInWorkspaceContext,
+    ).toHaveBeenCalledWith(expect.any(Function), AUTH_CONTEXT);
   });
 });

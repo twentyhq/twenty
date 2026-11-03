@@ -73,7 +73,7 @@ export class WorkflowRunStepLogWorkspaceService {
     workspaceId: string;
     stepId: string;
     summary: AgentRunSummary;
-    threadId: string;
+    threadId: string | null;
   }): Promise<void> {
     const stepLog = buildAiAgentStepLog({ summary, threadId });
 

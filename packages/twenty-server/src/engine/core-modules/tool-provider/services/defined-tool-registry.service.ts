@@ -175,11 +175,10 @@ export class DefinedToolRegistryService implements OnModuleInit {
           return cachedGrant;
         }
 
-        const grant = this.permissionsService.checkRolesPermissions(
-          context.rolePermissionConfig,
-          context.workspaceId,
-          permissionFlag,
-        );
+        const grant = this.permissionsService.hasPermissionFlag({
+          authContext: context.authContext,
+          setting: permissionFlag,
+        });
 
         grantedByPermissionFlag.set(permissionFlag, grant);
 

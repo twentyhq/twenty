@@ -15,9 +15,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import {
@@ -35,7 +32,6 @@ export class AgentChatActorService {
     private readonly threadService: AgentChatThreadService,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly permissionsService: PermissionsService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async resolveMessage({
@@ -151,41 +147,20 @@ export class AgentChatActorService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
-    const rolePermissions = await this.resolveRolePermissions({
-      workspaceId,
-      authContext,
-    });
-    if (!isDefined(rolePermissions)) {
+    if (!(await this.hasRole(authContext))) {
       throw new AiException(
         'Chat execution is not permitted',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
-    return { authContext, ...rolePermissions };
+    return { authContext };
   }
 
-  // the permissions a member acts with in the chat, also used to run the calls they approve
-  async resolveRolePermissions({
-    workspaceId,
-    authContext,
-  }: {
-    workspaceId: string;
-    authContext: WorkspaceAuthContext;
-  }): Promise<{ rolePermissionConfig: RolePermissionConfig } | undefined> {
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
-    const rolePermissionConfig = resolveRolePermissionConfig({
-      authContext,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap: {},
-      flatRoleTargetByAgentIdMaps: {},
-    });
+  // a member with no role left cannot act in the chat nor run the calls they approve
+  async hasRole(authContext: WorkspaceAuthContext): Promise<boolean> {
+    const roleIds = await this.permissionsService.getRoleIds(authContext);
 
-    return isDefined(rolePermissionConfig)
-      ? { rolePermissionConfig }
-      : undefined;
+    return roleIds.length > 0;
   }
 
   // resolved from the application context of the turn that made the call
