@@ -33,6 +33,11 @@ export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
     return;
   }
 
+  if (i18n.locale === locale) {
+    applyDocumentLocale(locale);
+    return;
+  }
+
   i18n.load(locale, messages);
   i18n.activate(locale);
   applyDocumentLocale(locale);
