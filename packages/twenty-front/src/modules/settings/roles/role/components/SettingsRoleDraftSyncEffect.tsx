@@ -1,3 +1,4 @@
+import { settingsRoleSaveSubmissionFamilyState } from '@/settings/roles/states/settingsRoleSaveSubmissionFamilyState';
 import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -7,6 +8,7 @@ import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { reconcileRoleDraft } from '@/settings/roles/role/utils/reconcileRoleDraft';
 
 type SettingsRoleDraftSyncEffectProps = {
   roleId: string;
@@ -38,23 +40,27 @@ export const SettingsRoleDraftSyncEffect = ({
       roleId,
       routedFlowStateScopeId,
     );
+    if (
+      isDefined(
+        store.get(
+          settingsRoleSaveSubmissionFamilyState.getAtom(
+            roleId,
+            routedFlowStateScopeId,
+          ),
+        ),
+      )
+    ) {
+      return;
+    }
+
     const currentDraftRole = store.get(draftRoleAtom);
     const draftRoleBase = store.get(draftRoleBaseAtom);
 
-    const isUninitialized = currentDraftRole.id !== settingsPersistedRole.id;
-    const hasNoUnsavedChanges =
-      isDefined(draftRoleBase) &&
-      isDeeplyEqual(currentDraftRole, draftRoleBase);
-
-    const nextDraftRole =
-      isUninitialized || hasNoUnsavedChanges
-        ? settingsPersistedRole
-        : {
-            ...currentDraftRole,
-            workspaceMembers: settingsPersistedRole.workspaceMembers,
-            agents: settingsPersistedRole.agents,
-            apiKeys: settingsPersistedRole.apiKeys,
-          };
+    const nextDraftRole = reconcileRoleDraft({
+      draftRole: currentDraftRole,
+      baseRole: draftRoleBase,
+      persistedRole: settingsPersistedRole,
+    });
 
     if (!isDeeplyEqual(currentDraftRole, nextDraftRole)) {
       store.set(draftRoleAtom, nextDraftRole);

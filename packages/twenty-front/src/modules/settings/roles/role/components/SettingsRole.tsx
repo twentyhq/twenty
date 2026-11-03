@@ -106,10 +106,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     },
   ];
 
-  const dirtyFields = getRoleDirtyFields(
-    settingsDraftRole,
-    settingsPersistedRole,
-  );
+  const dirtyFields = getRoleDirtyFields({
+    draftRole: settingsDraftRole,
+    persistedRole: settingsPersistedRole,
+  });
   const isRoleDirty = Object.keys(dirtyFields).length > 0;
   const isDirty = isRoleDirty || isRoleAgentChatChannelAccessDirty;
 
