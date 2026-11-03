@@ -39,6 +39,7 @@ export type CommandMenuItemOverrides = {
   hotKeys?: string[] | null;
   availabilityType?: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: SerializedRelation | null;
+  availabilityCoreObjectName?: CommandMenuCoreObjectName | null;
   engineComponentKey?: EngineComponentKey;
   pageLayoutId?: SerializedRelation | null;
 };
