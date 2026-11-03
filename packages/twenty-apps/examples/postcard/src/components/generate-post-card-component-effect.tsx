@@ -6,7 +6,20 @@ import {
   updateProgress,
   useRecordId,
 } from 'twenty-sdk/front-component';
-import { RestApiClient } from 'twenty-client-sdk/rest';
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+// the route answers failures with a non-2xx status, so its reason is in the error body
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof RestApiClientError) {
+    const body = error.body as { error?: string } | undefined;
+
+    if (body?.error) {
+      return body.error;
+    }
+  }
+
+  return error instanceof Error ? error.message : 'Failed to generate content';
+};
 
 const GeneratePostCardEffect = () => {
   const recordId = useRecordId();
@@ -42,10 +55,7 @@ const GeneratePostCardEffect = () => {
         await unmountFrontComponent();
       } catch (error) {
         await enqueueSnackbar({
-          message:
-            error instanceof Error
-              ? error.message
-              : 'Failed to generate content',
+          message: getErrorMessage(error),
           variant: 'error',
         });
         await unmountFrontComponent();

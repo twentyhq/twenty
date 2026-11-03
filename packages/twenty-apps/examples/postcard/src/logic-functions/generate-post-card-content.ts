@@ -7,6 +7,9 @@ const SYSTEM_PROMPT =
   'under 150 words. Use a personal tone. Output ONLY the postcard message ' +
   'text, nothing else — no greeting label, no sign-off label, just the message.';
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const respond = ({
   body,
   status = 200,
@@ -20,11 +23,22 @@ const respond = ({
   });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
-  const recordId = (event.body as { recordId?: string } | null)?.recordId;
-
-  if (!recordId) {
+  // API keys reach the route without a user, and would otherwise act with this app's own role
+  if (!event.userWorkspaceId) {
     return respond({
-      body: { success: false, error: 'recordId is required' },
+      body: {
+        success: false,
+        error: 'Only a workspace member can generate a post card',
+      },
+      status: 403,
+    });
+  }
+
+  const recordId = (event.body as { recordId?: unknown } | null)?.recordId;
+
+  if (typeof recordId !== 'string' || !UUID_PATTERN.test(recordId)) {
+    return respond({
+      body: { success: false, error: 'recordId must be a UUID' },
       status: 400,
     });
   }
