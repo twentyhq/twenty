@@ -23,6 +23,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -208,11 +209,20 @@ export class WorkflowVersionStepResolver {
   @Mutation(() => LogicFunctionExecutionResultDTO)
   async testWorkflowCodeStep(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthIsUserSession() isUserSession: boolean,
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input')
     { workflowVersionId, code, payload }: TestWorkflowCodeStepInput,
   ): Promise<LogicFunctionExecutionResultDTO> {
+    // the code runs with the workspace custom application's token, which an app caller must not borrow
+    if (!isUserSession) {
+      throw new WorkflowVersionStepException(
+        'Only a signed-in member can test a code step',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+
     const { flatApplication, workflowId } =
       await this.findWorkflowApplicationOrThrow({
         workspace,
