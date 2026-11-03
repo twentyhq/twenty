@@ -6582,8 +6582,8 @@
   {
     "path": "tag.background.gray",
     "cssVariable": "--t-tag-background-gray",
-    "light": "color(display-p3 0.976 0.976 0.976)",
-    "dark": "color(display-p3 0.098 0.098 0.098)",
+    "light": "color(display-p3 0.945 0.945 0.945)",
+    "dark": "color(display-p3 0.114 0.114 0.114)",
     "isNumber": false
   },
   {
