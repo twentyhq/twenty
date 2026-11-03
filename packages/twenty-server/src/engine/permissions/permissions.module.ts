@@ -6,6 +6,7 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -23,10 +24,16 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AccessPolicyService,
     ApiKeyRoleService,
     PermissionsService,
+    PermissionsPrincipalsService,
     provideWorkspaceScopedRepository(ApiKeyEntity),
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
-  exports: [AccessPolicyService, PermissionsService, ApiKeyRoleService],
+  exports: [
+    AccessPolicyService,
+    PermissionsService,
+    PermissionsPrincipalsService,
+    ApiKeyRoleService,
+  ],
 })
 export class PermissionsModule {}

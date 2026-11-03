@@ -26,7 +26,7 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/is-permission-main-principal-workspace-member.util';
 
 export type PermissionsPrincipalsRoleMaps = {
-  flatWorkspaceMemberMaps: {
+  flatWorkspaceMemberMaps?: {
     byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'userId'>>>;
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
   };
@@ -60,9 +60,9 @@ const findWorkspaceMemberRoleId = ({
   >;
 }): string | undefined => {
   const userId =
-    roleMaps.flatWorkspaceMemberMaps.byId[workspaceMemberId]?.userId;
+    roleMaps.flatWorkspaceMemberMaps?.byId[workspaceMemberId]?.userId;
   const userWorkspaceId = isDefined(userId)
-    ? roleMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId]
+    ? roleMaps.flatWorkspaceMemberMaps?.userWorkspaceIdByUserId[userId]
     : undefined;
 
   return isDefined(userWorkspaceId)
@@ -78,7 +78,7 @@ const findMainPrincipalRoleId = ({
   roleMaps: PermissionsPrincipalsRoleMaps;
 }): string | undefined => {
   switch (mainPrincipal.type) {
-    case 'deprecatedRoleOnly':
+    case 'role':
       return mainPrincipal.roleId;
     case 'workspaceMember':
       return findWorkspaceMemberRoleId({
@@ -116,10 +116,6 @@ const resolveLimitingPrincipal = ({
   limitingPrincipal: PermissionsLimitingPrincipal;
   roleMaps: PermissionsPrincipalsRoleMaps;
 }): PermissionsLimitingPrincipalWithRole | undefined => {
-  if (limitingPrincipal.type === 'deprecatedRoleOnly') {
-    return limitingPrincipal;
-  }
-
   const roleId =
     roleMaps.flatRoleTargetByAgentIdMaps[limitingPrincipal.agentId]?.roleId;
 
