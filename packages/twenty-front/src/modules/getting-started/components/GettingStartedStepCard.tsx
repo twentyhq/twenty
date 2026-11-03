@@ -16,7 +16,7 @@ const StyledCard = styled.section<{ isCompleted: boolean }>`
   border: 1px solid
     ${({ isCompleted }) =>
       isCompleted
-        ? themeCssVariables.color.green5
+        ? themeCssVariables.color.green7
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.lg};
   box-sizing: border-box;
@@ -34,12 +34,12 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
   background: ${({ isCompleted }) =>
     isCompleted
-      ? themeCssVariables.color.green2
+      ? themeCssVariables.tag.background.green
       : themeCssVariables.background.secondary};
   border-bottom: 1px solid
     ${({ isCompleted }) =>
       isCompleted
-        ? themeCssVariables.color.green3
+        ? themeCssVariables.color.green6
         : themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -159,7 +159,10 @@ export const GettingStartedStepCard = ({
         </StyledTitle>
       </StyledHeading>
       <StyledBody>
-        <GettingStartedStepAction stepDefinition={stepDefinition} />
+        <GettingStartedStepAction
+          stepDefinition={stepDefinition}
+          isCompleted={isCompleted}
+        />
       </StyledBody>
     </StyledCard>
   );

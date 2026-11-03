@@ -20,6 +20,7 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
         companyEnrichment: null,
+        doneChatThreadId: null,
         translate,
       }),
     ).toEqual({
@@ -32,7 +33,19 @@ describe('buildGettingStartedStepDefinition', () => {
       iconColor: 'gray',
       promptLabel: null,
       prompt: null,
+      doneChatThreadId: null,
     });
+  });
+
+  it('should return the chat thread the step was completed with', () => {
+    expect(
+      buildGettingStartedStepDefinition({
+        stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+        companyEnrichment: null,
+        doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+        translate,
+      }).doneChatThreadId,
+    ).toBe('20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90');
   });
 
   it('should define a step with a prompt as a prompt step', () => {
@@ -40,6 +53,7 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         companyEnrichment: null,
+        doneChatThreadId: null,
         translate,
       }),
     ).toMatchObject({
@@ -70,6 +84,7 @@ describe('buildGettingStartedStepDefinition', () => {
           region: null,
           country: null,
         },
+        doneChatThreadId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -82,6 +97,7 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         companyEnrichment: null,
+        doneChatThreadId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -94,6 +110,7 @@ describe('buildGettingStartedStepDefinition', () => {
       buildGettingStartedStepDefinition({
         stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         companyEnrichment: null,
+        doneChatThreadId: null,
         translate,
       }),
     ).toMatchObject({

@@ -9,4 +9,7 @@ export type GettingStartedProgress = Omit<
 > & {
   stepActionKeys: GettingStartedStepActionKey[];
   companyEnrichment: WorkspaceCompanyEnrichment | null;
+  chatThreadIdByStepActionKey: Partial<
+    Record<GettingStartedStepActionKey, string>
+  >;
 };

@@ -68,16 +68,18 @@ export const GettingStartedImportAction = () => {
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const canImportWithAi = hasAiPermission && canSendAgentChatMessage;
 
-  const importFilesWithAi = (files: File[]) => {
-    void openAskAiPageWithPreprompt({
+  const importFilesWithAi = async (files: File[]) => {
+    const chatThreadId = await openAskAiPageWithPreprompt({
       serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
         t(GETTING_STARTED_IMPORT_PROMPT),
       ),
       mode: 'SEND',
       files,
     });
+
     void updateGettingStarted({
       completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,
+      completedStepChatThreadId: chatThreadId,
     });
   };
 
@@ -93,7 +95,7 @@ export const GettingStartedImportAction = () => {
       ],
       'text/csv': ['.csv'],
     },
-    onDropAccepted: importFilesWithAi,
+    onDropAccepted: (files) => void importFilesWithAi(files),
     onDropRejected: () =>
       enqueueToast({
         status: 'error',

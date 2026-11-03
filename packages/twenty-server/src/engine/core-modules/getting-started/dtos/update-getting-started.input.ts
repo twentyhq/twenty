@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsEnum, IsISO8601, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsISO8601,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 
 import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 
@@ -25,4 +31,9 @@ export class UpdateGettingStartedInput {
   @IsOptional()
   @IsEnum(GettingStartedStepActionKey)
   completedStepActionKey?: GettingStartedStepActionKey | null;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  completedStepChatThreadId?: string | null;
 }

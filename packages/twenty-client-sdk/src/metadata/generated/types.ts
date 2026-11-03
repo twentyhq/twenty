@@ -5469,6 +5469,9 @@ export default {
             "description": [
                 1
             ],
+            "doneChatThreadId": [
+                1
+            ],
             "doneTitle": [
                 1
             ],
@@ -13851,6 +13854,9 @@ export default {
         "UpdateGettingStartedInput": {
             "completedStepActionKey": [
                 298
+            ],
+            "completedStepChatThreadId": [
+                1
             ],
             "isHidden": [
                 4

@@ -28,6 +28,10 @@ const GETTING_STARTED_PROGRESS_QUERY = gql`
 const UPDATE_GETTING_STARTED_MUTATION = gql`
   mutation UpdateGettingStarted($input: UpdateGettingStartedInput!) {
     updateGettingStarted(input: $input) {
+      steps {
+        actionKey
+        doneChatThreadId
+      }
       completedStepActionKeys
       selectedStepActionKey
       snoozedUntil
@@ -359,6 +363,40 @@ describe('gettingStarted (e2e)', () => {
       expect(
         await findJaneUserVar('GETTING_STARTED_COMPLETED_FOLLOW_UP_DEALS'),
       ).toEqual(firstCompletion);
+    });
+
+    it('returns the chat thread a step was completed with on that step only', async () => {
+      const chatThreadId = '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90';
+
+      const response = await updateGettingStarted({
+        completedStepActionKey:
+          GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
+        completedStepChatThreadId: chatThreadId,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findJaneUserVar('GETTING_STARTED_COMPLETED_CUSTOMIZE_DATA_MODEL'),
+      ).toEqual({ completedAt: expect.any(String), chatThreadId });
+      expect(response.body.data.updateGettingStarted.steps).toContainEqual({
+        actionKey: 'CUSTOMIZE_DATA_MODEL',
+        doneChatThreadId: chatThreadId,
+      });
+      expect(response.body.data.updateGettingStarted.steps).toContainEqual({
+        actionKey: 'INVITE_TEAM',
+        doneChatThreadId: null,
+      });
+    });
+
+    it('refuses a chat thread id that is not a UUID', async () => {
+      const response = await updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+        completedStepChatThreadId: 'not-a-uuid',
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
     });
   });
 

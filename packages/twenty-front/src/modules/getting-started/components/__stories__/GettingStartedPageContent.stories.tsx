@@ -13,11 +13,14 @@ import { gettingStartedJustCompletedStepState } from '@/getting-started/states/g
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   FeatureFlagKey,
+  FindManyMarketplaceAppsDocument,
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
@@ -209,6 +212,122 @@ export const AllDone: Story = {
     await expect(
       await within(canvasElement).findByText('All steps done'),
     ).toBeVisible();
+  },
+};
+
+let doneStepsProgress: GettingStartedProgressQuery['gettingStartedProgress'] =
+  TRIAL_PROGRESS;
+
+const createDoneStepsProgress =
+  (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
+    ...TRIAL_PROGRESS,
+    steps: mockGettingStartedStepDefinitions.map((stepDefinition) =>
+      stepDefinition.actionKey === GettingStartedStepActionKey.FOLLOW_UP_DEALS
+        ? {
+            ...stepDefinition,
+            doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+          }
+        : stepDefinition,
+    ),
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.IMPORT_DATA,
+      GettingStartedStepActionKey.INSTALL_APP,
+      GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  });
+
+const FEATURED_MARKETPLACE_APPS_MOCK: MockedResponse = {
+  request: { query: FindManyMarketplaceAppsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      findManyMarketplaceApps: [
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+          name: 'Slack',
+          description: 'Get notified in Slack.',
+        },
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM,
+          name: 'Fathom',
+          description: 'Log your meeting notes.',
+        },
+      ].map((marketplaceApp) => ({
+        __typename: 'MarketplaceApp',
+        ...marketplaceApp,
+        author: 'Twenty',
+        category: 'Communication',
+        logoUrl: null,
+        sourcePackage: null,
+        isListed: true,
+      })),
+    },
+  },
+};
+
+export const DoneSteps: Story = {
+  beforeEach: () => {
+    doneStepsProgress = createDoneStepsProgress();
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...TRIALING_WORKSPACE,
+      installedApplications: [
+        {
+          ...CUSTOM_WORKSPACE_APPLICATION_MOCK,
+          name: 'Slack',
+          universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+        },
+      ],
+    });
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      FEATURED_MARKETPLACE_APPS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: () => ({
+          data: { gettingStartedProgress: doneStepsProgress },
+        }),
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => {
+          doneStepsProgress = {
+            ...doneStepsProgress,
+            selectedStepActionKey:
+              input.selectedStepActionKey ??
+              doneStepsProgress.selectedStepActionKey,
+          };
+
+          return { data: { updateGettingStarted: doneStepsProgress } };
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Invite in settings' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Follow-up request sent' }),
+    );
+
+    const openConversationButton = await canvas.findByRole('button', {
+      name: 'Open the conversation',
+    });
+
+    await waitFor(() => expect(openConversationButton).toBeVisible());
   },
 };
 

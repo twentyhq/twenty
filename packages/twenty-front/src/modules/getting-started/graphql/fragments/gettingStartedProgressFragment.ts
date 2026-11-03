@@ -12,6 +12,7 @@ export const GETTING_STARTED_PROGRESS_FRAGMENT = gql`
       iconColor
       promptLabel
       prompt
+      doneChatThreadId
     }
     completedStepActionKeys
     selectedStepActionKey

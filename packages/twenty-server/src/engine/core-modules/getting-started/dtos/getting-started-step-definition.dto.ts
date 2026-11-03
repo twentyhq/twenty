@@ -31,4 +31,7 @@ export class GettingStartedStepDefinitionDTO {
 
   @Field(() => String, { nullable: true })
   prompt: string | null;
+
+  @Field(() => String, { nullable: true })
+  doneChatThreadId: string | null;
 }

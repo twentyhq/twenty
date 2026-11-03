@@ -2639,6 +2639,7 @@ enum GettingStartedStepActionKey {
 type GettingStartedStepDefinition {
   actionKey: GettingStartedStepActionKey!
   description: String!
+  doneChatThreadId: String
   doneTitle: String!
   icon: String!
   iconColor: String!
@@ -5171,6 +5172,7 @@ input UpdateFrontComponentInputUpdates {
 
 input UpdateGettingStartedInput {
   completedStepActionKey: GettingStartedStepActionKey
+  completedStepChatThreadId: String
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
