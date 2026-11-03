@@ -14,7 +14,6 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ModelsDevModelSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-model-suggestion.dto';
 import { ModelsDevProviderSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-provider-suggestion.dto';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -43,7 +42,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 export class AdminPanelAiProviderResolver {
   constructor(

@@ -12,7 +12,6 @@ import { WorkspaceDataExportGraphqlApiExceptionFilter } from 'src/engine/core-mo
 import { WorkspaceDataExportService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -37,7 +36,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
   AdminPanelGuard,
 )
 export class AdminPanelWorkspaceDataExportResolver {

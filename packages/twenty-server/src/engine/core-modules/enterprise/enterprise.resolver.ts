@@ -18,7 +18,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
@@ -46,7 +45,6 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
   }),
   BillingDisabledGuard,
   AdminPanelGuard,
-  NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)

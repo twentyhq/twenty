@@ -128,7 +128,6 @@ export class WorkspaceResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async currentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     const workspace = await this.workspaceService.findOneWorkspaceById(id);
@@ -154,7 +153,6 @@ export class WorkspaceResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async activateWorkspace(
     // ignored, kept only because removing it would break the schema

@@ -15,7 +15,6 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
@@ -48,7 +47,6 @@ export class CompanyEnrichmentResolver {
   ) {}
 
   @Mutation(() => WorkspaceCompanyEnrichmentResultDTO)
-  @UseGuards(NoPermissionGuard)
   async enrichWorkspaceCompany(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,

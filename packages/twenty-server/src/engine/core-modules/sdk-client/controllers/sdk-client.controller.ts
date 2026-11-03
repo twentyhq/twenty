@@ -27,7 +27,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -58,7 +57,6 @@ export class SdkClientController {
   ) {}
 
   @Get(['metadata', 'metadata/:checksum'])
-  @UseGuards(NoPermissionGuard)
   async getInstanceSdkMetadataModule(
     @Res() res: Response,
     @Param('checksum') checksum?: string,
@@ -75,7 +73,7 @@ export class SdkClientController {
   }
 
   @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async getSdkModule(
     @Res() res: Response,
     @ApplicationTargetParam('applicationId', {

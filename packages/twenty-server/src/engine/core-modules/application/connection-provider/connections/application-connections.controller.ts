@@ -22,7 +22,6 @@ import { ListAppConnectionsDto } from 'src/engine/core-modules/application/conne
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { ConnectionProviderRestApiExceptionFilter } from 'src/engine/core-modules/application/connection-provider/filters/connection-provider-rest-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { APPLICATION_CONNECTION_ACCESS_POLICY } from 'src/engine/core-modules/application/connection-provider/connections/constants/application-connection-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -34,7 +33,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 @UseGuards(
   JwtAuthGuard,
   AccessPolicyGuard(APPLICATION_CONNECTION_ACCESS_POLICY),
-  NoPermissionGuard,
 )
 @UseFilters(ConnectionProviderRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))

@@ -19,15 +19,11 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { APPLICATION_CONNECTION_ACCESS_POLICY } from 'src/engine/core-modules/application/connection-provider/connections/constants/application-connection-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(
-  AccessPolicyGuard(APPLICATION_CONNECTION_ACCESS_POLICY),
-  NoPermissionGuard,
-)
+@UseGuards(AccessPolicyGuard(APPLICATION_CONNECTION_ACCESS_POLICY))
 @UseInterceptors(ConnectionProviderGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

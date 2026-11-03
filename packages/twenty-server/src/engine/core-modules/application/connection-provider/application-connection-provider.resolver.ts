@@ -11,7 +11,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -40,7 +39,7 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async applicationConnectionProviders(
     @ApplicationTargetArg(
       'applicationId',

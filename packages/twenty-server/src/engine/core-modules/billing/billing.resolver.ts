@@ -42,7 +42,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -132,10 +131,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingSessionDTO)
-  @UseGuards(
-    AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
   async checkoutSession(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
@@ -206,10 +202,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
-  @UseGuards(
-    AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
   async createSubscriptionPaymentIntent(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
@@ -387,10 +380,7 @@ export class BillingResolver {
   }
 
   @Query(() => [BillingPlanDTO])
-  @UseGuards(
-    AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY))
   async billingPlans(): Promise<BillingPlanDTO[]> {
     const plans = await this.billingPlanService.listPlans();
 
@@ -400,10 +390,7 @@ export class BillingResolver {
   @Query(() => [BillingPlanDTO], {
     deprecationReason: 'Use billingPlans instead.',
   })
-  @UseGuards(
-    AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(BILLING_PLAN_READ_ACCESS_POLICY))
   async listPlans(): Promise<BillingPlanDTO[]> {
     return this.billingPlans();
   }

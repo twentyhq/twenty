@@ -20,7 +20,6 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -45,7 +44,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
   AdminPanelGuard,
 )
 export class AdminPanelUsageLimitResolver {

@@ -192,7 +192,6 @@ export class ApplicationRegistrationResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
     ApplicationTargetGuard,
   )
   @Query(() => ApplicationRegistrationEntity, { nullable: true })

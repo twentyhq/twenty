@@ -7,7 +7,6 @@ import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -38,7 +37,6 @@ const MARKETPLACE_READ_ACCESS_POLICY: AccessPolicy = {
   AuthGraphqlApiExceptionFilter,
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseGuards(NoPermissionGuard)
 export class MarketplaceResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,

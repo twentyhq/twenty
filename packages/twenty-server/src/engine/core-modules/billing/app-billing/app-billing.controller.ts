@@ -32,7 +32,6 @@ import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 // On top of the executor's throttle: application-access tokens are JWTs usable outside the runtime
@@ -59,7 +58,6 @@ const CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON: Record<
     },
     requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 export class AppBillingController {
   constructor(

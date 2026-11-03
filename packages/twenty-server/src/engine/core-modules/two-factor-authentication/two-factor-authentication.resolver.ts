@@ -174,7 +174,6 @@ export class TwoFactorAuthenticationResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async initiateOTPProvisioningForAuthenticatedUser(
     @AuthUser() user: AuthContextUser,
@@ -247,10 +246,7 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
-  @UseGuards(
-    AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(TWO_FACTOR_AUTHENTICATION_WRITE_ACCESS_POLICY))
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,

@@ -31,7 +31,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -64,7 +63,7 @@ export class FrontComponentSharedDependenciesController {
   ) {}
 
   @Get([':applicationId', ':applicationId/:cacheKey'])
-  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
+  @UseGuards(ApplicationTargetGuard)
   async getBuiltSharedDependencies(
     @Res() res: Response,
     @ApplicationTargetParam('applicationId', {

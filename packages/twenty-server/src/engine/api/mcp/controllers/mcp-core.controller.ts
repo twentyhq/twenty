@@ -37,7 +37,6 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -59,7 +58,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     requiredPermissionFlags: [],
   }),
   WorkspaceNotSuspendedGuard,
-  NoPermissionGuard,
 )
 @UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class McpCoreController {

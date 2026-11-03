@@ -15,7 +15,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
@@ -45,7 +44,6 @@ export class OnboardingResolver {
   ) {}
 
   @Query(() => [InviteSuggestionDTO])
-  @UseGuards(NoPermissionGuard)
   async getInviteSuggestions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -59,7 +57,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
   async skipSyncEmailOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -76,7 +73,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
   async completeBookCallOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -96,7 +92,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepNavigationDTO)
-  @UseGuards(NoPermissionGuard)
   async goBackToPreviousOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,

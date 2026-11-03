@@ -669,10 +669,7 @@ export class AuthResolver {
   }
 
   @Query(() => SubdomainAvailabilityDTO)
-  @UseGuards(
-    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   async checkWorkspaceSubdomainAvailability(
     @Args('subdomain') subdomain: string,
   ): Promise<SubdomainAvailabilityDTO> {
@@ -680,10 +677,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceCreationDefaultsDTO)
-  @UseGuards(
-    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   async getWorkspaceCreationDefaults(
     @AuthUser() currentUser: AuthContextUser,
   ): Promise<WorkspaceCreationDefaultsDTO> {
@@ -698,7 +692,6 @@ export class AuthResolver {
   @UseGuards(
     AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY),
     WorkspaceCreationCaptchaGuard,
-    NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
   async signUpInNewWorkspace(
@@ -744,10 +737,7 @@ export class AuthResolver {
     deprecationReason:
       'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async uploadNewWorkspaceLogo(
     @AuthUser() currentUser: AuthContextUser,
@@ -776,10 +766,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(
-    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async createNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -806,10 +793,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_CREATION_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async completeNewWorkspaceLogoUpload(
     @AuthUser() currentUser: AuthContextUser,
@@ -832,7 +816,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientTokenDTO)
-  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY), NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY))
   async generateTransientToken(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -1120,7 +1104,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY), NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY))
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,

@@ -14,7 +14,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 const APPLICATION_TOKEN_RATE_LIMIT_MAX = 30;
@@ -50,7 +49,6 @@ export class ApplicationOAuthResolver {
   ) {}
 
   @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(NoPermissionGuard)
   async renewApplicationToken(
     @Args('applicationRefreshToken') applicationRefreshToken: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

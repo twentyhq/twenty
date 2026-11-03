@@ -19,7 +19,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { BillingEnabledGuard } from 'src/engine/guards/billing-enabled.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
@@ -40,7 +39,6 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED],
   }),
   BillingEnabledGuard,
-  NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)

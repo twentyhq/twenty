@@ -16,11 +16,9 @@ import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-ta
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-@UseGuards(NoPermissionGuard)
 @MetadataResolver()
 @UseFilters(
   ApplicationVariableEntityExceptionFilter,

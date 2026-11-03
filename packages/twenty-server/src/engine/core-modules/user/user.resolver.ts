@@ -63,7 +63,6 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { buildUserSessionRequiredError } from 'src/engine/guards/utils/is-user-session-principal.util';
 import {
   PermissionsException,
@@ -141,7 +140,7 @@ export class UserResolver {
   }
 
   @Query(() => UserEntity)
-  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY), NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
@@ -413,7 +412,6 @@ export class UserResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {

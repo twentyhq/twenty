@@ -93,7 +93,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -146,7 +145,6 @@ const SERVER_ADMIN_MANAGEMENT_ACCESS_POLICY: AccessPolicy = {
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
-@UseGuards(NoPermissionGuard)
 export class AdminPanelResolver {
   constructor(
     private readonly adminUserLookupService: AdminPanelUserLookupService,

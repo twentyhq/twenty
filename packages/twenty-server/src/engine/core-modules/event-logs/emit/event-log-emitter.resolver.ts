@@ -56,7 +56,6 @@ export class EventLogEmitterResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async createObjectEvent(
     @Args()
