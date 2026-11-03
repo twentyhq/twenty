@@ -4,10 +4,13 @@ import { ARRAY_LENGTH_VARIABLE_NAMES } from '@/app/source/constants/array-length
 import { getConditionalAvailabilityExpressionTokenText } from '@/app/source/get-conditional-availability-expression-token-text';
 import { scanConditionalAvailabilityExpressionTokens } from '@/app/source/scan-conditional-availability-expression-tokens';
 
-const isTrailingCommaToken = (
-  tokens: ReturnType<typeof scanConditionalAvailabilityExpressionTokens>,
-  index: number,
-): boolean => {
+const isTrailingCommaToken = ({
+  tokens,
+  index,
+}: {
+  tokens: ReturnType<typeof scanConditionalAvailabilityExpressionTokens>;
+  index: number;
+}): boolean => {
   let nextIndex = index + 1;
 
   while (
@@ -42,7 +45,7 @@ export const toConditionalAvailabilityExpressionString = (
 
     if (
       token.kind === ts.SyntaxKind.CommaToken &&
-      isTrailingCommaToken(tokens, index)
+      isTrailingCommaToken({ tokens, index })
     ) {
       continue;
     }
