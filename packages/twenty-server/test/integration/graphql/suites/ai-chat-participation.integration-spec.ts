@@ -39,11 +39,12 @@ describe('Chat participation through the authenticated API', () => {
   });
 
   const addJonyAsParticipant = (threadId: string) =>
-    context.threadService.deliverToParticipants({
+    context.inboxDeliveryService.addMembers({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'recipient',
     });
   const createDirectMessage = async (isAssistantParticipant = true) => {
     const threadId = await context.createThread(isAssistantParticipant);

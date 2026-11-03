@@ -173,7 +173,7 @@ export class StreamAgentChatJob {
     const isExecutionAllowed =
       await this.replyExecutionPolicyService.shouldExecute({
         threadId: data.threadId,
-        workspace,
+        workspaceId: data.workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         messageId: message?.id,
       });
@@ -331,16 +331,28 @@ export class StreamAgentChatJob {
       turnModelId,
     );
 
-    await this.eventPublisherService.publish({
-      threadId,
-      workspaceId,
-      event: { type: 'stream-ended' },
-    });
-    await this.eventPublisherService.publish({
-      threadId,
-      workspaceId,
-      event: { type: 'queue-updated' },
-    });
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId,
+        event: { type: 'stream-ended' },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish workspace-policy stream-ended event for stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId,
+        event: { type: 'queue-updated' },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish workspace-policy queue-updated event for stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
   }
 
   // resolve auto-select ids here so turn-start and outcome metrics carry the same model label

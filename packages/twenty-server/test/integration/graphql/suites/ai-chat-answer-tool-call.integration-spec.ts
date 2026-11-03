@@ -15,6 +15,7 @@ import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -27,6 +28,10 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const getFeatureFlagService = () =>
   getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
+const getInboxDeliveryService = () =>
+  getAppProviderByClassName<AgentChatInboxDeliveryService>(
+    'AgentChatInboxDeliveryService',
+  );
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
@@ -136,19 +141,21 @@ describe('Answering a chat tool call', () => {
     )[0]?.toolOutput?.result?.status;
 
   const markAsMentioned = async () => {
-    const threadService = getAgentChatThreadService();
+    const inboxDeliveryService = getInboxDeliveryService();
 
-    await threadService.deliverToParticipants({
+    await inboxDeliveryService.addMembers({
       workspaceId,
       workspaceMemberId,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'recipient',
     });
-    await threadService.mentionParticipants({
+    await inboxDeliveryService.addMembers({
       workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       threadId,
-      participantWorkspaceMemberIds: [workspaceMemberId],
+      workspaceMemberIds: [workspaceMemberId],
+      reason: 'mention',
     });
   };
 
@@ -299,11 +306,12 @@ describe('Answering a chat tool call', () => {
 
   it('resolves only the answering member while another request remains pending', async () => {
     await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
-    await getAgentChatThreadService().mentionParticipants({
+    await getInboxDeliveryService().addMembers({
       workspaceId,
       workspaceMemberId,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'mention',
     });
     await markAsMentioned();
 

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
@@ -40,6 +41,9 @@ const findNewWorkspaceMemberIds = (
 
 @Injectable()
 export class AgentInboxService {
+  @Inject(AgentChatInboxDeliveryService)
+  private readonly inboxDeliveryService: AgentChatInboxDeliveryService;
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -322,15 +326,16 @@ export class AgentInboxService {
       return throwAgentChatThreadNotFound();
     }
 
-    const participantWorkspaceMemberIds =
-      await this.threadService.deliverToParticipants({
+    const deliveredWorkspaceMemberIds =
+      await this.inboxDeliveryService.addMembers({
         workspaceId,
         threadId: thread.id,
         workspaceMemberId: thread.workspaceMemberId,
-        participantWorkspaceMemberIds: newWorkspaceMemberIds,
+        workspaceMemberIds: newWorkspaceMemberIds,
+        reason: 'recipient',
       });
 
-    if (participantWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
+    if (deliveredWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
       throwAgentChatThreadNotFound();
     }
   }

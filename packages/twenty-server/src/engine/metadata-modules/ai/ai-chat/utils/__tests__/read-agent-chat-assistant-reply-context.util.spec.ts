@@ -4,13 +4,28 @@ import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadat
 import { readAgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-agent-chat-assistant-reply-context.util';
 
 describe('readAgentChatAssistantReplyContext', () => {
-  it('reads false flags and a structured continuation from persisted user text', () => {
-    const context = {
+  it.each([
+    {
+      isAssistantMentioned: false,
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: false,
+    },
+    {
+      isAssistantMentioned: true,
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: false,
+    },
+    {
+      isAssistantMentioned: false,
+      isDirectAssistantChat: true,
+      isStructuredRequestContinuation: false,
+    },
+    {
       isAssistantMentioned: false,
       isDirectAssistantChat: false,
       isStructuredRequestContinuation: true,
-    };
-
+    },
+  ])('reads persisted policy context %j', (context) => {
     expect(
       readAgentChatAssistantReplyContext([
         {
@@ -31,8 +46,13 @@ describe('readAgentChatAssistantReplyContext', () => {
   });
 
   const malformedContexts: JSONValue[] = [
-    { isAssistantMentioned: 'true', isDirectAssistantChat: false },
-    { isAssistantMentioned: true },
+    {
+      isAssistantMentioned: 'true',
+      isDirectAssistantChat: false,
+      isStructuredRequestContinuation: false,
+    },
+    { isAssistantMentioned: true, isStructuredRequestContinuation: false },
+    { isAssistantMentioned: true, isDirectAssistantChat: false },
     {
       isAssistantMentioned: true,
       isDirectAssistantChat: false,
@@ -63,6 +83,7 @@ describe('readAgentChatAssistantReplyContext', () => {
             buildAgentChatAssistantReplyProviderMetadata({
               isAssistantMentioned: true,
               isDirectAssistantChat: false,
+              isStructuredRequestContinuation: false,
             }) ?? null,
         },
       ]),

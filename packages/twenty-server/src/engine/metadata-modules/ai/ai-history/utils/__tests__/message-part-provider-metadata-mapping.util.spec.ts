@@ -11,6 +11,7 @@ describe('message part provider metadata mapping', () => {
         assistantReplyContext: {
           isAssistantMentioned: true,
           isDirectAssistantChat: false,
+          isStructuredRequestContinuation: false,
         },
       },
     };

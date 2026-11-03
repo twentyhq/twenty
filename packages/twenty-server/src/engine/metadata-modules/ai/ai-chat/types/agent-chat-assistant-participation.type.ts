@@ -1,11 +1,5 @@
-import { type AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentChatAssistantDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-decision.type';
 
-export type AgentChatAssistantParticipation = {
-  threadBefore: AgentChatThreadWorkspaceEntity;
-  thread: AgentChatThreadWorkspaceEntity;
+export type AgentChatAssistantParticipation = AgentChatAssistantDecision & {
   isInitialMessage: boolean;
-  assistantPolicy: Awaited<
-    ReturnType<AgentChatAssistantPolicyService['resolve']>
-  >;
 };

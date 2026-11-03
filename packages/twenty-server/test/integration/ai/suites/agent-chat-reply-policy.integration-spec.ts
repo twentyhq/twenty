@@ -1,9 +1,12 @@
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -28,37 +31,54 @@ describe('Assistant reply selection with stored conversation participants', () =
     isAssistantMentioned = false,
     shouldAssistantReply = true,
     isAiChatInboxEnabled = true,
+    text = 'Can Ada help with the latest task?',
   }: {
     threadId: string;
     isAssistantMentioned?: boolean | null;
     shouldAssistantReply?: boolean;
     isAiChatInboxEnabled?: boolean;
+    text?: string;
   }) => {
-    const { thread, assistantPolicy } =
-      await context.threadService.applyAssistantParticipation({
-        threadId,
-        workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-        isAssistantMentioned: isAssistantMentioned ?? false,
-      });
+    const isAssistantMentionedInMessage = isAssistantMentioned ?? false;
+    const thread = await context.threadService.getWritableThread({
+      threadId,
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+    });
+    const participation = await context.assistantParticipationService.resolve({
+      thread,
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+      isAssistantMentioned: isAssistantMentionedInMessage,
+      isReplyRequested: shouldAssistantReply,
+    });
+
+    await context.assistantParticipationService.save({
+      thread,
+      workspaceId: context.workspaceId,
+      participation,
+    });
+
+    const decision = isAiChatInboxEnabled
+      ? participation.replyDecision
+      : 'REPLY';
 
     return context.replyPolicyService.shouldReply({
-      isAiChatInboxEnabled,
-      shouldAssistantReply,
-      thread,
-      assistantPolicy,
+      decision,
+      threadId,
+      pendingQuestionMessageId: thread.pendingQuestionMessageId,
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
-      isAssistantMentioned,
-      text: 'Can Ada help with the latest task?',
+      text,
     });
   };
   const addJonyAsParticipant = (threadId: string) =>
-    context.threadService.deliverToParticipants({
+    context.inboxDeliveryService.addMembers({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'recipient',
     });
   const createGroup = async (isAssistantParticipant = true) => {
     const threadId = await context.createThread(isAssistantParticipant);
@@ -73,20 +93,26 @@ describe('Assistant reply selection with stored conversation participants', () =
   }: {
     threadId: string;
     assistantReplyContext: AgentChatAssistantReplyContext;
-  }) =>
-    context.streamingService.saveMessageWithoutReply({
+  }) => {
+    const savedMessage = await context.memberMessageWriterService.write({
+      actor: {
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        userWorkspaceId: context.userWorkspaceId,
+      },
       thread: await context.threadService.getWritableThread({
         threadId,
         workspaceId: context.workspaceId,
         workspaceMemberId: context.workspaceMemberId,
       }),
-      workspace: await context.getWorkspace(),
-      workspaceMemberId: context.workspaceMemberId,
-      userWorkspaceId: context.userWorkspaceId,
-      text: 'Continue the task with this answer.',
+      message: { text: 'Continue the task with this answer.' },
+      placement: 'completed',
       assistantReplyContext,
     });
-  const shouldExecute = async ({
+
+    return { messageId: savedMessage.id };
+  };
+  const shouldExecute = ({
     threadId,
     messageId,
   }: {
@@ -96,7 +122,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     context.replyExecutionPolicyService.shouldExecute({
       threadId,
       messageId,
-      workspace: await context.getWorkspace(),
+      workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
     });
 
@@ -285,6 +311,56 @@ describe('Assistant reply selection with stored conversation participants', () =
     await expect(shouldReply({ threadId })).resolves.toBe(false);
   });
 
+  it('continues a pending question without relying on the evaluator', async () => {
+    const threadId = await createGroup();
+    const { turnId } = await context.chatService.addMessage({
+      threadId,
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: 'Draft a quote.' }],
+      },
+    });
+    const conversationWriterService =
+      getAppProviderByClassName<AgentConversationWriterService>(
+        'AgentConversationWriterService',
+      );
+    const question = {
+      header: 'Plan',
+      question: 'Which plan should I quote?',
+      options: [{ label: 'Pro' }, { label: 'Team' }],
+    };
+
+    await conversationWriterService.insertMessage({
+      workspaceId: context.workspaceId,
+      threadId,
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+      agentId: null,
+      senderUserWorkspaceId: null,
+      isAwaitingAnswer: true,
+      parts: [
+        {
+          type: 'dynamic-tool',
+          toolName: 'ask_question',
+          toolCallId: 'pending-quote-plan',
+          state: 'output-available',
+          input: question,
+          output: buildAskQuestionPendingOutput(question),
+        },
+      ],
+    });
+
+    await expect(shouldReply({ threadId, text: 'Pro' })).resolves.toBe(true);
+
+    models.enableEvaluation();
+    models.setReplyProbability(0);
+
+    await expect(shouldReply({ threadId, text: 'Pro' })).resolves.toBe(true);
+    expect(models.evaluate).not.toHaveBeenCalled();
+  });
+
   it('rechecks persisted participants when a direct chat becomes a group', async () => {
     const threadId = await context.createThread();
 
@@ -300,6 +376,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -325,6 +402,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -337,12 +415,14 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('executes a persisted explicit mention under mention-only mode', async () => {
+    models.enableEvaluation();
     const threadId = await createGroup();
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -355,6 +435,7 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('executes a persisted structured answer under mention-only mode', async () => {
+    models.enableEvaluation();
     const threadId = await createGroup();
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
@@ -394,6 +475,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -421,6 +503,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -439,6 +522,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: false,
         isDirectAssistantChat: true,
+        isStructuredRequestContinuation: false,
       },
     });
 
@@ -478,6 +562,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       assistantReplyContext: {
         isAssistantMentioned: true,
         isDirectAssistantChat: false,
+        isStructuredRequestContinuation: false,
       },
     });
 

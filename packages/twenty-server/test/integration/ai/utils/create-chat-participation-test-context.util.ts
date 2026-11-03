@@ -18,10 +18,12 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { type AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
+import { type AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
+import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -65,6 +67,18 @@ export const createChatParticipationTestContext = async () => {
   const threadService = getAppProviderByClassName<AgentChatThreadService>(
     'AgentChatThreadService',
   );
+  const inboxDeliveryService =
+    getAppProviderByClassName<AgentChatInboxDeliveryService>(
+      'AgentChatInboxDeliveryService',
+    );
+  const assistantParticipationService =
+    getAppProviderByClassName<AgentChatAssistantParticipationService>(
+      'AgentChatAssistantParticipationService',
+    );
+  const memberMessageWriterService =
+    getAppProviderByClassName<AgentChatMemberMessageWriterService>(
+      'AgentChatMemberMessageWriterService',
+    );
   const chatService =
     getAppProviderByClassName<AgentChatService>('AgentChatService');
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
@@ -78,9 +92,6 @@ export const createChatParticipationTestContext = async () => {
     getAppProviderByClassName<AgentChatReplyExecutionPolicyService>(
       'AgentChatReplyExecutionPolicyService',
     );
-  const streamingService = getAppProviderByClassName<AgentChatStreamingService>(
-    'AgentChatStreamingService',
-  );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
   const wasInboxEnabled = await featureFlagService.isFeatureEnabled(
@@ -265,13 +276,13 @@ export const createChatParticipationTestContext = async () => {
     userWorkspaceId,
     schema,
     threadService,
+    inboxDeliveryService,
+    assistantParticipationService,
+    memberMessageWriterService,
     chatService,
     sharingService,
     replyPolicyService,
     replyExecutionPolicyService,
-    streamingService,
-    getWorkspace: () =>
-      workspaceRepository.findOneByOrFail({ id: workspaceId }),
     featureFlagService,
     setAssistantModes,
     setConversationType,

@@ -1,1 +1,5 @@
-export type AgentChatReplyDecision = 'REPLY' | 'SKIP' | 'EVALUATE';
+export type AgentChatReplyDecision =
+  | 'ASSISTANT_CHAT_REPLY'
+  | 'REPLY'
+  | 'SKIP'
+  | 'EVALUATE';

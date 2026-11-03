@@ -7,7 +7,8 @@ import {
 } from 'twenty-shared/ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -26,6 +27,63 @@ export class AgentRunConversationService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
   ) {}
+
+  async claimQueuedMessages({
+    workspaceId,
+    threadId,
+    turnId,
+    agentId,
+    createdBy,
+    queuedMessageIds,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    agentId: string | null;
+    createdBy: ActorMetadata;
+    queuedMessageIds: string[];
+  }): Promise<boolean> {
+    if (!isNonEmptyArray(queuedMessageIds)) {
+      return false;
+    }
+
+    return this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        await this.conversationWriterService.insertTurn({
+          workspaceId,
+          threadId,
+          id: turnId,
+          agentId,
+          status: AgentTurnStatus.RUNNING,
+          createdBy,
+          scope,
+        });
+
+        const takenMessageCount = await scope.update(
+          'agentMessage',
+          {
+            id: In(queuedMessageIds),
+            threadId,
+            status: AgentMessageStatus.QUEUED,
+          },
+          {
+            status: AgentMessageStatus.SENT,
+            turnId,
+            processedAt: new Date().toISOString(),
+          },
+        );
+
+        if (takenMessageCount === 0) {
+          await scope.delete('agentTurn', { id: turnId });
+
+          return false;
+        }
+
+        return true;
+      },
+    );
+  }
 
   // A run holds its conversation's stream while it goes on, as a chat reply does, so nothing else
   // writes to the conversation meanwhile. A stream whose worker died is reaped first

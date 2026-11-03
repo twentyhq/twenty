@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
+import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -22,15 +24,22 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { type AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { type AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { type AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { type AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
+import { buildAgentRunContinuationTurnId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-turn-id.util';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
+import { type AgentChatReplyContinuationPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-continuation-policy.service';
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -324,6 +333,366 @@ describe('agent runs that wait (integration)', () => {
       expectToFail: false,
       input: { id: agentId, triggers: [trigger] },
     });
+  });
+
+  it('keeps a triggered run waiting when queued input is blocked and resumes it for a later allowed message', async () => {
+    const context = await createChatParticipationTestContext();
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+      replyingResult,
+    );
+    const queueService = getAppProviderByClassName<AgentChatQueueService>(
+      'AgentChatQueueService',
+    );
+
+    try {
+      await runTrigger();
+
+      const { id: wakeUpId, threadId } = await findSuspensionEventually(
+        'AGENT_TRIGGER',
+        agentId,
+      );
+
+      context.registerThread(threadId);
+
+      const queueMemberMessage = async ({
+        text,
+        isAssistantMentioned,
+      }: {
+        text: string;
+        isAssistantMentioned: boolean;
+      }) => {
+        const streamId = await holdConversation(threadId);
+
+        await queueService.queueMessage({
+          workspaceId,
+          threadId,
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          text,
+          assistantReplyContext: {
+            isAssistantMentioned,
+            isDirectAssistantChat: false,
+            isStructuredRequestContinuation: false,
+          },
+        });
+
+        return streamId;
+      };
+      const blockedMessageText = 'Continue with the queued update';
+      const blockedStreamId = await queueMemberMessage({
+        text: blockedMessageText,
+        isAssistantMentioned: false,
+      });
+
+      await context.setAssistantModes({
+        aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
+      });
+      await releaseConversation(threadId, blockedStreamId);
+
+      await expectEventually(async () => {
+        expect(
+          await queueService.getQueuedMessages({ workspaceId, threadId }),
+        ).toEqual([]);
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'waiting_for_input',
+          'cancelled',
+        ]);
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+      });
+
+      expect(runTurn).toHaveBeenCalledTimes(1);
+      expect(await findWaitCallStatus(threadId)).toBe('pending');
+      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([
+        expect.objectContaining({ id: wakeUpId }),
+      ]);
+      expect(await findUserMessageTexts(threadId)).toContain(
+        blockedMessageText,
+      );
+
+      await context.setAssistantModes({
+        aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+      });
+
+      const conversationService =
+        getAppProviderByClassName<AgentRunConversationService>(
+          'AgentRunConversationService',
+        );
+      const claimQueuedMessages =
+        conversationService.claimQueuedMessages.bind(conversationService);
+
+      jest
+        .spyOn(conversationService, 'claimQueuedMessages')
+        .mockImplementationOnce(async (args) => {
+          for (const messageId of args.queuedMessageIds) {
+            await queueService.deleteQueuedMessage({ workspaceId, messageId });
+          }
+
+          return claimQueuedMessages(args);
+        });
+
+      const removedStreamId = await queueMemberMessage({
+        text: 'Ada, disregard this cancelled queued message',
+        isAssistantMentioned: true,
+      });
+
+      await releaseConversation(threadId, removedStreamId);
+
+      await expectEventually(async () => {
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+        expect(
+          await queueService.getQueuedMessages({ workspaceId, threadId }),
+        ).toEqual([]);
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'waiting_for_input',
+          'cancelled',
+        ]);
+      });
+      expect(runTurn).toHaveBeenCalledTimes(1);
+      expect(await findWaitCallStatus(threadId)).toBe('pending');
+      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([
+        expect.objectContaining({ id: wakeUpId }),
+      ]);
+
+      const allowedStreamId = await queueMemberMessage({
+        text: 'Ada, continue with this update',
+        isAssistantMentioned: true,
+      });
+
+      await releaseConversation(threadId, allowedStreamId);
+
+      await expectEventually(async () => {
+        expect(runTurn).toHaveBeenCalledTimes(2);
+        expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+        expect((await findTurnStatuses(threadId)).at(-1)).toBe('completed');
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+      });
+    } finally {
+      await getAppProviderByClassName<AgentRunSuspensionService>(
+        'AgentRunSuspensionService',
+      ).releaseForCaller({
+        workspaceId,
+        caller: { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } },
+      });
+      await context.cleanup();
+    }
+  });
+
+  it('defers a message queued after the continuation policy snapshot to its own policy check', async () => {
+    const context = await createChatParticipationTestContext();
+    const models = configureChatParticipationModels();
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+      replyingResult,
+    );
+    const queueService = getAppProviderByClassName<AgentChatQueueService>(
+      'AgentChatQueueService',
+    );
+    const continuationPolicy =
+      getAppProviderByClassName<AgentChatReplyContinuationPolicyService>(
+        'AgentChatReplyContinuationPolicyService',
+      );
+
+    try {
+      await runTrigger();
+
+      const { threadId } = await findSuspensionEventually(
+        'AGENT_TRIGGER',
+        agentId,
+      );
+
+      context.registerThread(threadId);
+      await context.setAssistantModes({
+        aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+      });
+
+      const streamId = await holdConversation(threadId);
+
+      await queueService.queueMessage({
+        workspaceId,
+        threadId,
+        userWorkspaceId: context.userWorkspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        text: 'Ada, continue with the approved update',
+        assistantReplyContext: {
+          isAssistantMentioned: true,
+          isDirectAssistantChat: false,
+          isStructuredRequestContinuation: false,
+        },
+      });
+
+      const lateMessageText = 'A later update without mentioning Ada';
+      const findAllowedQueuedMessageIds =
+        continuationPolicy.findAllowedQueuedMessageIds.bind(continuationPolicy);
+
+      jest
+        .spyOn(continuationPolicy, 'findAllowedQueuedMessageIds')
+        .mockImplementationOnce(async (args) => {
+          const allowedMessageIds = await findAllowedQueuedMessageIds(args);
+
+          await queueService.queueMessage({
+            workspaceId,
+            threadId,
+            userWorkspaceId: context.userWorkspaceId,
+            workspaceMemberId: context.workspaceMemberId,
+            text: lateMessageText,
+            assistantReplyContext: {
+              isAssistantMentioned: false,
+              isDirectAssistantChat: false,
+              isStructuredRequestContinuation: false,
+            },
+          });
+
+          return allowedMessageIds;
+        });
+
+      await releaseConversation(threadId, streamId);
+
+      await expectEventually(async () => {
+        expect(runTurn).toHaveBeenCalledTimes(2);
+        expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+        expect(
+          await queueService.getQueuedMessages({ workspaceId, threadId }),
+        ).toEqual([]);
+        expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+        expect(await findTurnStatuses(threadId)).toEqual([
+          'completed',
+          'completed',
+          'cancelled',
+        ]);
+      });
+
+      const continuedMessages = JSON.stringify(
+        runTurn.mock.calls[1][0].priorMessages,
+      );
+
+      expect(continuedMessages).toContain(
+        'Ada, continue with the approved update',
+      );
+      expect(continuedMessages).not.toContain(lateMessageText);
+      expect(await findUserMessageTexts(threadId)).toContain(lateMessageText);
+    } finally {
+      await getAppProviderByClassName<AgentRunSuspensionService>(
+        'AgentRunSuspensionService',
+      ).releaseForCaller({
+        workspaceId,
+        caller: { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } },
+      });
+      await context.cleanup();
+      models.restore();
+    }
+  });
+
+  it('settles a retried message continuation after its input was already promoted', async () => {
+    const context = await createChatParticipationTestContext();
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult({
+        toolName: 'wait_for_event',
+        wait: {
+          type: 'EVENT',
+          eventName: 'opportunity.deleted',
+          recordId: randomUUID(),
+        },
+      }),
+    );
+    const queueService = getAppProviderByClassName<AgentChatQueueService>(
+      'AgentChatQueueService',
+    );
+    const suspensionService =
+      getAppProviderByClassName<AgentRunSuspensionService>(
+        'AgentRunSuspensionService',
+      );
+    const caller = { type: 'AGENT_TRIGGER', ref: { agentId, triggerId } };
+
+    try {
+      await runTrigger();
+
+      const { id: wakeUpId, threadId } = await findSuspensionEventually(
+        'AGENT_TRIGGER',
+        agentId,
+      );
+
+      context.registerThread(threadId);
+
+      const streamId = await holdConversation(threadId);
+      const message = await queueService.queueMessage({
+        workspaceId,
+        threadId,
+        userWorkspaceId: context.userWorkspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        text: 'Ada, continue after this update',
+        assistantReplyContext: {
+          isAssistantMentioned: true,
+          isDirectAssistantChat: false,
+          isStructuredRequestContinuation: false,
+        },
+      });
+      const executionContext =
+        await getAppProviderByClassName<AgentTriggerRunnerService>(
+          'AgentTriggerRunnerService',
+        ).buildExecutionContext({ workspaceId, caller });
+      const turnId = buildAgentRunContinuationTurnId(wakeUpId);
+
+      await getAppProviderByClassName<AgentRunConversationService>(
+        'AgentRunConversationService',
+      ).claimQueuedMessages({
+        workspaceId,
+        threadId,
+        turnId,
+        agentId,
+        createdBy: executionContext.turnCreatedBy,
+        queuedMessageIds: [message.id],
+      });
+      await suspensionService.recordWaitOutcome({
+        workspaceId,
+        threadId,
+        outcome: { type: 'MESSAGE_RECEIVED' },
+      });
+      await getAppProviderByClassName<AgentChatStreamHeartbeatService>(
+        'AgentChatStreamHeartbeatService',
+      ).clear(streamId);
+
+      await getAppProviderByClassName<AgentRunnerService>(
+        'AgentRunnerService',
+      ).continue({
+        workspaceId,
+        threadId,
+        wakeUpId,
+        outcome: { type: 'MESSAGE_RECEIVED' },
+      });
+
+      expect(runTurn).toHaveBeenCalledTimes(1);
+      expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
+      expect(await findTurnStatuses(threadId)).toEqual(['completed', 'failed']);
+      expect(
+        await queueService.getQueuedMessages({ workspaceId, threadId }),
+      ).toEqual([]);
+      expect((await context.readThread(threadId)).activeStreamId).toBeNull();
+
+      const [retriedTurn] = await global.testDataSource.query(
+        `SELECT error FROM "${schema}"."agentTurn" WHERE id = $1`,
+        [turnId],
+      );
+
+      expect(retriedTurn.error).toEqual(AGENT_TURN_INTERRUPTED_ERROR);
+    } finally {
+      await suspensionService.releaseForCaller({ workspaceId, caller });
+      await context.cleanup();
+    }
   });
 
   it('starts a runAgent call without waiting when asked not to, its reply landing in its thread', async () => {

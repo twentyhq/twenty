@@ -24,17 +24,9 @@ const buildService = () => {
     ]),
   };
 
-  const service = new AgentChatService(
-    threadRepository as never,
-    {} as never,
-    messageRepository as never,
-    {} as never,
-    {} as never,
-    {} as never,
-    {} as never,
-    {} as never,
-    {} as never,
-  );
+  const service = new AgentChatService();
+
+  Object.assign(service, { threadRepository, messageRepository });
 
   return { service, threadRepository, messageRepository };
 };
