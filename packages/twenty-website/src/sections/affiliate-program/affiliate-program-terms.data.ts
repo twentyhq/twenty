@@ -16,7 +16,7 @@ export const AFFILIATE_PROGRAM_TERMS: readonly AffiliateProgramTerm[] = [
     label: msg`per customer, from their first payment`,
   },
   {
-    value: msg`60 days`,
+    value: msg`30 days`,
     label: msg`of credit after each click on your link`,
   },
   {

@@ -1,10 +1,13 @@
 'use client';
 
 import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { type FormEvent, useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
+import { localizeHref } from '@/platform/i18n/localize-href';
+import { useLocale } from '@/platform/i18n/use-locale';
 import {
   color,
   FONT_WEIGHT,
@@ -14,7 +17,15 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { Button, Field, Heading, Select, TextareaField, TextField } from '@/ui';
+import {
+  Button,
+  ExternalLink,
+  Field,
+  Heading,
+  Select,
+  TextareaField,
+  TextField,
+} from '@/ui';
 
 import { AFFILIATE_APPLICATION_COPY } from './affiliate-application-copy';
 import { affiliateApplicationRequestSchema } from './affiliate-application-request-schema';
@@ -60,6 +71,13 @@ const CheckboxStack = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: ${spacing(2)};
+`;
+
+// Opens in a new tab so the applicant keeps what they typed.
+const TermsLink = styled(ExternalLink)`
+  color: ${color('blue')};
+  text-decoration: underline;
+  text-underline-offset: 2px;
 `;
 
 const CheckboxLabel = styled.label`
@@ -143,6 +161,7 @@ function buildRequestBody(state: FormState) {
 
 export function AffiliateApplicationForm() {
   const { i18n } = useLingui();
+  const locale = useLocale();
   const [state, setState] = useState<FormState>(INITIAL_STATE);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -306,7 +325,16 @@ export function AffiliateApplicationForm() {
                 }
                 type="checkbox"
               />
-              {i18n._(COPY.fields.acceptsTerms)}
+              <span>
+                <Trans>
+                  I agree to the{' '}
+                  <TermsLink
+                    href={localizeHref(locale, '/affiliate-partners/terms')}
+                  >
+                    affiliate program terms
+                  </TermsLink>
+                </Trans>
+              </span>
             </CheckboxLabel>
           </CheckboxStack>
           <Button
