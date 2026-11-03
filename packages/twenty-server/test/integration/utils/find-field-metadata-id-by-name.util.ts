@@ -2,34 +2,30 @@ import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-m
 import { isDefined } from 'twenty-shared/utils';
 
 export const findFieldMetadataIdByName = async ({
-  objectNameSingular,
+  objectMetadataId,
   fieldName,
 }: {
-  objectNameSingular: string;
+  objectMetadataId: string;
   fieldName: string;
 }): Promise<string> => {
   const { fields } = await findManyFieldsMetadata({
-    input: { filter: {}, paging: { first: 1000 } },
+    input: {
+      filter: { objectMetadataId: { eq: objectMetadataId } },
+      paging: { first: 1000 },
+    },
     gqlFields: `
       id
       name
-      object {
-        nameSingular
-      }
     `,
     expectToFail: false,
   });
 
   const fieldMetadataId = fields?.find(
-    ({ node }: { node: { name: string; object: { nameSingular: string } } }) =>
-      node.name === fieldName &&
-      node.object.nameSingular === objectNameSingular,
+    ({ node }: { node: { name: string } }) => node.name === fieldName,
   )?.node.id;
 
   if (!isDefined(fieldMetadataId)) {
-    throw new Error(
-      `The ${objectNameSingular}.${fieldName} field metadata is missing from the seed`,
-    );
+    throw new Error(`The ${fieldName} field metadata is missing from the seed`);
   }
 
   return fieldMetadataId;

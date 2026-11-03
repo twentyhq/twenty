@@ -235,7 +235,7 @@ describe('field permissions on person.intro', () => {
         readRestricted.token,
       );
 
-      expect(response.body.errors).toBeUndefined();
+      expectPermissionGrantedResponse({ api: 'graphql', response });
     });
 
     it('denies aggregating over it', async () => {

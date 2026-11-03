@@ -1,4 +1,4 @@
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import {
@@ -22,15 +22,16 @@ export const createApiKeyWithFieldPermission = async ({
   canUpdateFieldValue?: false | null;
   isFieldInRowLevelPredicate?: boolean;
 }): Promise<ApiKeyWithObjectRecordGrants> => {
-  const [apiKey, objectMetadataId, fieldMetadataId] = await Promise.all([
+  const objectMetadataId = await findObjectMetadataIdByName(objectNameSingular);
+
+  const [apiKey, fieldMetadataId] = await Promise.all([
     createApiKeyWithObjectRecordGrants({
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
     }),
-    findObjectMetadataIdByName(objectNameSingular),
-    findFieldMetadataIdByName({ objectNameSingular, fieldName }),
+    findFieldMetadataIdByName({ objectMetadataId, fieldName }),
   ]);
 
   await upsertFieldPermissions({
