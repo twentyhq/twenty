@@ -21,6 +21,7 @@ import { personRequestsByApi } from 'test/integration/utils/person-requests-by-a
 
 const UPDATED_JOB_TITLE = 'Updated job title';
 const RESTRICTED_INTRO = 'Restricted intro';
+const LINKED_PERSON_INTRO = 'Linked person intro';
 
 const ACTIVE = { status: 'active', jobTitle: PERSON_RECORD_FIXTURE.jobTitle };
 const ACTIVE_UPDATED = { status: 'active', jobTitle: UPDATED_JOB_TITLE };
@@ -63,6 +64,7 @@ describe('field permissions on person.intro', () => {
         id: randomUUID(),
         name: { firstName: PERSON_RECORD_FIXTURE.firstName },
         jobTitle: PERSON_RECORD_FIXTURE.jobTitle,
+        intro: LINKED_PERSON_INTRO,
         companyId,
       },
     });
@@ -439,8 +441,10 @@ describe('field permissions on person.intro', () => {
 
       expectPermissionGrantedResponse({ api: 'graphql', response });
       expect(
-        response.body.data.companies.edges[0].node.people.edges,
-      ).toHaveLength(1);
+        response.body.data.companies.edges[0].node.people.edges.map(
+          ({ node }: { node: { intro: string } }) => node.intro,
+        ),
+      ).toEqual([LINKED_PERSON_INTRO]);
     });
   });
 
@@ -479,6 +483,7 @@ describe('field permissions on person.intro', () => {
           fieldName: 'intro',
         });
         expect(await findPersonRecordStates([id])).toEqual([ACTIVE]);
+        expect(await findSavedIntros([id])).toEqual(['']);
       });
 
       it('allows updateOne writing another field', async () => {
