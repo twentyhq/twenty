@@ -3,12 +3,11 @@ import {
   renderRemoteNode,
   useRemoteReceived,
   type RemoteReceiverNode,
-  type RemoteRootRendererProps,
+  type RemoteRootRendererProps as FrontComponentRemoteRootRendererProps,
 } from '@remote-dom/react/host';
 import { type CSSProperties, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { usePreventPageZoomRef } from 'twenty-ui/utilities';
 
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
@@ -42,19 +41,10 @@ const isRemoteRenderContainer = (child: RemoteReceiverNode) =>
   child.type === NODE_TYPE_ELEMENT &&
   child.element === REMOTE_RENDER_CONTAINER_TAG;
 
-type FrontComponentRemoteRootRendererProps = RemoteRootRendererProps & {
-  preventPageZoom?: boolean;
-};
-
-export const FrontComponentRemoteRootRenderer = ({
-  preventPageZoom = false,
-  ...props
-}: FrontComponentRemoteRootRendererProps) => {
+export const FrontComponentRemoteRootRenderer = (
+  props: FrontComponentRemoteRootRendererProps,
+) => {
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
-  const portalLayerRef = usePreventPageZoomRef({
-    preventPageZoom,
-    onElementChange: geometryTracker?.setPortalLayer,
-  });
   const root = useRemoteReceived(props.receiver.root, props.receiver);
   const children = root?.children ?? [];
   const renderContainers = children.filter(isRemoteRenderContainer);
@@ -67,7 +57,7 @@ export const FrontComponentRemoteRootRenderer = ({
       {renderContainers.map((child) => renderRemoteNode(child, props))}
       {isNonEmptyArray(portalChildren) &&
         createPortal(
-          <div ref={portalLayerRef} style={PORTAL_LAYER_STYLE}>
+          <div ref={geometryTracker?.setPortalLayer} style={PORTAL_LAYER_STYLE}>
             <div style={PORTAL_COORDINATE_STYLE}>
               <div style={PORTAL_CONTENT_STYLE}>
                 {portalChildren.map((child) => renderRemoteNode(child, props))}
