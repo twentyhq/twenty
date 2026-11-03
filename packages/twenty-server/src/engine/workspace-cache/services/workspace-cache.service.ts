@@ -511,9 +511,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         value: expectedHash,
         ttl: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
       })),
-      keysToDelete: cacheKeyNames.map(
-        (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
-      ),
+      keysToDelete: [
+        ...cacheKeyNames.map(
+          (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
+        ),
+        // Pods still on the previous storage version read the unversioned entry, so it goes too
+        ...cacheKeyNames
+          .filter((keyName) => this.storageVersionByKey.has(keyName))
+          .flatMap((keyName) => [
+            `${keyName}:${workspaceId}:hash`,
+            `${keyName}:${workspaceId}:data`,
+          ]),
+      ],
     });
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
