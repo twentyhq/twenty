@@ -74,6 +74,8 @@ Key points:
 - `modelConfiguration` (optional) turns on the model's native tools, as the agent settings page does: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Each tool only works on models that support it. Leave it out to keep them off.
 - `isSystem` (optional, defaults to `false`) hides the agent from agent lists, like the agents Twenty creates for workflow AI steps. It only changes what is displayed: an app's agents can only be changed through the app, whatever this flag says.
 
+Setting `avatarColor` or `avatarShape` displays the face avatar and takes precedence over `icon`. Missing avatar values use a color derived from the agent ID and the `circle` shape. Without avatar preferences, a configured icon other than the default `IconLego` is displayed; otherwise, the agent uses the same face defaults.
+
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
 ```ts src/agents/structured-agent.ts

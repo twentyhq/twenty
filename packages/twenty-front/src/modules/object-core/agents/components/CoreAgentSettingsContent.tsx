@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -8,8 +9,6 @@ import { useCoreAgentEditStatus } from '@/object-core/agents/hooks/useCoreAgentE
 import { useCoreAgentField } from '@/object-core/agents/hooks/useCoreAgentField';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -34,7 +33,7 @@ type CoreAgentSettingsContentProps = { agentId: string };
 export const CoreAgentSettingsContent = ({
   agentId,
 }: CoreAgentSettingsContentProps) => {
-  const { isEditable, canReadRoles, session, roleId } = useCoreAgentEditStatus({
+  const { isEditable } = useCoreAgentEditStatus({
     agentId,
   });
   const { value: prompt = '', setValue: setPrompt } = useCoreAgentField({
@@ -58,9 +57,6 @@ export const CoreAgentSettingsContent = ({
 
   return (
     <StyledContent>
-      {canReadRoles && isDefined(session?.roleId) && (
-        <SettingsRoleDraftSyncEffect roleId={roleId} />
-      )}
       {isAiChatInboxEnabled && (
         <CoreAgentTriggersTab agentId={agentId} disabled={!isEditable} />
       )}

@@ -1,40 +1,75 @@
-import { Trans, useLingui } from '@lingui/react/macro';
-
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useCoreAgentEditScope } from '@/object-core/agents/hooks/useCoreAgentEditScope';
+import { useOpenCoreAgentDeleteDialog } from '@/object-core/agents/hooks/useOpenCoreAgentDeleteDialog';
+import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
+import {
+  DeleteOneAgentDocument,
+  FindManyAgentsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
-
-type CoreAgentDeleteConfirmationModalProps = {
-  agentId: string;
-  agentName: string;
-};
+type CoreAgentDeleteConfirmationModalProps = { agentId: string };
 
 export const CoreAgentDeleteConfirmationModal = ({
   agentId,
-  agentName,
 }: CoreAgentDeleteConfirmationModalProps) => {
-  const { t } = useLingui();
+  const store = useStore();
+  const { sessionAtom } = useCoreAgentEditScope(agentId);
+  const { dialogId } = useOpenCoreAgentDeleteDialog({ agentId });
   const { closeDialog } = useDialog();
   const navigate = useNavigateApp();
   const { enqueueToast } = useToast();
-  const [deleteAgent] = useMutation(DeleteOneAgentDocument);
+  const [deleteAgent, { loading }] = useMutation(DeleteOneAgentDocument);
 
   const handleDelete = async () => {
+    const session = store.get(sessionAtom);
+    const customApplicationId = store.get(currentWorkspaceState.atom)
+      ?.workspaceCustomApplication?.id;
+    const canDelete =
+      isDefined(session) &&
+      !session.isSaving &&
+      !session.agent.isSystem &&
+      store.get(permissionFlagMapSelector.atom)[
+        PermissionFlagType.AI_SETTINGS
+      ] &&
+      getIsMetadataItemCustom(session.agent, customApplicationId);
+    if (!canDelete || loading) {
+      return;
+    }
     try {
-      await deleteAgent({
-        variables: {
-          input: { id: agentId },
+      const { data } = await deleteAgent({
+        variables: { input: { id: agentId } },
+        update: (cache, result) => {
+          if (result.data?.deleteOneAgent.id !== agentId) {
+            return;
+          }
+          cache.updateQuery({ query: FindManyAgentsDocument }, (cached) =>
+            isDefined(cached)
+              ? {
+                  ...cached,
+                  findManyAgents: cached.findManyAgents.filter(
+                    ({ id }) => id !== agentId,
+                  ),
+                }
+              : cached,
+          );
         },
       });
-      closeDialog(DELETE_AGENT_MODAL_ID);
+      if (data?.deleteOneAgent.id !== agentId) {
+        throw new CustomError(t`The agent could not be deleted. Try again.`);
+      }
+      closeDialog(dialogId);
       navigate(AppPath.AgentIndexPage);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -43,19 +78,13 @@ export const CoreAgentDeleteConfirmationModal = ({
 
   return (
     <ConfirmationDialog
-      confirmationValue={agentName}
-      confirmationPlaceholder={agentName}
-      dialogId={DELETE_AGENT_MODAL_ID}
-      title={t`Delete Agent`}
-      subtitle={
-        <Trans>
-          This action cannot be undone. This will permanently delete your agent.
-          <br />
-          Please type in the agent name to confirm.
-        </Trans>
-      }
+      dialogId={dialogId}
+      title={t`Delete agent?`}
+      subtitle={t`This permanently deletes this agent. This action cannot be undone.`}
       onConfirmClick={handleDelete}
-      confirmButtonText={t`Delete Agent`}
+      confirmButtonText={t`Delete agent`}
+      shouldWaitForConfirmBeforeClosing
+      loading={loading}
     />
   );
 };
