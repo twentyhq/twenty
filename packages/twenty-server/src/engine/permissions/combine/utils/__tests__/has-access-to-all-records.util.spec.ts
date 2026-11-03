@@ -77,7 +77,7 @@ const hasAccess = ({
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-      rolesPermissions: {
+      rolesRecordsPermissions: {
         [READ_ONLY_ROLE_ID]: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: { [flatObjectMetadata.id]: readOnlyPermissions },

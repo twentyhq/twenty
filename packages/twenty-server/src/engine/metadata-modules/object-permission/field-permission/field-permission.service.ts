@@ -98,9 +98,9 @@ export class FieldPermissionService {
       }
     ).flatFieldPermissionMaps;
 
-    const { rolesPermissions } =
+    const { rolesRecordsPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
+        'rolesRecordsPermissions',
       ]);
 
     const roleUniversalIdentifier =
@@ -126,7 +126,7 @@ export class FieldPermissionService {
         fieldPermission,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        rolesPermissions,
+        rolesRecordsPermissions,
         flatRole,
       });
 
@@ -313,7 +313,7 @@ export class FieldPermissionService {
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
+      'rolesRecordsPermissions',
     ]);
 
     const freshFlatFieldPermissionMaps: FlatFieldPermissionMaps = (
@@ -345,14 +345,14 @@ export class FieldPermissionService {
     fieldPermission,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    rolesPermissions,
+    rolesRecordsPermissions,
     flatRole,
   }: {
     allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    rolesPermissions: Record<string, RoleRecordsPermissions> | undefined;
+    rolesRecordsPermissions: Record<string, RoleRecordsPermissions> | undefined;
     flatRole: { id: string } | undefined;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(
@@ -422,7 +422,7 @@ export class FieldPermissionService {
     }
 
     const rolePermissionOnObject = isDefined(flatRole)
-      ? rolesPermissions?.[flatRole.id]?.objects[
+      ? rolesRecordsPermissions?.[flatRole.id]?.objects[
           fieldPermission.objectMetadataId
         ]
       : undefined;

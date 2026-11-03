@@ -109,7 +109,7 @@ const buildRepository = ({
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
       roleIdsWithAllRecordsAccess: [ROLE_ID],
-      rolesPermissions: {
+      rolesRecordsPermissions: {
         [ROLE_ID]: {
           canReadAllRecords: true,
           canUpdateAllRecords: true,

@@ -111,7 +111,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
-        rolesPermissions: {},
+        rolesRecordsPermissions: {},
         flatRoleTargetByAgentIdMaps: {},
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],

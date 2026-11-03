@@ -70,7 +70,7 @@ import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-c
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
   [
-    'rolesPermissions',
+    'rolesRecordsPermissions',
     'userWorkspaceRoleMap',
     'apiKeyRoleMap',
     'flatRoleMaps',

@@ -22,7 +22,7 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 
 export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
-  rolesPermissions: Record<string, RoleRecordsPermissions>;
+  rolesRecordsPermissions: Record<string, RoleRecordsPermissions>;
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;

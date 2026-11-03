@@ -77,7 +77,7 @@ const defaultRolePermissions = buildRoleRecordsPermissions({
   },
 });
 
-const rolesPermissions: Record<string, RoleRecordsPermissions> = {
+const rolesRecordsPermissions: Record<string, RoleRecordsPermissions> = {
   'agent-role-id': agentRolePermissions,
   'default-role-id': defaultRolePermissions,
 };
@@ -85,7 +85,7 @@ const rolesPermissions: Record<string, RoleRecordsPermissions> = {
 const computeForPrincipals = (principals: PrincipalsWithRoles) =>
   computePrincipalsRecordsPermissions({
     principals,
-    rolesPermissions,
+    rolesRecordsPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
     flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
     flatApplicationMaps: { byId: {} },
@@ -138,7 +138,7 @@ const computeForAuthContext = ({
   return isDefined(principals)
     ? computePrincipalsRecordsPermissions({
         principals,
-        rolesPermissions,
+        rolesRecordsPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
         flatApplicationMaps: roleMaps.flatApplicationMaps,
@@ -576,7 +576,7 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
     ({ principals, canDestroy }) => {
       const invoicePermissions = computePrincipalsRecordsPermissions({
         principals,
-        rolesPermissions: disabledActionRolesPermissions,
+        rolesRecordsPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
@@ -660,7 +660,7 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
         },
         applicationPrincipal: { type: 'customApplication' },
       },
-      rolesPermissions: {
+      rolesRecordsPermissions: {
         'user-role-id': buildRoleRecordsPermissions({
           [INVOICE_ID]: FULL_ACCESS,
           [COMPANY_ID]: FULL_ACCESS,
@@ -757,7 +757,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     return isDefined(principals)
       ? computePrincipalsRecordsPermissions({
           principals,
-          rolesPermissions: rolesPermissionsWithPredicate,
+          rolesRecordsPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           flatApplicationMaps,

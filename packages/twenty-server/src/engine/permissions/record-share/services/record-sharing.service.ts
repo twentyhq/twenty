@@ -410,10 +410,10 @@ export class RecordSharingService {
     objectMetadataId: string;
     grants: RecordShare[];
   }): Promise<RecordSharingRoleDTO[]> {
-    const { flatRoleMaps, rolesPermissions } =
+    const { flatRoleMaps, rolesRecordsPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleMaps',
-        'rolesPermissions',
+        'rolesRecordsPermissions',
       ]);
 
     return Object.values(flatRoleMaps.byUniversalIdentifier)
@@ -428,7 +428,7 @@ export class RecordSharingService {
           ),
       )
       .map(({ id, label }) => {
-        const roleRecordsPermissions = rolesPermissions[id];
+        const roleRecordsPermissions = rolesRecordsPermissions[id];
 
         if (!isDefined(roleRecordsPermissions)) {
           return { id, label, canRead: null, canUpdate: null };

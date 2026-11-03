@@ -100,7 +100,7 @@ export class PurgeSoftDeletedRowLevelPermissionPredicatesCommand extends Provisi
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
+      'rolesRecordsPermissions',
     ]);
 
     this.logger.log(

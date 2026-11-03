@@ -17,7 +17,7 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 
 export const computePrincipalsRecordsPermissions = ({
   principals,
-  rolesPermissions,
+  rolesRecordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
@@ -29,7 +29,7 @@ export const computePrincipalsRecordsPermissions = ({
     | 'applicationPrincipal'
     | 'aiRunScope'
   >;
-  rolesPermissions: Record<string, RoleRecordsPermissions>;
+  rolesRecordsPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
@@ -49,7 +49,7 @@ export const computePrincipalsRecordsPermissions = ({
     : undefined;
 
   const recordsPermissionsPerRole = roleIds.map((roleId) => {
-    const roleRecordsPermissions = rolesPermissions[roleId];
+    const roleRecordsPermissions = rolesRecordsPermissions[roleId];
 
     return isDefined(roleRecordsPermissions)
       ? restrictRecordsPermissionsToDisabledActions({
