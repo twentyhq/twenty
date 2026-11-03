@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { buildCreatedByFromAgent } from 'src/engine/core-modules/actor/utils/build-created-by-from-agent.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
@@ -215,7 +214,6 @@ export class AgentTriggerRunnerService
         actorContext: createdBy,
         turnCreatedBy: createdBy,
         userWorkspaceId: null,
-        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };
   }

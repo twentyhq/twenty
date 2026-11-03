@@ -184,12 +184,17 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    return this.isPermissionFlagGrantedToRoles({
-      roleIds: getPermissionsPrincipalRoleIds(principal),
-      setting,
-      flatRoleMaps,
-      flatRolePermissionFlagMaps,
-    });
+    const { scope } = principal;
+
+    return (
+      (!isDefined(scope) || (scope.permissionFlags[setting] ?? false)) &&
+      this.isPermissionFlagGrantedToRoles({
+        roleIds: getPermissionsPrincipalRoleIds(principal),
+        setting,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
+      })
+    );
   }
 
   // Empty for the system, which acts with no role

@@ -14,7 +14,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
@@ -23,7 +23,7 @@ import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/email
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
-  userWorkspaceId: string;
+  authContext: WorkspaceAuthContext;
   campaignId?: string;
   name?: string;
   subject?: string;
@@ -43,13 +43,13 @@ const DEFAULT_CAMPAIGN_NAME = 'Untitled campaign';
 @Injectable()
 export class MessageCampaignDraftService {
   constructor(
-    private readonly userRoleService: UserRoleService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly campaignVariableService: CampaignVariableService,
   ) {}
 
   async saveDraft({
     workspaceId,
+    authContext,
     campaignId,
     name,
     subject,
@@ -155,7 +155,7 @@ export class MessageCampaignDraftService {
         blockCount: stampedDocument?.content?.length,
         variablesUsed,
       };
-    });
+    }, authContext);
   }
 
   private parseAndStampDocument(body: unknown): EmailDocument {

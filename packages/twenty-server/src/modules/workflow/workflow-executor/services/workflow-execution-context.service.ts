@@ -86,7 +86,7 @@ export class WorkflowExecutionContextService {
       WorkflowExecutionContext,
       'application' | 'authContext'
     >;
-    targetApplicationId: string;
+    targetApplicationId: string | null;
     targetLabel: string;
   }): void {
     if (

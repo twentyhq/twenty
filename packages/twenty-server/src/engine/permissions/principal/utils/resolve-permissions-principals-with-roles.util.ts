@@ -209,5 +209,8 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
+    ...(isDefined(principalsContext.scope)
+      ? { scope: principalsContext.scope }
+      : {}),
   };
 };

@@ -331,7 +331,7 @@ export type GetAgentRunsQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentRunsQuery = { agentRuns: Array<{ __typename: 'AgentRun', id: string, threadId: string, threadTitle: string | null, status: Types.AgentTurnStatus, errorMessage: string | null, createdAt: string, startedAt: string | null, endedAt: string | null, modelId: string | null, inputTokens: number | null, outputTokens: number | null, credits: number | null, creatorSource: string, creatorName: string, input: string | null, reply: string | null, toolNames: Array<string> }> };
+export type GetAgentRunsQuery = { agentRuns: Array<{ __typename: 'AgentRun', id: string, threadId: string | null, threadTitle: string | null, status: Types.AgentTurnStatus, errorMessage: string | null, createdAt: string, startedAt: string | null, endedAt: string | null, modelId: string | null, inputTokens: number | null, outputTokens: number | null, credits: number | null, creatorSource: string, creatorName: string, input: string | null, reply: string | null, toolNames: Array<string> }> };
 
 export type GetAiChatUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -362,7 +362,7 @@ export type OnAgentChatEventSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnAgentChatEventSubscription = { onAgentChatEvent: { __typename: 'AgentChatEvent', threadId: string, event: any } };
+export type OnAgentChatEventSubscription = { onAgentChatEvent: { __typename: 'AgentChatEvent', threadId: string | null, event: any } };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: Types.AnalyticsType;

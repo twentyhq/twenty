@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -14,10 +15,7 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const roleId = 'role-id';
-const userRoleId = 'user-role-id';
 const workspaceId = 'workspace-id';
 
 const allObjectPermissions: ObjectPermissions = {
@@ -41,18 +39,9 @@ const createFlatObject = (
     ...overrides,
   });
 
-type ExplicitPermissionRow = {
-  objectMetadataId: string;
-  canReadObjectRecords?: boolean;
-  canUpdateObjectRecords?: boolean;
-  canSoftDeleteObjectRecords?: boolean;
-};
-
 type GenerateDescriptorsTestOptions = {
-  explicitObjectGrantsRoleId?: string;
-  explicitPermissionRows?: ExplicitPermissionRow[];
+  explicitObjectGrants?: ExplicitObjectGrants;
   composedObjectPermissions?: Partial<ObjectPermissions>;
-  explicitPermissionRowsRoleId?: string;
   sharedOperationTypes?: OperationType[];
 };
 
@@ -89,15 +78,6 @@ describe('DatabaseToolProvider', () => {
         object.universalIdentifier;
     }
 
-    const explicitPermissionRows =
-      options?.explicitPermissionRows ??
-      objects.map((object) => ({
-        objectMetadataId: object.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-      }));
-
     const composedObjectPermissionsByObjectId = Object.fromEntries(
       objects.map((object) => [
         object.id,
@@ -107,27 +87,6 @@ describe('DatabaseToolProvider', () => {
         },
       ]),
     );
-
-    const workspaceCacheService = {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        rolesPermissions: {
-          [roleId]: composedObjectPermissionsByObjectId,
-          [userRoleId]: composedObjectPermissionsByObjectId,
-        },
-        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-        flatObjectPermissionMaps: {
-          byUniversalIdentifier: Object.fromEntries(
-            explicitPermissionRows.map((row, index) => [
-              `object-permission-${index}`,
-              {
-                roleId: options?.explicitPermissionRowsRoleId ?? roleId,
-                ...row,
-              },
-            ]),
-          ),
-        },
-      }),
-    } as unknown as WorkspaceCacheService;
 
     const flatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
@@ -180,7 +139,6 @@ describe('DatabaseToolProvider', () => {
     } as unknown as RecordAccessPolicyService;
 
     const provider = new DatabaseToolProvider(
-      workspaceCacheService,
       recordAccessPolicyService,
       flatEntityMapsCacheService,
       i18nService,
@@ -195,7 +153,7 @@ describe('DatabaseToolProvider', () => {
           workspace: { id: workspaceId },
           apiKey: { id: 'api-key-id' },
         } as WorkspaceAuthContext,
-        explicitObjectGrantsRoleId: options?.explicitObjectGrantsRoleId,
+        explicitObjectGrants: options?.explicitObjectGrants,
       },
       { includeSchemas: false },
     )) as (ToolIndexEntry | ToolDescriptor)[];
@@ -444,7 +402,7 @@ describe('DatabaseToolProvider', () => {
     }
   });
 
-  describe('explicitObjectGrantsRoleId', () => {
+  describe('explicitObjectGrants', () => {
     const personObject = createFlatObject({
       nameSingular: 'person',
       namePlural: 'people',
@@ -454,45 +412,38 @@ describe('DatabaseToolProvider', () => {
       namePlural: 'companies',
     });
 
-    it('emits no tools for objects without an explicit permission row', async () => {
+    it('emits no tools for objects the grants do not name', async () => {
       const descriptorNames = await generateDescriptorNames(
         [personObject, companyObject],
         {
-          explicitObjectGrantsRoleId: roleId,
-          explicitPermissionRows: [
-            {
-              objectMetadataId: personObject.id,
-              canReadObjectRecords: true,
-            },
-          ],
+          explicitObjectGrants: {
+            objectPermissions: [
+              {
+                objectUniversalIdentifier: personObject.universalIdentifier,
+                canReadObjectRecords: true,
+              },
+            ],
+          },
         },
       );
 
       expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('create_one_person');
       expect(descriptorNames).not.toContain('find_many_companies');
     });
 
-    it('emits only the verbs granted by the explicit row', async () => {
+    it('drops the verbs the composed permissions deny even when granted', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
-        explicitObjectGrantsRoleId: roleId,
-        explicitPermissionRows: [
-          {
-            objectMetadataId: personObject.id,
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: false,
-            canSoftDeleteObjectRecords: false,
-          },
-        ],
-      });
-
-      expect(descriptorNames).toContain('find_many_people');
-      expect(descriptorNames).not.toContain('create_one_person');
-      expect(descriptorNames).not.toContain('delete_one_person');
-    });
-
-    it('drops the verbs the composed permissions deny even with an explicit row', async () => {
-      const descriptorNames = await generateDescriptorNames([personObject], {
-        explicitObjectGrantsRoleId: roleId,
+        explicitObjectGrants: {
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: personObject.universalIdentifier,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+            },
+          ],
+        },
         composedObjectPermissions: {
           canUpdateObjectRecords: false,
           canSoftDeleteObjectRecords: false,
@@ -504,19 +455,34 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).not.toContain('delete_one_person');
     });
 
-    it('ignores explicit rows of the other roles', async () => {
-      const descriptorNames = await generateDescriptorNames([personObject], {
-        explicitObjectGrantsRoleId: roleId,
-        explicitPermissionRowsRoleId: userRoleId,
-      });
+    it('names every object for an action granted on all objects', async () => {
+      const descriptorNames = await generateDescriptorNames(
+        [personObject, companyObject],
+        {
+          explicitObjectGrants: { canReadAllObjectRecords: true },
+        },
+      );
 
-      expect(descriptorNames).toEqual([]);
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).toContain('find_many_companies');
+      expect(descriptorNames).not.toContain('create_one_person');
     });
 
-    it('keeps composed permissions without a grants role even without explicit rows', async () => {
+    it('keeps all-objects grants within the composed permissions', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
-        explicitPermissionRows: [],
+        explicitObjectGrants: {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+        },
+        composedObjectPermissions: { canUpdateObjectRecords: false },
       });
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('create_one_person');
+    });
+
+    it('keeps composed permissions without explicit grants', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject]);
 
       expect(descriptorNames).toContain('find_many_people');
       expect(descriptorNames).toContain('create_one_person');
