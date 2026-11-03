@@ -26,13 +26,15 @@ export const useSettingsAiWorkspaceInstructions = () => {
       return;
     }
 
+    const aiAdditionalInstructions = newValue || null;
+
     try {
       await updateWorkspace({
-        variables: { input: { aiAdditionalInstructions: newValue || null } },
+        variables: { input: { aiAdditionalInstructions } },
       });
       setCurrentWorkspace((previousWorkspace) =>
         isDefined(previousWorkspace)
-          ? { ...previousWorkspace, aiAdditionalInstructions: newValue || null }
+          ? { ...previousWorkspace, aiAdditionalInstructions }
           : previousWorkspace,
       );
     } catch (error) {
