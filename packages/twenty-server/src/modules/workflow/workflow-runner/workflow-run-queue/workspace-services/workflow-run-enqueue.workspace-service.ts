@@ -53,10 +53,10 @@ export class WorkflowRunEnqueueWorkspaceService {
       const authContext = buildSystemAuthContext(workspaceId);
 
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowRunRepository = this.workspaceOrmManager.getRepository(
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+        const workflowRunRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            WorkflowRunWorkspaceEntity,
+          );
 
         const notStartedRunsCount = isCacheMode
           ? await this.workflowThrottlingWorkspaceService.getNotStartedRunsCountFromCache(

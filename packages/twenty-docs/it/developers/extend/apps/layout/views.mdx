@@ -87,21 +87,22 @@ Tre proprietà facoltative perfezionano un filtro:
 
 ### Operatori supportati per tipo di campo
 
-| Tipo di campo                                                                                      | Operandi supportati                                                                                                |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
-| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
-| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
-| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
-| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
-| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
-| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
-| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+| Tipo di campo                                                                              | Operandi supportati                                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                         |
+| `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                  | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                   | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                             | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                 | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                   | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                   | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                        | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                    | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                        | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                  | `IS`                                                                                                               |
+| `UUID`                                                                                     | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                | `VECTOR_SEARCH`                                                                                                    |
 
 > I tipi di campo con nomi simili possono usare operandi completamente diversi — `SELECT` e `MULTI_SELECT` sono un caso comune.
 
@@ -109,18 +110,19 @@ Tre proprietà facoltative perfezionano un filtro:
 
 Il campo `value` è sempre un valore serializzabile in JSON, ma la forma prevista dipende dall'operando:
 
-| Famiglia di operandi                                  | Forma del valore                      | Esempio                  |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------ |
-| `IS`, `IS_NOT` su `SELECT`                            | array di chiavi di opzione (stringhe) | `['ACTIVE', 'PENDING']`  |
-| `CONTAINS`, `DOES_NOT_CONTAIN` su `MULTI_SELECT`      | array di chiavi di opzione (stringhe) | `['TAG_A']`              |
-| `IS`, `IS_NOT` su `RELATION`                          | array di ID di record (uuid)          | `['c5a1...']`            |
-| `CONTAINS`, `DOES_NOT_CONTAIN` su campi testuali      | stringa                               | `'acme'`                 |
-| `IS`, `IS_NOT` su `NUMBER`                            | stringa (il valore)                   | `'5'`                    |
-| `IS` su `RATING` / `UUID`                             | stringa (il valore)                   | `'5'`                    |
-| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | stringa (il limite)                   | `'10'`                   |
-| `IS`, `IS_BEFORE`, `IS_AFTER` su `DATE` / `DATE_TIME` | stringa ISO 8601                      | `'2025-01-01T00:00:00Z'` |
-| `IS_EMPTY`, `IS_NOT_EMPTY`                            | stringa vuota                         | `''`                     |
-| `IS` su `BOOLEAN`                                     | `'true'` o `'false'`                  | `'true'`                 |
+| Famiglia di operandi                                  | Forma del valore                                       | Esempio                  |
+| ----------------------------------------------------- | ------------------------------------------------------ | ------------------------ |
+| `IS`, `IS_NOT` su `SELECT`                            | array di chiavi di opzione (stringhe)                  | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` su `MULTI_SELECT`      | array di chiavi di opzione (stringhe)                  | `['TAG_A']`              |
+| `IS`, `IS_NOT` su `RELATION`                          | array di ID di record (uuid)                           | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` su campi testuali      | stringa                                                | `'acme'`                 |
+| `IS`, `IS_NOT` su `TEXT`                              | stringa (esatta, sensibile alle maiuscole e minuscole) | `'Acme'`                 |
+| `IS`, `IS_NOT` su `NUMBER`                            | stringa (il valore)                                    | `'5'`                    |
+| `IS` su `RATING` / `UUID`                             | stringa (il valore)                                    | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | stringa (il limite)                                    | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` su `DATE` / `DATE_TIME` | stringa ISO 8601                                       | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                            | stringa vuota                                          | `''`                     |
+| `IS` su `BOOLEAN`                                     | `'true'` o `'false'`                                   | `'true'`                 |
 
 ## Come le viste vengono visualizzate nell'interfaccia utente
 

@@ -23,7 +23,7 @@ export type AgentRunCallerHandler = {
   // absent for a caller that only records the run, whose outcome is already in its conversation
   onOutcome?(
     input: AgentRunCallerInput & {
-      threadId: string;
+      threadId: string | null;
       outcome: AgentRunCallerOutcome;
       // null when the run recorded none
       summary: AgentRunSummary | null;
@@ -33,7 +33,7 @@ export type AgentRunCallerHandler = {
   // the caller can no longer take the outcome, but something may still wait on the run, such as a request
   onCallerGone?(
     input: AgentRunCallerInput & {
-      threadId: string;
+      threadId: string | null;
       outcome: AgentRunCallerOutcome;
     },
   ): Promise<void>;

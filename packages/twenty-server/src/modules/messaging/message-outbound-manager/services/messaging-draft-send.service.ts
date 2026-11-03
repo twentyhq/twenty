@@ -67,9 +67,8 @@ export class MessagingDraftSendService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
-            { shouldBypassPermissionChecks: true },
           );
 
         const association =
@@ -136,9 +135,8 @@ export class MessagingDraftSendService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const messageChannelMessageAssociationRepository =
-            this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
-              { shouldBypassPermissionChecks: true },
             );
 
           return messageChannelMessageAssociationRepository.find({

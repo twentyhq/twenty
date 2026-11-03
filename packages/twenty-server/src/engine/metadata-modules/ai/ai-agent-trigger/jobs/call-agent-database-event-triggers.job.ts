@@ -10,9 +10,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -43,19 +42,12 @@ export class CallAgentDatabaseEventTriggersJob {
       objectMetadata,
     } = workspaceEventBatch;
 
-    const {
-      flatAgentMaps,
-      flatRoleTargetByAgentIdMaps,
-      rolesPermissions,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetByAgentIdMaps',
-      'rolesPermissions',
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
+    const { flatAgentMaps, flatApplicationMaps, flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatAgentMaps',
+        'flatApplicationMaps',
+        'flatRoleTargetByAgentIdMaps',
+      ]);
 
     const matchingAgentTriggers = findAgentDatabaseEventTriggersMatchingEvent({
       flatAgentMaps,
@@ -72,42 +64,30 @@ export class CallAgentDatabaseEventTriggersJob {
       );
 
     for (const { flatAgent, trigger } of matchingAgentTriggers) {
-      const agentRoleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
-      const agentObjectsPermissions = isDefined(agentRoleId)
-        ? rolesPermissions[agentRoleId]
-        : undefined;
+      const application = flatApplicationMaps.byId[flatAgent.applicationId];
 
-      // An agent receives what its role lets it read: without a role it reads nothing
-      if (!isDefined(agentRoleId) || !isDefined(agentObjectsPermissions)) {
+      if (!isDefined(application) || isDefined(application.deletedAt)) {
         continue;
       }
 
-      const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds({
-          workspaceId: workspaceEventBatch.workspaceId,
-          mainPrincipal: { agentId: flatAgent.id },
-          applicationPrincipal: { isCustomApp: true },
-        });
-      const admittedEvents = workspaceEventBatch.events
-        .filter((event) => admittedRecordIds.has(event.recordId))
-        .filter(
+      const agentAuthContext: PermissionsAuthContext = {
+        type: 'application',
+        workspace: { id: workspaceId },
+        application,
+        agentId: flatAgent.id,
+      };
+      const admittedEvents = await eventRecordAccessGate.resolveReadableEvents({
+        authContext: agentAuthContext,
+        // Masking can drop the actor fields, so the agent's own writes are skipped first
+        events: workspaceEventBatch.events.filter(
           (event) =>
             !isDatabaseEventCausedByAgent({
               event,
               eventName,
               agentId: flatAgent.id,
             }),
-        )
-        .map((event) =>
-          omitRestrictedFieldsFromEvent({
-            event,
-            objectMetadata,
-            objectsPermissions: agentObjectsPermissions,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          }),
-        )
-        .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
+        ),
+      });
 
       const eventsToRunOn = filterEventsByUpdatedFields({
         events: admittedEvents,
@@ -150,7 +130,7 @@ export class CallAgentDatabaseEventTriggersJob {
             workspaceId,
             agentId: flatAgent.id,
             triggerId: trigger.id,
-            dispatchedRoleId: agentRoleId,
+            dispatchedRoleId: flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId,
             payload: {
               type: 'DATABASE_EVENT',
               eventName,

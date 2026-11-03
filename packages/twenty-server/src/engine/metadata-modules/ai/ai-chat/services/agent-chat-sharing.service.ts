@@ -1,9 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  buildPrivateRecordInsertSql,
-  type PrivateRecordInsertSql,
-} from 'src/engine/permissions/private-record/utils/build-private-record-insert-sql.util';
-import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -196,9 +192,7 @@ export class AgentChatSharingService {
     // batches that stay well under PostgreSQL's parameter limit
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          'agentChatThread',
-        );
+        this.workspaceOrmManager.getRepository('agentChatThread');
       const readableThreadIds: string[] = [];
 
       for (const threadIdBatch of chunk(
@@ -329,10 +323,10 @@ export class AgentChatSharingService {
             const grants = await Promise.all(
               AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
                 this.recordAccessPolicyService.hasAccessToRecords({
-                  principals: {
-                    workspaceId,
-                    mainPrincipal: { workspaceMemberId: memberId },
-                    applicationPrincipal: { isCustomApp: true },
+                  authContext: {
+                    type: 'user',
+                    workspace: { id: workspaceId },
+                    workspaceMemberId: memberId,
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],
@@ -351,19 +345,6 @@ export class AgentChatSharingService {
     return candidateMemberIds.filter((memberId) =>
       admittedMemberIds.has(memberId),
     );
-  }
-
-  async getPrivateRecordInsertSql(
-    workspaceId: string,
-  ): Promise<PrivateRecordInsertSql> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return buildPrivateRecordInsertSql({
-      isPrivateRecordEnabled: isPrivateRecordEnabled(featureFlagsMap),
-    });
   }
 
   async createThread(args: {
@@ -386,8 +367,6 @@ export class AgentChatSharingService {
       authContext,
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
-    const { privateColumn, privateValue } =
-      await this.getPrivateRecordInsertSql(args.workspaceId);
 
     return this.threadRepository.query(
       args.workspaceId,
@@ -405,8 +384,8 @@ export class AgentChatSharingService {
           channelIds: [args.channelId],
         });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${privateColumn}${isDefined(args.channelId) ? ', "channelId"' : ''})
-           VALUES ($1, $2, $3${privateValue}${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}"${isDefined(args.channelId) ? ', "channelId"' : ''})
+           VALUES ($1, $2, $3, true${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -466,7 +445,7 @@ export class AgentChatSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
+          .getRepository('agentChatThread')
           .validateWriteIsPermitted({
             operationType: 'insert',
             columnsToReturn: ['id'],
@@ -488,8 +467,6 @@ export class AgentChatSharingService {
 
     const participantObjectMetadataId =
       await this.getParticipantObjectMetadataId(args.workspaceId);
-    const { privateColumn, privateValue } =
-      await this.getPrivateRecordInsertSql(args.workspaceId);
 
     return this.threadRepository.query(
       args.workspaceId,
@@ -532,8 +509,8 @@ export class AgentChatSharingService {
         }
         await manager.query(
           `WITH participant AS (
-             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId"${privateColumn}, "lastReadAt", "isSubscribed")
-             VALUES ($1, $2${privateValue}, clock_timestamp(), false)
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "isSubscribed")
+             VALUES ($1, $2, true, clock_timestamp(), false)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
@@ -576,9 +553,6 @@ export class AgentChatSharingService {
     isArchived?: boolean;
     isSubscribed?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
-    const { privateColumn, privateValue } =
-      await this.getPrivateRecordInsertSql(workspaceId);
-
     return manager.query<AgentChatThreadWorkspaceEntity[]>(
       `WITH thread AS (
          UPDATE ${table('agentChatThread')}
@@ -586,8 +560,8 @@ export class AgentChatSharingService {
          WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
          RETURNING *
        ), participant AS (
-         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId"${privateColumn}, "lastReadAt", "archivedAt", "isSubscribed")
-         SELECT thread.id, $2${privateValue}, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
+         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "archivedAt", "isSubscribed")
+         SELECT thread.id, $2, true, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
          FROM thread
          ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
          RETURNING id, "workspaceMemberId"
@@ -686,7 +660,7 @@ export class AgentChatSharingService {
     operationType: OperationType,
   ): Promise<void> {
     const allowedIds = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions('agentChatThread')
+      .getRepository('agentChatThread')
       .findRecordIdsAllowedForOperation({
         recordIds: [threadId],
         operationType,

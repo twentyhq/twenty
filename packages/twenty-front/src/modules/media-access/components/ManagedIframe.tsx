@@ -17,6 +17,8 @@ export const ManagedIframe = ({
   sandbox,
   allow,
   allowFullScreen,
+  renderIframe,
+  iframeElement,
   owner,
   requestedMediaCapabilities,
   iframeMediaPermissions,
@@ -46,6 +48,8 @@ export const ManagedIframe = ({
       sandbox={sandbox}
       allow={allow}
       allowFullScreen={allowFullScreen}
+      renderIframe={renderIframe}
+      iframeElement={iframeElement}
       ownerId={ownerId}
       ownerName={owner.name}
       permission={permission}

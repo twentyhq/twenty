@@ -25,6 +25,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
@@ -34,7 +35,6 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 const OBJECT_NAME = 'beyondRoleRecord';
 const OBJECT_PLURAL = 'beyondRoleRecords';
@@ -255,17 +255,15 @@ describe('Records shared beyond the role that can access their object', () => {
       throw new Error('The object under test is not cached');
     }
 
-    const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
-      workspaceId,
-      mainPrincipal: {
+    const resolveJonyAuthContext = () =>
+      resolveWorkspaceMemberAuthContext({
+        workspaceId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      },
-      applicationPrincipal: { isCustomApp: true },
-    });
+      });
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principals: buildJonyPrincipal(),
+        authContext: await resolveJonyAuthContext(),
         flatObjectMetadata,
         operationType: 'select',
       }),
@@ -273,25 +271,25 @@ describe('Records shared beyond the role that can access their object', () => {
 
     await setShare({ principal: JONY });
 
-    const principals = buildJonyPrincipal();
+    const authContext = await resolveJonyAuthContext();
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principals,
+        authContext,
         flatObjectMetadata,
         operationType: 'select',
       }),
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principals,
+        authContext,
         flatObjectMetadata,
         operationType: 'update',
       }),
     ).toBe(false);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principals,
+        authContext,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID],
@@ -299,7 +297,7 @@ describe('Records shared beyond the role that can access their object', () => {
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principals,
+        authContext,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
@@ -521,13 +519,12 @@ describe('Records shared beyond the role that can access their object', () => {
             properties: { after: { id: recordId } },
           })) as ObjectRecordEvent[],
         })
-        .resolveAdmittedRecordIds({
-          workspaceId: workspaceId,
-          mainPrincipal: {
+        .resolveAdmittedRecordIds(
+          await resolveWorkspaceMemberAuthContext({
+            workspaceId,
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
-          applicationPrincipal: { isCustomApp: true },
-        });
+          }),
+        );
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);

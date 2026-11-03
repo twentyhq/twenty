@@ -93,7 +93,7 @@ Pentru un checkout al codului-sursă Twenty, funcționează și mediul de dezvol
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-twenty auth login --url http://localhost:3000 --name local
+twenty auth login --url http://localhost:3000 --name local --use
 ```
 
 Utilizați URL-ul și portul efective ale serverului dvs. Pentru spațiile de lucru cu subdomenii, utilizați
@@ -102,8 +102,9 @@ numele de gazdă al spațiului de lucru. Pentru implementarea în producție, ur
 
 ## Dependențele proiectului
 
-Instalați `twenty-sdk` și `twenty-client-sdk` ca dependențe ale proiectului. Instalați
-CLI-ul `twenty` la nivel global, apoi rulați `twenty app typecheck`, `twenty app build` și
-`twenty app apply` din directorul aplicației.
+`twenty app init` declară `twenty-sdk`, `twenty-client-sdk` și `twenty-ui` în
+`devDependencies`, dar nu le instalează. Cu CLI-ul `twenty` instalat
+global, rulați `yarn install` din directorul aplicației generate înainte de a rula
+`twenty app typecheck`, `twenty app build` sau `twenty app apply`.
 
 <PageBanner illustration="dev-self-host" />

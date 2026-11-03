@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { buildCreatedByFromAgent } from 'src/engine/core-modules/actor/utils/build-created-by-from-agent.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
@@ -14,9 +13,6 @@ import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agen
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
-import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
-import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-base-system-prompt.const';
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
@@ -204,11 +200,6 @@ export class AgentTriggerRunnerService
       return null;
     }
 
-    // the agent never exceeds its application, as in its runAgent runs
-    const agentRunRoleIds: AgentRunRoleIds = resolveApplicationRoleId({
-      application,
-    });
-
     const actingAgent = { id: agent.id, label: agent.label };
     const createdBy = buildCreatedByFromAgent({
       agent: actingAgent,
@@ -219,16 +210,10 @@ export class AgentTriggerRunnerService
       agent,
       trigger,
       executionContext: {
-        authContext: { ...authContext, actingAgent },
+        authContext: { ...authContext, agentId: agent.id, actingAgent },
         actorContext: createdBy,
         turnCreatedBy: createdBy,
         userWorkspaceId: null,
-        rolePermissionConfig: buildAgentRolePermissionConfig({
-          agentRoleId,
-          agentRunRoleIds,
-        }),
-        agentRunRoleIds,
-        usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };
   }

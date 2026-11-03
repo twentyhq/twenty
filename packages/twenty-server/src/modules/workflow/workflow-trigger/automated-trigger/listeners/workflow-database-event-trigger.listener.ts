@@ -44,7 +44,6 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -308,10 +307,10 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository = this.workspaceOrmManager.getRepository(
-          relatedObjectMetadataNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
+        const relatedObjectRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            relatedObjectMetadataNameSingular,
+          );
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },
@@ -505,21 +504,25 @@ export class WorkflowDatabaseEventTriggerListener {
         ['flatApplicationMaps'],
       );
 
-    return resolveEventsReadableByRole({
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
       applicationId,
-      roleId:
-        findActiveFlatApplicationById(flatApplicationMaps, applicationId)
-          ?.defaultRoleId ?? null,
-      workspaceEventBatch,
-      eventRecordAccessGate:
-        this.recordAccessPolicyService.buildEventRecordAccessGate(
-          workspaceEventBatch,
-        ),
-      metadataMaps:
-        await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
-          workspaceEventBatch.workspaceId,
-        ),
-    });
+    );
+
+    if (!isDefined(application)) {
+      return [];
+    }
+
+    return this.recordAccessPolicyService
+      .buildEventRecordAccessGate(workspaceEventBatch)
+      .resolveReadableEvents({
+        authContext: {
+          type: 'application',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          application,
+        },
+        events: workspaceEventBatch.events,
+      });
   }
 
   private shouldTriggerJob({

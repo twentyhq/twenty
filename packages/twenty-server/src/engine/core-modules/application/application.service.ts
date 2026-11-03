@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DataSource,
@@ -28,7 +28,11 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { buildApplicationIframeMediaPermissionGrantQuery } from 'src/engine/core-modules/application/utils/build-application-iframe-media-permission-grant-query.util';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -170,6 +174,46 @@ export class ApplicationService {
     return this.applicationRepository.find(workspaceId, {
       relations: ['applicationRegistration'],
     });
+  }
+
+  async findInstalledFlatApplication({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<FlatApplication | undefined> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    return findActiveFlatApplicationById(flatApplicationMaps, applicationId);
+  }
+
+  async findReadableInstalledFlatApplication({
+    applicationId,
+    workspaceId,
+    workspaceCustomApplicationId,
+    callingApplication,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): Promise<FlatApplication | undefined> {
+    if (
+      !canCallerReachApplication({
+        applicationId,
+        callingApplication,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return undefined;
+    }
+
+    return this.findInstalledFlatApplication({ applicationId, workspaceId });
   }
 
   async findManyInstalledFlatApplications(
@@ -805,6 +849,44 @@ export class ApplicationService {
         error,
       );
     }
+  }
+
+  async grantIframeMediaPermissions({
+    applicationId,
+    workspaceId,
+    permissions,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    permissions: IframeMediaPermission[];
+  }): Promise<ApplicationEntity> {
+    const grantQuery =
+      buildApplicationIframeMediaPermissionGrantQuery(permissions);
+
+    await this.applicationRepository
+      .createQueryBuilder()
+      .update()
+      .set({ grantedIframeMediaPermissions: () => grantQuery.query })
+      .where({ id: applicationId, workspaceId, deletedAt: IsNull() })
+      .setParameters(grantQuery.parameters)
+      .execute();
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+    ]);
+
+    const application = await this.findOneApplicationOrThrow({
+      id: applicationId,
+      workspaceId,
+    });
+
+    await this.broadcastApplicationEvent({
+      type: 'updated',
+      application,
+      updatedFields: ['grantedIframeMediaPermissions'],
+    });
+
+    return application;
   }
 
   async update(

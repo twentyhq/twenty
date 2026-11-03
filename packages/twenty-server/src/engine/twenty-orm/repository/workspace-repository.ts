@@ -19,7 +19,6 @@ import {
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
-import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -55,7 +54,6 @@ import {
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/rls/utils/validate-rls-predicates-for-records.util';
 import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
@@ -108,8 +106,6 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
@@ -132,7 +128,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  rolePermissionConfig: RolePermissionConfig;
+  permissionsPrincipal: PermissionsPrincipalsWithRolesContext | undefined;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
   // and timeline activities will NOT fire
@@ -160,8 +156,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private readonly options: WorkspaceRepositoryOptions<TEntity>;
 
   private _filesFieldSync?: FilesFieldSync;
-
-  private permissionsPrincipal?: PermissionsPrincipalsWithRolesContext;
 
   private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
@@ -1849,9 +1843,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatObjectMetadata: this.options.flatObjectMetadata,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       recordIds,
-      isPrivateRecordEnabled: isPrivateRecordEnabled(
-        this.options.internalContext.featureFlagsMap,
-      ),
     });
   }
 
@@ -2292,24 +2283,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private resolvePermissionsPrincipalOrThrow(): PermissionsPrincipalsWithRolesContext {
-    this.permissionsPrincipal ??= buildPermissionsPrincipalsWithRolesFromConfig(
-      {
-        workspaceId: this.options.internalContext.workspaceId,
-        rolePermissionConfig: this.options.rolePermissionConfig,
-        principalsContext: getPermissionsPrincipalsFromAuthContext(
-          this.options.authContext,
-        ),
-      },
-    );
+    const { permissionsPrincipal } = this.options;
 
-    if (!isDefined(this.permissionsPrincipal)) {
+    if (!isDefined(permissionsPrincipal)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
 
-    return this.permissionsPrincipal;
+    return permissionsPrincipal;
   }
 
   private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {

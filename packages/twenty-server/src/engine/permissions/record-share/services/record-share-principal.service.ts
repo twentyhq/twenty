@@ -126,8 +126,8 @@ export class RecordSharePrincipalService {
 
       const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
         workspaceId,
-        mainPrincipal: { roleId, isDeprecatedRoleOnly: true },
-        applicationPrincipal: { isCustomApp: true },
+        mainPrincipal: { type: 'deprecatedRoleOnly', roleId },
+        applicationPrincipal: { type: 'customApplication' },
       };
 
       if (
@@ -154,10 +154,10 @@ export class RecordSharePrincipalService {
       }
 
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
-        principals: {
-          workspaceId,
-          mainPrincipal: { workspaceMemberId: principal.principalId },
-          applicationPrincipal: { isCustomApp: true },
+        authContext: {
+          type: 'user',
+          workspace: { id: workspaceId },
+          workspaceMemberId: principal.principalId,
         },
         flatObjectMetadata,
         operationType: 'select',

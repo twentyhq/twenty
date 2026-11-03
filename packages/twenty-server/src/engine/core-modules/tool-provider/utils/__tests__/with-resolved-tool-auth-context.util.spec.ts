@@ -16,7 +16,6 @@ describe('withResolvedToolAuthContext', () => {
     overrides?: Partial<ToolProviderContext>,
   ): ToolProviderContext => ({
     workspaceId,
-    rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: 'role-1' } },
     ...overrides,
   });
 

@@ -35,14 +35,19 @@ const readOnlyPermissions: ObjectPermissions = {
 
 const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
-  applicationPrincipal: { isCustomApp: true },
+  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: READ_ONLY_ROLE_ID },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
 const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  mainPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
   applicationPrincipal: {
+    type: 'application',
     roleId: APPLICATION_ROLE_ID,
     applicationId: APPLICATION_ID,
   },
@@ -106,8 +111,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          mainPrincipal: { roleId: 'missing-role', isDeprecatedRoleOnly: true },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'missing-role' },
+          applicationPrincipal: { type: 'customApplication' },
         },
       }),
     ).toBe(false);
@@ -147,5 +152,54 @@ describe('resolvePermissionsRowAccessOutcome', () => {
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
       }),
     ).toBe(true);
+  });
+
+  describe('for a principal narrowed by a scope', () => {
+    const scopedPrincipal = ({
+      canReadObjectRecords,
+    }: {
+      canReadObjectRecords: boolean;
+    }): PermissionsPrincipalsWithRolesContext => ({
+      ...readOnlyPrincipal,
+      aiRunScope: {
+        objectsPermissions: {
+          [flatObjectMetadata.id]: {
+            ...readOnlyPermissions,
+            canReadObjectRecords,
+          },
+        },
+        permissionFlags: {},
+      },
+    });
+
+    it('denies what the scope denies, though the role permits it', () => {
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: false }),
+        }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: true }),
+        }),
+      ).toBeUndefined();
+    });
+
+    it('never lets a share carry it beyond its roles', () => {
+      const principal = scopedPrincipal({ canReadObjectRecords: true });
+      const featureFlagKeys = [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED];
+
+      expect(
+        resolveOutcome({ principal, operationType: 'update', featureFlagKeys }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal,
+          operationType: 'update',
+          featureFlagKeys,
+          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        }),
+      ).toBe(false);
+    });
   });
 });

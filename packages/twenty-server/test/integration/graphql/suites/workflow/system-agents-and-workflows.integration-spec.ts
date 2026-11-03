@@ -124,7 +124,24 @@ describe('system agents and workflows (e2e)', () => {
     await deleteOneAgent({ expectToFail: false, input: { id: userAgentId } });
   });
 
-  it('flags the agent created by an AI agent step as system, not the ones members create', async () => {
+  it('creates an AI agent step without a hidden agent, and never flags member agents as system', async () => {
+    const findAgentSystemFlags = async () => {
+      const { data } = await findAgents({
+        expectToFail: false,
+        input: undefined,
+        gqlFields: 'id isSystem',
+      });
+
+      return {
+        agentIds: data.findManyAgents.map((agent) => agent.id).sort(),
+        isUserAgentSystem: data.findManyAgents.find(
+          (agent) => agent.id === userAgentId,
+        )?.isSystem,
+      };
+    };
+
+    const { agentIds: agentIdsBefore } = await findAgentSystemFlags();
+
     const createStepResponse = await workflowGraphqlRequest(
       `
         mutation CreateCoreWorkflowVersionStep(
@@ -152,23 +169,14 @@ describe('system agents and workflows (e2e)', () => {
     );
 
     expect(versionResponse.body.errors).toBeUndefined();
+    expect(
+      versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input,
+    ).toEqual({ instructions: '', prompt: '' });
 
-    const workflowAgentId =
-      versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input
-        .agentId;
+    const { agentIds, isUserAgentSystem } = await findAgentSystemFlags();
 
-    const { data } = await findAgents({
-      expectToFail: false,
-      input: undefined,
-      gqlFields: 'id isSystem',
-    });
-
-    const isSystemByAgentId = new Map(
-      data.findManyAgents.map((agent) => [agent.id, agent.isSystem]),
-    );
-
-    expect(isSystemByAgentId.get(workflowAgentId)).toBe(true);
-    expect(isSystemByAgentId.get(userAgentId)).toBe(false);
+    expect(agentIds).toEqual(agentIdsBefore);
+    expect(isUserAgentSystem).toBe(false);
   });
 
   it('leaves system workflows out of the list when filtered on IS_SYSTEM', async () => {

@@ -9,24 +9,21 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 <AccordionGroup>
 <Accordion title="¿Puedo usar Twenty gratis mientras lo alojo por mi cuenta?">
-Sí, puedes usar Twenty gratis mientras lo alojas por tu cuenta. Obtendrás acceso a todo lo incluido en el plan Pro (Cloud), excepto el apoyo de nuestro equipo central. El soporte está disponible a través de nuestra comunidad en Discord.
+Sí, puedes usar Twenty gratis mientras lo alojas por tu cuenta. Obtienes las funciones de CRM del plan Pro (Cloud), además de roles personalizados, con IA ejecutándose en las claves de tu propio proveedor de IA en lugar del uso personal de IA y los créditos del espacio de trabajo. No se incluye soporte de nuestro equipo principal. El soporte está disponible a través de nuestra comunidad en Discord.
 
 Si quieres alojar por tu cuenta y necesitas las funciones Premium (SSO, permisos a nivel de registro y más), puedes elegir la licencia de pago de Organization (Self-Hosted). Esto también incluye soporte del equipo de Twenty y elimina el requisito de publicar el código personalizado como código abierto antes de distribuirlo.
 </Accordion>
 
 <Accordion title="¿Cuáles son las funciones Premium?">
-Las funciones Premium solo están disponibles en los planes Organization (nube o Self-Hosted):
-* **Integración de SSO**: inicio de sesión único con tu proveedor de identidad
-* **Permisos a nivel de registro**: control de acceso granular a nivel de registro
-* **Datos de uso de IA**: Realice un seguimiento del consumo de IA en su espacio de trabajo
-* **Registros de auditoría**: comprueba qué ha estado haciendo cada miembro del espacio de trabajo
-* **Campañas de correo electrónico**: Planifica qué correos electrónicos se deben enviar (disponible pronto)
-* **Espacios de trabajo ilimitados**: Crea tantos espacios de trabajo como quieras (solo para instalaciones autoalojadas)
-* **Código fuente privado**: No es necesario publicar cambios en un repositorio disponible públicamente (sólo alojado)
+Las funciones Premium solo están disponibles en los planes Organization (nube o Self-Hosted), por ejemplo, los permisos a nivel de fila, el SSO y los registros de auditoría. En Cloud, los roles personalizados también son una función Premium, excepto en Pro (Early). Consulta la lista completa en [Planes de precios](/es/user-guide/billing/capabilities/pricing-plans#premium-features).
 </Accordion>
 
 <Accordion title="¿Son los planes de la nube y de la organización autosuficiente lo mismo?">
-Ofrecen las mismas funciones Premium. Sin embargo, una suscripción en la nube no puede usarse para implementaciones autoalojadas. La versión autoalojada requiere una clave de organización.
+Ofrecen las mismas funciones premium, y Organization (Cloud) también incluye uso personal de IA y créditos del espacio de trabajo. Sin embargo, una suscripción en la nube no puede usarse para implementaciones autoalojadas. La versión autoalojada requiere una clave de organización.
+</Accordion>
+
+<Accordion title="¿Qué es el uso personal de IA?">
+En los planes Pro y Organization, cada miembro recibe una asignación semanal de IA para el chat de IA y la búsqueda web: unas 100 tareas de IA por semana en Pro y unas 500 en Organization. Se utiliza antes que los créditos del espacio de trabajo y se renueva cada lunes. Consulta [Créditos](/es/user-guide/billing/capabilities/credits#personal-ai-usage).
 </Accordion>
 
 <Accordion title="¿Ofrecen licencias gratuitas para usuarios de solo lectura?">
@@ -54,9 +51,10 @@ Lo encontrarás en `Configuración → Facturación`.
 </Accordion>
 
 <Accordion title="¿Cuántos créditos de flujo de trabajo tenemos?">
-Los créditos se basan en tu ciclo de facturación, no en tu plan:
-* **Suscripciones mensuales**: 5 créditos por mes
-* **Suscripciones anuales**: 50 créditos por año
+Los flujos de trabajo usan los créditos de tu espacio de trabajo, y la cantidad depende de tu plan y de tu número de usuarios:
+* **Pro**: 1 crédito por usuario al mes
+* **Organization**: 4 créditos por usuario al mes
+* **Planes Early**: 5 créditos al mes o 50 al año con facturación anual
 </Accordion>
 
 <Accordion title="¿Cómo funciona el consumo de créditos de flujo de trabajo?">

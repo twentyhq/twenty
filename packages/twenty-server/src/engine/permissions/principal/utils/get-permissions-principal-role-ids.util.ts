@@ -14,9 +14,9 @@ export const getPermissionsPrincipalRoleIds = (
     [
       principal.limitingPrincipal?.roleId,
       principal.mainPrincipal.roleId,
-      'roleId' in principal.applicationPrincipal
-        ? principal.applicationPrincipal.roleId
-        : undefined,
+      principal.applicationPrincipal.type === 'customApplication'
+        ? undefined
+        : principal.applicationPrincipal.roleId,
     ].filter(isDefined),
   ),
 ];
