@@ -12,14 +12,17 @@ export const listFathomMeetingPage = async ({
   fathomClient,
   createdAfter,
   cursor,
+  recordedBy,
 }: {
   fathomClient: FathomMeetingLister;
   createdAfter?: string;
   cursor?: string;
+  recordedBy?: string[];
 }): Promise<FathomMeetingPage> => {
   const { result } = await fathomClient.listMeetings({
     ...(isDefined(createdAfter) ? { createdAfter } : {}),
     ...(isDefined(cursor) ? { cursor } : {}),
+    ...(isDefined(recordedBy) ? { recordedBy } : {}),
     includeActionItems: true,
   });
 

@@ -825,8 +825,13 @@ msgstr "管理パネル"
 msgid "Admin role not found."
 msgstr "管理者ロールが見つかりません。"
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr "エージェント \"{label}\" はアーカイブされているか、別のワークフローステップに属しているため、新しいステップで実行できません。"
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "エージェント \"{label}\" はアーカイブされています。"
 
@@ -1113,6 +1118,11 @@ msgstr "この名前のエージェントはすでに存在します"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "この名前のエージェントはすでに存在します."
+
+#. js-lingui-id: pk6kfE
+#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
+msgid "An AI step cannot change its agent. Create a new step instead."
+msgstr "AI ステップではエージェントを変更できません。代わりに新しいステップを作成してください。"
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -5911,6 +5921,12 @@ msgstr "検索"
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Find Connected Accounts"
 msgstr "接続アカウントを検索"
+
+#. js-lingui-id: HEpRJM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "First direct message member ID"
+msgstr "最初のダイレクトメッセージメンバーID"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -12137,6 +12153,12 @@ msgstr "検索ベクターフィールドは同じオブジェクトに属して
 msgid "Search vector field not found"
 msgstr "検索ベクターフィールドが見つかりません"
 
+#. js-lingui-id: pMB33L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Second direct message member ID"
+msgstr "ダイレクトメッセージのもう一方のメンバーID"
+
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "Secret application variable cannot have a default value"
@@ -13469,6 +13491,11 @@ msgstr "{reservedViewKey} ビューキーはデフォルトビュー用に予約
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "{reservedViewKey} ビューキーはエンジン所有のデフォルトビュー用に予約されているため、そのキーをビュー定義から削除してください。"
 
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr "このステップで実行するエージェントが見つかりませんでした。"
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -13756,6 +13783,12 @@ msgstr "ファイルが空であるか、許可されている最大サイズを
 msgid "The file upload has not been completed. Please retry the upload."
 msgstr "ファイルのアップロードは完了していません。もう一度アップロードをお試しください。"
 
+#. js-lingui-id: 2T6q1O
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The first member in the fixed direct message pair"
+msgstr "固定されたダイレクトメッセージペアの最初のメンバー"
+
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -14010,6 +14043,12 @@ msgstr "同じカラムを 1 つのインデックス内で 2 回使用するこ
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
 msgstr "保存済みのコンポーネントはこの下書きと異なります。"
+
+#. js-lingui-id: i+FcdU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The second member in the fixed direct message pair"
+msgstr "固定されたダイレクトメッセージペアのもう一方のメンバー"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts

@@ -38,11 +38,10 @@ import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/ob
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
 type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -167,25 +166,6 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const principals = buildPermissionsPrincipalsContext({
-      workspaceId: workspaceEventBatch.workspaceId,
-      workspaceMemberId,
-      apiKeyId: undefined,
-      applicationId: subscriberAuthContext.applicationId,
-      agentId: undefined,
-    });
-
-    if (!isDefined(principals)) {
-      return;
-    }
-
-    const objectsPermissions =
-      await this.recordAccessPolicyService.findObjectsPermissions(principals);
-
-    if (!isDefined(objectsPermissions)) {
-      return;
-    }
-
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
     if (
@@ -198,13 +178,34 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
+    const { applicationId } = subscriberAuthContext;
+    const permissionsAuthContext: PermissionsAuthContext = {
+      type: 'user',
+      workspace: { id: workspaceEventBatch.workspaceId },
+      workspaceMemberId,
+      ...(isDefined(applicationId)
+        ? { application: { id: applicationId } }
+        : {}),
+    };
+
+    const objectsPermissions =
+      await this.recordAccessPolicyService.findObjectsPermissions(
+        permissionsAuthContext,
+      );
+
+    if (!isDefined(objectsPermissions)) {
+      return;
+    }
+
     const matchedEvents: {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(principals);
+      await eventRecordAccessGate.resolveAdmittedRecordIds(
+        permissionsAuthContext,
+      );
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -273,7 +274,7 @@ export class ObjectRecordEventPublisher {
             userWorkspaceId,
             applicationId: subscriberAuthContext.applicationId,
           }),
-          principals,
+          permissionsAuthContext,
           objectsPermissions,
         });
       } catch (error) {
@@ -303,14 +304,14 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     subscriberAuthContext,
-    principals,
+    permissionsAuthContext,
     objectsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
     subscriberAuthContext: Promise<WorkspaceAuthContext>;
-    principals: PermissionsPrincipalsContext;
+    permissionsAuthContext: PermissionsAuthContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -344,7 +345,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principals,
+          authContext: permissionsAuthContext,
           flatObjectMetadataMaps,
         }),
       depth: 1,
