@@ -653,10 +653,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       targetObjectMetadataUniversalIdentifier: 'targetObjectUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: {
-      agentChatChannelUniversalIdentifier:
-        'apps cannot declare AGENT_CHAT_CHANNEL navigation menu items',
-    },
+    knownGaps: {},
   },
   {
     metadataName: 'pageLayout',

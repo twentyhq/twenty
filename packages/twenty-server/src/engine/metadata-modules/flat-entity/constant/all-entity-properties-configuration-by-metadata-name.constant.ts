@@ -1460,7 +1460,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
     agentChatChannelId: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: 'agentChatChannelUniversalIdentifier',
     },
