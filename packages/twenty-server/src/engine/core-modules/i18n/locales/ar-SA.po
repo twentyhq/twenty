@@ -1119,11 +1119,6 @@ msgstr "يوجد بالفعل وكيل بهذا الاسم"
 msgid "An agent with this name already exists."
 msgstr "يوجد بالفعل وكيل بهذا الاسم."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "لا يمكن لخطوة الذكاء الاصطناعي تغيير وكيلها. أنشئ خطوة جديدة بدلاً من ذلك."
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."

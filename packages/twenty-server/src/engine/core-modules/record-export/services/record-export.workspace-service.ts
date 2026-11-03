@@ -606,6 +606,7 @@ export class RecordExportWorkspaceService {
         userWorkspaceId: userWorkspace.id,
         workspaceMember,
         workspaceMemberId: workspaceMember.id,
+        userSessionVariant: 'standard',
         application,
       }),
     );

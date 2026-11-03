@@ -1,4 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import {
   AuthException,
@@ -112,6 +114,11 @@ describe('TwoFactorAuthenticationResolver', () => {
           provide: PermissionsService,
           useValue: {},
         },
+        {
+          provide: FeatureFlagService,
+          useValue: {},
+        },
+        AccessPolicyService,
         {
           provide: LoginTokenService,
           useFactory: createMockLoginTokenService,

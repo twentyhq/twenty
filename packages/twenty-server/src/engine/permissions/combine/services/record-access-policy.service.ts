@@ -27,6 +27,7 @@ import {
   type PermissionsObjectAccessRequest,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
@@ -38,6 +39,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
+import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -291,11 +293,11 @@ export class RecordAccessPolicyService {
   }
 
   // Event snapshots go through the same grant paths as the principal's queries
-  buildEventRecordAccessGate({
+  buildEventRecordAccessGate<TEvent extends ObjectRecordEvent>({
     workspaceId,
     objectMetadata,
     events,
-  }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
+  }: WorkspaceEventBatch<TEvent>): EventRecordAccessGate<TEvent> {
     // One lookup per object for the whole batch: operands only ever ask for
     // records of the batch, so later calls are served from what was fetched
     const recordSharesByRecordIdByObject = new Map<
@@ -368,27 +370,64 @@ export class RecordAccessPolicyService {
       }));
 
     let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
+    const loadMetadataMaps = () =>
+      (metadataMaps ??= this.loadPermissionsMetadataMaps(workspaceId));
+
+    const findAdmittedRecordIds = async (
+      principal: PermissionsPrincipalsWithRolesContext,
+    ) =>
+      findPermissionsAdmittedRecordIds({
+        principal,
+        metadataMaps: await loadMetadataMaps(),
+        flatObjectMetadata: objectMetadata,
+        operationType: 'select',
+        records: resolveEventRecordSnapshots(events),
+        context: {
+          shouldIgnoreSoftDeleteDefaultFilter: true,
+          fetchRecordShares,
+          findPrivateRecordStates,
+        },
+      });
 
     return {
       resolveAdmittedRecordIds: async (authContext) => {
         const principal = await this.resolvePrincipalsWithRoles(authContext);
 
+        return isDefined(principal)
+          ? findAdmittedRecordIds(principal)
+          : new Set<string>();
+      },
+      resolveReadableEvents: async ({
+        authContext,
+        events: candidateEvents,
+      }) => {
+        const principal = await this.resolvePrincipalsWithRoles(authContext);
+
         if (!isDefined(principal)) {
-          return new Set<string>();
+          return [];
         }
 
-        return findPermissionsAdmittedRecordIds({
-          principal,
-          metadataMaps: await (metadataMaps ??=
-            this.loadPermissionsMetadataMaps(workspaceId)),
-          flatObjectMetadata: objectMetadata,
-          operationType: 'select',
-          records: resolveEventRecordSnapshots(events),
-          context: {
-            shouldIgnoreSoftDeleteDefaultFilter: true,
-            fetchRecordShares,
-            findPrivateRecordStates,
-          },
+        const principalMetadataMaps = await loadMetadataMaps();
+
+        // A role missing from the cache must not fall through to share or creator admission
+        if (
+          getPermissionsPrincipalRoleIds(principal).some(
+            (roleId) =>
+              !isDefined(principalMetadataMaps.rolesPermissions[roleId]),
+          )
+        ) {
+          return [];
+        }
+
+        return filterReadableEvents({
+          events: candidateEvents,
+          admittedRecordIds: await findAdmittedRecordIds(principal),
+          objectMetadata,
+          objectsPermissions: getPermissionsPrincipalObjectsPermissions({
+            principal,
+            metadataMaps: principalMetadataMaps,
+          }),
+          metadataMaps: principalMetadataMaps,
         });
       },
     };
