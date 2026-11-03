@@ -1,2 +1,2 @@
 export const ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME =
-  '2.56.0_AddNativePageNavigationMenuItemFastInstanceCommand_1793720312475';
+  '2.56.0_AddNativePageNavigationMenuItemFastInstanceCommand_1793746440801';

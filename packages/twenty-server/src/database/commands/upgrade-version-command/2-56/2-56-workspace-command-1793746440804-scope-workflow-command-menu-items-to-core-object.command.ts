@@ -11,7 +11,7 @@ import { rescopeWorkflowCommandMenuItem } from 'src/database/commands/upgrade-ve
 const WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
 
-@RegisteredWorkspaceCommand('2.56.0', 1793721085167)
+@RegisteredWorkspaceCommand('2.56.0', 1793746440804)
 @Command({
   name: 'upgrade:2-56:scope-workflow-command-menu-items-to-core-object',
   description:
