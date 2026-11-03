@@ -15,7 +15,13 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
   try {
     const workspaceFrames =
       style === 'WORKSPACE'
-        ? await buildWorkspaceCameraTileFrames()
+        ? await buildWorkspaceCameraTileFrames().catch((error: unknown) => {
+            console.warn(
+              `[call-recorder] failed to build the workspace camera tile, using the Twenty one: ${error instanceof Error ? error.message : String(error)}`,
+            );
+
+            return undefined;
+          })
         : undefined;
 
     const frames =

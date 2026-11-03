@@ -7,7 +7,7 @@ import {
   CAMERA_TILE_INITIAL_FONT_SIZE,
   CAMERA_TILE_PLATE_SIZE,
   CAMERA_TILE_PLATE_TOP,
-  CAMERA_TILE_TEXT_MAX_WIDTH,
+  CAMERA_TILE_SAFE_ZONE_WIDTH,
   CAMERA_TILE_TITLE_FONT_SIZE,
 } from 'src/logic-functions/constants/camera-tile-config';
 import { type WorkspaceBranding } from 'src/logic-functions/data/get-workspace-branding.util';
@@ -79,7 +79,7 @@ export const buildCameraTileWorkspaceComposites = async ({
     title: await renderText({
       text: displayName,
       fontSize: CAMERA_TILE_TITLE_FONT_SIZE,
-      maxWidth: CAMERA_TILE_TEXT_MAX_WIDTH,
+      maxWidth: CAMERA_TILE_SAFE_ZONE_WIDTH,
     }),
   });
 

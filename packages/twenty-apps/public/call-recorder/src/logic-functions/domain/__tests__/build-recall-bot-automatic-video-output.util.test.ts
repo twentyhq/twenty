@@ -39,7 +39,7 @@ const requestedAssetPaths = () =>
     .filter((url) => url.startsWith(ASSET_URL_PREFIX))
     .map((url) => url.slice(ASSET_URL_PREFIX.length));
 
-const decodeFrame = (base64: string) =>
+const readFrameMetadata = (base64: string) =>
   sharp(Buffer.from(base64, 'base64')).metadata();
 
 const readPublicAssetAsBase64 = async (path: string) =>
@@ -149,7 +149,7 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
       output?.in_call_not_recording,
     ]) {
       expect(frame?.kind).toBe('jpeg');
-      expect(await decodeFrame(frame?.b64_data ?? '')).toMatchObject({
+      expect(await readFrameMetadata(frame?.b64_data ?? '')).toMatchObject({
         format: 'jpeg',
         width: RECALL_BOT_IMAGE_WIDTH,
         height: RECALL_BOT_IMAGE_HEIGHT,
@@ -161,7 +161,7 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     );
   });
 
-  it('shrinks a workspace name wider than the tile to fit', async () => {
+  it('renders a workspace name wider than the safe zone', async () => {
     vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
     metadataQueryMock.mockResolvedValue({
       currentWorkspace: {
@@ -210,6 +210,33 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     );
   });
 
+  it('falls back to the Twenty frames when the workspace tile fails', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
+    const assetFetch = fetchMock.getMockImplementation();
+
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith(CAMERA_TILE_FONT_ASSET_PATH)
+        ? new Response(null, { status: 503 })
+        : assetFetch?.(url),
+    );
+
+    expect(await buildOutput()).toEqual({
+      in_call_recording: {
+        kind: 'jpeg',
+        b64_data: await readPublicAssetAsBase64(
+          CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS.TWENTY.recording,
+        ),
+      },
+      in_call_not_recording: {
+        kind: 'jpeg',
+        b64_data: await readPublicAssetAsBase64(
+          CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS.TWENTY.notRecording,
+        ),
+      },
+    });
+    expect(console.warn).toHaveBeenCalledOnce();
+  });
+
   it('falls back to the plain frame when the recording frame fails', async () => {
     vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
     vi.doMock('src/logic-functions/domain/build-bot-image.util', () => ({
@@ -223,6 +250,7 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
       in_call_recording: { kind: 'jpeg', b64_data: 'PLAIN_FRAME' },
       in_call_not_recording: { kind: 'jpeg', b64_data: 'PLAIN_FRAME' },
     });
+    expect(console.warn).toHaveBeenCalledOnce();
 
     vi.doUnmock('src/logic-functions/domain/build-bot-image.util');
   });

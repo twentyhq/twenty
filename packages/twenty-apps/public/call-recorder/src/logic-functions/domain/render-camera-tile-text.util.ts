@@ -1,9 +1,10 @@
-import { isDefined } from 'twenty-sdk/utils';
+import { isUndefined } from '@sniptt/guards';
 
 import {
   CAMERA_TILE_FONT_FAMILY,
   CAMERA_TILE_TEXT_COLOR,
 } from 'src/logic-functions/constants/camera-tile-config';
+import { renderTruncatedCameraTileText } from 'src/logic-functions/domain/render-truncated-camera-tile-text.util';
 import { escapePangoMarkup } from 'src/logic-functions/utils/escape-pango-markup.util';
 import { type SharpFactory } from 'src/logic-functions/utils/load-sharp.util';
 
@@ -30,27 +31,27 @@ export const renderCameraTileText = async ({
   opacity?: number;
   maxWidth?: number;
 }): Promise<CameraTileText> => {
-  const markup = `<span foreground="${color}" alpha="${Math.round(opacity * 100)}%">${escapePangoMarkup(text)}</span>`;
-
-  const render = (box?: { width: number; height: number }) =>
-    sharp({
+  const render = async (content: string): Promise<CameraTileText> => {
+    const { data, info } = await sharp({
       text: {
-        text: markup,
+        text: `<span foreground="${color}" alpha="${Math.round(opacity * 100)}%">${escapePangoMarkup(content)}</span>`,
         font: `${CAMERA_TILE_FONT_FAMILY} ${fontSize}`,
         fontfile: fontFilePath,
         rgba: true,
-        ...(box ?? { dpi: 72 }),
+        dpi: 72,
       },
     })
       .png()
       .toBuffer({ resolveWithObject: true });
 
-  const naturalText = await render();
+    return { input: data, width: info.width, height: info.height };
+  };
 
-  const { data, info } =
-    isDefined(maxWidth) && naturalText.info.width > maxWidth
-      ? await render({ width: maxWidth, height: naturalText.info.height })
-      : naturalText;
+  const fullText = await render(text);
 
-  return { input: data, width: info.width, height: info.height };
+  if (isUndefined(maxWidth) || fullText.width <= maxWidth) {
+    return fullText;
+  }
+
+  return renderTruncatedCameraTileText({ text, maxWidth, render });
 };

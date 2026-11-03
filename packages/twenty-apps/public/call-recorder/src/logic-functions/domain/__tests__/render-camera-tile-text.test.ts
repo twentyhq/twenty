@@ -34,13 +34,13 @@ describe('renderCameraTileText', () => {
     expect(constrained.height).toBe(natural.height);
   });
 
-  it('shrinks text wider than the max width to fit on one line', async () => {
+  it('cuts text wider than the max width at its full size', async () => {
     const text = 'A workspace name long enough to overflow the camera tile';
     const natural = await render({ text });
     const constrained = await render({ text, maxWidth: MAX_WIDTH });
 
     expect(natural.width).toBeGreaterThan(MAX_WIDTH);
     expect(constrained.width).toBeLessThanOrEqual(MAX_WIDTH);
-    expect(constrained.height).toBeLessThanOrEqual(natural.height);
+    expect(constrained.height).toBeGreaterThan(natural.height * 0.9);
   });
 });

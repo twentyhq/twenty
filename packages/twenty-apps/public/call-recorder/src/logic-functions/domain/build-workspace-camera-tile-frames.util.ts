@@ -51,7 +51,13 @@ export const buildWorkspaceCameraTileFrames = async (): Promise<
       sharp,
       background,
       composites: [...composites, ...recordingComposites],
-    }).catch(() => undefined)) ?? notRecording;
+    }).catch((error: unknown) => {
+      console.warn(
+        `[call-recorder] failed to build the recording camera tile, using the plain one: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return undefined;
+    })) ?? notRecording;
 
   return { recording, notRecording };
 };
