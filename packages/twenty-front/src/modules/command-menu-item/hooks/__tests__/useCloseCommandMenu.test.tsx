@@ -71,6 +71,7 @@ const getWrapper =
           canAccessFullAdminPanel: false,
           objectMetadataItem: {},
           objectMetadataLabel: '',
+          coreObjectName: null,
         },
         isInPreviewMode: false,
       }}

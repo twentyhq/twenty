@@ -7,7 +7,7 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchAvailabilityTarget } from '@/command-menu-item/utils/doesCommandMenuItemMatchAvailabilityTarget';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -65,6 +65,7 @@ export const StandalonePageCommandMenu = () => {
       canAccessFullAdminPanel: currentUser?.canAccessFullAdminPanel === true,
       objectMetadataItem: {},
       objectMetadataLabel: '',
+      coreObjectName: null,
     };
   }, [
     currentWorkspace?.featureFlags,
@@ -84,7 +85,12 @@ export const StandalonePageCommandMenu = () => {
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )
-      .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
+      .filter(
+        doesCommandMenuItemMatchAvailabilityTarget({
+          objectMetadataItemId: undefined,
+          coreObjectName: null,
+        }),
+      )
       .filter(
         (item) =>
           item.availabilityType !==

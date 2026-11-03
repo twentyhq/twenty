@@ -31,6 +31,7 @@ const buildContext = (
   canAccessFullAdminPanel: false,
   objectMetadataItem: {},
   objectMetadataLabel: '',
+  coreObjectName: null,
   ...overrides,
 });
 

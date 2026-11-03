@@ -6,7 +6,7 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchAvailabilityTarget } from '@/command-menu-item/utils/doesCommandMenuItemMatchAvailabilityTarget';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
@@ -62,9 +62,7 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
-  const isCoreWorkflow =
-    commandMenuContextApi.objectMetadataItem.nameSingular ===
-    CoreObjectNameSingular.Workflow;
+  const isCoreWorkflow = commandMenuContextApi.coreObjectName === 'workflow';
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
@@ -133,7 +131,10 @@ export const CommandMenuContextProviderContent = ({
           isLayoutCustomizationAllowedOnCurrentPage,
       )
       .filter(
-        doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+        doesCommandMenuItemMatchAvailabilityTarget({
+          objectMetadataItemId: currentObjectMetadataItemId,
+          coreObjectName: commandMenuContextApi.coreObjectName,
+        }),
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))

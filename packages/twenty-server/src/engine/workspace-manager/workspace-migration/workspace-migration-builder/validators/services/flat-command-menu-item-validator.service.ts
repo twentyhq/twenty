@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isCommandMenuCoreObjectName, isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
@@ -81,6 +81,14 @@ export class FlatCommandMenuItemValidatorService {
       navigationTargetObjectMetadataUniversalIdentifier:
         flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
       flatObjectMetadataMaps,
+      validationResult,
+    });
+
+    this.validateAvailabilityTarget({
+      availabilityObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityCoreObjectName:
+        flatCommandMenuItem.availabilityCoreObjectName,
       validationResult,
     });
 
@@ -194,7 +202,53 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    this.validateAvailabilityTarget({
+      availabilityObjectMetadataUniversalIdentifier:
+        flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.availabilityObjectMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      availabilityCoreObjectName:
+        flatEntityUpdate.availabilityCoreObjectName !== undefined
+          ? flatEntityUpdate.availabilityCoreObjectName
+          : fromFlatCommandMenuItem.availabilityCoreObjectName,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateAvailabilityTarget({
+    availabilityObjectMetadataUniversalIdentifier,
+    availabilityCoreObjectName,
+    validationResult,
+  }: {
+    availabilityObjectMetadataUniversalIdentifier: string | null;
+    availabilityCoreObjectName: string | null;
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }) {
+    if (!isDefined(availabilityCoreObjectName)) {
+      return;
+    }
+
+    if (!isCommandMenuCoreObjectName(availabilityCoreObjectName)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Unknown availabilityCoreObjectName ${availabilityCoreObjectName}`,
+        userFriendlyMessage: msg`Unknown core object for this command menu item`,
+      });
+    }
+
+    if (isDefined(availabilityObjectMetadataUniversalIdentifier)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`A command menu item cannot target both an object and a core object`,
+        userFriendlyMessage: msg`A command menu item cannot target both an object and a core object`,
+      });
+    }
   }
 
   private validateNavigationTarget({
