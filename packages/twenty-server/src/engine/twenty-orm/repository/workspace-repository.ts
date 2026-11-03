@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { v4 } from 'uuid';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
@@ -7,7 +8,7 @@ import {
   type ObjectsPermissionsByRoleId,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -41,6 +42,7 @@ import {
   type RowAccessRecord,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { getObjectRowAccessPolicy } from 'src/engine/permissions/row-policy/utils/get-object-row-access-policy.util';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
@@ -1046,8 +1048,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsToInsert = enriched.entities as Partial<ObjectRecord>[];
     }
 
+    const policy = getObjectRowAccessPolicy(this.options.flatObjectMetadata);
+    const recordsWithIdentities = isDefined(policy)
+      ? recordsToInsert.map((record) =>
+          isNonEmptyString(record.id) ? record : { ...record, id: v4() },
+        )
+      : recordsToInsert;
     const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
-      this.buildInsertRows(recordsToInsert);
+      this.buildInsertRows(recordsWithIdentities);
 
     this.validateWriteIsPermitted({
       operationType: 'insert',
@@ -1056,6 +1064,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!this.options.shouldBypassPermissionChecks) {
+      await this.validateObjectPolicyWritesOrThrow({
+        records: formattedRecords,
+        operationType: 'insert',
+      });
+
       validateRLSPredicatesForRecords({
         records: this.formatResult<ObjectRecord[]>(formattedRecords),
         objectMetadata: this.options.flatObjectMetadata,
@@ -1201,14 +1214,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       });
     }
 
-    await this.validateRLSPredicatesForUpdatedRecords(
-      setColumnsByInputIndex.flatMap((setColumns, index) =>
-        rawBeforeByInputIndex[index].map((rawRecordBefore) => ({
-          rawRecordBefore,
-          setColumns,
-        })),
-      ),
+    const updates = setColumnsByInputIndex.flatMap((setColumns, index) =>
+      rawBeforeByInputIndex[index].map((rawRecordBefore) => ({
+        rawRecordBefore,
+        setColumns,
+      })),
     );
+
+    await this.validateRLSPredicatesForUpdatedRecords(updates);
+    await this.validateObjectPolicyWritesOrThrow({
+      updates,
+      operationType: 'update',
+    });
 
     for (const [index, input] of writableInputs.entries()) {
       const setColumns = setColumnsByInputIndex[index];
@@ -1600,12 +1617,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     if (kind === 'update' && isDefined(setColumns)) {
-      await this.validateRLSPredicatesForUpdatedRecords(
-        recordsBefore.map((rawRecordBefore) => ({
-          rawRecordBefore,
-          setColumns,
-        })),
-      );
+      const updates = recordsBefore.map((rawRecordBefore) => ({
+        rawRecordBefore,
+        setColumns,
+      }));
+
+      await this.validateObjectPolicyWritesOrThrow({
+        updates,
+        operationType: 'update',
+      });
+      await this.validateRLSPredicatesForUpdatedRecords(updates);
     }
 
     const mutationResult = await this.morphAndExecute({
@@ -1809,6 +1830,47 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return {
       shouldIgnoreSoftDeleteDefaultFilter: false,
+      findRecords: async ({
+        objectUniversalIdentifier,
+        recordIds,
+        selectFields,
+      }) => {
+        const repository =
+          this.getBypassingRepositoryForObjectUniversalIdentifier<RowAccessRecord>(
+            objectUniversalIdentifier,
+          );
+
+        if (!isDefined(repository)) {
+          return [];
+        }
+
+        return repository.find({
+          where: { id: In(recordIds) },
+          select: Object.fromEntries(
+            selectFields.map((field) => [field, true]),
+          ),
+          withDeleted: true,
+        });
+      },
+      findAdmittedRecordIds: async ({
+        objectUniversalIdentifier,
+        recordIds,
+        principal,
+        operationType,
+      }) => {
+        const repository =
+          this.getBypassingRepositoryForObjectUniversalIdentifier(
+            objectUniversalIdentifier,
+          );
+
+        return isDefined(repository)
+          ? repository.findPrincipalAdmittedRecordIds({
+              principal,
+              recordIds,
+              operationType,
+            })
+          : new Set();
+      },
       fetchRecordShares: async ({
         objectMetadataId,
         recordIds: requestedRecordIds,
@@ -1831,6 +1893,95 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       findPrivateRecordStates: async () =>
         (privateRecordStates ??= this.selectPrivateRecordStates(recordIds)),
     };
+  }
+
+  private getBypassingRepositoryForObjectUniversalIdentifier<
+    TRecord extends ObjectLiteral,
+  >(
+    objectUniversalIdentifier: string,
+  ): WorkspaceRepository<TRecord> | undefined {
+    const objectMetadata =
+      this.options.internalContext.flatObjectMetadataMaps.byUniversalIdentifier[
+        objectUniversalIdentifier
+      ];
+
+    if (!isDefined(objectMetadata)) {
+      return undefined;
+    }
+
+    const repository = this.options.getRepositoryForObjectMetadataId<TRecord>(
+      objectMetadata.id,
+    );
+
+    return new WorkspaceRepository<TRecord>({
+      ...repository.options,
+      shouldBypassPermissionChecks: true,
+    });
+  }
+
+  private async validateObjectPolicyWritesOrThrow({
+    records = [],
+    updates = [],
+    operationType,
+  }: {
+    records?: Record<string, unknown>[];
+    updates?: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[];
+    operationType: OperationType;
+  }): Promise<void> {
+    const policy = getObjectRowAccessPolicy(this.options.flatObjectMetadata);
+
+    if (
+      this.options.shouldBypassPermissionChecks ||
+      !isDefined(policy) ||
+      (!isNonEmptyArray(records) && !isNonEmptyArray(updates))
+    ) {
+      return;
+    }
+
+    const formattedRecords = this.formatResult<RowAccessRecord[]>([
+      ...records,
+      ...updates.map(({ rawRecordBefore, setColumns }) => ({
+        ...rawRecordBefore,
+        ...setColumns,
+      })),
+    ]);
+    const formattedRecordsBefore = this.formatResult<RowAccessRecord[]>(
+      updates.map(({ rawRecordBefore }) => rawRecordBefore),
+    );
+
+    if (formattedRecords.some(({ id }) => !isNonEmptyString(id))) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    await policy.validateWritesOrThrow({
+      principal: this.resolvePermissionsPrincipalOrThrow(),
+      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      operationType,
+      records: formattedRecords,
+      recordsBefore: formattedRecordsBefore,
+      context: this.buildWriteRowAccessEvaluationContext(
+        formattedRecords.map(({ id }) => id),
+      ),
+      targetRelations: Object.values(
+        this.options.tableShape.relationShapeByFieldName,
+      ),
+      findReadableRecordIds: async ({ objectMetadataId, recordIds }) =>
+        new Set(
+          await this.options
+            .getRepositoryForObjectMetadataId(objectMetadataId)
+            .findRecordIdsAllowedForOperation({
+              recordIds,
+              operationType: 'select',
+            }),
+        ),
+    });
   }
 
   private async selectPrivateRecordStates(

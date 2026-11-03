@@ -56,12 +56,24 @@ export type RowAccessEvaluationContext = {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<Map<string, PrivateRecordState>>;
+  findRecords: (args: {
+    objectUniversalIdentifier: string;
+    recordIds: string[];
+    selectFields: string[];
+  }) => Promise<RowAccessRecord[]>;
+  findAdmittedRecordIds: (args: {
+    objectUniversalIdentifier: string;
+    recordIds: string[];
+    principal: PermissionsPrincipalsWithRolesContext;
+    operationType: OperationType;
+  }) => Promise<Set<string>>;
 };
 
 export type PermissionsRowAccessEvaluationRequest =
   PermissionsRowAccessRequest & {
     records: RowAccessRecord[];
     context: RowAccessEvaluationContext;
+    preAdmittedRecordIds?: Set<string>;
   };
 
 export type PermissionsRowAccessSqlRequest = PermissionsRowAccessRequest & {

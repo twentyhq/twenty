@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getObjectRowAccessPolicy } from 'src/engine/permissions/row-policy/utils/get-object-row-access-policy.util';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type RecordSharePrincipalInput,
@@ -263,6 +264,14 @@ export class RecordSharingService {
     if (isPrivate) {
       assertPrivateRecordEnabledOrThrow(featureFlagsMap);
     }
+
+    await getObjectRowAccessPolicy(flatObjectMetadata)?.validateSharingOrThrow({
+      transactionScope,
+      flatObjectMetadata,
+      recordIds: [args.recordId],
+      isPrivate,
+      metadataMaps: { featureFlagsMap, flatFieldMetadataMaps },
+    });
 
     await this.privateRecordStorageService.setPrivate({
       workspaceId,

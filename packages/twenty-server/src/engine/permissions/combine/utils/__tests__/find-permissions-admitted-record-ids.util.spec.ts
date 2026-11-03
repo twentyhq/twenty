@@ -138,6 +138,8 @@ const buildContext = (): RowAccessEvaluationContext => ({
     ),
   ),
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
+  findRecords: jest.fn(async () => []),
+  findAdmittedRecordIds: jest.fn(async () => new Set<string>()),
 });
 
 const findAdmitted = ({

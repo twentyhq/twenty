@@ -3,8 +3,10 @@
 import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
+import { In } from 'typeorm';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  type ObjectRecord,
   type ObjectsPermissions,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
@@ -22,7 +24,10 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import {
   type PermissionsMetadataMaps,
+  type RowAccessRecord,
   type PermissionsObjectAccessRequest,
+  type PermissionsRowAccessEvaluationRequest,
+  type RowAccessEvaluationContext,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -38,6 +43,8 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
+import { getObjectRowAccessPolicy } from 'src/engine/permissions/row-policy/utils/get-object-row-access-policy.util';
+import { resolveEventRecordAccessSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-access-snapshots.util';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -312,6 +319,89 @@ export class RecordAccessPolicyService {
       }));
 
     let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
+    const loadMetadataMaps = () =>
+      (metadataMaps ??= this.loadPermissionsMetadataMaps(workspaceId));
+    const recordsByLookup = new Map<string, Promise<RowAccessRecord[]>>();
+    const findObjectMetadata = async (objectUniversalIdentifier: string) =>
+      (await loadMetadataMaps()).flatObjectMetadataMaps.byUniversalIdentifier[
+        objectUniversalIdentifier
+      ];
+
+    const context: RowAccessEvaluationContext = {
+      shouldIgnoreSoftDeleteDefaultFilter: true,
+      fetchRecordShares,
+      findPrivateRecordStates,
+      findRecords: async ({
+        objectUniversalIdentifier,
+        recordIds,
+        selectFields,
+      }) => {
+        const relatedObjectMetadata = await findObjectMetadata(
+          objectUniversalIdentifier,
+        );
+
+        if (!isDefined(relatedObjectMetadata)) {
+          return [];
+        }
+
+        const lookupKey = JSON.stringify({
+          objectUniversalIdentifier,
+          recordIds,
+          selectFields,
+        });
+        const existingRecords = recordsByLookup.get(lookupKey);
+
+        if (isDefined(existingRecords)) {
+          return existingRecords;
+        }
+
+        const records = this.withBypassingRepository<
+          RowAccessRecord[],
+          RowAccessRecord
+        >({
+          workspaceId,
+          objectNameSingular: relatedObjectMetadata.nameSingular,
+          work: (repository) =>
+            repository.find({
+              where: { id: In(recordIds) },
+              select: Object.fromEntries(
+                selectFields.map((field) => [field, true]),
+              ),
+              withDeleted: true,
+            }),
+        });
+
+        recordsByLookup.set(lookupKey, records);
+
+        return records;
+      },
+      findAdmittedRecordIds: async ({
+        objectUniversalIdentifier,
+        recordIds,
+        principal,
+        operationType,
+      }) => {
+        const relatedObjectMetadata = await findObjectMetadata(
+          objectUniversalIdentifier,
+        );
+
+        if (!isDefined(relatedObjectMetadata)) {
+          return new Set();
+        }
+
+        return this.withBypassingRepository({
+          workspaceId,
+          objectNameSingular: relatedObjectMetadata.nameSingular,
+          work: (repository) =>
+            repository.findPrincipalAdmittedRecordIds({
+              principal,
+              recordIds,
+              operationType,
+            }),
+        });
+      },
+    };
+    const objectPolicy = getObjectRowAccessPolicy(objectMetadata);
 
     return {
       resolveAdmittedRecordIds: async (principals) => {
@@ -321,24 +411,31 @@ export class RecordAccessPolicyService {
           return new Set<string>();
         }
 
-        return findPermissionsAdmittedRecordIds({
+        const request: PermissionsRowAccessEvaluationRequest = {
           principal,
-          metadataMaps: await (metadataMaps ??=
-            this.loadPermissionsMetadataMaps(workspaceId)),
+          metadataMaps: await loadMetadataMaps(),
           flatObjectMetadata: objectMetadata,
           operationType: 'select',
           records: resolveEventRecordSnapshots(events),
-          context: {
-            shouldIgnoreSoftDeleteDefaultFilter: true,
-            fetchRecordShares,
-            findPrivateRecordStates,
-          },
+          context,
+        };
+        const preAdmittedRecordIds = await objectPolicy?.findAdmittedRecordIds({
+          ...request,
+          records: resolveEventRecordAccessSnapshots(events),
+        });
+
+        return findPermissionsAdmittedRecordIds({
+          ...request,
+          preAdmittedRecordIds,
         });
       },
     };
   }
 
-  private withBypassingRepository<TResult>({
+  private withBypassingRepository<
+    TResult,
+    TEntity extends ObjectRecord = ObjectRecord,
+  >({
     workspaceId,
     objectNameSingular,
     transactionScope,
@@ -347,11 +444,11 @@ export class RecordAccessPolicyService {
     workspaceId: string;
     objectNameSingular: string;
     transactionScope?: WorkspaceTransactionScope;
-    work: (repository: WorkspaceRepository) => Promise<TResult>;
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<TResult>;
   }): Promise<TResult> {
     if (isDefined(transactionScope)) {
       return work(
-        transactionScope.getRepositoryWithoutPermissionChecks(
+        transactionScope.getRepositoryWithoutPermissionChecks<TEntity>(
           objectNameSingular,
         ),
       );
@@ -360,7 +457,7 @@ export class RecordAccessPolicyService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<TEntity>(
             objectNameSingular,
           ),
         ),

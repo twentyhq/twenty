@@ -6,6 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getObjectRowAccessPolicy } from 'src/engine/permissions/row-policy/utils/get-object-row-access-policy.util';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
@@ -92,6 +93,21 @@ export class RecordSharePrincipalService {
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
+    const objectPolicy = getObjectRowAccessPolicy(flatObjectMetadata);
+
+    if (isDefined(objectPolicy)) {
+      await objectPolicy.validateSharingOrThrow({
+        transactionScope,
+        flatObjectMetadata,
+        principals,
+        recordIds,
+        metadataMaps:
+          await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+            workspaceId,
+          ),
+      });
+    }
+
     const namedPrincipals = principals.filter(
       (principal) =>
         principal.principalType !== RecordSharePrincipalType.EVERYONE,
