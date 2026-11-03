@@ -55,7 +55,7 @@ const StyledTile = styled.span`
   }
 `;
 
-const StyledCheckmark = styled.span<{ $checked: boolean }>`
+const StyledCheckmark = styled.span<{ $isChecked: boolean }>`
   align-items: center;
   background-color: ${() => themeCssVariables.color.blue};
   border-radius: 50%;
@@ -65,7 +65,7 @@ const StyledCheckmark = styled.span<{ $checked: boolean }>`
   display: flex;
   height: ${() => themeCssVariables.spacing[5]};
   justify-content: center;
-  opacity: ${({ $checked }) => ($checked ? 1 : 0)};
+  opacity: ${({ $isChecked }) => ($isChecked ? 1 : 0)};
   position: absolute;
   right: ${() => themeCssVariables.spacing[2]};
   transition: opacity 0.3s ease-in-out;
@@ -125,7 +125,7 @@ export const CameraTileStylePicker = ({
                 )}
                 alt=""
               />
-              <StyledCheckmark $checked={isChecked} aria-hidden>
+              <StyledCheckmark $isChecked={isChecked} aria-hidden>
                 <IconCheck size={THEME_COMMON.icon.size.sm} />
               </StyledCheckmark>
             </StyledTile>
