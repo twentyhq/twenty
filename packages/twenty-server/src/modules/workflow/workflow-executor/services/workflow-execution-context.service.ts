@@ -200,6 +200,7 @@ export class WorkflowExecutionContextService {
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
       workspaceMember,
+      userSessionVariant: 'standard',
       application,
     });
   }

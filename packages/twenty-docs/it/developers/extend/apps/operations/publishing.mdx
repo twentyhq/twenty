@@ -61,10 +61,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Compila e carica la tua app sul server in un solo passaggio:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+L'opzione esplicita `--remote production` seleziona la connessione salvata sopra, anche se un altro remote è quello predefinito. Il salvataggio di un remote denominato non modifica quello predefinito esistente.
 
 ### Condivisione di un'app distribuita
 
@@ -83,7 +83,7 @@ Quando si aggiorna un'app in formato tarball già distribuita, il server richied
 Per rilasciare un aggiornamento:
 
 1. Incrementa il campo `version` nel tuo `package.json` (ad es. `1.2.3` → `1.2.4`, `1.3.0` o `2.0.0`).
-2. Esegui `twenty app publish --private` (oppure `twenty app publish --private --remote production`)
+2. Esegui `twenty app publish --private --remote production`
 3. Gli spazi di lavoro che hanno installato l'app e abilitato l'aggiornamento automatico (nella scheda Generale dell'app) vengono aggiornati automaticamente in secondo piano; gli altri vedranno l'aggiornamento disponibile nelle loro impostazioni
 
 <Note>
@@ -389,11 +389,13 @@ Vai alla pagina **Impostazioni > Applicazioni** in Twenty, dove è possibile sfo
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-Puoi anche installare le app dalla riga di comando:
+Dalla directory dell'app, installa la versione pubblicata nell'area di lavoro di destinazione:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Utilizza il nome del remote per l'area di lavoro in cui vuoi installare l'app. Per installare senza un progetto locale, passa `--universal-identifier \<id>`.
 
 <Note>
 Il server applica il versioning semver durante l’installazione, rispecchiando le regole del deploy:
@@ -401,7 +403,7 @@ Il server applica il versioning semver durante l’installazione, rispecchiando 
 * L’installazione della stessa versione già installata nel tuo spazio di lavoro viene rifiutata con un errore `APP_ALREADY_INSTALLED`.
 * L’installazione di una versione inferiore rispetto a quella attualmente installata viene rifiutata con un errore `CANNOT_DOWNGRADE_APPLICATION`.
 
-Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `twenty app install`.
+Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `twenty app install --remote production`.
 
 </Note>
 

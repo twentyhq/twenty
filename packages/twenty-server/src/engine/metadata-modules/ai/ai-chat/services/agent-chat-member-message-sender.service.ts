@@ -10,6 +10,7 @@ import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
+import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
 import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
@@ -21,6 +22,7 @@ import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-args.type';
+import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -46,6 +48,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
   ) {}
 
   async sendMemberMessage({
@@ -56,6 +59,11 @@ export class AgentChatMemberMessageSenderService {
     assistant,
     execution,
   }: AgentChatMemberMessageSendArgs): Promise<AgentChatMemberMessageResult> {
+    const preparedMessage =
+      await this.memberMessagePartsService.prepareMemberMessage({
+        workspaceId: actor.workspaceId,
+        message,
+      });
     const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
@@ -123,25 +131,30 @@ export class AgentChatMemberMessageSenderService {
     const memberMessageWriteInput = {
       actor,
       thread,
-      message,
+      message: preparedMessage,
       addressing: isInboxEnabled ? addressing : undefined,
       participation,
     };
-    const result: AgentChatMemberMessageResult = shouldGenerateAssistantReply
-      ? await this.sendMessageWithAssistantReply({
+    let result: AgentChatMemberMessageResult;
+
+    if (shouldGenerateAssistantReply) {
+      result = await this.sendMessageWithAssistantReply({
+        ...memberMessageWriteInput,
+        execution,
+      });
+    } else {
+      const persistedMessage =
+        await this.memberMessageWriterService.writeMemberMessage({
           ...memberMessageWriteInput,
-          execution,
-        })
-      : await this.memberMessageWriterService
-          .writeMemberMessage({
-            ...memberMessageWriteInput,
-            placement: AgentChatMemberMessagePlacement.COMPLETED,
-          })
-          .then((persistedMessage) => ({
-            messageId: persistedMessage.id,
-            queued: false,
-            delivery: persistedMessage.delivery,
-          }));
+          placement: AgentChatMemberMessagePlacement.COMPLETED,
+        });
+
+      result = {
+        messageId: persistedMessage.id,
+        isQueued: false,
+        delivery: persistedMessage.delivery,
+      };
+    }
 
     if (!isInboxEnabled) {
       result.delivery = await this.inboxDeliveryService.deliverMessageToInboxes(
@@ -172,7 +185,8 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     participation,
     execution,
-  }: Pick<AgentChatMemberMessageSendArgs, 'actor' | 'message' | 'execution'> & {
+  }: Pick<AgentChatMemberMessageSendArgs, 'actor' | 'execution'> & {
+    message: AgentChatPreparedMemberMessage;
     addressing?: AgentChatMemberMessageSendArgs['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
     participation?: AgentChatAssistantParticipation;
@@ -238,7 +252,7 @@ export class AgentChatMemberMessageSenderService {
 
               return {
                 messageId: persistedMessage.id,
-                queued: false,
+                isQueued: false,
                 streamId,
                 turnId: persistedMessage.turnId,
                 delivery: persistedMessage.delivery,
@@ -273,7 +287,7 @@ export class AgentChatMemberMessageSenderService {
 
     return {
       messageId: queuedMemberMessage.id,
-      queued: true,
+      isQueued: true,
       delivery: queuedMemberMessage.delivery,
     };
   }
