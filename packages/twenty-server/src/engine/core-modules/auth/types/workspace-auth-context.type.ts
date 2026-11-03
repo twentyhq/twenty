@@ -1,5 +1,6 @@
 import { type ActingAgent } from 'src/engine/core-modules/auth/types/acting-agent.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 
 export type WorkspaceAuthContextType =
@@ -7,6 +8,7 @@ export type WorkspaceAuthContextType =
   | 'user'
   | 'apiKey'
   | 'application'
+  | 'webhook'
   | 'pendingActivationUser';
 
 interface BaseWorkspaceAuthContext {
@@ -46,6 +48,12 @@ export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContex
   permissionScope?: PermissionScope;
 }
 
+// A webhook only reads: it receives the events its role lets it see
+export interface WebhookWorkspaceAuthContext extends BaseWorkspaceAuthContext {
+  type: 'webhook';
+  webhook: FlatWebhook;
+}
+
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'system';
 }
@@ -60,5 +68,6 @@ export type WorkspaceAuthContext =
   | ApiKeyWorkspaceAuthContext
   | UserWorkspaceAuthContext
   | ApplicationWorkspaceAuthContext
+  | WebhookWorkspaceAuthContext
   | SystemWorkspaceAuthContext
   | PendingActivationUserWorkspaceAuthContext;

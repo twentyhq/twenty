@@ -9,6 +9,7 @@ import { RecordSharePrincipalService } from 'src/engine/permissions/record-share
 import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
 import { RecordPermissionsModule } from 'src/engine/permissions/record-permissions/record-permissions.module';
+import { UserWorkspaceAuthContextModule } from 'src/engine/core-modules/user-workspace/user-workspace-auth-context.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -16,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     RecordShareStorageModule,
     RecordPermissionsModule,
+    UserWorkspaceAuthContextModule,
   ],
   providers: [
     ShareWithService,

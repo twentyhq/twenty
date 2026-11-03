@@ -5,11 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
@@ -45,14 +47,14 @@ export class CallAgentDatabaseEventTriggersJob {
 
     const {
       flatAgentMaps,
+      flatApplicationMaps,
       flatRoleTargetByAgentIdMaps,
-      rolesPermissions,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
+      'flatApplicationMaps',
       'flatRoleTargetByAgentIdMaps',
-      'rolesPermissions',
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
     ]);
@@ -72,22 +74,29 @@ export class CallAgentDatabaseEventTriggersJob {
       );
 
     for (const { flatAgent, trigger } of matchingAgentTriggers) {
-      const agentRoleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
-      const agentObjectsPermissions = isDefined(agentRoleId)
-        ? rolesPermissions[agentRoleId]
-        : undefined;
+      const application = flatApplicationMaps.byId[flatAgent.applicationId];
 
-      // An agent receives what its role lets it read: without a role it reads nothing
-      if (!isDefined(agentRoleId) || !isDefined(agentObjectsPermissions)) {
+      if (!isDefined(application) || isDefined(application.deletedAt)) {
+        continue;
+      }
+
+      // The agent receives what it could read when running: its role within its application
+      const agentAuthContext = buildApplicationAuthContext({
+        workspace: { id: workspaceId } as FlatWorkspace,
+        application,
+        agentId: flatAgent.id,
+      });
+      const agentObjectsPermissions =
+        await this.recordAccessPolicyService.findObjectsPermissions(
+          agentAuthContext,
+        );
+
+      if (!isDefined(agentObjectsPermissions)) {
         continue;
       }
 
       const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds({
-          workspaceId: workspaceEventBatch.workspaceId,
-          mainPrincipal: { type: 'agent', agentId: flatAgent.id },
-          applicationPrincipal: { type: 'customApplication' },
-        });
+        await eventRecordAccessGate.resolveAdmittedRecordIds(agentAuthContext);
       const admittedEvents = workspaceEventBatch.events
         .filter((event) => admittedRecordIds.has(event.recordId))
         .filter(
@@ -150,7 +159,7 @@ export class CallAgentDatabaseEventTriggersJob {
             workspaceId,
             agentId: flatAgent.id,
             triggerId: trigger.id,
-            dispatchedRoleId: agentRoleId,
+            dispatchedRoleId: flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId,
             payload: {
               type: 'DATABASE_EVENT',
               eventName,

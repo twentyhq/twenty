@@ -16,6 +16,7 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-neste
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -38,11 +39,9 @@ import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/ob
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
 type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -167,25 +166,6 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const principals = buildPermissionsPrincipalsContext({
-      workspaceId: workspaceEventBatch.workspaceId,
-      workspaceMemberId,
-      apiKeyId: undefined,
-      applicationId: subscriberAuthContext.applicationId,
-      agentId: undefined,
-    });
-
-    if (!isDefined(principals)) {
-      return;
-    }
-
-    const objectsPermissions =
-      await this.recordAccessPolicyService.findObjectsPermissions(principals);
-
-    if (!isDefined(objectsPermissions)) {
-      return;
-    }
-
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
     if (
@@ -198,13 +178,38 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
+    // A subscriber who can no longer act in the workspace receives nothing
+    const authContext = await this.findSubscriberAuthContext({
+      subscriberAuthContexts,
+      workspaceId: workspaceEventBatch.workspaceId,
+      userWorkspaceId,
+      applicationId: subscriberAuthContext.applicationId,
+    }).catch((error) => {
+      if (error instanceof AuthException) {
+        return undefined;
+      }
+
+      throw error;
+    });
+
+    if (!isDefined(authContext)) {
+      return;
+    }
+
+    const objectsPermissions =
+      await this.recordAccessPolicyService.findObjectsPermissions(authContext);
+
+    if (!isDefined(objectsPermissions)) {
+      return;
+    }
+
     const matchedEvents: {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(principals);
+      await eventRecordAccessGate.resolveAdmittedRecordIds(authContext);
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -267,13 +272,7 @@ export class ObjectRecordEventPublisher {
             (matchedEvent) => matchedEvent.objectRecordEvent,
           ),
           workspaceId: workspaceEventBatch.workspaceId,
-          subscriberAuthContext: this.findSubscriberAuthContext({
-            subscriberAuthContexts,
-            workspaceId: workspaceEventBatch.workspaceId,
-            userWorkspaceId,
-            applicationId: subscriberAuthContext.applicationId,
-          }),
-          principals,
+          subscriberAuthContext: authContext,
           objectsPermissions,
         });
       } catch (error) {
@@ -303,14 +302,12 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     subscriberAuthContext,
-    principals,
     objectsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
-    subscriberAuthContext: Promise<WorkspaceAuthContext>;
-    principals: PermissionsPrincipalsContext;
+    subscriberAuthContext: WorkspaceAuthContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -344,7 +341,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principals,
+          authContext: subscriberAuthContext,
           flatObjectMetadataMaps,
         }),
       depth: 1,
@@ -366,7 +363,6 @@ export class ObjectRecordEventPublisher {
       commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
-    const resolvedSubscriberAuthContext = await subscriberAuthContext;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -375,7 +371,7 @@ export class ObjectRecordEventPublisher {
           flatFieldMetadataMaps,
           parentObjectMetadataItem: objectMetadata,
           parentObjectRecords: allRecords,
-          authContext: resolvedSubscriberAuthContext,
+          authContext: subscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
           relations: selectedFieldsResult.relations as Record<
             string,
@@ -383,7 +379,7 @@ export class ObjectRecordEventPublisher {
           >,
           selectedFields: selectedFieldsResult.select,
         }),
-      resolvedSubscriberAuthContext,
+      subscriberAuthContext,
     );
   }
 

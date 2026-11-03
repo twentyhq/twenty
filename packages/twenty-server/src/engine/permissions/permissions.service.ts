@@ -28,7 +28,6 @@ import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-syst
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
@@ -215,12 +214,6 @@ export class PermissionsService {
   private async findPrincipalWithRoles(
     authContext: WorkspaceAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
-    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
-
-    if (!isDefined(principals)) {
-      return undefined;
-    }
-
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -228,7 +221,7 @@ export class PermissionsService {
       flatApplicationMaps,
       flatWorkspaceMemberMaps,
     } = await this.workspaceCacheService.getOrRecompute(
-      principals.workspaceId,
+      authContext.workspace.id,
       [
         'userWorkspaceRoleMap',
         'apiKeyRoleMap',
@@ -239,7 +232,7 @@ export class PermissionsService {
     );
 
     return resolvePermissionsPrincipalsWithRoles({
-      principalsContext: principals,
+      authContext,
       roleMaps: buildPermissionsPrincipalRoleMaps({
         flatWorkspaceMemberMaps,
         userWorkspaceRoleMap,

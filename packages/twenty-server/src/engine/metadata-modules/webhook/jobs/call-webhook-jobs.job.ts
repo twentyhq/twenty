@@ -5,11 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { buildWebhookAuthContext } from 'src/engine/core-modules/auth/utils/build-webhook-auth-context.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
@@ -93,11 +95,12 @@ export class CallWebhookJobsJob {
 
       const admittedRecordIds =
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
-        eventRecordAccessGate.resolveAdmittedRecordIds({
-          workspaceId: workspaceEventBatch.workspaceId,
-          mainPrincipal: { type: 'webhook', webhookId: webhook.id },
-          applicationPrincipal: { type: 'customApplication' },
-        });
+        eventRecordAccessGate.resolveAdmittedRecordIds(
+          buildWebhookAuthContext({
+            workspace: { id: workspaceEventBatch.workspaceId } as FlatWorkspace,
+            webhook,
+          }),
+        );
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
 

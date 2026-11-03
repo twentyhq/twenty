@@ -20,6 +20,7 @@ export const applyWorkspaceSentryContext = (
       return;
     case 'apiKey':
     case 'application':
+    case 'webhook':
     case 'system':
       applyWorkspaceSentryFields({ workspaceId });
       return;
