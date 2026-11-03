@@ -32,8 +32,9 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
+  const { intersectionOf, scope } = rolePermissionConfig;
   const principalRoles = buildPermissionsPrincipalRoles({
-    roleIdsBySource: rolePermissionConfig.intersectionOf,
+    roleIdsBySource: intersectionOf,
     principalsContext: principals,
   });
 
@@ -42,7 +43,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
   }
 
   return computeObjectsPermissionsForRoles({
-    principal: principalRoles,
+    principal: { ...principalRoles, scope },
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

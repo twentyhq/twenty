@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
   WORKFLOW_ACTION_FEATURE_FLAGS,
+  WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
   WorkflowActionType,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
@@ -23,8 +24,6 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
-import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -33,7 +32,6 @@ import {
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -46,6 +44,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
@@ -78,18 +77,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
-    private readonly agentService: AgentService,
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly findRecordsService: FindRecordsService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -120,34 +116,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
             throw error;
           });
-        break;
-      }
-      case WorkflowActionType.AI_AGENT: {
-        if (!isDefined(step.settings.input.agentId)) {
-          break;
-        }
-
-        const roleTarget = await this.roleTargetRepository.findOne(
-          workspaceId,
-          {
-            where: {
-              agentId: step.settings.input.agentId,
-            },
-          },
-        );
-
-        await this.agentService.deleteManyAgents({
-          ids: [step.settings.input.agentId],
-          workspaceId,
-        });
-
-        if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
-          await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
-            roleId: roleTarget.roleId,
-            roleTargetId: roleTarget.id,
-            workspaceId,
-          });
-        }
         break;
       }
     }
@@ -556,29 +524,42 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const newAgent = await this.agentService.createOneAgent(
-          {
-            label: 'Workflow Agent ' + baseStep.id.substring(0, 4),
-            icon: 'IconLego',
-            description: '',
-            prompt:
-              'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-            responseFormat: { type: 'text' },
-            isSystem: true,
-          },
-          workspaceId,
-        );
+        const defaultAgentInput = defaultSettings?.input;
+        const defaultAgentId = isPlainObject(defaultAgentInput)
+          ? defaultAgentInput.agentId
+          : undefined;
+
+        if (isNonEmptyString(defaultAgentId)) {
+          const agent =
+            await this.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow(
+              { agentId: defaultAgentId, workspaceId },
+            );
+
+          return {
+            builtStep: {
+              ...baseStep,
+              name: agent.label,
+              type: WorkflowActionType.AI_AGENT,
+              settings: {
+                ...BASE_STEP_DEFINITION,
+                input: {
+                  agentId: agent.id,
+                  prompt: '',
+                },
+              },
+            },
+          };
+        }
 
         return {
           builtStep: {
             ...baseStep,
-            name: 'Agent',
+            name: WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                agentId: newAgent.id,
+                instructions: '',
                 prompt: '',
               },
             },
@@ -926,38 +907,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.AI_AGENT: {
-        const agentId = step.settings.input.agentId;
-
-        if (!isDefined(agentId)) {
-          throw new WorkflowVersionStepException(
-            'Agent ID is required for cloning',
-            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
-          );
-        }
-
-        const clonedStepId = v4();
-
-        const clonedAgent = await this.duplicateAgent({
-          agentId,
-          labelSuffix: clonedStepId.substring(0, 4),
-          workspaceId,
-        });
-
-        return {
-          ...step,
-          id: clonedStepId,
-          nextStepIds: [],
-          position: duplicatedStepPosition,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              agentId: clonedAgent.id,
-            },
-          },
-        };
-      }
       case WorkflowActionType.ITERATOR: {
         return {
           ...step,
@@ -1109,75 +1058,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.AI_AGENT: {
-        const agentId = step.settings.input.agentId;
-
-        if (!isDefined(agentId)) {
-          return step;
-        }
-
-        const newAgent = await this.duplicateAgent({
-          agentId,
-          labelSuffix: v4().substring(0, 4),
-          workspaceId,
-        });
-
-        const roleId = await this.aiAgentRoleService.findAgentRoleId({
-          agentId,
-          workspaceId,
-        });
-
-        if (isDefined(roleId)) {
-          await this.aiAgentRoleService.assignRoleToAgent({
-            agentId: newAgent.id,
-            roleId,
-            workspaceId,
-          });
-        }
-
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              agentId: newAgent.id,
-            },
-          },
-        };
-      }
       default: {
         return step;
       }
     }
-  }
-
-  private async duplicateAgent({
-    agentId,
-    labelSuffix,
-    workspaceId,
-  }: {
-    agentId: string;
-    labelSuffix: string;
-    workspaceId: string;
-  }) {
-    const existingAgent = await this.agentService.findOneAgentById({
-      id: agentId,
-      workspaceId,
-    });
-
-    return this.agentService.createOneAgent(
-      {
-        label: existingAgent.label + ' ' + labelSuffix,
-        icon: existingAgent.icon ?? undefined,
-        description: existingAgent.description ?? undefined,
-        prompt: existingAgent.prompt,
-        modelId: existingAgent.modelId,
-        responseFormat: existingAgent.responseFormat ?? undefined,
-        modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-        isSystem: true,
-      },
-      workspaceId,
-    );
   }
 }

@@ -31,36 +31,17 @@ export class AgentChatEventPublisherService {
     threadId,
     workspaceId,
     event,
+    shouldKeepCatchup = true,
   }: {
     threadId: string;
     workspaceId: string;
     event: AgentChatSubscriptionEvent;
+    // a run channel is followed from before its run starts, so nothing reads catch-up chunks for it
+    shouldKeepCatchup?: boolean;
   }): Promise<void> {
-    let publishedEvent = event;
-
-    if (event.type === 'stream-chunk') {
-      const redis = this.redisClientService.getClient();
-      const key = this.getStreamChunksKey(threadId);
-
-      // RPUSH returns the new list length — use it as a 1-based sequence number.
-      // Sent together on one connection, Redis still runs them in order.
-      const [seq] = await Promise.all([
-        redis.rpush(key, JSON.stringify(event.chunk)),
-        redis.expire(key, STREAM_CHUNKS_TTL_SECONDS),
-        redis.expire(
-          this.getStreamOwnerKey(threadId),
-          STREAM_CHUNKS_TTL_SECONDS,
-        ),
-      ]);
-
-      publishedEvent = { ...event, seq };
-    } else if (
-      event.type === 'message-persisted' ||
-      event.type === 'credits-exhausted'
-    ) {
-      const redis = this.redisClientService.getClient();
-      await redis.del(this.getStreamChunksKey(threadId));
-    }
+    const publishedEvent = shouldKeepCatchup
+      ? await this.keepCatchup({ threadId, event })
+      : event;
 
     await this.subscriptionService.publishToAgentChat({
       workspaceId,
@@ -72,6 +53,40 @@ export class AgentChatEventPublisherService {
         },
       },
     });
+  }
+
+  private async keepCatchup({
+    threadId,
+    event,
+  }: {
+    threadId: string;
+    event: AgentChatSubscriptionEvent;
+  }): Promise<AgentChatSubscriptionEvent> {
+    const redis = this.redisClientService.getClient();
+    const key = this.getStreamChunksKey(threadId);
+
+    if (event.type === 'stream-chunk') {
+      // Sent together on one connection, Redis still runs them in order.
+      const [seq] = await Promise.all([
+        redis.rpush(key, JSON.stringify(event.chunk)),
+        redis.expire(key, STREAM_CHUNKS_TTL_SECONDS),
+        redis.expire(
+          this.getStreamOwnerKey(threadId),
+          STREAM_CHUNKS_TTL_SECONDS,
+        ),
+      ]);
+
+      return { ...event, seq };
+    }
+
+    if (
+      event.type === 'message-persisted' ||
+      event.type === 'credits-exhausted'
+    ) {
+      await redis.del(key);
+    }
+
+    return event;
   }
 
   async resetStreamState(threadId: string): Promise<void> {

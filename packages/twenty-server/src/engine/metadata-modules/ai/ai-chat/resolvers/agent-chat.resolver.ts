@@ -25,12 +25,10 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
-import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -38,7 +36,6 @@ import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -50,8 +47,6 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @UseGuards(
@@ -87,10 +82,7 @@ export class AgentChatResolver {
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly messageReactionService: AgentChatMessageReactionService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -105,79 +97,6 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId,
     });
-  }
-
-  @Query(() => [AgentMessageDTO])
-  async chatMessages(
-    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    const messages = await this.agentChatService.getMessagesForThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
-    const [{ flatWorkspaceMemberMaps }, reactionsByMessageId] =
-      await Promise.all([
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatWorkspaceMemberMaps',
-        ]),
-        this.messageReactionService.findReactionsByMessageId({
-          workspaceId,
-          messageIds: messages.map(({ id }) => id),
-        }),
-      ]);
-
-    // Fronts cached from the release before still name senders by their
-    // membership, which messages no longer store
-    return messages.map((message) => {
-      const senderUserId = isDefined(message.senderWorkspaceMemberId)
-        ? flatWorkspaceMemberMaps.byId[message.senderWorkspaceMemberId]?.userId
-        : undefined;
-
-      return {
-        ...message,
-        reactions: reactionsByMessageId.get(message.id) ?? [],
-        senderUserWorkspaceId: isDefined(senderUserId)
-          ? (flatWorkspaceMemberMaps.userWorkspaceIdByUserId[senderUserId] ??
-            null)
-          : null,
-      };
-    });
-  }
-
-  @Query(() => ChatStreamCatchupChunksDTO)
-  async chatStreamCatchupChunks(
-    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    const thread = await this.sharingService.getReadableThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    await this.reapDeadStream(thread, workspaceId);
-
-    const { chunks, maxSeq } =
-      await this.eventPublisherService.getAccumulatedChunks(threadId);
-
-    const turnError = await this.turnRecorderService.findLatestTurnError({
-      workspaceId,
-      threadId,
-    });
-
-    return {
-      chunks,
-      maxSeq,
-      error: turnError
-        ? { code: turnError.code, message: turnError.message }
-        : null,
-    };
   }
 
   @Mutation(() => AgentChatThreadDTO)

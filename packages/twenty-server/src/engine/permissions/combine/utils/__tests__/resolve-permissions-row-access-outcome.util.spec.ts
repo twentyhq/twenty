@@ -153,4 +153,52 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       }),
     ).toBe(true);
   });
+
+  describe('for a principal narrowed by a scope', () => {
+    const scopedPrincipal = ({
+      canReadObjectRecords,
+    }: {
+      canReadObjectRecords: boolean;
+    }): PermissionsPrincipalsWithRolesContext => ({
+      ...readOnlyPrincipal,
+      scope: {
+        objectsPermissions: {
+          [flatObjectMetadata.id]: {
+            ...readOnlyPermissions,
+            canReadObjectRecords,
+          },
+        },
+      },
+    });
+
+    it('denies what the scope denies, though the role permits it', () => {
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: false }),
+        }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: true }),
+        }),
+      ).toBeUndefined();
+    });
+
+    it('never lets a share carry it beyond its roles', () => {
+      const principal = scopedPrincipal({ canReadObjectRecords: true });
+      const featureFlagKeys = [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED];
+
+      expect(
+        resolveOutcome({ principal, operationType: 'update', featureFlagKeys }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal,
+          operationType: 'update',
+          featureFlagKeys,
+          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        }),
+      ).toBe(false);
+    });
+  });
 });
