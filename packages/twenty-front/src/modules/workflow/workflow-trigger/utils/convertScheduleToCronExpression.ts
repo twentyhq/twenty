@@ -1,7 +1,7 @@
 import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
 
 export const convertScheduleToCronExpression = (
-  trigger: WorkflowCronTrigger,
+  trigger: Pick<WorkflowCronTrigger, 'settings'>,
 ): string | null => {
   switch (trigger.settings.type) {
     case 'CUSTOM':
