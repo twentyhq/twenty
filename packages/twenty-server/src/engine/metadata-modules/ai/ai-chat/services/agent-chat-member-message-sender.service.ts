@@ -75,7 +75,7 @@ export class AgentChatMemberMessageSenderService {
     await this.threadService.createThreadIfMissing({
       ...access,
       channelId: target.channelId,
-      shouldApplyAssistantParticipation: !isInboxEnabled,
+      shouldApplyAssistantParticipation: false,
       ...participationIntent,
     });
 
@@ -85,14 +85,6 @@ export class AgentChatMemberMessageSenderService {
       thread,
       ...participationIntent,
     });
-
-    if (!isInboxEnabled) {
-      await this.participationService.save({
-        workspaceId: actor.workspaceId,
-        thread,
-        participation,
-      });
-    }
 
     const shouldReply = assistant.isReplyRequested || !isInboxEnabled;
 
@@ -128,8 +120,8 @@ export class AgentChatMemberMessageSenderService {
       actor,
       thread,
       message,
-      addressing,
-      participation: isInboxEnabled ? participation : undefined,
+      addressing: isInboxEnabled ? addressing : undefined,
+      participation,
     };
     const result: AgentChatMemberMessageResult = shouldReply
       ? await this.sendWithReply({ ...write, execution })
@@ -171,10 +163,8 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     participation,
     execution,
-  }: Pick<
-    AgentChatMemberMessageSendArgs,
-    'actor' | 'message' | 'addressing' | 'execution'
-  > & {
+  }: Pick<AgentChatMemberMessageSendArgs, 'actor' | 'message' | 'execution'> & {
+    addressing?: AgentChatMemberMessageSendArgs['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
     participation?: AgentChatAssistantParticipation;
   }): Promise<AgentChatMemberMessageResult> {
