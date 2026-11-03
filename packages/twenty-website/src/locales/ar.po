@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 16:14\n"
+"PO-Revision-Date: 2026-11-03 14:14\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -649,12 +649,12 @@ msgstr "3 خطوط منتجات"
 #. js-lingui-id: P9cEa2
 #: src/sections/affiliate-program/affiliate-program-terms.data.ts
 msgid "30 days"
-msgstr ""
+msgstr "30 يومًا"
 
 #. js-lingui-id: f8kF3P
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr ""
+msgstr "30 يومًا بعد النقر. إذا أنشأ الزائر مساحة العمل الخاصة به خلال تلك المدة وأصبح لاحقًا عميلًا مدفوعًا لـ Cloud Organization أو Enterprise، فإن العمولة من حقك. إذا نقر على رابط شريك آخر قبل إنشاء مساحة العمل الخاصة به، فسيحصل ذلك الشريك على الفضل."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -1131,12 +1131,12 @@ msgstr "طلب الانضمام إلى برنامج الشركاء بالعمو�
 #. js-lingui-id: WsWBAA
 #: src/app/[locale]/(site)/affiliate-partners/terms/page.tsx
 msgid "Affiliate Program Terms"
-msgstr ""
+msgstr "شروط برنامج الشركاء التابعين"
 
 #. js-lingui-id: KwiXVB
 #: src/platform/routing/static-website-routes.ts
 msgid "Affiliate Program Terms | Twenty"
-msgstr ""
+msgstr "شروط برنامج الشركاء | Twenty"
 
 #. js-lingui-id: QjSFuI
 #: src/partner-application/data/partner-country-options.ts
@@ -4727,7 +4727,7 @@ msgstr "المجر 🇭🇺"
 #. js-lingui-id: L6C8J0
 #: src/affiliate-application/AffiliateApplicationForm.tsx
 msgid "I agree to the <0>affiliate program terms</0>"
-msgstr ""
+msgstr "أوافق على <0>شروط برنامج الشركاء</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -6425,7 +6425,7 @@ msgstr "تفعيل المؤسسة | Twenty"
 #. js-lingui-id: gedycB
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "Organization and Enterprise plans on Twenty Cloud. Pro plans and AI credits are not included."
-msgstr ""
+msgstr "خطط المؤسسات والشركات على Twenty Cloud. لا تشمل خطط Pro ولا أرصدة الذكاء الاصطناعي."
 
 #. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
@@ -8843,7 +8843,7 @@ msgstr "الشروط التي تحكم استخدامك لـ Twenty وخدمات
 #. js-lingui-id: GbDTo3
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty."
-msgstr ""
+msgstr "شروط برنامج الشركاء في Twenty: الإحالات المؤهلة والعمولات والدفعات وكيفية الترويج لـ Twenty."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/ReleaseNotes.tsx
