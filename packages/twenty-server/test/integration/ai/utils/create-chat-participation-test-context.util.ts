@@ -18,7 +18,6 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { type AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
-import { type AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
 import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
@@ -74,10 +73,6 @@ export const createChatParticipationTestContext = async () => {
   const assistantParticipationService =
     getAppProviderByClassName<AgentChatAssistantParticipationService>(
       'AgentChatAssistantParticipationService',
-    );
-  const assistantPolicyService =
-    getAppProviderByClassName<AgentChatAssistantPolicyService>(
-      'AgentChatAssistantPolicyService',
     );
   const memberMessageWriterService =
     getAppProviderByClassName<AgentChatMemberMessageWriterService>(
@@ -278,7 +273,6 @@ export const createChatParticipationTestContext = async () => {
     threadService,
     inboxDeliveryService,
     assistantParticipationService,
-    assistantPolicyService,
     memberMessageWriterService,
     chatService,
     sharingService,

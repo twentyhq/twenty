@@ -59,7 +59,10 @@ export class AgentChatMemberMessageWriterService {
     thread: AgentChatThreadWorkspaceEntity;
     message: AgentChatMemberMessage;
     placement: 'queued' | 'running' | 'completed';
-    participation?: AgentChatAssistantParticipation;
+    participation?: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant' | 'isInitialMessage'
+    >;
     addressing?: AgentChatMessageAddressing;
   }) {
     const access = {

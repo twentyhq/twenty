@@ -8,9 +8,8 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type AgentChatAssistantDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-decision.type';
 import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
-import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
@@ -41,9 +40,6 @@ export class AgentChatAssistantPolicyService {
   @Inject(RecordShareStorageService)
   private readonly recordShareStorageService: RecordShareStorageService;
 
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
   async resolve({
     workspaceId,
     thread,
@@ -51,6 +47,7 @@ export class AgentChatAssistantPolicyService {
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     isInitialMessage,
+    isReplyRequested = true,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
@@ -58,7 +55,8 @@ export class AgentChatAssistantPolicyService {
     isAssistantMentioned?: boolean;
     isInitialAssistantParticipant?: boolean;
     isInitialMessage: boolean;
-  }): Promise<boolean> {
+    isReplyRequested?: boolean;
+  }): Promise<AgentChatAssistantDecision> {
     const mode = await this.resolveMode({ workspaceId, thread });
     const audience = await this.resolveAudience({
       workspaceId,
@@ -66,7 +64,7 @@ export class AgentChatAssistantPolicyService {
       candidateWorkspaceMemberIds,
     });
 
-    return resolveAgentChatAssistantParticipation({
+    const isAssistantParticipant = resolveAgentChatAssistantParticipation({
       mode,
       audience,
       isAssistantParticipant: thread.isAssistantParticipant,
@@ -74,47 +72,15 @@ export class AgentChatAssistantPolicyService {
       isInitialAssistantParticipant,
       isInitialMessage,
     });
-  }
-
-  async resolveReplyDecision({
-    workspaceId,
-    workspaceMemberId,
-    thread,
-    candidateWorkspaceMemberIds = [],
-    isAssistantMentioned,
-    isReplyRequested,
-  }: {
-    workspaceId: string;
-    workspaceMemberId: string;
-    thread: AssistantPolicyThread;
-    candidateWorkspaceMemberIds?: string[];
-    isAssistantMentioned: boolean;
-    isReplyRequested: boolean;
-  }): Promise<AgentChatReplyDecision> {
-    const eligibleWorkspaceMemberIds =
-      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
-        workspaceId,
-        workspaceMemberId,
-        threadId: thread.id,
-        memberIds: candidateWorkspaceMemberIds,
-      });
-    const mode = await this.resolveMode({ workspaceId, thread });
-    const audience = await this.resolveAudience({
-      workspaceId,
-      thread,
-      candidateWorkspaceMemberIds: [
-        workspaceMemberId,
-        ...eligibleWorkspaceMemberIds,
-      ],
-    });
-
-    return resolveAgentChatReplyDecision({
+    const replyDecision = resolveAgentChatReplyDecision({
       mode,
       audience,
-      isAssistantParticipant: thread.isAssistantParticipant,
+      isAssistantParticipant,
       isAssistantMentioned,
       isReplyRequested,
     });
+
+    return { isAssistantParticipant, replyDecision };
   }
 
   private async resolveMode({

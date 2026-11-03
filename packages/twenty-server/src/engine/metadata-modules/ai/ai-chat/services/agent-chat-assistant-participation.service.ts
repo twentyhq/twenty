@@ -42,6 +42,7 @@ export class AgentChatAssistantParticipationService {
     isInitialMessage: initialMessage,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
+    isReplyRequested = true,
     recipientWorkspaceMemberIds = [],
     mentionedWorkspaceMemberIds = [],
   }: AgentChatAssistantParticipationArgs & {
@@ -49,6 +50,7 @@ export class AgentChatAssistantParticipationService {
     workspaceMemberId: string;
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage?: boolean;
+    isReplyRequested?: boolean;
   }): Promise<AgentChatAssistantParticipation> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
@@ -68,7 +70,7 @@ export class AgentChatAssistantParticipationService {
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
         ],
       });
-    const isAssistantParticipant = await this.assistantPolicyService.resolve({
+    const decision = await this.assistantPolicyService.resolve({
       workspaceId,
       thread,
       candidateWorkspaceMemberIds: [
@@ -78,9 +80,10 @@ export class AgentChatAssistantParticipationService {
       isAssistantMentioned,
       isInitialAssistantParticipant,
       isInitialMessage,
+      isReplyRequested,
     });
 
-    return { isAssistantParticipant, isInitialMessage };
+    return { ...decision, isInitialMessage };
   }
 
   async save({

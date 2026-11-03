@@ -48,6 +48,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       isAssistantMentioned: isAssistantMentionedInMessage,
+      isReplyRequested: shouldAssistantReply,
     });
 
     await context.assistantParticipationService.save({
@@ -57,16 +58,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     });
 
     const decision = isAiChatInboxEnabled
-      ? await context.assistantPolicyService.resolveReplyDecision({
-          workspaceId: context.workspaceId,
-          workspaceMemberId: context.workspaceMemberId,
-          thread: {
-            ...thread,
-            isAssistantParticipant: participation.isAssistantParticipant,
-          },
-          isAssistantMentioned: isAssistantMentionedInMessage,
-          isReplyRequested: shouldAssistantReply,
-        })
+      ? participation.replyDecision
       : 'REPLY';
 
     return context.replyPolicyService.shouldReply({

@@ -1,4 +1,3 @@
-import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -32,9 +31,6 @@ import {
 
 @Injectable()
 export class AgentChatMemberMessageSenderService {
-  @Inject(AgentChatAssistantPolicyService)
-  private readonly assistantPolicyService: AgentChatAssistantPolicyService;
-
   @Inject(AgentChatReplyPolicyService)
   private readonly replyPolicyService: AgentChatReplyPolicyService;
 
@@ -117,6 +113,7 @@ export class AgentChatMemberMessageSenderService {
       ...actor,
       thread,
       ...participationIntent,
+      isReplyRequested: assistant.isReplyRequested,
     });
 
     if (!isInboxEnabled) {
@@ -127,23 +124,7 @@ export class AgentChatMemberMessageSenderService {
       });
     }
 
-    const replyDecision =
-      await this.assistantPolicyService.resolveReplyDecision({
-        workspaceId: actor.workspaceId,
-        workspaceMemberId: actor.workspaceMemberId,
-        thread: {
-          ...thread,
-          isAssistantParticipant: participation.isAssistantParticipant,
-        },
-        candidateWorkspaceMemberIds: [
-          ...addressing.mentionedWorkspaceMemberIds,
-          ...(participation.isInitialMessage
-            ? addressing.initialRecipientWorkspaceMemberIds
-            : []),
-        ],
-        isAssistantMentioned: assistant.isMentioned,
-        isReplyRequested: assistant.isReplyRequested,
-      });
+    const replyDecision = participation.replyDecision;
     const shouldReply =
       !isInboxEnabled ||
       (await this.replyPolicyService.shouldReply({
@@ -235,7 +216,10 @@ export class AgentChatMemberMessageSenderService {
     'actor' | 'message' | 'addressing' | 'execution'
   > & {
     thread: AgentChatThreadWorkspaceEntity;
-    participation?: AgentChatAssistantParticipation;
+    participation?: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant' | 'isInitialMessage'
+    >;
   }): Promise<AgentChatMemberMessageResult> {
     const access = { workspaceId: actor.workspaceId, threadId: thread.id };
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
