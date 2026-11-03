@@ -8,7 +8,12 @@ const NO_OPERATIONS = {
   canDestroyRecords: false,
 };
 
-const OPERATIONS = Object.keys(NO_OPERATIONS) as (keyof typeof NO_OPERATIONS)[];
+const OPERATIONS = [
+  'canReadRecords',
+  'canUpdateRecords',
+  'canSoftDeleteRecords',
+  'canDestroyRecords',
+] as const;
 
 describe('getNestedPredicateGroupOperationErrors', () => {
   it.each(OPERATIONS)('lets a root group grant %s', (operation) => {
