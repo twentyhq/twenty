@@ -10,6 +10,7 @@ import {
   convertRecordFilterGroupToPredicateGroup,
   convertRecordFilterToPredicate,
 } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
+import { getRowLevelPermissionPredicateGroupIdsWithAncestors } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRowLevelPermissionPredicateGroupIdsWithAncestors';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
@@ -46,28 +47,12 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
       const previousPredicateGroups =
         previousRole.rowLevelPermissionPredicateGroups ?? [];
 
-      const previousPredicateGroupById = new Map(
-        previousPredicateGroups.map((group) => [group.id, group]),
-      );
-
       // Otherwise removing a group in the builder would orphan relation-backed predicates still pointing at it
-      const groupIdsNeededByPredicatesNotManagedByFilters = new Set<string>();
-
-      for (const predicate of predicatesNotManagedByFilters) {
-        let groupId: string | null | undefined =
-          predicate.rowLevelPermissionPredicateGroupId;
-
-        while (
-          isDefined(groupId) &&
-          !groupIdsNeededByPredicatesNotManagedByFilters.has(groupId)
-        ) {
-          groupIdsNeededByPredicatesNotManagedByFilters.add(groupId);
-          groupId =
-            previousPredicateGroupById.get(
-              groupId,
-            )?.parentRowLevelPermissionPredicateGroupId;
-        }
-      }
+      const groupIdsNeededByPredicatesNotManagedByFilters =
+        getRowLevelPermissionPredicateGroupIdsWithAncestors({
+          predicates: predicatesNotManagedByFilters,
+          predicateGroups: previousPredicateGroups,
+        });
 
       const currentGroupIds = new Set(
         currentRecordFilterGroups.map((group) => group.id),

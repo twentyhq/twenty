@@ -1,24 +1,17 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
-import { AdvancedFilterRecordFilterGroupOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
-import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupRow';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell';
-import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledChildren = styled.div`
@@ -26,26 +19,6 @@ const StyledChildren = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   width: 100%;
-`;
-
-const StyledGroupRow = styled.div`
-  align-items: start;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledGroupContainer = styled.div`
-  align-items: start;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildrenProps =
@@ -57,8 +30,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupC
   ({
     recordFilterGroup,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildrenProps) => {
-    const { objectMetadataItem } = useContext(AdvancedFilterContext);
-
     const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
@@ -71,10 +42,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupC
       useChildRecordFiltersAndRecordFilterGroups({
         recordFilterGroupId: recordFilterGroup.id,
       });
-
-    const { handleAddFilter } = useRecordLevelPermissionFilterActions({
-      objectMetadataItem,
-    });
 
     // Relation-backed predicates are not editable here, so a group holding only those would render empty
     const visibleChildren = childRecordFiltersAndRecordFilterGroups.filter(
@@ -93,29 +60,16 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupC
       <StyledChildren>
         {visibleChildren.map((child, index) =>
           isRecordFilterGroupChildARecordFilterGroup(child) ? (
-            <StyledGroupRow key={child.id}>
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell
-                index={index}
-                recordFilterGroup={recordFilterGroup}
+            <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupRow
+              key={child.id}
+              recordFilterGroup={child}
+              parentRecordFilterGroup={recordFilterGroup}
+              index={index}
+            >
+              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildren
+                recordFilterGroup={child}
               />
-              <StyledGroupContainer>
-                <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildren
-                  recordFilterGroup={child}
-                />
-                <CommandMenuButton
-                  command={{
-                    Icon: IconPlus,
-                    label: t`Add rule`,
-                    shortLabel: t`Add rule`,
-                    key: `add-rule-${child.id}`,
-                  }}
-                  onClick={() => handleAddFilter(child)}
-                />
-              </StyledGroupContainer>
-              <AdvancedFilterRecordFilterGroupOptionsDropdown
-                recordFilterGroupId={child.id}
-              />
-            </StyledGroupRow>
+            </SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupRow>
           ) : (
             <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
               key={child.id}
