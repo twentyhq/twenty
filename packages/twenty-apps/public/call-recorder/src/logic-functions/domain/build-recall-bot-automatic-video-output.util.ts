@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { fetchPublicAsset } from 'src/logic-functions/data/fetch-public-asset.util';
-import { getCameraTileFontFilePath } from 'src/logic-functions/data/get-camera-tile-font-file-path.util';
+import { fetchPublicAssetOrThrow } from 'src/logic-functions/data/fetch-public-asset-or-throw.util';
+import { getCameraTileFontFilePathOrThrow } from 'src/logic-functions/data/get-camera-tile-font-file-path-or-throw.util';
 import { getWorkspaceBranding } from 'src/logic-functions/data/get-workspace-branding.util';
 import { buildBotImage } from 'src/logic-functions/domain/build-bot-image.util';
 import { buildCameraTileLayout } from 'src/logic-functions/domain/build-camera-tile-layout.util';
@@ -22,7 +22,7 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
     const sharp = await loadSharp();
 
     const [fontFilePath, branding] = await Promise.all([
-      getCameraTileFontFilePath(),
+      getCameraTileFontFilePathOrThrow(),
       style === 'WORKSPACE' ? getWorkspaceBranding() : undefined,
     ]);
 
@@ -35,7 +35,7 @@ export const buildRecallBotAutomaticVideoOutput = async (): Promise<
 
     const background = isUndefined(layout.backgroundAssetPath)
       ? undefined
-      : await fetchPublicAsset(layout.backgroundAssetPath);
+      : await fetchPublicAssetOrThrow(layout.backgroundAssetPath);
 
     const notRecordingImage = await buildBotImage({
       sharp,

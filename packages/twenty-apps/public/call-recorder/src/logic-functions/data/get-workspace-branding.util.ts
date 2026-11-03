@@ -1,8 +1,7 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-
-const LOGO_DOWNLOAD_TIMEOUT_MS = 30_000;
 
 export type WorkspaceBranding = {
   logo: Buffer | undefined;
@@ -10,9 +9,7 @@ export type WorkspaceBranding = {
 };
 
 const downloadLogo = async (logoUrl: string): Promise<Buffer | undefined> => {
-  const response = await fetch(logoUrl, {
-    signal: AbortSignal.timeout(LOGO_DOWNLOAD_TIMEOUT_MS),
-  });
+  const response = await fetchWithTimeout(logoUrl);
 
   if (!response.ok) {
     console.warn(

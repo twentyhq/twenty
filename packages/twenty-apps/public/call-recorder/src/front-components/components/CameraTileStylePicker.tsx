@@ -1,22 +1,14 @@
 import styled from '@emotion/styled';
-import { useRef, type KeyboardEvent } from 'react';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
 import { CALL_RECORDER_STYLE_OPTIONS } from 'src/constants/call-recorder-style-options';
-import {
-  CameraTilePreview,
-  type CameraTilePreviewProps,
-} from 'src/front-components/components/CameraTilePreview';
+import { StyledCameraTilePreviewImage } from 'src/front-components/components/StyledCameraTilePreviewImage';
+import { CAMERA_TILE_PREVIEW_ASSET_PATHS } from 'src/front-components/constants/camera-tile-preview-asset-paths.constant';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 
 const MOBILE_CHOICE_WIDTH = '160px';
-const NAVIGATION_STEP_BY_KEY: Record<string, number> = {
-  ArrowRight: 1,
-  ArrowDown: 1,
-  ArrowLeft: -1,
-  ArrowUp: -1,
-};
 
 const StyledChoices = styled.div`
   display: flex;
@@ -28,7 +20,8 @@ const StyledChoices = styled.div`
   }
 `;
 
-const StyledChoice = styled.div`
+const StyledChoice = styled.label`
+  cursor: pointer;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
@@ -39,16 +32,17 @@ const StyledChoice = styled.div`
   }
 `;
 
-const StyledTileButton = styled.button`
-  background: none;
-  border: none;
+const StyledRadioInput = styled.input`
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+`;
+
+const StyledTile = styled.span`
   border-radius: ${() => themeCssVariables.border.radius.md};
-  cursor: pointer;
   display: block;
   overflow: hidden;
-  padding: 0;
   position: relative;
-  width: 100%;
 
   &::after {
     border-radius: inherit;
@@ -59,7 +53,7 @@ const StyledTileButton = styled.button`
     position: absolute;
   }
 
-  &:focus-visible {
+  input:focus-visible + & {
     outline: 2px solid ${() => themeCssVariables.color.blue};
     outline-offset: 1px;
   }
@@ -94,82 +88,46 @@ const StyledChoiceLabel = styled.span`
   margin-top: ${() => themeCssVariables.spacing[2]};
 `;
 
-type CameraTileStylePickerProps = Omit<CameraTilePreviewProps, 'style'> & {
-  idPrefix: string;
+type CameraTileStylePickerProps = {
+  id: string;
   label: string;
   value: CallRecorderStyle;
   onChange: (style: CallRecorderStyle) => void;
 };
 
-export const getCameraTileStyleOptionId = (
-  idPrefix: string,
-  style: CallRecorderStyle,
-) => `${idPrefix}-${style.toLowerCase()}`;
-
 export const CameraTileStylePicker = ({
-  idPrefix,
+  id,
   label,
   value,
   onChange,
-  ...previewProps
-}: CameraTileStylePickerProps) => {
-  const optionReferences = useRef<
-    Partial<Record<CallRecorderStyle, HTMLButtonElement | null>>
-  >({});
+}: CameraTileStylePickerProps) => (
+  <StyledChoices id={id} role="radiogroup" aria-label={label}>
+    {CALL_RECORDER_STYLE_OPTIONS.map((option) => {
+      const isChecked = option.value === value;
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    const step = NAVIGATION_STEP_BY_KEY[event.key];
-
-    if (step === undefined) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const currentIndex = CALL_RECORDER_STYLE_OPTIONS.findIndex(
-      (option) => option.value === value,
-    );
-    const nextStyle =
-      CALL_RECORDER_STYLE_OPTIONS[
-        (currentIndex + step + CALL_RECORDER_STYLE_OPTIONS.length) %
-          CALL_RECORDER_STYLE_OPTIONS.length
-      ].value;
-
-    onChange(nextStyle);
-    optionReferences.current[nextStyle]?.focus();
-  };
-
-  return (
-    <StyledChoices role="radiogroup" aria-label={label}>
-      {CALL_RECORDER_STYLE_OPTIONS.map((option) => {
-        const isChecked = option.value === value;
-        const optionId = getCameraTileStyleOptionId(idPrefix, option.value);
-        const labelId = `${optionId}-label`;
-
-        return (
-          <StyledChoice key={option.value}>
-            <StyledTileButton
-              ref={(element) => {
-                optionReferences.current[option.value] = element;
-              }}
-              id={optionId}
-              type="button"
-              role="radio"
-              aria-checked={isChecked}
-              aria-labelledby={labelId}
-              tabIndex={isChecked ? 0 : -1}
-              onClick={() => onChange(option.value)}
-              onKeyDown={handleKeyDown}
-            >
-              <CameraTilePreview style={option.value} {...previewProps} />
-              <StyledCheckmark $checked={isChecked} aria-hidden>
-                <IconCheck size={THEME_COMMON.icon.size.sm} />
-              </StyledCheckmark>
-            </StyledTileButton>
-            <StyledChoiceLabel id={labelId}>{option.label}</StyledChoiceLabel>
-          </StyledChoice>
-        );
-      })}
-    </StyledChoices>
-  );
-};
+      return (
+        <StyledChoice key={option.value}>
+          <StyledRadioInput
+            type="radio"
+            name={id}
+            value={option.value}
+            checked={isChecked}
+            onChange={() => onChange(option.value)}
+          />
+          <StyledTile>
+            <StyledCameraTilePreviewImage
+              src={getPublicAssetUrl(
+                CAMERA_TILE_PREVIEW_ASSET_PATHS[option.value],
+              )}
+              alt=""
+            />
+            <StyledCheckmark $checked={isChecked} aria-hidden>
+              <IconCheck size={THEME_COMMON.icon.size.sm} />
+            </StyledCheckmark>
+          </StyledTile>
+          <StyledChoiceLabel>{option.label}</StyledChoiceLabel>
+        </StyledChoice>
+      );
+    })}
+  </StyledChoices>
+);

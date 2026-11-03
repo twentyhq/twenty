@@ -13,6 +13,17 @@ import { type SharpFactory } from 'src/logic-functions/utils/load-sharp.util';
 
 const JPEG_QUALITY_STEP = 10;
 
+const JPEG_QUALITIES = Array.from(
+  {
+    length:
+      Math.floor(
+        (RECALL_BOT_IMAGE_JPEG_QUALITY - RECALL_BOT_IMAGE_MIN_JPEG_QUALITY) /
+          JPEG_QUALITY_STEP,
+      ) + 1,
+  },
+  (_, index) => RECALL_BOT_IMAGE_JPEG_QUALITY - index * JPEG_QUALITY_STEP,
+);
+
 export const buildBotImage = async ({
   sharp,
   background,
@@ -38,24 +49,17 @@ export const buildBotImage = async ({
       .jpeg({ quality, mozjpeg: true })
       .toBuffer();
 
-  let quality = RECALL_BOT_IMAGE_JPEG_QUALITY;
-  let jpeg = await composeJpeg(quality);
+  for (const quality of JPEG_QUALITIES) {
+    const jpeg = await composeJpeg(quality);
 
-  while (
-    jpeg.byteLength > RECALL_BOT_IMAGE_MAX_BYTES &&
-    quality - JPEG_QUALITY_STEP >= RECALL_BOT_IMAGE_MIN_JPEG_QUALITY
-  ) {
-    quality -= JPEG_QUALITY_STEP;
-    jpeg = await composeJpeg(quality);
+    if (jpeg.byteLength <= RECALL_BOT_IMAGE_MAX_BYTES) {
+      return jpeg.toString('base64');
+    }
   }
 
-  if (jpeg.byteLength > RECALL_BOT_IMAGE_MAX_BYTES) {
-    console.warn(
-      '[call-recorder] camera tile could not be encoded under the Recall image size limit',
-    );
+  console.warn(
+    '[call-recorder] camera tile could not be encoded under the Recall image size limit',
+  );
 
-    return undefined;
-  }
-
-  return jpeg.toString('base64');
+  return undefined;
 };

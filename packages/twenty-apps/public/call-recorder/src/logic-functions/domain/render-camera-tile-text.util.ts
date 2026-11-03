@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 import {
   CAMERA_TILE_FONT_FAMILY,
   CAMERA_TILE_TEXT_COLOR,
@@ -43,11 +45,12 @@ export const renderCameraTileText = async ({
       .png()
       .toBuffer({ resolveWithObject: true });
 
-  let { data, info } = await render();
+  const naturalText = await render();
 
-  if (maxWidth !== undefined && info.width > maxWidth) {
-    ({ data, info } = await render({ width: maxWidth, height: info.height }));
-  }
+  const { data, info } =
+    isDefined(maxWidth) && naturalText.info.width > maxWidth
+      ? await render({ width: maxWidth, height: naturalText.info.height })
+      : naturalText;
 
   return { input: data, width: info.width, height: info.height };
 };

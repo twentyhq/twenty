@@ -1,14 +1,12 @@
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CameraTilePreview } from 'src/front-components/components/CameraTilePreview';
-import {
-  CameraTileStylePicker,
-  getCameraTileStyleOptionId,
-} from 'src/front-components/components/CameraTileStylePicker';
+import { CameraTileStylePicker } from 'src/front-components/components/CameraTileStylePicker';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
+import { StyledCameraTilePreviewImage } from 'src/front-components/components/StyledCameraTilePreviewImage';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import {
@@ -16,8 +14,8 @@ import {
   CALL_RECORDER_STYLE_DESCRIPTIONS,
   CALL_RECORDER_STYLE_FIELD,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
+import { CAMERA_TILE_PREVIEW_ASSET_PATHS } from 'src/front-components/constants/camera-tile-preview-asset-paths.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
-import { useWorkspaceBranding } from 'src/front-components/hooks/use-workspace-branding';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { DEFAULT_CALL_RECORDER_STYLE } from 'src/logic-functions/constants/default-call-recorder-style';
 import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
@@ -55,12 +53,11 @@ const getInitialStyle = (): CallRecorderStyle => {
 
 export const RecorderSection = () => {
   const nameInputId = useId();
-  const styleIdPrefix = useId();
+  const styleGroupId = useId();
   const [nameValue, setNameValue] = useState(() =>
     getApplicationVariableValue(CALL_RECORDER_NAME_FIELD.variableKey),
   );
   const [style, setStyle] = useState(getInitialStyle);
-  const { logoUrl, displayName } = useWorkspaceBranding();
 
   const { saveDebounced: saveNameDebounced } = useAutosaveApplicationVariable({
     variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
@@ -83,8 +80,6 @@ export const RecorderSection = () => {
     setStyle(value);
     saveStyleImmediately(value);
   };
-
-  const previewProps = { logoUrl, displayName };
 
   return (
     <Section.Root>
@@ -110,24 +105,21 @@ export const RecorderSection = () => {
         </LabelledSettingsField>
         <LabelledSettingsField
           label={CALL_RECORDER_STYLE_FIELD.label}
-          inputId={getCameraTileStyleOptionId(styleIdPrefix, style)}
+          inputId={styleGroupId}
           hint={`${CALL_RECORDER_STYLE_DESCRIPTIONS[style]} ${CALL_RECORDER_STYLE_FIELD.hint}`}
         >
           <CameraTileStylePicker
-            idPrefix={styleIdPrefix}
+            id={styleGroupId}
             label={CALL_RECORDER_STYLE_FIELD.label}
             value={style}
             onChange={handleStyleChange}
-            {...previewProps}
           />
         </LabelledSettingsField>
         <StyledPreview>
           <StyledPreviewFrame>
-            <CameraTilePreview
-              style={style}
-              isRecording
-              recorderName={nameValue}
-              {...previewProps}
+            <StyledCameraTilePreviewImage
+              src={getPublicAssetUrl(CAMERA_TILE_PREVIEW_ASSET_PATHS[style])}
+              alt=""
             />
           </StyledPreviewFrame>
           <StyledPreviewCaption>Preview</StyledPreviewCaption>

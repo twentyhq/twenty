@@ -128,6 +128,22 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     );
   });
 
+  it('shrinks a workspace name wider than the tile to fit', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
+    metadataQueryMock.mockResolvedValue({
+      currentWorkspace: {
+        logo: LOGO_URL,
+        displayName:
+          'A workspace name long enough to overflow the camera tile on its own line',
+      },
+    });
+
+    const output = await buildOutput();
+
+    expect(output).toBeDefined();
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
   it('falls back to the Twenty style when the workspace has neither a logo nor a drawable name', async () => {
     vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
     metadataQueryMock.mockResolvedValue({
