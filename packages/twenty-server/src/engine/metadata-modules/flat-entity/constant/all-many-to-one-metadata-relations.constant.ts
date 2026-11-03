@@ -348,6 +348,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'webhookUniversalIdentifier',
     },
+    targetApplication: null,
     workspace: null,
     application: null,
   },
@@ -479,6 +480,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
+    },
+    relationFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'relationFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'relationFieldMetadataUniversalIdentifier',
     },
     workspaceMemberFieldMetadata: {
       metadataName: 'fieldMetadata',

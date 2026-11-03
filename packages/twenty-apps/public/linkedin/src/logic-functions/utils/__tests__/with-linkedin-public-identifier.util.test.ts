@@ -14,6 +14,9 @@ vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
   getUnipileUser: mocks.getUnipileUser,
 }));
 
+const { UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
+
 const { withLinkedinPublicIdentifier } =
   await import('src/logic-functions/utils/with-linkedin-public-identifier.util');
 
@@ -38,6 +41,35 @@ describe('withLinkedinPublicIdentifier', () => {
     ).resolves.toBe(user);
     expect(mocks.kvGet).not.toHaveBeenCalled();
     expect(mocks.getUnipileUser).not.toHaveBeenCalled();
+  });
+
+  it('leaves an uncached user as is when the caller declines the lookup', async () => {
+    const shouldLookUp = vi.fn().mockResolvedValue(false);
+
+    await expect(
+      withLinkedinPublicIdentifier({
+        unipileAccountId: 'acc_1',
+        user: DAPHNE,
+        shouldLookUp,
+      }),
+    ).resolves.toBe(DAPHNE);
+    expect(shouldLookUp).toHaveBeenCalledOnce();
+    expect(mocks.getUnipileUser).not.toHaveBeenCalled();
+  });
+
+  it('uses the cache without asking whether to look up', async () => {
+    const shouldLookUp = vi.fn().mockResolvedValue(false);
+
+    mocks.kvGet.mockResolvedValue('daphne-muller');
+
+    await expect(
+      withLinkedinPublicIdentifier({
+        unipileAccountId: 'acc_1',
+        user: DAPHNE,
+        shouldLookUp,
+      }),
+    ).resolves.toEqual({ ...DAPHNE, public_identifier: 'daphne-muller' });
+    expect(shouldLookUp).not.toHaveBeenCalled();
   });
 
   it('reads a cached public identifier without calling Unipile', async () => {
@@ -71,8 +103,20 @@ describe('withLinkedinPublicIdentifier', () => {
     );
   });
 
-  it('falls back to the user as received when the profile lookup fails', async () => {
-    mocks.getUnipileUser.mockRejectedValue(new Error('429 too many requests'));
+  it('fails on a temporary lookup error rather than linking a member id URL', async () => {
+    mocks.getUnipileUser.mockRejectedValue(
+      new UnipileRequestError('Unipile get user profile failed (429)', 429),
+    );
+
+    await expect(
+      withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),
+    ).rejects.toThrow('(429)');
+  });
+
+  it('falls back to the user as received when the profile is gone', async () => {
+    mocks.getUnipileUser.mockRejectedValue(
+      new UnipileRequestError('Unipile get user profile failed (404)', 404),
+    );
 
     await expect(
       withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),

@@ -1,6 +1,7 @@
 /** @jest-environment node */
 
 import { isDefined } from '@/utils/validation/isDefined';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
 
 import {
   workflowManifestSchema,
@@ -153,11 +154,139 @@ describe('workflow manifest step types', () => {
         addConferencing: false,
       },
     },
+    {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        prompt: '{{trigger.properties.after.summary}}',
+        responseFormat: { type: 'text' },
+        humanInputInstructions: 'Ask when the company is unclear',
+        workspaceMemberId: ASSIGNEE,
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
+    {
+      type: 'AI_AGENT',
+      input: {
+        instructions: 'Qualify the lead from its last email.',
+        modelId: 'auto-select-workspace-default-model',
+        modelConfiguration: { webSearch: { enabled: true } },
+        scope: {
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        prompt: '{{trigger.properties.after.summary}}',
+      },
+    },
+    {
+      type: 'SEND_CHAT_MESSAGE',
+      input: {
+        workspaceMemberId: ASSIGNEE,
+        title: 'Approve the opportunity',
+        text: 'Detected in an email thread',
+        toolCall: {
+          toolName: 'create_one_opportunity',
+          arguments: { name: '{{trigger.properties.after.name}}' },
+        },
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
 
     expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  it('refuses an AI agent step running an agent with its own config', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        instructions: 'Qualify the lead.',
+      },
+    });
+
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.message).toContain(
+        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
+      );
+    }
+  });
+
+  it.each([
+    { humanInputInstructions: 'Ask when the company is unclear' },
+    { conversation: { scope: 'RUN' } },
+  ])('refuses %o on an AI agent step without an agent', (agentOnlyInput) => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        instructions: 'Qualify the lead.',
+        prompt: 'Go',
+        ...agentOnlyInput,
+      },
+    });
+
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.message).toContain(
+        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
+      );
+    }
+  });
+
+  it('accepts a conversation on an AI agent step running an agent', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        prompt: 'Go',
+        conversation: { scope: 'RUN' },
+      },
+    });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  it('accepts the blank human input instructions the builder stores on a step without an agent', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: { prompt: 'Go', humanInputInstructions: ' ' },
+    });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  it('refuses an AI agent step scope with row-level predicates', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        instructions: 'Qualify the lead.',
+        scope: { rowLevelPermissionPredicates: [] },
+      },
+    });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(false);
   });
 
   describe('connected account reference', () => {
@@ -228,6 +357,24 @@ describe('workflow manifest step types', () => {
         'connectedAccountHandle',
       ]);
     });
+  });
+
+  it('requires the member a chat message is sent to', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'SEND_CHAT_MESSAGE',
+      input: { title: 'Approve', text: 'Please review' },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'steps',
+      2,
+      'input',
+      'workspaceMemberId',
+    ]);
   });
 
   it('rejects a step type applications cannot use', () => {

@@ -36,6 +36,7 @@ export const RecordTableCellButtons = ({
           {buttons.map(({ Icon, onClick, ariaLabel }, index) => (
             <LightIconButton
               key={index}
+              size="xs"
               aria-label={ariaLabel}
               onClick={onClick}
               disabled={!isDefined(onClick)}

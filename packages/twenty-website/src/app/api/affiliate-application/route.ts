@@ -4,7 +4,6 @@ import { createWebhookForwardingRoute } from '@/platform/http';
 
 export const POST = createWebhookForwardingRoute({
   webhookUrlEnvVar: 'AFFILIATE_APPLICATION_WEBHOOK_URL',
-  secretEnvVar: 'AFFILIATE_APPLICATION_SECRET',
   upstreamKind: 'workflow-webhook',
   schema: affiliateApplicationRequestSchema,
   buildPayload: buildAffiliateWorkflowPayload,

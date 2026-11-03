@@ -20,6 +20,12 @@ export const STANDARD_OBJECT_FIELDS = {
     conversationType: {
       universalIdentifier: '66f93c2f-ae10-4c1a-8510-355a521f7899',
     },
+    directMessageFirstWorkspaceMemberId: {
+      universalIdentifier: 'dd7e093b-06af-47f3-a246-57ae2de33244',
+    },
+    directMessageSecondWorkspaceMemberId: {
+      universalIdentifier: '730c7491-35fa-4bce-90e1-29901e08eba3',
+    },
     isAssistantParticipant: {
       universalIdentifier: 'd901f5bc-23ba-48ac-9103-145da4b76afe',
     },
@@ -1369,6 +1375,23 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     listMemberships: {
       universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
+    },
+  },
+  accessGroup: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
+    ),
+    roleId: {
+      universalIdentifier: '0f8c81b0-6d46-4593-97cb-97216de930ff',
+    },
+    rowLevelPermissionPredicateGroupId: {
+      universalIdentifier: '03f12114-2b40-4dc0-9963-6c2e059bc4b3',
+    },
+    memberFieldValues: {
+      universalIdentifier: 'a0d519f8-cc6b-4bb5-b107-89213d683705',
+    },
+    groupHash: {
+      universalIdentifier: '04687cce-1268-4774-b47e-04076a152630',
     },
   },
   recordShare: {

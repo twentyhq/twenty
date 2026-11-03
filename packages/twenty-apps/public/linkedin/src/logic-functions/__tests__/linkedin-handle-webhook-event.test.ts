@@ -12,6 +12,9 @@ const mocks = vi.hoisted(() => ({
   kvSet: vi.fn(),
   getUnipileUser: vi.fn(),
   getUnipileChat: vi.fn(),
+  downloadUnipileMessageAttachment: vi.fn(),
+  query: vi.fn(),
+  mutation: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -26,12 +29,23 @@ vi.mock('twenty-sdk/logic-function', () => ({
   kv: { get: mocks.kvGet, set: mocks.kvSet },
 }));
 
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: class {
+    query = mocks.query;
+    mutation = mocks.mutation;
+  },
+}));
+
 vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
   getUnipileUser: mocks.getUnipileUser,
 }));
 
 vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
   getUnipileChat: mocks.getUnipileChat,
+}));
+
+vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
+  downloadUnipileMessageAttachment: mocks.downloadUnipileMessageAttachment,
 }));
 
 const { linkedinHandleWebhookEventHandler } =
@@ -76,6 +90,15 @@ describe('linkedinHandleWebhookEventHandler', () => {
       { id: 'channel-id', handle: CHANNEL_HANDLE },
     ]);
     mocks.kvGet.mockResolvedValue(null);
+    mocks.query.mockResolvedValue({ people: { edges: [] } });
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      user: DAPHNE,
+    });
+    mocks.mutation.mockResolvedValue({ createPerson: { id: 'created-id' } });
     mocks.getUnipileUser.mockResolvedValue({
       ...DAPHNE,
       public_identifier: 'daphne-muller',
@@ -112,6 +135,90 @@ describe('linkedinHandleWebhookEventHandler', () => {
     });
   });
 
+  it('imports the image of a received message', async () => {
+    mocks.downloadUnipileMessageAttachment.mockResolvedValue(
+      Buffer.from('png'),
+    );
+    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+          text: '',
+          attachments: [
+            { id: 'attachment-1', type: 'img', mimetype: 'image/png' },
+          ],
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+
+    expect(
+      mocks.downloadUnipileMessageAttachment,
+    ).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      messageId: 'message-1',
+      attachmentId: 'attachment-1',
+      maxSizeBytes: 25 * 1024 * 1024,
+      deadlineAtMs: expect.any(Number),
+    });
+
+    consoleLog.mockRestore();
+  });
+
+  it('imports a group message from a stranger when another member is a contact', async () => {
+    const ada = {
+      id: 'ACoADA',
+      display_name: 'Ada Lovelace',
+      public_identifier: 'ada',
+    };
+
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Founders',
+      is_group: true,
+      is_1to1: false,
+      participants: [
+        { is_self: false, user: ada },
+        { is_self: false, user: DAPHNE },
+      ],
+    });
+    mocks.query.mockImplementation(async (query: unknown) =>
+      JSON.stringify(query).includes('in/ada')
+        ? {
+            people: {
+              edges: [
+                {
+                  node: {
+                    id: 'ada-id',
+                    linkedinLink: {
+                      primaryLinkUrl: 'https://www.linkedin.com/in/ada',
+                    },
+                  },
+                },
+              ],
+            },
+          }
+        : { people: { edges: [] } },
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+    expect(mocks.getUnipileUser).not.toHaveBeenCalled();
+  });
+
   it('ingests a sent message to the chat counterpart public profile URL', async () => {
     mocks.getUnipileChat.mockResolvedValue({
       id: 'chat-1',
@@ -138,8 +245,25 @@ describe('linkedinHandleWebhookEventHandler', () => {
         role: 'TO',
         handle: 'https://www.linkedin.com/in/daphne-muller',
         displayName: 'Daphné Müller',
+        personId: 'created-id',
       },
     ]);
+    expect(mocks.mutation).toHaveBeenCalledExactlyOnceWith({
+      createPerson: {
+        __args: {
+          data: {
+            id: expect.stringMatching(
+              /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+            ),
+            name: { firstName: 'Daphné', lastName: 'Müller' },
+            linkedinLink: {
+              primaryLinkUrl: 'https://www.linkedin.com/in/daphne-muller',
+            },
+          },
+        },
+        id: true,
+      },
+    });
   });
 
   it('ignores events of accounts no connection owns', async () => {

@@ -101,7 +101,7 @@ Un flux de lucru webhook ascultă la `https://\<your-twenty-domain>/webhooks/wor
 
 ## Pași
 
-Fluxurile de lucru ale aplicației acceptă aceste tipuri de pași: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` și `EMPTY`.
+Fluxurile de lucru ale aplicației acceptă aceste tipuri de pași: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` și `EMPTY`.
 
 Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/user-guide/workflows/capabilities/workflow-actions), cu identificatori universali în locul numelor:
 
@@ -110,6 +110,13 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 * Operanzii de filtrare acceptă valori `ViewFilterOperand`, exportate de `twenty-sdk/define`. Operatorii grupului de filtre acceptă valori șir de caractere precum `'AND'` sau `'OR'`.
 * Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
 * Pentru a executa propriul cod, utilizați un pas `LOGIC_FUNCTION`. Pasul Code al generatorului nu este disponibil.
+* Pașii `AI_AGENT` sunt de două tipuri, pe care nu îi puteți combina:
+
+  * Un pas Generate nu are agent. Acesta are propriile `instructions`, `modelId`, `modelConfiguration` și `scope` și se execută o singură dată: fără conversație, fără intervenție umană, fără așteptare.
+  * Un pas Agent execută unul dintre agenții aplicației dvs., denumit cu `agentUniversalIdentifier`, care are propriile instrucțiuni, propriul model și propriile permisiuni. Doar un pas Agent primește `humanInputInstructions` și `conversation`.
+
+  Ambele tipuri primesc `prompt` și `responseFormat` ale constructorului, precum și `workspaceMemberId` pentru membrul cu care agentul poartă conversația.
+* `scope` al unui pas `AI_AGENT` primește permisiunile unui rol fără identitatea acestuia sau predicatele la nivel de rând: `canReadAllObjectRecords`, `objectPermissions` și `fieldPermissions` după identificator universal, `permissionFlagUniversalIdentifiers` și așa mai departe. Acesta doar restricționează: AI-ul pasului nu accesează niciodată mai mult decât persoana care rulează fluxul de lucru. Se rezolvă ca un rol ale cărui indicatori pentru toate înregistrările sunt dezactivați implicit: acțiunile asupra obiectelor și indicatorii de permisiune pe care nu îi acordă sunt refuzați, obiectele de sistem rămân lizibile, cu excepția cazului în care acordă mai multe permisiuni, iar un câmp pe care nu îl listează urmează obiectul său. Un pas Generate fără un `scope` nu primește instrumente de date; un pas Agent rulează cu rolul agentului său.
 * Pașii de e-mail și calendar rulează numai dacă rolul aplicației dvs. are indicatorul de permisiune corespunzător: `SystemPermissionFlag.SEND_EMAIL_TOOL` pentru `SEND_EMAIL` și `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` pentru `CREATE_CALENDAR_EVENT`. Spațiul de lucru o acordă prin instalarea aplicației, iar pasul poate utiliza apoi orice cont conectat din spațiul de lucru, asemenea unui flux de lucru creat în aplicație.
 * id-urile conturilor conectate sunt locale pentru fiecare spațiu de lucru, deci nu includeți unul direct în cod. Denumiți contul în unul dintre următoarele două moduri:
 
@@ -117,6 +124,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
   * `connectedAccountId`: o variabilă, cum ar fi `{{trigger.properties.after.connectedAccountId}}`. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
 
   Setează exact unul dintre cele două.
+* `SEND_CHAT_MESSAGE` publică în căsuța de primire a unui membru al spațiului de lucru, setată cu `workspaceMemberId`. ID-urile membrilor sunt, de asemenea, locale pentru fiecare spațiu de lucru, astfel încât o aplicație transmite o variabilă, cum ar fi `{{trigger.properties.after.assigneeId}}`.
 
 ## După instalare
 

@@ -2,8 +2,10 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
@@ -14,6 +16,9 @@ const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const WORKFLOW_ID = 'workflow-id';
 const WORKSPACE_MEMBER_ID = '20202020-2222-4222-8222-222222222222';
+const EXECUTION_CONTEXT = {
+  authContext: { type: 'application', workspace: { id: WORKSPACE_ID } },
+};
 
 const buildStep = (input: Record<string, unknown>): WorkflowAction =>
   ({
@@ -66,13 +71,17 @@ describe('SendChatMessageWorkflowAction', () => {
       new WorkflowRunInboxSenderWorkspaceService(
         {
           executeInWorkspaceContext: jest.fn((callback) => callback()),
-          getRepository: jest
+          getRepositoryWithoutPermissionChecks: jest
             .fn()
             .mockReturnValue({ findOne: findWorkflowRun }),
         } as unknown as WorkspaceOrmManager,
         { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
+        {} as WorkspaceCacheService,
       ),
       { arm: armStepWait } as unknown as WorkflowStepWaitWorkspaceService,
+      {
+        getExecutionContext: jest.fn().mockResolvedValue(EXECUTION_CONTEXT),
+      } as unknown as WorkflowExecutionContextService,
     );
   });
 
@@ -124,10 +133,7 @@ describe('SendChatMessageWorkflowAction', () => {
         awaitedToolCall: {
           toolName: 'update_one_company',
           arguments: { id: 'id' },
-          caller: {
-            type: 'WORKFLOW_STEP',
-            ref: { workflowRunId: WORKFLOW_RUN_ID, stepId: 'step-1' },
-          },
+          permissions: EXECUTION_CONTEXT,
           waitOnAnswer: expect.any(Function),
         },
       }),

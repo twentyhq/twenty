@@ -22,10 +22,12 @@ import {
   CONNECTED_ACCOUNTS,
   FATHOM_ACCOUNT_ID,
   FATHOM_APPLICATION_ID,
+  FATHOM_ONLY_ACCOUNT_ID,
   GOOGLE_ACCOUNT_ID,
   GOOGLE_MESSAGE_CHANNEL_ID,
   MESSAGE_CHANNELS,
   MICROSOFT_ACCOUNT_ID,
+  USER_SETTINGS_APPLICATION_PREFERENCES_GRAPHQL_HANDLER,
   deleteConnectedAccount,
   disconnectConnectedAccount,
   seedAccountGroupsStory,
@@ -316,11 +318,11 @@ export const AccountsTabWithoutAccountsOffersConnectCards: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Gmail and Calendar', undefined, {
+      await canvas.findByText('Connect with Google', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByText('Connect with Outlook')).toBeVisible();
+    expect(canvas.getByText('Connect with Microsoft')).toBeVisible();
     const linearCard = await canvas.findByText(
       'Connect with Linear',
       undefined,
@@ -388,6 +390,32 @@ export const RowOpensAccountPage: Story = {
         'Navigated to /settings/app-preferences/accounts/:connectedAccountId',
       ),
     ).toBeVisible();
+  },
+};
+
+export const AppOnlyAccountWithAppSettingsOpensAccountPage: Story = {
+  ...accountsTabStory,
+  parameters: {
+    msw: {
+      handlers: [
+        USER_SETTINGS_APPLICATION_PREFERENCES_GRAPHQL_HANDLER,
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole(
+        'link',
+        { name: 'notes@apple.dev' },
+        { timeout: 3000 },
+      ),
+    ).toHaveAttribute(
+      'href',
+      `/settings/app-preferences/accounts/${FATHOM_ONLY_ACCOUNT_ID}`,
+    );
   },
 };
 

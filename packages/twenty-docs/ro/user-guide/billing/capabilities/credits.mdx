@@ -1,13 +1,13 @@
 ---
 title: Credite
-description: Un singur sold simplu care alimentează fluxurile dvs. de lucru, agenții AI și chatul AI — cât valorează un credit, cât de departe ajunge și cum să îl gestionați.
+description: Soldul comun care alimentează fluxurile dvs. de lucru, agenții AI și chatul AI, plus utilizarea AI personală a fiecărui membru — cât valorează un credit, cât de departe ajunge și cum să îl gestionați.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Ce sunt creditele?
 
-Creditele reprezintă un singur sold care alimentează tot ceea ce rulăm în numele dvs. și are un cost real: **automatizări ale fluxurilor de lucru**, **agenți AI** și **chatul AI**. În loc să jonglați cu cote separate pentru „rulări de automatizare” și „jetoane AI”, aveți un singur sold simplu de urmărit.
+Creditele spațiului de lucru reprezintă un singur sold, partajat de întregul spațiu de lucru, care alimentează tot ceea ce rulăm în numele dvs. și are un cost real: **automatizări ale fluxurilor de lucru**, **agenți AI** și **chatul AI**. În loc să jonglați cu cote separate pentru „rulări de automatizare” și „jetoane AI”, aveți un singur sold simplu de urmărit. În planurile Pro și Organization, chatul AI utilizează mai întâi [utilizarea AI personală](#personal-ai-usage) a fiecărui membru.
 
 **1 credit = $1 de utilizare.** Un credit reprezintă doar un dolar de muncă, astfel încât soldul tău este ușor de înțeles — fără unități abstracte de convertit.
 
@@ -51,21 +51,39 @@ Costul variază în funcție de model: un model ușor este considerabil mai ieft
 
 ## Ce este inclus
 
-Fiecare abonament include credite, iar cantitatea depinde de **ciclul de facturare**, nu de plan:
+Fiecare abonament include **credite pentru spațiul de lucru**, partajate de întregul spațiu de lucru. Numărul depinde de planul dvs. și de numărul de utilizatori:
 
-| Ciclu de facturare | Credite incluse | Utilizare echivalentă            |
-| ------------------ | --------------- | -------------------------------- |
-| Lunar              | 5 / lună        | ~$5 de utilizare în fiecare lună |
-| Anual              | 50 / an         | ~$50 de utilizare în fiecare an  |
+| Plan          | Credite incluse                                | Utilizare echivalentă                                   |
+| ------------- | ---------------------------------------------- | ------------------------------------------------------- |
+| Pro           | 1 per utilizator pe lună                       | ~$1 de utilizare per utilizator în fiecare lună         |
+| Organizație   | 4 per utilizator pe lună                       | ~$4 de utilizare per utilizator în fiecare lună         |
+| Planuri Early | 5 pe lună sau 50 pe an pentru facturare anuală | ~$5 de utilizare în fiecare lună sau ~$50 în fiecare an |
 
-Aceste credite sunt concepute pentru a acoperi confortabil automatizările de zi cu zi. Cinci credite acoperă zeci de mii de etape standard de automatizare sau sute de mesaje rapide de interfață – deși o mână de mari, sarcinile de agent în mai multe etape le pot folosi mai repede. Puteți suplimenta în orice moment (vedeți mai jos).
+Pentru facturare anuală, alocarea acoperă întregul an: 12 credite per utilizator pentru Pro și 48 pentru Organization.
+
+Aceste credite sunt concepute pentru a acoperi confortabil automatizările de zi cu zi. Un credit acoperă aproximativ 10.000 de pași standard ai fluxurilor de lucru sau sute de mesaje AI rapide, însă câteva sarcini mari ale agenților, cu mai mulți pași, le pot consuma mai repede. Puteți adăuga un pachet de credite în orice moment (vedeți mai jos).
+
+## Utilizare AI personală
+
+În planurile Pro și Organization, fiecare membru primește și propria alocare săptămânală de AI. Chatul AI și căutarea web o utilizează înaintea creditelor spațiului de lucru:
+
+| Plan        | Utilizare AI personală                                |
+| ----------- | ----------------------------------------------------- |
+| Pro         | Aproximativ 100 de sarcini AI per membru pe săptămână |
+| Organizație | Aproximativ 500 de sarcini AI per membru pe săptămână |
+
+O sarcină AI este o solicitare de chat cu modelul implicit; modelele mai inteligente utilizează mai mult. Alocarea se reînnoiește în fiecare luni la 00:00 UTC. Agenții AI din fluxurile de lucru rulează întotdeauna folosind creditele spațiului de lucru.
+
+Când un membru nu mai are credite, conversațiile sale continuă folosind creditele spațiului de lucru până la reînnoirea alocării. Pentru a întrerupe conversațiile în schimb, un membru cu permisiunea de setări **Facturare** poate dezactiva **Utilizați creditele spațiului de lucru după ce un membru își atinge limita** în **Setări → Facturare**. Planurile Early nu au utilizare AI personală, astfel încât chatul AI rulează folosind creditele spațiului de lucru.
 
 ## Reportare de credite
 
-Creditele neutilizate se reportează automat în următoarea perioadă de facturare.
+Creditele incluse în planurile Pro și Organization sunt cheltuite primele și se reînnoiesc în fiecare perioadă de facturare. Nu se reportează.
 
-* **Cap**: Rollover este plafonat la alocarea completă a unei perioade, deci nu vei putea reporta niciodată mai mult decât oferă ciclul tău de facturare pe perioadă.
-* **Vizibilitate**: Când există credite reportate, acestea apar ca o linie separată **Credite reportate** în **Setări → Facturare**, alături de soldul **Total disponibil**.
+Creditele neutilizate dintr-un pachet de credite și creditele incluse în planurile Early se reportează automat în următoarea perioadă de facturare.
+
+* **Limită**: Reportarea este limitată la alocarea unei perioade, astfel încât aceste credite nu se cumulează niciodată la mai mult de dublul valorii oferite pentru o perioadă.
+* **Vizibilitate**: Secțiunea **Credite** din **Setări → Facturare** arată ce credite provin din planul dvs. și care provin din pachetul de credite, precum și cât se poate reporta.
 
 ## Monitorizare utilizare
 
@@ -79,11 +97,11 @@ Revizuirea regulată a acestor date face ușoară identificarea din timp a unui 
 
 ## Aveți nevoie de mai multe credite?
 
-Dacă rămâneți fără credite — sau doriți un buffer înainte de o campanie mare de automatizare — puteți cumpăra oricând pachete suplimentare de credite:
+Dacă rămâneți fără credite sau doriți o rezervă înaintea unui efort mare de automatizare, puteți adăuga un pachet de credite în orice moment. Pachetele costă $1 per credit, de la $20 pe lună, și se reînnoiesc odată cu abonamentul dvs.:
 
 1. Accesați **Setări → Facturare**
-2. Faceți clic pe butonul **Creștere**
-3. Selectați suma de care aveți nevoie și acceptați modificările
+2. În secțiunea **Credite**, faceți clic pe **Gestionați** sau pe una dintre comenzile rapide **Creșteți la $…**
+3. Alegeți un pachet de credite și confirmați
 
 Creditele achiziționate sunt adăugate imediat la soldul disponibil.
 

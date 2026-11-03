@@ -8,6 +8,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const updateViewFilterInputSchema = z.object({
   id: z.string().uuid().describe('ID of the view filter to update'),
@@ -42,14 +43,24 @@ export class UpdateViewFilterTool extends BaseTool<
 > {
   readonly inputSchema = updateViewFilterInputSchema;
 
-  constructor(private readonly viewFilterService: ViewFilterService) {
+  constructor(
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof updateViewFilterInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+      kind: 'viewFilter',
+      entityId: input.id,
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const filter = await this.viewFilterService.updateOne({
       updateViewFilterInput: {
         id: input.id,

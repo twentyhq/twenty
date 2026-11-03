@@ -37,7 +37,7 @@ The API key authenticates the developer against the target workspace. It determi
 
 Connect to an existing Twenty workspace with `twenty auth login --url <twenty-instance-url> --name dev`. This opens browser authentication and saves a remote.
 
-For local development, provision a separate Twenty server through Docker or the repository's development environment, then authenticate against its URL. The standalone CLI does not start containers.
+For local development, run `twenty local start` to create or start the full Twenty environment, then authenticate against `http://localhost:2020`. Docker must be installed and running. Use `--test` for a separate instance on port `2021`. The repository's development environment remains an alternative.
 
 ## App Lifecycle
 

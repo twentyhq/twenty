@@ -112,7 +112,11 @@ const buildRepository = ({
       flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
       flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
-    authContext: { type: 'apiKey', apiKey: { id: API_KEY_ID } },
+    authContext: {
+      type: 'apiKey',
+      apiKey: { id: API_KEY_ID },
+      workspace: { id: 'workspace-id' },
+    },
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
@@ -129,7 +133,26 @@ const buildRepository = ({
         restrictedFields: {},
       },
     },
-    rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
+    rolesPermissions: {
+      [ROLE_ID]: {
+        [OBJECT_METADATA_ID]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+        },
+      },
+    },
+    permissionsPrincipal: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'apiKey',
+        apiKeyId: 'api-key-id',
+        roleId: ROLE_ID,
+      },
+      applicationPrincipal: { type: 'customApplication' },
+    },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,

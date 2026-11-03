@@ -72,5 +72,6 @@ export const buildRequiredToolAuthContext = async ({
     workspaceMemberId,
     workspaceMember,
     application: context.application,
+    agentId: context.agentId,
   });
 };

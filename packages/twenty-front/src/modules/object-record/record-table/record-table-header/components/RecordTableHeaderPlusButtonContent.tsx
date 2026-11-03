@@ -13,7 +13,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconSettings, useIcons } from 'twenty-ui/icon';
+import { IconSettings } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();

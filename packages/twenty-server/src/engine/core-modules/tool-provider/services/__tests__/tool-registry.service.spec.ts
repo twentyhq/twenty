@@ -8,7 +8,6 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { type ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 
 const workspaceId = 'workspace-id';
-const agentRoleId = 'agent-role-id';
 
 const buildToolRegistryService = () => {
   const generateDescriptors = jest.fn().mockResolvedValue([]);
@@ -42,22 +41,18 @@ describe('ToolRegistryService', () => {
         buildToolRegistryService();
       const resolvedContext: ToolProviderContext = {
         workspaceId,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-        },
       };
 
       await toolRegistryService.getCatalog({
         workspaceId,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-        },
-        explicitObjectGrantsRoleId: agentRoleId,
+        explicitObjectGrants: { canReadAllObjectRecords: true },
         resolveExecutionContext: async () => resolvedContext,
       });
 
       expect(generateDescriptors).toHaveBeenCalledWith(
-        expect.objectContaining({ explicitObjectGrantsRoleId: agentRoleId }),
+        expect.objectContaining({
+          explicitObjectGrants: { canReadAllObjectRecords: true },
+        }),
         expect.anything(),
       );
     });

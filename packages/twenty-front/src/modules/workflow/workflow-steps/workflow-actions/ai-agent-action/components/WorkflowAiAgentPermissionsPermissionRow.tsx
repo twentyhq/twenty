@@ -14,7 +14,7 @@ type WorkflowAiAgentPermissionsPermissionRowProps = {
   };
   isEnabled: boolean;
   readonly: boolean;
-  showDeleteButton?: boolean;
+  shouldShowDeleteButton?: boolean;
   alwaysShowGranted?: boolean;
   onAdd?: () => void;
   onDelete?: () => void;
@@ -24,14 +24,14 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   permission,
   isEnabled,
   readonly,
-  showDeleteButton = true,
+  shouldShowDeleteButton = true,
   alwaysShowGranted = false,
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsPermissionRowProps) => {
   const isClickable = !readonly && !isEnabled && isDefined(onAdd);
-  const isDisabled = isEnabled && !showDeleteButton;
-  const showTrashButton = isEnabled && showDeleteButton;
+  const isDisabled = isEnabled && !shouldShowDeleteButton;
+  const shouldShowTrashButton = isEnabled && shouldShowDeleteButton;
 
   const startIcon = (
     <PermissionIcon
@@ -53,7 +53,7 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
       startIcon={startIcon}
       disabled={isDisabled}
       actions={
-        showTrashButton && (
+        shouldShowTrashButton && (
           <LightIconButton aria-label={t`Remove permission`} onClick={onDelete}>
             <IconTrash />
           </LightIconButton>

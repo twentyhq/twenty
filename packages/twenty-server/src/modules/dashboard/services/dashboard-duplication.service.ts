@@ -11,17 +11,16 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
   getWorkspaceContext,
   type ORMWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
-import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
+import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -65,25 +64,10 @@ export class DashboardDuplicationService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceContext = getWorkspaceContext();
-      const rolePermissionConfig = resolveRolePermissionConfig({
-        authContext: workspaceContext.authContext,
-        userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-        apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps:
-          workspaceContext.flatRoleTargetByAgentIdMaps,
-      });
-
-      if (!isDefined(rolePermissionConfig)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
 
       const dashboardRepository =
         this.workspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
           'dashboard',
-          rolePermissionConfig,
         );
 
       const originalDashboard = await dashboardRepository.findOne({
@@ -114,7 +98,6 @@ export class DashboardDuplicationService {
       // The layout copy lives outside the dashboard insert, so refuse before creating it
       this.assertCanCreateDashboardOrThrow({
         workspaceContext,
-        rolePermissionConfig,
       });
 
       try {
@@ -154,18 +137,16 @@ export class DashboardDuplicationService {
 
   private assertCanCreateDashboardOrThrow({
     workspaceContext,
-    rolePermissionConfig,
   }: {
     workspaceContext: ORMWorkspaceContext;
-    rolePermissionConfig: RolePermissionConfig;
   }): void {
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
-        rolePermissionConfig,
+        authContext: workspaceContext.authContext,
+        roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
         flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
-        flatApplicationMaps: workspaceContext.flatApplicationMaps,
       });
 
     if (shouldBypassPermissionChecks) {

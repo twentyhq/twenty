@@ -11,7 +11,8 @@ import { UpdateRoleTool } from 'src/engine/metadata-modules/role/tools/update-ro
 import { UpsertObjectPermissionsTool } from 'src/engine/metadata-modules/role/tools/upsert-object-permissions.tool';
 import { UpsertRowLevelPermissionRulesTool } from 'src/engine/metadata-modules/role/tools/upsert-row-level-permission-rules.tool';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     ObjectPermissionModule,
     RowLevelPermissionModule,
     ApplicationModule,
+    PermissionsModule,
   ],
   providers: [
     ListRolesTool,

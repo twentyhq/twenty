@@ -31,11 +31,21 @@ resource "kubernetes_deployment" "twentycrm_server" {
       }
 
       spec {
+        termination_grace_period_seconds = 120
+
         container {
           image = var.twentycrm_server_image
           name  = var.twentycrm_app_name
           stdin = true
           tty   = true
+
+          lifecycle {
+            pre_stop {
+              exec {
+                command = ["sleep", "20"]
+              }
+            }
+          }
 
           env {
             name  = "NODE_PORT"

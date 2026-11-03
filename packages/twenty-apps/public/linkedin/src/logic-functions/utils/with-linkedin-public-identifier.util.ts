@@ -1,16 +1,27 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { getLinkedinPublicIdentifierKey } from 'src/logic-functions/utils/get-linkedin-public-identifier-key.util';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
+import { UnipileRequestError } from 'src/unipile/utils/request-unipile.util';
+
+const isPermanentUnipileError = (error: unknown): boolean =>
+  error instanceof UnipileRequestError &&
+  isDefined(error.status) &&
+  error.status >= 400 &&
+  error.status < 500 &&
+  error.status !== 429;
 
 export const withLinkedinPublicIdentifier = async ({
   unipileAccountId,
   user,
+  shouldLookUp,
 }: {
   unipileAccountId: string;
   user: UnipileUser;
+  shouldLookUp?: () => Promise<boolean>;
 }): Promise<UnipileUser> => {
   if (isNonEmptyString(user.public_identifier)) {
     return user;
@@ -21,6 +32,10 @@ export const withLinkedinPublicIdentifier = async ({
 
   if (isNonEmptyString(cachedPublicIdentifier)) {
     return { ...user, public_identifier: cachedPublicIdentifier };
+  }
+
+  if (isDefined(shouldLookUp) && !(await shouldLookUp())) {
+    return user;
   }
 
   try {
@@ -37,6 +52,10 @@ export const withLinkedinPublicIdentifier = async ({
 
     return { ...user, public_identifier: publicIdentifier };
   } catch (error) {
+    if (!isPermanentUnipileError(error)) {
+      throw error;
+    }
+
     console.warn(
       `[linkedin] could not resolve the public identifier of ${user.id}: ${error instanceof Error ? error.message : String(error)}`,
     );

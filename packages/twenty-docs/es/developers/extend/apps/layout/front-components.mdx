@@ -133,6 +133,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -144,16 +145,25 @@ Declara tantos como necesites. El elemento propio **General** de Twenty — actu
 
 ### Campos
 
-| Campo                               | Descripción                                                                                         |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`               | Un UUID que generas una vez y te pertenece, estable entre sincronizaciones                          |
-| `frontComponentUniversalIdentifier` | El `universalIdentifier` del componente de frontend que renderiza este elemento                     |
-| `título`                            | La etiqueta del elemento. `General` está reservado y provoca un error en la compilación             |
-| `icon` *(opcional)*                 | Nombre del icono, resuelto del lado del cliente; un nombre desconocido recurre a uno predeterminado |
-| `position` *(opcional)*             | Orden de clasificación, ascendente. El valor predeterminado es `0`                                  |
-| `scope` *(opcional)*                | `WORKSPACE` (predeterminado) o `USER`                                                               |
+| Campo                               | Descripción                                                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`               | Un UUID que generas una vez y te pertenece, estable entre sincronizaciones                                 |
+| `frontComponentUniversalIdentifier` | El `universalIdentifier` del componente de frontend que renderiza este elemento                            |
+| `título`                            | La etiqueta del elemento. `General` está reservado y provoca un error en la compilación                    |
+| `icon` *(opcional)*                 | Nombre del icono, resuelto del lado del cliente; un nombre desconocido recurre a uno predeterminado        |
+| `position` *(opcional)*             | Orden de clasificación, ascendente. El valor predeterminado es `0`                                         |
+| `scope` *(opcional)*                | `WORKSPACE` (predeterminado) o `USER`                                                                      |
+| `slug` *(opcional)*                 | El id de la pestaña en la URL de la página, p. ej., `#sync`. Consulta las [URL de las pestañas](#tab-urls) |
 
 `position` es un decimal, por lo que se puede insertar un elemento entre dos existentes sin renumerarlos. Los elementos se ordenan por `position` ascendente, y los empates se resuelven mediante `universalIdentifier`, de modo que el orden es el mismo en todos los espacios de trabajo. Dos elementos de una aplicación no pueden compartir una posición en el mismo ámbito: la sincronización lo rechaza en lugar de permitir que el orden de instalación decida cuál se renderiza primero.
+
+### URL de las pestañas
+
+La pestaña de cada elemento se identifica mediante un hash en la URL de la página, por lo que puedes enlazar directamente a ella; por ejemplo, `/settings/applications/\<applicationId>#sync` o `/settings/app-preferences/\<applicationId>#sync`. Establece `slug` para elegir ese hash; sin uno, la pestaña se identifica mediante el `universalIdentifier` del elemento. Añadir un slug más adelante mantiene funcionando los enlaces que usan el `universalIdentifier`: abren la misma pestaña.
+
+Un slug está en kebab-case en minúsculas (letras, dígitos y guiones simples, como `sync` o `sync-settings`) y tiene como máximo 64 caracteres. `general` y `variables` están reservados para las pestañas integradas, se rechaza un slug con forma de UUID porque podría ocultar el enlace de otra pestaña y dos elementos de una aplicación no pueden compartir un slug, ni siquiera entre ámbitos. Tanto la compilación como la sincronización rechazan un slug que incumpla estas reglas.
+
+Después de que un miembro conecte o vuelva a conectar una cuenta en **Configuración > Preferencias de aplicaciones**, llega a la primera pestaña de elemento `USER` de la aplicación, según el orden de `position`, o a **General** cuando la aplicación no declara ninguna.
 
 ### Ámbito de espacio de trabajo y de usuario
 
@@ -1039,7 +1049,7 @@ Importa iconos individuales desde `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Cada icono con nombre se optimiza con tree-shaking, por lo que importar unos pocos añade muy poco a tu bundle. Evita `IconsProvider` y `useIcons` en los componentes de Front. Los componentes de Front se empaquetan sin división de código, por lo que el catálogo dinámico de iconos del proveedor (el conjunto completo de Tabler, aproximadamente 2 MB minificado) termina en tu paquete. Consulta la [referencia de iconos](/es/ui/icons) para ver las exportaciones disponibles y las props compatibles.
+Cada icono con nombre se optimiza con tree-shaking, por lo que importar unos pocos añade muy poco a tu bundle. Evita `twenty-ui/icon/provider` (`IconsProvider`, `useIcons` y el `Icon` por nombre) en los componentes front. Los componentes de Front se empaquetan sin división de código, por lo que el catálogo dinámico de iconos del proveedor (el conjunto completo de Tabler, aproximadamente 2 MB minificado) termina en tu paquete. Consulta la [referencia de iconos](/es/ui/icons) para ver las exportaciones disponibles y las props compatibles.
 
 ### Temas y tokens de tema
 

@@ -7,6 +7,18 @@ import {
 export const buildAgentChatThreadStandardFlatIndexMetadatas = (
   args: Omit<CreateStandardIndexArgs<'agentChatThread'>, 'context'>,
 ): Record<string, FlatIndexMetadata> => ({
+  directMessagePairUniqueIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'directMessagePairUniqueIndex',
+      relatedFieldNames: [
+        'directMessageFirstWorkspaceMemberId',
+        'directMessageSecondWorkspaceMemberId',
+      ],
+      isUnique: true,
+      indexWhereClause: null,
+    },
+  }),
   workspaceMemberIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {

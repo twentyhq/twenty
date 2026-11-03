@@ -1,18 +1,19 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
-  ingestMessages,
   listMessageChannels,
   reportConnectionAuthFailure,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
+import { LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/linkedin-handle-webhook-event-timeout-seconds.constant';
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { createLinkedinCounterpartResolver } from 'src/logic-functions/utils/create-linkedin-counterpart-resolver.util';
 import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-linkedin-connection-by-unipile-account-id.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
-import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
-import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
+import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
+import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
-import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 
@@ -22,10 +23,12 @@ const ingestUnipileMessage = async ({
   connectedAccountId,
   unipileAccountId,
   message,
+  attachmentDeadlineAtMs,
 }: {
   connectedAccountId: string;
   unipileAccountId: string;
   message: UnipileMessage;
+  attachmentDeadlineAtMs: number;
 }): Promise<LinkedinWebhookEventResult> => {
   const [channel] = await listMessageChannels({ connectedAccountId });
 
@@ -33,39 +36,38 @@ const ingestUnipileMessage = async ({
     return { handled: false, reason: 'Connection has no message channel' };
   }
 
-  const resolveUser = (user: UnipileUser) =>
-    withLinkedinPublicIdentifier({ unipileAccountId, user });
+  const settings = await getLinkedinSettings(connectedAccountId);
 
-  const counterparts = message.is_sender
-    ? await Promise.all(
-        getLinkedinChatCounterparts(
-          await getUnipileChat({
-            accountId: unipileAccountId,
-            chatId: message.chat_id,
-          }),
-        ).map(resolveUser),
-      )
-    : [];
+  const chat = await getUnipileChat({
+    accountId: unipileAccountId,
+    chatId: message.chat_id,
+  });
 
-  const sender =
-    !message.is_sender && isDefined(message.sender)
-      ? await resolveUser(message.sender)
-      : message.sender;
+  const chatCounterparts = getLinkedinChatCounterparts(chat);
+  const counterparts =
+    message.is_sender ||
+    !isDefined(message.sender) ||
+    chatCounterparts.some((user) => user.id === message.sender?.id)
+      ? chatCounterparts
+      : [...chatCounterparts, message.sender];
 
-  const ingestMessage = mapUnipileMessageToIngestMessage({
-    message: { ...message, sender },
-    channelHandle: channel.handle,
+  const { ingestedMessageCount } = await ingestLinkedinMessages({
+    unipileAccountId,
+    attachmentDeadlineAtMs,
+    channel,
+    settings,
+    chat,
     counterparts,
+    resolveCounterpart: createLinkedinCounterpartResolver(unipileAccountId),
+    messages: [message],
   });
 
-  if (!isDefined(ingestMessage)) {
-    return { handled: false, reason: 'Message carries no content' };
+  if (ingestedMessageCount === 0) {
+    return {
+      handled: false,
+      reason: 'Message carries no content or nobody in it is in Twenty',
+    };
   }
-
-  await ingestMessages({
-    messageChannelId: channel.id,
-    messages: [ingestMessage],
-  });
 
   return { handled: true };
 };
@@ -73,6 +75,10 @@ const ingestUnipileMessage = async ({
 export const linkedinHandleWebhookEventHandler = async (
   event: UnipileWebhookEvent,
 ): Promise<LinkedinWebhookEventResult> => {
+  const attachmentDeadlineAtMs =
+    Date.now() +
+    LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS * 1000 -
+    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const connection = await findLinkedinConnectionByUnipileAccountId(
     event.account_id,
   );
@@ -90,6 +96,7 @@ export const linkedinHandleWebhookEventHandler = async (
         connectedAccountId: connection.id,
         unipileAccountId: event.account_id,
         message: event.payload,
+        attachmentDeadlineAtMs,
       });
     case 'account.status.disconnected':
     case 'account.status.errored':
@@ -109,6 +116,6 @@ export default defineLogicFunction({
   name: 'linkedin-handle-webhook-event',
   description:
     'Imports new LinkedIn messages into the connection message channel and flags connections LinkedIn signed out.',
-  timeoutSeconds: 30,
+  timeoutSeconds: LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS,
   handler: linkedinHandleWebhookEventHandler,
 });

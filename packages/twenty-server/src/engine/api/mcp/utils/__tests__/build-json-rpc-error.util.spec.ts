@@ -8,7 +8,7 @@ import { buildJsonRpcError } from 'src/engine/api/mcp/utils/build-json-rpc-error
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 
 describe('buildJsonRpcError', () => {
   it.each([

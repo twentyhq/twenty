@@ -11,8 +11,8 @@ import {
   IconPerspective,
   IconSettingsAutomation,
   IconTable,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 import {

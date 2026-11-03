@@ -36,10 +36,10 @@ Los iconos exportados mantienen el ancho solicitado en los diseños flex, inclus
 
 ## Nombres de iconos dinámicos
 
-Usa `IconsProvider` e `Icon` cuando los nombres se eligen en tiempo de ejecución. El proveedor carga el mapa completo de iconos de forma asíncrona; los paquetes creados sin división de código, como los componentes de front-end, incluyen el mapa completo. Antes de que se complete la carga y para nombres desconocidos, `Icon` representa `Icon123`. El mapa dinámico difiere del catálogo de exportaciones con nombre; no supongas que todas las exportaciones de marca o ilustración se pueden resolver por nombre.
+Usa `IconsProvider` e `Icon` de `twenty-ui/icon/provider` cuando los nombres se elijan en tiempo de ejecución. El proveedor carga el mapa completo de iconos de forma asíncrona; los paquetes creados sin división de código, como los componentes de front-end, incluyen el mapa completo. `twenty-ui/icon` no incluye el proveedor, por lo que importar iconos con nombre nunca incluye el mapa. Antes de que se complete la carga y para nombres desconocidos, `Icon` representa `Icon123`. El mapa dinámico difiere del catálogo de exportaciones con nombre; no supongas que todas las exportaciones de marca o ilustración se pueden resolver por nombre.
 
 ```tsx
-import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Icon, IconsProvider } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DynamicAction = ({ iconName }: { iconName: string }) => (

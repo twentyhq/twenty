@@ -277,13 +277,11 @@ export const OutlookWithoutAccountOffersOutlookOnly: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Outlook', undefined, {
+      await canvas.findByText('Connect with Microsoft', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(
-      canvas.queryByText('Connect with Gmail and Calendar'),
-    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
     expect(canvas.queryByTestId('tab-general')).not.toBeInTheDocument();
     expect(canvas.getByText('Blocklist')).toBeVisible();
   },
