@@ -436,7 +436,7 @@ export class ConnectedAccountMetadataService {
     );
 
     // Runs before the tokens are wiped below; archived accounts were already disconnected
-    const latestConnectedAccounts = await this.runOnDisconnectHooks({
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
       connectedAccounts: connectedAccounts.filter(
         ({ archivedAt }) => !isDefined(archivedAt),
       ),
@@ -510,7 +510,7 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    const latestConnectedAccounts = await this.runOnDisconnectHooks({
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
       connectedAccounts: [connectedAccount],
       workspaceId,
     });
@@ -666,7 +666,7 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting ${connectedAccounts.length} connected account(s) with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    const latestConnectedAccounts = await this.runOnDisconnectHooks({
+    const latestConnectedAccounts = await this.runOnDisconnectHooksAndReload({
       connectedAccounts,
       workspaceId,
     });
@@ -710,7 +710,7 @@ export class ConnectedAccountMetadataService {
   }
 
   // Returns the accounts re-read, since hooks may refresh tokens through getConnection and an overlapping delete may remove rows
-  private async runOnDisconnectHooks({
+  private async runOnDisconnectHooksAndReload({
     connectedAccounts,
     workspaceId,
   }: {
