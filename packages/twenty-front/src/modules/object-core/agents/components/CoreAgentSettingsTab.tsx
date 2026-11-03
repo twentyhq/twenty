@@ -1,3 +1,6 @@
+import { Key } from 'ts-key-enum';
+import { useCoreAgentField } from '@/object-core/agents/hooks/useCoreAgentField';
+import { useUpdateCoreAgentIdentity } from '@/object-core/agents/hooks/useUpdateCoreAgentIdentity';
 import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -16,8 +19,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
-import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
-import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 
@@ -46,18 +47,11 @@ const StyledErrorMessage = styled.div`
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
 type CoreAgentSettingsTabProps = {
-  formValues: CoreAgentFormValues;
-  onFieldChange: (
-    field: keyof CoreAgentFormValues,
-    value: CoreAgentFormValues[keyof CoreAgentFormValues],
-  ) => void;
   disabled: boolean;
   agent?: FlatAgent;
 };
 
 export const CoreAgentSettingsTab = ({
-  formValues,
-  onFieldChange,
   disabled,
   agent,
 }: CoreAgentSettingsTabProps) => {
@@ -68,35 +62,61 @@ export const CoreAgentSettingsTab = ({
   const aiModels = useAtomStateValue(aiModelsState);
   const noModelsAvailable = aiModels.length === 0;
 
-  const fillNameFromLabel = (label: string) => {
-    if (isDefined(label)) {
-      onFieldChange('name', computeMetadataNameFromLabel(label));
-    }
-  };
+  const { value: description, setValue: setDescription } = useCoreAgentField({
+    field: 'description',
+  });
+  const { value: modelId, setValue: setModelId } = useCoreAgentField({
+    field: 'modelId',
+  });
+  const { value: modelConfiguration, setValue: setModelConfiguration } =
+    useCoreAgentField({ field: 'modelConfiguration' });
+  const { value: prompt, setValue: setPrompt } = useCoreAgentField({
+    field: 'prompt',
+  });
+  const { updateCoreAgentIdentity, isSavingIdentity } =
+    useUpdateCoreAgentIdentity();
 
   return (
     <StyledFormContainer>
       <StyledFormContainer>
         <StyledIconNameRow>
           <IconPicker
-            selectedIconKey={getAgentIcon(formValues.icon)}
+            selectedIconKey={getAgentIcon(agent?.icon)}
             onChange={({ iconKey }) => {
-              onFieldChange('icon', iconKey);
+              void updateCoreAgentIdentity({ icon: iconKey });
             }}
-            disabled={disabled}
+            disabled={disabled || isSavingIdentity}
           />
 
           <StyledNameContainer>
             <SettingsTextInput
               instanceId="agent-label-input"
               placeholder={t`Enter agent name*`}
-              value={formValues.label}
-              onChange={(value) => {
-                onFieldChange('label', value);
-                fillNameFromLabel(value);
+              key={agent?.label}
+              inputProps={{ defaultValue: agent?.label }}
+              onKeyDown={(event) => {
+                if (event.key === Key.Escape) {
+                  event.currentTarget.value = agent?.label ?? '';
+                }
+                if (event.key === Key.Enter || event.key === Key.Escape) {
+                  event.currentTarget.blur();
+                }
+              }}
+              onBlur={(event) => {
+                const input = event.currentTarget;
+                if (input.value === agent?.label) {
+                  return;
+                }
+                void updateCoreAgentIdentity({ label: input.value }).then(
+                  (saved) => {
+                    if (!saved) {
+                      input.value = agent?.label ?? '';
+                    }
+                  },
+                );
               }}
               fullWidth
-              disabled={disabled}
+              disabled={disabled || isSavingIdentity}
             />
           </StyledNameContainer>
         </StyledIconNameRow>
@@ -106,8 +126,8 @@ export const CoreAgentSettingsTab = ({
           textAreaId="agent-description-textarea"
           placeholder={t`Write a description for this agent`}
           minRows={3}
-          value={formValues.description || ''}
-          onChange={(value) => onFieldChange('description', value)}
+          value={description || ''}
+          onChange={setDescription}
           disabled={disabled}
         />
       </StyledFormContainer>
@@ -118,20 +138,18 @@ export const CoreAgentSettingsTab = ({
           </StyledErrorMessage>
         ) : (
           <AiModelPicker
-            modelId={formValues.modelId}
-            onModelIdChange={(value) => onFieldChange('modelId', value)}
+            modelId={modelId ?? ''}
+            onModelIdChange={setModelId}
             disabled={disabled}
           />
         )}
       </StyledFormContainer>
-      {formValues.modelId && (
+      {modelId && (
         <StyledFormContainer>
           <SettingsAgentModelCapabilities
-            selectedModelId={formValues.modelId}
-            modelConfiguration={formValues.modelConfiguration || {}}
-            onConfigurationChange={(configuration) =>
-              onFieldChange('modelConfiguration', configuration)
-            }
+            selectedModelId={modelId}
+            modelConfiguration={modelConfiguration || {}}
+            onConfigurationChange={setModelConfiguration}
             disabled={disabled}
           />
         </StyledFormContainer>
@@ -143,8 +161,8 @@ export const CoreAgentSettingsTab = ({
           placeholder={t`Enter the system prompt that defines this agent's behavior and capabilities`}
           minRows={6}
           maxRows={15}
-          value={formValues.prompt}
-          onChange={(value) => onFieldChange('prompt', value)}
+          value={prompt ?? ''}
+          onChange={setPrompt}
           disabled={disabled}
         />
       </StyledFormContainer>

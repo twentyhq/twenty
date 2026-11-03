@@ -1,3 +1,6 @@
+import { useCoreAgentField } from '@/object-core/agents/hooks/useCoreAgentField';
+import { getCoreAgentEditableTrigger } from '@/object-core/agents/utils/getCoreAgentEditableTrigger';
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -30,17 +33,19 @@ const StyledEmptyMessage = styled.div`
 `;
 
 type CoreAgentTriggersTabProps = {
-  triggers: AgentTrigger[];
-  onTriggersChange: (triggers: AgentTrigger[]) => void;
   disabled: boolean;
 };
 
 export const CoreAgentTriggersTab = ({
-  triggers,
-  onTriggersChange,
   disabled,
 }: CoreAgentTriggersTabProps) => {
   const { t } = useLingui();
+  const { value: rawTriggers = [], setValue: setTriggers } = useCoreAgentField({
+    field: 'triggers',
+  });
+  const triggers = rawTriggers
+    .map(getCoreAgentEditableTrigger)
+    .filter(isDefined);
   const objectOptions = useObjectMetadataItemSelectOptions();
 
   const defaultObjectNameSingular =
@@ -49,11 +54,12 @@ export const CoreAgentTriggersTab = ({
     'company';
 
   const canAddTrigger =
-    !disabled && triggers.length < AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT;
+    !disabled &&
+    rawTriggers.length < AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT;
 
   const addTrigger = (type: AgentTrigger['type']) =>
-    onTriggersChange([
-      ...triggers,
+    setTriggers((previous) => [
+      ...previous,
       buildDefaultCoreAgentTrigger({
         type,
         objectNameSingular: defaultObjectNameSingular,
@@ -61,14 +67,20 @@ export const CoreAgentTriggersTab = ({
     ]);
 
   const updateTrigger = (updatedTrigger: AgentTrigger) =>
-    onTriggersChange(
-      triggers.map((trigger) =>
-        trigger.id === updatedTrigger.id ? updatedTrigger : trigger,
-      ),
+    setTriggers((previous) =>
+      previous.map((rawTrigger) => {
+        const trigger = getCoreAgentEditableTrigger(rawTrigger);
+        return trigger?.id === updatedTrigger.id ? updatedTrigger : rawTrigger;
+      }),
     );
 
   const deleteTrigger = (triggerId: string) =>
-    onTriggersChange(triggers.filter((trigger) => trigger.id !== triggerId));
+    setTriggers((previous) =>
+      previous.filter(
+        (rawTrigger) =>
+          getCoreAgentEditableTrigger(rawTrigger)?.id !== triggerId,
+      ),
+    );
 
   return (
     <Section.Root>
@@ -77,7 +89,10 @@ export const CoreAgentTriggersTab = ({
         description={t`Run this agent on its own when records change or on a schedule. It runs with its role's permissions.`}
       />
       <StyledTriggerList>
-        {triggers.length === 0 && (
+        {rawTriggers.length > triggers.length && (
+          <StyledEmptyMessage>{t`Some saved triggers are unsupported. They will be preserved.`}</StyledEmptyMessage>
+        )}
+        {rawTriggers.length === 0 && (
           <StyledEmptyMessage>
             {t`This agent only runs when someone sends it a message.`}
           </StyledEmptyMessage>

@@ -5,6 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
+import { useId } from 'react';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -36,6 +37,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsObjectsTableRowProps) => {
+  const labelId = useId();
   const revokedBy = permission.revokedBy;
   const grantedBy = permission.grantedBy;
   const isRevoked =
@@ -60,7 +62,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
             permission={permission.key as SettingsRoleObjectPermissionKey}
             state={isRevoked ? 'revoked' : 'granted'}
           />
-          <StyledPermissionLabel>{label}</StyledPermissionLabel>
+          <StyledPermissionLabel id={labelId}>{label}</StyledPermissionLabel>
         </StyledPermissionContent>
         <StyledOverrideInfo>
           {isRevoked && revokedBy > 0 ? (
@@ -88,6 +90,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
         onClick={(e) => e.stopPropagation()}
       >
         <Checkbox
+          aria-labelledby={labelId}
           checked={permission.value ?? false}
           onCheckedChange={() => permission.setValue(!permission.value)}
           disabled={isDisabled}
