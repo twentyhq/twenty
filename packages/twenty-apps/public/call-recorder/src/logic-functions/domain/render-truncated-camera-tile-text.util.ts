@@ -2,6 +2,10 @@ import { type CameraTileText } from 'src/logic-functions/domain/render-camera-ti
 
 const ELLIPSIS = '…';
 
+const graphemeSegmenter = new Intl.Segmenter(undefined, {
+  granularity: 'grapheme',
+});
+
 const findLongestFittingLength = async ({
   low,
   high,
@@ -31,7 +35,10 @@ export const renderTruncatedCameraTileText = async ({
   maxWidth: number;
   render: (content: string) => Promise<CameraTileText>;
 }): Promise<CameraTileText> => {
-  const characters = Array.from(text.normalize('NFC'));
+  const characters = Array.from(
+    graphemeSegmenter.segment(text.normalize('NFC')),
+    ({ segment }) => segment,
+  );
 
   const renderPrefix = (length: number) =>
     render(`${characters.slice(0, length).join('').trimEnd()}${ELLIPSIS}`);
