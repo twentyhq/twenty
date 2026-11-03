@@ -1,0 +1,35 @@
+// Positions are in the 1280x720 frame; the bundled backgrounds leave the plate
+// area at PLATE_TOP free and keep their pattern behind it.
+export const CAMERA_TILE_BACKGROUND_COLOR = '#1d1d1d';
+export const CAMERA_TILE_TEXT_COLOR = '#ffffff';
+export const CAMERA_TILE_SECONDARY_TEXT_OPACITY = 0.6;
+export const CAMERA_TILE_FONT_FAMILY = 'Inter SemiBold';
+
+export const CAMERA_TILE_PLATE_TOP = 200;
+export const CAMERA_TILE_PLATE_SIZE = 200;
+export const CAMERA_TILE_PLATE_RADIUS = 48;
+export const CAMERA_TILE_PLATE_COLOR = '#ffffff';
+export const CAMERA_TILE_PLATE_STROKE_COLOR = '#2e2e2e';
+export const CAMERA_TILE_LOGO_BOX_SIZE = 132;
+export const CAMERA_TILE_INITIAL_COLOR = '#333333';
+export const CAMERA_TILE_INITIAL_FONT_SIZE = 96;
+
+export const CAMERA_TILE_TEXT_TOP = 445;
+export const CAMERA_TILE_TEXT_LINE_GAP = 10;
+export const CAMERA_TILE_TEXT_MAX_WIDTH = 1000;
+export const CAMERA_TILE_TITLE_FONT_SIZE = 44;
+export const CAMERA_TILE_TITLE_LINE_HEIGHT = 53;
+export const CAMERA_TILE_SUBTITLE_FONT_SIZE = 28;
+export const CAMERA_TILE_SUBTITLE_LINE_HEIGHT = 34;
+export const CAMERA_TILE_MINIMAL_FONT_SIZE = 64;
+
+export const CAMERA_TILE_RECORDING_FONT_SIZE = 26;
+export const CAMERA_TILE_RECORDING_BOTTOM_INSET = 64;
+export const CAMERA_TILE_RECORDING_DOT_COLOR = '#e5484d';
+export const CAMERA_TILE_RECORDING_DOT_SIZE = 14;
+export const CAMERA_TILE_RECORDING_DOT_GAP = 12;
+
+export const CAMERA_TILE_TWENTY_TITLE = 'Twenty';
+export const CAMERA_TILE_TWENTY_SUBTITLE = 'Learn more at twenty.com';
+export const CAMERA_TILE_NOTES_BY_TWENTY = 'Notes by Twenty';
+export const CAMERA_TILE_RECORDING_LABEL = 'Recording';

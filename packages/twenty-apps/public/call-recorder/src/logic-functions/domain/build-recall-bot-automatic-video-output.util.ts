@@ -1,41 +1,70 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { getBotImageBackground } from 'src/logic-functions/constants/get-bot-image-background';
-import { isWorkspaceLogoBotImageEnabled } from 'src/logic-functions/constants/is-workspace-logo-bot-image-enabled';
-import { getWorkspaceLogo } from 'src/logic-functions/data/get-workspace-logo.util';
+import { fetchPublicAsset } from 'src/logic-functions/data/fetch-public-asset.util';
+import { getCameraTileFontFilePath } from 'src/logic-functions/data/get-camera-tile-font-file-path.util';
+import { getWorkspaceBranding } from 'src/logic-functions/data/get-workspace-branding.util';
 import { buildBotImage } from 'src/logic-functions/domain/build-bot-image.util';
+import { buildCameraTileLayout } from 'src/logic-functions/domain/build-camera-tile-layout.util';
 import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
+import { getCallRecorderStyle } from 'src/logic-functions/utils/get-call-recorder-style.util';
+import { isNotesByTwentyEnabled } from 'src/logic-functions/utils/is-notes-by-twenty-enabled.util';
+import { loadSharp } from 'src/logic-functions/utils/load-sharp.util';
 
 export const buildRecallBotAutomaticVideoOutput = async (): Promise<
   RecallBotAutomaticVideoOutput | undefined
 > => {
-  if (!isWorkspaceLogoBotImageEnabled()) {
+  const style = getCallRecorderStyle();
+
+  if (style === 'NONE') {
     return undefined;
   }
 
-  const logoBuffer = await getWorkspaceLogo();
+  try {
+    const sharp = await loadSharp();
 
-  if (isUndefined(logoBuffer)) {
-    return undefined;
-  }
+    const [fontFilePath, branding] = await Promise.all([
+      getCameraTileFontFilePath(),
+      style === 'WORKSPACE' ? getWorkspaceBranding() : undefined,
+    ]);
 
-  const background = getBotImageBackground();
+    const layout = await buildCameraTileLayout({
+      sharp,
+      style,
+      branding,
+      fontFilePath,
+      isNotesByTwentyEnabled: isNotesByTwentyEnabled(),
+    });
 
-  const notRecordingImage = await buildBotImage({ logoBuffer, background });
+    const background = isUndefined(layout.backgroundAssetPath)
+      ? undefined
+      : await fetchPublicAsset(layout.backgroundAssetPath);
 
-  if (isUndefined(notRecordingImage)) {
-    return undefined;
-  }
-
-  const recordingImage =
-    (await buildBotImage({
-      logoBuffer,
+    const notRecordingImage = await buildBotImage({
+      sharp,
       background,
-      withRecordingStatusBadge: true,
-    })) ?? notRecordingImage;
+      composites: layout.composites,
+    });
 
-  return {
-    in_call_recording: { kind: 'jpeg', b64_data: recordingImage },
-    in_call_not_recording: { kind: 'jpeg', b64_data: notRecordingImage },
-  };
+    if (isUndefined(notRecordingImage)) {
+      return undefined;
+    }
+
+    const recordingImage =
+      (await buildBotImage({
+        sharp,
+        background,
+        composites: [...layout.composites, ...layout.recordingComposites],
+      })) ?? notRecordingImage;
+
+    return {
+      in_call_recording: { kind: 'jpeg', b64_data: recordingImage },
+      in_call_not_recording: { kind: 'jpeg', b64_data: notRecordingImage },
+    };
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to build the camera tile: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return undefined;
+  }
 };
