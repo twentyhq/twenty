@@ -24,8 +24,6 @@ import type { DashboardToolWorkspaceService } from 'src/modules/dashboard/tools/
 export class DashboardToolProvider implements ToolProvider {
   readonly category = ToolCategory.DASHBOARD;
 
-  readonly canRunUnderScope = true;
-
   constructor(
     @Optional()
     @Inject(DASHBOARD_TOOL_SERVICE_TOKEN)

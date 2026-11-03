@@ -17,9 +17,6 @@ import type { AiFrontComponentToolService } from 'src/engine/metadata-modules/ai
 export class FrontComponentToolProvider implements ToolProvider {
   readonly category = ToolCategory.FRONT_COMPONENT;
 
-  // it saves workspace components, which a scope's record permissions do not cover
-  readonly canRunUnderScope = false;
-
   constructor(
     @Optional()
     @Inject(AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN)

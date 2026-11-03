@@ -1,4 +1,4 @@
-import { type AgentResponseFormat } from 'twenty-shared/ai';
+import { type AgentResponseFormat, ToolCategory } from 'twenty-shared/ai';
 
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
@@ -60,6 +60,7 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
   return {
     started,
     output: startAgentTurn.mock.calls[0][0].output,
+    registryAccess: startAgentTurn.mock.calls[0][0].toolset.registryAccess,
   };
 };
 
@@ -78,5 +79,25 @@ describe('AgentRunTurnService.startTurn', () => {
 
     expect(started.isStructuredOutputInSameRequest).toBe(false);
     expect(output).toBeUndefined();
+  });
+
+  it('offers a scoped run only database tools and the action tools its scope bounds', async () => {
+    const { registryAccess } = await startTurn({
+      ...buildPersona({ objectPermissions: [] }),
+      permissions: {
+        agentRoleId: null,
+        scope: { objectPermissions: [] },
+        explicitObjectGrants: { objectPermissions: [] },
+      },
+    });
+    const isOffered = (name: string, category: ToolCategory) =>
+      registryAccess.isToolOffered({ name, category });
+
+    expect(isOffered('find_many_people', ToolCategory.DATABASE_CRUD)).toBe(
+      true,
+    );
+    expect(isOffered('send_email', ToolCategory.ACTION)).toBe(true);
+    expect(isOffered('code_interpreter', ToolCategory.ACTION)).toBe(false);
+    expect(isOffered('send_campaign', ToolCategory.ACTION)).toBe(false);
   });
 });

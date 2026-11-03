@@ -51,7 +51,7 @@ export type AgentRegistryAccess =
       toolContext: ToolContext;
       explicitObjectGrants: ExplicitObjectGrants;
       categories: readonly ToolCategory[];
-      excludedToolNames: readonly string[];
+      isToolOffered: (tool: ToolIndexEntry) => boolean;
     }
   | { type: 'none' };
 
@@ -249,7 +249,7 @@ export class AgentToolsetService {
           },
           {
             categories: [...registryAccess.categories],
-            excludeTools: new Set(registryAccess.excludedToolNames),
+            isToolOffered: registryAccess.isToolOffered,
           },
         );
         // the context lacks the explicit grants the tools were built with, so calls stay within them

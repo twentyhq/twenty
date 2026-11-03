@@ -29,7 +29,6 @@ import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/util
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 
 @Injectable()
 export class ToolRegistryService {
@@ -422,14 +421,21 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, compactOutput, spillLargeOutput } =
-      options;
-
-    const descriptors = await this.getCatalog(context, {
+    const {
       categories,
       excludeTools,
-      includeSchemas: true,
-    });
+      isToolOffered = () => true,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
+
+    const descriptors = (
+      await this.getCatalog(context, {
+        categories,
+        excludeTools,
+        includeSchemas: true,
+      })
+    ).filter(isToolOffered);
 
     const toolSet = this.hydrateToolSet(descriptors, context, {
       compactOutput,
@@ -459,10 +465,7 @@ export class ToolRegistryService {
             !isDefined(categories) || categories.includes(provider.category),
         )
         .map(async (provider) =>
-          !isWithheldFromPermissionScope({
-            canRunUnderScope: provider.canRunUnderScope,
-            rolePermissionConfig: context.rolePermissionConfig,
-          }) && (await provider.isAvailable(context))
+          (await provider.isAvailable(context))
             ? this.generateProviderDescriptors({
                 provider,
                 context,

@@ -23,9 +23,6 @@ import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provide
 export class LogicFunctionToolProvider implements ToolProvider {
   readonly category = ToolCategory.LOGIC_FUNCTION;
 
-  // functions run as their application, not with the caller's config
-  readonly canRunUnderScope = false;
-
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}

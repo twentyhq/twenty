@@ -36,7 +36,6 @@ import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provid
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 
 @Injectable()
 export class ToolExecutorService {
@@ -111,13 +110,11 @@ export class ToolExecutorService {
       case 'static':
         return this.dispatchStaticTool(descriptor, args, context);
       case 'logic_function':
-        // functions run as their application, so a scoped caller never reaches them
-        return isWithheldFromPermissionScope({
-          canRunUnderScope: false,
-          rolePermissionConfig: context.rolePermissionConfig,
-        })
-          ? buildToolNotAvailableOutput(descriptor.name)
-          : this.dispatchLogicFunction(descriptor.executionRef, args, context);
+        return this.dispatchLogicFunction(
+          descriptor.executionRef,
+          args,
+          context,
+        );
     }
   }
 
@@ -360,13 +357,7 @@ export class ToolExecutorService {
     }
 
     // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
-    if (
-      isWithheldFromPermissionScope({
-        canRunUnderScope: provider.canRunUnderScope,
-        rolePermissionConfig: context.rolePermissionConfig,
-      }) ||
-      !(await provider.isAvailable(context))
-    ) {
+    if (!(await provider.isAvailable(context))) {
       return buildToolNotAvailableOutput(descriptor.name);
     }
 

@@ -8,7 +8,5 @@ export type DefineToolOptions = {
   description: string;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags?: FeatureFlagKey[];
-  // set only when the tool authorizes everything with the caller's config; others are withheld from a scoped caller
-  canRunUnderScope?: boolean;
   icon?: string;
 };

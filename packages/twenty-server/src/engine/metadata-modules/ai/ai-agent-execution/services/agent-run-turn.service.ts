@@ -16,6 +16,7 @@ import {
   type AgentResponseFormat,
   type AgentResponseSchema,
   type ExtendedUIMessage,
+  ToolCategory,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
@@ -31,6 +32,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
+import { SCOPED_AGENT_RUN_ACTION_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/scoped-agent-run-action-tool-names.const';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { type AgentRegistryAccess } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
@@ -447,8 +449,10 @@ export class AgentRunTurnService {
       ...additionalExcludedToolNames,
     ];
 
+    const isScoped = isDefined(persona.permissions.scope);
+
     // open-ended agents reach too many tools to send them all; a few granted ones are cheaper sent than learned
-    return toolLoadingStrategy === 'lazy'
+    return toolLoadingStrategy === 'lazy' && !isScoped
       ? {
           type: 'catalog',
           toolContext,
@@ -460,7 +464,11 @@ export class AgentRunTurnService {
           toolContext,
           explicitObjectGrants: persona.permissions.explicitObjectGrants,
           categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
-          excludedToolNames,
+          isToolOffered: ({ name, category }) =>
+            !excludedToolNames.includes(name) &&
+            (!isScoped ||
+              category === ToolCategory.DATABASE_CRUD ||
+              SCOPED_AGENT_RUN_ACTION_TOOL_NAMES.has(name)),
         };
   }
 }

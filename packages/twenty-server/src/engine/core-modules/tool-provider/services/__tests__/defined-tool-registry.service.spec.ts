@@ -24,14 +24,6 @@ const context: ToolProviderContext = {
   },
 };
 
-const scopedContext: ToolProviderContext = {
-  ...context,
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-    scope: { objectsPermissions: {}, permissionFlags: {} },
-  },
-};
-
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
 
 @DefineTool({
@@ -107,25 +99,6 @@ class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
   }
 }
 
-const resendWebhookInputSchema = z.object({ id: z.uuid() });
-
-@DefineTool({
-  name: 'resend_webhook',
-  category: ToolCategory.WEBHOOK,
-  description: 'Resend a webhook with the caller permissions.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-  canRunUnderScope: true,
-})
-class ResendWebhookTool extends BaseTool<typeof resendWebhookInputSchema> {
-  readonly inputSchema = resendWebhookInputSchema;
-
-  async execute({
-    input,
-  }: ToolExecuteArgs<typeof resendWebhookInputSchema>): Promise<ToolOutput> {
-    return { success: true, message: `Webhook ${input.id} resent` };
-  }
-}
-
 const buildDefinedToolRegistryService = ({
   tools,
   isGranted,
@@ -161,15 +134,11 @@ const buildDefinedToolRegistryService = ({
   return { definedToolRegistryService, featureFlagService };
 };
 
-const listToolNames = async ({
-  definedToolRegistryService,
-  callerContext = context,
-}: {
-  definedToolRegistryService: DefinedToolRegistryService;
-  callerContext?: ToolProviderContext;
-}) =>
+const listToolNames = async (
+  definedToolRegistryService: DefinedToolRegistryService,
+) =>
   (
-    await definedToolRegistryService.getAvailableDescriptors(callerContext, {
+    await definedToolRegistryService.getAvailableDescriptors(context, {
       includeSchemas: false,
     })
   ).map(({ name }) => name);
@@ -227,21 +196,19 @@ describe('DefinedToolRegistryService', () => {
       const tools = [new RenameWebhookTool(), new ReplayWebhookTool()];
 
       expect(
-        await listToolNames({
-          definedToolRegistryService: buildDefinedToolRegistryService({
-            tools,
-            isGranted: true,
-          }).definedToolRegistryService,
-        }),
+        await listToolNames(
+          buildDefinedToolRegistryService({ tools, isGranted: true })
+            .definedToolRegistryService,
+        ),
       ).toEqual(['rename_webhook']);
       expect(
-        await listToolNames({
-          definedToolRegistryService: buildDefinedToolRegistryService({
+        await listToolNames(
+          buildDefinedToolRegistryService({
             tools,
             isGranted: true,
             enabledFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
           }).definedToolRegistryService,
-        }),
+        ),
       ).toEqual(['rename_webhook', 'replay_webhook']);
     });
 
@@ -256,7 +223,7 @@ describe('DefinedToolRegistryService', () => {
           ],
         });
 
-      expect(await listToolNames({ definedToolRegistryService })).toEqual([
+      expect(await listToolNames(definedToolRegistryService)).toEqual([
         'replay_webhook',
         'pause_webhook',
       ]);
@@ -327,70 +294,6 @@ describe('DefinedToolRegistryService', () => {
         message: 'Tool "replay_webhook" is not available',
       });
       expect(executeSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('under a permission scope', () => {
-    it('should list every tool for a caller without a scope', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [new ResendWebhookTool(), new RenameWebhookTool()],
-        isGranted: true,
-      });
-
-      expect(await listToolNames({ definedToolRegistryService })).toEqual([
-        'resend_webhook',
-        'rename_webhook',
-      ]);
-    });
-
-    it('should withhold a tool that does not honour the scope, even when its flags are granted', async () => {
-      const renameWebhookTool = new RenameWebhookTool();
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [new ResendWebhookTool(), renameWebhookTool],
-        isGranted: true,
-      });
-      const renameWebhook =
-        definedToolRegistryService.findDefinedTool('rename_webhook');
-      const executeSpy = jest.spyOn(renameWebhookTool, 'execute');
-
-      jestExpectToBeDefined(renameWebhook);
-
-      expect(
-        await listToolNames({
-          definedToolRegistryService,
-          callerContext: scopedContext,
-        }),
-      ).toEqual(['resend_webhook']);
-      expect(
-        await definedToolRegistryService.execute({
-          definedTool: renameWebhook,
-          args: { id: webhookId },
-          context: scopedContext,
-        }),
-      ).toMatchObject({
-        success: false,
-        message: 'Tool "rename_webhook" is not available',
-      });
-      expect(executeSpy).not.toHaveBeenCalled();
-    });
-
-    it('should run a tool that honours the scope for a scoped caller', async () => {
-      const { definedToolRegistryService } = buildDefinedToolRegistryService({
-        tools: [new ResendWebhookTool()],
-        isGranted: true,
-      });
-      const resendWebhook =
-        definedToolRegistryService.findDefinedTool('resend_webhook');
-
-      jestExpectToBeDefined(resendWebhook);
-
-      expect(
-        await definedToolRegistryService.execute({
-          definedTool: resendWebhook,
-          args: { id: webhookId },
-          context: scopedContext,
-        }),
-      ).toEqual({ success: true, message: `Webhook ${webhookId} resent` });
     });
   });
 });
