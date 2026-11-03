@@ -2,16 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildApplicationGrantDeletionFlatEntityOperations } from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-deletion-flat-entity-operations.util';
-import {
-  buildApplicationGrantFlatEntityOperations,
-  type ApplicationGrantFlatEntityOperations,
-} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-flat-entity-operations.util';
+import { buildApplicationGrantFlatEntityOperations } from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-flat-entity-operations.util';
 import { findApplicationGrantFlatRoleTarget } from 'src/engine/core-modules/application/application-grant/utils/find-application-grant-flat-role-target.util';
 import { isApplicationGrantable } from 'src/engine/core-modules/application/application-grant/utils/is-application-grantable.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
+import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { computeFlatEntityAndRelatedFlatEntitiesToDelete } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-and-related-flat-entities-to-delete.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -62,8 +60,9 @@ export class ApplicationGrantService {
         await this.runGrantMigration({
           workspaceId,
           workspaceCustomFlatApplication,
-          operations: buildApplicationGrantDeletionFlatEntityOperations({
-            grantFlatRole,
+          operations: computeFlatEntityAndRelatedFlatEntitiesToDelete({
+            metadataName: 'role',
+            flatEntity: grantFlatRole,
             flatEntityMaps,
           }),
         });
@@ -104,8 +103,9 @@ export class ApplicationGrantService {
     await this.runGrantMigration({
       workspaceId,
       workspaceCustomFlatApplication: state.workspaceCustomFlatApplication,
-      operations: buildApplicationGrantDeletionFlatEntityOperations({
-        grantFlatRole: state.grantFlatRole,
+      operations: computeFlatEntityAndRelatedFlatEntitiesToDelete({
+        metadataName: 'role',
+        flatEntity: state.grantFlatRole,
         flatEntityMaps: state.flatEntityMaps,
       }),
     });
@@ -133,6 +133,7 @@ export class ApplicationGrantService {
         'flatRolePermissionFlagMaps',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
+        'flatAgentChatChannelRoleMaps',
       ]);
 
     const flatApplication = findActiveFlatApplicationById(
@@ -186,7 +187,7 @@ export class ApplicationGrantService {
   }: {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
-    operations: ApplicationGrantFlatEntityOperations;
+    operations: AllFlatEntityOperationByMetadataName;
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
