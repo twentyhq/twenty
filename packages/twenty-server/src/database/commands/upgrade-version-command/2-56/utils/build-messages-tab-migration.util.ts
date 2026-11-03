@@ -23,28 +23,28 @@ const MESSAGES_WIDGET_DEFAULTS = {
   title: 'Messages',
 };
 
-const isStandardEntity = <
-  TEntity extends FlatPageLayoutTab | FlatPageLayoutWidget,
+const isStandardPageLayoutItem = <
+  TPageLayoutItem extends FlatPageLayoutTab | FlatPageLayoutWidget,
 >(
-  entity: TEntity | undefined,
-): entity is TEntity =>
-  isDefined(entity) &&
-  !isDefined(entity.deletedAt) &&
-  entity.applicationUniversalIdentifier ===
+  pageLayoutItem: TPageLayoutItem | undefined,
+): pageLayoutItem is TPageLayoutItem =>
+  isDefined(pageLayoutItem) &&
+  !isDefined(pageLayoutItem.deletedAt) &&
+  pageLayoutItem.applicationUniversalIdentifier ===
     TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
 
-const pickStandardEntities = <
-  TEntity extends FlatPageLayoutTab | FlatPageLayoutWidget,
+const pickStandardPageLayoutItems = <
+  TPageLayoutItem extends FlatPageLayoutTab | FlatPageLayoutWidget,
 >(
   universalIdentifiers: string[],
-  entitiesByUniversalIdentifier: Record<string, TEntity | undefined>,
-): TEntity[] =>
+  pageLayoutItemsByUniversalIdentifier: Record<string, TPageLayoutItem | undefined>,
+): TPageLayoutItem[] =>
   universalIdentifiers
     .map(
       (universalIdentifier) =>
-        entitiesByUniversalIdentifier[universalIdentifier],
+        pageLayoutItemsByUniversalIdentifier[universalIdentifier],
     )
-    .filter(isStandardEntity);
+    .filter(isStandardPageLayoutItem);
 
 export const buildMessagesTabMigration = ({
   flatPageLayoutTabsByUniversalIdentifier,
@@ -64,7 +64,7 @@ export const buildMessagesTabMigration = ({
   pageLayoutTabsToUpdate: FlatPageLayoutTab[];
   pageLayoutWidgetsToUpdate: FlatPageLayoutWidget[];
 } => {
-  const pageLayoutTabsToUpdate = pickStandardEntities(
+  const pageLayoutTabsToUpdate = pickStandardPageLayoutItems(
     MESSAGES_TAB_MIGRATION_UNIVERSAL_IDENTIFIERS.tabs,
     flatPageLayoutTabsByUniversalIdentifier,
   ).flatMap((tab) => {
@@ -82,7 +82,7 @@ export const buildMessagesTabMigration = ({
     return [{ ...tab, title, icon, updatedAt: now }];
   });
 
-  const pageLayoutWidgetsToUpdate = pickStandardEntities(
+  const pageLayoutWidgetsToUpdate = pickStandardPageLayoutItems(
     MESSAGES_TAB_MIGRATION_UNIVERSAL_IDENTIFIERS.widgets,
     flatPageLayoutWidgetsByUniversalIdentifier,
   )
