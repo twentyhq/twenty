@@ -149,6 +149,14 @@ export type { ConnectionProviderScope } from 'twenty-shared/application';
 export { defineMessagingProvider } from '@/sdk/define/messaging-providers/define-messaging-provider';
 export { defineMcpServer } from '@/sdk/define/mcp-servers/define-mcp-server';
 
+export { defineEvent } from '@/sdk/define/events/define-event';
+export type {
+  EventManifest,
+  EventPropertyManifest,
+  EventPropertyType,
+  EventRealtimeScopeManifest,
+} from 'twenty-shared/application';
+
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';

@@ -33,6 +33,7 @@ import { FlatMcpServerValidatorService } from 'src/engine/workspace-manager/work
 import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service';
 import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service';
 import { FlatMessagingProviderValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service';
+import { FlatEventMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service';
 import { FlatTimelineActivityTypeValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service';
 import { FlatAgentChatChannelRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-role-validator.service';
 import { FlatAgentChatChannelValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-chat-channel-validator.service';
@@ -76,6 +77,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatApplicationVariableValidatorService,
     FlatConnectionProviderValidatorService,
     FlatMessagingProviderValidatorService,
+    FlatEventMetadataValidatorService,
     FlatTimelineActivityTypeValidatorService,
     FlatSettingsMenuItemValidatorService,
     FlatAgentChatChannelValidatorService,
@@ -116,6 +118,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatApplicationVariableValidatorService,
     FlatConnectionProviderValidatorService,
     FlatMessagingProviderValidatorService,
+    FlatEventMetadataValidatorService,
     FlatTimelineActivityTypeValidatorService,
     FlatSettingsMenuItemValidatorService,
     FlatAgentChatChannelValidatorService,

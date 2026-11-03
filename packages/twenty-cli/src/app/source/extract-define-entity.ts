@@ -19,6 +19,7 @@ export const DEFINE_ENTITY_KEYS = {
   defineConnectionProvider: 'connectionProviders',
   defineMessagingProvider: 'messagingProviders',
   defineMcpServer: 'mcpServers',
+  defineEvent: 'events',
   defineFrontComponent: 'frontComponents',
   defineSettingsFrontComponent: 'frontComponents',
   defineView: 'views',

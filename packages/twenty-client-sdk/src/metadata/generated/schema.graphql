@@ -304,6 +304,7 @@ enum AllMetadataName {
   applicationVariable
   commandMenuItem
   connectionProvider
+  eventMetadata
   fieldMetadata
   fieldPermission
   frontComponent
@@ -391,6 +392,23 @@ type AppConnection {
   userWorkspaceId: String!
   visibility: String! @deprecated(reason: "Use scope instead.")
   workspaceMemberId: String
+}
+
+type AppEventOccurrence {
+  id: UUID!
+  occurredAt: String!
+  properties: JSON!
+  type: String!
+}
+
+type AppEventStreamPayload {
+  occurrence: AppEventOccurrence
+}
+
+input AppEventSubscriptionInput {
+  event: String!
+  property: String
+  recordId: UUID!
 }
 
 type AppKeyValue {
@@ -1483,6 +1501,17 @@ input CreateAppMessageChannelInput {
   visibility: MessageChannelVisibility!
 }
 
+input CreateAppVisitorEventTokenInput {
+  anonymousId: String!
+  events: [String!]!
+  expiresInSeconds: Int
+}
+
+type CreateAppVisitorEventTokenOutput {
+  expiresAt: String!
+  token: String!
+}
+
 type CreateApplicationFileUploadsResult {
   errors: [ApplicationFileUploadError!]!
   targets: [ApplicationFileUploadTarget!]!
@@ -2095,6 +2124,17 @@ enum EmailingDomainTenantStatus {
 
 type EmailsConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+input EmitAppEventInput {
+  anonymousId: String
+  event: String!
+  properties: JSON
+}
+
+type EmitAppEventOutput {
+  id: UUID!
+  occurredAt: String!
 }
 
 enum EngineComponentKey {
@@ -3318,6 +3358,7 @@ type Mutation {
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  createAppVisitorEventToken(input: CreateAppVisitorEventTokenInput!): CreateAppVisitorEventTokenOutput!
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
@@ -3423,6 +3464,7 @@ type Mutation {
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
   emailPasswordResetLink(captchaToken: String, email: String!, workspaceId: UUID): EmailPasswordResetLink!
+  emitAppEvent(input: EmitAppEventInput!): EmitAppEventOutput!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
@@ -3789,6 +3831,10 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
+}
+
+input OnAppEventInput {
+  subscriptions: [AppEventSubscriptionInput!]!
 }
 
 """Onboarding status"""
@@ -4799,6 +4845,7 @@ type Subscription {
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAppEvent(input: OnAppEventInput!): AppEventStreamPayload!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

@@ -31,6 +31,7 @@ export const ALL_METADATA_NAME = {
   connectionProvider: 'connectionProvider',
   messagingProvider: 'messagingProvider',
   mcpServer: 'mcpServer',
+  eventMetadata: 'eventMetadata',
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',

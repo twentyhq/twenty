@@ -33,6 +33,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   applicationVariable: false,
   connectionProvider: true,
   messagingProvider: true,
+  eventMetadata: true,
   timelineActivityType: true,
   relatedRecordPath: true,
   validationRule: true,

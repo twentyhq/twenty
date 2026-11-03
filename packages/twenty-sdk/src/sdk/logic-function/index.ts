@@ -84,6 +84,18 @@ export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
+export { emitEvent } from '@/sdk/logic-function/events/emit-event';
+export type {
+  EmitEventInput,
+  EmitEventResult,
+} from 'twenty-shared/application';
+
+export { createVisitorEventToken } from '@/sdk/logic-function/events/create-visitor-event-token';
+export type {
+  CreateVisitorEventTokenInput,
+  CreateVisitorEventTokenResult,
+} from 'twenty-shared/application';
+
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
 export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
 export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
