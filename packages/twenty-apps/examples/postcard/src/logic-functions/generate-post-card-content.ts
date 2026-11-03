@@ -7,7 +7,13 @@ const SYSTEM_PROMPT =
   'under 150 words. Use a personal tone. Output ONLY the postcard message ' +
   'text, nothing else — no greeting label, no sign-off label, just the message.';
 
-const respond = (body: { success: boolean; error?: string }, status = 200) =>
+const respond = ({
+  body,
+  status = 200,
+}: {
+  body: { success: boolean; error?: string };
+  status?: number;
+}) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
@@ -17,7 +23,10 @@ const handler = async (event: RoutePayload): Promise<Response> => {
   const recordId = (event.body as { recordId?: string } | null)?.recordId;
 
   if (!recordId) {
-    return respond({ success: false, error: 'recordId is required' }, 400);
+    return respond({
+      body: { success: false, error: 'recordId is required' },
+      status: 400,
+    });
   }
 
   const result = await ai.generate({
@@ -25,18 +34,24 @@ const handler = async (event: RoutePayload): Promise<Response> => {
     input: 'Write a postcard message for a friend.',
   });
 
-  if (!result.success) {
-    return respond({ success: false, error: result.error ?? undefined }, 502);
+  if (!result.success || !result.text) {
+    return respond({
+      body: {
+        success: false,
+        error: result.error ?? 'The model returned no text',
+      },
+      status: 502,
+    });
   }
 
   await new CoreApiClient().mutation({
     updatePostCard: {
-      __args: { id: recordId, data: { content: result.text ?? '' } },
+      __args: { id: recordId, data: { content: result.text } },
       id: true,
     },
   });
 
-  return respond({ success: true });
+  return respond({ body: { success: true } });
 };
 
 export default defineLogicFunction({
