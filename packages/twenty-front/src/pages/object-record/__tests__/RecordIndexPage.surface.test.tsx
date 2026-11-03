@@ -63,75 +63,7 @@ jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({
-    objectMetadataItem: { labelPlural: 'Workflows' },
-  }),
-}));
-
-jest.mock('@/object-core/workflows/hooks/useCoreWorkflows', () => ({
-  CORE_WORKFLOWS_INITIAL_SORT: [],
-  CORE_WORKFLOWS_TABLE_ID: 'workflow-table',
-  useCoreWorkflows: () => ({
-    coreWorkflows: [{ id: 'workflow-1' }],
-    hasNextPage: false,
-    loading: false,
-    error: undefined,
-    fetchNextPage: jest.fn(),
-  }),
-}));
-
-jest.mock('@/object-core/workflows/hooks/useCreateCoreWorkflow', () => ({
-  useCreateCoreWorkflow: () => ({
-    createCoreWorkflow: jest.fn(),
-    canCreateCoreWorkflow: false,
-    isCreatingCoreWorkflow: false,
-  }),
-}));
-
-jest.mock('react-intersection-observer', () => ({
-  useInView: () => ({ ref: jest.fn(), inView: false }),
-}));
-
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => ({}),
-}));
-
-jest.mock(
-  '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents',
-  () => ({
-    useListenToCoreWorkflowEvents: () => undefined,
-  }),
-);
-
-jest.mock('@/object-core/components/CoreObjectTable', () => ({
-  CoreObjectTable: () => <div data-testid="workflow-core-index" />,
-}));
-
-jest.mock(
-  '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect',
-  () => ({
-    CoreWorkflowsSelectionToContextStoreEffect: () => null,
-  }),
-);
-
-jest.mock('@/ui/layout/page/components/PageCardHeader', () => ({
-  PageCardHeader: () => null,
-}));
-
-jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
-  PageCardLayout: ({ children }: { children: React.ReactNode }) => children,
-}));
-
-jest.mock('@/ui/utilities/page-title/components/PageTitle', () => ({
-  PageTitle: () => null,
-}));
-
 describe('RecordIndexPage workspace surface composition', () => {
-  beforeAll(async () => {
-    await import('~/pages/object-core/WorkflowCoreIndexPage');
-  });
-
   beforeEach(() => {
     mockObjectNamePlural = 'people';
     mockCurrentObjectMetadataItemId = 'person-object-metadata-id';
@@ -142,29 +74,6 @@ describe('RecordIndexPage workspace surface composition', () => {
 
     expect(screen.getByTestId('page-container')).toBeInTheDocument();
     expect(screen.getByTestId('record-index-gater')).toBeInTheDocument();
-  });
-
-  it('hosts the same specialized workflow index on a secondary surface', async () => {
-    mockObjectNamePlural = 'workflows';
-    mockCurrentObjectMetadataItemId = 'workflow-object-metadata-id';
-
-    render(
-      <WorkspaceSurfaceContext.Provider
-        value={{
-          type: 'side-panel',
-          instanceId: 'side-panel-page-1',
-          ownsRouteLocation: true,
-        }}
-      >
-        <RecordIndexPage />
-      </WorkspaceSurfaceContext.Provider>,
-    );
-
-    expect(screen.queryByTestId('page-container')).not.toBeInTheDocument();
-    expect(
-      await screen.findByTestId('workflow-core-index', {}, { timeout: 5000 }),
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('record-index-gater')).not.toBeInTheDocument();
   });
 
   it('renders a panel-local fallback for a removed object', () => {

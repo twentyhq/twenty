@@ -4,6 +4,7 @@ import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
@@ -42,11 +43,20 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const currentSearch = location.search;
   const currentPathWithSearch = location.pathname + location.search;
 
-  const currentObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) =>
-      item.namePlural === currentObjectNamePlural ||
-      item.nameSingular === currentObjectNameSingular,
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+
+  const currentObjectMetadataItem =
+    activeObjectMetadataItems.find(
+      (item) =>
+        item.namePlural === currentObjectNamePlural ||
+        item.nameSingular === currentObjectNameSingular,
+    ) ??
+    activeObjectMetadataItems.find(
+      (item) => item.id === contextStoreCurrentObjectMetadataItemId,
+    );
 
   const isOnRecordShowPage =
     isDefined(currentObjectMetadataItem) &&
@@ -159,12 +169,25 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       }
 
       const matchingViewNavigationMenuItemIds = navigationMenuItems
-        .filter(
-          (item) =>
-            item.type === NavigationMenuItemType.VIEW &&
-            isDefined(contextStoreCurrentViewId) &&
-            item.viewId === contextStoreCurrentViewId,
-        )
+        .filter((item) => {
+          if (item.type !== NavigationMenuItemType.VIEW) {
+            return false;
+          }
+
+          if (isDefined(contextStoreCurrentViewId)) {
+            return item.viewId === contextStoreCurrentViewId;
+          }
+
+          return isLinkNavigationMenuItemActive({
+            computedLink: getNavigationMenuItemComputedLink({
+              item,
+              objectMetadataItems,
+              views,
+              lastVisitedViewPerObjectMetadataItem,
+            }),
+            location: { pathname: currentPath, search: currentSearch },
+          });
+        })
         .map((item) => item.id);
 
       if (matchingViewNavigationMenuItemIds.length > 0) {

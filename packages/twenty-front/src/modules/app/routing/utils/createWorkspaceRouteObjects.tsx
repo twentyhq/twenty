@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import {
@@ -7,6 +8,8 @@ import {
   SettingsRouteOutlet,
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
+import { CoreWorkflowIndexRedirect } from '@/object-core/workflows/components/CoreWorkflowIndexRedirect';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
 const GettingStartedPage = lazy(() =>
@@ -24,6 +27,12 @@ const AgentCoreIndexPage = lazy(() =>
 const AgentCoreShowPage = lazy(() =>
   import('~/pages/object-core/AgentCoreShowPage').then((module) => ({
     default: module.AgentCoreShowPage,
+  })),
+);
+
+const WorkflowCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
+    default: module.WorkflowCoreIndexPage,
   })),
 );
 
@@ -97,6 +106,28 @@ export const createWorkspaceRouteObjects = ({
           <GettingStartedPage />
         </LazyRoute>
       ),
+    },
+    {
+      path: AppPath.WorkflowCoreIndexPage,
+      element: (
+        <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+          <WorkflowCoreIndexPage />
+        </LazyRoute>
+      ),
+      handle: {
+        workspaceSurfaces: MAIN_AND_SIDE_PANEL,
+        isLocationExpandableFromSidePanel: true,
+      },
+    },
+    {
+      path: getAppPath(AppPath.RecordIndexPage, {
+        objectNamePlural: CoreObjectNamePlural.Workflow,
+      }),
+      element: <CoreWorkflowIndexRedirect />,
+      handle: {
+        workspaceSurfaces: MAIN_AND_SIDE_PANEL,
+        isLocationExpandableFromSidePanel: true,
+      },
     },
     {
       path: AppPath.WorkflowCoreShowPage,

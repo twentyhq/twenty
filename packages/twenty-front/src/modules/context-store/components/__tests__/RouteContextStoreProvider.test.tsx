@@ -111,6 +111,19 @@ const routeObjects: WorkspaceRouteObject[] = [
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
   {
+    path: AppPath.WorkflowCoreIndexPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.AgentIndexPage,
+    element: null,
+  },
+  {
+    path: AppPath.AgentShowPage,
+    element: null,
+  },
+  {
     path: AppPath.WorkflowCoreShowPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
@@ -202,6 +215,42 @@ describe('RouteContextStoreProvider', () => {
       'false',
     );
   });
+
+  it('provides workflow index context without reviving a legacy view', () => {
+    renderAt('/workflows?viewId=company-view', <MainSurfaceRoutes />);
+
+    const routeContextStore = screen.getByTestId('route-context-store');
+
+    expect(routeContextStore).toHaveAttribute(
+      'data-object-metadata-id',
+      'workflow-object',
+    );
+    expect(routeContextStore).toHaveAttribute(
+      'data-is-record-index-page',
+      'true',
+    );
+    expect(routeContextStore).not.toHaveAttribute('data-view-id');
+  });
+
+  it.each(['/agents', '/agent/agent-id'])(
+    'clears record context on %s',
+    (path) => {
+      renderAt(path, <MainSurfaceRoutes />);
+
+      const routeContextStore = screen.getByTestId('route-context-store');
+
+      expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
+      expect(routeContextStore).not.toHaveAttribute('data-view-id');
+      expect(routeContextStore).toHaveAttribute(
+        'data-is-record-index-page',
+        'false',
+      );
+      expect(routeContextStore).toHaveAttribute(
+        'data-is-record-show-page',
+        'false',
+      );
+    },
+  );
 
   it('treats the chat page as the record page of a chat', () => {
     renderAt('/chat/chat-id', <MainSurfaceRoutes />);

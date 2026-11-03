@@ -131,7 +131,10 @@ const renderWorkflowCommands = (applicationId: string) => {
         pageType: ContextStorePageType.Record,
         numberOfSelectedRecords: 1,
         selectedRecords: [{ id: 'workflow' }],
-        objectMetadataItem: { nameSingular: CoreObjectNameSingular.Workflow },
+        objectMetadataItem: {
+          id: 'workflow-object',
+          nameSingular: CoreObjectNameSingular.Workflow,
+        },
       }}
     >
       <CommandButtons />

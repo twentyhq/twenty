@@ -7,6 +7,7 @@ import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/util
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const useEditableCommandMenuItems = () => {
@@ -24,7 +25,12 @@ export const useEditableCommandMenuItems = () => {
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
-      .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
+      .filter(
+        doesCommandMenuItemMatchPageType({
+          pageType: commandMenuContextApi.pageType,
+          hasObjectContext: isNonEmptyString(currentObjectMetadataItemId),
+        }),
+      )
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(
         (item) =>

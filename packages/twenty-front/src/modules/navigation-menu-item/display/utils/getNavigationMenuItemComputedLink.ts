@@ -34,11 +34,11 @@ export const getNavigationMenuItemComputedLink = ({
       });
     }
     case NavigationMenuItemType.VIEW:
-      return getViewNavigationMenuItemComputedLink(
+      return getViewNavigationMenuItemComputedLink({
         item,
         objectMetadataItems,
         views,
-      );
+      });
     case NavigationMenuItemType.LINK:
       return getLinkNavigationMenuItemComputedLink(item);
     case NavigationMenuItemType.RECORD:
