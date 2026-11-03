@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -9,7 +9,6 @@ import { hasDirectMessageThreadIdentity } from 'src/engine/permissions/direct-me
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { AGENT_RUNS_MAX_LIMIT } from 'src/engine/metadata-modules/ai/ai-agent-runs/constants/agent-runs-max-limit.constant';
 import { type AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
-import { buildAgentRunTurnsWhere } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/build-agent-run-turns-where.util';
 import { mapAgentTurnToAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/map-agent-turn-to-agent-run.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -94,21 +93,20 @@ export class AgentRunsService {
     limit: number;
   }): Promise<AgentTurnWorkspaceEntity[]> {
     const workspaceId = authContext.workspace.id;
-    const authorizedTurns: AgentTurnWorkspaceEntity[] = [];
-    let cursor: Pick<AgentTurnWorkspaceEntity, 'createdAt' | 'id'> | undefined;
+    const authorizedTurnsById = new Map<string, AgentTurnWorkspaceEntity>();
 
-    while (authorizedTurns.length < limit) {
+    for (
+      let skip = 0;
+      authorizedTurnsById.size < limit;
+      skip += AGENT_RUNS_MAX_LIMIT
+    ) {
       const turns = await this.turnRepository.find(workspaceId, {
-        where: buildAgentRunTurnsWhere({ agentId, cursor }),
+        where: { agentId },
         order: { createdAt: 'DESC', id: 'DESC' },
-        take: limit,
+        skip,
+        take: AGENT_RUNS_MAX_LIMIT,
         relations: { thread: true },
       });
-
-      if (!isNonEmptyArray(turns)) {
-        return authorizedTurns;
-      }
-
       const directMessageThreadIds = new Set(
         turns.flatMap(({ threadId, thread }) =>
           isDefined(threadId) &&
@@ -142,20 +140,14 @@ export class AgentRunsService {
           continue;
         }
 
-        authorizedTurns.push(turn);
-
-        if (authorizedTurns.length === limit) {
-          return authorizedTurns;
-        }
+        authorizedTurnsById.set(turn.id, turn);
       }
 
-      if (turns.length < limit) {
-        return authorizedTurns;
+      if (turns.length < AGENT_RUNS_MAX_LIMIT) {
+        break;
       }
-
-      cursor = turns[turns.length - 1];
     }
 
-    return authorizedTurns;
+    return [...authorizedTurnsById.values()].slice(0, limit);
   }
 }
