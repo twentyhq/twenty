@@ -154,16 +154,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       stepIds: parameters.steps.map((step) => step.id),
     };
 
-    const recordReferences = isDefined(coreWorkflow.workspaceWorkflowId)
-      ? [
-          {
-            objectNameSingular: 'workflow',
-            recordId: coreWorkflow.workspaceWorkflowId,
-            displayName: parameters.name,
-          },
-        ]
-      : [];
-
     if (parameters.activate) {
       try {
         await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
@@ -177,7 +167,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,
           error: error.message,
           result,
-          recordReferences,
         };
       }
     }
@@ -186,7 +175,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       success: true,
       message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
       result,
-      recordReferences,
     };
   },
 });

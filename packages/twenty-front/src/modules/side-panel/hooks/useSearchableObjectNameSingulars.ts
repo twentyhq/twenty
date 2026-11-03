@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
@@ -19,19 +18,13 @@ export const useSearchableObjectNameSingulars = ({
   );
 
   return useMemo(() => {
-    const isSearchableObjectNameSingular = (objectNameSingular: string) =>
-      objectNameSingular !== CoreObjectNameSingular.Workflow;
-
     if (isDefined(selectedObjectNameSingular)) {
-      return isSearchableObjectNameSingular(selectedObjectNameSingular)
-        ? [selectedObjectNameSingular]
-        : [];
+      return [selectedObjectNameSingular];
     }
 
     return readableObjectMetadataItems
       .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
-      .map((item) => item.nameSingular)
-      .filter(isSearchableObjectNameSingular);
+      .map((item) => item.nameSingular);
   }, [
     readableObjectMetadataItems,
     selectedObjectNameSingular,

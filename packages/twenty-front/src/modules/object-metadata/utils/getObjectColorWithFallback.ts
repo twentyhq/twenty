@@ -18,7 +18,6 @@ const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   [CoreObjectNameSingular.NoteTarget]: 'turquoise',
   [CoreObjectNameSingular.Opportunity]: 'red',
   [CoreObjectNameSingular.Dashboard]: SYSTEM_OBJECT_COLOR,
-  [CoreObjectNameSingular.Workflow]: SYSTEM_OBJECT_COLOR,
   [CoreObjectNameSingular.WorkflowRun]: SYSTEM_OBJECT_COLOR,
   [CoreObjectNameSingular.WorkflowVersion]: SYSTEM_OBJECT_COLOR,
 };

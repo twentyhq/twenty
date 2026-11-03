@@ -116,9 +116,6 @@ describe('createCreateCompleteWorkflowTool', () => {
           coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
           stepIds: [STEP_ID],
         }),
-        recordReferences: [
-          expect.objectContaining({ recordId: WORKSPACE_WORKFLOW_ID }),
-        ],
       }),
     );
   });

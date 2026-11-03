@@ -8,6 +8,7 @@ import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-v
 import { RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793707166734-rename-emails-tab-to-messages.command';
 import { ConvertWorkflowNavigationMenuItemsToSystemPageCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793717128388-convert-workflow-navigation-menu-items-to-system-page.command';
 import { ScopeWorkflowCommandMenuItemsToCoreObjectCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793721085167-scope-workflow-command-menu-items-to-core-object.command';
+import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793724401314-drop-workspace-workflow-object.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RenameEmailsTabToMessagesCommand,
     ConvertWorkflowNavigationMenuItemsToSystemPageCommand,
     ScopeWorkflowCommandMenuItemsToCoreObjectCommand,
+    DropWorkspaceWorkflowObjectCommand,
   ],
 })
 export class V2_56_UpgradeVersionCommandModule {}

@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AiChatSuggestedPromptsContext } from '@/ai/types/AiChatSuggestedPromptsContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -41,6 +42,11 @@ export const useAiChatSuggestedPromptsContext =
       contextStoreInstanceId,
     );
 
+    const contextStoreCurrentCoreObjectName = useAtomComponentStateValue(
+      contextStoreCurrentCoreObjectNameComponentState,
+      contextStoreInstanceId,
+    );
+
     const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
     const objectMetadataItem = objectMetadataItems.find(
@@ -51,6 +57,16 @@ export const useAiChatSuggestedPromptsContext =
       pageType: contextStoreCurrentPageType,
       viewType: contextStoreCurrentViewType,
     });
+
+    if (
+      isDefined(contextStoreCurrentCoreObjectName) &&
+      isDefined(browsingContextType)
+    ) {
+      return {
+        browsingContextType,
+        objectNameSingular: contextStoreCurrentCoreObjectName,
+      };
+    }
 
     // The chat page is the chat's own record page, not what the user is asking about.
     if (

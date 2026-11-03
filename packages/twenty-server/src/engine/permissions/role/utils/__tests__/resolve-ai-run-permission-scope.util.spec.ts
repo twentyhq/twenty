@@ -21,7 +21,7 @@ const COMPANY_ID = 'company-id';
 const WORKFLOW_ID = 'workflow-id';
 const CAMPAIGN_ID = 'campaign-id';
 const WORKFLOW_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.workflow.universalIdentifier;
+  STANDARD_OBJECTS.workflowRun.universalIdentifier;
 const EMAIL_FIELD_ID = 'email-field-id';
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =

@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -7,6 +6,10 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import {
+  LEGACY_WORKFLOW_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/upgrade-version-command/2-23/constants/legacy-workflow-universal-identifiers.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -14,9 +17,8 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const WORKFLOW = STANDARD_OBJECTS.workflow;
 const CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER =
-  WORKFLOW.fields.coreWorkflowId.universalIdentifier;
+  LEGACY_WORKFLOW_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER;
 
 @RegisteredWorkspaceCommand('2.23.0', 1784286706000)
 @Command({
@@ -49,7 +51,7 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
     const workflowObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: WORKFLOW.universalIdentifier,
+        universalIdentifier: LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
       });
 
     if (!isDefined(workflowObjectMetadata)) {

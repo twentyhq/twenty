@@ -16,7 +16,6 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
-  STANDARD_OBJECTS.workflow.universalIdentifier,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];

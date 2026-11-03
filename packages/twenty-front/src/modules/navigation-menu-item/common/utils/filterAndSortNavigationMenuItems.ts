@@ -22,7 +22,6 @@ export const filterAndSortNavigationMenuItems = (
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
     CoreObjectNameSingular.AgentChatThread,
-    CoreObjectNameSingular.Workflow,
   ];
 
   const hiddenRecordObjectMetadataIds = new Set(
