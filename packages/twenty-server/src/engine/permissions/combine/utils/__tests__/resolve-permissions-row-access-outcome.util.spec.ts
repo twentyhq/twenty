@@ -33,13 +33,13 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
+const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { type: 'deprecatedRoleOnly', roleId: READ_ONLY_ROLE_ID },
   applicationPrincipal: { type: 'customApplication' },
 };
 
-const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
+const owningApplicationPrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: {
     type: 'application',
@@ -54,20 +54,20 @@ const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
 };
 
 const resolveOutcome = ({
-  principal = readOnlyPrincipal,
+  principals = readOnlyPrincipals,
   operationType = 'select',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  principal?: PermissionsPrincipalsWithRolesContext;
+  principals?: PermissionsPrincipalsWithRolesContext;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
   hypotheticalRecordShareAccessLevel?: PermissionsRowAccessRequest['hypotheticalRecordShareAccessLevel'];
 }) =>
   resolvePermissionsRowAccessOutcome({
-    principal,
+    principals,
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
@@ -109,8 +109,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     expect(resolveOutcome({ operationType: 'update' })).toBe(false);
     expect(
       resolveOutcome({
-        principal: {
-          ...readOnlyPrincipal,
+        principals: {
+          ...readOnlyPrincipals,
           mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'missing-role' },
           applicationPrincipal: { type: 'customApplication' },
         },
@@ -132,7 +132,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        principal: owningApplicationPrincipal,
+        principals: owningApplicationPrincipals,
         disabledObjectPermissionActions: ['canReadObjectRecords'],
       }),
     ).toBeUndefined();
@@ -155,12 +155,12 @@ describe('resolvePermissionsRowAccessOutcome', () => {
   });
 
   describe('for a principal narrowed by a scope', () => {
-    const scopedPrincipal = ({
+    const scopedPrincipals = ({
       canReadObjectRecords,
     }: {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
-      ...readOnlyPrincipal,
+      ...readOnlyPrincipals,
       aiRunScope: {
         objectsPermissions: {
           [flatObjectMetadata.id]: {
@@ -175,26 +175,30 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     it('denies what the scope denies, though the role permits it', () => {
       expect(
         resolveOutcome({
-          principal: scopedPrincipal({ canReadObjectRecords: false }),
+          principals: scopedPrincipals({ canReadObjectRecords: false }),
         }),
       ).toBe(false);
       expect(
         resolveOutcome({
-          principal: scopedPrincipal({ canReadObjectRecords: true }),
+          principals: scopedPrincipals({ canReadObjectRecords: true }),
         }),
       ).toBeUndefined();
     });
 
     it('never lets a share carry it beyond its roles', () => {
-      const principal = scopedPrincipal({ canReadObjectRecords: true });
+      const principals = scopedPrincipals({ canReadObjectRecords: true });
       const featureFlagKeys = [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED];
 
       expect(
-        resolveOutcome({ principal, operationType: 'update', featureFlagKeys }),
+        resolveOutcome({
+          principals,
+          operationType: 'update',
+          featureFlagKeys,
+        }),
       ).toBe(false);
       expect(
         resolveOutcome({
-          principal,
+          principals,
           operationType: 'update',
           featureFlagKeys,
           hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,

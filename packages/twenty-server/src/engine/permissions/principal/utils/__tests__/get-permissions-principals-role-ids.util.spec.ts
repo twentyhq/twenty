@@ -1,9 +1,9 @@
-import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 
-describe('getPermissionsPrincipalRoleIds', () => {
+describe('getPermissionsPrincipalsRoleIds', () => {
   it('lists the limiting role first and drops duplicates', () => {
     expect(
-      getPermissionsPrincipalRoleIds({
+      getPermissionsPrincipalsRoleIds({
         mainPrincipal: {
           type: 'workspaceMember',
           roleId: 'user-role',
@@ -25,7 +25,7 @@ describe('getPermissionsPrincipalRoleIds', () => {
 
   it('leaves the custom app out of the intersection', () => {
     expect(
-      getPermissionsPrincipalRoleIds({
+      getPermissionsPrincipalsRoleIds({
         mainPrincipal: {
           type: 'workspaceMember',
           roleId: 'user-role',

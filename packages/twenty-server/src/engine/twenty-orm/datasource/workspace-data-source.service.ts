@@ -101,7 +101,6 @@ export class WorkspaceDataSourceService
       pool,
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,
-      objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
     });
   }
 
@@ -124,6 +123,7 @@ export class WorkspaceDataSourceService
       billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+      rolesPermissions: workspaceContext.permissionsPerRoleId,
       flatRoleTargetByAgentIdMaps: workspaceContext.flatRoleTargetByAgentIdMaps,
       flatApplicationMaps: workspaceContext.flatApplicationMaps,
       eventEmitterService: this.workspaceEventEmitter,

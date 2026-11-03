@@ -4705,7 +4705,6 @@ msgstr "İş akışı e-postalarında HTML"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -5555,11 +5554,6 @@ msgstr "Madagaskar 🇲🇬"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Main channel (URL)"
 msgstr "Ana kanal (URL)"
-
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Ana kanal, https:// ile başlayan tam bir URL olmalıdır"
 
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6737,6 +6731,11 @@ msgstr "Lütfen devam etmeden önce tüm zorunlu alanları doldurun."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Lütfen geçerli bir e-posta adresi girin."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr ""
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -10301,6 +10300,11 @@ msgstr "Çalışma alanınız bir git deposuyla desteklenir; böylece dallar olu
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, bültenler, LinkedIn, TikTok: GTM araçlarını ele alan herkes."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

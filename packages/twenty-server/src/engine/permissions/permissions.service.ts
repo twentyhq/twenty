@@ -27,13 +27,13 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/principal/utils/can-auth-context-hold-roles.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
 import {
-  type PermissionsPrincipalRoleMaps,
+  type PermissionsPrincipalsRoleMaps,
   resolvePermissionsPrincipalsWithRoles,
 } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -90,7 +90,7 @@ export class PermissionsService {
     return {
       permissionFlags,
       objectsPermissions: computeObjectsPermissionsForRoles({
-        principal: {
+        principals: {
           mainPrincipal: { type: 'deprecatedRoleOnly', roleId: flatRole.id },
           applicationPrincipal: { type: 'customApplication' },
         },
@@ -176,25 +176,25 @@ export class PermissionsService {
       return true;
     }
 
-    const principal = await this.findPrincipalWithRoles(authContext);
+    const principals = await this.findPrincipalsWithRoles(authContext);
 
-    if (!isDefined(principal)) {
+    if (!isDefined(principals)) {
       return false;
     }
 
     const { flatRoleMaps, flatRolePermissionFlagMaps } =
-      await this.workspaceCacheService.getOrRecompute(principal.workspaceId, [
+      await this.workspaceCacheService.getOrRecompute(principals.workspaceId, [
         'flatRoleMaps',
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { aiRunScope } = principal;
+    const { aiRunScope } = principals;
 
     return (
       (!isDefined(aiRunScope) ||
         (aiRunScope.permissionFlags[setting] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
-        roleIds: getPermissionsPrincipalRoleIds(principal),
+        roleIds: getPermissionsPrincipalsRoleIds(principals),
         setting,
         flatRoleMaps,
         flatRolePermissionFlagMaps,
@@ -210,14 +210,14 @@ export class PermissionsService {
       return [];
     }
 
-    const principal = await this.findPrincipalWithRoles(authContext);
+    const principals = await this.findPrincipalsWithRoles(authContext);
 
-    return isDefined(principal)
-      ? getPermissionsPrincipalRoleIds(principal)
+    return isDefined(principals)
+      ? getPermissionsPrincipalsRoleIds(principals)
       : [];
   }
 
-  public async findPrincipalWithRoles(
+  public async findPrincipalsWithRoles(
     authContext: PermissionsAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
     if (!canAuthContextHoldRoles(authContext)) {
@@ -232,7 +232,7 @@ export class PermissionsService {
 
   private async loadPrincipalRoleMaps(
     authContext: Pick<PermissionsAuthContext, 'type' | 'workspace'>,
-  ): Promise<PermissionsPrincipalRoleMaps> {
+  ): Promise<PermissionsPrincipalsRoleMaps> {
     const workspaceId = authContext.workspace.id;
     const {
       userWorkspaceRoleMap,
@@ -247,7 +247,7 @@ export class PermissionsService {
     ]);
 
     return {
-      ...buildPermissionsPrincipalRoleMaps({
+      ...buildPermissionsPrincipalsRoleMaps({
         flatWorkspaceMemberMaps:
           await this.loadFlatWorkspaceMemberMaps(authContext),
         userWorkspaceRoleMap,

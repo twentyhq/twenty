@@ -40,9 +40,9 @@ import { type RecordTargetInput } from 'src/engine/permissions/record-permission
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
-import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
+import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
+import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -471,9 +471,9 @@ export class RecordSharingService {
       'flatWorkspaceMemberMaps',
       'roleIdsWithAllRecordsAccess',
     ]);
-    const principal = resolvePermissionsPrincipalsWithRoles({
+    const principals = resolvePermissionsPrincipalsWithRoles({
       authContext,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
+      roleMaps: buildPermissionsPrincipalsRoleMaps({
         flatWorkspaceMemberMaps,
         userWorkspaceRoleMap,
         apiKeyRoleMap,
@@ -482,9 +482,9 @@ export class RecordSharingService {
       }),
     });
     const canAccessAllRecords =
-      isDefined(principal) &&
+      isDefined(principals) &&
       canRolesAccessAllRecords({
-        roleIds: getPermissionsPrincipalRoleIds(principal),
+        roleIds: getPermissionsPrincipalsRoleIds(principals),
         roleIdsWithAllRecordsAccess,
       });
     const shares = await this.recordShareStorageService.findByRecordIds({
@@ -507,8 +507,8 @@ export class RecordSharingService {
       recordShares: shares,
       principalIds: [
         EVERYONE_PRINCIPAL_ID,
-        ...(isDefined(principal)
-          ? getPermissionsPrincipalShareKeys(principal)
+        ...(isDefined(principals)
+          ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
       implicitAccessLevels: isShareable

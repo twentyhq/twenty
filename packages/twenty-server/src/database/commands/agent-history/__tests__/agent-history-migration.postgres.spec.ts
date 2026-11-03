@@ -97,7 +97,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const workspaceDataSourceOptions = {
       pool,
       authContext: buildSystemAuthContext(WORKSPACE_ID),
-      objectPermissionsByRoleId: {},
       internalContext: {
         workspaceId: WORKSPACE_ID,
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
@@ -112,6 +111,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
+        rolesPermissions: {},
         flatRoleTargetByAgentIdMaps: {},
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],

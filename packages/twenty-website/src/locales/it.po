@@ -4703,7 +4703,6 @@ msgstr "HTML nelle email dei flussi di lavoro"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -5553,11 +5552,6 @@ msgstr "Madagascar 🇲🇬"
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Main channel (URL)"
 msgstr "Canale principale (URL)"
-
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Il canale principale deve essere un URL completo che inizia con https://"
 
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6735,6 +6729,11 @@ msgstr "Completa tutti i campi obbligatori prima di continuare."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Inserisci un indirizzo email valido."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr ""
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -10309,6 +10308,11 @@ msgstr "Il tuo workspace è supportato da una repo git, così puoi creare branch
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, newsletter, LinkedIn, TikTok: chiunque si occupi di strumenti GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
