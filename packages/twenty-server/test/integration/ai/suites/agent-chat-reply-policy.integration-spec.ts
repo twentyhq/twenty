@@ -1,3 +1,4 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -80,7 +81,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       workspaceMemberId: context.workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'recipient',
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     });
   const createGroup = async (isAssistantParticipant = true) => {
     const threadId = await context.createThread(isAssistantParticipant);

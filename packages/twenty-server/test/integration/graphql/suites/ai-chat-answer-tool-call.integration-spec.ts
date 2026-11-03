@@ -1,3 +1,4 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
@@ -148,14 +149,14 @@ describe('Answering a chat tool call', () => {
       workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'recipient',
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     });
     await inboxDeliveryService.deliverThreadToMemberInboxes({
       workspaceId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       threadId,
       workspaceMemberIds: [workspaceMemberId],
-      reason: 'mention',
+      reason: AgentChatInboxDeliveryReason.MENTION,
     });
   };
 
@@ -311,7 +312,7 @@ describe('Answering a chat tool call', () => {
       workspaceMemberId,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'mention',
+      reason: AgentChatInboxDeliveryReason.MENTION,
     });
     await markAsMentioned();
 

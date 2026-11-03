@@ -1,3 +1,5 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 import { EventEmitter, once } from 'node:events';
@@ -99,7 +101,7 @@ const addParticipants = ({
     workspaceMemberId,
     threadId,
     workspaceMemberIds,
-    reason: 'mention',
+    reason: AgentChatInboxDeliveryReason.MENTION,
   });
 
 type Participant = {
@@ -895,7 +897,7 @@ describe('Chat thread participant state through the authenticated API', () => {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           threadId,
           workspaceMemberIds: [workspaceMemberId],
-          reason: 'recipient',
+          reason: AgentChatInboxDeliveryReason.RECIPIENT,
         }),
       ),
     );
@@ -1410,7 +1412,7 @@ describe('Chat thread participant state through the authenticated API', () => {
         'AgentChatThreadService',
       ).getWritableThread(buildJonyThreadAccess(threadId)),
       message: { text: 'I have handled this.' },
-      placement: 'running',
+      placement: AgentChatMemberMessagePlacement.RUNNING,
     });
 
     const repliedParticipant = await findMyParticipant(
@@ -1516,7 +1518,7 @@ describe('Chat thread participant state through the authenticated API', () => {
           'AgentChatThreadService',
         ).getWritableThread(buildJonyThreadAccess(threadId)),
         message: { text: 'On it' },
-        placement: 'queued',
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
 
     const deleteQueuedReply = (messageId: string) =>
@@ -1608,7 +1610,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      reason: 'recipient' as const,
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     };
 
     await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);

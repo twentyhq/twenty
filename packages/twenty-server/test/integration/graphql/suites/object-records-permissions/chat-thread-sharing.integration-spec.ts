@@ -1,3 +1,4 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
@@ -477,7 +478,7 @@ describe('Conversation sharing through the authenticated API', () => {
               threadId,
             }),
             message: { text: 'Use my permissions' },
-            placement: 'queued',
+            placement: AgentChatMemberMessagePlacement.QUEUED,
           });
         const turnId = await queue.promoteQueuedMessage({
           workspaceId,

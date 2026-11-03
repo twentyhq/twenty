@@ -4,10 +4,10 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Equal, IsNull } from 'typeorm';
 
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
-import { type AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-reason.type';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -46,7 +46,7 @@ export class AgentChatInboxDeliveryService {
           await this.deliverThreadToMemberInboxes({
             ...access,
             workspaceMemberIds: mentionedWorkspaceMemberIds,
-            reason: 'mention',
+            reason: AgentChatInboxDeliveryReason.MENTION,
           });
       } catch (error) {
         this.logger.warn(
@@ -72,7 +72,7 @@ export class AgentChatInboxDeliveryService {
           await this.deliverThreadToMemberInboxes({
             ...access,
             workspaceMemberIds: remainingInitialRecipientWorkspaceMemberIds,
-            reason: 'recipient',
+            reason: AgentChatInboxDeliveryReason.RECIPIENT,
           });
       } catch (error) {
         this.logger.warn(

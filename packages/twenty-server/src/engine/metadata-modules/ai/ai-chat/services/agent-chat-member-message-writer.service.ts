@@ -1,3 +1,4 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,7 +47,7 @@ export class AgentChatMemberMessageWriterService {
     actor: AgentChatMemberMessageActor;
     thread: AgentChatThreadWorkspaceEntity;
     message: AgentChatMemberMessage;
-    placement: 'queued' | 'running' | 'completed';
+    placement: AgentChatMemberMessagePlacement;
     participation?: Pick<
       AgentChatAssistantParticipation,
       'isAssistantParticipant' | 'isInitialMessage'
@@ -84,14 +85,14 @@ export class AgentChatMemberMessageWriterService {
             );
           }
 
-          if (placement !== 'queued') {
+          if (placement !== AgentChatMemberMessagePlacement.QUEUED) {
             return this.agentChatService.addMessage({
               ...actor,
               threadId: thread.id,
               id: message.id,
               uiMessage: { role: AgentMessageRole.USER, parts: messageParts },
               turnStatus:
-                placement === 'running'
+                placement === AgentChatMemberMessagePlacement.RUNNING
                   ? AgentTurnStatus.RUNNING
                   : AgentTurnStatus.COMPLETED,
               scope: transactionScope,
@@ -134,12 +135,15 @@ export class AgentChatMemberMessageWriterService {
       });
     }
 
-    if (placement !== 'queued') {
+    if (placement !== AgentChatMemberMessagePlacement.QUEUED) {
       await this.eventPublisherService.publish({
         workspaceId: actor.workspaceId,
         threadId: thread.id,
         event: {
-          type: placement === 'running' ? 'message-persisted' : 'message-added',
+          type:
+            placement === AgentChatMemberMessagePlacement.RUNNING
+              ? 'message-persisted'
+              : 'message-added',
           messageId: persistedMessage.id,
         },
       });

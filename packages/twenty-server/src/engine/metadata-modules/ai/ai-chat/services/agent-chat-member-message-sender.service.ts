@@ -1,4 +1,5 @@
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -146,7 +147,7 @@ export class AgentChatMemberMessageSenderService {
       : await this.memberMessageWriterService
           .writeMemberMessage({
             ...memberMessageWriteInput,
-            placement: 'completed',
+            placement: AgentChatMemberMessagePlacement.COMPLETED,
           })
           .then((persistedMessage) => ({
             messageId: persistedMessage.id,
@@ -236,7 +237,7 @@ export class AgentChatMemberMessageSenderService {
               const persistedMessage =
                 await this.memberMessageWriterService.writeMemberMessage({
                   ...memberMessageWriteInput,
-                  placement: 'running',
+                  placement: AgentChatMemberMessagePlacement.RUNNING,
                 });
 
               assertIsDefinedOrThrow(persistedMessage.turnId);
@@ -267,7 +268,7 @@ export class AgentChatMemberMessageSenderService {
     const queuedMemberMessage =
       await this.memberMessageWriterService.writeMemberMessage({
         ...memberMessageWriteInput,
-        placement: 'queued',
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
 
     if (isDefined(conversationWait.suspendedRun)) {
