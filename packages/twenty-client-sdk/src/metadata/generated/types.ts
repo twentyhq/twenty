@@ -8082,6 +8082,15 @@ export default {
             "enrichWorkspaceCompany": [
                 678
             ],
+            "ensureAgentRole": [
+                461,
+                {
+                    "agentId": [
+                        538,
+                        "UUID!"
+                    ]
+                }
+            ],
             "executeOneLogicFunction": [
                 343,
                 {

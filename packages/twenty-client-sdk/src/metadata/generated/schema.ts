@@ -2442,6 +2442,7 @@ export interface Mutation {
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
     enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
+    ensureAgentRole: Role
     executeOneLogicFunction: LogicFunctionExecutionResult
     generate: GenerateResult
     generateApiKeyToken: ApiKeyToken
@@ -7057,6 +7058,7 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
+    ensureAgentRole?: (RoleGenqlSelection & { __args: {agentId: Scalars['UUID']} })
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
     generate?: (GenerateResultGenqlSelection & { __args: {input: GenerateInput} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })

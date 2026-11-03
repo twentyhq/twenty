@@ -27,6 +27,8 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { AgentRoleInitializationService } from 'src/engine/metadata-modules/ai/ai-agent-role/agent-role-initialization.service';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
@@ -84,6 +86,7 @@ export class RoleResolver {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly rolePermissionFlagService: RolePermissionFlagService,
     private readonly agentRoleService: AiAgentRoleService,
+    private readonly agentRoleInitializationService: AgentRoleInitializationService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly applicationService: ApplicationService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
@@ -307,6 +310,19 @@ export class RoleResolver {
         input,
       },
     );
+  }
+
+  @Mutation(() => RoleDTO)
+  @UseGuards(AccessPolicyGuard(ROLE_WRITE_ACCESS_POLICY))
+  @UseInterceptors(AiGraphqlApiExceptionInterceptor)
+  async ensureAgentRole(
+    @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<RoleDTO> {
+    return this.agentRoleInitializationService.ensureAgentRoleOrThrow({
+      agentId,
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean)
