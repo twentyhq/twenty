@@ -2,8 +2,9 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -12,22 +13,33 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { TestHttpRequestDTO } from 'src/engine/core-modules/workflow/dtos/test-http-request.dto';
+import { TestWorkflowCodeStepInput } from 'src/engine/core-modules/workflow/dtos/test-workflow-code-step.input';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step.input';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step.input';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { fromLogicFunctionExecuteResultToDTO } from 'src/engine/metadata-modules/logic-function/utils/from-logic-function-execute-result-to-dto.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
 import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/utils/can-update-workflow-run-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -62,6 +74,9 @@ export class WorkflowVersionStepResolver {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly httpTool: HttpTool,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly codeStepRunnerService: CodeStepRunnerService,
   ) {}
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
@@ -172,6 +187,102 @@ export class WorkflowVersionStepResolver {
       },
       { workspaceId: workspace.id },
     );
+  }
+
+  @Query(() => graphqlTypeJson)
+  async workflowCodeStepAvailablePackages(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('workflowVersionId', { type: () => UUIDScalarType })
+    workflowVersionId: string,
+  ): Promise<Record<string, string>> {
+    const { flatApplication } = await this.findWorkflowApplicationOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      workflowVersionId,
+    });
+
+    return flatApplication.availablePackages ?? {};
+  }
+
+  @Mutation(() => LogicFunctionExecutionResultDTO)
+  async testWorkflowCodeStep(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser() { id: userId }: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('input')
+    { workflowVersionId, code, payload }: TestWorkflowCodeStepInput,
+  ): Promise<LogicFunctionExecutionResultDTO> {
+    const { flatApplication, workflowId } =
+      await this.findWorkflowApplicationOrThrow({
+        workspaceId,
+        userWorkspaceId,
+        workflowVersionId,
+      });
+
+    const result = await this.codeStepRunnerService.run({
+      flatApplication,
+      code,
+      payload,
+      userId,
+      userWorkspaceId,
+      workflowId,
+    });
+
+    return fromLogicFunctionExecuteResultToDTO(result);
+  }
+
+  private async findWorkflowApplicationOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    workflowVersionId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    workflowVersionId: string;
+  }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId: workflowVersionId,
+      });
+
+    if (!isDefined(coreWorkflowVersion?.coreWorkflowId)) {
+      throw new WorkflowVersionStepException(
+        'Workflow version not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const { flatWorkflowMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+        'flatApplicationMaps',
+      ]);
+
+    const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: coreWorkflowVersion.coreWorkflowId,
+      flatEntityMaps: flatWorkflowMaps,
+    });
+
+    const flatApplication = isDefined(flatWorkflow)
+      ? flatApplicationMaps.byId[flatWorkflow.applicationId]
+      : undefined;
+
+    if (!isDefined(flatApplication)) {
+      throw new WorkflowVersionStepException(
+        'Application of the workflow not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    return {
+      flatApplication,
+      workflowId:
+        coreWorkflowVersion.workspaceWorkflowId ??
+        coreWorkflowVersion.coreWorkflowId,
+    };
   }
 
   private async assertWorkflowRunIsReadableByRequesterOrThrow(

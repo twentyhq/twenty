@@ -5,15 +5,23 @@ import { expectedOutputSchemaShape } from './expected-output-schema-shape';
 export const workflowCodeActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
+      code: z
+        .string()
+        .max(256_000)
+        .optional()
+        .describe(
+          'The TypeScript source of the step. It must export a `main` function, which receives logicFunctionInput as its only argument and returns an object.',
+        ),
       logicFunctionId: z
         .string()
+        .optional()
         .describe(
-          'The ID of the logic function that holds the code. This is auto-generated when a CODE step is created via create_workflow_version_step — do NOT set this manually.',
+          'Deprecated: only set on steps created before inline code. Do NOT set this; write the source in `code` instead.',
         ),
       logicFunctionInput: z
         .record(z.string(), z.any())
         .describe(
-          'Key-value map of input parameters to pass to the logic function at runtime.',
+          'Key-value map of input parameters passed to `main` at runtime.',
         ),
     }),
     ...expectedOutputSchemaShape,

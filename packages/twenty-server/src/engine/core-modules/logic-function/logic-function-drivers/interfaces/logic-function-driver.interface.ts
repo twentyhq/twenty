@@ -57,6 +57,7 @@ export type LogicFunctionTranspileResult = {
 
 export type LogicFunctionDeleteApplicationResourcesParams = {
   workspaceId: string;
+  applicationId: string;
   applicationUniversalIdentifier: string;
 };
 
