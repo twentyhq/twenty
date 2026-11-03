@@ -46,6 +46,20 @@ const LIST_PARTICIPANTS = parse(`
   }
 `);
 
+const SET_THREAD_SHARE = parse(`
+  mutation ShareDirectMessage($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
+    setRecordShare(target: $target, principal: $principal, accessLevel: READ_WRITE) {
+      canManageSharing
+    }
+  }
+`);
+
+const SET_THREAD_PRIVATE = parse(`
+  mutation SetDirectMessagePrivate($target: RecordTargetInput!) {
+    setRecordPrivate(target: $target, isPrivate: false) { isPrivate }
+  }
+`);
+
 describe('Direct message pair privacy', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
   let identityService: AgentChatDirectMessageIdentityService;
@@ -344,6 +358,55 @@ describe('Direct message pair privacy', () => {
     expect(updated.body.errors).toBeDefined();
     expect(restResponse.status).toBe(200);
     expect(restResponse.body.data.agentChatThreads).toEqual([]);
+  });
+
+  it('rejects sharing a DM outside its pair or making it public', async () => {
+    const threadId = await createDirectMessage({
+      firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    await grantAccess({
+      recordId: threadId,
+      principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    });
+    const target = {
+      objectMetadataId: threadObjectMetadata.id,
+      recordId: threadId,
+    };
+    const pairShare = await makeMetadataApiRequest(
+      {
+        query: SET_THREAD_SHARE,
+        variables: {
+          target,
+          principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+        },
+      },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(pairShare.body.errors).toBeUndefined();
+
+    for (const principal of [
+      { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM },
+      { roleId: roleIdsByUserWorkspaceId[USER_WORKSPACE_DATA_SEED_IDS.JANE] },
+    ]) {
+      const response = await makeMetadataApiRequest(
+        { query: SET_THREAD_SHARE, variables: { target, principal } },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+    }
+
+    const publicResponse = await makeMetadataApiRequest(
+      { query: SET_THREAD_PRIVATE, variables: { target } },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(publicResponse.body.errors[0].extensions.code).toBe(
+      'BAD_USER_INPUT',
+    );
   });
 
   it('filters thread and participant record events through the same pair boundary', async () => {
