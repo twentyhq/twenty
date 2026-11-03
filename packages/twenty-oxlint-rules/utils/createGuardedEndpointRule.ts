@@ -65,7 +65,7 @@ export const createGuardedEndpointRule = ({
         [AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID]:
           'AuthPrincipalGuard and AccessPolicyGuard must come first in their @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after them only run once the principal is known.',
         [ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID]:
-          'AccessPolicyGuard takes a *_ACCESS_POLICY constant, imported when GraphQL, REST or tools share the operation, or an inline policy object (no spread, no shorthand).',
+          'AccessPolicyGuard takes a *_ACCESS_POLICY constant or an inline policy object (no spread, no shorthand).',
         [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
           'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
       },
