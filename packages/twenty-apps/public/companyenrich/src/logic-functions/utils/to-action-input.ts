@@ -18,7 +18,10 @@ export const toResearchInput = (
 ): ResearchInput => {
   const input = toActionInput(event);
   if (!input || input.bodyJson === undefined) return input;
-  if (input.body !== undefined || typeof input.bodyJson !== 'string') {
+  if (typeof input.bodyJson !== 'string') {
+    throw new CompanyEnrichError('Request body JSON must be a string.');
+  }
+  if (input.body !== undefined) {
     throw new CompanyEnrichError('Provide either body or bodyJson, not both.');
   }
   if (new TextEncoder().encode(input.bodyJson).byteLength > 256 * 1024) {

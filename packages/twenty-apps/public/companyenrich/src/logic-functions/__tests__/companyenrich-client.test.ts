@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import specification from 'src/schemas/operations.json';
+import { CompanyEnrichError } from '../utils/companyenrich-error';
 import {
   parseProviderJson,
   queryCompanyEnrich,
@@ -81,6 +82,24 @@ describe('CompanyEnrich requests', () => {
       pageSize: 10,
     });
   });
+
+  it.each([
+    ['enrich-company', { domain: 'https://[' }],
+    ['similar-companies', { body: { domain: 'https://[' } }],
+  ] as const)(
+    'reports malformed %s domains before calling the provider',
+    async (name, input) => {
+      const fetchRequest = vi.fn<typeof fetch>();
+      const error = await queryCompanyEnrich(name, input, fetchRequest).catch(
+        (caught: Error) => caught,
+      );
+      expect(error).toBeInstanceOf(CompanyEnrichError);
+      expect((error as Error).message).toBe(
+        'Enter a company domain such as example.com.',
+      );
+      expect(fetchRequest).not.toHaveBeenCalled();
+    },
+  );
 
   it('normalizes the supported singular similarity domain', async () => {
     const fetchRequest = vi

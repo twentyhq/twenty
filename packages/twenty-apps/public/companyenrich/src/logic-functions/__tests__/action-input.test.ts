@@ -114,6 +114,22 @@ describe('action input adapters', () => {
     },
   );
 
+  it.each([false, 42, null])(
+    'reports a non-string bodyJson as an input type error',
+    async (bodyJson) => {
+      expect(
+        await createResearchFunction('search-companies').handler(
+          { bodyJson },
+          memberContext,
+        ),
+      ).toEqual({
+        success: false,
+        error: 'Request body JSON must be a string.',
+      });
+      expect(query).not.toHaveBeenCalled();
+    },
+  );
+
   it('does not confuse a direct provider body with an HTTP envelope', () => {
     expect(toResearchInput({ body: { domains: ['example.com'] } })).toEqual({
       body: { domains: ['example.com'] },

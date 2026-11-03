@@ -21,7 +21,8 @@ export const createRecordFunction = (
   handler: (input: ActionInput<{ recordId: string }>, context) =>
     executeOperation(() => {
       // Only the trusted execution context can establish a delegated member.
-      // API-key and background triggers otherwise fall back to app-wide access.
+      // Reject API-key and background calls because Twenty would otherwise
+      // fall back to app-wide access instead of a member's permissions.
       if (!context?.userWorkspaceId || !context.workspaceMemberId) {
         throw new CompanyEnrichError(
           'Saving CRM profiles requires a signed-in workspace member. API-key and background invocations cannot save records.',

@@ -70,9 +70,14 @@ export const parseProviderJson = (text: string): unknown =>
   );
 
 const normalizeDomain = (value: string): string => {
-  const domain = new URL(
-    value.includes('://') ? value : `https://${value}`,
-  ).hostname.toLowerCase();
+  let domain: string;
+  try {
+    domain = new URL(
+      value.includes('://') ? value : `https://${value}`,
+    ).hostname.toLowerCase();
+  } catch {
+    throw new CompanyEnrichError('Enter a company domain such as example.com.');
+  }
 
   if (!domain.includes('.') || domain.length > 253) {
     throw new CompanyEnrichError('Enter a company domain such as example.com.');
