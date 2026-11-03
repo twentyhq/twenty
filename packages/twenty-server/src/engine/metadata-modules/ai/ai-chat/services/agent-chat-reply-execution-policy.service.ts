@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,26 +9,21 @@ import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-c
 import { readAgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-agent-chat-assistant-reply-context.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 
 @Injectable()
 export class AgentChatReplyExecutionPolicyService {
-  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
-  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
-
-  @Inject(getAgentHistoryRepositoryToken('agentMessage'))
-  private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>;
-
-  @Inject(AgentChatAssistantPolicyService)
-  private readonly assistantPolicyService: AgentChatAssistantPolicyService;
-
-  @Inject(AgentChatReplyPolicyService)
-  private readonly replyPolicyService: AgentChatReplyPolicyService;
-
-  @Inject(FeatureFlagService)
-  private readonly featureFlagService: FeatureFlagService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly assistantPolicyService: AgentChatAssistantPolicyService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   async shouldExecute({
     threadId,

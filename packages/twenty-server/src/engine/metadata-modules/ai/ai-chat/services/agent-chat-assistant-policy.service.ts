@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -31,17 +31,12 @@ type AssistantPolicyThread = Pick<
 
 @Injectable()
 export class AgentChatAssistantPolicyService {
-  @Inject(AgentChatThreadParticipantService)
-  private readonly participantService: AgentChatThreadParticipantService;
-
-  @Inject(CoreEntityCacheService)
-  private readonly coreEntityCacheService: CoreEntityCacheService;
-
-  @Inject(WorkspaceCacheService)
-  private readonly workspaceCacheService: WorkspaceCacheService;
-
-  @Inject(RecordShareStorageService)
-  private readonly recordShareStorageService: RecordShareStorageService;
+  constructor(
+    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordShareStorageService: RecordShareStorageService,
+  ) {}
 
   async resolve({
     workspaceId,

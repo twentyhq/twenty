@@ -1,9 +1,9 @@
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
@@ -40,29 +40,19 @@ type AddMessageArgs = {
 
 @Injectable()
 export class AgentChatService {
-  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
-  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
-
-  @Inject(getAgentHistoryRepositoryToken('agentTurn'))
-  private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>;
-
-  @Inject(getAgentHistoryRepositoryToken('agentMessage'))
-  private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>;
-
-  @Inject(AgentTitleGenerationService)
-  private readonly titleGenerationService: AgentTitleGenerationService;
-
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatThreadRecordEventService)
-  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
-
-  @Inject(AgentConversationWriterService)
-  private readonly conversationWriterService: AgentConversationWriterService;
-
-  @Inject(AgentChatThreadService)
-  private readonly threadService: AgentChatThreadService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly titleGenerationService: AgentTitleGenerationService,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadService: AgentChatThreadService,
+  ) {}
 
   private getMessageSenderValues({
     workspaceId,

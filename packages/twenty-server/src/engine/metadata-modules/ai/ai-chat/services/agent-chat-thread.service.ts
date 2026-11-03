@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull } from 'typeorm';
@@ -22,7 +22,7 @@ import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-m
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -33,26 +33,16 @@ import {
 export class AgentChatThreadService {
   private readonly logger = new Logger(AgentChatThreadService.name);
 
-  @Inject(AgentChatAssistantParticipationService)
-  private readonly assistantParticipationService: AgentChatAssistantParticipationService;
-
-  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
-  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
-
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatThreadRecordEventService)
-  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
-
-  @Inject(AgentChatThreadParticipantService)
-  private readonly participantService: AgentChatThreadParticipantService;
-
-  @Inject(AgentChatChannelAccessService)
-  private readonly channelAccessService: AgentChatChannelAccessService;
-
-  @Inject(AgentChatChannelGrantService)
-  private readonly channelGrantService: AgentChatChannelGrantService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly channelAccessService: AgentChatChannelAccessService,
+    private readonly channelGrantService: AgentChatChannelGrantService,
+    private readonly assistantParticipationService: AgentChatAssistantParticipationService,
+  ) {}
 
   async createThread({
     isAssistantMentioned,

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
@@ -196,21 +196,14 @@ const PARTICIPANT_COLUMNS = AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES.map(
 // record event, which only that member is let through to receive.
 @Injectable()
 export class AgentChatThreadParticipantService {
-  @Inject(AgentChatSharingService)
-  private readonly sharingService: AgentChatSharingService;
-
-  @Inject(AgentChatThreadParticipantEventService)
-  private readonly participantEventService: AgentChatThreadParticipantEventService;
-
-  @InjectMessageQueue(MessageQueue.delayedJobsQueue)
-  private readonly delayedJobsQueueService: MessageQueueService;
-
-  @Inject(WorkspaceOrmManager)
-  private readonly workspaceOrmManager: WorkspaceOrmManager;
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly sharingService: AgentChatSharingService,
+    private readonly participantEventService: AgentChatThreadParticipantEventService,
+    @InjectMessageQueue(MessageQueue.delayedJobsQueue)
+    private readonly delayedJobsQueueService: MessageQueueService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async updateInboxState({
