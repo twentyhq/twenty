@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
@@ -528,6 +528,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const defaultAgentId = isPlainObject(defaultAgentInput)
           ? defaultAgentInput.agentId
           : undefined;
+        // the prompt is the user's own text, so switching an AI step's kind or agent keeps it
+        const defaultPrompt =
+          isPlainObject(defaultAgentInput) && isString(defaultAgentInput.prompt)
+            ? defaultAgentInput.prompt
+            : '';
 
         if (isNonEmptyString(defaultAgentId)) {
           const agent =
@@ -544,7 +549,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 ...BASE_STEP_DEFINITION,
                 input: {
                   agentId: agent.id,
-                  prompt: '',
+                  prompt: defaultPrompt,
                 },
               },
             },
@@ -560,7 +565,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 instructions: '',
-                prompt: '',
+                prompt: defaultPrompt,
               },
             },
           },

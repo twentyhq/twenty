@@ -92,16 +92,18 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     ['adds an agent', {}, { agentId: 'agent-id' }],
     ['changes its agent', { agentId: 'agent-id' }, { agentId: 'other-id' }],
   ])('rebuilds an AI step that %s', async (_, existingInput, updatedInput) => {
-    const { service, workflowVersionStepOperationsWorkspaceService } =
-      await buildService({
-        existingStep: buildAiAgentStep({
-          input: { ...existingInput, prompt: 'Qualify' },
-        }),
-      });
+    const existingStep = buildAiAgentStep({
+      input: { ...existingInput, prompt: 'Qualify' },
+    });
+    const {
+      service,
+      coreWorkflowVersionWriteService,
+      workflowVersionStepOperationsWorkspaceService,
+    } = await buildService({ existingStep });
     const step = buildAiAgentStep({
       input: { ...updatedInput, prompt: 'Qualify' },
     });
-    const builtStep = buildAiAgentStep({ input: { prompt: '' } });
+    const builtStep = buildAiAgentStep({ input: { prompt: 'Qualify' } });
 
     workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep.mockResolvedValue(
       {
@@ -121,13 +123,20 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     ).toHaveBeenCalledTimes(1);
     expect(
       workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: 'step-id',
-        defaultSettings: step.settings,
-      }),
-    );
+    ).toHaveBeenCalledWith({
+      type: WorkflowActionType.AI_AGENT,
+      workspaceId: WORKSPACE_ID,
+      position: step.position,
+      id: 'step-id',
+      defaultSettings: step.settings,
+    });
     expect(updatedStep).toEqual(builtStep);
+    expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith(
+      expect.objectContaining({ steps: [builtStep] }),
+    );
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
+    ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
   });
 
   it('updates an AI step in place when its agent is unchanged', async () => {
