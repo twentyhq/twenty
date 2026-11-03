@@ -23,7 +23,7 @@ export function buildAffiliateWorkflowPayload(
     // Lowercased so the workflow can match the applicant to an existing person.
     email: request.email.toLowerCase(),
     partnerType: request.partnerType,
-    mainChannelUrl: request.mainChannel ?? '',
+    mainChannelUrl: request.mainChannel,
     audienceSize: request.audienceSize ?? '',
     country: request.country ?? '',
     promotionPlan: request.promotionPlan ?? '',

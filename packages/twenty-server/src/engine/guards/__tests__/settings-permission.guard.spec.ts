@@ -17,6 +17,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('SettingsPermissionGuard', () => {
@@ -175,6 +176,7 @@ describe('SettingsPermissionGuard', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           PermissionsService,
+          PermissionsPrincipalsService,
           { provide: ApiKeyRoleService, useValue: {} },
           {
             provide: WorkspaceCacheService,
