@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -19,12 +19,17 @@ import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/mess
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -97,19 +102,34 @@ export class ApplicationMessageIngestionService {
     // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
-      async () =>
-        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
-          messagesToSave: await this.withMessageFolderIdsOrThrow({
+      async () => {
+        const saved =
+          await this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
+            messagesToSave: await this.withMessageFolderIdsOrThrow({
+              workspaceId,
+              messageChannelId,
+              messages: messagesToSave,
+            }),
+            // the save path only reads inert settings and the id off the channel
+            messageChannel,
+            connectedAccount,
             workspaceId,
-            messageChannelId,
-            messages: messagesToSave,
+            personHandleField: personHandleField ?? undefined,
+          });
+
+        if (!isDefined(saved)) {
+          return saved;
+        }
+
+        return {
+          ...saved,
+          messageIdsWithAttachments: await this.storeMissingAttachments({
+            workspaceId,
+            messages,
+            messageExternalIdsAndIdsMap: saved.messageExternalIdsAndIdsMap,
           }),
-          // the save path only reads inert settings and the id off the channel
-          messageChannel,
-          connectedAccount,
-          workspaceId,
-          personHandleField: personHandleField ?? undefined,
-        }),
+        };
+      },
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       APP_INGESTION_LOCK_OPTIONS,
     );
@@ -124,6 +144,7 @@ export class ApplicationMessageIngestionService {
     const {
       messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap,
+      messageIdsWithAttachments,
     } = savedMessages;
 
     // never drop a row: the app would see success with nothing to retry
@@ -145,9 +166,89 @@ export class ApplicationMessageIngestionService {
           externalId: message.externalId,
           messageId,
           messageThreadId,
+          hasAttachments: messageIdsWithAttachments.has(messageId),
         };
       }),
     };
+  }
+
+  // the save path shared with email import writes no files, and a message that already holds some keeps them
+  private async storeMissingAttachments({
+    workspaceId,
+    messages,
+    messageExternalIdsAndIdsMap,
+  }: {
+    workspaceId: string;
+    messages: AppMessageInput[];
+    messageExternalIdsAndIdsMap: Map<string, string>;
+  }): Promise<Set<string>> {
+    const messageIds = [...new Set(messageExternalIdsAndIdsMap.values())];
+
+    if (messageIds.length === 0) {
+      return new Set();
+    }
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+            'message',
+          );
+
+        const storedMessages = await messageRepository.find({
+          where: { id: In(messageIds) },
+          select: { id: true, attachments: true },
+        });
+
+        const messageIdsWithAttachments = new Set(
+          storedMessages
+            .filter((storedMessage) =>
+              isNonEmptyArray(storedMessage.attachments),
+            )
+            .map((storedMessage) => storedMessage.id),
+        );
+
+        for (const message of messages) {
+          const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+
+          if (
+            !isDefined(messageId) ||
+            !isNonEmptyArray(message.attachments) ||
+            messageIdsWithAttachments.has(messageId)
+          ) {
+            continue;
+          }
+
+          // one record per call: the files field sync refuses multi-record updates
+          try {
+            await messageRepository.update(messageId, {
+              attachments: message.attachments.map(({ fileId, label }) => ({
+                fileId,
+                label,
+              })),
+            });
+          } catch (error) {
+            if (
+              error instanceof TwentyOrmException &&
+              error.code === TwentyOrmExceptionCode.INVALID_INPUT
+            ) {
+              throw new MessageChannelException(
+                `Attachments of message ${message.externalId} were not stored: ${error.message}`,
+                MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+              );
+            }
+
+            throw error;
+          }
+
+          messageIdsWithAttachments.add(messageId);
+        }
+
+        return messageIdsWithAttachments;
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   private toMessageWithParticipants({
