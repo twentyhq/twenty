@@ -1,4 +1,8 @@
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import {
+  type RestrictedFieldsPermissions,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
@@ -19,10 +23,12 @@ const ALL_GRANTED: AllRecordsGrants = {
   canDestroy: true,
 };
 
-const buildAllRecordsPermissions = (
-  grants: AllRecordsGrants,
-  restrictedFields: RestrictedFieldsPermissions = {},
-): ObjectRecordsPermissions => ({
+const buildAllRecordsPermissions = ({
+  restrictedFields = {},
+  ...grants
+}: AllRecordsGrants & {
+  restrictedFields?: RestrictedFieldsPermissions;
+}): ObjectRecordsPermissions => ({
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
@@ -199,15 +205,21 @@ describe('computePermissionIntersection', () => {
     it('should compute intersection for restricted fields', () => {
       const result = computePermissionIntersection([
         buildRoleRecordsPermissions({
-          [objectMetadataId1]: buildAllRecordsPermissions(ALL_GRANTED, {
-            email: { canRead: null, canUpdate: false },
-            salary: { canRead: false, canUpdate: null },
+          [objectMetadataId1]: buildAllRecordsPermissions({
+            ...ALL_GRANTED,
+            restrictedFields: {
+              email: { canRead: null, canUpdate: false },
+              salary: { canRead: false, canUpdate: null },
+            },
           }),
         }),
         buildRoleRecordsPermissions({
-          [objectMetadataId1]: buildAllRecordsPermissions(ALL_GRANTED, {
-            email: { canRead: null, canUpdate: null },
-            salary: { canRead: null, canUpdate: false },
+          [objectMetadataId1]: buildAllRecordsPermissions({
+            ...ALL_GRANTED,
+            restrictedFields: {
+              email: { canRead: null, canUpdate: null },
+              salary: { canRead: null, canUpdate: false },
+            },
           }),
         }),
       ]);
@@ -221,13 +233,19 @@ describe('computePermissionIntersection', () => {
     it('should handle fields that only exist in some roles', () => {
       const result = computePermissionIntersection([
         buildRoleRecordsPermissions({
-          [objectMetadataId1]: buildAllRecordsPermissions(ALL_GRANTED, {
-            email: { canRead: false, canUpdate: false },
+          [objectMetadataId1]: buildAllRecordsPermissions({
+            ...ALL_GRANTED,
+            restrictedFields: {
+              email: { canRead: false, canUpdate: false },
+            },
           }),
         }),
         buildRoleRecordsPermissions({
-          [objectMetadataId1]: buildAllRecordsPermissions(ALL_GRANTED, {
-            salary: { canRead: false, canUpdate: false },
+          [objectMetadataId1]: buildAllRecordsPermissions({
+            ...ALL_GRANTED,
+            restrictedFields: {
+              salary: { canRead: false, canUpdate: false },
+            },
           }),
         }),
       ]);
@@ -293,14 +311,34 @@ describe('computePermissionIntersection', () => {
                   canSoftDeleteRecords: grants.canSoftDelete,
                   canDestroyRecords: grants.canDestroy,
                   predicates: constrainedFieldMetadataIds.map(
-                    (fieldMetadataId) =>
-                      ({
-                        id: `${roleId}-${fieldMetadataId}`,
-                        roleId,
-                        fieldMetadataId,
-                      }) as never,
+                    (fieldMetadataId) => ({
+                      id: `${roleId}-${fieldMetadataId}`,
+                      roleId,
+                      objectMetadataId: objectMetadataId1,
+                      fieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.IS,
+                      value: null,
+                      subFieldName: null,
+                      rowLevelPermissionPredicateGroupId: null,
+                      workspaceMemberFieldMetadataId: null,
+                      workspaceMemberSubFieldName: null,
+                    }),
                   ),
-                  predicateGroups: [{ id: `${roleId}-group`, roleId } as never],
+                  predicateGroups: [
+                    {
+                      id: `${roleId}-group`,
+                      roleId,
+                      objectMetadataId: objectMetadataId1,
+                      logicalOperator:
+                        RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                      parentRowLevelPermissionPredicateGroupId: null,
+                      positionInRowLevelPermissionPredicateGroup: null,
+                      canReadRecords: false,
+                      canUpdateRecords: false,
+                      canSoftDeleteRecords: false,
+                      canDestroyRecords: false,
+                    },
+                  ],
                 },
               },
       });

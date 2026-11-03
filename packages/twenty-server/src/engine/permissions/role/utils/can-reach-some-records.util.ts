@@ -20,24 +20,24 @@ export const canReachSomeRecords = ({
     case 'select':
       return (
         objectRecordsPermissions.canReadAllRecords ||
-        rls?.canReadRecords === true
+        (rls?.canReadRecords ?? false)
       );
     case 'insert':
     case 'update':
       return (
         objectRecordsPermissions.canUpdateAllRecords ||
-        rls?.canUpdateRecords === true
+        (rls?.canUpdateRecords ?? false)
       );
     case 'delete':
       return (
         objectRecordsPermissions.canDestroyAllRecords ||
-        rls?.canDestroyRecords === true
+        (rls?.canDestroyRecords ?? false)
       );
     case 'restore':
     case 'soft-delete':
       return (
         objectRecordsPermissions.canSoftDeleteAllRecords ||
-        rls?.canSoftDeleteRecords === true
+        (rls?.canSoftDeleteRecords ?? false)
       );
     default:
       return assertUnreachable(operationType);

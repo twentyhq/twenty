@@ -9,7 +9,6 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
-  type OperationType,
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -720,11 +719,6 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     }),
   };
 
-  const canReach = (
-    objectRecordsPermissions: ObjectRecordsPermissions | undefined,
-    operationType: OperationType,
-  ) => canReachSomeRecords({ objectRecordsPermissions, operationType });
-
   const compute = ({
     apiKeyId = 'api-key-id',
     scopeObjectPermissions,
@@ -773,8 +767,18 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       },
     });
 
-    expect(canReach(invoicePermissions, 'select')).toBe(true);
-    expect(canReach(invoicePermissions, 'update')).toBe(false);
+    expect(
+      canReachSomeRecords({
+        objectRecordsPermissions: invoicePermissions,
+        operationType: 'select',
+      }),
+    ).toBe(true);
+    expect(
+      canReachSomeRecords({
+        objectRecordsPermissions: invoicePermissions,
+        operationType: 'update',
+      }),
+    ).toBe(false);
   });
 
   it('never grants what the roles deny', () => {
@@ -782,14 +786,29 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(canReach(invoicePermissions, 'delete')).toBe(false);
+    expect(
+      canReachSomeRecords({
+        objectRecordsPermissions: invoicePermissions,
+        operationType: 'delete',
+      }),
+    ).toBe(false);
   });
 
   it('denies an object the scope leaves out', () => {
     const invoicePermissions = compute({});
 
-    expect(canReach(invoicePermissions, 'select')).toBe(false);
-    expect(canReach(invoicePermissions, 'update')).toBe(false);
+    expect(
+      canReachSomeRecords({
+        objectRecordsPermissions: invoicePermissions,
+        operationType: 'select',
+      }),
+    ).toBe(false);
+    expect(
+      canReachSomeRecords({
+        objectRecordsPermissions: invoicePermissions,
+        operationType: 'update',
+      }),
+    ).toBe(false);
   });
 
   it("keeps the roles' row-level predicates", () => {
