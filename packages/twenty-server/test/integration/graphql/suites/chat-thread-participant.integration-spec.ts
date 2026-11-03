@@ -13,6 +13,7 @@ import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
@@ -29,6 +30,9 @@ import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modu
 import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -90,7 +94,7 @@ const addParticipants = ({
 }) =>
   getAppProviderByClassName<AgentChatInboxDeliveryService>(
     'AgentChatInboxDeliveryService',
-  ).addMembers({
+  ).deliverThreadToMemberInboxes({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     workspaceMemberId,
     threadId,
@@ -832,6 +836,75 @@ describe('Chat thread participant state through the authenticated API', () => {
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
   });
 
+  it('retains both writers when inbox deliveries update the same thread concurrently', async () => {
+    const threadId = await createTestThread();
+    const workspaceMemberIds = [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    ];
+
+    for (const workspaceMemberId of workspaceMemberIds) {
+      await setShareWithMember({
+        threadId,
+        workspaceMemberId,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+        enabled: true,
+      });
+    }
+
+    const threadRepository = global.app.get<
+      string,
+      AgentHistoryRepository<AgentChatThreadWorkspaceEntity>
+    >(getAgentHistoryRepositoryToken('agentChatThread'), { strict: false });
+    const updateThread = threadRepository.update.bind(threadRepository);
+    const updateEvents = new EventEmitter();
+    const WRITER_UPDATES_READY = 'writer-updates-ready';
+    const concurrentUpdatesReady = once(updateEvents, WRITER_UPDATES_READY);
+    let initialUpdateCount = 0;
+
+    jest
+      .spyOn(threadRepository, 'update')
+      .mockImplementation(async (...args) => {
+        const [workspaceId, criteria, values] = args;
+        const isTargetWriterUpdate =
+          workspaceId === SEED_APPLE_WORKSPACE_ID &&
+          criteria.id === threadId &&
+          isDefined(values.writerWorkspaceMemberIds);
+
+        if (!isTargetWriterUpdate || initialUpdateCount >= 2) {
+          return updateThread(...args);
+        }
+
+        initialUpdateCount += 1;
+
+        if (initialUpdateCount === 2) {
+          updateEvents.emit(WRITER_UPDATES_READY);
+        }
+
+        await concurrentUpdatesReady;
+
+        return updateThread(...args);
+      });
+
+    await Promise.all(
+      workspaceMemberIds.map((workspaceMemberId) =>
+        getAppProviderByClassName<AgentChatInboxDeliveryService>(
+          'AgentChatInboxDeliveryService',
+        ).deliverThreadToMemberInboxes({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          threadId,
+          workspaceMemberIds: [workspaceMemberId],
+          reason: 'recipient',
+        }),
+      ),
+    );
+
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds?.sort(),
+    ).toEqual([...workspaceMemberIds].sort());
+  });
+
   it('brings the thread back unread for a participant who had read and archived it', async () => {
     const threadId = await createTestThread();
 
@@ -1327,7 +1400,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
       'AgentChatMemberMessageWriterService',
-    ).write({
+    ).writeMemberMessage({
       actor: {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -1433,7 +1506,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     const queueReply = async (threadId: string) =>
       getAppProviderByClassName<AgentChatMemberMessageWriterService>(
         'AgentChatMemberMessageWriterService',
-      ).write({
+      ).writeMemberMessage({
         actor: {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -1538,7 +1611,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       reason: 'recipient' as const,
     };
 
-    await inboxDeliveryService.addMembers(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -1559,7 +1632,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    await inboxDeliveryService.addMembers(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),

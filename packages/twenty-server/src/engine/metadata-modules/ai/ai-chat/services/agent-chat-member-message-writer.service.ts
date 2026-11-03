@@ -25,17 +25,17 @@ import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-hi
 @Injectable()
 export class AgentChatMemberMessageWriterService {
   constructor(
-    private readonly chatService: AgentChatService,
-    private readonly threadService: AgentChatThreadService,
-    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly agentChatService: AgentChatService,
+    private readonly chatThreadService: AgentChatThreadService,
+    private readonly threadParticipantService: AgentChatThreadParticipantService,
     private readonly assistantParticipationService: AgentChatAssistantParticipationService,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly messagePartsService: AgentChatMemberMessagePartsService,
+    private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
   ) {}
 
-  async write({
+  async writeMemberMessage({
     actor,
     thread,
     message,
@@ -53,75 +53,80 @@ export class AgentChatMemberMessageWriterService {
     >;
     addressing?: AgentChatMessageAddressing;
   }) {
-    const access = {
+    const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
       threadId: thread.id,
     };
-    const parts = await this.messagePartsService.build({
-      workspaceId: actor.workspaceId,
-      message,
-    });
-    const savedMessage = await this.conversationWriterService.runInTransaction(
-      actor.workspaceId,
-      async (scope) => {
-        await this.participantService.resolveMentionInTransaction({
-          ...access,
-          scope,
-        });
-
-        if (isDefined(participation)) {
-          await this.assistantParticipationService.save({
-            workspaceId: actor.workspaceId,
-            thread,
-            participation,
-            scope,
-          });
-        }
-
-        if (placement !== 'queued') {
-          return this.chatService.addMessage({
-            ...actor,
-            threadId: thread.id,
-            id: message.id,
-            uiMessage: { role: AgentMessageRole.USER, parts },
-            turnStatus:
-              placement === 'running'
-                ? AgentTurnStatus.RUNNING
-                : AgentTurnStatus.COMPLETED,
-            scope,
-          });
-        }
-
-        const queuedMessage = {
-          id: message.id ?? randomUUID(),
-          threadId: thread.id,
-          turnId: null,
-          role: AgentMessageRole.USER,
-          agentId: null,
-          status: AgentMessageStatus.QUEUED,
-          senderWorkspaceMemberId: actor.workspaceMemberId,
-          senderApplicationId: resolveMessageSenderApplicationId(actor),
-        };
-
-        await scope.insert('agentMessage', queuedMessage);
-        await scope.insert(
-          'agentMessagePart',
-          mapUIMessagePartsToDBParts(parts, queuedMessage.id),
-        );
-
-        return queuedMessage;
+    const messageParts = await this.memberMessagePartsService.buildMessageParts(
+      {
+        workspaceId: actor.workspaceId,
+        message,
       },
     );
+    const persistedMessage =
+      await this.conversationWriterService.runInTransaction(
+        actor.workspaceId,
+        async (transactionScope) => {
+          await this.threadParticipantService.resolveMentionInTransaction({
+            ...threadAccess,
+            scope: transactionScope,
+          });
+
+          if (isDefined(participation)) {
+            await this.assistantParticipationService.persistAssistantParticipation(
+              {
+                workspaceId: actor.workspaceId,
+                thread,
+                participation,
+                scope: transactionScope,
+              },
+            );
+          }
+
+          if (placement !== 'queued') {
+            return this.agentChatService.addMessage({
+              ...actor,
+              threadId: thread.id,
+              id: message.id,
+              uiMessage: { role: AgentMessageRole.USER, parts: messageParts },
+              turnStatus:
+                placement === 'running'
+                  ? AgentTurnStatus.RUNNING
+                  : AgentTurnStatus.COMPLETED,
+              scope: transactionScope,
+            });
+          }
+
+          const queuedMemberMessage = {
+            id: message.id ?? randomUUID(),
+            threadId: thread.id,
+            turnId: null,
+            role: AgentMessageRole.USER,
+            agentId: null,
+            status: AgentMessageStatus.QUEUED,
+            senderWorkspaceMemberId: actor.workspaceMemberId,
+            senderApplicationId: resolveMessageSenderApplicationId(actor),
+          };
+
+          await transactionScope.insert('agentMessage', queuedMemberMessage);
+          await transactionScope.insert(
+            'agentMessagePart',
+            mapUIMessagePartsToDBParts(messageParts, queuedMemberMessage.id),
+          );
+
+          return queuedMemberMessage;
+        },
+      );
     let delivery: AgentChatInboxDeliveryResult = {
       deliveredMentionWorkspaceMemberIds: [],
       deliveredRecipientWorkspaceMemberIds: [],
     };
 
     if (isDefined(participation) && isDefined(addressing)) {
-      delivery = await this.inboxDeliveryService.deliver({
-        ...access,
-        messageId: savedMessage.id,
+      delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
+        ...threadAccess,
+        messageId: persistedMessage.id,
         mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
         initialRecipientWorkspaceMemberIds: participation.isInitialMessage
           ? addressing.initialRecipientWorkspaceMemberIds
@@ -135,16 +140,16 @@ export class AgentChatMemberMessageWriterService {
         threadId: thread.id,
         event: {
           type: placement === 'running' ? 'message-persisted' : 'message-added',
-          messageId: savedMessage.id,
+          messageId: persistedMessage.id,
         },
       });
     }
 
-    await this.threadService.notifyThreadActivityUpdated({
-      ...access,
+    await this.chatThreadService.notifyThreadActivityUpdated({
+      ...threadAccess,
       text: message.text,
     });
 
-    return { ...savedMessage, delivery };
+    return { ...persistedMessage, delivery };
   }
 }
