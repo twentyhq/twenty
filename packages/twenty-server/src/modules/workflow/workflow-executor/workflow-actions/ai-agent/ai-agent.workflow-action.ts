@@ -107,6 +107,21 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
+    const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
+    const isGenerateStep = isWorkflowAiAgentGenerateStep(step.settings.input);
+
+    // a Test run skips activation's validation, and a Generate step has nothing to answer without a prompt
+    const isPromptEmpty =
+      !isDefined(resolvedPrompt) ||
+      (isString(resolvedPrompt) && resolvedPrompt.trim() === '');
+
+    if (isGenerateStep && isPromptEmpty) {
+      throw new WorkflowStepExecutorException(
+        `AI step "${step.name}" has no prompt.`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
@@ -129,8 +144,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     );
 
     // an Agent step converses so it keeps its wait tools; a Generate step runs one-shot
-    const hasConversation = !isWorkflowAiAgentGenerateStep(step.settings.input);
-    const conversation = hasConversation
+    const conversation = !isGenerateStep
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,
           stepId: currentStepId,
@@ -152,8 +166,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           }),
         })
       : null;
-
-    const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
     // a conversation is linked from the start, so the run can be followed while it goes on
     await this.workflowRunStepLogService.setAiAgentStepLog({
