@@ -4,10 +4,13 @@ const parseVersion = (version: string): number[] =>
     .split('.')
     .map((part) => Number.parseInt(part, 10) || 0);
 
-export const isVersionLowerThan = (
-  version: string,
-  targetVersion: string,
-): boolean => {
+export const isVersionLowerThan = ({
+  version,
+  targetVersion,
+}: {
+  version: string;
+  targetVersion: string;
+}): boolean => {
   const parts = parseVersion(version);
   const targetParts = parseVersion(targetVersion);
 

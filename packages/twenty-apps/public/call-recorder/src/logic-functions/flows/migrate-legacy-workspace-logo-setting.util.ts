@@ -14,10 +14,10 @@ export const migrateLegacyWorkspaceLogoSetting = async (
   previousVersion: string,
 ): Promise<CallRecorderStyle | undefined> => {
   if (
-    !isVersionLowerThan(
-      previousVersion,
-      CALL_RECORDER_STYLES_INTRODUCED_VERSION,
-    ) ||
+    !isVersionLowerThan({
+      version: previousVersion,
+      targetVersion: CALL_RECORDER_STYLES_INTRODUCED_VERSION,
+    }) ||
     getCallRecorderStyle() !== DEFAULT_CALL_RECORDER_STYLE
   ) {
     return undefined;

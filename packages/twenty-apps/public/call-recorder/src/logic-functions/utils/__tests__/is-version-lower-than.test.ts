@@ -13,6 +13,6 @@ describe('isVersionLowerThan', () => {
     ['1.20.0-rc.1', '1.20.0', false],
     ['1.19', '1.20.0', true],
   ])('compares %s with %s', (version, targetVersion, expected) => {
-    expect(isVersionLowerThan(version, targetVersion)).toBe(expected);
+    expect(isVersionLowerThan({ version, targetVersion })).toBe(expected);
   });
 });
