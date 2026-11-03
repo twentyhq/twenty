@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { getPermissionsPrincipalEphemeralRole } from 'src/engine/permissions/principal/utils/get-permissions-principal-ephemeral-role.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -26,7 +27,7 @@ export const computeObjectsPermissionsForRoles = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsWithRolesContext,
-    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal' | 'scope'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -70,10 +71,12 @@ export const computeObjectsPermissionsForRoles = ({
 
   const objectsPermissions = computePermissionIntersection(permissionsPerRole);
 
-  return isDefined(principal.scope)
+  const ephemeralRole = getPermissionsPrincipalEphemeralRole(principal);
+
+  return isDefined(ephemeralRole)
     ? restrictObjectsPermissionsToScope({
         objectsPermissions,
-        scope: principal.scope,
+        scope: ephemeralRole,
       })
     : objectsPermissions;
 };

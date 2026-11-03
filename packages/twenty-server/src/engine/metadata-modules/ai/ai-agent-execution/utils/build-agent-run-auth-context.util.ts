@@ -6,24 +6,18 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 
-// A run never exceeds its agent, its scope nor the agent's application, whoever calls it
+// A run never exceeds its agent nor the agent's application, whoever calls it
 export const buildAgentRunAuthContext = ({
   authContext,
   agentId,
   application,
-  permissionScope,
 }: {
   authContext: WorkspaceAuthContext;
   agentId?: string;
   application?: FlatApplication;
-  permissionScope?: PermissionScope;
 }): WorkspaceAuthContext => {
-  const narrowing = {
-    ...(isDefined(agentId) ? { agentId } : {}),
-    ...(isDefined(permissionScope) ? { permissionScope } : {}),
-  };
+  const narrowing = isDefined(agentId) ? { agentId } : {};
 
   switch (authContext.type) {
     case 'user':

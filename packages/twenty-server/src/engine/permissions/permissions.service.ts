@@ -4,6 +4,8 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findPermissionsEphemeralRole } from 'src/engine/permissions/principal/storage/permissions-ephemeral-role.storage';
+import { getPermissionsPrincipalEphemeralRole } from 'src/engine/permissions/principal/utils/get-permissions-principal-ephemeral-role.util';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
@@ -188,10 +190,11 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { scope } = principal;
+    const ephemeralRole = getPermissionsPrincipalEphemeralRole(principal);
 
     return (
-      (!isDefined(scope) || (scope.permissionFlags[setting] ?? false)) &&
+      (!isDefined(ephemeralRole) ||
+        (ephemeralRole.permissionFlags[setting] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalRoleIds(principal),
         setting,
@@ -226,6 +229,7 @@ export class PermissionsService {
     return resolvePermissionsPrincipalsWithRoles({
       authContext,
       roleMaps: await this.loadPrincipalRoleMaps(authContext),
+      ephemeralRole: findPermissionsEphemeralRole(authContext),
     });
   }
 

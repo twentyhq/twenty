@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
   type PermissionsApplicationIdPrincipal,
   type PermissionsCustomApplicationPrincipal,
   type PermissionsDeprecatedRoleOnlyPrincipal,
+  type PermissionsEphemeralRolePrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
 } from 'src/engine/permissions/principal/types/permissions-principal.type';
@@ -23,6 +23,7 @@ export type PermissionsMainPrincipalWithRole =
 
 export type PermissionsLimitingPrincipalWithRole =
   | WithRoleId<PermissionsAgentPrincipal>
+  | PermissionsEphemeralRolePrincipal
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
 export type PermissionsApplicationPrincipalWithRole =
@@ -35,6 +36,4 @@ export type PermissionsPrincipalsWithRolesContext = {
   mainPrincipal: PermissionsMainPrincipalWithRole;
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
-  // narrows what the roles allow, and leaves no reach beyond them
-  scope?: PermissionScope;
 };

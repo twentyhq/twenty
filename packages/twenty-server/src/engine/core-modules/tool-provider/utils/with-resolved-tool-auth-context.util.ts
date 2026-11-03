@@ -5,6 +5,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolAuthContextDependencies } from 'src/engine/core-modules/tool-provider/types/tool-auth-context-dependencies.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { withPermissionsEphemeralRole } from 'src/engine/permissions/principal/storage/permissions-ephemeral-role.storage';
 
 const resolveToolAuthContext = async ({
   context,
@@ -47,7 +48,12 @@ export const withResolvedToolAuthContext = async <T>(
     return dispatch(context);
   }
 
+  const { ephemeralRole } = context;
+
   return await withWorkspaceAuthContext(authContext, () =>
-    dispatch({ ...context, authContext }),
+    withPermissionsEphemeralRole(
+      isDefined(ephemeralRole) ? { authContext, ephemeralRole } : undefined,
+      () => dispatch({ ...context, authContext }),
+    ),
   );
 };

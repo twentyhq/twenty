@@ -1,3 +1,4 @@
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -17,7 +18,10 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
   getReadPermissions(input: {
     wakeUp: PendingWakeUpEntity;
     owner: TOwner;
-  }): Promise<{ authContext: WorkspaceAuthContext } | null>;
+  }): Promise<{
+    authContext: WorkspaceAuthContext;
+    ephemeralRole?: PermissionScope;
+  } | null>;
 
   // the handler claims the wake-up once it takes the outcome, so the outcome is taken once
   resolve(input: {

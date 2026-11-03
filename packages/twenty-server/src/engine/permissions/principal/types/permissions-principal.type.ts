@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+
 // TODO(@charlesBochet): drop deprecatedRoleOnly once every caller names the principal holding the role
 export type PermissionsDeprecatedRoleOnlyPrincipal = {
   type: 'deprecatedRoleOnly';
@@ -43,8 +45,14 @@ export type PermissionsMainPrincipal =
   | PermissionsApplicationIdPrincipal
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
+export type PermissionsEphemeralRolePrincipal = {
+  type: 'ephemeralRole';
+  permissions: PermissionScope;
+};
+
 export type PermissionsLimitingPrincipal =
   | PermissionsAgentPrincipal
+  | PermissionsEphemeralRolePrincipal
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
 export type PermissionsApplicationPrincipal =

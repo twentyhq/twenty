@@ -1,6 +1,5 @@
 import { type ActingAgent } from 'src/engine/core-modules/auth/types/acting-agent.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 
 export type WorkspaceAuthContextType =
   | 'system'
@@ -20,7 +19,6 @@ export interface ApiKeyWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   // Set when the key runs an agent: the agent and its application narrow the key's roles
   application?: NonNullable<RawAuthContext['application']>;
   agentId?: string;
-  permissionScope?: PermissionScope;
 }
 
 export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
@@ -31,8 +29,6 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: NonNullable<RawAuthContext['application']>;
   agentId?: string;
-  // Set when an AI run narrows the caller to an inline scope
-  permissionScope?: PermissionScope;
 }
 
 export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContext {
@@ -42,7 +38,6 @@ export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContex
   actingAgent?: ActingAgent;
   // The agent named in the token only narrows its roles; unlike actingAgent, writes are not attributed to it
   agentId?: string;
-  permissionScope?: PermissionScope;
 }
 
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {

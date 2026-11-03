@@ -12,7 +12,9 @@ export const getPermissionsPrincipalRoleIds = (
 ): string[] => [
   ...new Set(
     [
-      principal.limitingPrincipal?.roleId,
+      principal.limitingPrincipal?.type === 'ephemeralRole'
+        ? undefined
+        : principal.limitingPrincipal?.roleId,
       principal.mainPrincipal.roleId,
       principal.applicationPrincipal.type === 'customApplication'
         ? undefined

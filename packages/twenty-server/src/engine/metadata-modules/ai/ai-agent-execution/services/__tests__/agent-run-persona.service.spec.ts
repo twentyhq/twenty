@@ -58,7 +58,7 @@ describe('AgentRunPersonaService', () => {
   );
 });
 
-describe('AgentRunPersonaService.resolveRunAuthContext', () => {
+describe('AgentRunPersonaService.resolveRunPermissions', () => {
   const service = buildService({});
   const authContext = {
     type: 'apiKey',
@@ -68,7 +68,7 @@ describe('AgentRunPersonaService.resolveRunAuthContext', () => {
 
   it("narrows the caller to the run's agent", async () => {
     expect(
-      await service.resolveRunAuthContext({
+      await service.resolveRunPermissions({
         workspaceId: WORKSPACE_ID,
         persona: {
           agentId: 'agent-id',
@@ -80,12 +80,14 @@ describe('AgentRunPersonaService.resolveRunAuthContext', () => {
         },
         authContext,
       }),
-    ).toMatchObject({ type: 'apiKey', agentId: 'agent-id' });
+    ).toMatchObject({
+      authContext: { type: 'apiKey', agentId: 'agent-id' },
+    });
   });
 
   it('reads nothing for a run handed no data access', async () => {
     expect(
-      await service.resolveRunAuthContext({
+      await service.resolveRunPermissions({
         workspaceId: WORKSPACE_ID,
         persona: {
           agentId: null,

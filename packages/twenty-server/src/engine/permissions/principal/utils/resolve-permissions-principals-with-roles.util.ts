@@ -115,7 +115,10 @@ const resolveLimitingPrincipal = ({
   limitingPrincipal: PermissionsLimitingPrincipal;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): PermissionsLimitingPrincipalWithRole | undefined => {
-  if (limitingPrincipal.type === 'deprecatedRoleOnly') {
+  if (
+    limitingPrincipal.type === 'deprecatedRoleOnly' ||
+    limitingPrincipal.type === 'ephemeralRole'
+  ) {
     return limitingPrincipal;
   }
 
@@ -168,7 +171,6 @@ type PermissionsIdentities = {
   mainPrincipal: PermissionsMainPrincipal;
   limitingPrincipal?: PermissionsLimitingPrincipal;
   applicationPrincipal: PermissionsApplicationPrincipal;
-  scope?: PermissionScope;
 };
 
 const toApplicationPrincipal = (
@@ -197,7 +199,6 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
       };
     case 'apiKey':
       return {
@@ -206,7 +207,6 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        scope: authContext.permissionScope,
       };
     case 'application':
       return {
@@ -216,7 +216,6 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        scope: authContext.permissionScope,
       };
     case 'webhook':
       return {
@@ -232,13 +231,18 @@ const getPermissionsIdentitiesFromAuthContext = (
 export const resolvePermissionsPrincipalsWithRoles = ({
   authContext,
   roleMaps,
+  ephemeralRole,
 }: {
   authContext: PermissionsAuthContext;
   roleMaps: PermissionsPrincipalRoleMaps;
+  ephemeralRole?: PermissionScope;
 }): PermissionsPrincipalsWithRolesContext | undefined => {
   const identities = getPermissionsIdentitiesFromAuthContext(authContext);
 
-  if (!isDefined(identities)) {
+  if (
+    !isDefined(identities) ||
+    (isDefined(ephemeralRole) && isDefined(identities.limitingPrincipal))
+  ) {
     return undefined;
   }
 
@@ -266,7 +270,11 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
-  const { limitingPrincipal } = identities;
+  const limitingPrincipal: PermissionsLimitingPrincipal | undefined = isDefined(
+    ephemeralRole,
+  )
+    ? { type: 'ephemeralRole', permissions: ephemeralRole }
+    : identities.limitingPrincipal;
   const limitingPrincipalWithRole = isDefined(limitingPrincipal)
     ? resolveLimitingPrincipal({ limitingPrincipal, roleMaps })
     : undefined;
@@ -281,6 +289,5 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
-    ...(isDefined(identities.scope) ? { scope: identities.scope } : {}),
   };
 };

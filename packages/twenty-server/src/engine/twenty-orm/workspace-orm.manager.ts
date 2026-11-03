@@ -1,3 +1,4 @@
+import { findPermissionsEphemeralRole } from 'src/engine/permissions/principal/storage/permissions-ephemeral-role.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
@@ -156,6 +157,7 @@ export class WorkspaceOrmManager {
 
     return {
       authContext,
+      ephemeralRole: findPermissionsEphemeralRole(authContext),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps,
@@ -218,6 +220,7 @@ export class WorkspaceOrmManager {
 
     return {
       authContext,
+      ephemeralRole: findPermissionsEphemeralRole(authContext),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps: {

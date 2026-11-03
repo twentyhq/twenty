@@ -28,6 +28,7 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { withPermissionsEphemeralRole } from 'src/engine/permissions/principal/storage/permissions-ephemeral-role.storage';
 
 @Injectable()
 export class ToolRegistryService {
@@ -59,18 +60,26 @@ export class ToolRegistryService {
     }: ToolCatalogOptions & { includeSchemas?: boolean } = {},
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const executionContext = await this.resolveExecutionContext(context);
+    const { authContext, ephemeralRole } = executionContext;
 
-    const [providerDescriptors, definedToolDescriptors] = await Promise.all([
-      this.listProviderDescriptors({
-        context: executionContext,
-        categories,
-        includeSchemas,
-      }),
-      this.definedToolRegistryService.getAvailableDescriptors(
-        executionContext,
-        { categories, includeSchemas },
-      ),
-    ]);
+    const [providerDescriptors, definedToolDescriptors] =
+      await withPermissionsEphemeralRole(
+        isDefined(authContext) && isDefined(ephemeralRole)
+          ? { authContext, ephemeralRole }
+          : undefined,
+        () =>
+          Promise.all([
+            this.listProviderDescriptors({
+              context: executionContext,
+              categories,
+              includeSchemas,
+            }),
+            this.definedToolRegistryService.getAvailableDescriptors(
+              executionContext,
+              { categories, includeSchemas },
+            ),
+          ]),
+      );
 
     return [...providerDescriptors, ...definedToolDescriptors].filter(
       (entry) => !excludeTools?.has(entry.name),
@@ -544,6 +553,7 @@ export class ToolRegistryService {
       workspaceId: context.workspaceId,
       approvedToolName: context.approvedToolName,
       authContext: context.authContext,
+      ephemeralRole: context.ephemeralRole,
       application: context.application,
       actorContext: context.actorContext,
       userId: context.userId,

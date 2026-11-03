@@ -26,7 +26,8 @@ export const getPermissionsPrincipalActingApplicationId = ({
     applicationPrincipal.type === 'customApplication' ||
     (mainPrincipal.type === 'workspaceMember' &&
       applicationPrincipal.roleId === mainPrincipal.roleId) ||
-    applicationPrincipal.roleId === limitingPrincipal?.roleId
+    (limitingPrincipal?.type !== 'ephemeralRole' &&
+      applicationPrincipal.roleId === limitingPrincipal?.roleId)
   ) {
     return undefined;
   }

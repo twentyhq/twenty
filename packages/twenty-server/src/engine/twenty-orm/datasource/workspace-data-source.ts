@@ -1,3 +1,4 @@
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { Logger } from '@nestjs/common';
 
 import { type Pool } from 'pg';
@@ -50,6 +51,7 @@ export class WorkspaceDataSource {
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
+  private readonly ephemeralRole?: PermissionScope;
   private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   private contextPermissions?: ObjectRecordsPermissionsResolution;
 
@@ -57,16 +59,19 @@ export class WorkspaceDataSource {
     pool,
     internalContext,
     authContext,
+    ephemeralRole,
     objectPermissionsByRoleId,
   }: {
     pool: Pool;
     internalContext: WorkspaceInternalContext;
     authContext: WorkspaceAuthContext;
+    ephemeralRole?: PermissionScope;
     objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   }) {
     this.pool = pool;
     this.internalContext = internalContext;
     this.authContext = authContext;
+    this.ephemeralRole = ephemeralRole;
     this.objectPermissionsByRoleId = objectPermissionsByRoleId;
   }
 
@@ -295,6 +300,7 @@ export class WorkspaceDataSource {
   private resolveContextPermissions(): ObjectRecordsPermissionsResolution {
     return (this.contextPermissions ??= resolveObjectRecordsPermissions({
       authContext: this.authContext,
+      ephemeralRole: this.ephemeralRole,
       roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
       objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,

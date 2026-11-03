@@ -18,7 +18,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import {
@@ -108,17 +107,14 @@ const buildMemberAuthContext = ({
 const buildApiKeyAuthContext = ({
   apiKeyId,
   agentId,
-  permissionScope,
 }: {
   apiKeyId: string;
   agentId?: string;
-  permissionScope?: PermissionScope;
 }): PermissionsAuthContext => ({
   type: 'apiKey',
   workspace: { id: 'workspace-id' },
   apiKey: { id: apiKeyId },
   ...(isDefined(agentId) ? { agentId } : {}),
-  ...(isDefined(permissionScope) ? { permissionScope } : {}),
 });
 
 const computeForAuthContext = ({
@@ -682,7 +678,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
   });
 });
 
-describe('computeObjectsPermissionsForRoles with a scope', () => {
+describe('computeObjectsPermissionsForRoles with an ephemeral role', () => {
   const USER_PREDICATE: RowLevelPermissionPredicate = {
     id: 'predicate-id',
     fieldMetadataId: AMOUNT_FIELD_ID,
@@ -716,17 +712,15 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
     hasScope?: boolean;
   }) => {
     const principal = resolvePermissionsPrincipalsWithRoles({
-      authContext: buildApiKeyAuthContext({
-        apiKeyId,
-        permissionScope: hasScope
-          ? {
-              objectsPermissions: isDefined(scopeObjectPermissions)
-                ? { [INVOICE_ID]: scopeObjectPermissions }
-                : {},
-              permissionFlags: {},
-            }
-          : undefined,
-      }),
+      authContext: buildApiKeyAuthContext({ apiKeyId }),
+      ephemeralRole: hasScope
+        ? {
+            objectsPermissions: isDefined(scopeObjectPermissions)
+              ? { [INVOICE_ID]: scopeObjectPermissions }
+              : {},
+            permissionFlags: {},
+          }
+        : undefined,
       roleMaps: {
         ...buildRoleMaps(flatApplicationMaps),
         apiKeyRoleMap: { 'api-key-id': 'user-role-id' },

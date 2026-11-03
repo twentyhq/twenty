@@ -1,3 +1,4 @@
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { AsyncLocalStorage } from 'async_hooks';
 
 import {
@@ -21,6 +22,7 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 
 export type ORMWorkspaceContext = {
   authContext: WorkspaceAuthContext;
+  ephemeralRole?: PermissionScope;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;

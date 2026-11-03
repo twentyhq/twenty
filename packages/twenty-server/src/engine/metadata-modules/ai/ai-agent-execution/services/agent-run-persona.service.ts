@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentRunPersonaSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type AgentRunPermissions } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-permissions.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { buildAgentRunAuthContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-auth-context.util';
 import { buildRoleExplicitObjectGrants } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-role-explicit-object-grants.util';
@@ -83,7 +84,7 @@ export class AgentRunPersonaService {
   }
 
   // What the run reads and acts with, for its tools as for the records that wake it up. Undefined when it may read nothing
-  async resolveRunAuthContext({
+  async resolveRunPermissions({
     workspaceId,
     persona: {
       agentId,
@@ -94,20 +95,22 @@ export class AgentRunPersonaService {
     workspaceId: string;
     persona: Pick<ResolvedAgentRunPersona, 'agentId' | 'permissions'>;
     authContext: WorkspaceAuthContext | undefined;
-  }): Promise<WorkspaceAuthContext | undefined> {
+  }): Promise<AgentRunPermissions | undefined> {
     if (!isDefined(authContext) || !isDefined(explicitObjectGrants)) {
       return undefined;
     }
 
     if (!isDefined(agentId) && !isDefined(scope)) {
-      return authContext;
+      return { authContext };
     }
 
+    const runAuthContext = buildAgentRunAuthContext({
+      authContext,
+      agentId: agentId ?? undefined,
+    });
+
     if (!isDefined(scope)) {
-      return buildAgentRunAuthContext({
-        authContext,
-        agentId: agentId ?? undefined,
-      });
+      return { authContext: runAuthContext };
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -118,15 +121,14 @@ export class AgentRunPersonaService {
         },
       );
 
-    return buildAgentRunAuthContext({
-      authContext,
-      agentId: agentId ?? undefined,
-      permissionScope: resolveAiRunPermissionScope({
+    return {
+      authContext: runAuthContext,
+      ephemeralRole: resolveAiRunPermissionScope({
         scope,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
-    });
+    };
   }
 
   // like a deleted agent, a deleted application fails the run rather than letting it act for the workspace
