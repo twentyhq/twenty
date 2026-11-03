@@ -6,7 +6,10 @@ import {
   GettingStartedException,
   GettingStartedExceptionCode,
 } from 'src/engine/core-modules/getting-started/getting-started.exception';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Catch(GettingStartedException)
 export class GettingStartedGraphqlApiExceptionFilter implements ExceptionFilter {
@@ -14,6 +17,8 @@ export class GettingStartedGraphqlApiExceptionFilter implements ExceptionFilter 
     switch (exception.code) {
       case GettingStartedExceptionCode.INVALID_STEP:
         throw new UserInputError(exception);
+      case GettingStartedExceptionCode.HIDE_NOT_ALLOWED:
+        throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);
       }
