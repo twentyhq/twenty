@@ -67,7 +67,6 @@ const buildService = (overrides: Record<string, unknown>) => {
     new AgentRunCallerContextService(
       agentActorContextService as never,
       {} as never,
-      {} as never,
     ),
     {} as never,
     applicationLookupService as never,

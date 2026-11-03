@@ -196,9 +196,7 @@ export class AgentChatSharingService {
     // batches that stay well under PostgreSQL's parameter limit
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          'agentChatThread',
-        );
+        this.workspaceOrmManager.getRepository('agentChatThread');
       const readableThreadIds: string[] = [];
 
       for (const threadIdBatch of chunk(
@@ -469,7 +467,7 @@ export class AgentChatSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
+          .getRepository('agentChatThread')
           .validateWriteIsPermitted({
             operationType: 'insert',
             columnsToReturn: ['id'],
@@ -689,7 +687,7 @@ export class AgentChatSharingService {
     operationType: OperationType,
   ): Promise<void> {
     const allowedIds = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions('agentChatThread')
+      .getRepository('agentChatThread')
       .findRecordIdsAllowedForOperation({
         recordIds: [threadId],
         operationType,

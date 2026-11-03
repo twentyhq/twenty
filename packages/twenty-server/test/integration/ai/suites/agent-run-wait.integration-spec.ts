@@ -93,27 +93,6 @@ const findWaitCallStatus = async (threadId: string) => {
   return part?.status;
 };
 
-const findCallerRoleId = async (roleTargetId: string): Promise<string> => {
-  const [{ roleId }] = await global.testDataSource.query(
-    `SELECT "roleId" FROM core."roleTarget"
-     WHERE $1 IN ("userWorkspaceId", "apiKeyId") AND "workspaceId" = $2`,
-    [roleTargetId, workspaceId],
-  );
-
-  return roleId;
-};
-
-const findApplicationDefaultRoleId = async (
-  applicationId: string,
-): Promise<string> => {
-  const [{ defaultRoleId }] = await global.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core.application WHERE id = $1`,
-    [applicationId],
-  );
-
-  return defaultRoleId;
-};
-
 const findTurnStatuses = async (threadId: string) =>
   (
     await global.testDataSource.query(
@@ -442,8 +421,6 @@ describe('agent runs that wait (integration)', () => {
         type: 'user',
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
-      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      callerRoleSource: 'userWorkspaceRoleId',
     },
     {
       title: 'the API key that made it',
@@ -452,12 +429,10 @@ describe('agent runs that wait (integration)', () => {
         type: 'apiKey',
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
-      roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
-      callerRoleSource: 'apiKeyRoleId',
     },
   ])(
     'goes on with a waiting runAgent call as $title',
-    async ({ token, authContext, roleTargetId, callerRoleSource }) => {
+    async ({ token, authContext }) => {
       const runTurn = mockAgent(
         buildWaitingAgentExecutionResult(),
         replyingResult,
@@ -504,17 +479,16 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const agentRunRoleIds = {
-        [callerRoleSource]: await findCallerRoleId(roleTargetId),
-        applicationRoleId:
-          await findApplicationDefaultRoleId(agentApplicationId),
-      };
+      const agentRunAuthContext = expect.objectContaining({
+        agentId,
+        application: expect.objectContaining({ id: agentApplicationId }),
+      });
 
       expect(
         runTurn.mock.calls.map(
-          ([execution]) => execution.executionContext.agentRunRoleIds,
+          ([execution]) => execution.executionContext.authContext,
         ),
-      ).toEqual([agentRunRoleIds, agentRunRoleIds]);
+      ).toEqual([agentRunAuthContext, agentRunAuthContext]);
     },
   );
 

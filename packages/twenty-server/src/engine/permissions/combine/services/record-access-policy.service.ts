@@ -4,9 +4,18 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import {
+  type ObjectsPermissions,
+  type RecordShareAccessLevel,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
+import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
@@ -147,6 +156,37 @@ export class RecordAccessPolicyService {
     });
 
     return uniqueRecordIds.every((recordId) => admittedRecordIds.has(recordId));
+  }
+
+  async getObjectsPermissionsOrThrow(
+    principals: PermissionsPrincipalsContext,
+  ): Promise<ObjectsPermissions> {
+    const objectsPermissions = await this.findObjectsPermissions(principals);
+
+    if (!isDefined(objectsPermissions)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return objectsPermissions;
+  }
+
+  // undefined when the principals hold no role
+  async findObjectsPermissions(
+    principals: PermissionsPrincipalsContext,
+  ): Promise<ObjectsPermissions | undefined> {
+    const principal = await this.findPrincipalsWithRoles(principals);
+
+    if (!isDefined(principal)) {
+      return undefined;
+    }
+
+    return getPermissionsPrincipalObjectsPermissions({
+      principal,
+      metadataMaps: await this.findPrincipalMetadataMaps(principal),
+    });
   }
 
   async loadPermissionsMetadataMaps(
@@ -311,18 +351,18 @@ export class RecordAccessPolicyService {
   }): Promise<TResult> {
     if (isDefined(transactionScope)) {
       return work(
-        transactionScope.getRepository(objectNameSingular, {
-          shouldBypassPermissionChecks: true,
-        }),
+        transactionScope.getRepositoryWithoutPermissionChecks(
+          objectNameSingular,
+        ),
       );
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
-          this.workspaceOrmManager.getRepository(objectNameSingular, {
-            shouldBypassPermissionChecks: true,
-          }),
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            objectNameSingular,
+          ),
         ),
       buildSystemAuthContext(workspaceId),
     );

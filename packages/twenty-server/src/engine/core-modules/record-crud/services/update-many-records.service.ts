@@ -25,8 +25,7 @@ export class UpdateManyRecordsService {
   ) {}
 
   async execute(params: UpdateManyRecordsParams): Promise<ToolOutput> {
-    const { objectName, filter, data, authContext, rolePermissionConfig } =
-      params;
+    const { objectName, filter, data, authContext } = params;
 
     if (!isDefined(filter) || isRecordFilterEmpty(filter)) {
       return {
@@ -46,7 +45,6 @@ export class UpdateManyRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       if (

@@ -337,9 +337,9 @@ export class WorkflowVersionCoreSyncService {
     const linkedCoreVersionId =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowVersion = await this.workspaceOrmManager
-          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-            shouldBypassPermissionChecks: true,
-          })
+          .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+          )
           .findOne({
             where: { id: workspaceWorkflowVersionId },
             select: { coreWorkflowVersionId: true },
@@ -369,9 +369,9 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<string | null> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersion = await this.workspaceOrmManager
-        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-          shouldBypassPermissionChecks: true,
-        })
+        .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+        )
         .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
 
       return workflowVersion?.id ?? null;
@@ -391,9 +391,8 @@ export class WorkflowVersionCoreSyncService {
     const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>(
             'workflow',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workflowRepository.find({
@@ -455,9 +454,8 @@ export class WorkflowVersionCoreSyncService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
-          { shouldBypassPermissionChecks: true },
         );
 
       for (const [

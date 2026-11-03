@@ -754,10 +754,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
     step: WorkflowFormAction;
     response: object;
-    recordReadContext?: Pick<
-      WorkflowExecutionContext,
-      'authContext' | 'rolePermissionConfig'
-    >;
+    recordReadContext?: Pick<WorkflowExecutionContext, 'authContext'>;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -807,10 +804,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               .filter((field) => field.type === FieldMetadataType.RELATION)
               .map((field) => field.name);
 
-            const repository = this.workspaceOrmManager.getRepository(
-              field.settings.objectName,
-              { shouldBypassPermissionChecks: true },
-            );
+            const repository =
+              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+                field.settings.objectName,
+              );
 
             const record = await repository.findOne({
               // @ts-expect-error legacy noImplicitAny
@@ -842,17 +839,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }: {
     objectName: string;
     recordId: string;
-    recordReadContext: Pick<
-      WorkflowExecutionContext,
-      'authContext' | 'rolePermissionConfig'
-    >;
+    recordReadContext: Pick<WorkflowExecutionContext, 'authContext'>;
   }) {
     const { success, result } = await this.findRecordsService.execute({
       objectName,
       filter: { id: { eq: recordId } },
       limit: 1,
       authContext: recordReadContext.authContext,
-      rolePermissionConfig: recordReadContext.rolePermissionConfig,
       shouldBuildEffectiveSelectFields: false,
     });
 

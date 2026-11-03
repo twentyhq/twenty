@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { type AgentRunInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-inline-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -57,44 +58,45 @@ describe('AgentRunPersonaService', () => {
   );
 });
 
-describe('AgentRunPersonaService.resolveRolePermissionConfig', () => {
+describe('AgentRunPersonaService.resolveRunAuthContext', () => {
   const service = buildService({});
-  const agentRunRoleIds = { applicationRoleId: 'application-role-id' };
+  const authContext = {
+    type: 'apiKey',
+    workspace: { id: WORKSPACE_ID },
+    apiKey: { id: 'api-key-id' },
+  } as WorkspaceAuthContext;
 
-  it("narrows the agent's role to the run's roles", async () => {
+  it("narrows the caller to the run's agent", async () => {
     expect(
-      await service.resolveRolePermissionConfig({
+      await service.resolveRunAuthContext({
         workspaceId: WORKSPACE_ID,
         persona: {
+          agentId: 'agent-id',
           permissions: {
             agentRoleId: 'agent-role-id',
             scope: null,
             explicitObjectGrants: { objectPermissions: [] },
           },
         },
-        agentRunRoleIds,
+        authContext,
       }),
-    ).toEqual({
-      intersectionOf: {
-        applicationRoleId: 'application-role-id',
-        agentRoleId: 'agent-role-id',
-      },
-    });
+    ).toMatchObject({ type: 'apiKey', agentId: 'agent-id' });
   });
 
   it('reads nothing for a run handed no data access', async () => {
     expect(
-      await service.resolveRolePermissionConfig({
+      await service.resolveRunAuthContext({
         workspaceId: WORKSPACE_ID,
         persona: {
+          agentId: null,
           permissions: {
             agentRoleId: null,
             scope: null,
             explicitObjectGrants: null,
           },
         },
-        agentRunRoleIds,
+        authContext,
       }),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 });

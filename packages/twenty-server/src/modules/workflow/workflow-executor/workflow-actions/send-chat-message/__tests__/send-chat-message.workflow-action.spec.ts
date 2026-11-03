@@ -17,7 +17,7 @@ const WORKFLOW_RUN_ID = 'workflow-run-id';
 const WORKFLOW_ID = 'workflow-id';
 const WORKSPACE_MEMBER_ID = '20202020-2222-4222-8222-222222222222';
 const EXECUTION_CONTEXT = {
-  rolePermissionConfig: { intersectionOf: { applicationRoleId: 'role-id' } },
+  authContext: { type: 'application', workspace: { id: WORKSPACE_ID } },
 };
 
 const buildStep = (input: Record<string, unknown>): WorkflowAction =>
@@ -71,7 +71,7 @@ describe('SendChatMessageWorkflowAction', () => {
       new WorkflowRunInboxSenderWorkspaceService(
         {
           executeInWorkspaceContext: jest.fn((callback) => callback()),
-          getRepository: jest
+          getRepositoryWithoutPermissionChecks: jest
             .fn()
             .mockReturnValue({ findOne: findWorkflowRun }),
         } as unknown as WorkspaceOrmManager,

@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
@@ -6,7 +7,6 @@ import {
   Nullable,
   ObjectRecord,
   type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
@@ -16,16 +16,12 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-neste
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
@@ -39,17 +35,10 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
-import {
-  RolePermissionConfig,
-  RoleIdsBySource,
-} from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
@@ -60,9 +49,6 @@ type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  rolesPermissions: ObjectsPermissionsByRoleId;
-  flatApplicationMaps: FlatApplicationCacheMaps;
 };
 
 @Injectable()
@@ -78,6 +64,7 @@ export class ObjectRecordEventPublisher {
     private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
 
   async publish(
@@ -108,6 +95,10 @@ export class ObjectRecordEventPublisher {
       this.recordAccessPolicyService.buildEventRecordAccessGate(eventBatch);
 
     const streamIdsToRemove: string[] = [];
+    const subscriberAuthContexts = new Map<
+      string,
+      Promise<WorkspaceAuthContext>
+    >();
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -126,6 +117,7 @@ export class ObjectRecordEventPublisher {
         permissionsContext,
         workspaceMemberIdByUserId,
         eventRecordAccessGate,
+        subscriberAuthContexts,
       });
     }
 
@@ -152,6 +144,7 @@ export class ObjectRecordEventPublisher {
     permissionsContext,
     workspaceMemberIdByUserId,
     eventRecordAccessGate,
+    subscriberAuthContexts,
   }: {
     streamChannelId: string;
     streamData: EventStreamData;
@@ -159,23 +152,35 @@ export class ObjectRecordEventPublisher {
     permissionsContext: StreamPermissionsContext;
     workspaceMemberIdByUserId: Map<string, string>;
     eventRecordAccessGate: EventRecordAccessGate;
+    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
   }): Promise<void> {
-    const rolePermissionConfig = this.resolveStreamRolePermissionConfig(
-      streamData.authContext,
-      permissionsContext,
-    );
-    const roleIds = isDefined(rolePermissionConfig)
-      ? getRoleIdsToIntersect(rolePermissionConfig.intersectionOf)
-      : null;
+    const subscriberAuthContext: SerializableAuthContext = {
+      ...streamData.authContext,
+      workspaceMemberId: this.resolveSubscriberWorkspaceMemberId({
+        subscriberAuthContext: streamData.authContext,
+        workspaceMemberIdByUserId,
+      }),
+    };
+    const { userWorkspaceId, workspaceMemberId } = subscriberAuthContext;
 
-    if (!isDefined(rolePermissionConfig) || !isDefined(roleIds)) {
+    if (!isDefined(userWorkspaceId) || !isDefined(workspaceMemberId)) {
       return;
     }
 
-    const objectsPermissions = this.resolveStreamObjectsPermissions(
-      roleIds,
-      permissionsContext.rolesPermissions,
-    );
+    const principals = buildPermissionsPrincipalsContext({
+      workspaceId: workspaceEventBatch.workspaceId,
+      workspaceMemberId,
+      apiKeyId: undefined,
+      applicationId: subscriberAuthContext.applicationId,
+      agentId: undefined,
+    });
+
+    if (!isDefined(principals)) {
+      return;
+    }
+
+    const objectsPermissions =
+      await this.recordAccessPolicyService.findObjectsPermissions(principals);
 
     if (!isDefined(objectsPermissions)) {
       return;
@@ -197,26 +202,6 @@ export class ObjectRecordEventPublisher {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
-
-    const subscriberAuthContext: SerializableAuthContext = {
-      ...streamData.authContext,
-      workspaceMemberId: this.resolveSubscriberWorkspaceMemberId({
-        subscriberAuthContext: streamData.authContext,
-        workspaceMemberIdByUserId,
-      }),
-    };
-
-    const principals = buildPermissionsPrincipalsContext({
-      workspaceId: workspaceEventBatch.workspaceId,
-      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-      apiKeyId: subscriberAuthContext.apiKeyId,
-      applicationId: subscriberAuthContext.applicationId,
-      agentId: undefined,
-    });
-
-    if (!isDefined(principals)) {
-      return;
-    }
 
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(principals);
@@ -281,9 +266,13 @@ export class ObjectRecordEventPublisher {
           events: matchedEvents.map(
             (matchedEvent) => matchedEvent.objectRecordEvent,
           ),
-          streamData,
           workspaceId: workspaceEventBatch.workspaceId,
-          rolePermissionConfig,
+          subscriberAuthContext: this.findSubscriberAuthContext({
+            subscriberAuthContexts,
+            workspaceId: workspaceEventBatch.workspaceId,
+            userWorkspaceId,
+            applicationId: subscriberAuthContext.applicationId,
+          }),
           principals,
           objectsPermissions,
         });
@@ -310,19 +299,17 @@ export class ObjectRecordEventPublisher {
   }
 
   private async enrichEventBatchWithNestedRelations({
-    streamData,
     objectMetadata,
     events,
     workspaceId,
-    rolePermissionConfig,
+    subscriberAuthContext,
     principals,
     objectsPermissions,
   }: {
-    streamData: EventStreamData;
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
-    rolePermissionConfig: RolePermissionConfig;
+    subscriberAuthContext: Promise<WorkspaceAuthContext>;
     principals: PermissionsPrincipalsContext;
     objectsPermissions: ObjectsPermissions;
   }) {
@@ -378,7 +365,9 @@ export class ObjectRecordEventPublisher {
     const selectedFieldsResult =
       commonQueryParser.parseSelectedFields(selectedFields);
 
-    // The ambient context is the writer's, so relations load as the subscriber's roles alone
+    // The ambient context is the writer's, so relations load as the subscriber
+    const resolvedSubscriberAuthContext = await subscriberAuthContext;
+
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.processNestedRelationsHelper.processNestedRelations({
@@ -386,75 +375,46 @@ export class ObjectRecordEventPublisher {
           flatFieldMetadataMaps,
           parentObjectMetadataItem: objectMetadata,
           parentObjectRecords: allRecords,
-          authContext:
-            streamData.authContext as unknown as WorkspaceAuthContext,
+          authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
-          rolePermissionConfig,
           relations: selectedFieldsResult.relations as Record<
             string,
             FindOptionsRelations<ObjectLiteral>
           >,
           selectedFields: selectedFieldsResult.select,
         }),
-      buildSystemAuthContext(workspaceId),
+      resolvedSubscriberAuthContext,
     );
   }
 
-  private resolveStreamRolePermissionConfig(
-    subscriberAuthContext: SerializableAuthContext,
-    permissionsContext: Pick<
-      StreamPermissionsContext,
-      'userWorkspaceRoleMap' | 'flatApplicationMaps'
-    >,
-  ): { intersectionOf: RoleIdsBySource } | undefined {
-    const { userWorkspaceId, applicationId } = subscriberAuthContext;
+  // Streams of one member share their auth context within a batch; null keeps the writer's application out
+  private findSubscriberAuthContext({
+    subscriberAuthContexts,
+    workspaceId,
+    userWorkspaceId,
+    applicationId,
+  }: {
+    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
+    workspaceId: string;
+    userWorkspaceId: string;
+    applicationId: string | undefined;
+  }): Promise<WorkspaceAuthContext> {
+    const key = `${userWorkspaceId}:${applicationId ?? ''}`;
+    const cachedAuthContext = subscriberAuthContexts.get(key);
 
-    if (!isDefined(userWorkspaceId)) {
-      return undefined;
+    if (isDefined(cachedAuthContext)) {
+      return cachedAuthContext;
     }
 
-    const userRoleId = permissionsContext.userWorkspaceRoleMap[userWorkspaceId];
+    const authContext = this.userWorkspaceAuthContextService.resolve({
+      workspaceId,
+      userWorkspaceId,
+      applicationId: applicationId ?? null,
+    });
 
-    if (!isDefined(applicationId)) {
-      return {
-        intersectionOf: buildUserRoleIdsBySource({
-          userRoleId,
-          application: undefined,
-        }),
-      };
-    }
+    subscriberAuthContexts.set(key, authContext);
 
-    // The cache keeps soft-deleted applications; a gone one must not fall back to the user alone and widen the stream
-    const application = findActiveFlatApplicationById(
-      permissionsContext.flatApplicationMaps,
-      applicationId,
-    );
-
-    if (!isDefined(application)) {
-      return undefined;
-    }
-
-    return {
-      intersectionOf: buildUserRoleIdsBySource({
-        userRoleId,
-        application,
-      }),
-    };
-  }
-
-  private resolveStreamObjectsPermissions(
-    roleIds: string[],
-    rolesPermissions: ObjectsPermissionsByRoleId,
-  ): ObjectsPermissions | undefined {
-    const allRolePermissions = roleIds.map(
-      (roleId) => rolesPermissions[roleId],
-    );
-
-    if (!allRolePermissions.every(isDefined)) {
-      return undefined;
-    }
-
-    return computePermissionIntersection(allRolePermissions);
+    return authContext;
   }
 
   private buildWorkspaceMemberIdByUserId(
@@ -594,17 +554,11 @@ export class ObjectRecordEventPublisher {
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-      userWorkspaceRoleMap,
-      rolesPermissions,
-      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
-      'userWorkspaceRoleMap',
-      'rolesPermissions',
-      'flatApplicationMaps',
     ]);
 
     return {
@@ -612,9 +566,6 @@ export class ObjectRecordEventPublisher {
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-      userWorkspaceRoleMap,
-      rolesPermissions,
-      flatApplicationMaps,
     };
   }
 }
