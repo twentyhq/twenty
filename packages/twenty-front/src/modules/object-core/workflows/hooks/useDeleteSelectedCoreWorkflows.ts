@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { DELETE_CORE_WORKFLOWS } from '@/object-core/workflows/graphql/mutations/deleteCoreWorkflows';
@@ -19,8 +18,10 @@ import {
   type DeleteCoreWorkflowsMutationVariables,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 export const useDeleteSelectedCoreWorkflows = () => {
+  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
 
   const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);

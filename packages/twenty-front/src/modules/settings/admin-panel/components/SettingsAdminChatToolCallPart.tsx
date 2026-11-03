@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -15,6 +14,7 @@ import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/Ad
 import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';
 import { parseAdminToolJson } from '@/settings/admin-panel/utils/parseAdminToolJson';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatToolCallPartProps = {
   part: AdminChatThreadMessagePart;
@@ -85,6 +85,7 @@ const StyledEmptyTabLabel = styled.div`
 export const SettingsAdminChatToolCallPart = ({
   part,
 }: SettingsAdminChatToolCallPartProps) => {
+  const { t } = useLingui();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'output' | 'input'>(
     isDefined(part.toolOutput) ? 'output' : 'input',

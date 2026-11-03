@@ -5,11 +5,11 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationRegistrationRedirectURIsTableProps = {
   redirectUris: string[];
@@ -28,6 +28,7 @@ export const SettingsApplicationRegistrationRedirectURIsTable = ({
   redirectUris,
   updateRedirectUris,
 }: SettingsApplicationRegistrationRedirectURIsTableProps) => {
+  const { t } = useLingui();
   return (
     <>
       {redirectUris.length > 0 && (

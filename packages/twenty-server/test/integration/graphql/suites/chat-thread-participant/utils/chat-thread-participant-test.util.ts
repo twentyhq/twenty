@@ -15,6 +15,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -337,6 +338,7 @@ export const setUpChatThreadParticipantTests = () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
+    await removeAgentChatSnoozeEndJobs({ threadIds: createdThreadIds });
 
     for (const manualShare of enabledManualShares.splice(0)) {
       await setShareWithMember({ ...manualShare, enabled: false });

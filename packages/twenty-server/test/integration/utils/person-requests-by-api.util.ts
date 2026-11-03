@@ -17,11 +17,15 @@ export type RecordApi = 'graphql' | 'rest';
 
 type PersonData = {
   id: string;
+  companyId?: string;
   name?: { firstName: string };
   jobTitle?: string;
+  intro?: string;
 };
 
 type PersonRequestInput = { api: RecordApi; token: string };
+
+type GraphqlSelectionInput = { gqlFields?: string };
 
 const PERSON_SINGULAR_NAME = 'person';
 const PERSON_PLURAL_NAME = 'people';
@@ -31,13 +35,18 @@ const restIdFilter = (ids: string[]) =>
   `filter=id[in]:[${ids.map((id) => `"${id}"`).join(',')}]`;
 
 export const personRequestsByApi = {
-  findMany: ({ api, token, ids }: PersonRequestInput & { ids: string[] }) => {
+  findMany: ({
+    api,
+    token,
+    ids,
+    gqlFields = PERSON_FIELDS,
+  }: PersonRequestInput & GraphqlSelectionInput & { ids: string[] }) => {
     if (api === 'graphql') {
       return makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: PERSON_SINGULAR_NAME,
           objectMetadataPluralName: PERSON_PLURAL_NAME,
-          gqlFields: PERSON_FIELDS,
+          gqlFields,
           filter: { id: { in: ids } },
         }),
         token,
@@ -51,12 +60,17 @@ export const personRequestsByApi = {
     });
   },
 
-  findOne: ({ api, token, id }: PersonRequestInput & { id: string }) => {
+  findOne: ({
+    api,
+    token,
+    id,
+    gqlFields = PERSON_FIELDS,
+  }: PersonRequestInput & GraphqlSelectionInput & { id: string }) => {
     if (api === 'graphql') {
       return makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: PERSON_SINGULAR_NAME,
-          gqlFields: PERSON_FIELDS,
+          gqlFields,
           filter: { id: { eq: id } },
         }),
         token,
@@ -124,12 +138,14 @@ export const personRequestsByApi = {
     token,
     id,
     data,
-  }: PersonRequestInput & { id: string; data: Omit<PersonData, 'id'> }) => {
+    gqlFields = PERSON_FIELDS,
+  }: PersonRequestInput &
+    GraphqlSelectionInput & { id: string; data: Omit<PersonData, 'id'> }) => {
     if (api === 'graphql') {
       return makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: PERSON_SINGULAR_NAME,
-          gqlFields: PERSON_FIELDS,
+          gqlFields,
           recordId: id,
           data,
         }),
@@ -150,13 +166,18 @@ export const personRequestsByApi = {
     token,
     ids,
     data,
-  }: PersonRequestInput & { ids: string[]; data: Omit<PersonData, 'id'> }) => {
+    gqlFields = PERSON_FIELDS,
+  }: PersonRequestInput &
+    GraphqlSelectionInput & {
+      ids: string[];
+      data: Omit<PersonData, 'id'>;
+    }) => {
     if (api === 'graphql') {
       return makeGraphqlApiRequest(
         updateManyOperationFactory({
           objectMetadataSingularName: PERSON_SINGULAR_NAME,
           objectMetadataPluralName: PERSON_PLURAL_NAME,
-          gqlFields: PERSON_FIELDS,
+          gqlFields,
           filter: { id: { in: ids } },
           data,
         }),

@@ -2,10 +2,10 @@ import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants
 import { styled } from '@linaria/react';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
-import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const GRAPH_TYPE_OPTIONS = [
   GraphType.VERTICAL_BAR,
@@ -54,6 +54,7 @@ export const ChartTypeSelectionSection = ({
   currentGraphType,
   setCurrentGraphType,
 }: ChartTypeSelectionSectionProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (

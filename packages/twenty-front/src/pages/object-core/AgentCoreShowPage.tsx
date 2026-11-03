@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -13,8 +12,10 @@ import { FindOneAgentDocument } from '~/generated-metadata/graphql';
 import { CoreAgentDetailSkeletonLoader } from '@/object-core/agents/components/CoreAgentDetailSkeletonLoader';
 import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
+import { useLingui } from '@lingui/react/macro';
 
 export const AgentCoreShowPage = () => {
+  const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
   const theme = useTheme();
   const { getIcon } = useIcons();

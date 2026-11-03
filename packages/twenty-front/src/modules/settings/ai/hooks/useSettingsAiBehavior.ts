@@ -4,7 +4,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -14,12 +13,14 @@ import {
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { useLingui } from '@lingui/react/macro';
 
 type AssistantModeField =
   | 'aiChatDirectMessageAssistantMode'
   | 'aiChatInboxAssistantMode';
 
 export const useSettingsAiBehavior = () => {
+  const { t } = useLingui();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );

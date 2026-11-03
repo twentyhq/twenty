@@ -475,7 +475,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+Driverul Lambda încarcă stratul de dependențe al fiecărei aplicații în `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, un bucket pe care îl dețineți în aceeași regiune cu funcțiile dvs. Când nu este setat, driverul utilizează bucket-ul de stocare (`STORAGE_S3_NAME`). Dacă niciuna nu este setată, funcțiile logice eșuează cu o eroare de configurare.
 
 **Pentru a dezactiva funcțiile logice:**
 

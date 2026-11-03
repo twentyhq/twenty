@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconVariable, IconX } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type AgentOutputSchemaFieldHeaderProps = {
   name: string;
@@ -90,6 +90,7 @@ export const AgentOutputSchemaFieldHeader = ({
   onToggle,
   onRemove,
 }: AgentOutputSchemaFieldHeaderProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (
