@@ -10,15 +10,15 @@ import {
 export const getTimelineThreadLabel = (
   thread: Pick<TimelineThread, 'subject' | 'visibility' | 'channel'>,
 ) => {
+  if (isChatTimelineThreadChannel(thread.channel)) {
+    return t`Conversation`;
+  }
+
   const isSubjectVisible =
     thread.visibility === MessageChannelVisibility.SUBJECT ||
     thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
-  if (isSubjectVisible && isNonEmptyString(thread.subject)) {
-    return thread.subject;
-  }
-
-  return isChatTimelineThreadChannel(thread.channel)
-    ? t`Conversation`
+  return isSubjectVisible && isNonEmptyString(thread.subject)
+    ? thread.subject
     : t`Email thread`;
 };

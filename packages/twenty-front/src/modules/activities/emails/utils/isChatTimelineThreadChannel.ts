@@ -6,7 +6,4 @@ import {
 
 export const isChatTimelineThreadChannel = (
   channel: Pick<TimelineThreadChannel, 'type'> | null | undefined,
-) =>
-  isDefined(channel) &&
-  (channel.type === MessageChannelType.APP ||
-    channel.type === MessageChannelType.SMS);
+) => isDefined(channel) && channel.type === MessageChannelType.APP;

@@ -32,20 +32,17 @@ describe('getTimelineThreadLabel', () => {
     ).toBe('Email thread');
   });
 
-  it.each([MessageChannelType.APP, MessageChannelType.SMS])(
-    'should fall back to a conversation label for %s channels',
-    (type) => {
-      expect(
-        getTimelineThreadLabel({
-          subject: '',
-          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-          channel: {
-            type,
-            provider: 'app',
-            applicationId: null,
-          },
-        }),
-      ).toBe('Conversation');
-    },
-  );
+  it('should use a conversation label for app chats, even with a subject', () => {
+    expect(
+      getTimelineThreadLabel({
+        subject: 'Intro call',
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        channel: {
+          type: MessageChannelType.APP,
+          provider: 'app',
+          applicationId: null,
+        },
+      }),
+    ).toBe('Conversation');
+  });
 });

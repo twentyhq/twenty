@@ -1,6 +1,6 @@
-import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
+import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -9,9 +9,9 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -23,7 +23,8 @@ export const EmptyInboxPlaceholder = () => {
   const { openComposer, loading } =
     useComposeEmailForTargetRecord(targetRecord);
 
-  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
+  const { connectedAccountId, loading: connectedAccountLoading } =
+    useFirstConnectedAccount();
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
@@ -33,7 +34,7 @@ export const EmptyInboxPlaceholder = () => {
   );
 
   const recordName = recordIdentifier?.name;
-  const hasConnectedAccount = isNonEmptyArray(myConnectedAccounts);
+  const hasAccountAbleToSend = isDefined(connectedAccountId);
 
   return (
     <EmptyState.Root>
@@ -48,9 +49,9 @@ export const EmptyInboxPlaceholder = () => {
             : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
         </EmptyState.Description>
       </EmptyState.Content>
-      {!isNull(myConnectedAccounts) && (
+      {!connectedAccountLoading && (
         <EmptyState.Actions>
-          {hasConnectedAccount ? (
+          {hasAccountAbleToSend ? (
             <>
               <LinkEmailThreadsDropdown
                 dropdownIdPrefix="empty-inbox-link-email-threads"

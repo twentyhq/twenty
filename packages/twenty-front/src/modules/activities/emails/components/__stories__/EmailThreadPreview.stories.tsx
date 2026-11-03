@@ -123,7 +123,7 @@ export const LinkedInConversation: Story = {
   args: {
     thread: {
       ...thread,
-      subject: '',
+      subject: 'Intro from Dreamforce',
       lastMessageBody: 'Great meeting you at Dreamforce. Happy to connect.',
       numberOfMessagesInThread: 4,
       channel: {
@@ -149,6 +149,9 @@ export const LinkedInConversation: Story = {
       'Great meeting you at Dreamforce. Happy to connect.',
     );
     await expect(canvas.queryByText('4')).not.toBeInTheDocument();
-    await expect(canvas.getByText('L')).toBeVisible();
+    await expect(
+      canvas.queryByText('Intro from Dreamforce'),
+    ).not.toBeInTheDocument();
+    await expect(canvas.getByRole('img', { name: 'LinkedIn' })).toBeVisible();
   },
 };
