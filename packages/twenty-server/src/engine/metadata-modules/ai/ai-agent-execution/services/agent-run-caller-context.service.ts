@@ -32,10 +32,12 @@ export class AgentRunCallerContextService {
     workspace,
     callerRef,
     requestUserWorkspaceId,
+    agentId,
     application,
     callerApplication,
   }: {
     workspace: FlatWorkspace;
+    agentId?: string;
     callerRef: AgentRunCallerRef;
     requestUserWorkspaceId: string | null;
     application: FlatApplication | undefined;
@@ -52,6 +54,7 @@ export class AgentRunCallerContextService {
       });
     const authContext = buildAgentRunAuthContext({
       authContext: callerAuthContext,
+      agentId,
       application,
     });
 
