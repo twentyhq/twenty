@@ -12,7 +12,7 @@ import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowAiAgentAgentStepPromptTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentAgentStepPromptTab';
 import { WorkflowAiAgentGenerateStepPromptTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab';
-import { WorkflowAiAgentScopePermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentScopePermissionsTab';
+import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabListComponentId';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
 import { useResetWorkflowAiAgentPermissionsStateOnSidePanelClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnSidePanelClose';
@@ -190,7 +190,7 @@ export const WorkflowEditActionAiAgent = ({
       >
         {isPermissionsTabActive ? (
           <WorkflowStepBody paddingBlock="0" paddingInline="0">
-            <WorkflowAiAgentScopePermissionsTab
+            <WorkflowAiAgentPermissionsTab
               scope={input.scope}
               readonly={readonly}
               onScopeChange={(scope) => handleInputChange({ scope })}

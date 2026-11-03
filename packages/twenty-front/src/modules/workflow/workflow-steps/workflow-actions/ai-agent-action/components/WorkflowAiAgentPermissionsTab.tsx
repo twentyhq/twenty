@@ -11,12 +11,13 @@ import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/work
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
-import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
+import { useWorkflowAiAgentScopePermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentScopePermissionActions';
+import { getWorkflowAiAgentScopePermissions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -58,25 +59,15 @@ const StyledGroupsContainer = styled.div`
 `;
 
 type WorkflowAiAgentPermissionsTabProps = {
+  scope: AiRunScope | undefined;
   readonly: boolean;
-  objectPermissions: WorkflowAiAgentObjectPermission[];
-  permissionFlagKeys: string[];
-  otherPermissionLabels?: string[];
-  onAddPermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
-  onDeletePermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
-  onAddPermissionFlag?: (permissionFlagKey: string) => void;
-  onDeletePermissionFlag?: (permissionFlagKey: string) => void;
+  onScopeChange: (scope: AiRunScope) => void;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
+  scope,
   readonly,
-  objectPermissions,
-  permissionFlagKeys,
-  otherPermissionLabels = [],
-  onAddPermission,
-  onDeletePermission,
-  onAddPermissionFlag,
-  onDeletePermissionFlag,
+  onScopeChange,
 }: WorkflowAiAgentPermissionsTabProps) => {
   const [
     workflowAiAgentPermissionsSelectedObjectId,
@@ -95,6 +86,17 @@ export const WorkflowAiAgentPermissionsTab = ({
     alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems,
     objectMetadataItems: allObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
+  const { objectPermissions, permissionFlagKeys, otherPermissionLabels } =
+    getWorkflowAiAgentScopePermissions({
+      scope,
+      objectMetadataItems: allObjectMetadataItems,
+    });
+  const {
+    onAddPermission,
+    onDeletePermission,
+    onAddPermissionFlag,
+    onDeletePermissionFlag,
+  } = useWorkflowAiAgentScopePermissionActions({ scope, onScopeChange });
 
   const systemObjectMetadataItems = allObjectMetadataItems
     .filter((item) => item.isActive && item.isSystem)
