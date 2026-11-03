@@ -36,6 +36,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
+// Reads only need the AI flag so the chat composer can list skills
 const SKILL_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
@@ -68,8 +69,6 @@ const SKILL_WRITE_ACCESS_POLICY: AccessPolicy = {
     PermissionFlagType.AI_SETTINGS,
   ],
 };
-
-// Reads only need the AI flag so the chat composer can list skills; mutations need AI_SETTINGS
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
