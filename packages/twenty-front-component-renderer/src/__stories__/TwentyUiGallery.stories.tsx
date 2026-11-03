@@ -445,7 +445,7 @@ export const PortalZoomPrevention: Story = {
   ...PortalBoundsReact,
   args: {
     ...PortalBoundsReact.args,
-    preventPageZoom: true,
+    shouldPreventPageZoom: true,
   },
   play: portalZoomTest,
 };
@@ -454,7 +454,7 @@ export const PortalBrowserZoom: Story = {
   ...PortalZoomPrevention,
   args: {
     ...PortalZoomPrevention.args,
-    preventPageZoom: false,
+    shouldPreventPageZoom: false,
   },
 };
 

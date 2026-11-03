@@ -37,7 +37,7 @@ type FrontComponentRendererProps = {
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
-  preventPageZoom?: boolean;
+  shouldPreventPageZoom?: boolean;
 };
 
 type ResolvedFrontComponent = NonNullable<
@@ -54,7 +54,7 @@ type FrontComponentRendererContentProps = {
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
-  preventPageZoom?: boolean;
+  shouldPreventPageZoom?: boolean;
 };
 
 export const FrontComponentRenderer = ({
@@ -67,7 +67,7 @@ export const FrontComponentRenderer = ({
   toolCall,
   loadingFallback,
   unavailableFallback,
-  preventPageZoom,
+  shouldPreventPageZoom,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
@@ -98,7 +98,7 @@ export const FrontComponentRenderer = ({
           toolCall={toolCall}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
-          preventPageZoom={preventPageZoom}
+          shouldPreventPageZoom={shouldPreventPageZoom}
         />
       )}
     </>
@@ -115,7 +115,7 @@ const FrontComponentRendererContent = ({
   toolCall,
   loadingFallback,
   unavailableFallback,
-  preventPageZoom,
+  shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
@@ -274,7 +274,7 @@ const FrontComponentRendererContent = ({
             storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
-            preventPageZoom={preventPageZoom}
+            shouldPreventPageZoom={shouldPreventPageZoom}
           />
         </FrontComponentRendererProvider>
       )}

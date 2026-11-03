@@ -92,7 +92,7 @@ export const FrontComponentWidgetRenderer = ({
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
           loadingFallback={loadingFallback}
-          preventPageZoom={shouldPreventPageZoom}
+          shouldPreventPageZoom={shouldPreventPageZoom}
         />
       </Suspense>
     </StyledContainer>

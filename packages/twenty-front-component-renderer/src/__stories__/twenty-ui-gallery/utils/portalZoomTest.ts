@@ -28,7 +28,9 @@ export const portalZoomTest: TwentyUiGalleryPlayFunction = async ({
 
     portalAction.dispatchEvent(zoomEvent);
 
-    expect(zoomEvent.defaultPrevented).toBe(args.preventPageZoom ?? false);
+    expect(zoomEvent.defaultPrevented).toBe(
+      args.shouldPreventPageZoom ?? false,
+    );
   }
 
   const scrollEvent = new WheelEvent('wheel', {

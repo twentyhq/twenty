@@ -60,7 +60,7 @@ type FrontComponentRendererProps = {
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
-  preventPageZoom?: boolean;
+  shouldPreventPageZoom?: boolean;
 };
 
 export const FrontComponentRenderer = ({
@@ -83,7 +83,7 @@ export const FrontComponentRenderer = ({
   onError,
   colorScheme,
   loadingFallback,
-  preventPageZoom = false,
+  shouldPreventPageZoom = false,
 }: FrontComponentRendererProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<FrontComponentThread | null>(null);
@@ -122,7 +122,7 @@ export const FrontComponentRenderer = ({
         onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
         onClick={outsidePressController.forwardUnhandledOwnedPress}
       >
-        {preventPageZoom && (
+        {shouldPreventPageZoom && (
           <FrontComponentPreventPageZoomEffect
             geometryTracker={geometryTracker}
           />
