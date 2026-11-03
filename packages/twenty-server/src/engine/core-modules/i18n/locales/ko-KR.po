@@ -1119,11 +1119,6 @@ msgstr "이 이름을 가진 에이전트가 이미 존재합니다"
 msgid "An agent with this name already exists."
 msgstr "이 이름을 가진 에이전트가 이미 존재합니다."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "AI 단계에서는 에이전트를 변경할 수 없습니다. 대신 새 단계를 만드세요."
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."

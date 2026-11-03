@@ -1119,11 +1119,6 @@ msgstr "此名稱的代理程式已存在"
 msgid "An agent with this name already exists."
 msgstr "此名稱的代理程式已存在."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "AI 步驟無法變更其代理程式。請改為建立新步驟。"
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."

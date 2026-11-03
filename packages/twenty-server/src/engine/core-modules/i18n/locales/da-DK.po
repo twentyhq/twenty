@@ -1119,11 +1119,6 @@ msgstr "En agent med dette navn findes allerede"
 msgid "An agent with this name already exists."
 msgstr "En agent med dette navn findes allerede."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "Et AI-trin kan ikke ændre sin agent. Opret i stedet et nyt trin."
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
