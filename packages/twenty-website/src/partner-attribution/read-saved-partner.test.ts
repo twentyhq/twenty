@@ -29,27 +29,28 @@ describe('readSavedPartner', () => {
   it('returns the code until the end of the attribution window', () => {
     const storage = createStorage();
 
-    savePartner(storage, 'NORTHWIND', CLICKED_AT);
+    savePartner({ storage, code: 'NORTHWIND', now: CLICKED_AT });
 
     expect(
-      readSavedPartner(
+      readSavedPartner({
         storage,
-        CLICKED_AT + PARTNER_ATTRIBUTION_WINDOW_DAYS * DAY_IN_MILLISECONDS,
-      ),
+        now: CLICKED_AT + PARTNER_ATTRIBUTION_WINDOW_DAYS * DAY_IN_MILLISECONDS,
+      }),
     ).toBe('NORTHWIND');
   });
 
   it('forgets the code once the attribution window has passed', () => {
     const storage = createStorage();
 
-    savePartner(storage, 'NORTHWIND', CLICKED_AT);
+    savePartner({ storage, code: 'NORTHWIND', now: CLICKED_AT });
 
     expect(
-      readSavedPartner(
+      readSavedPartner({
         storage,
-        CLICKED_AT +
+        now:
+          CLICKED_AT +
           (PARTNER_ATTRIBUTION_WINDOW_DAYS + 1) * DAY_IN_MILLISECONDS,
-      ),
+      }),
     ).toBeNull();
     expect(storage.getItem(PARTNER_STORAGE_KEY)).toBeNull();
   });
@@ -57,11 +58,15 @@ describe('readSavedPartner', () => {
   it('keeps the last link clicked, with a fresh window', () => {
     const storage = createStorage();
 
-    savePartner(storage, 'NORTHWIND', CLICKED_AT);
-    savePartner(storage, 'CONTOSO', CLICKED_AT + 20 * DAY_IN_MILLISECONDS);
+    savePartner({ storage, code: 'NORTHWIND', now: CLICKED_AT });
+    savePartner({
+      storage,
+      code: 'CONTOSO',
+      now: CLICKED_AT + 20 * DAY_IN_MILLISECONDS,
+    });
 
     expect(
-      readSavedPartner(storage, CLICKED_AT + 45 * DAY_IN_MILLISECONDS),
+      readSavedPartner({ storage, now: CLICKED_AT + 45 * DAY_IN_MILLISECONDS }),
     ).toBe('CONTOSO');
   });
 
@@ -70,6 +75,6 @@ describe('readSavedPartner', () => {
 
     storage.setItem(PARTNER_STORAGE_KEY, 'NORTHWIND');
 
-    expect(readSavedPartner(storage, CLICKED_AT)).toBeNull();
+    expect(readSavedPartner({ storage, now: CLICKED_AT })).toBeNull();
   });
 });

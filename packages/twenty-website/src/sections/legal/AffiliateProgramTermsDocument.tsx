@@ -1,7 +1,6 @@
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 
-// Source of truth: the "Twenty Affiliate Program Terms" doc owned by the
-// partner program. Change this page only together with that doc.
+// Change only together with the "Twenty Affiliate Program Terms" doc.
 export function AffiliateProgramTermsDocument() {
   return (
     <>

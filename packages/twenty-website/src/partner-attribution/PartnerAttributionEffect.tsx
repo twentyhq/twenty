@@ -18,7 +18,7 @@ export function PartnerAttributionEffect(): null {
     }
 
     try {
-      savePartner(localStorage, partner, Date.now());
+      savePartner({ storage: localStorage, code: partner, now: Date.now() });
     } catch {
       return;
     }

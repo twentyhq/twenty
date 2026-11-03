@@ -96,24 +96,6 @@ const CheckboxLabel = styled.label`
   }
 `;
 
-// Not a <label>: the sentence holds a link, and a link inside a label makes
-// a click ambiguous. The sentence labels the checkbox through aria instead.
-const TermsCheckboxRow = styled.div`
-  ${typeRampDeclarations('bodyXs')}
-  align-items: center;
-  color: ${semanticColor.inkMuted};
-  display: flex;
-  font-family: ${fontFamily('sans')};
-  gap: ${spacing(2)};
-
-  & > input {
-    accent-color: ${color('blue')};
-    cursor: pointer;
-    height: 16px;
-    width: 16px;
-  }
-`;
-
 const ACCEPTS_TERMS_LABEL_ID = 'affiliate-application-accepts-terms-label';
 
 const ErrorBanner = styled.p`
@@ -336,7 +318,8 @@ export function AffiliateApplicationForm() {
               />
               {i18n._(COPY.fields.isIntegrationPartner)}
             </CheckboxLabel>
-            <TermsCheckboxRow>
+            {/* A div, not a label: a link inside a label makes a click ambiguous. */}
+            <CheckboxLabel as="div">
               <input
                 aria-labelledby={ACCEPTS_TERMS_LABEL_ID}
                 checked={state.acceptsTerms}
@@ -356,7 +339,7 @@ export function AffiliateApplicationForm() {
                   </TermsLink>
                 </Trans>
               </span>
-            </TermsCheckboxRow>
+            </CheckboxLabel>
           </CheckboxStack>
           <Button
             disabled={isSubmitting}

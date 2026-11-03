@@ -11,7 +11,7 @@ const subscribe = () => () => {};
 
 const readSavedPartnerSafely = (): string | null => {
   try {
-    return readSavedPartner(localStorage, Date.now());
+    return readSavedPartner({ storage: localStorage, now: Date.now() });
   } catch {
     return null;
   }

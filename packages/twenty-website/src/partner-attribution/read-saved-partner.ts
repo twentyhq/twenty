@@ -1,31 +1,33 @@
 import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { PARTNER_ATTRIBUTION_WINDOW_DAYS } from './partner-attribution-window-days';
 import { PARTNER_STORAGE_KEY } from './partner-storage-key';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-type SavedPartner = { code: string; savedAt: number };
+const savedPartnerSchema = z.object({
+  code: z.string(),
+  savedAt: z.number(),
+});
 
-const parseSavedPartner = (raw: string): SavedPartner | null => {
+const parseSavedPartner = (raw: string) => {
   try {
-    const value: unknown = JSON.parse(raw);
+    const result = savedPartnerSchema.safeParse(JSON.parse(raw));
 
-    return isDefined(value) &&
-      typeof value === 'object' &&
-      typeof (value as SavedPartner).code === 'string' &&
-      typeof (value as SavedPartner).savedAt === 'number'
-      ? (value as SavedPartner)
-      : null;
+    return result.success ? result.data : null;
   } catch {
     return null;
   }
 };
 
-export const readSavedPartner = (
-  storage: Storage,
-  now: number,
-): string | null => {
+export const readSavedPartner = ({
+  storage,
+  now,
+}: {
+  storage: Storage;
+  now: number;
+}): string | null => {
   const raw = storage.getItem(PARTNER_STORAGE_KEY);
 
   if (!isDefined(raw)) {
