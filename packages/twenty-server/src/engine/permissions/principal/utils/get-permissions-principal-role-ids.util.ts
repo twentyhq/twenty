@@ -1,8 +1,22 @@
 /* @license Enterprise */
 
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const getPermissionsPrincipalRoleIds = (
-  principal: PermissionsPrincipal,
-): string[] => getRoleIdsToIntersect(principal.intersectionOf) ?? [];
+  principal: Pick<
+    PermissionsPrincipalsWithRolesContext,
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
+  >,
+): string[] => [
+  ...new Set(
+    [
+      principal.limitingPrincipal?.roleId,
+      principal.mainPrincipal.roleId,
+      principal.applicationPrincipal.type === 'customApplication'
+        ? undefined
+        : principal.applicationPrincipal.roleId,
+    ].filter(isDefined),
+  ),
+];

@@ -1,22 +1,19 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 
-// Temporary: an application without a role adds no restriction when it acts with a
-// member or an agent, which the workspace custom and Twenty standard applications rely on
-// until they get a role. It covers every application without a role, not only those two.
+// OAuth-only applications have no role yet, so they act with the role of the member they act for
 export const resolveApplicationRoleId = ({
   application,
-  isMissingApplicationRoleTolerated,
+  userRoleId,
 }: {
-  application: { defaultRoleId: string | null } | undefined;
-  isMissingApplicationRoleTolerated: boolean;
-}): Pick<RoleIdsBySource, 'applicationRoleId'> => {
-  const applicationRoleId = application?.defaultRoleId;
-
-  if (isDefined(applicationRoleId)) {
-    return { applicationRoleId };
+  application: Pick<FlatApplication, 'defaultRoleId' | 'sourceType'>;
+  userRoleId?: string;
+}): string | undefined => {
+  if (isDefined(application.defaultRoleId)) {
+    return application.defaultRoleId;
   }
 
-  return isMissingApplicationRoleTolerated ? {} : { applicationRoleId: null };
+  return isOAuthOnlyApplication(application) ? userRoleId : undefined;
 };

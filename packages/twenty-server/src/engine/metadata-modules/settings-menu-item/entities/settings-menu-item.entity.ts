@@ -17,6 +17,8 @@ import {
   type SettingsMenuItemScope,
 } from 'twenty-shared/application';
 
+import { ADD_SETTINGS_MENU_ITEM_SLUG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-settings-menu-item-slug-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -65,6 +67,12 @@ export class SettingsMenuItemEntity
     default: DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
   })
   scope: SettingsMenuItemScope;
+
+  @Column({ nullable: true, type: 'varchar' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_SETTINGS_MENU_ITEM_SLUG_UPGRADE_COMMAND_NAME,
+  })
+  slug: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

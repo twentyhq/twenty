@@ -16,6 +16,6 @@ export const isObjectOperationDisabledToPrincipal = ({
   }) &&
   !isPermissionsPrincipalOwningObject({
     principal,
-    flatApplicationMaps: metadataMaps.flatApplicationMaps,
     flatObjectMetadata,
+    flatApplicationMaps: metadataMaps.flatApplicationMaps,
   });

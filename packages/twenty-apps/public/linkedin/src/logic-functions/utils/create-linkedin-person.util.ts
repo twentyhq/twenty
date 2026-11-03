@@ -5,6 +5,42 @@ import { findPersonIdsByLinkedinHandle } from 'src/logic-functions/utils/find-pe
 import { getLinkedinPersonId } from 'src/logic-functions/utils/get-linkedin-person-id.util';
 import { getLinkedinProfileSlug } from 'src/logic-functions/utils/get-linkedin-profile-slug.util';
 
+const insertLinkedinPerson = async ({
+  id,
+  firstName,
+  lastName,
+  handle,
+}: {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  handle: string;
+}): Promise<string> => {
+  const { createPerson } = await new CoreApiClient({
+    runAs: 'application',
+  }).mutation({
+    createPerson: {
+      __args: {
+        data: {
+          ...(isDefined(id) ? { id } : {}),
+          name: { firstName, lastName },
+          linkedinLink: { primaryLinkUrl: handle },
+        },
+      },
+      id: true,
+    },
+  });
+
+  if (!isDefined(createPerson)) {
+    throw new Error(`Could not create the person for ${handle}`);
+  }
+
+  return createPerson.id;
+};
+
+const isPersonIdTakenError = (error: unknown): boolean =>
+  error instanceof Error && error.message.includes('person_pkey');
+
 export const createLinkedinPerson = async ({
   firstName,
   lastName,
@@ -23,28 +59,18 @@ export const createLinkedinPerson = async ({
   const id = await getLinkedinPersonId(slug);
 
   try {
-    const { createPerson } = await new CoreApiClient({
-      runAs: 'application',
-    }).mutation({
-      createPerson: {
-        __args: {
-          data: {
-            id,
-            name: { firstName, lastName },
-            linkedinLink: { primaryLinkUrl: handle },
-          },
-        },
-        id: true,
-      },
+    const createdPersonId = await insertLinkedinPerson({
+      id,
+      firstName,
+      lastName,
+      handle,
     });
 
-    if (isDefined(createPerson)) {
-      console.log(
-        `[linkedin] created person ${createPerson.id} for ${handle} (slug ${slug}, requested id ${id})`,
-      );
+    console.log(
+      `[linkedin] created person ${createdPersonId} for ${handle} (slug ${slug})`,
+    );
 
-      return createPerson.id;
-    }
+    return createdPersonId;
   } catch (error) {
     const [existingPersonId] = await findPersonIdsByLinkedinHandle(handle);
 
@@ -56,8 +82,20 @@ export const createLinkedinPerson = async ({
       return existingPersonId;
     }
 
-    throw error;
-  }
+    if (!isPersonIdTakenError(error)) {
+      throw error;
+    }
 
-  throw new Error(`Could not create the person for ${handle}`);
+    const createdPersonId = await insertLinkedinPerson({
+      firstName,
+      lastName,
+      handle,
+    });
+
+    console.log(
+      `[linkedin] created person ${createdPersonId} for ${handle} with a new id, ${id} is taken: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return createdPersonId;
+  }
 };

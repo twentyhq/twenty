@@ -145,7 +145,7 @@ a `defineAgent()` y pasa lo que quieres que procese como `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -310,6 +310,188 @@ designar a ningún miembro.
   miembro desconocido o eliminado, o uno sin rol. Nunca recurre al
   rol propio del agente, ya que eso otorgaría más acceso del que solicitó quien llama.
 </Warning>
+
+### Siguiendo una conversación
+
+Una aplicación lee las conversaciones que mantiene con sus agentes a través de la misma API
+que el chat: `listConversationMessages()` devuelve su historia, y
+`streamConversation()` produce sus eventos en vivo, token por token. Nombra la conversación
+por el agente y la clave `hilo` que pasas a `runAgent()`; Tú
+puedes empezar a seguirlo antes de que la primera ejecución llegue a él.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+* Los eventos son propios del chat: `stream-chunk` lleva un SDK
+  `UIMessageChunk` y un `seq`, y notificaciones como `message-persisted`
+  (un mensaje fue guardado: un miembro, o la respuesta, que lleva su ejecución
+  `turnId`), `credits-exhausted` (la respuesta se detuvo cuando el espacio de trabajo corrió
+  sin créditos), `queue-updated` o `stream-error` decir cuando
+  para leer la historia de nuevo. Un `keepalive` viene una vez conectado, luego cada
+  pocos segundos: lee la historia en la primera, ya que lo que pasó antes de
+  está ahí.
+* Para convertir chunks en mensajes como lo hace el chat, pipéalos en
+  `readUIMessageStream()` del paquete `ai`.
+* `listConversationMessages()` devuelve `{ mensajes, streamCatchup }`: los mensajes guardados
+  como AI SDK `UIMessage`s, a medida que el chat los construye, y las porciones de
+  una respuesta todavía fluyendo. Muestra esos trozos y luego omite trozos vivos cuyos
+  `seq` es como máximo `streamCatchup.maxSeq`, ya que los repiten.
+* `runAgent()` devuelve `runId`, el giro que abre la llamada: los mensajes de esa ejecución
+  llevan como `metadata.turnId`. Una ejecución que espera en turnos posteriores de
+  la conversación.
+* El stream permanece abierto hasta que abortes su `señal` o `romper`, y arroja si
+  la conexión cae: stream de nuevo para reanudar.
+* Una aplicación sólo lee sus propias conversaciones. Turna un miembro abierto en otro lugar,
+  como en el chat, muestra solo su texto en la historia, viva y en la siguiente carrera del agente
+  : vive, sus otros trozos llegan como trozos
+  `message-metadata`, así que `seq` permanece recolectado. Turna tu aplicación se ha ejecutado como un miembro
+  (ver arriba) permanecen entera cuando lee por sí mismo.
+* Requiere `"engines": { "twenty": ">=2.56.0" }`.
+
+</Accordion>
+<Accordion title="ai.generate" description="Llamar a un modelo desde una función lógica, sin un agente">
+
+`ai.generate()` llama a un modelo desde una función lógica. A diferencia de
+`runAgent()`, no necesita `defineAgent()`: la llamada lleva sus propias instrucciones
+, y no abre ninguna conversación. Úselo para un trabajo de un solo tiro, como
+clasificar, resumir o extraer.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+* `input` es una cadena o una lista de mensajes `{ role: 'user' | 'assistant', content }`
+  .
+* `instructions` (opcional) añade las instrucciones del sistema de llamada.
+* `modelId` (opcional) elige el modelo. Sin ella, la llamada utiliza el modelo predeterminado del espacio de trabajo
+  .
+* `responseFormat` (opcional) funciona como en `runAgent()`. Con
+  `{ type: 'json', schema }`, el esquema se incluye en la propia solicitud al modelo, por lo que
+  una respuesta JSON requiere una solicitud (más pasos de herramientas cuando un `scope` concede
+  herramientas).
+* `scope` (opcional) permite a la llamada utilizar la base de datos, como se describe a continuación.
+
+Resuelve a `{ éxito, texto, objeto, error, runId, uso }`:
+
+* `text` es la respuesta de un texto, y `null` para una respuesta JSON.
+* `object` es el resultado de una respuesta JSON, y `null` de otra manera.
+* `error` explica una ejecución fallida, cuando `success` es `false`. Una ejecución que falla
+  resuelve esta manera en lugar de lanzarla; una llamada que no puede iniciar una ejecución, tal
+  como una con entrada no válida, lanza.
+* `runId` identifica la ejecución registrada, con su modelo, uso y créditos.
+* `usage` es `{ inputTokens, outputTokens }`: lo que gastó la ejecución, incluyendo los pasos
+  que terminaron antes de un fallo.
+
+La llamada actúa como quien lo hizo: el miembro a un token con ámbito de usuario pertenece,
+de lo contrario su aplicación, de lo contrario la clave API. Desde una función lógica
+sigue a los clientes predeterminados: actúa como la persona que desencadenó la ejecución, o como
+tu aplicación cuando nadie lo hizo. Nunca excede el rol de tu aplicación, y
+una aplicación sin un rol predeterminado no puede llamarla.
+
+Sin `scope`, la llamada lee y no escribe registros. Para permitir que use la base de datos
+, pase un `scope`, escrito como los permisos de un rol:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+Un alcance sólo estrecha: no concede nada que el que llama no tenga ya.
+
+Para mostrar la respuesta mientras está escrita, pase `onChunk`. La llamada todavía resuelve
+al mismo resultado, una vez que el último fragmento fue entregado a `onChunk`. Si el final del streamformat@@0
+nunca llega, deja de esperar una vez que el resultado está dentro y 5 s
+pasa sin un nuevo trozo, y sigue entregando cada trozo recibido entonces:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+* La llamada sigue la ejecución a través de la misma suscripción que
+  `streamConversation()`: se suscribe primero, espera hasta que la suscripción esté
+  en vivo, luego comienza la ejecución, por lo que no pierde ningún chunk.
+* Los trozos son los propios del chat: póngalos en `readUIMessageStream()` desde el paquete
+  `ai` para construir el mensaje.
+* `signal` aborta la llamada: rechaza con el error de aborto y cierra la transmisión
+  . La ejecución en sí misma continúa, y se registra como de costumbre.
+* Una vez que el stream está vivo, un fallo solo detiene los pedazos: la llamada
+  todavía se resuelve con el resultado de la ejecución. que se facturan de cualquier manera. La llamada
+  se rechaza cuando la suscripción falla antes de activarse, por lo que la ejecución nunca
+  comienza, o cuando `onChunk` genera una excepción.
+* Una aplicación sólo sigue sus propias ejecuciones, así que `onChunk` necesita un token de aplicación.
+* Requiere `"engines": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  `ai.generate()` requiere la bandera de permiso de IA en el rol predeterminado de la aplicación,
+  como `runAgent()`.
+</Note>
 
 </Accordion>
 <Accordion title="sendInboxMessage" description="Inicia o continúa una conversación en los chats de los miembros">

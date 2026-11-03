@@ -13,19 +13,37 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
+import { getSettingsAiModelsSectionVisibility } from '@/settings/ai/utils/getSettingsAiModelsSectionVisibility';
 import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 
 export const SettingsAiModelsTab = () => {
+  const isInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
+  const {
+    isWorkspaceInstructionsSectionVisible,
+    isSystemPromptsSectionVisible,
+  } = getSettingsAiModelsSectionVisibility({
+    isInboxEnabled,
+    canReadSystemPrompts,
+  });
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const tiers = useAiModelTiers();
@@ -126,8 +144,10 @@ export const SettingsAiModelsTab = () => {
       </Section.Root>
 
       <SettingsAiModelTiersPreview />
-      <SettingsAiWorkspaceInstructionsSection />
-      <SettingsAiSystemPromptsSection />
+      {isWorkspaceInstructionsSectionVisible && (
+        <SettingsAiWorkspaceInstructionsSection />
+      )}
+      {isSystemPromptsSectionVisible && <SettingsAiSystemPromptsSection />}
     </>
   );
 };

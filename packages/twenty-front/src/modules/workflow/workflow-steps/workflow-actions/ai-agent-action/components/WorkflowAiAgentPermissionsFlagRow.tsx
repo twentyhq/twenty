@@ -12,7 +12,7 @@ type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
   isEnabled: boolean;
   readonly: boolean;
-  showDeleteButton?: boolean;
+  shouldShowDeleteButton?: boolean;
   onAdd?: () => void;
   onDelete?: () => void;
 };
@@ -21,14 +21,14 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   permission,
   isEnabled,
   readonly,
-  showDeleteButton = false,
+  shouldShowDeleteButton = false,
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
   const theme = useTheme();
   const isClickable = !readonly && !isEnabled && isDefined(onAdd);
-  const isDisabled = isEnabled && !showDeleteButton;
-  const showTrashButton = isEnabled && showDeleteButton;
+  const isDisabled = isEnabled && !shouldShowDeleteButton;
+  const shouldShowTrashButton = isEnabled && shouldShowDeleteButton;
 
   const Icon = permission.Icon;
   const startIcon = (
@@ -50,7 +50,7 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
       startIcon={startIcon}
       disabled={isDisabled}
       actions={
-        showTrashButton && (
+        shouldShowTrashButton && (
           <LightIconButton aria-label={t`Remove permission`} onClick={onDelete}>
             <IconTrash />
           </LightIconButton>

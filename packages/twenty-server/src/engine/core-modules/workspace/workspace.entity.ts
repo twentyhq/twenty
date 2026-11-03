@@ -391,6 +391,7 @@ export class WorkspaceEntity {
   @Column({ type: 'text', nullable: true })
   aiEvaluationModelId: string | null;
 
+  @Field(() => AiChatAssistantMode)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME,
   })
@@ -401,6 +402,7 @@ export class WorkspaceEntity {
   })
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
 
+  @Field(() => AiChatAssistantMode)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME,
   })

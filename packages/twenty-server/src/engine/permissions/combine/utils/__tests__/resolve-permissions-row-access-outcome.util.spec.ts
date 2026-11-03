@@ -10,7 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const APPLICATION_ID = 'application-id';
@@ -33,14 +33,24 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlyPrincipal: PermissionsPrincipal = {
+const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  intersectionOf: { userWorkspaceRoleId: READ_ONLY_ROLE_ID },
+  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: READ_ONLY_ROLE_ID },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
-const owningApplicationPrincipal: PermissionsPrincipal = {
+const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
+  mainPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
+  applicationPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
 };
 
 const resolveOutcome = ({
@@ -50,7 +60,7 @@ const resolveOutcome = ({
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  principal?: PermissionsPrincipal;
+  principal?: PermissionsPrincipalsWithRolesContext;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
@@ -101,7 +111,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          intersectionOf: { userWorkspaceRoleId: 'missing-role' },
+          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'missing-role' },
+          applicationPrincipal: { type: 'customApplication' },
         },
       }),
     ).toBe(false);
@@ -141,5 +152,54 @@ describe('resolvePermissionsRowAccessOutcome', () => {
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
       }),
     ).toBe(true);
+  });
+
+  describe('for a principal narrowed by a scope', () => {
+    const scopedPrincipal = ({
+      canReadObjectRecords,
+    }: {
+      canReadObjectRecords: boolean;
+    }): PermissionsPrincipalsWithRolesContext => ({
+      ...readOnlyPrincipal,
+      scope: {
+        objectsPermissions: {
+          [flatObjectMetadata.id]: {
+            ...readOnlyPermissions,
+            canReadObjectRecords,
+          },
+        },
+        permissionFlags: {},
+      },
+    });
+
+    it('denies what the scope denies, though the role permits it', () => {
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: false }),
+        }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal: scopedPrincipal({ canReadObjectRecords: true }),
+        }),
+      ).toBeUndefined();
+    });
+
+    it('never lets a share carry it beyond its roles', () => {
+      const principal = scopedPrincipal({ canReadObjectRecords: true });
+      const featureFlagKeys = [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED];
+
+      expect(
+        resolveOutcome({ principal, operationType: 'update', featureFlagKeys }),
+      ).toBe(false);
+      expect(
+        resolveOutcome({
+          principal,
+          operationType: 'update',
+          featureFlagKeys,
+          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        }),
+      ).toBe(false);
+    });
   });
 });

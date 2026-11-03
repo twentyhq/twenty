@@ -39,10 +39,12 @@ import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permiss
 import { type RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/permissions/principal/utils/get-role-ids-from-role-permission-config.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
+import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -187,11 +189,9 @@ export class RecordSharingService {
               `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 FOR UPDATE`,
               [args.recordId],
             );
-            const repository =
-              this.workspaceOrmManager.getRepositoryWithContextPermissions(
-                flatObjectMetadata.nameSingular,
-                transactionScope,
-              );
+            const repository = transactionScope.getRepository(
+              flatObjectMetadata.nameSingular,
+            );
             const writableIds =
               await repository.findRecordIdsAllowedForOperation({
                 recordIds: [args.recordId],
@@ -466,25 +466,40 @@ export class RecordSharingService {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
+      flatWorkspaceMemberMaps,
       roleIdsWithAllRecordsAccess,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
+      'flatWorkspaceMemberMaps',
       'roleIdsWithAllRecordsAccess',
     ]);
-    const roleMaps = {
-      authContext,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-    };
-    const principalIds = resolvePrincipalIdsFromAuthContext(roleMaps) ?? [];
-    const rolePermissionConfig = resolveRolePermissionConfig(roleMaps);
+    const principalIds =
+      resolvePrincipalIdsFromAuthContext({
+        authContext,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+      }) ?? [];
+    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
+    const principal = isDefined(principals)
+      ? resolvePermissionsPrincipalsWithRoles({
+          principalsContext: principals,
+          roleMaps: buildPermissionsPrincipalRoleMaps({
+            flatWorkspaceMemberMaps,
+            userWorkspaceRoleMap,
+            apiKeyRoleMap,
+            flatRoleTargetByAgentIdMaps,
+            flatApplicationMaps,
+          }),
+        })
+      : undefined;
     const canAccessAllRecords =
-      isDefined(rolePermissionConfig) &&
+      isDefined(principal) &&
       canRolesAccessAllRecords({
-        roleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
+        roleIds: getPermissionsPrincipalRoleIds(principal),
         roleIdsWithAllRecordsAccess,
       });
     const shares = await this.recordShareStorageService.findByRecordIds({
@@ -575,7 +590,7 @@ export class RecordSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions(flatObjectMetadata.nameSingular)
+          .getRepository(flatObjectMetadata.nameSingular)
           .isObjectOperationPermittedByRole('update'),
       authContext,
     );

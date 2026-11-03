@@ -594,9 +594,7 @@ export class AgentChatThreadParticipantService {
     const [summary] = await this.workspaceOrmManager
       .executeInWorkspaceContext(() => {
         const repository =
-          this.workspaceOrmManager.getRepositoryWithContextPermissions(
-            'agentChatThread',
-          );
+          this.workspaceOrmManager.getRepository('agentChatThread');
         const readableThreads = repository
           .createQueryBuilder('thread')
           .select([])

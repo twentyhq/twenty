@@ -1,4 +1,4 @@
-import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 
 export const MARKETPLACE_FEATURED_APPLICATIONS: {
   universalIdentifier: string;
@@ -35,5 +35,10 @@ export const MARKETPLACE_FEATURED_APPLICATIONS: {
     universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.TEAMS,
     sourcePackage: '@twentyhq/teams',
     position: 6,
+  },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM,
+    sourcePackage: '@twentyhq/fathom',
+    position: 7,
   },
 ];
