@@ -1,13 +1,9 @@
-import { isUndefined } from '@sniptt/guards';
 import { type OverlayOptions } from 'sharp';
 
-import { CAMERA_TILE_BACKGROUND_COLOR } from 'src/logic-functions/constants/camera-tile-config';
 import {
-  RECALL_BOT_IMAGE_HEIGHT,
   RECALL_BOT_IMAGE_JPEG_QUALITY,
   RECALL_BOT_IMAGE_MAX_BYTES,
   RECALL_BOT_IMAGE_MIN_JPEG_QUALITY,
-  RECALL_BOT_IMAGE_WIDTH,
 } from 'src/logic-functions/constants/recall-bot-image-config';
 import { type SharpFactory } from 'src/logic-functions/utils/load-sharp.util';
 
@@ -24,38 +20,17 @@ const JPEG_QUALITIES = Array.from(
   (_, index) => RECALL_BOT_IMAGE_JPEG_QUALITY - index * JPEG_QUALITY_STEP,
 );
 
-const createBaseImage = ({
-  sharp,
-  background,
-}: {
-  sharp: SharpFactory;
-  background: Buffer | undefined;
-}) => {
-  if (isUndefined(background)) {
-    return sharp({
-      create: {
-        width: RECALL_BOT_IMAGE_WIDTH,
-        height: RECALL_BOT_IMAGE_HEIGHT,
-        channels: 3,
-        background: CAMERA_TILE_BACKGROUND_COLOR,
-      },
-    });
-  }
-
-  return sharp(background);
-};
-
 export const buildBotImage = async ({
   sharp,
   background,
   composites,
 }: {
   sharp: SharpFactory;
-  background: Buffer | undefined;
+  background: Buffer;
   composites: OverlayOptions[];
 }): Promise<string | undefined> => {
   const composeJpeg = (quality: number) =>
-    createBaseImage({ sharp, background })
+    sharp(background)
       .composite(composites)
       .jpeg({ quality, mozjpeg: true })
       .toBuffer();

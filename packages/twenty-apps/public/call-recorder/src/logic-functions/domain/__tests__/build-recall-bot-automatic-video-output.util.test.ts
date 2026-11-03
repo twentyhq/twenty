@@ -4,9 +4,15 @@ import sharp from 'sharp';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  CAMERA_TILE_TWENTY_BACKGROUND_ASSET_PATH,
+  CAMERA_TILE_FONT_ASSET_PATH,
+  CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS,
   CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH,
 } from 'src/logic-functions/constants/camera-tile-asset-paths';
+import {
+  RECALL_BOT_IMAGE_HEIGHT,
+  RECALL_BOT_IMAGE_MAX_BYTES,
+  RECALL_BOT_IMAGE_WIDTH,
+} from 'src/logic-functions/constants/recall-bot-image-config';
 
 const metadataQueryMock = vi.hoisted(() => vi.fn());
 
@@ -36,10 +42,12 @@ const requestedAssetPaths = () =>
 const decodeFrame = (base64: string) =>
   sharp(Buffer.from(base64, 'base64')).metadata();
 
+const readPublicAssetAsBase64 = async (path: string) =>
+  (await readFile(join(PUBLIC_DIRECTORY, path))).toString('base64');
+
 const buildOutput = async () => {
-  const { buildRecallBotAutomaticVideoOutput } = await import(
-    'src/logic-functions/domain/build-recall-bot-automatic-video-output.util'
-  );
+  const { buildRecallBotAutomaticVideoOutput } =
+    await import('src/logic-functions/domain/build-recall-bot-automatic-video-output.util');
 
   return buildRecallBotAutomaticVideoOutput();
 };
@@ -84,12 +92,54 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('renders distinct 1280x720 frames for the recording states', async () => {
-    vi.stubEnv('CALL_RECORDER_STYLE', 'TWENTY');
+  it.each(['TWENTY', 'MINIMAL'] as const)(
+    'sends the prebuilt %s frames without rendering',
+    async (style) => {
+      vi.stubEnv('CALL_RECORDER_STYLE', style);
+      const assetPaths = CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS[style];
+
+      expect(await buildOutput()).toEqual({
+        in_call_recording: {
+          kind: 'jpeg',
+          b64_data: await readPublicAssetAsBase64(assetPaths.recording),
+        },
+        in_call_not_recording: {
+          kind: 'jpeg',
+          b64_data: await readPublicAssetAsBase64(assetPaths.notRecording),
+        },
+      });
+      expect(requestedAssetPaths()).not.toContain(CAMERA_TILE_FONT_ASSET_PATH);
+      expect(metadataQueryMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it('defaults to the Twenty style when the variable is unset', async () => {
+    expect(await buildOutput()).toBeDefined();
+    expect(requestedAssetPaths()).toContain(
+      CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS.TWENTY.notRecording,
+    );
+  });
+
+  it.each(
+    Object.values(CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS).flatMap(
+      ({ recording, notRecording }) => [recording, notRecording],
+    ),
+  )('ships %s as a frame Recall accepts', async (path) => {
+    const frame = await readFile(join(PUBLIC_DIRECTORY, path));
+
+    expect(frame.byteLength).toBeLessThanOrEqual(RECALL_BOT_IMAGE_MAX_BYTES);
+    expect(await sharp(frame).metadata()).toMatchObject({
+      format: 'jpeg',
+      width: RECALL_BOT_IMAGE_WIDTH,
+      height: RECALL_BOT_IMAGE_HEIGHT,
+    });
+  });
+
+  it('renders distinct 1280x720 workspace frames for the recording states', async () => {
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
 
     const output = await buildOutput();
 
-    expect(output).toBeDefined();
     expect(output?.in_call_recording.b64_data).not.toEqual(
       output?.in_call_not_recording.b64_data,
     );
@@ -101,27 +151,10 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
       expect(frame?.kind).toBe('jpeg');
       expect(await decodeFrame(frame?.b64_data ?? '')).toMatchObject({
         format: 'jpeg',
-        width: 1280,
-        height: 720,
+        width: RECALL_BOT_IMAGE_WIDTH,
+        height: RECALL_BOT_IMAGE_HEIGHT,
       });
     }
-    expect(requestedAssetPaths()).toContain(
-      CAMERA_TILE_TWENTY_BACKGROUND_ASSET_PATH,
-    );
-  });
-
-  it('defaults to the Twenty style when the variable is unset', async () => {
-    expect(await buildOutput()).toBeDefined();
-    expect(metadataQueryMock).not.toHaveBeenCalled();
-    expect(requestedAssetPaths()).toContain(
-      CAMERA_TILE_TWENTY_BACKGROUND_ASSET_PATH,
-    );
-  });
-
-  it('draws the workspace logo and name on the workspace background', async () => {
-    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
-
-    expect(await buildOutput()).toBeDefined();
     expect(fetchMock).toHaveBeenCalledWith(LOGO_URL, expect.anything());
     expect(requestedAssetPaths()).toContain(
       CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH,
@@ -170,19 +203,7 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
 
     expect(await buildOutput()).toBeDefined();
     expect(requestedAssetPaths()).toContain(
-      CAMERA_TILE_TWENTY_BACKGROUND_ASSET_PATH,
-    );
-    expect(requestedAssetPaths()).not.toContain(
-      CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH,
-    );
-  });
-
-  it('draws the minimal style without a background asset', async () => {
-    vi.stubEnv('CALL_RECORDER_STYLE', 'MINIMAL');
-
-    expect(await buildOutput()).toBeDefined();
-    expect(requestedAssetPaths()).not.toContain(
-      CAMERA_TILE_TWENTY_BACKGROUND_ASSET_PATH,
+      CAMERA_TILE_PREBUILT_FRAME_ASSET_PATHS.TWENTY.notRecording,
     );
     expect(requestedAssetPaths()).not.toContain(
       CAMERA_TILE_WORKSPACE_BACKGROUND_ASSET_PATH,
@@ -190,7 +211,7 @@ describe('buildRecallBotAutomaticVideoOutput', () => {
   });
 
   it('falls back to the plain frame when the recording frame fails', async () => {
-    vi.stubEnv('CALL_RECORDER_STYLE', 'MINIMAL');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'WORKSPACE');
     vi.doMock('src/logic-functions/domain/build-bot-image.util', () => ({
       buildBotImage: vi
         .fn()
