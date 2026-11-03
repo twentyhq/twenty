@@ -6,12 +6,12 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { computeRepairedDependencyChecksums } from 'src/database/commands/upgrade-version-command/2-56/utils/compute-repaired-dependency-checksums.util';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @RegisteredWorkspaceCommand('2.56.0', 1793720039867)
 @Command({
@@ -24,6 +24,7 @@ export class RepairApplicationDependencyChecksumsCommand extends ProvisionedWork
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly fileStorageService: FileStorageService,
   ) {
     super(workspaceIteratorService);
@@ -44,18 +45,32 @@ export class RepairApplicationDependencyChecksumsCommand extends ProvisionedWork
     );
 
     for (const flatApplication of flatApplications) {
-      const storedDependencyContents = await this.readStoredDependencyContents({
+      const applicationIdentifier = {
         workspaceId,
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      });
+      };
 
-      if (!isDefined(storedDependencyContents)) {
+      const isPackageJsonStored = await this.fileStorageService.checkFileExists(
+        {
+          ...applicationIdentifier,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: 'package.json',
+        },
+      );
+
+      if (!isPackageJsonStored) {
         continue;
       }
 
+      const { packageJsonContent, yarnLockContent } =
+        await this.applicationDependencyFilesService.getDependencyContents(
+          applicationIdentifier,
+        );
+
       const repairedChecksums = computeRepairedDependencyChecksums({
         declaredChecksums: flatApplication,
-        ...storedDependencyContents,
+        packageJsonContent,
+        yarnLockContent,
       });
 
       if (!isDefined(repairedChecksums)) {
@@ -75,40 +90,5 @@ export class RepairApplicationDependencyChecksumsCommand extends ProvisionedWork
         ...repairedChecksums,
       });
     }
-  }
-
-  private async readStoredDependencyContents({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<
-    { packageJsonContent: string; yarnLockContent: string | null } | undefined
-  > {
-    const [packageJsonContent, yarnLockContent] = await Promise.all(
-      ['package.json', 'yarn.lock'].map(async (resourcePath) => {
-        const location = {
-          workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.Dependencies,
-          resourcePath,
-        };
-
-        if (!(await this.fileStorageService.checkFileExists(location))) {
-          return null;
-        }
-
-        return (
-          await streamToBuffer(await this.fileStorageService.readFile(location))
-        ).toString('utf-8');
-      }),
-    );
-
-    if (!isDefined(packageJsonContent)) {
-      return undefined;
-    }
-
-    return { packageJsonContent, yarnLockContent };
   }
 }
