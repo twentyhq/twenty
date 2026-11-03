@@ -115,7 +115,7 @@ export enum AgentChatChannelThreadStatus {
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
   event: Scalars['JSON']['output'];
-  threadId: Scalars['String']['output'];
+  threadId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum AgentChatInboxAction {
@@ -247,7 +247,7 @@ export type AgentRun = {
   reply?: Maybe<Scalars['String']['output']>;
   startedAt?: Maybe<Scalars['DateTime']['output']>;
   status: AgentTurnStatus;
-  threadId: Scalars['UUID']['output'];
+  threadId?: Maybe<Scalars['UUID']['output']>;
   threadTitle?: Maybe<Scalars['String']['output']>;
   toolNames: Array<Scalars['String']['output']>;
 };
@@ -320,6 +320,12 @@ export enum AiModelTier {
   fast = 'fast',
   smart = 'smart'
 }
+
+export type AiRunUsage = {
+  __typename?: 'AiRunUsage';
+  inputTokens: Scalars['Int']['output'];
+  outputTokens: Scalars['Int']['output'];
+};
 
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
@@ -2453,6 +2459,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
@@ -2461,7 +2468,6 @@ export enum FeatureFlagKey {
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_PRIVATE_RECORD_ENABLED = 'IS_PRIVATE_RECORD_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -2725,6 +2731,25 @@ export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String']['output'];
   lastName: Scalars['String']['output'];
+};
+
+export type GenerateInput = {
+  input: Array<RunAgentMessageInput>;
+  instructions?: InputMaybe<Scalars['String']['input']>;
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  scope?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type GenerateResult = {
+  __typename?: 'GenerateResult';
+  error?: Maybe<Scalars['String']['output']>;
+  object?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
+  success: Scalars['Boolean']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  usage: AiRunUsage;
 };
 
 export type GetApiKeyInput = {
@@ -3616,6 +3641,7 @@ export type Mutation = {
   enqueueJobs: EnqueueJobsResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
+  generate: GenerateResult;
   generateApiKeyToken: ApiKeyToken;
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
@@ -4458,6 +4484,11 @@ export type MutationEnqueueJobsArgs = {
 
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteOneLogicFunctionInput;
+};
+
+
+export type MutationGenerateArgs = {
+  input: GenerateInput;
 };
 
 
@@ -6082,12 +6113,16 @@ export type QueryCallRecordingIdForCalendarEventArgs = {
 
 
 export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryChatStreamCatchupChunksArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6832,6 +6867,7 @@ export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
   status: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   threadId: Scalars['UUID']['output'];
@@ -7123,7 +7159,10 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 
 export type SubscriptionOnAgentChatEventArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 

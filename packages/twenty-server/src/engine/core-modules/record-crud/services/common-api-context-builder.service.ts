@@ -20,10 +20,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -44,17 +41,15 @@ export type CommonApiContext = {
 export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   async build({
     authContext,
     objectName,
-    rolePermissionConfig,
   }: {
     authContext: WorkspaceAuthContext;
     objectName: string;
-    rolePermissionConfig?: RolePermissionConfig;
   }): Promise<CommonApiContext> {
     const workspaceId = authContext.workspace.id;
 
@@ -101,12 +96,8 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { objectsPermissions, principals } = await this.getPermissionsContext(
-      {
-        authContext,
-        rolePermissionConfig,
-      },
-    );
+    const { objectsPermissions, principals } =
+      await this.getPermissionsContext(authContext);
 
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
@@ -128,7 +119,6 @@ export class CommonApiContextBuilderService {
         flatFieldMetadataMaps,
         flatIndexMaps,
         objectIdByNameSingular: idByNameSingular,
-        rolePermissionConfig,
       },
       selectedFields,
       flatObjectMetadata,
@@ -139,53 +129,12 @@ export class CommonApiContextBuilderService {
     };
   }
 
-  private async getPermissionsContext({
-    authContext,
-    rolePermissionConfig,
-  }: {
-    authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: RolePermissionConfig;
-  }): Promise<{
+  private async getPermissionsContext(
+    authContext: WorkspaceAuthContext,
+  ): Promise<{
     objectsPermissions: ObjectsPermissions;
     principals: PermissionsPrincipalsContext;
   }> {
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatApplicationMaps',
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'flatRoleTargetByAgentIdMaps',
-      ],
-    );
-
-    const resolvedRolePermissionConfig =
-      rolePermissionConfig ??
-      resolveRolePermissionConfig({
-        authContext,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-      });
-
-    if (!isDefined(resolvedRolePermissionConfig)) {
-      throw new RecordCrudException(
-        'No role found for this auth context',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
-
     const principals = getPermissionsPrincipalsFromAuthContext(authContext);
 
     if (!isDefined(principals)) {
@@ -196,14 +145,10 @@ export class CommonApiContextBuilderService {
     }
 
     return {
-      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-        rolesPermissions,
-        rolePermissionConfig: resolvedRolePermissionConfig,
-        principals,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatApplicationMaps,
-      }),
+      objectsPermissions:
+        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+          principals,
+        ),
       principals,
     };
   }

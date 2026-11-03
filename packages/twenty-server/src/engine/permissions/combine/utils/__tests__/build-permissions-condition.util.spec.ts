@@ -125,14 +125,23 @@ const buildConditionOutcome = (
 
 const readEverything: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
-  applicationPrincipal: { isCustomApp: true },
+  mainPrincipal: {
+    type: 'workspaceMember',
+    roleId: FULL_ACCESS_ROLE_ID,
+    workspaceMemberId: 'member-1',
+  },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
 const owningApplication: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  mainPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
   applicationPrincipal: {
+    type: 'application',
     roleId: APPLICATION_ROLE_ID,
     applicationId: APPLICATION_ID,
   },
@@ -141,10 +150,11 @@ const owningApplication: PermissionsPrincipalsWithRolesContext = {
 const withoutObjectPermission: PermissionsPrincipalsWithRolesContext = {
   ...readEverything,
   mainPrincipal: {
+    type: 'workspaceMember',
     roleId: ROLE_WITHOUT_PERMISSION_ID,
     workspaceMemberId: 'member-1',
   },
-  applicationPrincipal: { isCustomApp: true },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
 const build = ({
@@ -299,9 +309,17 @@ describe('buildPermissionsCondition', () => {
       });
     const withoutCompanyPermission: PermissionsPrincipalsWithRolesContext = {
       ...readEverything,
-      limitingPrincipal: { roleId: 'role-2', agentId: 'agent-1' },
-      mainPrincipal: { roleId: 'role-3', workspaceMemberId: 'member-1' },
-      applicationPrincipal: { isCustomApp: true },
+      limitingPrincipal: {
+        type: 'agent',
+        roleId: 'role-2',
+        agentId: 'agent-1',
+      },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: 'role-3',
+        workspaceMemberId: 'member-1',
+      },
+      applicationPrincipal: { type: 'customApplication' },
     };
 
     it('narrows a principal without object permission to the records named for them', () => {

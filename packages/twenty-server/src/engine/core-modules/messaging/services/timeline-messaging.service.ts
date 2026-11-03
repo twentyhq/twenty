@@ -56,9 +56,8 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const totalQueryBuilder = messageThreadRepository
@@ -127,9 +126,8 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const queryBuilder = messageThreadRepository
@@ -262,9 +260,8 @@ export class TimelineMessagingService {
     }
 
     const messageThreadRepository =
-      this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
         'messageThread',
-        { shouldBypassPermissionChecks: true },
       );
 
     const messageThreads = await messageThreadRepository.find({
@@ -318,9 +315,8 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageParticipantRepository =
-        this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
           'messageParticipant',
-          { shouldBypassPermissionChecks: true },
         );
 
       const threadParticipants = await messageParticipantRepository
@@ -431,9 +427,8 @@ export class TimelineMessagingService {
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const threadChannelRows = await messageThreadRepository

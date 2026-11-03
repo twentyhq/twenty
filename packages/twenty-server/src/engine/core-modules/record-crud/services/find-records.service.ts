@@ -39,7 +39,6 @@ export class FindRecordsService {
       limit,
       offset = 0,
       authContext,
-      rolePermissionConfig,
       select,
       shouldBuildEffectiveSelectFields,
     } = params;
@@ -64,7 +63,6 @@ export class FindRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       const { effectiveSelectedFields, warnings } =
