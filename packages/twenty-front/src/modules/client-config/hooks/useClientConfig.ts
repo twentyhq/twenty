@@ -216,6 +216,7 @@ export const useClientConfig = (): UseClientConfigResult => {
           frontDomain: clientConfig?.frontDomain,
           publicFunctionDomain: clientConfig?.publicFunctionDomain,
           serverUrl: clientConfig?.serverUrl,
+          adminConsoleUrl: clientConfig?.adminConsoleUrl,
         });
         setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
         setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);

@@ -10,6 +10,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
+import { useIsCurrentLocationOnAdminConsole } from '@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { usePageChangeEffectNavigateLocation } from '@/app/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
@@ -76,6 +77,15 @@ const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
     isOnAWorkspace,
   });
 };
+
+jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole');
+const setupMockIsOnAdminConsole = (isOnAdminConsole: boolean) => {
+  jest.mocked(useIsCurrentLocationOnAdminConsole).mockReturnValue({
+    isOnAdminConsole,
+  });
+};
+
+setupMockIsOnAdminConsole(false);
 
 jest.mock('@apollo/client/react');
 const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
@@ -606,4 +616,38 @@ describe('usePageChangeEffectNavigateLocation — suspended workspace settings p
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(res);
   });
+});
+
+describe('usePageChangeEffectNavigateLocation — admin console host', () => {
+  afterEach(() => {
+    setupMockIsOnAdminConsole(false);
+  });
+
+  it.each([
+    { loc: AppPath.Index, isLogged: false, res: AppPath.SignInUp },
+    { loc: AppPath.SettingsCatchAll, isLogged: false, res: AppPath.SignInUp },
+    { loc: AppPath.Verify, isLogged: false, res: undefined },
+    { loc: AppPath.SignInUp, isLogged: false, res: undefined },
+    {
+      loc: AppPath.SignInUp,
+      isLogged: true,
+      res: getSettingsPath(SettingsPath.AdminPanel),
+    },
+    { loc: AppPath.SettingsCatchAll, isLogged: true, res: undefined },
+  ])(
+    'returns $res from $loc when logged is $isLogged',
+    ({ loc, isLogged, res }) => {
+      setupMockIsOnAdminConsole(true);
+      setupMockIsMatchingLocation(loc);
+      setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+      setupMockIsWorkspaceActivationStatusEqualsTo(false);
+      setupMockIsLogged(isLogged);
+      setupMockIsOnAWorkspace(true);
+      setupMockUseQuery();
+      setupMockUseLocation(loc);
+      setupMockState();
+
+      expect(usePageChangeEffectNavigateLocation()).toEqual(res);
+    },
+  );
 });

@@ -27,6 +27,12 @@ export type AddQuerySubscriptionInput = {
   queryId: Scalars['String']['input'];
 };
 
+export type AdminConsoleLoginToken = {
+  __typename?: 'AdminConsoleLoginToken';
+  adminConsoleUrl: Scalars['String']['output'];
+  loginToken: Scalars['String']['output'];
+};
+
 export type Agent = {
   __typename?: 'Agent';
   applicationId?: Maybe<Scalars['UUID']['output']>;
@@ -1417,6 +1423,7 @@ export type ClientAiModelTierConfig = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  adminConsoleUrl?: Maybe<Scalars['String']['output']>;
   aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
   aiModelTiers: Array<ClientAiModelTierConfig>;
   aiModels: Array<ClientAiModelConfig>;
@@ -3501,6 +3508,7 @@ export type Mutation = {
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl;
+  createAdminConsoleLoginToken: AdminConsoleLoginToken;
   createAgentChatChannel: AgentChatChannel;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;

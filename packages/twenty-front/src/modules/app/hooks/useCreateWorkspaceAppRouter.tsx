@@ -96,13 +96,16 @@ const preloadOnboardingPages = () => {
 
 type CreateWorkspaceAppRouterArgs = {
   isAdminPageEnabled?: boolean;
+  isAdminConsoleEnabled?: boolean;
 };
 
 const createWorkspaceAppRouter = ({
   isAdminPageEnabled,
+  isAdminConsoleEnabled,
 }: CreateWorkspaceAppRouterArgs) => {
   const workspaceRouteObjects = createWorkspaceRouteObjects({
     isAdminPageEnabled,
+    isAdminConsoleEnabled,
   });
 
   return createBrowserRouter([
@@ -260,8 +263,10 @@ const createWorkspaceAppRouter = ({
 
 export const useCreateWorkspaceAppRouter = ({
   isAdminPageEnabled,
+  isAdminConsoleEnabled,
 }: CreateWorkspaceAppRouterArgs) =>
   useMemo(
-    () => createWorkspaceAppRouter({ isAdminPageEnabled }),
-    [isAdminPageEnabled],
+    () =>
+      createWorkspaceAppRouter({ isAdminPageEnabled, isAdminConsoleEnabled }),
+    [isAdminPageEnabled, isAdminConsoleEnabled],
   );

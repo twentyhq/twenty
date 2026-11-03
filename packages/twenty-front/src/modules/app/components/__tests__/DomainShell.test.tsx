@@ -4,6 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { DomainShell } from '@/app/components/DomainShell';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -39,6 +40,10 @@ jest.mock('@/app/components/RootApp', () => ({
 
 jest.mock('@/app/components/WorkspaceApp', () => ({
   WorkspaceApp: () => <div>WORKSPACE_APP</div>,
+}));
+
+jest.mock('@/app/components/AdminConsoleApp', () => ({
+  AdminConsoleApp: () => <div>ADMIN_CONSOLE_APP</div>,
 }));
 
 jest.mock('~/loading/components/UserOrMetadataLoader', () => ({
@@ -125,5 +130,21 @@ describe('DomainShell', () => {
     renderShell();
 
     expect(screen.getByText('WORKSPACE_APP')).toBeInTheDocument();
+  });
+
+  it('mounts the admin console app on the configured admin console host', () => {
+    setClientConfigLoaded(true);
+    jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
+    jotaiStore.set(domainConfigurationState.atom, {
+      frontDomain: 'example.com',
+      defaultSubdomain: 'app',
+      serverUrl: '',
+      adminConsoleUrl: window.location.origin,
+    });
+    isDefaultDomainValue = false;
+
+    renderShell();
+
+    expect(screen.getByText('ADMIN_CONSOLE_APP')).toBeInTheDocument();
   });
 });

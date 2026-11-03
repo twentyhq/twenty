@@ -628,6 +628,14 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
+const SettingsAdminConsoleLink = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminConsoleLink').then(
+    (module) => ({
+      default: module.SettingsAdminConsoleLink,
+    }),
+  ),
+);
+
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -768,6 +776,8 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 
 type CreateSettingsRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
+  // When a dedicated admin console is configured, admin pages are only served there.
+  isAdminConsoleEnabled?: boolean;
 };
 
 type SettingsRouteHandle = WorkspaceRouteHandle;
@@ -793,8 +803,81 @@ const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   },
 };
 
+const createSettingsAdminRouteElements = () => (
+  <>
+    <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+    <Route
+      path={SettingsPath.Enterprise}
+      element={
+        <Navigate
+          to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+          replace
+        />
+      }
+    />
+    <Route
+      path={SettingsPath.AdminPanelInferredVersion}
+      element={<SettingsAdminInferredVersion />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelInstanceStatus}
+      element={<SettingsAdminInstanceStatus />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelWorkspacesStatus}
+      element={<SettingsAdminWorkspacesStatus />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelIndicatorHealthStatus}
+      element={<SettingsAdminIndicatorHealthStatus />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelQueueDetail}
+      element={<SettingsAdminQueueDetail />}
+    />
+
+    <Route
+      path={SettingsPath.AdminPanelConfigVariableDetails}
+      element={<SettingsAdminConfigVariableDetails />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelNewAiProvider}
+      element={<SettingsAdminNewAiProvider />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelNewAiModel}
+      element={<SettingsAdminNewAiModel />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelAiProviderDetail}
+      element={<SettingsAdminAiProviderDetail />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelUserDetail}
+      element={<SettingsAdminUserDetail />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelWorkspaceDetail}
+      element={<SettingsAdminWorkspaceDetail />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelApplicationRegistrationDetail}
+      element={<SettingsAdminApplicationRegistrationDetail />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelApplicationRegistrationMonitoring}
+      element={<SettingsAdminApplicationRegistrationMonitoring />}
+    />
+    <Route
+      path={SettingsPath.AdminPanelWorkspaceChatThread}
+      element={<SettingsAdminWorkspaceChatThread />}
+    />
+  </>
+);
+
 const createSettingsRouteElements = ({
   isAdminPageEnabled,
+  isAdminConsoleEnabled,
 }: CreateSettingsRouteObjectsArgs) => (
   <>
     <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
@@ -1268,77 +1351,15 @@ const createSettingsRouteElements = ({
       />
     </Route>
 
-    {isAdminPageEnabled && (
-      <>
-        <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+    {isAdminPageEnabled &&
+      (isAdminConsoleEnabled ? (
         <Route
-          path={SettingsPath.Enterprise}
-          element={
-            <Navigate
-              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-              replace
-            />
-          }
+          path={`${SettingsPath.AdminPanel}/*`}
+          element={<SettingsAdminConsoleLink />}
         />
-        <Route
-          path={SettingsPath.AdminPanelInferredVersion}
-          element={<SettingsAdminInferredVersion />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelInstanceStatus}
-          element={<SettingsAdminInstanceStatus />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelWorkspacesStatus}
-          element={<SettingsAdminWorkspacesStatus />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelIndicatorHealthStatus}
-          element={<SettingsAdminIndicatorHealthStatus />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelQueueDetail}
-          element={<SettingsAdminQueueDetail />}
-        />
-
-        <Route
-          path={SettingsPath.AdminPanelConfigVariableDetails}
-          element={<SettingsAdminConfigVariableDetails />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelNewAiProvider}
-          element={<SettingsAdminNewAiProvider />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelNewAiModel}
-          element={<SettingsAdminNewAiModel />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelAiProviderDetail}
-          element={<SettingsAdminAiProviderDetail />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelUserDetail}
-          element={<SettingsAdminUserDetail />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelWorkspaceDetail}
-          element={<SettingsAdminWorkspaceDetail />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelApplicationRegistrationDetail}
-          element={<SettingsAdminApplicationRegistrationDetail />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelApplicationRegistrationMonitoring}
-          element={<SettingsAdminApplicationRegistrationMonitoring />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelWorkspaceChatThread}
-          element={<SettingsAdminWorkspaceChatThread />}
-        />
-      </>
-    )}
+      ) : (
+        createSettingsAdminRouteElements()
+      ))}
 
     <Route
       element={
@@ -1368,6 +1389,14 @@ export const createSettingsRouteObjects = (
       createSettingsRouteElements(args),
     ) as WorkspaceRouteObject[],
   );
+
+export const createAdminConsoleSettingsRouteObjects =
+  (): WorkspaceRouteObject[] =>
+    removeGeneratedRouteIds(
+      createRoutesFromElements(
+        createSettingsAdminRouteElements(),
+      ) as WorkspaceRouteObject[],
+    );
 
 export const SettingsRouteOutlet = () => (
   <Suspense fallback={<SettingsSkeletonLoader />}>

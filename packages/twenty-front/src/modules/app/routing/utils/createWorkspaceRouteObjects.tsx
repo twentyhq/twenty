@@ -1,8 +1,11 @@
 import { lazy } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { Navigate } from 'react-router-dom';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import {
+  createAdminConsoleSettingsRouteObjects,
   createSettingsRouteObjects,
   SettingsRouteOutlet,
 } from '@/app/components/SettingsRoutes';
@@ -77,6 +80,7 @@ const NotFound = lazy(() =>
 
 type CreateWorkspaceRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
+  isAdminConsoleEnabled?: boolean;
 };
 
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
@@ -84,9 +88,11 @@ const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
 export const createWorkspaceRouteObjects = ({
   isAdminPageEnabled,
+  isAdminConsoleEnabled,
 }: CreateWorkspaceRouteObjectsArgs): WorkspaceRouteObject[] => {
   const settingsRouteObjects = createSettingsRouteObjects({
     isAdminPageEnabled,
+    isAdminConsoleEnabled,
   });
 
   return [
@@ -202,3 +208,16 @@ export const createWorkspaceRouteObjects = ({
     },
   ];
 };
+
+// The admin console host only serves the admin pages; anything else lands on the admin panel.
+export const createAdminConsoleRouteObjects = (): WorkspaceRouteObject[] => [
+  {
+    path: SETTINGS_ROOT_PATH,
+    element: <SettingsRouteOutlet />,
+    children: createAdminConsoleSettingsRouteObjects(),
+  },
+  {
+    path: AppPath.NotFoundWildcard,
+    element: <Navigate to={getSettingsPath(SettingsPath.AdminPanel)} replace />,
+  },
+];

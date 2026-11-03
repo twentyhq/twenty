@@ -423,6 +423,12 @@ export type ApplicationRegistrationVariable = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type AuthToken = {
+  __typename?: 'AuthToken';
+  expiresAt: Scalars['DateTime']['output'];
+  token: Scalars['String']['output'];
+};
+
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
   COMPENSATION = 'COMPENSATION',
@@ -567,6 +573,12 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
+export type Impersonate = {
+  __typename?: 'Impersonate';
+  loginToken: AuthToken;
+  workspace: WorkspaceUrlsAndId;
+};
+
 export type InstalledWorkspace = {
   __typename?: 'InstalledWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
@@ -667,6 +679,7 @@ export type Mutation = {
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
+  impersonateFromAdminPanel: Impersonate;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
   removeAiProvider: Scalars['Boolean']['output'];
   removeModelFromProvider: Scalars['Boolean']['output'];
@@ -677,6 +690,7 @@ export type Mutation = {
   setAdminAiModelsEnabled: Scalars['Boolean']['output'];
   setAdminDefaultAiModel: Scalars['Boolean']['output'];
   setMaintenanceMode: Scalars['Boolean']['output'];
+  signInToAdminConsole: Scalars['Boolean']['output'];
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   updateAdminApplicationRegistration: ApplicationRegistration;
   updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -750,6 +764,12 @@ export type MutationGrantWorkspaceCreditsArgs = {
 };
 
 
+export type MutationImpersonateFromAdminPanelArgs = {
+  userId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationRemoveAiProviderArgs = {
   providerName: Scalars['String']['input'];
 };
@@ -800,6 +820,11 @@ export type MutationSetMaintenanceModeArgs = {
   endAt: Scalars['DateTime']['input'];
   link?: InputMaybe<Scalars['String']['input']>;
   startAt: Scalars['DateTime']['input'];
+};
+
+
+export type MutationSignInToAdminConsoleArgs = {
+  loginToken: Scalars['String']['input'];
 };
 
 
@@ -1332,4 +1357,10 @@ export type WorkspaceUrls = {
   __typename?: 'WorkspaceUrls';
   customUrl?: Maybe<Scalars['String']['output']>;
   subdomainUrl: Scalars['String']['output'];
+};
+
+export type WorkspaceUrlsAndId = {
+  __typename?: 'WorkspaceUrlsAndId';
+  id: Scalars['UUID']['output'];
+  workspaceUrls: WorkspaceUrls;
 };

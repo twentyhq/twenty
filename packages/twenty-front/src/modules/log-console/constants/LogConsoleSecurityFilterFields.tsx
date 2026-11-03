@@ -47,6 +47,11 @@ export const LOG_CONSOLE_SECURITY_FILTER_FIELDS: LogConsoleFilterField[] = [
         values: ['ServerAdminAccessChanged'],
         startIcon: <IconServer />,
       },
+      {
+        label: t`Server administration action`,
+        values: ['ServerAdminAction'],
+        startIcon: <IconServer />,
+      },
     ],
   },
   LOG_CONSOLE_ACTOR_FILTER_FIELD,

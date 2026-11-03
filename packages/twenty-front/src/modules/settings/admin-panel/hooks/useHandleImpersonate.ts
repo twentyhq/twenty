@@ -8,10 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useIsCurrentLocationOnAdminConsole } from '@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useToast } from 'twenty-ui/components/feedback';
-import { ImpersonateDocument } from '~/generated-metadata/graphql';
+import { ImpersonateFromAdminPanelDocument } from '~/generated-admin/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useHandleImpersonate = () => {
@@ -20,7 +22,11 @@ export const useHandleImpersonate = () => {
   const { enqueueToast } = useToast();
   const { startImpersonating } = useImpersonationSession();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const [impersonate] = useMutation(ImpersonateDocument);
+  const { isOnAdminConsole } = useIsCurrentLocationOnAdminConsole();
+  const apolloAdminClient = useApolloAdminClient();
+  const [impersonate] = useMutation(ImpersonateFromAdminPanelDocument, {
+    client: apolloAdminClient,
+  });
   const [impersonatingUserId, setImpersonatingUserId] = useState<string | null>(
     null,
   );
@@ -40,10 +46,11 @@ export const useHandleImpersonate = () => {
     await impersonate({
       variables: { userId, workspaceId },
       onCompleted: async (data) => {
-        const { loginToken, workspace } = data.impersonate;
+        const { loginToken, workspace } = data.impersonateFromAdminPanel;
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
-        if (isCurrentWorkspace) {
+        // The admin console host holds no workspace session to swap, so the target workspace always opens in its own host.
+        if (isCurrentWorkspace && !isOnAdminConsole) {
           await startImpersonating(loginToken.token);
 
           return;

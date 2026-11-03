@@ -66,6 +66,12 @@ export const getLogConsoleSecurityEvent = (
         color: 'orange',
         severity: 'warning',
       };
+    case 'ServerAdminAction':
+      return {
+        label: msg`Server administration action`,
+        color: 'orange',
+        severity: 'warning',
+      };
     default:
       return undefined;
   }

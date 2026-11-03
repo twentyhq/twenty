@@ -5,6 +5,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
+import { useIsCurrentLocationOnAdminConsole } from '@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOpenGettingStarted';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
@@ -38,6 +39,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isLogged = useIsLogged();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const { isOnAdminConsole } = useIsCurrentLocationOnAdminConsole();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -98,6 +100,21 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isOnboardingCheckoutPending = useAtomStateValue(
     isOnboardingCheckoutPendingState,
   );
+
+  // The admin console has no sign-in or onboarding of its own: sessions come from a workspace handoff.
+  if (isOnAdminConsole) {
+    const isOnSignInPage = isMatchingLocation(location, AppPath.SignInUp);
+
+    if (isLogged) {
+      return isOnSignInPage
+        ? getSettingsPath(SettingsPath.AdminPanel)
+        : undefined;
+    }
+
+    return isOnSignInPage || isMatchingLocation(location, AppPath.Verify)
+      ? undefined
+      : AppPath.SignInUp;
+  }
 
   if (
     (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&

@@ -32,6 +32,7 @@ export type ClientConfig = {
   frontDomain: string;
   serverUrl: string;
   publicFunctionDomain?: string | null;
+  adminConsoleUrl?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
   isEmailVerificationRequired: boolean;
