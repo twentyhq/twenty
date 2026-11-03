@@ -157,12 +157,10 @@ export class BillingWebhookController {
             event,
           );
 
-        if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED) {
-          await this.billingWebhookDiscountService.processSubscriptionDeleted({
-            workspaceId,
-            subscription: event.data.object,
-          });
-        }
+        await this.billingWebhookDiscountService.processSubscriptionEvent({
+          workspaceId,
+          subscription: event.data.object,
+        });
 
         return result;
       }

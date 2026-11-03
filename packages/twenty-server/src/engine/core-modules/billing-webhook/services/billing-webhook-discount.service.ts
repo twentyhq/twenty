@@ -57,22 +57,14 @@ export class BillingWebhookDiscountService {
     return { stripeCustomerId };
   }
 
-  async processSubscriptionDeleted({
+  async processSubscriptionEvent({
     workspaceId,
     subscription,
   }: {
     workspaceId: string;
     subscription: Pick<Stripe.Subscription, 'customer'>;
   }) {
-    if (
-      !(await this.billingDiscountService.hasActiveDiscountArrangement(
-        workspaceId,
-      ))
-    ) {
-      return;
-    }
-
-    await this.billingDiscountService.syncDiscountArrangement({
+    await this.billingDiscountService.syncDiscountArrangementIfActive({
       workspaceId,
       stripeCustomerId: getStripeObjectId(subscription.customer),
     });

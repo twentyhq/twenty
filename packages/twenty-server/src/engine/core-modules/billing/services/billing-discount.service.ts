@@ -42,16 +42,6 @@ export class BillingDiscountService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async hasActiveDiscountArrangement(workspaceId: string): Promise<boolean> {
-    const now = new Date();
-    const discountArrangements =
-      await this.findDiscountArrangements(workspaceId);
-
-    return discountArrangements.some((arrangement) =>
-      isBillingArrangementActive({ arrangement, now }),
-    );
-  }
-
   async syncDiscountArrangement({
     workspaceId,
     stripeCustomerId,
@@ -67,6 +57,40 @@ export class BillingDiscountService {
         stripeDiscounts,
       });
     }, buildBillingArrangementLockKey(workspaceId));
+  }
+
+  // Subscription events fire on every seat change, so only a workspace with a discount row to end is synced
+  async syncDiscountArrangementIfActive({
+    workspaceId,
+    stripeCustomerId,
+  }: {
+    workspaceId: string;
+    stripeCustomerId: string;
+  }): Promise<void> {
+    await this.cacheLockService.withLock(async () => {
+      if (!(await this.hasActiveDiscountArrangement(workspaceId))) {
+        return;
+      }
+
+      const stripeDiscounts = await this.findStripeDiscounts(stripeCustomerId);
+
+      await this.applyDiscountArrangementSync({
+        workspaceId,
+        stripeDiscounts,
+      });
+    }, buildBillingArrangementLockKey(workspaceId));
+  }
+
+  private async hasActiveDiscountArrangement(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const now = new Date();
+    const discountArrangements =
+      await this.findDiscountArrangements(workspaceId);
+
+    return discountArrangements.some((arrangement) =>
+      isBillingArrangementActive({ arrangement, now }),
+    );
   }
 
   private async findDiscountArrangements(
