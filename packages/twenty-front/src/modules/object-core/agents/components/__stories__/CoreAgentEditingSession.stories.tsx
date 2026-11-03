@@ -1,7 +1,9 @@
-import { settingsRoleSaveSubmissionFamilyState } from '@/settings/roles/states/settingsRoleSaveSubmissionFamilyState';
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreAgentEditSessionEffect } from '@/object-core/agents/components/CoreAgentEditSessionEffect';
+import { CoreAgentEditingScope } from '@/object-core/agents/components/CoreAgentEditingScope';
 import { useCoreAgentEditStatus } from '@/object-core/agents/hooks/useCoreAgentEditStatus';
 import { useCoreAgentField } from '@/object-core/agents/hooks/useCoreAgentField';
 import { useDiscardCoreAgentChanges } from '@/object-core/agents/hooks/useDiscardCoreAgentChanges';
@@ -9,28 +11,43 @@ import { useSaveCoreAgentChanges } from '@/object-core/agents/hooks/useSaveCoreA
 import { coreAgentEditSessionFamilyState } from '@/object-core/agents/states/coreAgentEditSessionFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
+import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { settingsRoleSaveSubmissionFamilyState } from '@/settings/roles/states/settingsRoleSaveSubmissionFamilyState';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  type UpsertObjectPermissionsMutation,
+  type UpsertObjectPermissionsMutationVariables,
   type UpdateOneRoleMutation,
   type UpdateOneRoleMutationVariables,
   type UpdateOneAgentMutation,
   type UpdateOneAgentMutationVariables,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { SettingsRoleAddObjectLevel } from '~/pages/settings/members/roles/SettingsRoleAddObjectLevel';
+import { SettingsRoleObjectLevel } from '~/pages/settings/members/roles/SettingsRoleObjectLevel';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const AGENT: CoreAgent = {
   __typename: 'Agent',
@@ -88,7 +105,11 @@ const SaveActions = () => {
   );
 };
 
-const CoreAgentEditingSession = () => {
+const CoreAgentEditingSession = ({
+  showObjectPermissions = false,
+}: {
+  showObjectPermissions?: boolean;
+}) => {
   const { value: prompt = '', setValue: setPrompt } = useCoreAgentField({
     agentId: AGENT.id,
     field: 'prompt',
@@ -112,6 +133,13 @@ const CoreAgentEditingSession = () => {
         roleId={ROLE.id}
         isEditable={isRoleEditable}
       />
+      {showObjectPermissions && (
+        <SettingsRolePermissionsObjectLevelSection
+          roleId={ROLE.id}
+          fromAgentId={AGENT.id}
+          isEditable={isRoleEditable}
+        />
+      )}
       <SaveActions />
       <Button
         disabled={isSaving}
@@ -124,6 +152,49 @@ const CoreAgentEditingSession = () => {
         {isRoleDirty ? 'Unsaved permissions' : 'Permissions saved'}
       </output>
     </>
+  );
+};
+
+const PERMISSION_NAVIGATION_ROUTES: WorkspaceRouteObject[] = [
+  {
+    path: getSettingsPath(SettingsPath.RoleAddObjectLevel),
+    element: <SettingsRoleAddObjectLevel />,
+    handle: { workspaceSurfaces: ['main', 'side-panel'] },
+  },
+  {
+    path: getSettingsPath(SettingsPath.RoleObjectLevel),
+    element: <SettingsRoleObjectLevel />,
+    handle: { workspaceSurfaces: ['main', 'side-panel'] },
+  },
+  {
+    path: AppPath.AgentShowPage,
+    element: <CoreAgentEditingSession showObjectPermissions />,
+    handle: { workspaceSurfaces: ['main', 'side-panel'] },
+  },
+];
+
+const CoreAgentPermissionNavigation = () => {
+  const [isEditorMounted, setIsEditorMounted] = useState(true);
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
+  const location = useLocation();
+
+  return (
+    <WorkspaceRouteObjectsContext.Provider value={PERMISSION_NAVIGATION_ROUTES}>
+      <output aria-label="Main location">{location.pathname}</output>
+      <Button onClick={() => setIsEditorMounted(false)}>Unmount editor</Button>
+      {isEditorMounted && (
+        <CoreAgentEditingScope agentId={AGENT.id}>
+          <CoreAgentEditingSession showObjectPermissions />
+        </CoreAgentEditingScope>
+      )}
+      {sidePanelNavigationStack.length > 0 && (
+        <section aria-label="Permission panel">
+          <SidePanelRouter />
+        </section>
+      )}
+    </WorkspaceRouteObjectsContext.Provider>
   );
 };
 
@@ -208,6 +279,30 @@ const meta: Meta<typeof CoreAgentEditingSession> = {
             prompt: variables.input.prompt ?? remoteAgent.prompt,
           };
           return HttpResponse.json({ data: { updateOneAgent: remoteAgent } });
+        }),
+        graphql.mutation<
+          UpsertObjectPermissionsMutation,
+          UpsertObjectPermissionsMutationVariables
+        >('UpsertObjectPermissions', ({ variables }) => {
+          const objectPermissions =
+            variables.upsertObjectPermissionsInput.objectPermissions.map(
+              (permission) => ({
+                __typename: 'ObjectPermission' as const,
+                objectMetadataId: permission.objectMetadataId,
+                canReadObjectRecords: permission.canReadObjectRecords ?? null,
+                canUpdateObjectRecords:
+                  permission.canUpdateObjectRecords ?? null,
+                canSoftDeleteObjectRecords:
+                  permission.canSoftDeleteObjectRecords ?? null,
+                canDestroyObjectRecords:
+                  permission.canDestroyObjectRecords ?? null,
+                restrictedFields: {},
+              }),
+            );
+          remoteRole = { ...remoteRole, objectPermissions };
+          return HttpResponse.json({
+            data: { upsertObjectPermissions: objectPermissions },
+          });
         }),
         graphql.query('FindOneAgent', () =>
           HttpResponse.json({ data: { findOneAgent: remoteAgent } }),
@@ -318,5 +413,66 @@ export const SettingsWithoutRoleAccess: Story = {
       canvas.getByRole('button', { name: 'Save settings' }),
     ).toBeDisabled();
     await expect(roleReadCalls).toBe(0);
+  },
+};
+
+export const PermissionNavigationRetainsDraft: Story = {
+  render: () => <CoreAgentPermissionNavigation />,
+  decorators: [ObjectMetadataItemsDecorator],
+  parameters: {
+    currentUserWorkspace: {
+      permissionFlags: [
+        PermissionFlagType.AI_SETTINGS,
+        PermissionFlagType.ROLES,
+      ],
+      objectsPermissions: [],
+      twoFactorAuthenticationMethodSummary: [],
+      isImpersonating: false,
+    },
+  },
+  beforeEach: () => {
+    shouldFailSettings = false;
+    releaseSave();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const prompt = await canvas.findByRole('textbox', { name: 'Instructions' });
+    await waitFor(() => expect(prompt).toHaveValue(AGENT.prompt));
+    await userEvent.clear(prompt);
+    await userEvent.type(prompt, 'Instructions retained through permissions');
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Add rule' }),
+    );
+    const panel = within(
+      await canvas.findByRole('region', { name: 'Permission panel' }),
+    );
+    await userEvent.click(await panel.findByText('Companies', { exact: true }));
+    await userEvent.click(
+      await panel.findByText('See Companies', { exact: true }),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Unmount editor' }),
+    );
+    await userEvent.click(panel.getByRole('link', { name: 'Finish' }));
+    await expect(
+      await panel.findByRole('textbox', { name: 'Instructions' }),
+    ).toHaveValue('Instructions retained through permissions');
+    await expect(panel.getByText('Unsaved permissions')).toBeVisible();
+    await expect(canvas.getByLabelText('Main location')).toHaveTextContent('/');
+    await userEvent.click(panel.getByRole('button', { name: 'Save settings' }));
+    await waitFor(() =>
+      expect(remoteAgent.prompt).toBe(
+        'Instructions retained through permissions',
+      ),
+    );
+    await waitFor(() =>
+      expect(remoteRole.objectPermissions).toEqual([
+        expect.objectContaining({
+          objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+          canReadObjectRecords: true,
+        }),
+      ]),
+    );
+    await expect(panel.queryByRole('alert')).not.toBeInTheDocument();
   },
 };
