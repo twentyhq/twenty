@@ -102,11 +102,12 @@ describe('Chat message participation with real storage', () => {
       false,
     );
     expect(
-      await context.chatService.hasMessages({
+      await context.chatService.getMessagesForThread({
         workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
         threadId,
       }),
-    ).toBe(true);
+    ).toContainEqual(expect.objectContaining({ id: messageId }));
     expect(await context.readParticipants(threadId)).not.toContainEqual(
       expect.objectContaining({
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -143,11 +144,12 @@ describe('Chat message participation with real storage', () => {
       ],
     });
     expect(
-      await context.chatService.hasMessages({
+      await context.chatService.getMessagesForThread({
         workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
         threadId,
       }),
-    ).toBe(true);
+    ).toContainEqual(expect.objectContaining({ id: messageId }));
     const participants = await context.readParticipants(threadId);
 
     expect(participants).toContainEqual(
