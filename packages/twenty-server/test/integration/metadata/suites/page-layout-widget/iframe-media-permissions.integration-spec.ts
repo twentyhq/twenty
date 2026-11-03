@@ -88,6 +88,10 @@ const createApplication = async ({
         displayName: name,
         requestedIframeMediaPermissions: permissions,
       },
+      roles: manifest.roles.map((role) => ({
+        ...role,
+        label: `Iframe Widget Role ${applicationUniversalIdentifier}`,
+      })),
       pageLayoutWidgets: widgets,
       frontComponents,
       commandMenuItems,

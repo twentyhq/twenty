@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isArray } from '@sniptt/guards';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -219,6 +220,14 @@ export const DoesNotApplyRejectedApproval: Story = {
 };
 
 export const ReportsFailedRefresh: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
   parameters: {
     msw: {
       handlers: [
