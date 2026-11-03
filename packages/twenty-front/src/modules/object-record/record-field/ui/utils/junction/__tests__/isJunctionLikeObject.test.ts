@@ -46,6 +46,21 @@ describe('isJunctionLikeObject', () => {
     expect(isJunctionLikeObject([manyToOneField, oneToManyField])).toBe(false);
   });
 
+  it('rejects an object with a one-to-many morph relation', () => {
+    expect(
+      isJunctionLikeObject([
+        manyToOneField,
+        {
+          ...scalarField,
+          morphRelations: [
+            buildRelation(RelationType.MANY_TO_ONE),
+            buildRelation(RelationType.ONE_TO_MANY),
+          ],
+        },
+      ]),
+    ).toBe(false);
+  });
+
   it('ignores the default one-to-many relations the engine adds to custom objects', () => {
     expect(
       isJunctionLikeObject([
