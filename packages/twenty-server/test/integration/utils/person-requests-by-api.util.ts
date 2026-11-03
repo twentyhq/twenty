@@ -17,312 +17,279 @@ export type RecordApi = 'graphql' | 'rest';
 
 type PersonData = { id: string; jobTitle?: string };
 
-const PERSON_FIELDS = 'id jobTitle';
+type PersonRequestInput = { api: RecordApi; token: string };
 
-const PERSON_NAMES = {
-  objectMetadataSingularName: 'person',
-  objectMetadataPluralName: 'people',
-};
+const PERSON_SINGULAR_NAME = 'person';
+const PERSON_PLURAL_NAME = 'people';
+const PERSON_FIELDS = 'id jobTitle';
 
 const restIdFilter = (ids: string[]) =>
   `filter=id[in]:[${ids.map((id) => `"${id}"`).join(',')}]`;
 
 export const personRequestsByApi = {
-  findMany: ({
-    api,
-    token,
-    ids,
-  }: {
-    api: RecordApi;
-    token: string;
-    ids: string[];
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          findManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { in: ids } },
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'get',
-          path: `/people?${restIdFilter(ids)}`,
-          bearer: token,
+  findMany: ({ api, token, ids }: PersonRequestInput & { ids: string[] }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { in: ids } },
         }),
+        token,
+      );
+    }
 
-  findOne: ({
-    api,
-    token,
-    id,
-  }: {
-    api: RecordApi;
-    token: string;
-    id: string;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          findOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { eq: id } },
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'get',
-          path: `/people/${id}`,
-          bearer: token,
+    return makeRestApiRequest({
+      method: 'get',
+      path: `/${PERSON_PLURAL_NAME}?${restIdFilter(ids)}`,
+      bearer: token,
+    });
+  },
+
+  findOne: ({ api, token, id }: PersonRequestInput & { id: string }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { eq: id } },
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'get',
+      path: `/${PERSON_PLURAL_NAME}/${id}`,
+      bearer: token,
+    });
+  },
 
   createOne: ({
     api,
     token,
     data,
-  }: {
-    api: RecordApi;
-    token: string;
-    data: PersonData;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          createOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            data,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'post',
-          path: '/people',
-          body: data,
-          bearer: token,
+  }: PersonRequestInput & { data: PersonData }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          data,
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'post',
+      path: `/${PERSON_PLURAL_NAME}`,
+      body: data,
+      bearer: token,
+    });
+  },
 
   createMany: ({
     api,
     token,
     data,
-  }: {
-    api: RecordApi;
-    token: string;
-    data: PersonData[];
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          createManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            data,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'post',
-          path: '/batch/people',
-          body: data,
-          bearer: token,
+  }: PersonRequestInput & { data: PersonData[] }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          data,
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'post',
+      path: `/batch/${PERSON_PLURAL_NAME}`,
+      body: data,
+      bearer: token,
+    });
+  },
 
   updateOne: ({
     api,
     token,
     id,
     data,
-  }: {
-    api: RecordApi;
-    token: string;
-    id: string;
-    data: Omit<PersonData, 'id'>;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          updateOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            recordId: id,
-            data,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'patch',
-          path: `/people/${id}`,
-          body: data,
-          bearer: token,
+  }: PersonRequestInput & { id: string; data: Omit<PersonData, 'id'> }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          recordId: id,
+          data,
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'patch',
+      path: `/${PERSON_PLURAL_NAME}/${id}`,
+      body: data,
+      bearer: token,
+    });
+  },
 
   updateMany: ({
     api,
     token,
     ids,
     data,
-  }: {
-    api: RecordApi;
-    token: string;
-    ids: string[];
-    data: Omit<PersonData, 'id'>;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          updateManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { in: ids } },
-            data,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'patch',
-          path: `/people?${restIdFilter(ids)}`,
-          body: data,
-          bearer: token,
+  }: PersonRequestInput & { ids: string[]; data: Omit<PersonData, 'id'> }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        updateManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { in: ids } },
+          data,
         }),
+        token,
+      );
+    }
 
-  deleteOne: ({
-    api,
-    token,
-    id,
-  }: {
-    api: RecordApi;
-    token: string;
-    id: string;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          deleteOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            recordId: id,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'delete',
-          path: `/people/${id}?soft_delete=true`,
-          bearer: token,
-        }),
+    return makeRestApiRequest({
+      method: 'patch',
+      path: `/${PERSON_PLURAL_NAME}?${restIdFilter(ids)}`,
+      body: data,
+      bearer: token,
+    });
+  },
 
-  deleteMany: ({
-    api,
-    token,
-    ids,
-  }: {
-    api: RecordApi;
-    token: string;
-    ids: string[];
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          deleteManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { in: ids } },
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'delete',
-          path: `/people?${restIdFilter(ids)}&soft_delete=true`,
-          bearer: token,
+  deleteOne: ({ api, token, id }: PersonRequestInput & { id: string }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          recordId: id,
         }),
+        token,
+      );
+    }
 
-  restoreOne: ({
-    api,
-    token,
-    id,
-  }: {
-    api: RecordApi;
-    token: string;
-    id: string;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          restoreOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            recordId: id,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'patch',
-          path: `/people/${id}/restore`,
-          bearer: token,
+    return makeRestApiRequest({
+      method: 'delete',
+      path: `/${PERSON_PLURAL_NAME}/${id}?soft_delete=true`,
+      bearer: token,
+    });
+  },
+
+  deleteMany: ({ api, token, ids }: PersonRequestInput & { ids: string[] }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { in: ids } },
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'delete',
+      path: `/${PERSON_PLURAL_NAME}?${restIdFilter(ids)}&soft_delete=true`,
+      bearer: token,
+    });
+  },
+
+  restoreOne: ({ api, token, id }: PersonRequestInput & { id: string }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        restoreOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          recordId: id,
+        }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'patch',
+      path: `/${PERSON_PLURAL_NAME}/${id}/restore`,
+      bearer: token,
+    });
+  },
 
   restoreMany: ({
     api,
     token,
     ids,
-  }: {
-    api: RecordApi;
-    token: string;
-    ids: string[];
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          restoreManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { in: ids } },
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'patch',
-          path: `/people/restore?${restIdFilter(ids)}`,
-          bearer: token,
+  }: PersonRequestInput & { ids: string[] }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { in: ids } },
         }),
+        token,
+      );
+    }
 
-  destroyOne: ({
-    api,
-    token,
-    id,
-  }: {
-    api: RecordApi;
-    token: string;
-    id: string;
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          destroyOneOperationFactory({
-            objectMetadataSingularName: 'person',
-            gqlFields: PERSON_FIELDS,
-            recordId: id,
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'delete',
-          path: `/people/${id}`,
-          bearer: token,
+    return makeRestApiRequest({
+      method: 'patch',
+      path: `/${PERSON_PLURAL_NAME}/restore?${restIdFilter(ids)}`,
+      bearer: token,
+    });
+  },
+
+  destroyOne: ({ api, token, id }: PersonRequestInput & { id: string }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          gqlFields: PERSON_FIELDS,
+          recordId: id,
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'delete',
+      path: `/${PERSON_PLURAL_NAME}/${id}`,
+      bearer: token,
+    });
+  },
 
   destroyMany: ({
     api,
     token,
     ids,
-  }: {
-    api: RecordApi;
-    token: string;
-    ids: string[];
-  }) =>
-    api === 'graphql'
-      ? makeGraphqlApiRequest(
-          destroyManyOperationFactory({
-            ...PERSON_NAMES,
-            gqlFields: PERSON_FIELDS,
-            filter: { id: { in: ids } },
-          }),
-          token,
-        )
-      : makeRestApiRequest({
-          method: 'delete',
-          path: `/people?${restIdFilter(ids)}`,
-          bearer: token,
+  }: PersonRequestInput & { ids: string[] }) => {
+    if (api === 'graphql') {
+      return makeGraphqlApiRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: PERSON_SINGULAR_NAME,
+          objectMetadataPluralName: PERSON_PLURAL_NAME,
+          gqlFields: PERSON_FIELDS,
+          filter: { id: { in: ids } },
         }),
+        token,
+      );
+    }
+
+    return makeRestApiRequest({
+      method: 'delete',
+      path: `/${PERSON_PLURAL_NAME}?${restIdFilter(ids)}`,
+      bearer: token,
+    });
+  },
 };

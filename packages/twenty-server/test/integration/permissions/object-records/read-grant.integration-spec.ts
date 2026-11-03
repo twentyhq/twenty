@@ -15,7 +15,13 @@ import {
   deletePersonRecords,
 } from 'test/integration/utils/person-record-fixtures.util';
 
-const getReturnedPersonIds = (api: RecordApi, response: Response): string[] => {
+const getReturnedPersonIds = ({
+  api,
+  response,
+}: {
+  api: RecordApi;
+  response: Response;
+}): string[] => {
   if (api === 'graphql') {
     return response.body.data.people.edges.map(
       (edge: { node: { id: string } }) => edge.node.id,
@@ -64,7 +70,9 @@ describe('read grant on object records', () => {
       });
 
       expectPermissionGrantedResponse({ api, response });
-      expect(getReturnedPersonIds(api, response).sort()).toEqual(ids.sort());
+      expect(getReturnedPersonIds({ api, response }).sort()).toEqual(
+        ids.sort(),
+      );
     });
 
     it('denies findOne without the grant', async () => {

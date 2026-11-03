@@ -17,5 +17,5 @@ export const expectPermissionGrantedResponse = ({
   }
 
   expect([200, 201]).toContain(response.status);
-  expect(response.body.data).toBeDefined();
+  expect(response.body.data).toEqual(expect.anything());
 };
