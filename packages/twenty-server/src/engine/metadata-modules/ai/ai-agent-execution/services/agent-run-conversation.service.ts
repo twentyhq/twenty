@@ -87,6 +87,7 @@ export class AgentRunConversationService {
     createdBy,
     messages,
     queuedMessageIds,
+    requiresQueuedMessages = isDefined(queuedMessageIds),
   }: {
     workspaceId: string;
     threadId: string;
@@ -97,12 +98,13 @@ export class AgentRunConversationService {
     createdBy: ActorMetadata;
     messages: RunAgentMessage[];
     queuedMessageIds?: string[];
+    requiresQueuedMessages?: boolean;
   }): Promise<{
     turnId: string;
     promptMessageIds: string[];
     hasTakenQueuedMessages: boolean;
   } | null> {
-    if (isDefined(queuedMessageIds) && !isNonEmptyArray(queuedMessageIds)) {
+    if (requiresQueuedMessages && !isNonEmptyArray(queuedMessageIds)) {
       return null;
     }
 
@@ -135,7 +137,7 @@ export class AgentRunConversationService {
           },
         );
 
-        if (isDefined(queuedMessageIds) && takenMessageCount === 0) {
+        if (requiresQueuedMessages && takenMessageCount === 0) {
           await scope.delete('agentTurn', { id: turnId });
 
           return null;
