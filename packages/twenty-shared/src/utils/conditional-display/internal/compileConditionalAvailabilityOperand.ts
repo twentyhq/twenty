@@ -51,26 +51,25 @@ export const compileConditionalAvailabilityOperand = ({
         : fail(`unknown variable "${node.name}"`);
     case 'member': {
       const object = compileOperand(node.object);
+      const unsupportedMemberReason = `unsupported member "${node.memberName}" of ${describeConditionalAvailabilityCompiledItem(object)}`;
 
-      if (object.kind === 'reference' && !isDefined(object.subFieldName)) {
-        if (
-          object.name ===
-            CONDITIONAL_AVAILABILITY_FAVORITE_RECORD_IDS_VARIABLE_NAME &&
-          node.memberName === 'length'
-        ) {
-          return { kind: 'favoriteRecordCount' };
-        }
-
-        const member = { ...object, subFieldName: node.memberName };
-
-        if (isDefined(resolveConditionalAvailabilitySubject(member))) {
-          return member;
-        }
+      if (object.kind !== 'reference' || isDefined(object.subFieldName)) {
+        return fail(unsupportedMemberReason);
       }
 
-      return fail(
-        `unsupported member "${node.memberName}" of ${describeConditionalAvailabilityCompiledItem(object)}`,
-      );
+      if (
+        object.name ===
+          CONDITIONAL_AVAILABILITY_FAVORITE_RECORD_IDS_VARIABLE_NAME &&
+        node.memberName === 'length'
+      ) {
+        return { kind: 'favoriteRecordCount' };
+      }
+
+      const member = { ...object, subFieldName: node.memberName };
+
+      return isDefined(resolveConditionalAvailabilitySubject(member))
+        ? member
+        : fail(unsupportedMemberReason);
     }
   }
 };
