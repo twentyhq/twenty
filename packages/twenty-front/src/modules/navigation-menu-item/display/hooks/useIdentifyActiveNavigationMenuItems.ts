@@ -5,8 +5,8 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { AUTOMATION_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/AutomationNavigationMenuItemTypes';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
+import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { getAutomationNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
@@ -104,7 +104,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
-      const matchingLinkNavigationMenuItemIds = navigationMenuItems
+      const matchingLinkOrAutomationNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
             (item.type === NavigationMenuItemType.LINK &&
@@ -112,7 +112,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
                 computedLink: getLinkNavigationMenuItemComputedLink(item),
                 location: { pathname: currentPath, search: currentSearch },
               })) ||
-            (AUTOMATION_NAVIGATION_MENU_ITEM_TYPES.includes(item.type) &&
+            (isAutomationNavigationMenuItemType(item.type) &&
               getAutomationNavigationMenuItemComputedLink(item) ===
                 currentPath),
         )
@@ -150,7 +150,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
         const activeNavigationMenuItemIds = [
           ...matchingRecordNavigationMenuItemIds,
-          ...matchingLinkNavigationMenuItemIds,
+          ...matchingLinkOrAutomationNavigationMenuItemIds,
           ...matchingObjectNavigationMenuItemIds,
         ];
 
@@ -179,9 +179,10 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         };
       }
 
-      if (matchingLinkNavigationMenuItemIds.length > 0) {
+      if (matchingLinkOrAutomationNavigationMenuItemIds.length > 0) {
         return {
-          activeNavigationMenuItemIds: matchingLinkNavigationMenuItemIds,
+          activeNavigationMenuItemIds:
+            matchingLinkOrAutomationNavigationMenuItemIds,
           objectMetadataIdForOpenedSection: null,
         };
       }

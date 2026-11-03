@@ -1,9 +1,7 @@
-import { AUTOMATION_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/AutomationNavigationMenuItemTypes';
+import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { NavigationMenuItemAutomationFolderSubItem } from '@/navigation-menu-item/display/automation/components/NavigationMenuItemAutomationFolderSubItem';
-import {
-  NavigationMenuItemFolderSubItem,
-  type NavigationMenuItemFolderSubItemProps,
-} from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { type NavigationMenuItemFolderSubItemProps } from '@/navigation-menu-item/display/folder/types/NavigationMenuItemFolderSubItemProps';
 
 type NavigationMenuItemFolderSubItemDispatcherProps = Omit<
   NavigationMenuItemFolderSubItemProps,
@@ -20,7 +18,7 @@ export const NavigationMenuItemFolderSubItemDispatcher = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemFolderSubItemDispatcherProps) =>
-  AUTOMATION_NAVIGATION_MENU_ITEM_TYPES.includes(navigationMenuItem.type) ? (
+  isAutomationNavigationMenuItemType(navigationMenuItem.type) ? (
     <NavigationMenuItemAutomationFolderSubItem
       navigationMenuItem={navigationMenuItem}
       index={index}

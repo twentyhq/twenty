@@ -5,7 +5,7 @@ import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgen
 import { useOpenCoreAgentFiltersSidePanel } from '@/object-core/agents/hooks/useOpenCoreAgentFiltersSidePanel';
 import { CORE_AGENTS_CREATE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsCreateCommandId';
 import { CORE_AGENTS_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsFiltersCommandId';
-import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
+import { useCoreAgentsIndexCommands } from '@/object-core/commands/hooks/useCoreAgentsIndexCommands';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
@@ -15,7 +15,7 @@ export const CoreAgentsIndexCommands = () => {
     shouldDisplayCreateCommand,
     filtersCommandLabel,
     shouldDisplayFiltersCommand,
-  } = useCoreAgentCommands();
+  } = useCoreAgentsIndexCommands();
   const { createCoreAgent } = useCreateCoreAgent();
   const { openCoreAgentFiltersSidePanel } = useOpenCoreAgentFiltersSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();

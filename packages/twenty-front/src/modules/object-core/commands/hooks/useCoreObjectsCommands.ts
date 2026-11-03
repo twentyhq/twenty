@@ -8,8 +8,11 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
-import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
 import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
+import { useCoreAgentPageCommands } from '@/object-core/commands/hooks/useCoreAgentPageCommands';
+import { useCoreAgentSectionContexts } from '@/object-core/commands/hooks/useCoreAgentSectionContexts';
+import { useCoreAgentsIndexCommands } from '@/object-core/commands/hooks/useCoreAgentsIndexCommands';
+import { useCoreAgentsSelectionCommands } from '@/object-core/commands/hooks/useCoreAgentsSelectionCommands';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
 import { isMatchingSidePanelSearch } from '@/object-core/commands/utils/isMatchingSidePanelSearch';
@@ -35,12 +38,11 @@ export const useCoreObjectsCommands = () => {
   );
 
   const { coreAgentEditionCommandIds } = useCoreAgentEditionCommands();
-  const {
-    coreAgentsIndexCommandIds,
-    coreAgentSelectionCommandIds,
-    coreAgentsObjectSectionContext,
-    coreAgentSelectionSectionContext,
-  } = useCoreAgentCommands();
+  const { coreAgentsIndexCommandIds } = useCoreAgentsIndexCommands();
+  const { coreAgentPageCommandIds } = useCoreAgentPageCommands();
+  const { coreAgentsSelectionCommandIds } = useCoreAgentsSelectionCommands();
+  const { coreAgentsObjectSectionContext, coreAgentSelectionSectionContext } =
+    useCoreAgentSectionContexts();
 
   const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
@@ -86,7 +88,8 @@ export const useCoreObjectsCommands = () => {
       ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]
       : []),
     ...coreAgentEditionCommandIds,
-    ...coreAgentSelectionCommandIds,
+    ...coreAgentPageCommandIds,
+    ...coreAgentsSelectionCommandIds,
   ];
 
   const coreSelectionSectionContext =

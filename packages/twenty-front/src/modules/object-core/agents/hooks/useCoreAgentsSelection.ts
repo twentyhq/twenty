@@ -1,10 +1,5 @@
-import { useEffect } from 'react';
-
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
-import {
-  EMPTY_CORE_AGENTS_SELECTION,
-  coreAgentsSelectionState,
-} from '@/object-core/agents/states/coreAgentsSelectionState';
+import { coreAgentsSelectionState } from '@/object-core/agents/states/coreAgentsSelectionState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getSelectedCoreAgentRowIds } from '@/object-core/agents/utils/getSelectedCoreAgentRowIds';
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
@@ -24,17 +19,13 @@ export const useCoreAgentsSelection = ({
     coreAgentsFilterSettingsState,
   );
 
-  useEffect(
-    () => () => setCoreAgentsSelection(EMPTY_CORE_AGENTS_SELECTION),
-    [setCoreAgentsSelection],
-  );
-
   const selectionRowIds = getSelectedCoreAgentRowIds({
     selection: coreAgentsSelection,
     currentFilterSettings: coreAgentsFilterSettings,
   });
+  const listedCoreAgentIds = new Set(coreAgents.map(({ id }) => id));
   const selectedRowIds = selectionRowIds.filter((id) =>
-    coreAgents.some((agent) => agent.id === id),
+    listedCoreAgentIds.has(id),
   );
 
   const selectRows = (rowIds: string[]) =>

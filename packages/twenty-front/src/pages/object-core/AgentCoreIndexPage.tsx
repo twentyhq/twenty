@@ -7,6 +7,7 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
+import { CoreAgentsSelectionResetEffect } from '@/object-core/agents/components/CoreAgentsSelectionResetEffect';
 import { CoreAgentsFilterButton } from '@/object-core/agents/components/CoreAgentsFilterButton';
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import { CORE_AGENT_FILTER_FIELDS } from '@/object-core/agents/constants/CoreAgentFilterFields';
@@ -109,6 +110,7 @@ export const AgentCoreIndexPage = () => {
         onButtonClick: canCreateCoreAgent ? createCoreAgent : undefined,
       }}
     >
+      <CoreAgentsSelectionResetEffect />
       <CoreObjectTable
         tableId={tableId}
         columns={CORE_AGENT_TABLE_COLUMNS}

@@ -42,7 +42,7 @@ export const useAutomationNavigationMenuItemTarget = (
   const workflow = workflowQuery.data?.coreWorkflow;
   const agent = agentQuery.data?.findOneAgent;
 
-  const getIsMissing = () => {
+  const getIsUnavailable = () => {
     if (item.type === NavigationMenuItemType.WORKFLOW) {
       return (
         !hasWorkflowsPermission ||
@@ -79,6 +79,6 @@ export const useAutomationNavigationMenuItemTarget = (
     label: getLabel(),
     workflow,
     agent,
-    isMissing: getIsMissing(),
+    isUnavailable: getIsUnavailable(),
   };
 };

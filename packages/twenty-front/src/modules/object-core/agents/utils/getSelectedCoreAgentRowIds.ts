@@ -1,7 +1,5 @@
-import {
-  EMPTY_CORE_AGENTS_SELECTION,
-  type CoreAgentsSelection,
-} from '@/object-core/agents/states/coreAgentsSelectionState';
+import { EMPTY_CORE_AGENTS_SELECTION } from '@/object-core/agents/constants/EmptyCoreAgentsSelection';
+import { type CoreAgentsSelection } from '@/object-core/agents/types/CoreAgentsSelection';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const getSelectedCoreAgentRowIds = ({

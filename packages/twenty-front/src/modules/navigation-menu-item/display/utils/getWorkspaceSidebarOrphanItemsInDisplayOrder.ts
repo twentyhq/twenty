@@ -2,8 +2,8 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { AUTOMATION_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/AutomationNavigationMenuItemTypes';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
+import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -53,7 +53,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       if (
         rowSource.type === NavigationMenuItemType.LINK ||
         rowSource.type === NavigationMenuItemType.PAGE_LAYOUT ||
-        AUTOMATION_NAVIGATION_MENU_ITEM_TYPES.includes(rowSource.type)
+        isAutomationNavigationMenuItemType(rowSource.type)
       ) {
         acc.push(rowSource);
         return acc;

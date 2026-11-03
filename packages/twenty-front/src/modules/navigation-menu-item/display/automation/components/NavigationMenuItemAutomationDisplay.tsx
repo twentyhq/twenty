@@ -1,9 +1,8 @@
-import { useLocation } from 'react-router-dom';
-
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAutomationNavigationMenuItemTarget } from '@/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget';
 import { getAutomationNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemComputedLink';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,16 +20,15 @@ export const NavigationMenuItemAutomationDisplay = ({
     isLayoutCustomizationModeEnabledState,
   );
 
-  const location = useLocation();
+  const { activeNavigationMenuItemIds } =
+    useIdentifyActiveNavigationMenuItems();
 
-  const { label, isMissing } = useAutomationNavigationMenuItemTarget(item);
+  const { label, isUnavailable } = useAutomationNavigationMenuItemTarget(item);
   const computedLink = getAutomationNavigationMenuItemComputedLink(item);
 
-  if (isMissing) {
+  if (isUnavailable) {
     return null;
   }
-
-  const isActive = computedLink !== '' && location.pathname === computedLink;
 
   return (
     <NavigationDrawerItem
@@ -46,7 +44,7 @@ export const NavigationMenuItemAutomationDisplay = ({
           : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
-      active={isActive}
+      active={activeNavigationMenuItemIds.includes(item.id)}
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"

@@ -2,6 +2,8 @@ import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
+
 export const getAutomationNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'type' | 'workflowId' | 'agentId'>,
 ): string => {
@@ -15,7 +17,7 @@ export const getAutomationNavigationMenuItemComputedLink = (
 
   if (item.type === NavigationMenuItemType.AGENT) {
     return isDefined(item.agentId)
-      ? getAppPath(AppPath.AgentShowPage, { agentId: item.agentId })
+      ? getCoreAgentLink(item.agentId)
       : getAppPath(AppPath.AgentIndexPage);
   }
 

@@ -11,7 +11,7 @@ import { CoreWorkflowsDeleteConfirmationDialogCleanupEffect } from '@/object-cor
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteConfirmationDialogId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
-import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
+import { useCoreAgentsSelectionCommands } from '@/object-core/commands/hooks/useCoreAgentsSelectionCommands';
 import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { useDeleteSelectedCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows';
@@ -48,7 +48,7 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
     shouldDisplaySeeRunsCommand: shouldDisplayCoreAgentsSeeRunsCommand,
     deleteCommandLabel: coreAgentsDeleteCommandLabel,
     shouldDisplayDeleteCommand: shouldDisplayCoreAgentsDeleteCommand,
-  } = useCoreAgentCommands();
+  } = useCoreAgentsSelectionCommands();
 
   const { openCoreWorkflowFiltersSidePanel } =
     useOpenCoreWorkflowFiltersSidePanel();

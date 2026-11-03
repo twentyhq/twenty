@@ -1,7 +1,7 @@
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { AUTOMATION_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/AutomationNavigationMenuItemTypes';
 import { OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/ObjectBackedNavigationMenuItemTypes';
+import { isAutomationNavigationMenuItemType } from '@/navigation-menu-item/common/utils/isAutomationNavigationMenuItemType';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type View } from '@/views/types/View';
@@ -29,7 +29,7 @@ export const getFirstNavigationMenuItemLink = ({
     if (
       item.type === NavigationMenuItemType.FOLDER ||
       item.type === NavigationMenuItemType.LINK ||
-      AUTOMATION_NAVIGATION_MENU_ITEM_TYPES.includes(item.type)
+      isAutomationNavigationMenuItemType(item.type)
     ) {
       continue;
     }

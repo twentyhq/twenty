@@ -32,6 +32,7 @@ const findExistingRowIds = async (
 const findServedNavigationMenuItemIds = async (
   navigationMenuItemIds: string[],
 ): Promise<string[]> => {
+  const navigationMenuItemIdsToFind = new Set(navigationMenuItemIds);
   const {
     data: { navigationMenuItems },
   } = await findNavigationMenuItems({
@@ -42,7 +43,7 @@ const findServedNavigationMenuItemIds = async (
 
   return navigationMenuItems
     .map((navigationMenuItem) => navigationMenuItem.id)
-    .filter((id) => navigationMenuItemIds.includes(id));
+    .filter((id) => navigationMenuItemIdsToFind.has(id));
 };
 
 describe('Navigation menu items on agent and workflow deletion', () => {

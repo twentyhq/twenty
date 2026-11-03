@@ -24,6 +24,7 @@ import { AUTOMATION_OBJECT_NAMES_SINGULAR } from '@/navigation-menu-item/common/
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { isAutomationObjectNameSingular } from '@/navigation-menu-item/common/utils/isAutomationObjectNameSingular';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -31,12 +32,11 @@ import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/e
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { getObjectNavigationMenuItemOption } from '@/navigation-menu-item/edit/utils/getObjectNavigationMenuItemOption';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/utils/isViewDisplayableInNavigationMenu';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -96,16 +96,6 @@ export const useNavigationMenuItemAddOptions = ({
     currentItems,
     skip: step !== 'record' && !isSearchingAllItems,
   });
-  const { hasAutomationAccess, automationItemGroups, automationLoading } =
-    useNavigationMenuItemAutomationOptions({
-      search,
-      skip: step !== 'automation' && !isSearchingAllItems,
-      currentItems,
-      objectMetadataItems,
-      objectMetadataIdsWithIndexView,
-      objectMetadataIdsAlreadyAdded,
-      addItem,
-    });
   const {
     availableObjectMetadataItems,
     availableSystemObjectMetadataItems,
@@ -121,6 +111,26 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
+  const allAvailableObjectMetadataItems = [
+    ...availableObjectMetadataItems,
+    ...availableSystemObjectMetadataItems,
+  ];
+  const automationObjectMetadataItems =
+    AUTOMATION_OBJECT_NAMES_SINGULAR.flatMap((nameSingular) =>
+      allAvailableObjectMetadataItems.filter(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === nameSingular,
+      ),
+    );
+  const { hasAutomationAccess, automationItemGroups, automationLoading } =
+    useNavigationMenuItemAutomationOptions({
+      search,
+      skip: step !== 'automation' && !isSearchingAllItems,
+      currentItems,
+      automationObjectMetadataItems,
+      objectMetadataIdsAlreadyAdded,
+      addItem,
+    });
 
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
@@ -224,12 +234,8 @@ export const useNavigationMenuItemAddOptions = ({
     ) {
       const objects =
         targetStep === 'object'
-          ? [
-              ...availableObjectMetadataItems,
-              ...availableSystemObjectMetadataItems,
-            ].filter(
-              (object) =>
-                !AUTOMATION_OBJECT_NAMES_SINGULAR.includes(object.nameSingular),
+          ? allAvailableObjectMetadataItems.filter(
+              (object) => !isAutomationObjectNameSingular(object.nameSingular),
             )
           : [
               ...objectMetadataItemsWithViews,
@@ -242,35 +248,23 @@ export const useNavigationMenuItemAddOptions = ({
             Number(objectMetadataIdsAlreadyAdded.has(secondObject.id)),
         );
       }
-      return objects.map((object) => ({
-        id: object.id,
-        label: object.labelPlural,
-        searchableValues: [
-          object.labelPlural,
-          object.labelSingular,
-          object.namePlural,
-          object.nameSingular,
-        ],
-        icon: <ObjectMetadataIcon objectMetadataItem={object} />,
-        isAlreadyInSidebar:
-          targetStep === 'object' &&
-          objectMetadataIdsAlreadyAdded.has(object.id),
-        isDisabled:
-          targetStep === 'object' &&
-          objectMetadataIdsAlreadyAdded.has(object.id),
-        hasSubMenu: targetStep === 'view',
-        onClick: () => {
-          if (targetStep === 'view') {
-            selectObject(object.id);
-          } else {
-            addItem({
-              type: NavigationMenuItemType.OBJECT,
-              targetObjectMetadataId: object.id,
-              color: getObjectColorWithFallback(object),
-            });
-          }
-        },
-      }));
+      return objects.map((object) => {
+        const objectOption = getObjectNavigationMenuItemOption({
+          objectMetadataItem: object,
+          isAlreadyInSidebar:
+            targetStep === 'object' &&
+            objectMetadataIdsAlreadyAdded.has(object.id),
+          addItem,
+        });
+
+        return targetStep === 'view'
+          ? {
+              ...objectOption,
+              hasSubMenu: true,
+              onClick: () => selectObject(object.id),
+            }
+          : objectOption;
+      });
     }
     if (targetStep === 'view') {
       const objectIdsWithViews = new Set(

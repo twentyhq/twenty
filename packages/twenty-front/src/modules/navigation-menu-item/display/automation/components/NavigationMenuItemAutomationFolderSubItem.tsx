@@ -1,8 +1,6 @@
 import { useAutomationNavigationMenuItemTarget } from '@/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget';
-import {
-  NavigationMenuItemFolderSubItem,
-  type NavigationMenuItemFolderSubItemProps,
-} from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { type NavigationMenuItemFolderSubItemProps } from '@/navigation-menu-item/display/folder/types/NavigationMenuItemFolderSubItemProps';
 
 type NavigationMenuItemAutomationFolderSubItemProps = Omit<
   NavigationMenuItemFolderSubItemProps,
@@ -19,10 +17,10 @@ export const NavigationMenuItemAutomationFolderSubItem = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemAutomationFolderSubItemProps) => {
-  const { label, isMissing } =
+  const { label, isUnavailable } =
     useAutomationNavigationMenuItemTarget(navigationMenuItem);
 
-  if (isMissing) {
+  if (isUnavailable) {
     return null;
   }
 
