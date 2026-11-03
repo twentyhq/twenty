@@ -11,12 +11,16 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { hasDirectMessageThreadIdentity } from 'src/engine/permissions/direct-message/utils/has-direct-message-thread-identity.util';
 
 @Injectable()
 export class AgentInboxAccessService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
     private readonly sharingService: AgentChatSharingService,
   ) {}
@@ -38,6 +42,14 @@ export class AgentInboxAccessService {
       });
 
       return;
+    }
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread) || hasDirectMessageThreadIdentity(thread)) {
+      throwAgentChatThreadNotFound();
     }
 
     const { id: applicationId, defaultRoleId } = authContext.application;

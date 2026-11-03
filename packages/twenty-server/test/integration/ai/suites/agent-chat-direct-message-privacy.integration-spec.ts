@@ -18,7 +18,9 @@ import {
 } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
+import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -407,6 +409,85 @@ describe('Direct message pair privacy', () => {
     expect(publicResponse.body.errors[0].extensions.code).toBe(
       'BAD_USER_INPUT',
     );
+  });
+
+  it('rejects delivery outside the pair and keeps DMs out of channels', async () => {
+    const threadId = await createDirectMessage({
+      firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    await grantAccess({
+      recordId: threadId,
+      principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    });
+
+    const threadArgs = {
+      workspaceId: context.workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+    };
+
+    await expect(
+      context.threadService.mentionParticipants({
+        ...threadArgs,
+        participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+      }),
+    ).resolves.toEqual([]);
+    await expect(
+      context.threadService.assign({
+        ...threadArgs,
+        assigneeWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      }),
+    ).rejects.toMatchObject({ code: 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY' });
+    expect(await context.readParticipants(threadId)).toEqual([]);
+
+    const channels = await getAppProviderByClassName<AgentChatChannelService>(
+      'AgentChatChannelService',
+    ).findChannels({
+      workspaceId: context.workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      canManageChannels: false,
+    });
+    const channel = channels.find(({ isAccessible }) => isAccessible);
+
+    assertIsDefinedOrThrow(channel);
+
+    await expect(
+      context.threadService.moveToChannel({
+        ...threadArgs,
+        channelId: channel.id,
+      }),
+    ).rejects.toMatchObject({ code: 'PERMISSION_DENIED' });
+    expect((await context.readThread(threadId)).channelId).toBeNull();
+
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentChatThread" SET "channelId" = $2 WHERE id = $1`,
+      [threadId, channel.id],
+    );
+    await global.testDataSource.query(
+      `INSERT INTO "${context.schema}"."recordShare"
+       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+       VALUES ($1, $2, $3, 'ROLE', 'READ_WRITE', 'RULE', $4)`,
+      [
+        threadObjectMetadata.id,
+        threadId,
+        roleIdsByUserWorkspaceId[USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        channel.id,
+      ],
+    );
+    await getAppProviderByClassName<AgentChatChannelGrantService>(
+      'AgentChatChannelGrantService',
+    ).rewriteChannelGrants({
+      workspaceId: context.workspaceId,
+      channelId: channel.id,
+    });
+    const channelGrants = await global.testDataSource.query(
+      `SELECT id FROM "${context.schema}"."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
+      [threadId],
+    );
+
+    expect(channelGrants).toEqual([]);
   });
 
   it('filters thread and participant record events through the same pair boundary', async () => {

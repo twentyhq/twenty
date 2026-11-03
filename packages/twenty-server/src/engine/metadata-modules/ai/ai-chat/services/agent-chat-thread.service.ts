@@ -19,6 +19,12 @@ import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/u
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { hasDirectMessageThreadIdentity } from 'src/engine/permissions/direct-message/utils/has-direct-message-thread-identity.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -374,6 +380,7 @@ export class AgentChatThreadService {
     const participantMemberIds =
       await this.sharingService.shareThreadWithMembers({
         ...args,
+        thread,
         memberIds: candidateMemberIds,
       });
 
@@ -429,6 +436,7 @@ export class AgentChatThreadService {
       const [assigneeWhoCanReply] =
         await this.sharingService.shareThreadWithMembers({
           ...args,
+          thread,
           memberIds: [assigneeWorkspaceMemberId],
         });
 
@@ -493,6 +501,13 @@ export class AgentChatThreadService {
     channelId: string | null;
   }): Promise<void> {
     const thread = await this.getWritableThread(args);
+
+    if (isDefined(channelId) && hasDirectMessageThreadIdentity(thread)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
 
     if (isDefined(channelId)) {
       await this.channelAccessService.assertChannelAccess({
