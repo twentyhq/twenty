@@ -12,7 +12,7 @@ export type ApiKeyWithObjectRecordGrants = {
   token: string;
 };
 
-type ObjectRecordGrants = Pick<
+export type ObjectRecordGrants = Pick<
   CreateRoleInput,
   | 'canReadAllObjectRecords'
   | 'canUpdateAllObjectRecords'
