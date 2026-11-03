@@ -1,8 +1,16 @@
 import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFrontComponentAvailableInWidgetPicker,
+} from 'twenty-shared/utils';
 
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import {
+  PageLayoutWidgetException,
+  PageLayoutWidgetExceptionCode,
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import {
   type PageLayoutToolContext,
   type PageLayoutToolDependencies,
@@ -33,7 +41,10 @@ export const assertFrontComponentWidgetAvailableOnPageLayoutOrThrow = async ({
       'findByIdOrThrow'
     >;
   };
-  context: PageLayoutToolContext;
+  context: Pick<
+    PageLayoutToolContext,
+    'workspaceId' | 'callingApplication' | 'workspaceCustomApplicationId'
+  >;
 }): Promise<void> => {
   if (
     !isDefined(configuration) ||
@@ -55,8 +66,9 @@ export const assertFrontComponentWidgetAvailableOnPageLayoutOrThrow = async ({
     !tab.isActive ||
     (isDefined(position) && position.layoutMode !== tab.layoutMode)
   ) {
-    throw new Error(
+    throw new PageLayoutWidgetException(
       'Choose an active tab and a widget position matching its layout mode',
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
   }
 
@@ -72,24 +84,31 @@ export const assertFrontComponentWidgetAvailableOnPageLayoutOrThrow = async ({
     flatEntityMaps: flatFrontComponentMaps,
   });
 
-  if (!isDefined(frontComponent)) {
-    throw new Error(
+  if (
+    !isDefined(frontComponent) ||
+    !canCallerReachApplication({
+      applicationId: frontComponent.applicationId,
+      callingApplication: context.callingApplication,
+      workspaceCustomApplicationId: context.workspaceCustomApplicationId,
+      operation: 'read',
+    })
+  ) {
+    throw new PageLayoutWidgetException(
       `Frontend component "${configuration.frontComponentId}" does not exist`,
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
   }
 
-  const isAvailable =
-    !frontComponent.isHeadless &&
-    frontComponent.widgetAvailability.some(
-      ({ pageLayoutType, objectMetadataId }) =>
-        pageLayoutType === pageLayout.type &&
-        (!isDefined(objectMetadataId) ||
-          objectMetadataId === pageLayout.objectMetadataId),
-    );
+  const isAvailable = isFrontComponentAvailableInWidgetPicker({
+    frontComponent,
+    pageLayoutType: pageLayout.type,
+    objectMetadataId: pageLayout.objectMetadataId,
+  });
 
   if (!isAvailable) {
-    throw new Error(
+    throw new PageLayoutWidgetException(
       `Frontend component "${frontComponent.name}" is not available on this page layout`,
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
   }
 };

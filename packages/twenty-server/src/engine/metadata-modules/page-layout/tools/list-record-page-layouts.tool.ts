@@ -2,13 +2,20 @@ import { z } from 'zod';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import {
   type PageLayoutToolContext,
   type PageLayoutToolDependencies,
 } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
-export const createListRecordPageLayoutsTool = (
+export const createListRecordPageLayoutsTool = ({
+  deps,
+  context,
+}: {
   deps: {
     pageLayoutService: Pick<
       PageLayoutToolDependencies['pageLayoutService'],
@@ -18,9 +25,9 @@ export const createListRecordPageLayoutsTool = (
       PageLayoutToolDependencies['flatEntityMapsCacheService'],
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >;
-  },
-  context: PageLayoutToolContext,
-) => ({
+  };
+  context: Pick<PageLayoutToolContext, 'workspaceId'>;
+}) => ({
   name: 'list_record_page_layouts' as const,
   description:
     'Find existing record-page layouts and active tabs for an object by its singular or plural name. Returns tab IDs, layout modes and widget positions for place_front_component. These layouts are shared by records of that object.',
@@ -34,14 +41,16 @@ export const createListRecordPageLayoutsTool = (
             flatMapsKeys: ['flatObjectMetadataMaps'],
           },
         );
-      const { idByNameSingular, idByNamePlural } = buildObjectIdByNameMaps(
+      const objectMetadataId = getObjectMetadataIdByName({
         flatObjectMetadataMaps,
-      );
-      const objectMetadataId =
-        idByNameSingular[objectName] ?? idByNamePlural[objectName];
+        objectName,
+      });
 
       if (!isDefined(objectMetadataId)) {
-        throw new Error(`Object "${objectName}" not found`);
+        throw new PageLayoutException(
+          `Object "${objectName}" not found`,
+          PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+        );
       }
 
       const layouts = await deps.pageLayoutService.findBy({

@@ -1,18 +1,21 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils/validation/isDefined';
 
-import {
-  type FrontComponent,
-  type PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type PageLayoutType } from '@/types';
 
 export const isFrontComponentAvailableInWidgetPicker = ({
   frontComponent,
   pageLayoutType,
   objectMetadataId,
 }: {
-  frontComponent: Pick<FrontComponent, 'isHeadless' | 'widgetAvailability'>;
-  pageLayoutType: PageLayoutType;
-  objectMetadataId?: string;
+  frontComponent: {
+    isHeadless: boolean;
+    widgetAvailability: {
+      pageLayoutType: `${PageLayoutType}`;
+      objectMetadataId?: string | null;
+    }[];
+  };
+  pageLayoutType: `${PageLayoutType}`;
+  objectMetadataId?: string | null;
 }): boolean => {
   return (
     !frontComponent.isHeadless &&

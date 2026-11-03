@@ -1,11 +1,14 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { createPlaceFrontComponentTool } from 'src/engine/metadata-modules/page-layout/tools/place-front-component.tool';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  type PageLayoutWidgetGridPosition,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from 'twenty-shared/types';
+
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { createPlaceFrontComponentTool } from 'src/engine/metadata-modules/page-layout/tools/place-front-component.tool';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createAddPageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool';
@@ -18,10 +21,7 @@ const TAB_ID = '20202020-1111-4111-8111-111111111111';
 const WIDGET_ID = '20202020-3333-4333-8333-333333333333';
 const CONTEXT = {
   workspaceId: 'workspace',
-  authContext: {
-    type: 'user',
-    workspace: { id: 'workspace' },
-  } as WorkspaceAuthContext,
+  authContext: buildSystemAuthContext('workspace'),
 };
 const CONFIGURATION = {
   configurationType: WidgetConfigurationType.FRONT_COMPONENT,
@@ -37,26 +37,26 @@ const WIDGET = {
     column: 0,
     rowSpan: 4,
     columnSpan: 6,
-  },
+  } satisfies PageLayoutWidgetGridPosition,
 };
 
-const buildDependencies = (
-  surface: PageLayoutType | undefined,
-  {
-    layoutType = PageLayoutType.DASHBOARD,
-    layoutMode = PageLayoutTabLayoutMode.GRID,
-    componentObjectMetadataId,
-    isHeadless = false,
-  }: {
-    layoutType?: PageLayoutType;
-    layoutMode?: PageLayoutTabLayoutMode;
-    componentObjectMetadataId?: string;
-    isHeadless?: boolean;
-  } = {},
-) => {
+const buildDependencies = ({
+  surface,
+  layoutType = PageLayoutType.DASHBOARD,
+  layoutMode = PageLayoutTabLayoutMode.GRID,
+  componentObjectMetadataId,
+  isHeadless = false,
+}: {
+  surface: PageLayoutType | undefined;
+  layoutType?: PageLayoutType;
+  layoutMode?: PageLayoutTabLayoutMode;
+  componentObjectMetadataId?: string;
+  isHeadless?: boolean;
+}) => {
   const component = {
     id: COMPONENT_ID,
     name: 'Company Search',
+    applicationId: 'component-app',
     isHeadless,
     widgetAvailability: [
       { pageLayoutType: surface, objectMetadataId: componentObjectMetadataId },
@@ -159,11 +159,16 @@ describe.each(['add', 'update', 'create'] as const)(
     };
 
     it('places a dashboard component without changing its configuration', async () => {
-      const dependencies = buildDependencies(PageLayoutType.DASHBOARD);
+      const dependencies = buildDependencies({
+        surface: PageLayoutType.DASHBOARD,
+      });
       const result = await execute(dependencies);
 
       expect(result.success).toBe(true);
       if (operation === 'update') {
+        expect(
+          dependencies.pageLayoutWidgetService.update,
+        ).toHaveBeenCalledTimes(1);
         expect(
           dependencies.pageLayoutWidgetService.update,
         ).toHaveBeenCalledWith(
@@ -172,6 +177,9 @@ describe.each(['add', 'update', 'create'] as const)(
           }),
         );
       } else {
+        expect(
+          dependencies.pageLayoutWidgetService.create,
+        ).toHaveBeenCalledTimes(1);
         expect(
           dependencies.pageLayoutWidgetService.create,
         ).toHaveBeenCalledWith(
@@ -188,7 +196,7 @@ describe.each(['add', 'update', 'create'] as const)(
     ] as const)(
       'refuses an unavailable component (%s)',
       async (surface, error) => {
-        const dependencies = buildDependencies(surface);
+        const dependencies = buildDependencies({ surface });
         const result = await execute(dependencies);
 
         if (operation === 'create') {
@@ -215,7 +223,7 @@ describe.each(['add', 'update', 'create'] as const)(
     );
 
     it('keeps other widget configurations working without a frontend component', async () => {
-      const dependencies = buildDependencies(undefined);
+      const dependencies = buildDependencies({ surface: undefined });
       const result = await execute(dependencies, {
         ...WIDGET,
         type: WidgetType.IFRAME,
@@ -234,7 +242,8 @@ describe.each(['add', 'update'] as const)(
   '%s page-layout widget on a record page',
   (operation) => {
     it('accepts a vertical-list position through the tool schema', async () => {
-      const dependencies = buildDependencies(PageLayoutType.RECORD_PAGE, {
+      const dependencies = buildDependencies({
+        surface: PageLayoutType.RECORD_PAGE,
         layoutType: PageLayoutType.RECORD_PAGE,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       });
@@ -254,6 +263,9 @@ describe.each(['add', 'update'] as const)(
         );
 
         expect(result).toMatchObject({ success: true, result: { position } });
+        expect(
+          dependencies.pageLayoutWidgetService.create,
+        ).toHaveBeenCalledTimes(1);
         expect(
           dependencies.pageLayoutWidgetService.create,
         ).toHaveBeenCalledWith({
@@ -277,6 +289,9 @@ describe.each(['add', 'update'] as const)(
         expect(result).toMatchObject({ success: true, result: { position } });
         expect(
           dependencies.pageLayoutWidgetService.update,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          dependencies.pageLayoutWidgetService.update,
         ).toHaveBeenCalledWith({
           id: WIDGET_ID,
           workspaceId: CONTEXT.workspaceId,
@@ -294,7 +309,10 @@ describe('place_front_component', () => {
       | typeof WIDGET.position
       | { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST; index: number },
   ) => {
-    const tool = createPlaceFrontComponentTool(dependencies, CONTEXT);
+    const tool = createPlaceFrontComponentTool({
+      deps: dependencies,
+      context: CONTEXT,
+    });
 
     return tool.execute(
       tool.inputSchema.parse({
@@ -313,7 +331,8 @@ describe('place_front_component', () => {
   it.each([undefined, 'company'])(
     'places a record-page component with matching object availability (%s)',
     async (componentObjectMetadataId) => {
-      const dependencies = buildDependencies(PageLayoutType.RECORD_PAGE, {
+      const dependencies = buildDependencies({
+        surface: PageLayoutType.RECORD_PAGE,
         layoutType: PageLayoutType.RECORD_PAGE,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         componentObjectMetadataId,
@@ -322,6 +341,9 @@ describe('place_front_component', () => {
       expect(await place(dependencies, recordPosition)).toMatchObject({
         success: true,
       });
+      expect(dependencies.pageLayoutWidgetService.create).toHaveBeenCalledTimes(
+        1,
+      );
       expect(dependencies.pageLayoutWidgetService.create).toHaveBeenCalledWith({
         workspaceId: CONTEXT.workspaceId,
         input: expect.objectContaining({
@@ -332,7 +354,13 @@ describe('place_front_component', () => {
       });
       expect(
         dependencies.pageLayoutTabService.findByIdOrThrow,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        dependencies.pageLayoutTabService.findByIdOrThrow,
       ).toHaveBeenCalledWith({ id: TAB_ID, workspaceId: CONTEXT.workspaceId });
+      expect(
+        dependencies.pageLayoutService.findByIdOrThrow,
+      ).toHaveBeenCalledTimes(1);
       expect(
         dependencies.pageLayoutService.findByIdOrThrow,
       ).toHaveBeenCalledWith({
@@ -343,9 +371,18 @@ describe('place_front_component', () => {
   );
 
   it('places a dashboard component in its grid', async () => {
-    const dependencies = buildDependencies(PageLayoutType.DASHBOARD);
+    const dependencies = buildDependencies({
+      surface: PageLayoutType.DASHBOARD,
+    });
     expect(await place(dependencies, WIDGET.position)).toMatchObject({
       success: true,
+    });
+    expect(dependencies.pageLayoutWidgetService.create).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(dependencies.pageLayoutWidgetService.create).toHaveBeenCalledWith({
+      workspaceId: CONTEXT.workspaceId,
+      input: expect.objectContaining({ position: WIDGET.position }),
     });
   });
 
@@ -360,7 +397,8 @@ describe('place_front_component', () => {
   ])(
     'refuses incompatible or missing components (%j)',
     async ({ surface, ...options }) => {
-      const dependencies = buildDependencies(surface, {
+      const dependencies = buildDependencies({
+        surface,
         layoutType: PageLayoutType.RECORD_PAGE,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         ...options,
@@ -374,8 +412,45 @@ describe('place_front_component', () => {
     },
   );
 
+  it.each([
+    ['component-app', true],
+    ['other-app', false],
+    ['workspace-app', true],
+  ])(
+    'respects the calling application scope (%s)',
+    async (applicationId, success) => {
+      const dependencies = buildDependencies({
+        surface: PageLayoutType.DASHBOARD,
+      });
+      const tool = createPlaceFrontComponentTool({
+        deps: dependencies,
+        context: {
+          ...CONTEXT,
+          callingApplication: {
+            id: applicationId,
+            universalIdentifier: applicationId,
+            sourceType: ApplicationRegistrationSourceType.LOCAL,
+          },
+          workspaceCustomApplicationId: 'workspace-app',
+        },
+      });
+      expect(
+        await tool.execute({
+          frontComponentId: COMPONENT_ID,
+          pageLayoutTabId: TAB_ID,
+          title: WIDGET.title,
+          position: WIDGET.position,
+        }),
+      ).toMatchObject({ success });
+      expect(dependencies.pageLayoutWidgetService.create).toHaveBeenCalledTimes(
+        success ? 1 : 0,
+      );
+    },
+  );
+
   it('refuses a grid position on a vertical-list tab', async () => {
-    const dependencies = buildDependencies(PageLayoutType.RECORD_PAGE, {
+    const dependencies = buildDependencies({
+      surface: PageLayoutType.RECORD_PAGE,
       layoutType: PageLayoutType.RECORD_PAGE,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
@@ -387,7 +462,9 @@ describe('place_front_component', () => {
   });
 
   it('refuses an inactive tab', async () => {
-    const dependencies = buildDependencies(PageLayoutType.DASHBOARD);
+    const dependencies = buildDependencies({
+      surface: PageLayoutType.DASHBOARD,
+    });
     dependencies.pageLayoutTabService.findByIdOrThrow.mockResolvedValue({
       pageLayoutId: 'layout',
       layoutMode: PageLayoutTabLayoutMode.GRID,
@@ -400,7 +477,9 @@ describe('place_front_component', () => {
   });
 
   it('does not write when the tab cannot be found in the workspace', async () => {
-    const dependencies = buildDependencies(PageLayoutType.DASHBOARD);
+    const dependencies = buildDependencies({
+      surface: PageLayoutType.DASHBOARD,
+    });
     dependencies.pageLayoutTabService.findByIdOrThrow.mockRejectedValue(
       new Error('Tab not found'),
     );

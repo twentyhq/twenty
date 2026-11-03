@@ -1,5 +1,5 @@
-import { isFrontComponentAvailableInWidgetPicker } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableInWidgetPicker';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { isFrontComponentAvailableInWidgetPicker } from '../isFrontComponentAvailableInWidgetPicker';
+import { PageLayoutType } from '@/types';
 
 const COMPANY_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000001';
 const PERSON_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000002';

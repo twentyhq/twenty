@@ -72,6 +72,7 @@ describe('get_dashboard tool', () => {
         {
           id: 'tab-1',
           title: 'Tab',
+          isActive: true,
           position: 0,
           widgets: [
             {
@@ -154,6 +155,9 @@ describe('get_dashboard tool', () => {
 
     const result = await tool.execute({ dashboardId: dashboard.id });
 
+    expect(result).toMatchObject({
+      result: { layout: { tabs: [{ isActive: true }] } },
+    });
     expect(result.success).toBe(true);
     const widgets = result.result?.layout?.tabs?.[0]?.widgets ?? [];
 

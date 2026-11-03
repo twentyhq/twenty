@@ -107,6 +107,7 @@ export const createGetDashboardTool = (
           title: tab.title,
           position: tab.position,
           layoutMode: tab.layoutMode,
+          isActive: tab.isActive,
           widgets:
             tab.widgets?.map((w) => {
               if (

@@ -84,9 +84,10 @@ export class PageLayoutToolProvider implements ToolProvider {
       return null;
     }
 
-    return this.pageLayoutToolService.generatePageLayoutTools(
-      context.workspaceId,
-      context.authContext,
-    );
+    return this.pageLayoutToolService.generatePageLayoutTools({
+      workspaceId: context.workspaceId,
+      authContext: context.authContext,
+      callingApplication: context.application,
+    });
   }
 }

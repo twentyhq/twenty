@@ -1,8 +1,9 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -45,12 +46,22 @@ export class PageLayoutToolService {
     };
   }
 
-  generatePageLayoutTools(
-    workspaceId: string,
-    authContext: WorkspaceAuthContext,
-  ): ToolSet {
-    const context = { workspaceId };
-    const contextWithPermissions = { workspaceId, authContext };
+  generatePageLayoutTools({
+    workspaceId,
+    authContext,
+    callingApplication,
+  }: {
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): ToolSet {
+    const context = {
+      workspaceId,
+      callingApplication,
+      workspaceCustomApplicationId:
+        authContext.workspace.workspaceCustomApplicationId ?? undefined,
+    };
+    const contextWithPermissions = { ...context, authContext };
 
     const createCompleteDashboard = createCreateCompleteDashboardTool(
       this.deps,
@@ -78,14 +89,14 @@ export class PageLayoutToolService {
       context,
     );
 
-    const placeFrontComponent = createPlaceFrontComponentTool(
-      this.deps,
+    const placeFrontComponent = createPlaceFrontComponentTool({
+      deps: this.deps,
       context,
-    );
-    const listRecordPageLayouts = createListRecordPageLayoutsTool(
-      this.deps,
+    });
+    const listRecordPageLayouts = createListRecordPageLayoutsTool({
+      deps: this.deps,
       context,
-    );
+    });
 
     return {
       [placeFrontComponent.name]: placeFrontComponent,

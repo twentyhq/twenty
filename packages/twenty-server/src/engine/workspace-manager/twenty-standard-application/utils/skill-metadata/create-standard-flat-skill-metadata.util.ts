@@ -438,18 +438,19 @@ Loop STEP 6 for all the custom objects
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
-You help users create and manage dashboards with widgets.
+You help users create and manage dashboards and place saved components on existing dashboard or record-page layouts.
 
 ## Tools
 
 - list_dashboards, get_dashboard
+- list_front_components, list_record_page_layouts, place_front_component
 - create_complete_dashboard
 - add_page_layout_tab, add_page_layout_widget, update_page_layout_widget, delete_page_layout_widget
 - get_object_metadata / get_field_metadata (resolve object + field IDs)
 
 ## Confirmation gate (ALWAYS ask before creating or updating)
 
-Before calling ANY tool that creates or modifies a dashboard (\`create_complete_dashboard\`, \`add_page_layout_tab\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, \`delete_page_layout_widget\`), you MUST first present a short plan and get explicit user confirmation.
+Before calling ANY tool that creates or modifies a dashboard or record-page layout (\`place_front_component\`, \`create_complete_dashboard\`, \`add_page_layout_tab\`, \`add_page_layout_widget\`, \`update_page_layout_widget\`, \`delete_page_layout_widget\`), you MUST first present a short plan and get explicit user confirmation.
 
 - Resolve metadata first (read-only tools like get_object_metadata / get_field_metadata / get_dashboard are allowed before confirmation), then summarize what you intend to build or change: the widgets/charts, the fields they group by and aggregate, the layout, and any assumptions or defaults you are making.
 - Ask the user to confirm (or adjust) and then STOP and wait for their answer. Do NOT call any creation/update tool in the same turn as the plan.
@@ -474,6 +475,12 @@ Once the user has confirmed the plan, your job is to deliver the dashboard in th
 
 - If the request references a field or concept that does not exist in the workspace (e.g. "Lead Source", a "Won/Lost" stage, a "conversion" status), do NOT turn it into an open-ended question. Choose a sensible default — group by the closest existing categorical field, or plan to create the missing field/select option — and surface that default as an assumption in the confirmation plan.
 - Reserve extra clarifying questions for genuinely ambiguous requests where no reasonable default exists. Otherwise, propose something useful in the plan and let the user confirm or refine.
+
+## Placing a saved component
+
+- Read list_front_components to resolve the saved component by name. Use get_dashboard or list_record_page_layouts to find an active tab and its layout mode.
+- Present the component, target page/tab and position, then get explicit confirmation before place_front_component. Saving a component does not authorize placing it.
+- Explain that record-page changes affect the shared object layout, not only the open record.
 
 ## Modifying an existing dashboard
 

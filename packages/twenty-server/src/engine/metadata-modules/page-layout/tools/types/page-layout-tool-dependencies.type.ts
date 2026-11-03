@@ -1,3 +1,4 @@
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -19,6 +20,8 @@ export type PageLayoutToolDependencies = {
 
 export type PageLayoutToolContext = {
   workspaceId: string;
+  callingApplication?: ApplicationCallerOperation['callingApplication'];
+  workspaceCustomApplicationId?: string;
 };
 
 export type PageLayoutToolContextWithPermissions = PageLayoutToolContext & {
