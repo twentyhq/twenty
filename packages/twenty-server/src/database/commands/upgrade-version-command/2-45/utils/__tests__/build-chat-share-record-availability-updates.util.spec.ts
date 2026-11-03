@@ -1,12 +1,11 @@
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
   buildChatShareRecordAvailabilityUpdates,
 } from 'src/database/commands/upgrade-version-command/2-45/utils/build-chat-share-record-availability-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -52,7 +51,7 @@ const buildUpdates = (
   });
 
 const isAvailable = (
-  expression: string,
+  expression: string | null,
   featureFlags: Record<string, boolean>,
   objectMetadataItem: Record<string, unknown>,
 ) =>
@@ -92,8 +91,9 @@ describe('buildChatShareRecordAvailabilityUpdates', () => {
 
   describe('availability', () => {
     const shareAnyRecordExpression =
-      STANDARD_COMMAND_MENU_ITEMS.shareAnyRecord
-        .conditionalAvailabilityExpression;
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        STANDARD_COMMAND_MENU_ITEMS.shareAnyRecord.universalIdentifier,
+      );
     const company = { nameSingular: 'company', isSystem: false };
     const chat = { nameSingular: 'agentChatThread', isSystem: true };
     const recordSharing = { IS_RECORD_LEVEL_SHARING_ENABLED: true };

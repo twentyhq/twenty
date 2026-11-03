@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildChatCommandMenuItemAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-44/utils/build-chat-command-menu-item-availability-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -30,7 +31,13 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
     );
   }
 
-  return commandMenuItem;
+  return {
+    ...commandMenuItem,
+    conditionalAvailabilityExpression:
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        universalIdentifier,
+      ),
+  };
 };
 
 describe('buildChatCommandMenuItemAvailabilityUpdates', () => {

@@ -6,7 +6,10 @@ import {
 import { findViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/find-view-field-groups.util';
 import { upsertFieldsWidget } from 'test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+
+import { type UpsertFieldsWidgetFieldInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-field.input';
 
 type FieldsWidgetTestSetup = {
   widgetId: string;
@@ -417,6 +420,106 @@ describe('upsertFieldsWidget', () => {
       expect(updatedField!.isVisible).toBe(false);
       expect(updatedField!.position).toBe(99);
       expect(updatedField!.viewFieldGroupId).toBeNull();
+    });
+
+    it('should set, keep and clear the conditional display of a field', async () => {
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
+
+      const mobileConditionalDisplay = {
+        recordFilters: [
+          {
+            id: uuidv4(),
+            contextKey: 'device' as const,
+            operand: ViewFilterOperand.IS,
+            value: JSON.stringify(['MOBILE']),
+          },
+        ],
+      };
+
+      const upsertTargetField = async (
+        fieldInput: Partial<UpsertFieldsWidgetFieldInput>,
+      ) => {
+        await upsertFieldsWidget({
+          expectToFail: false,
+          input: {
+            widgetId: testSetup.widgetId,
+            fields: [
+              {
+                viewFieldId: targetField.id,
+                isVisible: true,
+                position: 0,
+                ...fieldInput,
+              },
+            ],
+          },
+        });
+
+        const { data } = await findViewFields({
+          viewId: testSetup.viewId,
+          gqlFields: 'id isVisible position conditionalDisplay',
+          expectToFail: false,
+        });
+
+        return data.getViewFields.find(
+          (field: { id: string }) => field.id === targetField.id,
+        )!;
+      };
+
+      expect(
+        (
+          await upsertTargetField({
+            conditionalDisplay: mobileConditionalDisplay,
+          })
+        ).conditionalDisplay,
+      ).toEqual(mobileConditionalDisplay);
+
+      const fieldAfterOmittedRule = await upsertTargetField({ position: 1 });
+
+      expect(fieldAfterOmittedRule.position).toBe(1);
+      expect(fieldAfterOmittedRule.conditionalDisplay).toEqual(
+        mobileConditionalDisplay,
+      );
+
+      expect(
+        (await upsertTargetField({ conditionalDisplay: null }))
+          .conditionalDisplay,
+      ).toBeNull();
+    });
+
+    it('should fail when the conditional display uses an unknown device', async () => {
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      await upsertFieldsWidget({
+        expectToFail: true,
+        input: {
+          widgetId: testSetup.widgetId,
+          fields: [
+            {
+              viewFieldId: targetField.id,
+              isVisible: true,
+              position: 0,
+              conditionalDisplay: {
+                recordFilters: [
+                  {
+                    id: uuidv4(),
+                    contextKey: 'device',
+                    operand: ViewFilterOperand.IS,
+                    value: JSON.stringify(['TABLET']),
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      });
     });
   });
 

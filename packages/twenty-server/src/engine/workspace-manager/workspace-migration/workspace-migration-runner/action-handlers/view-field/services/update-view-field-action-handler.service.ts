@@ -14,6 +14,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -34,24 +35,42 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
       universalIdentifier: action.universalIdentifier,
     });
 
-    const { universalOverrides, ...updateWithResolvedForeignKeys } =
-      resolveUniversalUpdateRelationIdentifiersToIds({
-        metadataName: 'viewField',
-        universalUpdate: action.update,
-        allFlatEntityMaps,
-      });
+    const {
+      universalConditionalDisplay,
+      universalOverrides,
+      ...updateWithResolvedForeignKeys
+    } = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'viewField',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    const updateWithConditionalDisplay =
+      universalConditionalDisplay === undefined
+        ? updateWithResolvedForeignKeys
+        : {
+            ...updateWithResolvedForeignKeys,
+            conditionalDisplay:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
 
     const update =
       universalOverrides === undefined
-        ? updateWithResolvedForeignKeys
+        ? updateWithConditionalDisplay
         : universalOverrides === null
-          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          ? { ...updateWithConditionalDisplay, overrides: null }
           : {
-              ...updateWithResolvedForeignKeys,
+              ...updateWithConditionalDisplay,
               overrides: fromUniversalOverridesToViewFieldOverrides({
                 universalOverrides,
                 flatViewFieldGroupMaps:
                   allFlatEntityMaps.flatViewFieldGroupMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
               }),
             };
 

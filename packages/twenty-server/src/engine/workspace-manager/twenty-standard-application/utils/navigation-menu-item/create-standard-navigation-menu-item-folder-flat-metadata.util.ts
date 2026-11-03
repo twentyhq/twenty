@@ -50,6 +50,8 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   icon: icon ?? null,
   color,
   position,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
   createdAt: now,
   updatedAt: now,
 });
@@ -116,6 +118,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     icon: null,
     color: 'gray',
     position,
+    conditionalDisplay: null,
+    universalConditionalDisplay: null,
     createdAt: now,
     updatedAt: now,
   };

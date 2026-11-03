@@ -47,8 +47,6 @@ export const updateOnePageLayoutWidgetQueryFactory = ({
       position: input.position,
       configuration: input.configuration,
       conditionalDisplay: input.conditionalDisplay,
-      conditionalAvailabilityExpression:
-        input.conditionalAvailabilityExpression,
       isActive: input.isActive,
     },
   },

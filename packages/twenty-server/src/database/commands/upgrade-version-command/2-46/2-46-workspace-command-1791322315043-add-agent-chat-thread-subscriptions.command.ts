@@ -58,10 +58,12 @@ export class AddAgentChatThreadSubscriptionsCommand extends ProvisionedWorkspace
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatCommandMenuItemMaps,
+      flatRoleMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatCommandMenuItemMaps',
+      'flatRoleMaps',
     ]);
 
     const hasParticipantObject = isDefined(
@@ -94,6 +96,8 @@ export class AddAgentChatThreadSubscriptionsCommand extends ProvisionedWorkspace
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         workspaceId,
         now: new Date().toISOString(),
       });

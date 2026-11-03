@@ -44,11 +44,17 @@ export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCom
     { workspaceId, options }: RunOnWorkspaceArgs,
     direction: 'up' | 'down',
   ): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
 
     const now = new Date().toISOString();
     const shareAnyRecord =
@@ -63,6 +69,8 @@ export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCom
             flatCommandMenuItemByUniversalIdentifier:
               flatCommandMenuItemMaps.byUniversalIdentifier,
             flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatRoleMaps,
             workspaceId,
             now,
           })

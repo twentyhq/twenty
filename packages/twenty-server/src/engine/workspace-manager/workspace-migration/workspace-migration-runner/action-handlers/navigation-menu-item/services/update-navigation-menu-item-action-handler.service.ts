@@ -13,6 +13,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -29,11 +30,25 @@ export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigra
       universalIdentifier: action.universalIdentifier,
     });
 
-    const update = resolveUniversalUpdateRelationIdentifiersToIds({
-      metadataName: 'navigationMenuItem',
-      universalUpdate: action.update,
-      allFlatEntityMaps,
-    });
+    const { universalConditionalDisplay, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'navigationMenuItem',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update =
+      universalConditionalDisplay === undefined
+        ? updateWithResolvedForeignKeys
+        : {
+            ...updateWithResolvedForeignKeys,
+            conditionalDisplay:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
 
     return {
       type: 'update',

@@ -4,7 +4,8 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { AggregateOperations } from 'twenty-shared/types';
+import GraphQLJSON from 'graphql-type-json';
+import { AggregateOperations, ConditionalDisplay } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -40,6 +41,9 @@ export class ViewFieldDTO {
 
   @Field(() => AggregateOperations, { nullable: true })
   aggregateOperation?: AggregateOperations | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;

@@ -14,7 +14,10 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  ConditionalDisplay,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 @InputType()
@@ -74,15 +77,20 @@ export class CreateCommandMenuItemInput {
   @Field(() => [String], { nullable: true })
   hotKeys?: string[];
 
-  @IsString()
+  @IsObject()
   @IsOptional()
-  @Field({ nullable: true })
-  conditionalAvailabilityExpression?: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
-  @IsString()
+  @IsObject()
   @IsOptional()
-  @Field({ nullable: true })
-  conditionalPinnedExpression?: string;
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalAvailability?: ConditionalDisplay | null;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalPinned?: ConditionalDisplay | null;
 
   @IsUUID()
   @IsOptional()

@@ -1,5 +1,9 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type UniversalConditionalDisplay,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { fromFlatViewFieldToStandaloneViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-standalone-view-field-manifest.util';
 import { fromFlatViewFieldToViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-view-field-manifest.util';
@@ -14,6 +18,17 @@ const FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const VIEW_FIELD_GROUP_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-03T10:00:00.000Z';
 
+const CONDITIONAL_DISPLAY: UniversalConditionalDisplay = {
+  recordFilters: [
+    {
+      id: '0',
+      fieldMetadataUniversalIdentifier: FIELD_UID,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
+      value: '',
+    },
+  ],
+};
+
 const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
   universalIdentifier: VIEW_FIELD_UID,
   fieldMetadataUniversalIdentifier: FIELD_UID,
@@ -22,6 +37,7 @@ const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
   position: 3,
   aggregateOperation: AggregateOperations.SUM,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
+  conditionalDisplay: CONDITIONAL_DISPLAY,
 };
 
 const MINIMAL_VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -67,6 +83,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       size: 240,
       position: 3,
       aggregateOperation: AggregateOperations.SUM,
+      universalConditionalDisplay: CONDITIONAL_DISPLAY,
       isActive: true,
       isSystemSideEffect: false,
       universalOverrides: null,

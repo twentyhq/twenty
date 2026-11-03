@@ -15,6 +15,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -37,6 +38,8 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
 
     const {
       universalConfiguration,
+      universalConditionalDisplay,
+      universalConditionalAvailability,
       universalOverrides,
       ...updateWithResolvedForeignKeys
     } = resolveUniversalUpdateRelationIdentifiersToIds({
@@ -62,16 +65,44 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
               }),
           };
 
+    const updateWithConditionalDisplay =
+      universalConditionalDisplay === undefined
+        ? updateWithConfiguration
+        : {
+            ...updateWithConfiguration,
+            conditionalDisplay:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
+
+    const updateWithConditionalAvailability =
+      universalConditionalAvailability === undefined
+        ? updateWithConditionalDisplay
+        : {
+            ...updateWithConditionalDisplay,
+            conditionalAvailability:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay: universalConditionalAvailability,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
+
     const update =
       universalOverrides === undefined
-        ? updateWithConfiguration
+        ? updateWithConditionalAvailability
         : universalOverrides === null
-          ? { ...updateWithConfiguration, overrides: null }
+          ? { ...updateWithConditionalAvailability, overrides: null }
           : {
-              ...updateWithConfiguration,
+              ...updateWithConditionalAvailability,
               overrides: fromUniversalOverridesToPageLayoutWidgetOverrides({
                 universalOverrides,
                 flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
               }),
             };
 

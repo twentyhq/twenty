@@ -29,11 +29,17 @@ export class AddWorkflowVisibilityCommandMenuItemsCommand extends ProvisionedWor
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
 
     const commandMenuItemsToCreate =
       buildMissingStandardCommandMenuItemsToCreate({
@@ -44,6 +50,8 @@ export class AddWorkflowVisibilityCommandMenuItemsCommand extends ProvisionedWor
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         workspaceId,
         now: new Date().toISOString(),
       });

@@ -1,8 +1,8 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
+  type ConditionalDisplay,
   type GridPosition,
-  PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type SerializedRelation,
   WidgetType,
@@ -21,6 +21,7 @@ import {
 } from 'typeorm';
 
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_CONDITIONAL_DISPLAY_COLUMNS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-conditional-display-columns-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -34,8 +35,7 @@ export type PageLayoutWidgetOverrides = {
   isActive?: boolean;
   title?: string;
   position?: PageLayoutWidgetPosition | null;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
-  conditionalAvailabilityExpression?: string | null;
+  conditionalDisplay?: ConditionalDisplay | null;
   pageLayoutTabId?: SerializedRelation;
 };
 
@@ -90,10 +90,16 @@ export class PageLayoutWidgetEntity<
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
+  conditionalDisplay: JsonbProperty<ConditionalDisplay | null>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITIONAL_DISPLAY_COLUMNS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalAvailability: JsonbProperty<ConditionalDisplay | null>;
 
   @Column({ type: 'varchar', nullable: true })
-  conditionalAvailabilityExpression: string | null;
+  conditionalAvailabilityExpression: WasRemovedInUpgrade<string> | null;
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: WasRemovedInUpgrade<JsonbProperty<GridPosition>>;

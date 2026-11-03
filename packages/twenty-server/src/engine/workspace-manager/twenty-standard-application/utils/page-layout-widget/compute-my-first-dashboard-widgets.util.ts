@@ -176,7 +176,9 @@ const createWelcomeRichText = ({
       universalConfiguration: configuration,
       objectMetadataId: null,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -240,7 +242,9 @@ const createDealsByCompany = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -317,7 +321,9 @@ const createPipelineValueByStage = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -383,7 +389,9 @@ const createRevenueTimeline = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -460,7 +468,9 @@ const createOpportunitiesByOwner = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -495,7 +505,9 @@ const createStockMarketIframe = ({
       universalConfiguration: configuration,
       objectMetadataId: null,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -560,7 +572,9 @@ const createDealsCreatedThisMonth = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };
@@ -625,7 +639,9 @@ const createDealValueCreatedThisMonth = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
-      conditionalAvailabilityExpression: null,
+      universalConditionalDisplay: null,
+      conditionalAvailability: null,
+      universalConditionalAvailability: null,
     },
   });
 };

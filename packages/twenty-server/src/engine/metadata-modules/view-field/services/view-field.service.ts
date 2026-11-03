@@ -71,7 +71,12 @@ export class ViewFieldService {
         },
       );
 
-    const { flatFieldMetadataMaps, flatViewMaps, flatViewFieldGroupMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldGroupMaps,
+      flatRoleMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -79,6 +84,7 @@ export class ViewFieldService {
             'flatFieldMetadataMaps',
             'flatViewMaps',
             'flatViewFieldGroupMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -91,6 +97,7 @@ export class ViewFieldService {
           flatFieldMetadataMaps,
           flatViewMaps,
           flatViewFieldGroupMaps,
+          flatRoleMaps,
         }),
     );
 
@@ -149,18 +156,26 @@ export class ViewFieldService {
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewFieldGroupMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps', 'flatViewFieldGroupMaps'],
-        },
-      );
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFieldMaps',
+          'flatViewFieldGroupMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
+        ],
+      },
+    );
 
     const optimisticallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
         flatViewFieldMaps: existingFlatViewFieldMaps,
         flatViewFieldGroupMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         updateViewFieldInput,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,

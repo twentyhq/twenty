@@ -1,4 +1,5 @@
 import { buildHideAskAiInSidePanelCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-38/utils/build-hide-ask-ai-in-side-panel-command-menu-item-update.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -13,6 +14,8 @@ const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
     twentyStandardApplicationId: 'application-id',
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatRoleMaps: createEmptyFlatEntityMaps(),
     },
     now: '2026-08-01T00:00:00.000Z',
   }),
@@ -29,7 +32,9 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
     ).toEqual({
       ...LEGACY_COMMAND_MENU_ITEM,
       conditionalAvailabilityExpression:
-        STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
+        getStandardCommandMenuItemConditionalAvailabilityExpression(
+          STANDARD_COMMAND_MENU_ITEMS.askAi.universalIdentifier,
+        ),
       updatedAt: NOW,
     });
   });
@@ -38,7 +43,9 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
   // command skips items this command already moved to that expression
   it('keeps the migrated expression synchronized with the standard definition', () => {
     expect(
-      STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        STANDARD_COMMAND_MENU_ITEMS.askAi.universalIdentifier,
+      ),
     ).toBe(
       'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
     );
@@ -59,7 +66,9 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
       existingCommandMenuItem: {
         ...LEGACY_COMMAND_MENU_ITEM,
         conditionalAvailabilityExpression:
-          STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            STANDARD_COMMAND_MENU_ITEMS.askAi.universalIdentifier,
+          ),
       },
     },
   ])('skips $name', ({ existingCommandMenuItem }) => {

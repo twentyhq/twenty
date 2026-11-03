@@ -2,6 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRemoveWorkflowCoreIndexFlagCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-remove-workflow-core-index-flag-command-menu-item-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -33,7 +34,13 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
     );
   }
 
-  return commandMenuItem;
+  return {
+    ...commandMenuItem,
+    conditionalAvailabilityExpression:
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        universalIdentifier,
+      ),
+  };
 };
 
 const withFlaggedFavoritesExpression = (

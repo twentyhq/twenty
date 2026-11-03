@@ -10,7 +10,7 @@ export const buildGateWorkflowFavoriteCommandMenuItemUpdates = ({
   flatCommandMenuItems: (FlatCommandMenuItem | undefined)[];
   conditionalAvailabilityExpressionByUniversalIdentifier: Record<
     string,
-    string
+    string | null
   >;
   now: string;
 }): FlatCommandMenuItem[] =>

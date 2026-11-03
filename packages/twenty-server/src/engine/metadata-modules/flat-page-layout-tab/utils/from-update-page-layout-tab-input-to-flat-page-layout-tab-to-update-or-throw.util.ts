@@ -5,9 +5,13 @@ import {
 } from 'twenty-shared/utils';
 
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { fromPageLayoutTabOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-page-layout-tab-overrides-to-universal-overrides.util';
 import { type UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import {
   PageLayoutTabException,
@@ -25,6 +29,8 @@ export type UpdatePageLayoutTabInputWithId = {
 export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
   updatePageLayoutTabInput: rawUpdatePageLayoutTabInput,
   flatPageLayoutTabMaps,
+  flatFieldMetadataMaps,
+  flatRoleMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -32,7 +38,10 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
   flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
-}): FlatPageLayoutTab => {
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatRoleMaps'
+>): FlatPageLayoutTab => {
   const { id: pageLayoutTabToUpdateId } = extractAndSanitizeObjectStringFields(
     rawUpdatePageLayoutTabInput,
     ['id'],
@@ -55,6 +64,12 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
     FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
   );
 
+  if (editableProperties.conditionalDisplay !== undefined) {
+    editableProperties.conditionalDisplay = normalizeConditionalDisplay(
+      editableProperties.conditionalDisplay,
+    );
+  }
+
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
     entityApplicationUniversalIdentifier:
@@ -73,7 +88,7 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
       workspaceCustomApplicationUniversalIdentifier,
     });
 
-  return {
+  const flatPageLayoutTabToUpdate = {
     ...mergeUpdateInExistingRecord({
       existing: existingFlatPageLayoutTabToUpdate,
       properties: [...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES],
@@ -81,4 +96,28 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
     }),
     overrides,
   } as FlatPageLayoutTab;
+
+  if (updatedEditableProperties.conditionalDisplay !== undefined) {
+    flatPageLayoutTabToUpdate.universalConditionalDisplay =
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: flatPageLayoutTabToUpdate.conditionalDisplay,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      });
+  }
+
+  if (isDefined(overrides)) {
+    flatPageLayoutTabToUpdate.universalOverrides =
+      fromPageLayoutTabOverridesToUniversalOverrides({
+        overrides,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      });
+  } else {
+    flatPageLayoutTabToUpdate.universalOverrides = null;
+  }
+
+  return flatPageLayoutTabToUpdate;
 };

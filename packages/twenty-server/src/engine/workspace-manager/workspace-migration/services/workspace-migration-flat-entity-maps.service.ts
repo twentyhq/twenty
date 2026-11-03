@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import {
@@ -31,6 +32,7 @@ export type WorkspaceMigrationRelatedFlatEntityMaps =
 
 export type FlatEntityMapsBundle = {
   flatApplicationMaps: FlatApplicationCacheMaps;
+  workspaceCustomApplicationId: string | undefined;
   allRelatedFlatEntityMaps: WorkspaceMigrationRelatedFlatEntityMaps;
   allMetadataNameCacheToCompute: AllMetadataName[];
 };
@@ -44,6 +46,7 @@ type ComputeFromToAllFlatEntityMapsAndBuildOptionsArgs = {
 export class WorkspaceMigrationFlatEntityMapsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
   ) {}
 
@@ -68,15 +71,19 @@ export class WorkspaceMigrationFlatEntityMapsService {
       ),
     ];
 
-    const { flatApplicationMaps, ...allRelatedFlatEntityMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
-        ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
-        'flatApplicationMaps',
+    const [{ flatApplicationMaps, ...allRelatedFlatEntityMaps }, workspace] =
+      await Promise.all([
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          ...allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
+          ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
+          'flatApplicationMaps',
+        ]),
+        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
       ]);
 
     return {
       flatApplicationMaps,
+      workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
     };
@@ -86,6 +93,7 @@ export class WorkspaceMigrationFlatEntityMapsService {
     allFlatEntityOperationRecordByMetadataName,
     applicationUniversalIdentifier,
     flatApplicationMaps,
+    workspaceCustomApplicationId,
     allRelatedFlatEntityMaps,
     allMetadataNameCacheToCompute,
   }: ComputeFromToAllFlatEntityMapsAndBuildOptionsArgs): {
@@ -100,6 +108,7 @@ export class WorkspaceMigrationFlatEntityMapsService {
         allFlatEntityOperationRecordByMetadataName,
         applicationUniversalIdentifier,
         flatApplicationMaps,
+        workspaceCustomApplicationId,
         allRelatedFlatEntityMaps,
         allMetadataNameCacheToCompute,
       });
@@ -188,12 +197,14 @@ export class WorkspaceMigrationFlatEntityMapsService {
     allFlatEntityOperationRecordByMetadataName,
     applicationUniversalIdentifier,
     flatApplicationMaps,
+    workspaceCustomApplicationId,
     allRelatedFlatEntityMaps,
     allMetadataNameCacheToCompute,
   }: ComputeFromToAllFlatEntityMapsAndBuildOptionsArgs) {
     const applicationIds = this.computeAllInvolvedApplicationIds({
       allFlatEntityOperationRecordByMetadataName,
       flatApplicationMaps,
+      workspaceCustomApplicationId,
       applicationUniversalIdentifier,
       allRelatedFlatEntityMaps,
     });
@@ -226,11 +237,13 @@ export class WorkspaceMigrationFlatEntityMapsService {
   private computeAllInvolvedApplicationIds({
     allFlatEntityOperationRecordByMetadataName,
     flatApplicationMaps,
+    workspaceCustomApplicationId,
     applicationUniversalIdentifier,
     allRelatedFlatEntityMaps,
   }: {
     allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
     flatApplicationMaps: FlatApplicationCacheMaps;
+    workspaceCustomApplicationId: string | undefined;
     applicationUniversalIdentifier: string;
     allRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
   }): string[] {
@@ -255,6 +268,10 @@ export class WorkspaceMigrationFlatEntityMapsService {
 
     if (isDefined(applicationId)) {
       applicationIds.add(applicationId);
+    }
+
+    if (isDefined(workspaceCustomApplicationId)) {
+      applicationIds.add(workspaceCustomApplicationId);
     }
 
     const isBuildingTwentyStandardApplication =

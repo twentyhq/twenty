@@ -16,6 +16,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -32,25 +33,71 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
       universalIdentifier: action.universalIdentifier,
     });
 
-    const { universalOverrides, ...updateWithResolvedForeignKeys } =
-      resolveUniversalUpdateRelationIdentifiersToIds({
-        metadataName: 'commandMenuItem',
-        universalUpdate: action.update,
-        allFlatEntityMaps,
-      });
+    const {
+      universalConditionalDisplay,
+      universalConditionalAvailability,
+      universalConditionalPinned,
+      universalOverrides,
+      ...updateWithResolvedForeignKeys
+    } = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'commandMenuItem',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    const updateWithConditionalDisplay =
+      universalConditionalDisplay === undefined
+        ? updateWithResolvedForeignKeys
+        : {
+            ...updateWithResolvedForeignKeys,
+            conditionalDisplay:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
+
+    const updateWithConditionalAvailability =
+      universalConditionalAvailability === undefined
+        ? updateWithConditionalDisplay
+        : {
+            ...updateWithConditionalDisplay,
+            conditionalAvailability:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay: universalConditionalAvailability,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
+
+    const updateWithConditionalPinned =
+      universalConditionalPinned === undefined
+        ? updateWithConditionalAvailability
+        : {
+            ...updateWithConditionalAvailability,
+            conditionalPinned:
+              fromUniversalConditionalDisplayToConditionalDisplay({
+                universalConditionalDisplay: universalConditionalPinned,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+          };
 
     const update =
       universalOverrides === undefined
-        ? updateWithResolvedForeignKeys
+        ? updateWithConditionalPinned
         : universalOverrides === null
-          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          ? { ...updateWithConditionalPinned, overrides: null }
           : {
-              ...updateWithResolvedForeignKeys,
+              ...updateWithConditionalPinned,
               overrides: fromUniversalOverridesToCommandMenuItemOverrides({
                 universalOverrides,
                 flatObjectMetadataMaps:
                   allFlatEntityMaps.flatObjectMetadataMaps,
                 flatPageLayoutMaps: allFlatEntityMaps.flatPageLayoutMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
               }),
             };
 

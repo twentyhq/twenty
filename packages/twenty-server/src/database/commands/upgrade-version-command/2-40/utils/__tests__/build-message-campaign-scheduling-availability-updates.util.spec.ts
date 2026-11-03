@@ -1,4 +1,5 @@
 import { buildMessageCampaignSchedulingAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-40/utils/build-message-campaign-scheduling-availability-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
@@ -22,7 +23,7 @@ const buildExistingItem = (
 
 describe('buildMessageCampaignSchedulingAvailabilityUpdates', () => {
   it('widens cancel from sending only to the scheduled state as well', () => {
-    const { universalIdentifier, conditionalAvailabilityExpression } =
+    const { universalIdentifier } =
       STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign;
 
     const updates = buildMessageCampaignSchedulingAvailabilityUpdates({
@@ -38,7 +39,10 @@ describe('buildMessageCampaignSchedulingAvailabilityUpdates', () => {
     expect(updates).toEqual([
       expect.objectContaining({
         universalIdentifier,
-        conditionalAvailabilityExpression,
+        conditionalAvailabilityExpression:
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            universalIdentifier,
+          ),
         updatedAt: NOW,
       }),
     ]);
@@ -62,10 +66,19 @@ describe('buildMessageCampaignSchedulingAvailabilityUpdates', () => {
       now: NOW,
     });
 
-    expect(updates.map(({ conditionalAvailabilityExpression }) => conditionalAvailabilityExpression)).toEqual(
+    expect(
+      updates.map(
+        ({ conditionalAvailabilityExpression }) =>
+          conditionalAvailabilityExpression,
+      ),
+    ).toEqual(
       expect.arrayContaining([
-        sendCommand.conditionalAvailabilityExpression,
-        testCommand.conditionalAvailabilityExpression,
+        getStandardCommandMenuItemConditionalAvailabilityExpression(
+          sendCommand.universalIdentifier,
+        ),
+        getStandardCommandMenuItemConditionalAvailabilityExpression(
+          testCommand.universalIdentifier,
+        ),
       ]),
     );
   });

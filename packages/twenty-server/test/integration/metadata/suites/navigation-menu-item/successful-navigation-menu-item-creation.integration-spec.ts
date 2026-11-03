@@ -1,9 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, ViewFilterOperand } from 'twenty-shared/types';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
+import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('NavigationMenuItem creation should succeed', () => {
@@ -171,5 +173,55 @@ describe('NavigationMenuItem creation should succeed', () => {
       expectToFail: false,
       input: { id: firstItemId },
     });
+  });
+
+  it('should create a folder with a role conditional display and read it back', async () => {
+    const memberRole = await findOneRoleByLabel({ label: 'Member' });
+
+    const conditionalDisplay = {
+      recordFilters: [
+        {
+          id: '0',
+          contextKey: 'currentRoleId' as const,
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify([memberRole.id]),
+        },
+      ],
+    };
+
+    const { data } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Members Folder',
+        conditionalDisplay,
+      },
+      gqlFields: `
+        id
+        conditionalDisplay
+      `,
+    });
+
+    createdNavigationMenuItemId = data?.createNavigationMenuItem?.id;
+
+    expect(data.createNavigationMenuItem.conditionalDisplay).toEqual(
+      conditionalDisplay,
+    );
+
+    const { data: findData } = await findNavigationMenuItems({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: `
+        id
+        conditionalDisplay
+      `,
+    });
+
+    expect(
+      findData.navigationMenuItems.find(
+        (navigationMenuItem) =>
+          navigationMenuItem.id === createdNavigationMenuItemId,
+      )?.conditionalDisplay,
+    ).toEqual(conditionalDisplay);
   });
 });

@@ -14,6 +14,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -42,6 +43,14 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const conditionalDisplay =
+      fromUniversalConditionalDisplayToConditionalDisplay({
+        universalConditionalDisplay:
+          action.flatEntity.universalConditionalDisplay,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+      });
+
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
         metadataName: 'navigationMenuItem',
@@ -55,6 +64,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
         folderId,
         viewId,
         pageLayoutId,
+        conditionalDisplay,
         agentChatChannelId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),

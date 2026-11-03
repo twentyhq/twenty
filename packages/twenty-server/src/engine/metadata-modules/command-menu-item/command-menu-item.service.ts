@@ -54,6 +54,12 @@ export class CommandMenuItemService {
 
     return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
+      .filter(
+        (flatCommandMenuItem) =>
+          !this.hasConditionalExpressionWithoutConditionalAvailability(
+            flatCommandMenuItem,
+          ),
+      )
       .sort((a, b) => a.position - b.position)
       .map(fromFlatCommandMenuItemToCommandMenuItemDto);
   }
@@ -106,6 +112,8 @@ export class CommandMenuItemService {
       flatObjectMetadataMaps,
       flatFrontComponentMaps,
       flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -114,6 +122,8 @@ export class CommandMenuItemService {
             'flatObjectMetadataMaps',
             'flatFrontComponentMaps',
             'flatPageLayoutMaps',
+            'flatFieldMetadataMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -131,6 +141,8 @@ export class CommandMenuItemService {
         flatObjectMetadataMaps,
         flatFrontComponentMaps,
         flatPageLayoutMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =
@@ -186,6 +198,8 @@ export class CommandMenuItemService {
       flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatRoleMaps: existingFlatRoleMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -193,6 +207,8 @@ export class CommandMenuItemService {
           'flatCommandMenuItemMaps',
           'flatObjectMetadataMaps',
           'flatPageLayoutMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -203,6 +219,8 @@ export class CommandMenuItemService {
         updateCommandMenuItemInput: input,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatRoleMaps: existingFlatRoleMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
@@ -630,5 +648,16 @@ export class CommandMenuItemService {
     return isDefined(flatCommandMenuItem)
       ? fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem)
       : null;
+  }
+
+  private hasConditionalExpressionWithoutConditionalAvailability(
+    flatCommandMenuItem: FlatCommandMenuItem,
+  ): boolean {
+    return (
+      (isDefined(flatCommandMenuItem.conditionalAvailabilityExpression) &&
+        !isDefined(flatCommandMenuItem.conditionalAvailability)) ||
+      (isDefined(flatCommandMenuItem.conditionalPinnedExpression) &&
+        !isDefined(flatCommandMenuItem.conditionalPinned))
+    );
   }
 }

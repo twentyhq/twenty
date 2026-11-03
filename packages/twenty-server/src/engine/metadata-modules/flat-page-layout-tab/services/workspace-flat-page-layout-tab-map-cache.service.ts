@@ -18,6 +18,8 @@ const FLAT_PAGE_LAYOUT_TAB_ROWS_REQUIREMENT = {
   },
   application: ['id', 'universalIdentifier'],
   pageLayout: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -35,12 +37,20 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends MetadataFlatEntit
       pageLayoutWidget: pageLayoutWidgets,
       application: applications,
       pageLayout: pageLayouts,
+      fieldMetadata: fieldMetadatas,
+      role: roles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const pageLayoutIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(pageLayouts);
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
 
     const flatPageLayoutTabMaps = createEmptyFlatEntityMaps();
 
@@ -55,6 +65,8 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends MetadataFlatEntit
           },
           applicationIdToUniversalIdentifierMap,
           pageLayoutIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
         },
       );
 

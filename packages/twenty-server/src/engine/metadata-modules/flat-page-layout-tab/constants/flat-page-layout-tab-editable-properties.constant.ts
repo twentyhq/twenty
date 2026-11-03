@@ -5,4 +5,5 @@ export const FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES = [
   'position',
   'icon',
   'layoutMode',
+  'conditionalDisplay',
 ] as const satisfies MetadataEntityPropertyName<'pageLayoutTab'>[];

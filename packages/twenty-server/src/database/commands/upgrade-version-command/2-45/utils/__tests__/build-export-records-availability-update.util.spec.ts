@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildExportRecordsAvailabilityUpdate } from 'src/database/commands/upgrade-version-command/2-45/utils/build-export-records-availability-update.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -49,9 +50,9 @@ const buildUpdate = (
 describe('buildExportRecordsAvailabilityUpdate', () => {
   it('matches the standard application expression', () => {
     expect(
-      allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-        EXPORT_RECORDS_UNIVERSAL_IDENTIFIER
-      ]?.conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        EXPORT_RECORDS_UNIVERSAL_IDENTIFIER,
+      ),
     ).toBe(NEXT_EXPRESSION);
   });
 

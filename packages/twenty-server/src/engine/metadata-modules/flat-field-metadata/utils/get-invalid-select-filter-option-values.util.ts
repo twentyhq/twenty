@@ -37,8 +37,10 @@ export const getInvalidSelectFilterOptionValues = ({
     FlatFieldMetadata<
       FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
     >,
-    'type' | 'options'
-  >;
+    'type'
+  > & {
+    options: readonly { value: string }[];
+  };
   operand: ViewFilterOperand;
   subFieldName?: string | null;
   value: ViewFilterValue | null;

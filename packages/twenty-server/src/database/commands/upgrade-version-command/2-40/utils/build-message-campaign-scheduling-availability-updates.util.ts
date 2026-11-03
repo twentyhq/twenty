@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
@@ -10,7 +11,8 @@ const COMMANDS_TO_WIDEN = [
       'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "SENDING") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
   },
   {
-    standardCommandMenuItem: STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest,
+    standardCommandMenuItem:
+      STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest,
     preSchedulingExpression:
       'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
   },
@@ -53,7 +55,9 @@ export const buildMessageCampaignSchedulingAvailabilityUpdates = ({
         {
           ...existingCommandMenuItem,
           conditionalAvailabilityExpression:
-            standardCommandMenuItem.conditionalAvailabilityExpression,
+            getStandardCommandMenuItemConditionalAvailabilityExpression(
+              standardCommandMenuItem.universalIdentifier,
+            ),
           updatedAt: now,
         },
       ];

@@ -16,6 +16,8 @@ const FLAT_NAVIGATION_MENU_ITEM_ROWS_REQUIREMENT = {
   objectMetadata: ['id', 'universalIdentifier'],
   view: ['id', 'universalIdentifier'],
   pageLayout: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
   agentChatChannel: ['id', 'universalIdentifier'],
 } as const;
 
@@ -36,6 +38,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
       objectMetadata: objectMetadatas,
       view: views,
       pageLayout: pageLayouts,
+      fieldMetadata: fieldMetadatas,
+      role: roles,
       agentChatChannel: agentChatChannels,
     } = rows;
 
@@ -49,6 +53,12 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
       createIdToUniversalIdentifierMap(views);
     const pageLayoutIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(pageLayouts);
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
     const agentChatChannelIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(agentChatChannels);
 
@@ -66,6 +76,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
           navigationMenuItemIdToUniversalIdentifierMap,
           viewIdToUniversalIdentifierMap,
           pageLayoutIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
           agentChatChannelIdToUniversalIdentifierMap,
         });
 

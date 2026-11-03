@@ -19,7 +19,10 @@ export type CampaignComposerStandardMetadataOperations = {
 
 type BuildCampaignComposerStandardMetadataOperationsArgs = Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatCommandMenuItemMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatCommandMenuItemMaps'
+  | 'flatRoleMaps'
 > & {
   workspaceId: string;
   direction: 'up' | 'down';
@@ -192,6 +195,7 @@ export const buildCampaignComposerStandardMetadataOperations = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatCommandMenuItemMaps,
+  flatRoleMaps,
   workspaceId,
   direction,
   now,
@@ -221,6 +225,8 @@ export const buildCampaignComposerStandardMetadataOperations = ({
             flatCommandMenuItemByUniversalIdentifier:
               flatCommandMenuItemMaps.byUniversalIdentifier,
             flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatRoleMaps,
             workspaceId,
             now,
           })

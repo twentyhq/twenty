@@ -15,6 +15,7 @@ import {
   type RunOnWorkspaceArgs,
   type WorkspaceCommandOptions,
 } from 'src/database/commands/command-runners/workspace.command-runner';
+import { STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS } from 'src/database/commands/upgrade-version-command/utils/standard-command-menu-item-conditional-expressions.constant';
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -233,8 +234,16 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
         isPinned: commandMenuItem.isPinned,
         availabilityType: commandMenuItem.availabilityType,
         conditionalAvailabilityExpression:
-          commandMenuItem.conditionalAvailabilityExpression ?? null,
+          STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+            commandMenuItem.universalIdentifier
+          ]?.conditionalAvailabilityExpression ?? null,
         conditionalPinnedExpression: null,
+        conditionalDisplay: null,
+        universalConditionalDisplay: null,
+        conditionalAvailability: null,
+        universalConditionalAvailability: null,
+        conditionalPinned: null,
+        universalConditionalPinned: null,
         frontComponentId: null,
         frontComponentUniversalIdentifier: null,
         engineComponentKey: EngineComponentKey.NAVIGATION,

@@ -4,11 +4,14 @@ import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
+import { ConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -48,6 +51,11 @@ export class UpdateNavigationMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string | null;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 }
 
 @InputType()

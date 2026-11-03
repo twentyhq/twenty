@@ -23,4 +23,7 @@ export const fromFlatViewFieldToViewFieldManifest = ({
           flatViewField.viewFieldGroupUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatViewField.universalConditionalDisplay)
+    ? { conditionalDisplay: flatViewField.universalConditionalDisplay }
+    : {}),
 });

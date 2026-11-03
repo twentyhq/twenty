@@ -35,11 +35,17 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
 
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -50,6 +56,7 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
       this.computeFlatCommandMenuItemsToCreateByApplication({
         flatCommandMenuItemMaps,
         flatObjectMetadataMaps,
+        dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatRoleMaps },
         excludedApplicationUniversalIdentifiers: new Set([
           twentyStandardFlatApplication.universalIdentifier,
           workspaceCustomFlatApplication.universalIdentifier,
@@ -119,10 +126,15 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
   private computeFlatCommandMenuItemsToCreateByApplication({
     flatCommandMenuItemMaps,
     flatObjectMetadataMaps,
+    dependencyFlatEntityMaps,
     excludedApplicationUniversalIdentifiers,
   }: {
     flatCommandMenuItemMaps: AllFlatEntityMaps['flatCommandMenuItemMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    dependencyFlatEntityMaps: Pick<
+      AllFlatEntityMaps,
+      'flatFieldMetadataMaps' | 'flatRoleMaps'
+    >;
     excludedApplicationUniversalIdentifiers: Set<string>;
   }): Map<string, UniversalFlatCommandMenuItem[]> {
     const flatCommandMenuItemsToCreateByApplication = new Map<
@@ -196,6 +208,7 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
             flatObjectMetadata.applicationUniversalIdentifier,
           position: nextPosition++,
           now,
+          dependencyFlatEntityMaps,
         });
 
       const existing =

@@ -25,6 +25,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "availabilityObjectMetadataId",
     "engineComponentKey",
     "hotKeys",
+    "conditionalDisplay",
     "pageLayoutId",
     "isActive",
   ],
@@ -58,6 +59,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "title",
     "position",
     "icon",
+    "conditionalDisplay",
     "isActive",
   ],
   "pageLayoutWidget": [
@@ -65,7 +67,6 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "pageLayoutTabId",
     "conditionalDisplay",
-    "conditionalAvailabilityExpression",
     "isActive",
   ],
   "permissionFlag": [],
@@ -112,6 +113,7 @@ exports[`registry-derived override property maps derives the overridable propert
   ],
   "viewField": [
     "isVisible",
+    "conditionalDisplay",
     "size",
     "position",
     "aggregateOperation",

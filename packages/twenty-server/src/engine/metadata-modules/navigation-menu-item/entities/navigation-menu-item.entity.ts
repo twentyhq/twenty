@@ -10,8 +10,10 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_CONDITIONAL_DISPLAY_COLUMNS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-conditional-display-columns-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -20,6 +22,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_APPLICATION_ID', ['applicationId'])
@@ -158,6 +161,12 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: false, type: 'double precision' })
   position: number;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITIONAL_DISPLAY_COLUMNS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalDisplay: JsonbProperty<ConditionalDisplay | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -48,11 +48,17 @@ export class AddMessageListMemberCommandMenuItemsCommand extends ProvisionedWork
     { workspaceId, options }: RunOnWorkspaceArgs,
     direction: 'up' | 'down',
   ): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
 
     const commandMenuItemsToCreate =
       direction === 'up'
@@ -63,6 +69,8 @@ export class AddMessageListMemberCommandMenuItemsCommand extends ProvisionedWork
             flatCommandMenuItemByUniversalIdentifier:
               flatCommandMenuItemMaps.byUniversalIdentifier,
             flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatRoleMaps,
             workspaceId,
             now: new Date().toISOString(),
           })

@@ -2,8 +2,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import { buildNavigationConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/build-navigation-conditional-availability-expression.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL, buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
+import {
+  NAVIGATION_INTERPOLATED_ICON,
+  NAVIGATION_INTERPOLATED_LABEL,
+  NAVIGATION_INTERPOLATED_SHORT_LABEL,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
 export const LEGACY_NAVIGATION_COMMAND_UUID_NAMESPACE =
@@ -60,6 +65,12 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression,
     conditionalPinnedExpression: null,
+    conditionalDisplay: null,
+    universalConditionalDisplay: null,
+    conditionalAvailability: null,
+    universalConditionalAvailability: null,
+    conditionalPinned: null,
+    universalConditionalPinned: null,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,

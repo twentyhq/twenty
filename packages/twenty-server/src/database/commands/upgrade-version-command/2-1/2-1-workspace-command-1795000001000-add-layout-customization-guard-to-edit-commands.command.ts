@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -80,7 +81,9 @@ export class AddLayoutCustomizationGuardToEditCommandsCommand extends Provisione
         !isDefined(standardItem) ||
         !isDefined(existingItem) ||
         existingItem.conditionalAvailabilityExpression ===
-          standardItem.conditionalAvailabilityExpression
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            standardItem.universalIdentifier,
+          )
       ) {
         continue;
       }
@@ -88,7 +91,9 @@ export class AddLayoutCustomizationGuardToEditCommandsCommand extends Provisione
       itemsToUpdateById[existingItem.id] = {
         ...existingItem,
         conditionalAvailabilityExpression:
-          standardItem.conditionalAvailabilityExpression,
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            standardItem.universalIdentifier,
+          ),
         updatedAt,
       };
     }
@@ -103,7 +108,7 @@ export class AddLayoutCustomizationGuardToEditCommandsCommand extends Provisione
       }
 
       const currentConditionalAvailabilityExpression =
-        existingItem.conditionalAvailabilityExpression;
+        existingItem.conditionalAvailabilityExpression ?? null;
 
       const nextConditionalAvailabilityExpression =
         replaceLegacyPageEditModeIdentifier(

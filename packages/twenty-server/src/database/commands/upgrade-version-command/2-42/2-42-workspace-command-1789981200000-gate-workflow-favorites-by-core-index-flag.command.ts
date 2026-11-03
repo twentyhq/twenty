@@ -6,6 +6,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildGateWorkflowFavoriteCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-gate-workflow-favorite-command-menu-item-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -43,11 +44,14 @@ export class GateWorkflowFavoritesByCoreIndexFlagCommand extends ProvisionedWork
         ),
         conditionalAvailabilityExpressionByUniversalIdentifier: {
           [STANDARD_COMMAND_MENU_ITEMS.addToFavorites.universalIdentifier]:
-            STANDARD_COMMAND_MENU_ITEMS.addToFavorites
-              .conditionalAvailabilityExpression,
+            getStandardCommandMenuItemConditionalAvailabilityExpression(
+              STANDARD_COMMAND_MENU_ITEMS.addToFavorites.universalIdentifier,
+            ),
           [STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites.universalIdentifier]:
-            STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites
-              .conditionalAvailabilityExpression,
+            getStandardCommandMenuItemConditionalAvailabilityExpression(
+              STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites
+                .universalIdentifier,
+            ),
         },
         now: new Date().toISOString(),
       });

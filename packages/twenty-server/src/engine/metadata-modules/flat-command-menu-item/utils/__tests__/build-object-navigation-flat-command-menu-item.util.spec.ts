@@ -1,6 +1,9 @@
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import {
   NAVIGATION_INTERPOLATED_ICON,
@@ -8,6 +11,7 @@ import {
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { buildObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-flat-command-menu-item.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -29,6 +33,10 @@ const baseArgs = {
   workspaceId: 'ws-id-1',
   position: 5,
   now: '2026-01-01T00:00:00.000Z',
+  dependencyFlatEntityMaps: {
+    flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    flatRoleMaps: createEmptyFlatEntityMaps(),
+  },
 };
 
 describe('buildObjectNavigationFlatCommandMenuItem', () => {
@@ -131,11 +139,22 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
     );
   });
 
-  it('should set conditionalAvailabilityExpression based on nameSingular', () => {
+  it('should gate conditionalAvailability on the read permission of the target object', () => {
     const result = buildObjectNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.conditionalAvailabilityExpression).toBe(
-      'targetObjectReadPermissions.person',
+    expect(result.conditionalAvailability).toEqual({
+      recordFilters: [
+        {
+          id: expect.any(String),
+          contextKey: 'targetObjectReadPermissions',
+          subFieldName: 'person',
+          operand: ViewFilterOperand.IS,
+          value: 'true',
+        },
+      ],
+    });
+    expect(result.universalConditionalAvailability).toEqual(
+      result.conditionalAvailability,
     );
   });
 

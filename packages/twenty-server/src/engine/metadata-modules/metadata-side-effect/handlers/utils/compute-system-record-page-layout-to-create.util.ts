@@ -109,7 +109,8 @@ export const computeSystemRecordPageLayoutToCreate = ({
       deletedAt: null,
       icon: tabProps.icon,
       layoutMode: tabProps.layoutMode,
-      overrides: null,
+      universalConditionalDisplay: null,
+      universalOverrides: null,
     });
 
     const universalConfiguration =
@@ -136,7 +137,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
-      conditionalDisplay: null,
+      universalConditionalDisplay: null,
       universalOverrides: null,
     });
   }

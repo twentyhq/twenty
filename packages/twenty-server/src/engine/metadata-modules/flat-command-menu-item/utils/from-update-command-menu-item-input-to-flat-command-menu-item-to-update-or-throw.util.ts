@@ -5,6 +5,8 @@ import {
   CommandMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -22,6 +24,8 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     updateCommandMenuItemInput,
     flatObjectMetadataMaps,
     flatPageLayoutMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
     callerApplicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
@@ -31,7 +35,10 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     workspaceCustomApplicationUniversalIdentifier: string;
   } & Pick<
     AllFlatEntityMaps,
-    'flatObjectMetadataMaps' | 'flatPageLayoutMaps'
+    | 'flatObjectMetadataMaps'
+    | 'flatPageLayoutMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatRoleMaps'
   >): FlatCommandMenuItem => {
     const existingFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateCommandMenuItemInput.id,
@@ -46,6 +53,12 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     }
 
     const { id: _id, ...updates } = updateCommandMenuItemInput;
+
+    if (updates.conditionalDisplay !== undefined) {
+      updates.conditionalDisplay = normalizeConditionalDisplay(
+        updates.conditionalDisplay,
+      );
+    }
 
     const shouldOverride = isCallerOverridingEntity({
       callerApplicationUniversalIdentifier,
@@ -106,6 +119,16 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
         pageLayoutUniversalIdentifier;
     }
 
+    if (updatedEditableProperties.conditionalDisplay !== undefined) {
+      flatCommandMenuItemToUpdate.universalConditionalDisplay =
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay: mergedRecord.conditionalDisplay,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+        });
+    }
+
     if (isDefined(overrides)) {
       flatCommandMenuItemToUpdate.universalOverrides =
         fromCommandMenuItemOverridesToUniversalOverrides({
@@ -114,6 +137,9 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
             flatObjectMetadataMaps.universalIdentifierById,
           pageLayoutUniversalIdentifierById:
             flatPageLayoutMaps.universalIdentifierById,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
         });
     } else {
       flatCommandMenuItemToUpdate.universalOverrides = null;

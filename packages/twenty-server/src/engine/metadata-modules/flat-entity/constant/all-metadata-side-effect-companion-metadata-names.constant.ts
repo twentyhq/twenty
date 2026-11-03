@@ -27,6 +27,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
     'pageLayoutTab',
     'pageLayoutWidget',
     'commandMenuItem',
+    'role',
   ],
 } as const satisfies Partial<
   Record<AllMetadataName, readonly AllMetadataName[]>

@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { validateUniversalFlatEntityConditionalDisplays } from 'src/engine/metadata-modules/flat-conditional-display/utils/validate-universal-flat-entity-conditional-displays.util';
 import { validateTabViewportConstraints } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
@@ -145,6 +146,13 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatPageLayoutWidget: updatedFlatPageLayoutWidget,
+        flatPageLayoutTab: referencedPageLayoutTab,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
 
     return validationResult;
   }
@@ -275,8 +283,49 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatPageLayoutWidget: flatPageLayoutWidgetToValidate,
+        flatPageLayoutTab: referencedPageLayoutTab,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
 
     return validationResult;
+  }
+
+  private validateConditionalDisplay({
+    flatPageLayoutWidget,
+    flatPageLayoutTab,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    },
+  }: {
+    flatPageLayoutWidget: UniversalFlatPageLayoutWidget;
+    flatPageLayoutTab: UniversalFlatPageLayoutTab | undefined;
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
+  }): FlatEntityValidationError[] {
+    const pageLayout = isDefined(flatPageLayoutTab)
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: flatPageLayoutTab.pageLayoutUniversalIdentifier,
+          flatEntityMaps: flatPageLayoutMaps,
+        })
+      : undefined;
+
+    return validateUniversalFlatEntityConditionalDisplays({
+      flatEntity: flatPageLayoutWidget,
+      surface: 'pageLayoutWidget',
+      objectMetadataUniversalIdentifier:
+        pageLayout?.objectMetadataUniversalIdentifier ?? null,
+      invalidDataCode:
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    });
   }
 
   private getEffectiveWidget(

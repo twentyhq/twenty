@@ -19,18 +19,16 @@ const UNPINNED_CHAT_SHARE = {
     'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
 };
 
-const readChatShare = async () => {
-  const [chatShare]: {
-    isPinned: boolean;
-    conditionalAvailabilityExpression: string | null;
-  }[] = await global.testDataSource.query(
-    `SELECT "isPinned", "conditionalAvailabilityExpression"
+const readChatShareIsPinned = async () => {
+  const [chatShare]: { isPinned: boolean }[] =
+    await global.testDataSource.query(
+      `SELECT "isPinned"
      FROM core."commandMenuItem"
      WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
-    [SEED_APPLE_WORKSPACE_ID, CHAT_SHARE_UNIVERSAL_IDENTIFIER],
-  );
+      [SEED_APPLE_WORKSPACE_ID, CHAT_SHARE_UNIVERSAL_IDENTIFIER],
+    );
 
-  return chatShare;
+  return chatShare.isPinned;
 };
 
 describe('2-47 workspace command - unpin chat share (integration)', () => {
@@ -71,18 +69,14 @@ describe('2-47 workspace command - unpin chat share (integration)', () => {
     await setChatShare(UNPINNED_CHAT_SHARE);
   });
 
-  it('pins the chat Share item behind its flags on down, and moves it back on up', async () => {
+  it('pins the chat Share item on down, and unpins it on up', async () => {
     await command.down(RUN_ON_WORKSPACE_ARGS);
 
-    expect(await readChatShare()).toEqual({
-      isPinned: true,
-      conditionalAvailabilityExpression:
-        'numberOfSelectedRecords == 1 and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED) and noneDefined(selectedRecords, "deletedAt")',
-    });
+    expect(await readChatShareIsPinned()).toBe(true);
 
     await command.up(RUN_ON_WORKSPACE_ARGS);
 
-    expect(await readChatShare()).toEqual(UNPINNED_CHAT_SHARE);
+    expect(await readChatShareIsPinned()).toBe(false);
   });
 
   it.each([
@@ -94,10 +88,10 @@ describe('2-47 workspace command - unpin chat share (integration)', () => {
       await setChatShare(customizedChatShare);
 
       await command.down(RUN_ON_WORKSPACE_ARGS);
-      expect(await readChatShare()).toEqual(customizedChatShare);
+      expect(await readChatShareIsPinned()).toBe(customizedChatShare.isPinned);
 
       await command.up(RUN_ON_WORKSPACE_ARGS);
-      expect(await readChatShare()).toEqual(customizedChatShare);
+      expect(await readChatShareIsPinned()).toBe(customizedChatShare.isPinned);
     },
   );
 });

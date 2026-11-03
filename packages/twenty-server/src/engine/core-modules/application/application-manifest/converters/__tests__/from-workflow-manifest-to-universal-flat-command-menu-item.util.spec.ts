@@ -86,7 +86,7 @@ describe('fromWorkflowManifestToUniversalFlatCommandMenuItem', () => {
     expect(
       build(manifestWithTriggerSettings({ availability: { type: 'GLOBAL' } })),
     ).toMatchObject({
-      conditionalAvailabilityExpression: null,
+      universalConditionalAvailability: null,
     });
   });
 });

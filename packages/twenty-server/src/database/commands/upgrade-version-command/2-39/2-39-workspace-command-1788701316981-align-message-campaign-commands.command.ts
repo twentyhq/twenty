@@ -30,11 +30,17 @@ export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCom
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
 
     const now = new Date().toISOString();
 
@@ -51,6 +57,8 @@ export class AlignMessageCampaignCommandsCommand extends ProvisionedWorkspaceCom
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         workspaceId,
         now,
       });

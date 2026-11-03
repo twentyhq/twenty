@@ -14,7 +14,8 @@ const SEND_COMMAND_MENU_ITEM = {
   universalIdentifier:
     STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign.universalIdentifier,
   applicationId: APPLICATION_ID,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
 };
 
 const MESSAGE_CAMPAIGN_OBJECT = {
@@ -22,7 +23,9 @@ const MESSAGE_CAMPAIGN_OBJECT = {
   universalIdentifier: STANDARD_OBJECTS.messageCampaign.universalIdentifier,
 } as FlatObjectMetadata;
 
-const buildFlatObjectMetadataMaps = (flatObjectMetadata?: FlatObjectMetadata) => ({
+const buildFlatObjectMetadataMaps = (
+  flatObjectMetadata?: FlatObjectMetadata,
+) => ({
   ...createEmptyFlatEntityMaps(),
   byUniversalIdentifier: flatObjectMetadata
     ? { [flatObjectMetadata.universalIdentifier]: flatObjectMetadata }
@@ -39,6 +42,8 @@ describe('buildMissingStandardCommandMenuItemsToCreate', () => {
       flatObjectMetadataMaps: buildFlatObjectMetadataMaps(
         MESSAGE_CAMPAIGN_OBJECT,
       ),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatRoleMaps: createEmptyFlatEntityMaps(),
       workspaceId: WORKSPACE_ID,
       now: NOW,
     });
@@ -50,9 +55,8 @@ describe('buildMissingStandardCommandMenuItemsToCreate', () => {
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       availabilityObjectMetadataId: MESSAGE_CAMPAIGN_OBJECT.id,
-      conditionalPinnedExpression:
-        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
-          .conditionalPinnedExpression,
+      conditionalPinned:
+        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign.conditionalPinned,
       createdAt: NOW,
     });
   });
@@ -74,6 +78,8 @@ describe('buildMissingStandardCommandMenuItemsToCreate', () => {
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(
           MESSAGE_CAMPAIGN_OBJECT,
         ),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         workspaceId: WORKSPACE_ID,
         now: NOW,
       }),
@@ -88,6 +94,8 @@ describe('buildMissingStandardCommandMenuItemsToCreate', () => {
           [SEND_COMMAND_MENU_ITEM.universalIdentifier]: SEND_COMMAND_MENU_ITEM,
         },
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         workspaceId: WORKSPACE_ID,
         now: NOW,
       }),
@@ -102,6 +110,8 @@ describe('buildMissingStandardCommandMenuItemsToCreate', () => {
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(
           MESSAGE_CAMPAIGN_OBJECT,
         ),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatRoleMaps: createEmptyFlatEntityMaps(),
         workspaceId: WORKSPACE_ID,
         now: NOW,
       }),

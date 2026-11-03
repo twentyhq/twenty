@@ -1,7 +1,9 @@
-import { type CommandMenuItemManifest } from 'twenty-shared/application';
-
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+
+import { type LegacyCommandMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/types/legacy-command-menu-item-manifest.type';
+import { resolveLegacyConditionalDisplayOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-legacy-conditional-display-or-throw.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
@@ -9,10 +11,28 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  commandMenuItemManifest: CommandMenuItemManifest;
+  commandMenuItemManifest: LegacyCommandMenuItemManifest;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatCommandMenuItem => {
+  const entityLabel = `Command menu item "${commandMenuItemManifest.label}"`;
+  const conditionalAvailability = resolveLegacyConditionalDisplayOrThrow({
+    loggerContext: 'CommandMenuItemManifestConverter',
+    entityLabel,
+    legacyPropertyName: 'conditionalAvailabilityExpression',
+    legacyConditionalDisplay:
+      commandMenuItemManifest.conditionalAvailabilityExpression,
+    conditionalDisplay: commandMenuItemManifest.conditionalAvailability,
+  });
+  const conditionalPinned = resolveLegacyConditionalDisplayOrThrow({
+    loggerContext: 'CommandMenuItemManifestConverter',
+    entityLabel,
+    legacyPropertyName: 'conditionalPinnedExpression',
+    legacyConditionalDisplay:
+      commandMenuItemManifest.conditionalPinnedExpression,
+    conditionalDisplay: commandMenuItemManifest.conditionalPinned,
+  });
+
   return {
     universalIdentifier: commandMenuItemManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -24,10 +44,13 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     availabilityType:
       commandMenuItemManifest.availabilityType ??
       CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
-    conditionalPinnedExpression:
-      commandMenuItemManifest.conditionalPinnedExpression ?? null,
+    universalConditionalDisplay: normalizeConditionalDisplay(
+      commandMenuItemManifest.conditionalDisplay,
+    ),
+    universalConditionalAvailability: normalizeConditionalDisplay(
+      conditionalAvailability,
+    ),
+    universalConditionalPinned: normalizeConditionalDisplay(conditionalPinned),
     frontComponentUniversalIdentifier:
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:

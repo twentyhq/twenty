@@ -5,13 +5,18 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  ConditionalDisplay,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 @InputType()
@@ -65,6 +70,11 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => [String], { nullable: true })
   hotKeys?: string[];
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @IsUUID()
   @IsOptional()

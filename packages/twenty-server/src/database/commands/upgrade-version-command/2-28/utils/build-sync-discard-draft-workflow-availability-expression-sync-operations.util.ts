@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -11,8 +12,9 @@ const DISCARD_DRAFT_WORKFLOW_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.discardDraftWorkflow.universalIdentifier;
 
 const DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION =
-  STANDARD_COMMAND_MENU_ITEMS.discardDraftWorkflow
-    .conditionalAvailabilityExpression;
+  getStandardCommandMenuItemConditionalAvailabilityExpression(
+    DISCARD_DRAFT_WORKFLOW_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  );
 
 export const buildDiscardDraftWorkflowCommandMenuItemsToUpdate = ({
   existingFlatCommandMenuItemMaps,

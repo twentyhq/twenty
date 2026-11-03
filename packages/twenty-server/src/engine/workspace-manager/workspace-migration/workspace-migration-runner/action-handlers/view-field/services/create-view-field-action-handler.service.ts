@@ -16,6 +16,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -39,10 +40,20 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         universalForeignKeyValues: action.flatEntity,
       });
 
+    const conditionalDisplay =
+      fromUniversalConditionalDisplayToConditionalDisplay({
+        universalConditionalDisplay:
+          action.flatEntity.universalConditionalDisplay,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+      });
+
     const overrides = isDefined(action.flatEntity.universalOverrides)
       ? fromUniversalOverridesToViewFieldOverrides({
           universalOverrides: action.flatEntity.universalOverrides,
           flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+          flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
         })
       : null;
 
@@ -58,6 +69,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         fieldMetadataId,
         viewId,
         viewFieldGroupId,
+        conditionalDisplay,
         overrides,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,

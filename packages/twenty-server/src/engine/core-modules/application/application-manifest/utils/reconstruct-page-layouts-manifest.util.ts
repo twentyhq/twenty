@@ -20,6 +20,7 @@ import {
   type FlatChild,
 } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
 import { getVerticalListFlatPageLayoutWidgetsInOrder } from 'src/engine/core-modules/application/application-manifest/utils/get-vertical-list-flat-page-layout-widgets-in-order.util';
+import { getUnsupportedConditionalDisplayReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-conditional-display-reason.util';
 import { getUnsupportedPageLayoutReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-page-layout-reason.util';
 import { getUnsupportedPageLayoutWidgetReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-page-layout-widget-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -123,7 +124,11 @@ export const reconstructPageLayoutsManifest = ({
           flatPageLayoutTab.pageLayoutUniversalIdentifier
         ],
       )
-        ? undefined
+        ? getUnsupportedConditionalDisplayReason({
+            entityLabel: 'page layout tab',
+            universalConditionalDisplay:
+              flatPageLayoutTab.universalConditionalDisplay,
+          })
         : 'page layout tab on a page layout that does not exist',
       canStandAlone: true,
     });

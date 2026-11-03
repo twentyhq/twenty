@@ -1,4 +1,5 @@
 import { buildSendMessageCampaignAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-39/utils/build-send-message-campaign-availability-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
@@ -19,7 +20,7 @@ const buildExistingItem = (
 
 describe('buildSendMessageCampaignAvailabilityUpdates', () => {
   it('rewrites a send command still carrying the legacy expression', () => {
-    const { universalIdentifier, conditionalAvailabilityExpression } =
+    const { universalIdentifier } =
       STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign;
 
     const updates = buildSendMessageCampaignAvailabilityUpdates({
@@ -34,7 +35,9 @@ describe('buildSendMessageCampaignAvailabilityUpdates', () => {
 
     expect(updates).toHaveLength(1);
     expect(updates[0].conditionalAvailabilityExpression).toBe(
-      conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        universalIdentifier,
+      ),
     );
     expect(updates[0].updatedAt).toBe(NOW);
   });
@@ -87,13 +90,17 @@ describe('buildSendMessageCampaignAvailabilityUpdates', () => {
       {
         ...buildExistingItem(send.universalIdentifier, LEGACY_EXPRESSION),
         conditionalAvailabilityExpression:
-          send.conditionalAvailabilityExpression,
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            send.universalIdentifier,
+          ),
         updatedAt: NOW,
       },
       {
         ...buildExistingItem(sendTest.universalIdentifier, LEGACY_EXPRESSION),
         conditionalAvailabilityExpression:
-          sendTest.conditionalAvailabilityExpression,
+          getStandardCommandMenuItemConditionalAvailabilityExpression(
+            sendTest.universalIdentifier,
+          ),
         updatedAt: NOW,
       },
     ]);

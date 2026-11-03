@@ -73,6 +73,10 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
           sourceFlatObjectMetadata.applicationUniversalIdentifier,
         position: syncedMaxPosition + 1 + indexInBatch,
         now: new Date().toISOString(),
+        dependencyFlatEntityMaps: {
+          flatFieldMetadataMaps: relatedFlatEntityMaps.flatFieldMetadataMaps,
+          flatRoleMaps: relatedFlatEntityMaps.flatRoleMaps,
+        },
       });
 
     return {

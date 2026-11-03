@@ -341,6 +341,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     const {
       flatApplicationMaps,
+      workspaceCustomApplicationId,
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
     } =
@@ -384,6 +385,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dryRun,
       shouldDeferActions,
       flatApplicationMaps,
+      workspaceCustomApplicationId,
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
     });
@@ -399,6 +401,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     dryRun,
     shouldDeferActions,
     flatApplicationMaps,
+    workspaceCustomApplicationId,
     allRelatedFlatEntityMaps,
     allMetadataNameCacheToCompute,
   }: ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs): Promise<
@@ -419,6 +422,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           allFlatEntityOperationRecordByMetadataName,
           applicationUniversalIdentifier,
           flatApplicationMaps,
+          workspaceCustomApplicationId,
           allRelatedFlatEntityMaps,
           allMetadataNameCacheToCompute,
         },

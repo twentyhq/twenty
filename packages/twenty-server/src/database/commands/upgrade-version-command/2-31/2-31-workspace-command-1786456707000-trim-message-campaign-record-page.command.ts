@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { STANDARD_PAGE_LAYOUT_WIDGET_CONDITIONAL_AVAILABILITY_EXPRESSIONS } from 'src/database/commands/upgrade-version-command/utils/standard-page-layout-widget-conditional-availability-expressions.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -95,28 +96,34 @@ export class TrimMessageCampaignRecordPageCommand extends ProvisionedWorkspaceCo
     ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
     const pageLayoutWidgetsToUpdate =
-      SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) => {
-        const existingWidget =
-          flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
-        const standardWidget =
-          standardAllFlatEntityMaps.flatPageLayoutWidgetMaps
-            .byUniversalIdentifier[universalIdentifier];
+      SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map(
+        (universalIdentifier): FlatPageLayoutWidget | null => {
+          const existingWidget =
+            flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
+          const standardWidget =
+            standardAllFlatEntityMaps.flatPageLayoutWidgetMaps
+              .byUniversalIdentifier[universalIdentifier];
+          const standardConditionalAvailabilityExpression =
+            STANDARD_PAGE_LAYOUT_WIDGET_CONDITIONAL_AVAILABILITY_EXPRESSIONS[
+              universalIdentifier
+            ];
 
-        if (
-          !isDefined(existingWidget) ||
-          !isDefined(standardWidget) ||
-          existingWidget.conditionalAvailabilityExpression ===
-            standardWidget.conditionalAvailabilityExpression
-        ) {
-          return null;
-        }
+          if (
+            !isDefined(existingWidget) ||
+            !isDefined(standardWidget) ||
+            existingWidget.conditionalAvailabilityExpression ===
+              standardConditionalAvailabilityExpression
+          ) {
+            return null;
+          }
 
-        return {
-          ...existingWidget,
-          conditionalAvailabilityExpression:
-            standardWidget.conditionalAvailabilityExpression,
-        };
-      }).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
+          return {
+            ...existingWidget,
+            conditionalAvailabilityExpression:
+              standardConditionalAvailabilityExpression,
+          };
+        },
+      ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
     const totalOperationCount =
       pageLayoutWidgetsToDelete.length + pageLayoutWidgetsToUpdate.length;

@@ -49,6 +49,7 @@ export class SyncCampaignComposerStandardMetadataCommand extends ProvisionedWork
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
         'flatCommandMenuItemMaps',
+        'flatRoleMaps',
       ],
     );
 

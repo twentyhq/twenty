@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -17,6 +19,8 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
   ({
     flatNavigationMenuItemMaps,
     flatPageLayoutMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
     updateNavigationMenuItemInput,
   }: {
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
@@ -25,7 +29,7 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
     };
   } & Pick<
     AllFlatEntityMaps,
-    'flatPageLayoutMaps'
+    'flatPageLayoutMaps' | 'flatFieldMetadataMaps' | 'flatRoleMaps'
   >): FlatNavigationMenuItem => {
     const existingFlatNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateNavigationMenuItemInput.id,
@@ -40,6 +44,12 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
     }
 
     const { id: _id, ...updates } = updateNavigationMenuItemInput;
+
+    if (updates.conditionalDisplay !== undefined) {
+      updates.conditionalDisplay = normalizeConditionalDisplay(
+        updates.conditionalDisplay,
+      );
+    }
 
     const flatNavigationMenuItemToUpdate = {
       ...mergeUpdateInExistingRecord({
@@ -76,6 +86,16 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
 
       flatNavigationMenuItemToUpdate.pageLayoutUniversalIdentifier =
         pageLayoutUniversalIdentifier;
+    }
+
+    if (updates.conditionalDisplay !== undefined) {
+      flatNavigationMenuItemToUpdate.universalConditionalDisplay =
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay: flatNavigationMenuItemToUpdate.conditionalDisplay,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+        });
     }
 
     return flatNavigationMenuItemToUpdate;

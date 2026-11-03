@@ -9,8 +9,14 @@ import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/comman
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { validateUniversalFlatEntityConditionalDisplays } from 'src/engine/metadata-modules/flat-conditional-display/utils/validate-universal-flat-entity-conditional-displays.util';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -22,6 +28,8 @@ export class FlatCommandMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps,
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -84,6 +92,14 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatCommandMenuItem,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
+      }),
+    );
+
     return validationResult;
   }
 
@@ -125,6 +141,8 @@ export class FlatCommandMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -194,7 +212,39 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatCommandMenuItem: {
+          ...fromFlatCommandMenuItem,
+          ...flatEntityUpdate,
+        },
+        flatFieldMetadataMaps,
+        flatRoleMaps,
+      }),
+    );
+
     return validationResult;
+  }
+
+  private validateConditionalDisplay({
+    flatCommandMenuItem,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
+  }: {
+    flatCommandMenuItem: MetadataUniversalFlatEntity<'commandMenuItem'>;
+    flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+    flatRoleMaps: MetadataUniversalFlatEntityMaps<'role'>;
+  }): FlatEntityValidationError[] {
+    return validateUniversalFlatEntityConditionalDisplays({
+      flatEntity: flatCommandMenuItem,
+      surface: 'commandMenuItem',
+      objectMetadataUniversalIdentifier:
+        flatCommandMenuItem.availabilityObjectMetadataUniversalIdentifier,
+      invalidDataCode:
+        CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    });
   }
 
   private validateNavigationTarget({

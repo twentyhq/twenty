@@ -59,11 +59,13 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
       flatFieldMetadataMaps,
       flatIndexMaps,
       flatCommandMenuItemMaps,
+      flatRoleMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'flatCommandMenuItemMaps',
+      'flatRoleMaps',
     ]);
 
     // Workspaces without chat history objects get the assignee when the 2.42
@@ -111,6 +113,8 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         workspaceId,
         now: new Date().toISOString(),
       });

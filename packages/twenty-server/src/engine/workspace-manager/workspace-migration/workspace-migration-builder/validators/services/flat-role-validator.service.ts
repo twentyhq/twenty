@@ -15,6 +15,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
+import { isRoleReferencedByConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-role-referenced-by-conditional-display.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
@@ -80,6 +81,11 @@ export class FlatRoleValidatorService {
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
+      flatPageLayoutWidgetMaps,
+      flatPageLayoutTabMaps,
+      flatViewFieldMaps,
+      flatCommandMenuItemMaps,
+      flatNavigationMenuItemMaps,
     },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
@@ -124,6 +130,24 @@ export class FlatRoleValidatorService {
         code: PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED,
         message: PermissionsExceptionMessage.MEMBER_ROLE_CANNOT_BE_DELETED,
         userFriendlyMessage: msg`The Member role cannot be deleted.`,
+      });
+    }
+
+    if (
+      isRoleReferencedByConditionalDisplay({
+        roleUniversalIdentifier: existingRole.universalIdentifier,
+        flatPageLayoutWidgetMaps,
+        flatPageLayoutTabMaps,
+        flatViewFieldMaps,
+        flatCommandMenuItemMaps,
+        flatNavigationMenuItemMaps,
+      })
+    ) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.ROLE_REFERENCED_BY_CONDITIONAL_DISPLAY_CANNOT_BE_DELETED,
+        message:
+          PermissionsExceptionMessage.ROLE_REFERENCED_BY_CONDITIONAL_DISPLAY_CANNOT_BE_DELETED,
+        userFriendlyMessage: msg`This role is used by a visibility rule and cannot be deleted.`,
       });
     }
 

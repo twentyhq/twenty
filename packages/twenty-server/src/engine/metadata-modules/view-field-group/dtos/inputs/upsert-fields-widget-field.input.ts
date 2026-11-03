@@ -1,6 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { ConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AtLeastOneOf } from 'src/engine/metadata-modules/view-field-group/dtos/validators/at-least-one-of.validator';
@@ -33,4 +41,9 @@ export class UpsertFieldsWidgetFieldInput {
   @IsNumber()
   @Field()
   position: number;
+
+  @IsOptional()
+  @IsObject()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 }

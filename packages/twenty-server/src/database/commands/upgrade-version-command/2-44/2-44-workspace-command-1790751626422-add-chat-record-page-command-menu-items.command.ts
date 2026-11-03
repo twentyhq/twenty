@@ -46,11 +46,17 @@ export class AddChatRecordPageCommandMenuItemsCommand extends ProvisionedWorkspa
     { workspaceId, options }: RunOnWorkspaceArgs,
     direction: 'up' | 'down',
   ): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatCommandMenuItemMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRoleMaps',
+    ]);
     const now = new Date().toISOString();
 
     const commandMenuItemsToCreate =
@@ -60,6 +66,8 @@ export class AddChatRecordPageCommandMenuItemsCommand extends ProvisionedWorkspa
             flatCommandMenuItemByUniversalIdentifier:
               flatCommandMenuItemMaps.byUniversalIdentifier,
             flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatRoleMaps,
             workspaceId,
             now,
           })

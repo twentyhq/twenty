@@ -1,5 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`NavigationMenuItem creation should fail when creating a folder with a device conditional display 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Conditional display context key "device" is not allowed on navigationMenuItem",
+              "userFriendlyMessage": "Conditional display rule uses a subject that is not available here",
+              "value": "device",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Device Folder",
+            "type": "FOLDER",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Conditional display rule uses a subject that is not available here",
+  },
+  "message": "Multiple validation errors occurred while creating navigation menu items",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`NavigationMenuItem creation should fail when creating with empty targetObjectMetadataId 1`] = `
 {
   "extensions": {

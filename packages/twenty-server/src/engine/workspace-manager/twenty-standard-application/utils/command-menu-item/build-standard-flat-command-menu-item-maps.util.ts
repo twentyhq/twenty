@@ -7,7 +7,9 @@ import { buildObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-mo
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -20,13 +22,19 @@ export const buildStandardFlatCommandMenuItemMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatObjectMetadataMaps },
+  dependencyFlatEntityMaps: {
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
+  },
 }: {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   dependencyFlatEntityMaps: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+    flatRoleMaps: FlatRoleMaps;
   };
 }): FlatCommandMenuItemMaps => {
   const flatCommandMenuItemMaps: FlatCommandMenuItemMaps =
@@ -40,6 +48,8 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       twentyStandardApplicationId,
       dependencyFlatEntityMaps: {
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       },
       now,
     });
@@ -84,6 +94,7 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       workspaceId,
       position,
       now,
+      dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatRoleMaps },
     });
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
@@ -44,7 +45,9 @@ export const buildSendMessageCampaignAvailabilityUpdates = ({
     updates.push({
       ...existingCommandMenuItem,
       conditionalAvailabilityExpression:
-        standardCommandMenuItem.conditionalAvailabilityExpression,
+        getStandardCommandMenuItemConditionalAvailabilityExpression(
+          standardCommandMenuItem.universalIdentifier,
+        ),
       updatedAt: now,
     });
   }

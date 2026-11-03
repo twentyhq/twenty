@@ -59,6 +59,7 @@ const updateWidget = ({
     flatViewFieldGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     flatViewMaps: EMPTY_FLAT_ENTITY_MAPS,
     flatPageLayoutTabMaps: EMPTY_FLAT_ENTITY_MAPS,
+    flatRoleMaps: EMPTY_FLAT_ENTITY_MAPS,
     callerApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:

@@ -140,25 +140,32 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
   });
 
+  const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps: {
+      flatPageLayoutWidgetMaps: createEmptyFlatEntityMaps(),
+      flatPageLayoutTabMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldMaps: createEmptyFlatEntityMaps(),
+      flatCommandMenuItemMaps: createEmptyFlatEntityMaps(),
+      flatNavigationMenuItemMaps: createEmptyFlatEntityMaps(),
+    },
+  });
+
   const flatViewFieldMaps = buildStandardFlatViewFieldMetadataMaps({
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFieldGroupMaps,
+      flatRoleMaps,
     },
     now,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
-  });
-
-  const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps: undefined,
   });
 
   const flatPermissionFlagMaps = buildStandardFlatPermissionFlagMetadataMaps({
@@ -216,6 +223,10 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       standardObjectMetadataRelatedEntityIds,
       standardPageLayoutMetadataRelatedEntityIds,
       excludedWidgetTypes,
+      dependencyFlatEntityMaps: {
+        flatFieldMetadataMaps,
+        flatRoleMaps,
+      },
     });
 
   const standardRecordFormFlatEntities = computeStandardRecordFormFlatEntities({
@@ -262,6 +273,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     },
   });
 

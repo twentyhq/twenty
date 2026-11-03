@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
-  PageLayoutWidgetConditionalDisplay,
+  ConditionalDisplay,
   PageLayoutWidgetPosition,
   WidgetType,
 } from 'twenty-shared/types';
@@ -58,10 +58,5 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  conditionalAvailabilityExpression?: string | null;
+  conditionalDisplay?: ConditionalDisplay | null;
 }

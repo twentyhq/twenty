@@ -32,11 +32,12 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
       : (effectiveFlatCommandMenuItem.payload ?? undefined),
     hotKeys: effectiveFlatCommandMenuItem.hotKeys ?? undefined,
     availabilityType: effectiveFlatCommandMenuItem.availabilityType,
-    conditionalAvailabilityExpression:
-      effectiveFlatCommandMenuItem.conditionalAvailabilityExpression ??
-      undefined,
-    conditionalPinnedExpression:
-      effectiveFlatCommandMenuItem.conditionalPinnedExpression ?? undefined,
+    conditionalDisplay:
+      effectiveFlatCommandMenuItem.conditionalDisplay ?? undefined,
+    conditionalAvailability:
+      effectiveFlatCommandMenuItem.conditionalAvailability ?? undefined,
+    conditionalPinned:
+      effectiveFlatCommandMenuItem.conditionalPinned ?? undefined,
     availabilityObjectMetadataId:
       effectiveFlatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
     navigationTargetObjectMetadataId:

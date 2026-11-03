@@ -12,6 +12,8 @@ const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
     twentyStandardApplicationId: 'application-id',
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatRoleMaps: createEmptyFlatEntityMaps(),
     },
     now: '2026-08-01T00:00:00.000Z',
   }),

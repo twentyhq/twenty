@@ -3,6 +3,7 @@ import { type CreateOneObjectFactoryInput } from 'test/integration/metadata/suit
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
@@ -24,7 +25,7 @@ const COMMAND_MENU_ITEM_GQL_FIELDS = `
   label
   icon
   isActive
-  conditionalAvailabilityExpression
+  conditionalAvailability
   navigationTargetObjectMetadataId
   payload {
     ... on PathCommandMenuItemPayload {
@@ -207,7 +208,7 @@ describe('Command menu item side effect on object metadata', () => {
     ).toEqual(expect.objectContaining({ isActive: false }));
   });
 
-  it('should recompute the availability expression when the object is renamed, keeping the same command', async () => {
+  it('should recompute the availability when the object is renamed, keeping the same command', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -233,7 +234,16 @@ describe('Command menu item side effect on object metadata', () => {
 
     expect(navigationItemBeforeRename).toEqual(
       expect.objectContaining({
-        conditionalAvailabilityExpression: `targetObjectReadPermissions.${createObjectInput.nameSingular}`,
+        conditionalAvailability: {
+          recordFilters: [
+            expect.objectContaining({
+              contextKey: 'targetObjectReadPermissions',
+              subFieldName: createObjectInput.nameSingular,
+              operand: ViewFilterOperand.IS,
+              value: 'true',
+            }),
+          ],
+        },
       }),
     );
 
@@ -266,7 +276,16 @@ describe('Command menu item side effect on object metadata', () => {
     expect(navigationItemAfterRename).toEqual(
       expect.objectContaining({
         id: navigationItemBeforeRename?.id,
-        conditionalAvailabilityExpression: `targetObjectReadPermissions.${renamedNameSingular}`,
+        conditionalAvailability: {
+          recordFilters: [
+            expect.objectContaining({
+              contextKey: 'targetObjectReadPermissions',
+              subFieldName: renamedNameSingular,
+              operand: ViewFilterOperand.IS,
+              value: 'true',
+            }),
+          ],
+        },
       }),
     );
   });

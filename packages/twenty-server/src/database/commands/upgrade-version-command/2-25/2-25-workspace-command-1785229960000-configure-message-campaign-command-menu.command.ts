@@ -104,7 +104,7 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
       .filter((item): item is FlatCommandMenuItem => isDefined(item));
 
     const itemsToUpdate = REALIGNED_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.map(
-      (universalIdentifier) => {
+      (universalIdentifier): FlatCommandMenuItem | null => {
         const existingItem =
           existingFlatCommandMenuItemMaps.byUniversalIdentifier[
             universalIdentifier

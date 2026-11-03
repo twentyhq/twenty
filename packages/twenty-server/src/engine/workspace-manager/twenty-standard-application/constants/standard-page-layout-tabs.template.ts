@@ -1,27 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import {
+  type ConditionalDisplay,
   PageLayoutTabLayoutMode,
-  type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
+  ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
 
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-
-export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
-  and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-} as const satisfies PageLayoutWidgetConditionalDisplay;
-
-export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
-  and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-} as const satisfies PageLayoutWidgetConditionalDisplay;
-
-export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
-  'device == "MOBILE"';
-
-export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
-  'device == "DESKTOP"';
 
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {
@@ -216,7 +203,17 @@ export const WIDGET_PROPS = {
     ),
     type: WidgetType.CHAT_THREADS,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-    conditionalAvailabilityExpression: 'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
+    conditionalAvailability: {
+      recordFilters: [
+        {
+          id: 'dcfd0802-eb40-5ed0-b8e9-dc486a6d79f1',
+          contextKey: 'featureFlags',
+          operand: ViewFilterOperand.IS,
+          subFieldName: 'IS_AI_CHAT_INBOX_ENABLED',
+          value: 'true',
+        },
+      ],
+    } satisfies ConditionalDisplay,
   },
   calendar: {
     title: i18nLabel(

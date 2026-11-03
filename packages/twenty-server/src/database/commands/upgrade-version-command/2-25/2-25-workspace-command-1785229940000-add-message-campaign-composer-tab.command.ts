@@ -227,7 +227,7 @@ export class AddMessageCampaignComposerTabCommand extends ProvisionedWorkspaceCo
       HOME_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
       HOME_RECIPIENTS_WIDGET_UNIVERSAL_IDENTIFIER,
     ]
-      .map((universalIdentifier) => {
+      .map((universalIdentifier): FlatPageLayoutWidget | null => {
         const existingWidget =
           flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
         const standardWidget =

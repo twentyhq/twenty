@@ -161,7 +161,9 @@ export const computeStandardRecordFormFlatEntities = ({
         updatedAt: now,
         deletedAt: null,
         conditionalDisplay: null,
-        conditionalAvailabilityExpression: null,
+        universalConditionalDisplay: null,
+        conditionalAvailability: null,
+        universalConditionalAvailability: null,
         overrides: null,
         universalOverrides: null,
       }));
@@ -191,7 +193,10 @@ export const computeStandardRecordFormFlatEntities = ({
       deletedAt: null,
       icon: RECORD_FORM_TAB_PROPS.icon,
       layoutMode: RECORD_FORM_TAB_PROPS.layoutMode,
+      conditionalDisplay: null,
+      universalConditionalDisplay: null,
       overrides: null,
+      universalOverrides: null,
     });
 
     flatPageLayouts.push({

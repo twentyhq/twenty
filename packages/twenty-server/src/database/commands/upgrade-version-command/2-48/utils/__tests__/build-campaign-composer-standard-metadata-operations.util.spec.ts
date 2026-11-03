@@ -13,7 +13,10 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 
 type CampaignComposerWorkspace = Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatCommandMenuItemMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatCommandMenuItemMaps'
+  | 'flatRoleMaps'
 >;
 
 type CommandMenuItemPresentation = Pick<
@@ -69,6 +72,7 @@ const CURRENT_WORKSPACE: CampaignComposerWorkspace = {
   flatObjectMetadataMaps: standardFlatEntityMaps.flatObjectMetadataMaps,
   flatFieldMetadataMaps: standardFlatEntityMaps.flatFieldMetadataMaps,
   flatCommandMenuItemMaps: standardFlatEntityMaps.flatCommandMenuItemMaps,
+  flatRoleMaps: standardFlatEntityMaps.flatRoleMaps,
 };
 
 const getFlatEntity = <TFlatEntity extends SyncableFlatEntity>(
@@ -138,6 +142,7 @@ const buildPreviousWorkspace = ({
         [EMAIL_PAGE_STYLE_UNIVERSAL_IDENTIFIER]: undefined,
       },
     },
+    flatRoleMaps: CURRENT_WORKSPACE.flatRoleMaps,
   };
 };
 
@@ -292,6 +297,7 @@ describe('buildCampaignComposerStandardMetadataOperations', () => {
           flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
           flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
           flatCommandMenuItemMaps: createEmptyFlatEntityMaps(),
+          flatRoleMaps: createEmptyFlatEntityMaps(),
         },
         'up',
       ),

@@ -10,6 +10,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { STANDARD_PAGE_LAYOUT_WIDGET_CONDITIONAL_AVAILABILITY_EXPRESSIONS } from 'src/database/commands/upgrade-version-command/utils/standard-page-layout-widget-conditional-availability-expressions.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -520,11 +521,16 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
       return [];
     }
 
+    const standardConditionalAvailabilityExpression =
+      STANDARD_PAGE_LAYOUT_WIDGET_CONDITIONAL_AVAILABILITY_EXPRESSIONS[
+        standardWidget.universalIdentifier
+      ] ?? null;
+
     const isAlignedWithStandard =
       configuration.fieldDisplayMode === FieldDisplayMode.TABLE &&
       configuration.viewId === membersView.id &&
       existingWidget.conditionalAvailabilityExpression ===
-        standardWidget.conditionalAvailabilityExpression &&
+        standardConditionalAvailabilityExpression &&
       JSON.stringify(existingWidget.conditionalDisplay) ===
         JSON.stringify(standardWidget.conditionalDisplay);
 
@@ -547,7 +553,7 @@ export class SyncMessageListRecordPageCommand extends ProvisionedWorkspaceComman
         },
         conditionalDisplay: standardWidget.conditionalDisplay,
         conditionalAvailabilityExpression:
-          standardWidget.conditionalAvailabilityExpression,
+          standardConditionalAvailabilityExpression,
       },
     ];
   }

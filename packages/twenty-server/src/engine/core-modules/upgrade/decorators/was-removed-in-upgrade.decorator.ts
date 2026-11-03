@@ -21,7 +21,11 @@ export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
 type WasRemovedInUpgradeKeys<TEntity> = {
   [K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
     ? K
-    : never;
+    : [NonNullable<TEntity[K]>] extends [never]
+      ? never
+      : typeof wasRemovedInUpgradeBrand extends keyof NonNullable<TEntity[K]>
+        ? K
+        : never;
 }[keyof TEntity];
 
 export type MakeWasRemovedInUpgradePropertiesOptional<TEntity> = Omit<

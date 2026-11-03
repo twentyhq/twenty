@@ -9,6 +9,7 @@ import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -222,6 +223,8 @@ const buildFlatPageLayoutTab = ({
   applicationId: APP_ID,
   pageLayoutId: `${pageLayoutUniversalIdentifier}-id`,
   widgetIds: [],
+  conditionalDisplay: null,
+  overrides: null,
   ...flatPageLayoutTabProperties,
 });
 
@@ -248,6 +251,7 @@ const buildFlatPageLayoutWidget = ({
     }).widgets[0],
     pageLayoutTabUniversalIdentifier,
     applicationUniversalIdentifier: APP_UID,
+    findObjectFieldByName: () => undefined,
     now: NOW,
   }),
   id: `${pageLayoutWidgetManifest.universalIdentifier}-id`,
@@ -256,6 +260,8 @@ const buildFlatPageLayoutWidget = ({
   pageLayoutTabId: `${pageLayoutTabUniversalIdentifier}-id`,
   objectMetadataId: null,
   configuration: { configurationType: WidgetConfigurationType.NOTES },
+  conditionalDisplay: null,
+  conditionalAvailability: null,
   overrides: null,
   ...flatPageLayoutWidgetProperties,
 });
@@ -888,10 +894,21 @@ describe('reconstructPageLayoutsManifest', () => {
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
           }),
           buildFlatPageLayoutWidget({
-            pageLayoutWidgetManifest:
-              buildNotesWidgetManifest('conditional-widget'),
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'conditional-availability-widget',
+            ),
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
-            conditionalAvailabilityExpression: 'device === "mobile"',
+            universalConditionalAvailability: {
+              recordFilters: [
+                {
+                  id: 'feature-flag-filter',
+                  contextKey: 'featureFlags',
+                  subFieldName: 'IS_AI_ENABLED',
+                  operand: ViewFilterOperand.IS,
+                  value: 'true',
+                },
+              ],
+            },
           }),
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
@@ -1000,8 +1017,8 @@ describe('reconstructPageLayoutsManifest', () => {
     expect(reasonOf(coverage, 'grid-widget')).toBe(
       'page layout widget positioned for another layout mode than its tab',
     );
-    expect(reasonOf(coverage, 'conditional-widget')).toBe(
-      'page layout widget with a conditional availability expression',
+    expect(reasonOf(coverage, 'conditional-availability-widget')).toBe(
+      'page layout widget with a conditional availability',
     );
     expect(reasonOf(coverage, 'missing-object-widget')).toBe(
       'page layout widget on an object that does not exist',

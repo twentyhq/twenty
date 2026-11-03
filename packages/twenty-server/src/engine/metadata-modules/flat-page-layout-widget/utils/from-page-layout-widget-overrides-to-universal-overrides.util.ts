@@ -1,6 +1,8 @@
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { mapOverridesEntryConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/map-overrides-entry-conditional-display.util';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -15,13 +17,28 @@ type UniversalPageLayoutWidgetOverrides =
 const fromPageLayoutWidgetOverridesToUniversalOverridesEntry = ({
   overrides,
   pageLayoutTabUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier = true,
 }: {
   overrides: PageLayoutWidgetOverrides;
   pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalPageLayoutWidgetOverrides => {
-  const { pageLayoutTabId, ...scalarOverrides } = overrides;
+  const { pageLayoutTabId, ...otherOverrides } = overrides;
+
+  const scalarOverrides: UniversalPageLayoutWidgetOverrides =
+    mapOverridesEntryConditionalDisplay({
+      overridesEntry: otherOverrides,
+      mapConditionalDisplay: (conditionalDisplay) =>
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
+        }),
+    });
 
   if (!isDefined(pageLayoutTabId)) {
     return {
@@ -58,10 +75,14 @@ const fromPageLayoutWidgetOverridesToUniversalOverridesEntry = ({
 export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
   overrides,
   pageLayoutTabUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier,
 }: {
   overrides: AuthoredOverrides<PageLayoutWidgetOverrides>;
   pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalPageLayoutWidgetOverrides> =>
   mapAuthoredOverrideEntries({
@@ -71,6 +92,8 @@ export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
       fromPageLayoutWidgetOverridesToUniversalOverridesEntry({
         overrides: entry,
         pageLayoutTabUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
         shouldThrowOnMissingIdentifier,
       }),
   });

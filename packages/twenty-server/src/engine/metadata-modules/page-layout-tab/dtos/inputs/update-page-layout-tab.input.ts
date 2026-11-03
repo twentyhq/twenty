@@ -1,7 +1,17 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  IsEnum,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import {
+  ConditionalDisplay,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 
 @InputType()
 export class UpdatePageLayoutTabInput {
@@ -24,4 +34,9 @@ export class UpdatePageLayoutTabInput {
   @IsEnum(PageLayoutTabLayoutMode)
   @IsOptional()
   layoutMode?: PageLayoutTabLayoutMode;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  conditionalDisplay?: ConditionalDisplay | null;
 }

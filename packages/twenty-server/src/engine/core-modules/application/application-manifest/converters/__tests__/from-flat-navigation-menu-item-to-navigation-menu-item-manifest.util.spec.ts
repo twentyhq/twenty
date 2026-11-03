@@ -1,5 +1,5 @@
 import { type NavigationMenuItemManifest } from 'twenty-shared/application';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
@@ -11,6 +11,7 @@ const FOLDER_UID = '33333333-3333-4333-8333-333333333333';
 const OBJECT_UID = '44444444-4444-4444-8444-444444444444';
 const VIEW_UID = '55555555-5555-4555-8555-555555555555';
 const PAGE_LAYOUT_UID = '66666666-6666-4666-8666-666666666666';
+const ROLE_UID = '77777777-7777-4777-8777-777777777777';
 const NOW = '2026-09-09T10:00:00.000Z';
 
 const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
@@ -25,6 +26,16 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,
+  conditionalDisplay: {
+    recordFilters: [
+      {
+        id: '0',
+        contextKey: 'currentRoleId',
+        operand: ViewFilterOperand.IS,
+        value: JSON.stringify([ROLE_UID]),
+      },
+    ],
+  },
 };
 
 const MINIMAL_NAVIGATION_MENU_ITEM_MANIFEST: NavigationMenuItemManifest = {

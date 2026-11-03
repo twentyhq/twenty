@@ -96,6 +96,12 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   conditionalPinnedExpression: null,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
+  conditionalAvailability: null,
+  universalConditionalAvailability: null,
+  conditionalPinned: null,
+  universalConditionalPinned: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,
@@ -127,6 +133,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   agentChatChannelId: null,
   agentChatChannelUniversalIdentifier: null,
   position: 0,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
 };
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =

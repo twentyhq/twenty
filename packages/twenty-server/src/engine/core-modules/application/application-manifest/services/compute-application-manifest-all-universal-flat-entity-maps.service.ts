@@ -46,6 +46,7 @@ import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
+import { type FindObjectFieldByName } from 'src/engine/core-modules/application/application-manifest/types/find-object-field-by-name.type';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -54,6 +55,9 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findFlatFieldMetadataByObjectUniversalIdentifierAndName } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadata-by-object-universal-identifier-and-name.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -69,14 +73,31 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    workspaceFlatFieldMetadataMaps,
     now,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    workspaceFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     now: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
+
+    const findObjectFieldByName: FindObjectFieldByName = ({
+      objectUniversalIdentifier,
+      fieldName,
+    }) =>
+      findFlatFieldMetadataByObjectUniversalIdentifierAndName({
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+        fieldName,
+        flatFieldMetadataMaps: allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+      }) ??
+      findFlatFieldMetadataByObjectUniversalIdentifierAndName({
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+        fieldName,
+        flatFieldMetadataMaps: workspaceFlatFieldMetadataMaps,
+      });
 
     const {
       universalIdentifier: applicationUniversalIdentifier,
@@ -595,6 +616,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutUniversalIdentifier: pageLayoutManifest.universalIdentifier,
           pageLayoutType: pageLayoutManifest.type,
           applicationUniversalIdentifier,
+          findObjectFieldByName,
           now,
           allUniversalFlatEntityMaps,
         });
@@ -620,6 +642,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutTabManifest.pageLayoutUniversalIdentifier,
         pageLayoutType: referencedPageLayoutManifest?.type,
         applicationUniversalIdentifier,
+        findObjectFieldByName,
         now,
         allUniversalFlatEntityMaps,
       });
@@ -641,6 +664,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             pageLayoutTabUniversalIdentifier:
               pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier,
             applicationUniversalIdentifier,
+            findObjectFieldByName,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -748,6 +772,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     pageLayoutUniversalIdentifier,
     pageLayoutType,
     applicationUniversalIdentifier,
+    findObjectFieldByName,
     now,
     allUniversalFlatEntityMaps,
   }: {
@@ -755,6 +780,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     pageLayoutUniversalIdentifier: string;
     pageLayoutType: PageLayoutManifest['type'] | undefined;
     applicationUniversalIdentifier: string;
+    findObjectFieldByName: FindObjectFieldByName;
     now: string;
     allUniversalFlatEntityMaps: AllFlatEntityMaps;
   }): void {
@@ -791,6 +817,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             pageLayoutWidgetManifest,
             pageLayoutTabUniversalIdentifier: pageLayoutTab.universalIdentifier,
             applicationUniversalIdentifier,
+            findObjectFieldByName,
             now,
           }),
         universalFlatEntityMapsToMutate:

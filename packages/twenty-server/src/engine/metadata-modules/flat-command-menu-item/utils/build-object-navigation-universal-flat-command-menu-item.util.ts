@@ -1,11 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { buildNavigationConditionalAvailability } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-conditional-availability.util';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
@@ -22,29 +25,12 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
 export const NAVIGATION_INTERPOLATED_ICON =
   getMetadataLabelPlaceholder('objectIcon');
 
-const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
-  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-]);
-
-export const buildNavigationConditionalAvailabilityExpression = ({
-  universalIdentifier,
-  nameSingular,
-}: {
-  universalIdentifier: string;
-  nameSingular: string;
-}): string => {
-  if (HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS.has(universalIdentifier)) {
-    return 'false';
-  }
-
-  return `targetObjectReadPermissions.${nameSingular}`;
-};
-
 export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   objectMetadata,
   applicationUniversalIdentifier,
   position,
   now,
+  dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatRoleMaps },
 }: {
   objectMetadata: {
     id: string;
@@ -56,18 +42,16 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   applicationUniversalIdentifier: string;
   position: number;
   now: string;
+  dependencyFlatEntityMaps: {
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+    flatRoleMaps: FlatRoleMaps;
+  };
 }): UniversalFlatCommandMenuItem => {
   const universalIdentifier =
     getSystemNavigationCommandMenuItemUniversalIdentifier({
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
-    });
-
-  const conditionalAvailabilityExpression =
-    buildNavigationConditionalAvailabilityExpression({
-      universalIdentifier: objectMetadata.universalIdentifier,
-      nameSingular: objectMetadata.nameSingular,
     });
 
   return {
@@ -79,8 +63,18 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     position,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression,
-    conditionalPinnedExpression: null,
+    universalConditionalDisplay: null,
+    universalConditionalAvailability:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: buildNavigationConditionalAvailability({
+          universalIdentifier: objectMetadata.universalIdentifier,
+          nameSingular: objectMetadata.nameSingular,
+        }),
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
+    universalConditionalPinned: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: null,

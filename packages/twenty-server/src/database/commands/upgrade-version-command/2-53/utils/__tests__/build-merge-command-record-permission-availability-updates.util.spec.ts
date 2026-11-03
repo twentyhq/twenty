@@ -3,6 +3,7 @@ import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { UNGATED_MERGE_AVAILABILITY_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-53/utils/build-ungate-merge-command-menu-item-update.util';
 import { buildMergeCommandRecordPermissionAvailabilityUpdates } from 'src/database/commands/upgrade-version-command/2-53/utils/build-merge-command-record-permission-availability-updates.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -14,8 +15,9 @@ const MERGE_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.mergeMultipleRecords.universalIdentifier;
 const PREVIOUS_EXPRESSION = UNGATED_MERGE_AVAILABILITY_EXPRESSION;
 const CURRENT_EXPRESSION =
-  STANDARD_COMMAND_MENU_ITEMS.mergeMultipleRecords
-    .conditionalAvailabilityExpression;
+  getStandardCommandMenuItemConditionalAvailabilityExpression(
+    MERGE_UNIVERSAL_IDENTIFIER,
+  );
 
 const MERGE_COMMAND: FlatCommandMenuItem = {
   workspaceId: '20202020-1111-4111-8111-111111111111',
@@ -37,6 +39,12 @@ const MERGE_COMMAND: FlatCommandMenuItem = {
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   conditionalAvailabilityExpression: PREVIOUS_EXPRESSION,
   conditionalPinnedExpression: null,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
+  conditionalAvailability: null,
+  universalConditionalAvailability: null,
+  conditionalPinned: null,
+  universalConditionalPinned: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,

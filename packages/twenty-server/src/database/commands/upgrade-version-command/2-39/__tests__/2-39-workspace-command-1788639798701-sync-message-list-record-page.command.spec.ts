@@ -10,12 +10,6 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import {
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
-  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
-  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -26,6 +20,19 @@ jest.mock(
 const computeTwentyStandardApplicationAllFlatEntityMapsMock = jest.mocked(
   computeTwentyStandardApplicationAllFlatEntityMaps,
 );
+
+const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
+  and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+};
+
+const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
+  and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
+};
+
+const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE = 'device == "MOBILE"';
+
+const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
+  'device == "DESKTOP"';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION = {
@@ -58,13 +65,14 @@ const MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER =
 const MEMBERS_VIEW_ID = '20202020-0000-0000-0000-000000000010';
 const OTHER_VIEW_ID = '20202020-0000-0000-0000-000000000099';
 
-const STANDARD_MEMBERS_VIEW_FIELDS = MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
-  (universalIdentifier, position) => ({
-    universalIdentifier,
-    viewUniversalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
-    position,
-  }),
-);
+const STANDARD_MEMBERS_VIEW_FIELDS =
+  MEMBERS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
+    (universalIdentifier, position) => ({
+      universalIdentifier,
+      viewUniversalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
+      position,
+    }),
+  );
 const STANDARD_MEMBERS_VIEW_FILTER = {
   universalIdentifier: MEMBERS_VIEW_FILTER_UNIVERSAL_IDENTIFIER,
   viewUniversalIdentifier: MEMBERS_VIEW_UNIVERSAL_IDENTIFIER,
@@ -325,7 +333,9 @@ describe('SyncMessageListRecordPageCommand', () => {
           ? [
               {
                 universalIdentifier: LIST.universalIdentifier,
-                viewUniversalIdentifiers: [LIST_INDEX_VIEW_UNIVERSAL_IDENTIFIER],
+                viewUniversalIdentifiers: [
+                  LIST_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+                ],
               },
               { universalIdentifier: LIST_MEMBER.universalIdentifier },
             ]
@@ -380,7 +390,10 @@ describe('SyncMessageListRecordPageCommand', () => {
   it('creates the metadata and the members tab, and turns the home members widget into a mobile table', async () => {
     mockWorkspaceCache({
       existingViewFields: [
-        { universalIdentifier: NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER, position: 0 },
+        {
+          universalIdentifier: NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          position: 0,
+        },
         { universalIdentifier: 'other-column', position: 3 },
         {
           universalIdentifier: 'removed-column',
@@ -535,7 +548,9 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
   });
 
   it('leaves a widget embedding another view untouched', async () => {
@@ -546,9 +561,8 @@ describe('SyncMessageListRecordPageCommand', () => {
         buildFieldsWidget(),
         buildHomeMembersWidget({
           configuration: buildTableConfiguration(OTHER_VIEW_ID),
-          universalConfiguration: buildTableUniversalConfiguration(
-            OTHER_VIEW_ID,
-          ),
+          universalConfiguration:
+            buildTableUniversalConfiguration(OTHER_VIEW_ID),
         }),
         buildMembersTabWidget(),
       ],
@@ -556,7 +570,9 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
   });
 
   it('does not embed or refill a soft-deleted members view', async () => {
@@ -666,7 +682,9 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
   });
 
   it('does not write metadata in dry-run mode', async () => {
@@ -674,7 +692,9 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     await runOnWorkspace(true);
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
   });
 
   it('skips workspaces without the message list objects', async () => {
@@ -682,6 +702,8 @@ describe('SyncMessageListRecordPageCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
   });
 });

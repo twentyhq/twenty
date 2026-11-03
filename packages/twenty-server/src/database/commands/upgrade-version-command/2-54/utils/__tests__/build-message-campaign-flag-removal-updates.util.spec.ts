@@ -6,9 +6,10 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 import { buildMessageCampaignFlagRemovalUpdates } from 'src/database/commands/upgrade-version-command/2-54/utils/build-message-campaign-flag-removal-updates.util';
+import { buildNavigationConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/build-navigation-conditional-availability-expression.util';
+import { STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS } from 'src/database/commands/upgrade-version-command/utils/standard-command-menu-item-conditional-expressions.constant';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -43,6 +44,12 @@ const buildCommandMenuItem = ({
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   conditionalAvailabilityExpression,
   conditionalPinnedExpression: null,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
+  conditionalAvailability: null,
+  universalConditionalAvailability: null,
+  conditionalPinned: null,
+  universalConditionalPinned: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,
@@ -106,14 +113,20 @@ describe('buildMessageCampaignFlagRemovalUpdates', () => {
         }),
       ),
     ).toEqual(
-      [
-        STANDARD_COMMAND_MENU_ITEMS.composeCampaign,
-        STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaign,
-        STANDARD_COMMAND_MENU_ITEMS.addToMessageList,
-      ].map(({ universalIdentifier, conditionalAvailabilityExpression }) => ({
-        universalIdentifier,
-        conditionalAvailabilityExpression,
-      })),
+      (
+        ['composeCampaign', 'sendMessageCampaign', 'addToMessageList'] as const
+      ).map((commandMenuItemName) => {
+        const { universalIdentifier } =
+          STANDARD_COMMAND_MENU_ITEMS[commandMenuItemName];
+
+        return {
+          universalIdentifier,
+          conditionalAvailabilityExpression:
+            STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+              universalIdentifier
+            ]?.conditionalAvailabilityExpression ?? null,
+        };
+      }),
     );
   });
 
@@ -126,39 +139,47 @@ describe('buildMessageCampaignFlagRemovalUpdates', () => {
       [
         STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned.universalIdentifier,
         `pageType == "INDEX_PAGE" and ${FLAG}`,
-        STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned.universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest.universalIdentifier,
         FLAGGED_SEND_CAMPAIGN_EXPRESSION,
-        STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.sendMessageCampaignTest
+            .universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign.universalIdentifier,
         `numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "status", "SCHEDULED") or everyEquals(selectedRecords, "status", "SENDING")) and noneDefined(selectedRecords, "deletedAt") and ${FLAG}`,
-        STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.cancelMessageCampaign.universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
           .universalIdentifier,
         `numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and ${FLAG}`,
-        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
+            .universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.duplicateMessageList.universalIdentifier,
         `${FLAG} and numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords`,
-        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageList
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.duplicateMessageList.universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.addViewToMessageList.universalIdentifier,
         `${FLAG} and targetObjectWritePermissions.messageListMember and pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView`,
-        STANDARD_COMMAND_MENU_ITEMS.addViewToMessageList
-          .conditionalAvailabilityExpression,
+        STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+          STANDARD_COMMAND_MENU_ITEMS.addViewToMessageList.universalIdentifier
+        ]?.conditionalAvailabilityExpression ?? null,
       ],
       ...(
         [
@@ -303,8 +324,9 @@ describe('buildMessageCampaignFlagRemovalUpdates', () => {
           universalIdentifier:
             STANDARD_COMMAND_MENU_ITEMS.addToMessageList.universalIdentifier,
           conditionalAvailabilityExpression:
-            STANDARD_COMMAND_MENU_ITEMS.addToMessageList
-              .conditionalAvailabilityExpression,
+            STANDARD_COMMAND_MENU_ITEM_CONDITIONAL_EXPRESSIONS[
+              STANDARD_COMMAND_MENU_ITEMS.addToMessageList.universalIdentifier
+            ]?.conditionalAvailabilityExpression ?? null,
         }),
         buildCommandMenuItem({
           universalIdentifier:

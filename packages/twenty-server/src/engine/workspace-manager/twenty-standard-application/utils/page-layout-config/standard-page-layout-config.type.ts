@@ -1,7 +1,7 @@
 import {
+  type ConditionalDisplay,
   type PageLayoutTabLayoutMode,
   type PageLayoutType,
-  type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
@@ -13,8 +13,8 @@ export type StandardPageLayoutWidgetConfig = {
   title?: string;
   type?: WidgetType;
   position?: PageLayoutWidgetPosition;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
-  conditionalAvailabilityExpression?: string | null;
+  conditionalDisplay?: ConditionalDisplay | null;
+  conditionalAvailability?: ConditionalDisplay | null;
   fieldUniversalIdentifier?: string;
   fieldDisplayMode?: FieldDisplayMode;
   embeddedViewUniversalIdentifier?: string;
@@ -43,8 +43,8 @@ export type StandardRecordPageWidgetConfig = {
   title: string;
   type: WidgetType;
   position?: PageLayoutWidgetPosition;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
-  conditionalAvailabilityExpression?: string | null;
+  conditionalDisplay?: ConditionalDisplay | null;
+  conditionalAvailability?: ConditionalDisplay | null;
   fieldUniversalIdentifier?: string;
   fieldDisplayMode?: FieldDisplayMode;
   embeddedViewUniversalIdentifier?: string;

@@ -1,5 +1,6 @@
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/testing';
 
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
 const INBOX_COMMAND_MENU_ITEM_NAMES = [
@@ -14,7 +15,9 @@ type InboxScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 const getAvailableInboxCommands = (...scopes: InboxScope[]) =>
   INBOX_COMMAND_MENU_ITEM_NAMES.filter((name) =>
     evaluateConditionalAvailabilityExpression(
-      STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier,
+      ),
       {
         numberOfSelectedRecords: scopes.length,
         permissionFlags: { AI: true },
@@ -38,7 +41,9 @@ const getAvailableSubscriptionCommands = (
 ) =>
   SUBSCRIPTION_COMMAND_MENU_ITEM_NAMES.filter((name) =>
     evaluateConditionalAvailabilityExpression(
-      STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier,
+      ),
       {
         numberOfSelectedRecords: subscriptions.length,
         permissionFlags: { AI: true },
@@ -70,7 +75,9 @@ describe('AI chat inbox command menu items', () => {
       ] as const
     ).filter((name) =>
       evaluateConditionalAvailabilityExpression(
-        STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
+        getStandardCommandMenuItemConditionalAvailabilityExpression(
+          STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier,
+        ),
         {
           numberOfSelectedRecords: 1,
           permissionFlags: { AI: true },

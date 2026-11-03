@@ -1,9 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -12,7 +15,11 @@ export const createStandardCommandMenuItemFlatMetadata = ({
   commandMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatObjectMetadataMaps },
+  dependencyFlatEntityMaps: {
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
+  },
   now,
 }: {
   commandMenuItemName: keyof typeof STANDARD_COMMAND_MENU_ITEMS;
@@ -21,6 +28,8 @@ export const createStandardCommandMenuItemFlatMetadata = ({
   twentyStandardApplicationId: string;
   dependencyFlatEntityMaps: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+    flatRoleMaps: FlatRoleMaps;
   };
   now: string;
 }): FlatCommandMenuItem => {
@@ -60,12 +69,28 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     position: definition.position,
     isPinned: definition.isPinned,
     availabilityType: definition.availabilityType,
-    conditionalAvailabilityExpression:
-      definition.conditionalAvailabilityExpression ?? null,
-    conditionalPinnedExpression:
-      'conditionalPinnedExpression' in definition
-        ? definition.conditionalPinnedExpression
-        : null,
+    conditionalDisplay: null,
+    universalConditionalDisplay: null,
+    conditionalAvailability: definition.conditionalAvailability ?? null,
+    universalConditionalAvailability:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: definition.conditionalAvailability ?? null,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
+    conditionalPinned:
+      'conditionalPinned' in definition ? definition.conditionalPinned : null,
+    universalConditionalPinned:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay:
+          'conditionalPinned' in definition
+            ? definition.conditionalPinned
+            : null,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: definition.engineComponentKey,

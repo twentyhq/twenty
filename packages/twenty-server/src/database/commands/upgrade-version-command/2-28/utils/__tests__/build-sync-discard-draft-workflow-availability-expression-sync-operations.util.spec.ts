@@ -4,6 +4,7 @@ import {
   buildDiscardDraftWorkflowCommandMenuItemsToUpdate,
   LEGACY_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-28/utils/build-sync-discard-draft-workflow-availability-expression-sync-operations.util';
+import { getStandardCommandMenuItemConditionalAvailabilityExpression } from 'src/database/commands/upgrade-version-command/utils/get-standard-command-menu-item-conditional-availability-expression.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -61,6 +62,12 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   availabilityType: DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityType,
   conditionalAvailabilityExpression,
   conditionalPinnedExpression: null,
+  conditionalDisplay: null,
+  universalConditionalDisplay: null,
+  conditionalAvailability: null,
+  universalConditionalAvailability: null,
+  conditionalPinned: null,
+  universalConditionalPinned: null,
   frontComponentId: null,
   frontComponentUniversalIdentifier: null,
   engineComponentKey: DISCARD_DRAFT_WORKFLOW_DEFINITION.engineComponentKey,
@@ -107,7 +114,9 @@ describe('buildDiscardDraftWorkflowCommandMenuItemsToUpdate', () => {
 
   it('syncs to the lastPublishedVersionId gate defined in the standard command menu item', () => {
     expect(
-      DISCARD_DRAFT_WORKFLOW_DEFINITION.conditionalAvailabilityExpression,
+      getStandardCommandMenuItemConditionalAvailabilityExpression(
+        DISCARD_DRAFT_WORKFLOW_DEFINITION.universalIdentifier,
+      ),
     ).toBe(EXPECTED_DISCARD_DRAFT_WORKFLOW_AVAILABILITY_EXPRESSION);
   });
 

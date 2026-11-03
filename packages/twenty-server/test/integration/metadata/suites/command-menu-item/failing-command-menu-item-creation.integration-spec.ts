@@ -1,10 +1,15 @@
 import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import {
+  CommandMenuItemAvailabilityType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -12,6 +17,28 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 type TestContext = {
   input: CreateCommandMenuItemInput;
 };
+
+const expectConditionalDisplayValidationError = ({
+  errors,
+  message,
+}: {
+  errors: unknown;
+  message: string;
+}) =>
+  expect(errors).toMatchObject([
+    {
+      extensions: {
+        code: 'METADATA_VALIDATION_FAILED',
+        errors: {
+          commandMenuItem: [
+            {
+              errors: [{ code: 'INVALID_COMMAND_MENU_ITEM_INPUT', message }],
+            },
+          ],
+        },
+      },
+    },
+  ]);
 
 const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[] =
   [
@@ -151,5 +178,66 @@ describe('CommandMenuItem creation should fail', () => {
     });
 
     expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
+
+  it('when a GLOBAL command has a conditional display on a record field', async () => {
+    const { fieldMetadataId2: nameFieldMetadataId } =
+      await fetchTestFieldMetadataIds();
+
+    const { errors } = await createCommandMenuItem({
+      expectToFail: true,
+      input: {
+        workflowVersionId: faker.string.uuid(),
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+        label: 'Global Command With Field Rule',
+        availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+        conditionalDisplay: {
+          recordFilters: [
+            {
+              id: '0',
+              fieldMetadataId: nameFieldMetadataId,
+              operand: ViewFilterOperand.IS_NOT_EMPTY,
+              value: '',
+            },
+          ],
+        },
+      },
+    });
+
+    expectConditionalDisplayValidationError({
+      errors,
+      message:
+        'Conditional display rules on commandMenuItem cannot reference a record field',
+    });
+  });
+
+  it('when conditionalAvailability uses an admin context key', async () => {
+    const { errors } = await createCommandMenuItem({
+      expectToFail: true,
+      input: {
+        workflowVersionId: faker.string.uuid(),
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+        label: 'Command With Admin Key In Availability',
+        conditionalAvailability: {
+          recordFilters: [
+            {
+              id: '0',
+              contextKey: 'currentWorkspaceMemberId',
+              operand: ViewFilterOperand.IS,
+              value: JSON.stringify({
+                isCurrentWorkspaceMemberSelected: true,
+                selectedRecordIds: [],
+              }),
+            },
+          ],
+        },
+      },
+    });
+
+    expectConditionalDisplayValidationError({
+      errors,
+      message:
+        'Conditional display context key "currentWorkspaceMemberId" is not allowed in conditionalAvailability',
+    });
   });
 });

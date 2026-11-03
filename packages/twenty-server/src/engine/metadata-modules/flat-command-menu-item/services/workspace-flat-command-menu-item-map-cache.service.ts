@@ -16,6 +16,8 @@ const FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT = {
   objectMetadata: ['id', 'universalIdentifier'],
   frontComponent: ['id', 'universalIdentifier'],
   pageLayout: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -34,6 +36,8 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEnt
       objectMetadata: objectMetadatas,
       frontComponent: frontComponents,
       pageLayout: pageLayouts,
+      fieldMetadata: fieldMetadatas,
+      role: roles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -50,6 +54,12 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEnt
     const pageLayoutUniversalIdentifierById = Object.fromEntries(
       pageLayoutIdToUniversalIdentifierMap,
     );
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
 
     const flatCommandMenuItemMaps = createEmptyFlatEntityMaps();
 
@@ -63,6 +73,8 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEnt
           pageLayoutIdToUniversalIdentifierMap,
           objectMetadataUniversalIdentifierById,
           pageLayoutUniversalIdentifierById,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -16,6 +16,7 @@ const FLAT_VIEW_FIELD_ROWS_REQUIREMENT = {
   fieldMetadata: ['id', 'universalIdentifier'],
   view: ['id', 'universalIdentifier'],
   viewFieldGroup: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -34,6 +35,7 @@ export class WorkspaceFlatViewFieldMapCacheService extends MetadataFlatEntityMap
       fieldMetadata: fieldMetadatas,
       view: views,
       viewFieldGroup: viewFieldGroups,
+      role: roles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -47,6 +49,12 @@ export class WorkspaceFlatViewFieldMapCacheService extends MetadataFlatEntityMap
     const viewFieldGroupUniversalIdentifierById = Object.fromEntries(
       viewFieldGroupIdToUniversalIdentifierMap,
     );
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      fieldMetadataIdToUniversalIdentifierMap,
+    );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
 
     const flatViewFieldMaps = createEmptyFlatEntityMaps();
 
@@ -58,6 +66,8 @@ export class WorkspaceFlatViewFieldMapCacheService extends MetadataFlatEntityMap
         viewIdToUniversalIdentifierMap,
         viewFieldGroupIdToUniversalIdentifierMap,
         viewFieldGroupUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
