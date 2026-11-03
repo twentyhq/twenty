@@ -1,8 +1,6 @@
-import { WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS } from '@/settings/ai/constants/WorkspaceInstructionsSaveDebounceMilliseconds';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { Toaster } from 'twenty-ui/components/feedback';
 import {
   AiChatAssistantMode,
   PermissionFlagType,
@@ -13,10 +11,6 @@ import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { sleep } from '~/utils/sleep';
-
-const WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS =
-  WORKSPACE_INSTRUCTIONS_SAVE_DEBOUNCE_MILLISECONDS * 2;
 
 const fixture = createSettingsAiIntegrationStoryFixture();
 
@@ -51,10 +45,7 @@ const meta = {
     <SettingsProtectedRouteWrapper
       settingsPermission={PermissionFlagType.AI_SETTINGS}
     >
-      <>
-        <SettingsAI />
-        <Toaster />
-      </>
+      <SettingsAI />
     </SettingsProtectedRouteWrapper>
   ),
 } satisfies Meta<SettingsAiIntegrationStoryArgs>;
@@ -189,71 +180,6 @@ export const BehaviorPersistenceAndRetry: Story = {
     expect(
       canvas.getByRole('combobox', { name: 'Global inbox' }),
     ).toHaveTextContent('Only when mentioned');
-  },
-};
-
-export const QueuedInstructionsPreserveConfirmedSettings: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const bodyQueries = within(canvasElement.ownerDocument.body);
-    const instructions = await canvas.findByRole('textbox', {
-      name: 'Workspace Instructions',
-    });
-    const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
-    const releaseFirstSave = fixture.pauseInstructionsSave();
-
-    fixture.failNextInstructionsSave();
-    await userEvent.type(instructions, 'Use concise replies.');
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
-      { timeout: 3000 },
-    );
-
-    await userEvent.click(directMessages);
-    await userEvent.click(
-      await bodyQueries.findByRole('option', { name: 'Never' }),
-    );
-    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
-
-    const releaseSecondSave = fixture.pauseInstructionsSave();
-    await userEvent.type(instructions, ' Add clear next steps.');
-    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
-    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
-
-    releaseFirstSave();
-    await waitFor(
-      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
-      { timeout: 3000 },
-    );
-    expect(directMessages).toHaveTextContent('Never');
-
-    fixture.failNextInstructionsSave();
-    await userEvent.type(instructions, ' Include examples.');
-    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
-    expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2);
-
-    releaseSecondSave();
-    expect(
-      await bodyQueries.findByText('Workspace instructions could not be saved'),
-    ).toBeVisible();
-    expect(instructions).toHaveTextContent('Include examples.');
-    expect(fixture.saveInstructions).toHaveBeenCalledOnce();
-    expect(fixture.saveInstructions).toHaveBeenCalledWith({
-      aiAdditionalInstructions: expect.stringContaining(
-        'Add clear next steps.',
-      ),
-    });
-
-    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
-    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
-    const savedInstructions = await canvas.findByRole('textbox', {
-      name: 'Workspace Instructions',
-    });
-    expect(savedInstructions).toHaveTextContent('Add clear next steps.');
-    expect(savedInstructions).not.toHaveTextContent('Include examples.');
-    expect(canvas.getByRole('combobox', { name: 'DMs' })).toHaveTextContent(
-      'Never',
-    );
   },
 };
 

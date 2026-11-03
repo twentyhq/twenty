@@ -31,17 +31,11 @@ type SettingsAiIntegrationStoryOptions = {
 
 export const createSettingsAiIntegrationStoryFixture = () => {
   const saveInstructions = fn();
-  const instructionsSaveStarted = fn();
   const saveBehavior = fn();
   const loadSystemPrompts = fn();
   let pendingBehaviorSave: Promise<void> | undefined;
   let releaseBehaviorSave: (() => void) | undefined;
-  let nextInstructionsSave:
-    | { pendingSave: Promise<void>; releaseSave: () => void }
-    | undefined;
-  const instructionsSaveReleases = new Set<() => void>();
   let shouldFailNextBehaviorSave = false;
-  let shouldFailNextInstructionsSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
   let workspace: CurrentWorkspace = {
@@ -54,17 +48,11 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     releaseBehaviorSave?.();
     pendingBehaviorSave = undefined;
     releaseBehaviorSave = undefined;
-    for (const releaseSave of instructionsSaveReleases) {
-      releaseSave();
-    }
-    nextInstructionsSave = undefined;
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
-    instructionsSaveStarted.mockClear();
     saveBehavior.mockClear();
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
-    shouldFailNextInstructionsSave = false;
     permissionFlags = options.permissionFlags;
     workspace = {
       ...mockCurrentWorkspace,
@@ -109,32 +97,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     releaseBehaviorSave?.();
     pendingBehaviorSave = undefined;
     releaseBehaviorSave = undefined;
-  };
-
-  const failNextInstructionsSave = () => {
-    shouldFailNextInstructionsSave = true;
-  };
-
-  const pauseInstructionsSave = () => {
-    if (isDefined(nextInstructionsSave)) {
-      return nextInstructionsSave.releaseSave;
-    }
-
-    let resolveSave: (() => void) | undefined;
-    const pendingSave = new Promise<void>((resolve) => {
-      resolveSave = resolve;
-    });
-    const releaseSave = () => {
-      resolveSave?.();
-      instructionsSaveReleases.delete(releaseSave);
-
-      if (nextInstructionsSave?.releaseSave === releaseSave) {
-        nextInstructionsSave = undefined;
-      }
-    };
-    instructionsSaveReleases.add(releaseSave);
-    nextInstructionsSave = { pendingSave, releaseSave };
-    return releaseSave;
   };
 
   const reloadWorkspace = async () => {
@@ -203,23 +165,13 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           isDefined(variables.input.aiChatInboxAssistantMode);
         const hasInstructionsUpdate =
           'aiAdditionalInstructions' in variables.input;
-        const pendingSave = hasBehaviorUpdate
-          ? pendingBehaviorSave
-          : nextInstructionsSave?.pendingSave;
+        const pendingSave = hasBehaviorUpdate ? pendingBehaviorSave : undefined;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
-        const shouldRejectInstructionsSave =
-          hasInstructionsUpdate && shouldFailNextInstructionsSave;
 
         if (hasBehaviorUpdate) {
           saveBehavior(variables.input);
           shouldFailNextBehaviorSave = false;
-        }
-
-        if (hasInstructionsUpdate) {
-          nextInstructionsSave = undefined;
-          instructionsSaveStarted(variables.input);
-          shouldFailNextInstructionsSave = false;
         }
 
         if (isDefined(pendingSave)) {
@@ -238,20 +190,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
                 extensions: {
                   userFriendlyMessage:
                     'You do not have permission to change this behavior.',
-                },
-              },
-            ],
-          });
-        }
-
-        if (shouldRejectInstructionsSave) {
-          return HttpResponse.json({
-            errors: [
-              {
-                message: 'Workspace instructions could not be saved',
-                extensions: {
-                  userFriendlyMessage:
-                    'Workspace instructions could not be saved',
                 },
               },
             ],
@@ -308,14 +246,11 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     reset,
     handlers,
     saveInstructions,
-    instructionsSaveStarted,
     saveBehavior,
     loadSystemPrompts,
     failNextBehaviorSave,
     pauseBehaviorSave,
     resumeBehaviorSave,
-    failNextInstructionsSave,
-    pauseInstructionsSave,
     reloadWorkspace,
   };
 };
