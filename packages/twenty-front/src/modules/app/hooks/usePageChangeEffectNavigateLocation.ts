@@ -20,7 +20,7 @@ import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { matchPath, useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   FindOnePageLayoutTypeDocument,
@@ -215,11 +215,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     return getSettingsPath(SettingsPath.LegalDpa);
   }
 
+  // The /objects/workflows route redirects on its own; keep it out of the NotFound check.
   if (
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
     objectNamePlural === CoreObjectNamePlural.Workflow
   ) {
-    return `${getAppPath(AppPath.WorkflowIndexPage)}${location.search}${location.hash}`;
+    return undefined;
   }
 
   if (

@@ -270,9 +270,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         await deleteCoreWorkflows({
           coreWorkflowIds: [fixture.coreWorkflowId],
         });
-        await deleteLegacyWorkspaceWorkflowRecords({
-          workspaceWorkflowId: fixture.workflowId,
-        });
+        if (fixture.workflowVersionId) {
+          await deleteLegacyWorkspaceWorkflowRecords({
+            workspaceWorkflowVersionIds: [fixture.workflowVersionId],
+          });
+        }
       }
       await global.testDataSource.query(
         'DELETE FROM core."workflowVersion" WHERE "coreWorkflowId" = $1',
@@ -2487,15 +2489,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
       expect(workspaceWorkflowCount).toBe(0);
       const relationFields = await global.testDataSource.query(
-        `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name = 'workflowVersion'`,
+        `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name IN ('workflow', 'workflowVersion')`,
         [freshWorkspaceId],
       );
-      expect(relationFields).toHaveLength(1);
-      expect(
-        relationFields.every(
-          (field: { isNullable: boolean }) => field.isNullable,
-        ),
-      ).toBe(true);
+      expect(relationFields).toEqual([
+        { name: 'workflowVersion', isNullable: true },
+      ]);
     } finally {
       if (await workspaces.existsBy({ id: freshWorkspaceId })) {
         await services.workspace.deleteWorkspace(freshWorkspaceId);

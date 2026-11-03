@@ -57,7 +57,7 @@ describe('filterAndSortNavigationMenuItems', () => {
       targetRecordId: 'chat-record-id',
       targetObjectMetadataId: 'chat-metadata-id',
       targetRecordIdentifier: { id: 'chat-record-id', labelIdentifier: 'Chat' },
-    } as unknown as NavigationMenuItem;
+    } as NavigationMenuItem;
 
     expect(
       filterAndSortNavigationMenuItems(

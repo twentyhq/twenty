@@ -18,7 +18,6 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workflowResolver', () => {
   let coreWorkflowId: string;
-  let workspaceWorkflowId: string;
   let workspaceWorkflowVersionId: string;
 
   beforeAll(async () => {
@@ -33,13 +32,14 @@ describe('workflowResolver', () => {
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
     workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+    await deleteLegacyWorkspaceWorkflowRecords({
+      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+    });
   });
 
   it.each([

@@ -167,18 +167,15 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
 };
 
 export const deleteLegacyWorkspaceWorkflowRecords = async ({
-  workspaceWorkflowId,
+  workspaceWorkflowVersionIds,
 }: {
-  workspaceWorkflowId: string;
+  workspaceWorkflowVersionIds: string[];
 }): Promise<void> => {
   const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
   await global.testDataSource.query(
-    `DELETE FROM "${workspaceSchema}"."workflowVersion"
-     WHERE id IN (
-       SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE "workflowId" = $1
-     )`,
-    [workspaceWorkflowId],
+    `DELETE FROM "${workspaceSchema}"."workflowVersion" WHERE id = ANY($1::uuid[])`,
+    [workspaceWorkflowVersionIds],
   );
 };
 

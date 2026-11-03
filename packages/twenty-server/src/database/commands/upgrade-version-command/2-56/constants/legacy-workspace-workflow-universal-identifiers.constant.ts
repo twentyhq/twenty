@@ -4,8 +4,7 @@ export const LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
 export const LEGACY_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-3319-4234-a34c-7f3b9d2e4d1f';
 
-// attachment.targetWorkflow, timelineActivity.targetWorkflow,
-// workflowRun.workflow and workflowVersion.workflow
+// {attachment,timelineActivity}.targetWorkflow and {workflowRun,workflowVersion}.workflow
 export const LEGACY_WORKFLOW_RELATION_FIELD_UNIVERSAL_IDENTIFIERS = [
   'edbe3ea7-b9ff-5b23-9a81-ef53a190c873',
   '7bdf04f6-a598-57b2-b485-5263c25e1257',
