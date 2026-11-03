@@ -11,5 +11,6 @@ export const OBJECTS_BLOCKED_FROM_AUTOMATION = [
   'workflowAutomatedTrigger',
   'workspaceMember',
   'dashboard',
+  'agentChatThread',
   ...OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS,
 ] as const;

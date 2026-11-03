@@ -31,7 +31,10 @@ export class SaveCampaignTool implements Tool {
     parameters: SaveCampaignToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    if (!isDefined(context.userWorkspaceId)) {
+    if (
+      !isDefined(context.userWorkspaceId) ||
+      !isDefined(context.rolePermissionConfig)
+    ) {
       return {
         success: false,
         message: 'Failed to save campaign',
@@ -42,7 +45,7 @@ export class SaveCampaignTool implements Tool {
     try {
       const result = await this.messageCampaignDraftService.saveDraft({
         workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
+        rolePermissionConfig: context.rolePermissionConfig,
         campaignId: parameters.campaignId,
         name: parameters.name,
         subject: parameters.subject,

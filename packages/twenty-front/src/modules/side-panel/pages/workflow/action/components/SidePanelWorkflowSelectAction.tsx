@@ -2,6 +2,7 @@ import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationMode
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { AgentMenuItem } from '@/side-panel/pages/workflow/action/components/AgentMenuItem';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { sortWorkflowActionLogicFunctions } from '@/side-panel/pages/workflow/action/utils/sortWorkflowActionLogicFunctions';
@@ -16,10 +17,15 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
+import { isAgentSelectableAsWorkflowStep } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/isAgentSelectableAsWorkflowStep';
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_ACTION_FEATURE_FLAGS } from 'twenty-shared/workflow';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FindManyAgentsDocument,
+} from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -77,8 +83,23 @@ export const SidePanelWorkflowSelectAction = ({
     installedApplications: currentWorkspace?.installedApplications ?? [],
   });
 
+  const { data: agentsData } = useQuery(FindManyAgentsDocument, {
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const stepAgents = (agentsData?.findManyAgents ?? []).filter(
+    isAgentSelectableAsWorkflowStep,
+  );
+
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
+  };
+
+  const handleAgentClick = (agentId: string) => {
+    onActionSelected({
+      type: 'AI_AGENT',
+      defaultSettings: { input: { agentId } },
+    });
   };
 
   const handleFunctionClick = (logicFunctionId: string) => {
@@ -107,6 +128,21 @@ export const SidePanelWorkflowSelectAction = ({
         actions={aiActions.filter(isActionEnabled)}
         onClick={handleActionClick}
       />
+
+      {stepAgents.length > 0 && (
+        <>
+          <SidePanelWorkflowSelectStepTitle>
+            {t`Agents`}
+          </SidePanelWorkflowSelectStepTitle>
+          {stepAgents.map((agent) => (
+            <AgentMenuItem
+              key={agent.id}
+              agent={agent}
+              onClick={() => handleAgentClick(agent.id)}
+            />
+          ))}
+        </>
+      )}
 
       <SidePanelWorkflowSelectStepTitle>
         {t`Flow`}

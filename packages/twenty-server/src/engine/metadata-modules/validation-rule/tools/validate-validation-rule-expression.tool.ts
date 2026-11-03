@@ -5,7 +5,6 @@ import {
   PermissionFlagType,
   VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION,
 } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -27,7 +26,6 @@ const validateValidationRuleExpressionInputSchema = z.object({
   name: 'validate_validation_rule_expression',
   category: ToolCategory.METADATA,
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
   icon: 'IconSettings',
   description:
     'Check a validation rule expression against an object without saving anything. An invalid expression is rejected with the reason.',

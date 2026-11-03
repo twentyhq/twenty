@@ -6,6 +6,7 @@ import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
+import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 
 import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace-service';
 
@@ -19,6 +20,7 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     LogicFunctionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     AiAgentModule,
+    WorkflowVersionStepModule,
   ],
   providers: [
     WorkflowToolWorkspaceService,
