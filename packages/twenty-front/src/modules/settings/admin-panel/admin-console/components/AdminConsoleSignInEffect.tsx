@@ -7,6 +7,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
+import { retryOnceAfterUnauthenticatedError } from '@/settings/admin-panel/admin-console/utils/retryOnceAfterUnauthenticatedError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -46,12 +47,16 @@ export const AdminConsoleSignInEffect = () => {
       return;
     }
 
-    signInToAdminConsole({ variables: { loginToken } })
-      .then(async ({ error }) => {
-        if (isDefined(error)) {
-          throw error;
-        }
+    retryOnceAfterUnauthenticatedError(async () => {
+      const { error } = await signInToAdminConsole({
+        variables: { loginToken },
+      });
 
+      if (isDefined(error)) {
+        throw error;
+      }
+    })
+      .then(async () => {
         markSessionActive();
         await loadCurrentUser();
         navigate(landingPath, { replace: true });
