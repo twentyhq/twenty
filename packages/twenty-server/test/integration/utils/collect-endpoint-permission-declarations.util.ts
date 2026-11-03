@@ -7,7 +7,6 @@ import {
 } from '@nestjs/core';
 import { type InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { RESOLVER_TYPE_METADATA } from '@nestjs/graphql/dist/graphql.constants.js';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -59,7 +58,7 @@ type Guard = Type<CanActivate> | CanActivate;
 const GRAPHQL_OPERATION_TYPES = new Set(['Query', 'Mutation', 'Subscription']);
 
 const discoverClasses = (
-  discoveryService: DiscoveryService,
+  discoveryService: Pick<DiscoveryService, 'getControllers' | 'getProviders'>,
 ): DiscoveredClass[] => {
   const isControllerByClass = new Map<EndpointClass, boolean>();
 
@@ -197,13 +196,15 @@ const stringifyWithSortedKeys = (value: unknown): string =>
       : nestedValue,
   );
 
-export const collectEndpointPermissionDeclarations = (): string[] => {
-  const discoveryService =
-    getAppProviderByClassName<DiscoveryService>('DiscoveryService');
-  const reflector = getAppProviderByClassName<Reflector>('Reflector');
-  const metadataScanner =
-    getAppProviderByClassName<MetadataScanner>('MetadataScanner');
-
+export const collectEndpointPermissionDeclarations = ({
+  discoveryService,
+  reflector,
+  metadataScanner,
+}: {
+  discoveryService: Pick<DiscoveryService, 'getControllers' | 'getProviders'>;
+  reflector: Reflector;
+  metadataScanner: MetadataScanner;
+}): string[] => {
   const declarationsByEndpoint = new Map<
     string,
     EndpointPermissionDeclarations
