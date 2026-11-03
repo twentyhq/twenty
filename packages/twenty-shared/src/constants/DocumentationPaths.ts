@@ -36,6 +36,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/data/system-fields',
   DEVELOPERS_EXTEND_APPS_DATA_TIMELINE_ACTIVITY_TYPES:
     '/developers/extend/apps/data/timeline-activity-types',
+  DEVELOPERS_EXTEND_APPS_DATA_VALIDATION_RULES:
+    '/developers/extend/apps/data/validation-rules',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_GOOD_PRACTICES:

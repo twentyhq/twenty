@@ -213,6 +213,7 @@ export class AgentActorContextService {
         user: fromUserEntityToFlat(userWorkspace.user),
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
+        userSessionVariant: 'standard',
       }),
       roleId,
     };
