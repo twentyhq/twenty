@@ -281,6 +281,7 @@ import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/
 import { AddSettingsMenuItemSlugFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793618487873-add-settings-menu-item-slug';
 import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793627583457-add-application-role-target';
 import { AddConditionalDisplayColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793642440810-add-conditional-display-columns';
+import { DropConditionalExpressionColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793642440812-drop-conditional-expression-columns';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -564,4 +565,5 @@ export const INSTANCE_COMMANDS = [
   AddSettingsMenuItemSlugFastInstanceCommand,
   AddApplicationRoleTargetFastInstanceCommand,
   AddConditionalDisplayColumnsFastInstanceCommand,
+  DropConditionalExpressionColumnsFastInstanceCommand,
 ];
