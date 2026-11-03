@@ -45,7 +45,7 @@ export type Agent = {
   prompt: Scalars['String']['output'];
   responseFormat?: Maybe<Scalars['JSON']['output']>;
   roleId?: Maybe<Scalars['UUID']['output']>;
-  triggers: Array<Scalars['JSON']['output']>;
+  triggers: Array<Maybe<Scalars['JSON']['output']>>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -7424,7 +7424,7 @@ export type UpdateAgentInput = {
   prompt?: InputMaybe<Scalars['String']['input']>;
   responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   roleId?: InputMaybe<Scalars['UUID']['input']>;
-  triggers?: InputMaybe<Array<Scalars['JSON']['input']>>;
+  triggers?: InputMaybe<Array<InputMaybe<Scalars['JSON']['input']>>>;
 };
 
 export type UpdateApiKeyInput = {
