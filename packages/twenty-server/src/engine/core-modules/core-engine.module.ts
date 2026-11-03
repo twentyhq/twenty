@@ -60,6 +60,8 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
+import { AdminConsoleModule } from 'src/engine/core-modules/admin-console/admin-console.module';
+import { ServerAdminAccessModule } from 'src/engine/core-modules/server-admin-access/server-admin-access.module';
 import { WorkspaceSsoModule } from 'src/engine/core-modules/sso/sso.module';
 import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
@@ -173,6 +175,8 @@ import { FileApiModule } from './file/file-api.module';
     DpaModule,
     PageLayoutModule,
     ImpersonationModule,
+    ServerAdminAccessModule,
+    AdminConsoleModule,
     TrashCleanupModule,
     CodeInterpreterSessionCleanupModule,
     EventLogsViewerModule,

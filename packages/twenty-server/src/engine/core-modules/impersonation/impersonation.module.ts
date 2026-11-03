@@ -5,6 +5,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
+import { AdminPanelImpersonationResolver } from 'src/engine/core-modules/impersonation/admin-panel-impersonation.resolver';
 import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/impersonation.resolver';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -22,6 +23,10 @@ import { PermissionsModule } from 'src/engine/permissions/permissions.module';
     PermissionsModule,
     UserSessionModule,
   ],
-  providers: [ImpersonationService, ImpersonationResolver],
+  providers: [
+    ImpersonationService,
+    ImpersonationResolver,
+    AdminPanelImpersonationResolver,
+  ],
 })
 export class ImpersonationModule {}

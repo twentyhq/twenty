@@ -12,6 +12,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type LoginTokenPurpose } from 'src/engine/core-modules/auth/types/login-token-purpose.type';
 import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -34,7 +35,10 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
     authProvider: AuthProviderEnum,
-    options?: { impersonatorUserWorkspaceId?: string },
+    options?: {
+      impersonatorUserWorkspaceId?: string;
+      purpose?: LoginTokenPurpose;
+    },
   ): Promise<AuthToken> {
     if (!Object.values(AuthProviderEnum).includes(authProvider)) {
       throw new AuthException(
@@ -49,6 +53,7 @@ export class LoginTokenService {
       workspaceId,
       authProvider,
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
+      purpose: options?.purpose,
       jti: crypto.randomUUID(),
     };
 
@@ -64,7 +69,11 @@ export class LoginTokenService {
     };
   }
 
-  async verifyLoginToken(loginToken: string): Promise<LoginTokenJwtPayload> {
+  // A purpose-bound token is only accepted where that purpose is expected, so it cannot open a regular session.
+  async verifyLoginToken(
+    loginToken: string,
+    options?: { purpose?: LoginTokenPurpose },
+  ): Promise<LoginTokenJwtPayload> {
     await this.jwtWrapperService.verifyJwtToken(loginToken);
 
     const decoded = this.jwtWrapperService.decode<LoginTokenJwtPayload>(
@@ -76,6 +85,13 @@ export class LoginTokenService {
       throw new AuthException(
         'Expected a login token',
         AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
+
+    if (decoded.purpose !== options?.purpose) {
+      throw new AuthException(
+        'Login token is not valid for this operation',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 

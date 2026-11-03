@@ -118,6 +118,7 @@
     "ical-generator": "^11.0.0",
     "imapflow": "2.0.2",
     "ioredis": "5.10.1",
+    "jose": "^4.15.9",
     "jsdom": "^30.0.1",
     "json-schema": "0.4.0",
     "jsonwebtoken": "9.0.2",

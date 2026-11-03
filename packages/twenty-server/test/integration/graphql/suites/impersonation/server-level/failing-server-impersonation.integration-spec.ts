@@ -1,5 +1,6 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
+import { impersonateFromAdminPanel } from 'test/integration/graphql/utils/impersonate-from-admin-panel.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -13,7 +14,7 @@ const IMPERSONATOR_WITHOUT_2FA_ACCESS_TOKEN = APPLE_JONY_MEMBER_ACCESS_TOKEN;
 
 describe('Server-level impersonation - authorization denials (integration)', () => {
   it('rejects cross-workspace impersonation when the impersonator has no verified 2FA', async () => {
-    const { errors } = await impersonate({
+    const { errors } = await impersonateFromAdminPanel({
       userId: USER_DATA_SEED_IDS.TIM,
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
       accessToken: IMPERSONATOR_WITHOUT_2FA_ACCESS_TOKEN,
@@ -28,10 +29,21 @@ describe('Server-level impersonation - authorization denials (integration)', () 
       email: 'scott.forstall@apple.dev',
     });
 
-    const { errors } = await impersonate({
+    const { errors } = await impersonateFromAdminPanel({
       userId: USER_DATA_SEED_IDS.JONY,
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
       accessToken: scottAccessToken,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('rejects cross-workspace impersonation through the workspace metadata API', async () => {
+    const { errors } = await impersonate({
+      userId: USER_DATA_SEED_IDS.TIM,
+      workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       expectToFail: true,
     });
 

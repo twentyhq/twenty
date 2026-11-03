@@ -1,21 +1,33 @@
-import { type CanActivate, type ExecutionContext } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { type Observable } from 'rxjs';
-
 import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
+import { ServerAdminAccessService } from 'src/engine/core-modules/server-admin-access/services/server-admin-access.service';
 import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
 
+@Injectable()
 export class AdminPanelGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
+  constructor(
+    private readonly serverAdminAccessService: ServerAdminAccessService,
+  ) {}
 
-    return (
-      !isImpersonating(request.impersonationContext) &&
-      userIsFullAdmin(request.user)
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = GqlExecutionContext.create(context).getContext().req;
+
+    if (
+      isImpersonating(request.impersonationContext) ||
+      !userIsFullAdmin(request.user)
+    ) {
+      return false;
+    }
+
+    return this.serverAdminAccessService.isRequestAllowed(
+      request,
+      request.user.email,
     );
   }
 }

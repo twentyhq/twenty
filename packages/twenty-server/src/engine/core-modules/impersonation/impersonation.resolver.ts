@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { type Request } from 'express';
 
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
@@ -56,11 +57,22 @@ export class ImpersonationResolver {
   async impersonate(
     @Args() { workspaceId, userId: toImpersonateUserId }: ImpersonateInput,
     @AuthUserWorkspaceId() impersonatorUserWorkspaceId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ImpersonateDTO> {
     if (!impersonatorUserWorkspaceId) {
       throw new AuthException(
         'Impersonator user not found',
         AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    if (workspaceId !== workspace.id) {
+      throw new AuthException(
+        'Cross-workspace impersonation is only available from the admin panel',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Impersonating a user of another workspace is only available from the admin panel.`,
+        },
       );
     }
 

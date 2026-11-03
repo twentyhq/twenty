@@ -24,6 +24,7 @@ import { ApiAccessLogMiddleware } from 'src/engine/middlewares/api-access-log.mi
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { GraphQLRefuseSuspendedWorkspaceMiddleware } from 'src/engine/middlewares/graphql-refuse-suspended-workspace.middleware';
+import { ServerAdminAccessMiddleware } from 'src/engine/middlewares/server-admin-access.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
@@ -124,6 +125,7 @@ export class AppModule {
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,
+        ServerAdminAccessMiddleware,
         WorkspaceAuthContextMiddleware,
       )
       .forRoutes({ path: ApiPath.AdminPanel, method: RequestMethod.ALL });

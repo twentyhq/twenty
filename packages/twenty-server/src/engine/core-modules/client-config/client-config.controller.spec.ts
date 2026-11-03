@@ -73,6 +73,7 @@ describe('ClientConfigController', () => {
         frontDomain: 'localhost',
         serverUrl: 'http://localhost:3000',
         publicFunctionDomain: null,
+        adminConsoleUrl: null,
         support: {
           supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,

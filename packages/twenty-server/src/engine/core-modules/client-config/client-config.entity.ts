@@ -368,6 +368,9 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;
 
+  @Field(() => String, { nullable: true })
+  adminConsoleUrl: string | null;
+
   @Field(() => Boolean)
   analyticsEnabled: boolean;
 

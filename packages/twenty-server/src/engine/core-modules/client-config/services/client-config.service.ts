@@ -208,6 +208,8 @@ export class ClientConfigService {
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,
+      adminConsoleUrl:
+        this.twentyConfigService.get('ADMIN_CONSOLE_URL') ?? null,
       support: {
         supportDriver: supportDriver ? supportDriver : SupportDriver.NONE,
         supportFrontChatId: this.twentyConfigService.get(

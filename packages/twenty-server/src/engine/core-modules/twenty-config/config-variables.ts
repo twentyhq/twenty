@@ -1249,6 +1249,17 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Origin of a dedicated admin console (e.g. https://admin.example.com). When set, server administration is only served on this host instead of inside workspace settings. Leave unset for standard self-hosted installations.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  ADMIN_CONSOLE_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Default subdomain for the frontend when multi-workspace is enabled',
     type: ConfigVariableType.STRING,
   })
@@ -2069,6 +2080,28 @@ export class ConfigVariables {
   })
   @IsOptional()
   CLOUDFLARE_DCV_DELEGATION_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
+    description:
+      'Cloudflare Access team domain (e.g. https://acme.cloudflareaccess.com). Set with SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE to require a valid Access assertion, matching the user email, on every server admin operation.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE)
+  SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
+    description:
+      'Audience (AUD tag) of the Cloudflare Access application protecting server administration',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsString()
+  @ValidateIf((env) => env.SERVER_ADMIN_CLOUDFLARE_ACCESS_TEAM_DOMAIN)
+  SERVER_ADMIN_CLOUDFLARE_ACCESS_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,

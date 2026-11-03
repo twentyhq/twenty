@@ -4,10 +4,20 @@ exports[`Server-level impersonation - authorization denials (integration) reject
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "Server-level impersonation is not enabled for this user or workspace.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Server level impersonation not allowed",
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Server-level impersonation - authorization denials (integration) rejects cross-workspace impersonation through the workspace metadata API 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "Impersonating a user of another workspace is only available from the admin panel.",
+  },
+  "message": "Cross-workspace impersonation is only available from the admin panel",
   "name": "ForbiddenError",
 }
 `;
