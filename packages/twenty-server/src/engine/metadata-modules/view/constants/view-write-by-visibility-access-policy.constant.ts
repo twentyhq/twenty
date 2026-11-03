@@ -1,7 +1,7 @@
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-// VIEWS is only required on workspace-visible views, which the view
-// permission guards check per view
+// The view permission guards check VIEWS per view, exempting the caller's
+// own unlisted views
 export const VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
