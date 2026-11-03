@@ -103,8 +103,9 @@ workspace's hostname. For production deployment, follow the
 
 ## Project dependencies
 
-`twenty app init` includes `twenty-sdk`, `twenty-client-sdk`, and `twenty-ui` as
-project dev dependencies. Install the `twenty` CLI globally, then run
-`twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.
+`twenty app init` declares `twenty-sdk`, `twenty-client-sdk`, and `twenty-ui` in
+`devDependencies`, but does not install them. With the `twenty` CLI installed
+globally, run `yarn install` from the generated app directory before running
+`twenty app typecheck`, `twenty app build`, or `twenty app apply`.
 
 <PageBanner illustration="dev-self-host" />
