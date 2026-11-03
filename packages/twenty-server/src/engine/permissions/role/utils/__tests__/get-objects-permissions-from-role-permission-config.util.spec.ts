@@ -539,21 +539,21 @@ describe('getObjectsPermissionsFromRolePermissionConfig with a scope', () => {
     },
   };
 
-  // the role's predicate exempts amount from its disabled update on insert, but not from the scope's deny
-  it('refuses inserting a record that sets a predicate field the scope denies writing', () => {
-    const invoicePermissions = getObjectsPermissionsFromRolePermissionConfig({
+  const compute = ({
+    intersectionOf,
+    scopeObjectPermissions,
+  }: {
+    intersectionOf: RoleIdsBySource;
+    scopeObjectPermissions?: ObjectPermissions;
+  }) =>
+    getObjectsPermissionsFromRolePermissionConfig({
       principals: undefined,
       rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        intersectionOf,
         scope: {
-          objectsPermissions: {
-            [INVOICE_ID]: {
-              ...FULL_ACCESS,
-              restrictedFields: {
-                [AMOUNT_FIELD_ID]: { canRead: null, canUpdate: false },
-              },
-            },
-          },
+          objectsPermissions: isDefined(scopeObjectPermissions)
+            ? { [INVOICE_ID]: scopeObjectPermissions }
+            : {},
           permissionFlags: {},
         },
       },
@@ -563,7 +563,68 @@ describe('getObjectsPermissionsFromRolePermissionConfig with a scope', () => {
       flatApplicationMaps,
     })[INVOICE_ID];
 
-    expect(() =>
+  it('narrows the roles to what the scope allows', () => {
+    const invoicePermissions = compute({
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      scopeObjectPermissions: {
+        ...FULL_ACCESS,
+        canUpdateObjectRecords: false,
+      },
+    });
+
+    expect(invoicePermissions?.canReadObjectRecords).toBe(true);
+    expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+  });
+
+  it('never grants what the roles deny', () => {
+    const invoicePermissions = compute({
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      scopeObjectPermissions: FULL_ACCESS,
+    });
+
+    expect(invoicePermissions?.canDestroyObjectRecords).toBe(false);
+  });
+
+  it('denies an object the scope leaves out', () => {
+    const invoicePermissions = compute({
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+    });
+
+    expect(invoicePermissions?.canReadObjectRecords).toBe(false);
+    expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+  });
+
+  it("keeps the roles' row-level predicates", () => {
+    const invoicePermissions = compute({
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      scopeObjectPermissions: FULL_ACCESS,
+    });
+
+    expect(invoicePermissions?.rowLevelPermissionPredicates).toEqual([
+      USER_PREDICATE,
+    ]);
+  });
+
+  it('adds the field restrictions of the scope', () => {
+    const invoicePermissions = compute({
+      intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      scopeObjectPermissions: {
+        ...FULL_ACCESS,
+        restrictedFields: {
+          [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
+        },
+      },
+    });
+
+    expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
+      canRead: false,
+      canUpdate: false,
+    });
+  });
+
+  describe('inserting a record that sets the predicate field', () => {
+    // the user role cannot update amount (a disabled action), which its own predicate exempts on insert
+    const insertAmount = (invoicePermissions: ObjectPermissions | undefined) =>
       validateOperationIsPermittedOrThrow({
         entityName: 'invoice',
         operationType: 'insert',
@@ -575,7 +636,56 @@ describe('getObjectsPermissionsFromRolePermissionConfig with a scope', () => {
         objectIdByNameSingular: { invoice: INVOICE_ID },
         selectedColumns: [],
         updatedColumns: ['amount'],
-      }),
-    ).toThrow('no permission to write field "amount" on "invoice"');
+      });
+
+    it('is allowed without a scope', () => {
+      expect(() =>
+        insertAmount(
+          getObjectsPermissionsFromRolePermissionConfig({
+            principals: undefined,
+            rolePermissionConfig: {
+              intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+            },
+            rolesPermissions: rolesPermissionsWithPredicate,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatApplicationMaps,
+          })[INVOICE_ID],
+        ),
+      ).not.toThrow();
+    });
+
+    it('is allowed when the scope does not restrict the field', () => {
+      expect(() =>
+        insertAmount(
+          compute({
+            intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+            scopeObjectPermissions: FULL_ACCESS,
+          }),
+        ),
+      ).not.toThrow();
+    });
+
+    it('is refused when the scope denies writing the field', () => {
+      expect(() =>
+        insertAmount(
+          compute({
+            intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+            scopeObjectPermissions: {
+              ...FULL_ACCESS,
+              restrictedFields: {
+                [AMOUNT_FIELD_ID]: { canRead: null, canUpdate: false },
+              },
+            },
+          }),
+        ),
+      ).toThrow('no permission to write field "amount" on "invoice"');
+    });
+  });
+
+  it('grants nothing without a role', () => {
+    expect(
+      compute({ intersectionOf: {}, scopeObjectPermissions: FULL_ACCESS }),
+    ).toBeUndefined();
   });
 });

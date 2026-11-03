@@ -1,6 +1,6 @@
 import { type ActionToolId } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 
-// these act with nothing but the run's permissions, so its scope bounds them; anything else could reach past it
+// these act with the run's permissions or the caller's own connected accounts; tools acting as the system or a member are left out
 export const SCOPED_AGENT_RUN_ACTION_TOOL_NAMES: ReadonlySet<string> =
   new Set<ActionToolId>([
     'http_request',

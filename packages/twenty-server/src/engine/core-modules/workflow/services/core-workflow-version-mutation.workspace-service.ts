@@ -221,7 +221,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       );
     }
 
-    // what an AI step owns follows from its agent, so switching it would leave or miss owned resources
+    // an AI step's kind and agent are fixed once it exists: a different agent is a new step
     if (isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step })) {
       throw new WorkflowVersionStepException(
         'An AI step cannot switch between generating and running an agent, or to another agent. Create a new step instead.',
