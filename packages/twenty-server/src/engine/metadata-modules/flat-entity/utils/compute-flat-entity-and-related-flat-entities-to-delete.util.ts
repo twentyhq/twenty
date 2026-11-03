@@ -9,6 +9,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { type MetadataFlatEntityAndOneToManyDescendantFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-one-to-many-descendant-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
@@ -53,16 +54,20 @@ const isDeletedWithParent = ({
       !relation.isNullable,
   );
 
+const DEFAULT_MAX_DEPTH = 10;
+
 export const computeFlatEntityAndRelatedFlatEntitiesToDelete = <
   TMetadataName extends AllMetadataName,
 >({
   metadataName,
   flatEntity,
   flatEntityMaps,
+  maxDepth = DEFAULT_MAX_DEPTH,
 }: {
   metadataName: TMetadataName;
   flatEntity: MetadataFlatEntity<TMetadataName>;
-  flatEntityMaps: Partial<AllFlatEntityMaps>;
+  flatEntityMaps: MetadataFlatEntityAndOneToManyDescendantFlatEntityMaps<TMetadataName>;
+  maxDepth?: number;
 }): AllFlatEntityOperationByMetadataName => {
   const flatEntitiesToDeleteByMetadataName: Partial<
     Record<AllMetadataName, GenericFlatEntity[]>
@@ -72,11 +77,19 @@ export const computeFlatEntityAndRelatedFlatEntitiesToDelete = <
   const visit = (
     currentMetadataName: AllMetadataName,
     currentFlatEntity: GenericFlatEntity,
+    depth: number,
   ) => {
     const visitedKey = `${currentMetadataName}:${currentFlatEntity.universalIdentifier}`;
 
     if (visitedKeys.has(visitedKey)) {
       return;
+    }
+
+    if (depth > maxDepth) {
+      throw new FlatEntityMapsException(
+        `Deleting ${metadataName} ${flatEntity.universalIdentifier} reaches ${currentMetadataName} ${currentFlatEntity.universalIdentifier} beyond the maximum depth of ${maxDepth}`,
+        FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     }
 
     visitedKeys.add(visitedKey);
@@ -111,7 +124,9 @@ export const computeFlatEntityAndRelatedFlatEntitiesToDelete = <
       const childFlatEntityMapsKey = getMetadataFlatEntityMapsKey(
         relation.metadataName,
       );
-      const childFlatEntityMaps = flatEntityMaps[childFlatEntityMapsKey] as
+      const childFlatEntityMaps = (
+        flatEntityMaps as Partial<AllFlatEntityMaps>
+      )[childFlatEntityMapsKey] as
         | FlatEntityMaps<MetadataFlatEntity<AllMetadataName>>
         | undefined;
 
@@ -128,12 +143,16 @@ export const computeFlatEntityAndRelatedFlatEntitiesToDelete = <
           universalIdentifiers: childUniversalIdentifiers,
         },
       )) {
-        visit(relation.metadataName, childFlatEntity as GenericFlatEntity);
+        visit(
+          relation.metadataName,
+          childFlatEntity as GenericFlatEntity,
+          depth + 1,
+        );
       }
     }
   };
 
-  visit(metadataName, flatEntity as unknown as GenericFlatEntity);
+  visit(metadataName, flatEntity as unknown as GenericFlatEntity, 0);
 
   return Object.fromEntries(
     Object.entries(flatEntitiesToDeleteByMetadataName).map(
