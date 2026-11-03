@@ -17,12 +17,17 @@ import {
 } from '@/workflow/workflow-schema/utils/resolve-variable-path-in-output-schema';
 
 // a CODE step's source is never resolved, so only its inputs can reference variables
-const getStepVariableInput = (step: ValidatableWorkflowStep): unknown =>
-  step.type === 'CODE' && isObject(step.settings?.input)
-    ? 'logicFunctionInput' in step.settings.input
-      ? step.settings.input.logicFunctionInput
-      : undefined
-    : step.settings?.input;
+const getStepVariableInput = (step: ValidatableWorkflowStep): unknown => {
+  if (step.type !== 'CODE' || !isObject(step.settings?.input)) {
+    return step.settings?.input;
+  }
+
+  if (!('logicFunctionInput' in step.settings.input)) {
+    return undefined;
+  }
+
+  return step.settings.input.logicFunctionInput;
+};
 
 export const validateWorkflowVariableReferences = ({
   workflow,

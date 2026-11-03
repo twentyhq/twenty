@@ -1,22 +1,11 @@
-import { v5 as uuidv5 } from 'uuid';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getWorkflowCodeStepLogicFunctionId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-workflow-code-step-logic-function-id.util';
 import {
   DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS,
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-
-const WORKFLOW_CODE_STEP_LOGIC_FUNCTION_ID_NAMESPACE =
-  '6f1d3b0e-6a43-4f7e-9c55-2b8f0d6c1a7e';
-
-// Drivers key their executor on the logic function id: one shared executor per application
-export const getWorkflowCodeStepLogicFunctionId = (applicationId: string) =>
-  uuidv5(
-    `workflow-code-step:${applicationId}`,
-    WORKFLOW_CODE_STEP_LOGIC_FUNCTION_ID_NAMESPACE,
-  );
 
 export const buildWorkflowCodeStepFlatLogicFunction = ({
   flatApplication,
