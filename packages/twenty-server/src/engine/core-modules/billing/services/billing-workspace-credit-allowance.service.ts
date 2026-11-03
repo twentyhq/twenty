@@ -26,18 +26,21 @@ export class BillingWorkspaceCreditAllowanceService {
   ): Promise<WorkspaceCreditAllowanceWindow[]> {
     const now = new Date();
 
-    return this.findWorkspaceCreditAllowances(workspaceId, [
-      {
-        revokedAt: Or(IsNull(), MoreThan(now)),
-        endsAt: Or(IsNull(), MoreThan(now)),
-      },
-    ]);
+    return this.findWorkspaceCreditAllowances({
+      workspaceId,
+      where: [
+        {
+          revokedAt: Or(IsNull(), MoreThan(now)),
+          endsAt: Or(IsNull(), MoreThan(now)),
+        },
+      ],
+    });
   }
 
   async findAllWorkspaceCreditAllowances(
     workspaceId: string,
   ): Promise<WorkspaceCreditAllowanceWindow[]> {
-    return this.findWorkspaceCreditAllowances(workspaceId, [{}]);
+    return this.findWorkspaceCreditAllowances({ workspaceId, where: [{}] });
   }
 
   async findActiveWorkspaceCreditAllowanceMicro({
@@ -60,10 +63,13 @@ export class BillingWorkspaceCreditAllowanceService {
     });
   }
 
-  private async findWorkspaceCreditAllowances(
-    workspaceId: string,
-    where: FindOptionsWhere<BillingArrangementEntity>[],
-  ): Promise<WorkspaceCreditAllowanceWindow[]> {
+  private async findWorkspaceCreditAllowances({
+    workspaceId,
+    where,
+  }: {
+    workspaceId: string;
+    where: FindOptionsWhere<BillingArrangementEntity>[];
+  }): Promise<WorkspaceCreditAllowanceWindow[]> {
     const arrangements = await this.billingArrangementRepository.find(
       workspaceId,
       {

@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type WorkspaceCreditAllowanceWindow } from 'src/engine/core-modules/billing/types/workspace-credit-allowance-window.type';
+import { isWithinBillingArrangementWindow } from 'src/engine/core-modules/billing/utils/is-within-billing-arrangement-window.util';
 
 export const findActiveWorkspaceCreditAllowanceMicro = ({
   workspaceCreditAllowances,
@@ -18,7 +19,7 @@ export const findActiveWorkspaceCreditAllowanceMicro = ({
 }): number | null => {
   const activeWorkspaceCreditAllowance = workspaceCreditAllowances.find(
     ({ startsAtMs, endsAtMs }) =>
-      startsAtMs <= nowMs && (!isDefined(endsAtMs) || endsAtMs > nowMs),
+      isWithinBillingArrangementWindow({ startsAtMs, endsAtMs, nowMs }),
   );
 
   if (!isDefined(activeWorkspaceCreditAllowance)) {
