@@ -1,3 +1,4 @@
+import { getCoreAgentScheduleDraftValidationError } from '@/object-core/agents/utils/getCoreAgentScheduleDraftValidationError';
 import { isCoreAgentRoleEditable } from '@/object-core/agents/utils/isCoreAgentRoleEditable';
 import { settingsRoleSaveSubmissionFamilyState } from '@/settings/roles/states/settingsRoleSaveSubmissionFamilyState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -73,9 +74,9 @@ export const useSaveCoreAgentChanges = ({
         throw new CustomError(t`You cannot edit this agent.`);
       }
 
-      const validationError = getCoreAgentDraftValidationError(
-        submission.draft,
-      );
+      const validationError =
+        getCoreAgentDraftValidationError(submission.draft) ??
+        getCoreAgentScheduleDraftValidationError(submission);
 
       if (isDefined(validationError)) {
         throw new CustomError(validationError);

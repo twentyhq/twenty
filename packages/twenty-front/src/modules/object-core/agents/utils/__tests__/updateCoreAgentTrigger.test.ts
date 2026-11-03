@@ -1,3 +1,4 @@
+import { getCoreAgentTriggerSummary } from '@/object-core/agents/utils/getCoreAgentTriggerSummary';
 import { getCoreAgentEditableTrigger } from '@/object-core/agents/utils/getCoreAgentEditableTrigger';
 import { updateCoreAgentDatabaseEvent } from '@/object-core/agents/utils/updateCoreAgentDatabaseEvent';
 import { updateCoreAgentTrigger } from '@/object-core/agents/utils/updateCoreAgentTrigger';
@@ -136,4 +137,39 @@ it('clears watched fields in the saved JSON shape while retaining empty and null
     },
   ]);
   expect(updated).toEqual(JSON.parse(JSON.stringify(updated)));
+});
+
+it('shows watched field labels and preserves missing field names as a fallback', () => {
+  expect(
+    getCoreAgentTriggerSummary({
+      trigger: {
+        id: schedule.id,
+        type: 'DATABASE_EVENT',
+        isActive: true,
+        instructions: null,
+        settings: {
+          eventName: 'company.updated',
+          updatedFields: ['name', 'futureField'],
+        },
+      },
+      objectLabel: 'Companies',
+      fields: [{ name: 'name', label: 'Company name' }],
+    }),
+  ).toBe('Companies: Updated (Company name, futureField)');
+});
+
+it('retains valid Custom cron text when a human description is unavailable', () => {
+  const trigger = {
+    id: schedule.id,
+    type: 'CRON' as const,
+    isActive: true,
+    instructions: null,
+    settings: { pattern: '@daily' },
+  };
+  expect(getCoreAgentTriggerSummary({ trigger })).toBe('@daily');
+  expect(
+    getCoreAgentTriggerSummary({
+      trigger: { ...trigger, settings: { pattern: 'invalid' } },
+    }),
+  ).toBe('Invalid schedule');
 });

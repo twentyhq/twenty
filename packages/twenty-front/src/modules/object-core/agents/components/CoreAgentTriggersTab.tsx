@@ -1,3 +1,5 @@
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { getCronScheduleDraftResult } from '@/workflow/workflow-trigger/utils/getCronScheduleDraftResult';
 import { useCoreAgentField } from '@/object-core/agents/hooks/useCoreAgentField';
 import { useCoreAgentEditStatus } from '@/object-core/agents/hooks/useCoreAgentEditStatus';
 import { useOpenCoreAgentTrigger } from '@/object-core/agents/hooks/useOpenCoreAgentTrigger';
@@ -41,6 +43,10 @@ export const CoreAgentTriggersTab = ({
   const { session } = useCoreAgentEditStatus({ agentId });
   const { openCoreAgentTrigger } = useOpenCoreAgentTrigger();
   const objectOptions = useObjectMetadataItemSelectOptions();
+  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const objectsByName = new Map(
+    objectMetadataItems.map((object) => [object.nameSingular, object]),
+  );
   const triggers = value ?? [];
   const defaultObjectNameSingular =
     objectOptions.find((option) => option.value === 'company')?.value ??
@@ -95,9 +101,25 @@ export const CoreAgentTriggersTab = ({
                   option.value === trigger.settings.eventName.split('.')[0],
               )?.label
             : undefined;
-        const description = isSupported
-          ? getCoreAgentTriggerSummary({ trigger, objectLabel })
-          : t`Preserved by this version. Remove it to stop using it.`;
+        const object =
+          trigger?.type === 'DATABASE_EVENT'
+            ? objectsByName.get(trigger.settings.eventName.split('.')[0])
+            : undefined;
+        const scheduleDraft = isDefined(trigger)
+          ? session?.scheduleDrafts?.[trigger.id]
+          : undefined;
+        const hasInvalidSchedule =
+          isDefined(scheduleDraft) &&
+          !isDefined(getCronScheduleDraftResult(scheduleDraft).settings);
+        const description = hasInvalidSchedule
+          ? t`Invalid schedule`
+          : isSupported
+            ? getCoreAgentTriggerSummary({
+                trigger,
+                objectLabel: object?.labelPlural ?? objectLabel,
+                fields: object?.fields,
+              })
+            : t`Preserved by this version. Remove it to stop using it.`;
 
         return (
           <ListItem

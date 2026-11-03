@@ -1,3 +1,4 @@
+import { getCoreAgentScheduleDraftValidationError } from '@/object-core/agents/utils/getCoreAgentScheduleDraftValidationError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCoreAgentEditScope } from '@/object-core/agents/hooks/useCoreAgentEditScope';
 import { getCoreAgentDraftValidationError } from '@/object-core/agents/utils/getCoreAgentDraftValidationError';
@@ -69,12 +70,17 @@ export const useCoreAgentEditStatus = ({
   const hasRoleConflict =
     isDefined(session?.agent.roleId) &&
     session?.roleId !== session.agent.roleId;
+  const scheduleValidationError = isDefined(session)
+    ? getCoreAgentScheduleDraftValidationError(session)
+    : null;
   const validationError = hasRoleConflict
     ? t`The assigned role changed. Discard settings and try again.`
     : isDefined(session)
-      ? getCoreAgentDraftValidationError(session.draft)
+      ? (getCoreAgentDraftValidationError(session.draft) ??
+        scheduleValidationError)
       : null;
-  const isDirty = isSettingsDirty || isRoleDirty;
+  const isDirty =
+    isSettingsDirty || isRoleDirty || isDefined(scheduleValidationError);
 
   return {
     session,

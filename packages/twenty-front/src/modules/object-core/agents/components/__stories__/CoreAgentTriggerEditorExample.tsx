@@ -61,12 +61,14 @@ type CoreAgentTriggerEditorExampleProps = {
   onSave: (triggers: unknown[]) => void;
   triggerCount?: number;
   readOnly?: boolean;
+  initialPattern?: string;
 };
 
 export const CoreAgentTriggerEditorExample = ({
   onSave,
   triggerCount = 2,
   readOnly = false,
+  initialPattern = '0 9 * * 1',
 }: CoreAgentTriggerEditorExampleProps) => {
   const [store] = useState(() => {
     const nextStore = createStore();
@@ -75,7 +77,7 @@ export const CoreAgentTriggerEditorExample = ({
       type: 'CRON',
       isActive: false,
       instructions: 'Send the weekly report',
-      settings: { pattern: '0 9 * * 1' },
+      settings: { pattern: initialPattern },
     };
     const opaqueTriggers = Array.from(
       { length: triggerCount - 1 },

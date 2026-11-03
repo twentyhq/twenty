@@ -1,3 +1,4 @@
+import { reconcileCoreAgentScheduleDrafts } from '@/object-core/agents/utils/reconcileCoreAgentScheduleDrafts';
 import { type CoreAgentSettings } from '@/object-core/agents/types/CoreAgentSettings';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreAgentEditSession } from '@/object-core/agents/types/CoreAgentEditSession';
@@ -67,6 +68,10 @@ export const reconcileCoreAgentEditSession = ({
     agent,
     confirmed,
     draft,
+    scheduleDrafts: reconcileCoreAgentScheduleDrafts({
+      scheduleDrafts: session.scheduleDrafts,
+      draft,
+    }),
     roleId: hasRoleChanges ? session.roleId : (agent.roleId ?? null),
   };
 };

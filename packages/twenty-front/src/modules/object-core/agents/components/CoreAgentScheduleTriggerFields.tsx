@@ -1,8 +1,6 @@
-import { useCoreAgentTrigger } from '@/object-core/agents/hooks/useCoreAgentTrigger';
-import { coreAgentTriggerSchema } from '@/object-core/agents/validation-schemas/coreAgentTriggerSchema';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useLingui } from '@lingui/react/macro';
-import { describeCronExpression } from '~/utils/cron-to-human/describeCronExpression';
+import { useCoreAgentScheduleDraft } from '@/object-core/agents/hooks/useCoreAgentScheduleDraft';
+import { CronScheduleFields } from '@/workflow/workflow-trigger/components/CronScheduleFields';
+import { isDefined } from 'twenty-shared/utils';
 
 type CoreAgentScheduleTriggerFieldsProps = {
   agentId: string;
@@ -15,51 +13,18 @@ export const CoreAgentScheduleTriggerFields = ({
   triggerId,
   disabled,
 }: CoreAgentScheduleTriggerFieldsProps) => {
-  const { t } = useLingui();
-  const { trigger, updateTrigger } = useCoreAgentTrigger({
+  const { value, updateScheduleDraft } = useCoreAgentScheduleDraft({
     agentId,
     triggerId,
   });
-
-  if (trigger?.type !== 'CRON') {
+  if (!isDefined(value)) {
     return null;
   }
-
-  const hasValidPattern =
-    coreAgentTriggerSchema.options[1].shape.settings.safeParse(
-      trigger.settings,
-    ).success;
-  const description = (() => {
-    try {
-      return describeCronExpression(trigger.settings.pattern, {
-        use24HourTimeFormat: true,
-      });
-    } catch {
-      return undefined;
-    }
-  })();
-
   return (
-    <SettingsTextInput
-      instanceId={`agent-trigger-cron-${triggerId}`}
-      label={t`Cron pattern`}
-      placeholder="0 9 * * 1"
-      value={trigger.settings.pattern}
-      onChange={(pattern) =>
-        updateTrigger((current) =>
-          current.type === 'CRON'
-            ? { ...current, settings: { ...current.settings, pattern } }
-            : current,
-        )
-      }
-      disabled={disabled}
-      fullWidth
-      hint={description}
-      error={
-        !hasValidPattern
-          ? t`Enter a valid cron pattern, such as 0 9 * * 1.`
-          : undefined
-      }
+    <CronScheduleFields
+      value={value}
+      onChange={updateScheduleDraft}
+      readonly={disabled}
     />
   );
 };

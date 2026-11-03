@@ -1,13 +1,9 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useUpdateCoreAgentEditSession } from '@/object-core/agents/hooks/useUpdateCoreAgentEditSession';
 import { useCoreAgentEditScope } from '@/object-core/agents/hooks/useCoreAgentEditScope';
 import { type CoreAgentSettings } from '@/object-core/agents/types/CoreAgentSettings';
-import { useAtomValue, useStore } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { isFunction } from '@sniptt/guards';
 
 export const useCoreAgentField = <TField extends keyof CoreAgentSettings>({
@@ -17,7 +13,9 @@ export const useCoreAgentField = <TField extends keyof CoreAgentSettings>({
   field: TField;
   agentId?: string;
 }) => {
-  const store = useStore();
+  const { updateCoreAgentEditSession } = useUpdateCoreAgentEditSession({
+    agentId,
+  });
   const { sessionAtom } = useCoreAgentEditScope(agentId);
   const fieldAtom = useMemo(
     () => selectAtom(sessionAtom, (session) => session?.draft[field]),
@@ -32,32 +30,18 @@ export const useCoreAgentField = <TField extends keyof CoreAgentSettings>({
           previousValue: CoreAgentSettings[TField],
         ) => CoreAgentSettings[TField]),
   ) => {
-    const session = store.get(sessionAtom);
-
-    if (
-      !isDefined(session) ||
-      session.agent.isSystem ||
-      !store.get(permissionFlagMapSelector.atom)[
-        PermissionFlagType.AI_SETTINGS
-      ] ||
-      !getIsMetadataItemCustom(
-        session.agent,
-        store.get(currentWorkspaceState.atom)?.workspaceCustomApplication?.id,
-      )
-    ) {
-      return;
-    }
-
-    const fieldValue = isFunction(nextValue)
-      ? nextValue(session.draft[field])
-      : nextValue;
-    store.set(sessionAtom, {
-      ...session,
-      draft: { ...session.draft, [field]: fieldValue },
-      fieldRevisions: {
-        ...session.fieldRevisions,
-        [field]: session.fieldRevisions[field] + 1,
-      },
+    updateCoreAgentEditSession((session) => {
+      const fieldValue = isFunction(nextValue)
+        ? nextValue(session.draft[field])
+        : nextValue;
+      return {
+        ...session,
+        draft: { ...session.draft, [field]: fieldValue },
+        fieldRevisions: {
+          ...session.fieldRevisions,
+          [field]: session.fieldRevisions[field] + 1,
+        },
+      };
     });
   };
 

@@ -81,6 +81,7 @@ export const useDiscardCoreAgentChanges = ({
     store.set(sessionAtom, {
       ...session,
       draft: session.confirmed,
+      scheduleDrafts: undefined,
       roleId,
       isSaving: false,
       requiresRefresh: false,

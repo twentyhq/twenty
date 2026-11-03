@@ -1,3 +1,4 @@
+import { getCoreAgentScheduleDraftFromPattern } from '@/object-core/agents/utils/getCoreAgentScheduleDraftFromPattern';
 import { isCoreAgentRoleEditable } from '@/object-core/agents/utils/isCoreAgentRoleEditable';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
@@ -167,3 +168,70 @@ it.each(['canBeAssignedToUsers', 'canBeAssignedToApiKeys'] as const)(
     ).toBe(false);
   },
 );
+
+it('preserves a selected interval after Save, accepts untouched remote changes, and retains later invalid buffers', () => {
+  const trigger = {
+    id: '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22',
+    type: 'CRON',
+    isActive: true,
+    instructions: null,
+    settings: { pattern: '0 9 */1 * *', futureTimezone: 'UTC' },
+  };
+  const agent = { ...AGENT, triggers: [trigger] };
+  const initial = reconcileCoreAgentEditSession({
+    session: undefined,
+    agent,
+    hasRoleChanges: false,
+  });
+  const custom = {
+    ...getCoreAgentScheduleDraftFromPattern(trigger.settings.pattern),
+    interval: 'CUSTOM' as const,
+    pattern: trigger.settings.pattern,
+  };
+  const current = {
+    ...initial,
+    scheduleDrafts: { [trigger.id]: custom },
+    submission: {
+      settings: initial.draft,
+      fieldRevisions: initial.fieldRevisions,
+    },
+  };
+  const acknowledged = reconcileCoreAgentEditSession({
+    session: current,
+    agent,
+    hasRoleChanges: false,
+  });
+  expect(acknowledged.scheduleDrafts?.[trigger.id].interval).toBe('CUSTOM');
+  const refreshedAgent = {
+    ...agent,
+    triggers: [
+      {
+        ...trigger,
+        settings: { ...trigger.settings, pattern: '15 */2 * * *' },
+      },
+    ],
+  };
+  expect(
+    reconcileCoreAgentEditSession({
+      session: { ...acknowledged, submission: null },
+      agent: refreshedAgent,
+      hasRoleChanges: false,
+    }).scheduleDrafts,
+  ).toBeUndefined();
+  const invalid = {
+    ...getCoreAgentScheduleDraftFromPattern(trigger.settings.pattern),
+    hour: '24',
+  };
+  const newer = {
+    ...current,
+    fieldRevisions: { ...current.fieldRevisions, triggers: 1 },
+    scheduleDrafts: { [trigger.id]: invalid },
+  };
+  const result = reconcileCoreAgentEditSession({
+    session: newer,
+    agent: refreshedAgent,
+    hasRoleChanges: false,
+  });
+  expect(result.scheduleDrafts?.[trigger.id]).toBe(invalid);
+  expect(result.draft.triggers).toEqual(agent.triggers);
+});

@@ -17,7 +17,7 @@ type Story = StoryObj<typeof CoreAgentTriggerEditorExample>;
 export const InvalidScheduleAndCancel: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const pattern = canvas.getByRole('textbox', { name: 'Cron pattern' });
+    const pattern = canvas.getByRole('textbox', { name: 'Expression' });
     const save = canvas.getByRole('button', { name: 'Save settings' });
     const active = canvas.getByRole('switch', { name: 'Active' });
     const instructions = canvas.getByRole('textbox', { name: 'Instructions' });
@@ -35,7 +35,7 @@ export const InvalidScheduleAndCancel: Story = {
       canvas.getByRole('button', { name: 'Cancel settings' }),
     );
     await expect(
-      canvas.getByRole('textbox', { name: 'Cron pattern' }),
+      canvas.getByRole('textbox', { name: 'Expression' }),
     ).toHaveValue('0 9 * * 1');
     await expect(
       canvas.getByRole('switch', { name: 'Active' }),
@@ -67,6 +67,50 @@ export const InvalidScheduleAndCancel: Story = {
   },
 };
 
+export const InvalidNumericScheduleAndCancel: Story = {
+  args: { initialPattern: '0 9 */1 * *' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const hour = canvas.getByRole('textbox', { name: 'Trigger at hour (UTC)' });
+    const save = canvas.getByRole('button', { name: 'Save settings' });
+    await userEvent.clear(hour);
+    await userEvent.type(hour, '24');
+    await expect(hour).toHaveValue('24');
+    await expect(save).toBeDisabled();
+    await expect(canvas.getByText('Invalid schedule')).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Cancel settings' }),
+    );
+    await expect(
+      canvas.getByRole('textbox', { name: 'Trigger at hour (UTC)' }),
+    ).toHaveValue('9');
+    await expect(
+      canvas.getByRole('switch', { name: 'Active' }),
+    ).not.toBeChecked();
+    await userEvent.clear(
+      canvas.getByRole('textbox', { name: 'Trigger at hour (UTC)' }),
+    );
+    await userEvent.type(
+      canvas.getByRole('textbox', { name: 'Trigger at hour (UTC)' }),
+      '10',
+    );
+    await expect(save).toBeEnabled();
+    await userEvent.click(save);
+    await expect(args.onSave).toHaveBeenCalledWith([
+      expect.objectContaining({
+        isActive: false,
+        instructions: 'Send the weekly report',
+        settings: { pattern: '0 10 */1 * *' },
+      }),
+      {
+        id: 'unsupported-0',
+        type: 'WEBHOOK',
+        futureSettings: { preserve: true },
+      },
+    ]);
+  },
+};
+
 export const TwentyTriggerLimit: Story = {
   args: { triggerCount: 20 },
   play: async ({ canvasElement }) => {
@@ -88,7 +132,7 @@ export const ReadOnly: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole('textbox', { name: 'Cron pattern' }),
+      canvas.getByRole('textbox', { name: 'Expression' }),
     ).toBeDisabled();
     await expect(
       canvas.getByRole('textbox', { name: 'Instructions' }),
