@@ -275,10 +275,14 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         return maps;
       };
 
-      it('keeps the renamed rule the workspace saved', () => {
+      it('keeps the renamed rule the workspace saved and warns', () => {
         const maps = buildRenamedMaps();
 
-        expect(sync(maps).warnings).toEqual([]);
+        expect(sync(maps).warnings).toEqual([
+          expect.stringContaining(
+            'kept its workspace expression "headcount > 0"',
+          ),
+        ]);
         expect(syncedRule(maps)).toMatchObject({
           expression: 'headcount > 0',
           bindings: { headcount: 'employees' },

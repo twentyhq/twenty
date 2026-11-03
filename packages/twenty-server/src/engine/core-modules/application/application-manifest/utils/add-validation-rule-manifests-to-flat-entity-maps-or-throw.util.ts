@@ -528,6 +528,10 @@ const resolveCompilationOutcome = ({
       expression,
       bindings: compilationResult.bindings,
       isActive: existingFlatValidationRule?.isActive ?? true,
+      warning:
+        expression === validationRuleManifest.expression
+          ? undefined
+          : `Validation rule "${validationRuleManifest.name}" kept its workspace expression "${expression}" because a field it reads was renamed in this workspace. Update the rule's expression to use the new name, or run twenty app pull.`,
     };
   }
 

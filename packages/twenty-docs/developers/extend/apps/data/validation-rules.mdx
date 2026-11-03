@@ -78,7 +78,7 @@ A rule can read fields you declare, and the [system fields](/developers/extend/a
 | Your app removes a field its rule reads                                               | The sync fails with an error naming the rule and the field                                   |
 | A workspace deactivates a field outside your app                                      | The sync succeeds, the rule stays off and the CLI shows a warning                            |
 | A workspace deletes a field outside your app, and your rule's expression is unchanged | The sync succeeds, the rule stays off and the CLI shows a warning                            |
-| A workspace renames a field outside your app                                          | The sync succeeds and keeps the rule under the new name, which `twenty app pull` writes back |
+| A workspace renames a field outside your app                                          | The sync succeeds, keeps the rule under the new name and the CLI shows a warning. `twenty app pull` writes the new name back |
 | A new or edited rule names a field that doesn't exist                                 | The sync fails                                                                               |
 | A workspace deletes the rule's error field                                            | The sync succeeds, the rule is no longer attached to that field and the CLI shows a warning  |
 
