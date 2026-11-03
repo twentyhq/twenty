@@ -3,13 +3,10 @@ import { usePrepareCoreAgentRole } from '@/object-core/agents/hooks/usePrepareCo
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { Link } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/components/layout';
-import { IconExternalLink } from 'twenty-ui/icon';
 
 type CoreAgentRolePolicyProps = { agentId?: string };
 
@@ -70,23 +67,6 @@ export const CoreAgentRolePolicy = ({ agentId }: CoreAgentRolePolicyProps) => {
           variant="outline"
           onClick={prepareCoreAgentRole}
         >{t`Prepare permissions`}</Button>
-      )}
-      {canReadRoles && isDefined(persistedRoleId) && (
-        <Button
-          nativeButton={false}
-          variant="outline"
-          size="sm"
-          startIcon={<IconExternalLink />}
-          render={
-            <Link
-              to={getSettingsPath(SettingsPath.RoleDetail, {
-                roleId: persistedRoleId,
-              })}
-              target="_blank"
-              rel="noreferrer"
-            />
-          }
-        >{t`Open in Roles`}</Button>
       )}
     </Section.Root>
   );

@@ -11,6 +11,8 @@ const AGENT: CoreAgent = {
   label: 'Agent',
   description: 'Original description',
   icon: null,
+  avatarColor: null,
+  avatarShape: null,
   prompt: 'Original instructions',
   modelId: 'workspace-default-model',
   responseFormat: null,

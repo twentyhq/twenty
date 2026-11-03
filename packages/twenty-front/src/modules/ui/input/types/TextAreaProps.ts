@@ -3,6 +3,7 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 export type TextAreaProps = {
   textAreaId: string;
   label?: string;
+  'aria-label'?: string;
   disabled?: boolean;
   height?: number;
   minRows?: number;

@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
 export const TextArea = ({
   textAreaId,
   label,
+  'aria-label': ariaLabel,
   disabled,
   height,
   placeholder,
@@ -65,6 +66,7 @@ export const TextArea = ({
       {label && <Field.Label>{label}</Field.Label>}
       <Textarea
         autoResize
+        aria-label={ariaLabel}
         rows={computedMinRows}
         maxRows={maxRows}
         variant={isTransparent ? 'plain' : 'default'}

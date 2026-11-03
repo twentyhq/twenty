@@ -171,3 +171,12 @@ export const LinkedTitle: Story = {
     );
   },
 };
+
+export const RawIcon: Story = {
+  args: {
+    ...Chart.args,
+    icon: <IconChartBar size={24} />,
+    iconDisplay: 'raw',
+    fontSize: 'lg',
+  },
+};

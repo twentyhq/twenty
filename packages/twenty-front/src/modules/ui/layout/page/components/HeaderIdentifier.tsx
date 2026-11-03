@@ -59,6 +59,7 @@ type HeaderIdentifierProps = {
   };
   icon?: ReactNode;
   iconColor?: string;
+  iconDisplay?: 'tile' | 'raw';
   fontSize?: 'md' | 'lg';
   title: ReactNode;
   label?: ReactNode;
@@ -68,6 +69,7 @@ export const HeaderIdentifier = ({
   avatar,
   icon,
   iconColor,
+  iconDisplay = 'tile',
   fontSize = 'md',
   title,
   label,
@@ -86,7 +88,9 @@ export const HeaderIdentifier = ({
     icon
   );
 
-  const shouldRenderInTile = !isDefined(avatar) || fontSize === 'md';
+  const shouldRenderInTile = isDefined(avatar)
+    ? fontSize === 'md'
+    : iconDisplay === 'tile';
 
   return (
     <StyledContainer>

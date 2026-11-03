@@ -1,6 +1,7 @@
+import { CoreAgentsIcon } from '@/object-core/agents/components/CoreAgentsIcon';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLego, IconPlus } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
@@ -71,9 +72,7 @@ export const CoreAgentsIndex = () => {
       <CoreAgentsSelectionCleanupEffect tableId={tableId} />
       <CoreObjectIndexPageLayout
         labelPlural={t`Agents`}
-        icon={
-          <IconLego size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
+        icon={<CoreAgentsIcon size={theme.icon.size.md} />}
         numberOfSelectedRecords={selectedAgentIds.length}
         actionButton={
           <>

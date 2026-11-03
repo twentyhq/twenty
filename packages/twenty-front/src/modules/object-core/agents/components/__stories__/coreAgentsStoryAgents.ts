@@ -33,6 +33,8 @@ export const CORE_AGENTS_STORY_AGENTS: CoreAgent[] = [
     : mockCurrentWorkspace.workspaceCustomApplication.id,
   description: null,
   icon: 'IconLego',
+  avatarColor: null,
+  avatarShape: null,
   prompt: 'Provide useful assistance.',
   modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   responseFormat: null,

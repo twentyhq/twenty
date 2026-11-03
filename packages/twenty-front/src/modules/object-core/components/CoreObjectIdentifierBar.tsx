@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -30,6 +30,8 @@ const StyledBar = styled.div`
 
 type CoreObjectIdentifierBarProps = {
   isReadOnly?: boolean;
+  icon?: ReactNode;
+  createdAt?: string;
   recordId: string;
   name: string | null | undefined;
   namePlaceholder: string;
@@ -42,6 +44,8 @@ export const CoreObjectIdentifierBar = ({
   namePlaceholder,
   onRename,
   isReadOnly = false,
+  icon,
+  createdAt,
 }: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -70,12 +74,18 @@ export const CoreObjectIdentifierBar = ({
     <StyledBar>
       <HeaderIdentifier
         fontSize="lg"
-        avatar={{
-          src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
-          colorSeed: recordId,
-          name: recordIdentifier?.name ?? '',
-          shape: recordIdentifier?.avatarShape ?? 'circle',
-        }}
+        icon={icon}
+        iconDisplay="raw"
+        avatar={
+          isDefined(icon)
+            ? undefined
+            : {
+                src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
+                colorSeed: recordId,
+                name: recordIdentifier?.name ?? '',
+                shape: recordIdentifier?.avatarShape ?? 'circle',
+              }
+        }
         title={
           <TitleInput
             instanceId={`core-object-name-${recordId}`}
@@ -97,7 +107,10 @@ export const CoreObjectIdentifierBar = ({
           />
         }
       />
-      <RecordIdentifierBarCreatedAt objectRecordId={recordId} />
+      <RecordIdentifierBarCreatedAt
+        objectRecordId={recordId}
+        createdAt={createdAt}
+      />
     </StyledBar>
   );
 };

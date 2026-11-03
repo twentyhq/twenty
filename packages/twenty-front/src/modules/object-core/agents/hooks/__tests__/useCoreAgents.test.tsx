@@ -28,6 +28,8 @@ const buildAgent = ({
   label,
   description: null,
   icon: null,
+  avatarColor: null,
+  avatarShape: null,
   prompt: 'Prompt',
   modelId: 'workspace-default-model',
   responseFormat: null,

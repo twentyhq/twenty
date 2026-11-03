@@ -20,32 +20,35 @@ const StyledCreatedAt = styled(StyledHeaderIdentifierLabel)`
 
 type RecordIdentifierBarCreatedAtProps = {
   objectRecordId: string;
+  createdAt?: string;
 };
 
 export const RecordIdentifierBarCreatedAt = ({
   objectRecordId,
+  createdAt,
 }: RecordIdentifierBarCreatedAtProps) => {
   const recordCreatedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     { recordId: objectRecordId, fieldName: 'createdAt' },
   );
+  const resolvedCreatedAt = createdAt ?? recordCreatedAt;
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const instanceId = useId().replace(/:/g, '');
 
-  if (!isNonEmptyString(recordCreatedAt)) {
+  if (!isNonEmptyString(resolvedCreatedAt)) {
     return null;
   }
 
   const createdAtElementId = `record-identifier-bar-created-at-${instanceId}`;
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-    recordCreatedAt,
+    resolvedCreatedAt,
     localeCatalog,
   );
 
   return (
     <Tooltip
       delay={TooltipDelay.mediumDelay}
-      content={beautifyExactDateTime(recordCreatedAt)}
+      content={beautifyExactDateTime(resolvedCreatedAt)}
       side="left"
     >
       <StyledCreatedAt id={createdAtElementId}>

@@ -7,6 +7,8 @@ export const CORE_AGENT_STORY_AGENT: CoreAgent = {
   label: 'Researcher',
   description: 'Researches companies',
   icon: null,
+  avatarColor: null,
+  avatarShape: null,
   prompt: 'Research the company',
   modelId: 'auto',
   responseFormat: null,
