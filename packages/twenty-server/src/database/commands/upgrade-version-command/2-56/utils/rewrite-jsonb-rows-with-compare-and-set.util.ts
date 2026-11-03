@@ -12,7 +12,6 @@ export const rewriteJsonbRowsWithCompareAndSet = async <TValue>({
   columnName,
   whereClause,
   whereParameters,
-  rewriteGuard,
   mapRow,
 }: {
   dataSource: DataSource;
@@ -21,12 +20,9 @@ export const rewriteJsonbRowsWithCompareAndSet = async <TValue>({
   columnName: string;
   whereClause: string;
   whereParameters: unknown[];
-  // an extra condition on each rewrite, which sees its guardKeys and the guard parameter as $2
-  rewriteGuard?: { condition: string; parameter: unknown };
   mapRow: (row: StoredJsonbRow<TValue>) => {
     value: TValue;
     hasChanged: boolean;
-    guardKeys?: string[];
   };
 }): Promise<number> => {
   let rewrittenRowCount = 0;
@@ -43,22 +39,17 @@ export const rewriteJsonbRowsWithCompareAndSet = async <TValue>({
     );
 
     const rewrites = rows.flatMap((row) => {
-      const { value, hasChanged, guardKeys = [] } = mapRow(row);
+      const { value, hasChanged } = mapRow(row);
 
-      return hasChanged
-        ? [{ id: row.id, from: row.value, to: value, guardKeys }]
-        : [];
+      return hasChanged ? [{ id: row.id, from: row.value, to: value }] : [];
     });
 
     if (isDryRun) {
       rewrittenRowCount += rewrites.length;
     } else if (rewrites.length > 0) {
       const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-        `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb, "guardKeys" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"${isDefined(rewriteGuard) ? ` AND (${rewriteGuard.condition})` : ''}`,
-        [
-          JSON.stringify(rewrites),
-          ...(isDefined(rewriteGuard) ? [rewriteGuard.parameter] : []),
-        ],
+        `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"`,
+        [JSON.stringify(rewrites)],
       );
 
       rewrittenRowCount += updatedRowCount;

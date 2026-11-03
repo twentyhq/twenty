@@ -14,15 +14,6 @@ export type StepAgentInlineConfig = {
   scope: AiRunScope | null;
 };
 
-// the inlineConfig a paused run's spec holds in 2.56
-export type PausedRunInlineConfig = Omit<
-  StepAgentInlineConfig,
-  'responseFormat'
-> & {
-  applicationId: string | null;
-  promptCacheKey: string;
-};
-
 export type StoredWorkflowStep = {
   id?: unknown;
   type?: unknown;

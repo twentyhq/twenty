@@ -28,38 +28,17 @@ const buildAgentStep = (
 const inline = ({
   steps,
   inlineConfig = INLINE_CONFIG,
-  keptAgentIds = [],
 }: {
   steps: StoredWorkflowStep[];
   inlineConfig?: StepAgentInlineConfig;
-  keptAgentIds?: string[];
 }) =>
   inlineWorkflowStepAgents({
     steps,
     inlineConfigByAgentId: new Map([['agent-id', inlineConfig]]),
-    keptAgentIds: new Set(keptAgentIds),
+    keptAgentIds: new Set(),
   });
 
 describe('inlineWorkflowStepAgents', () => {
-  it('moves the agent config into the step and drops the agent', () => {
-    const { steps, hasChanged } = inline({
-      steps: [
-        buildAgentStep({ agentId: 'agent-id', prompt: 'Qualify {{trigger}}' }),
-      ],
-    });
-
-    expect(hasChanged).toBe(true);
-    expect(steps).toEqual([
-      buildAgentStep({
-        prompt: 'Qualify {{trigger}}',
-        instructions: 'Qualify the lead.',
-        modelId: 'auto-select',
-        modelConfiguration: { webSearch: { enabled: true } },
-        scope: INLINE_CONFIG.scope,
-      }),
-    ]);
-  });
-
   it("keeps the step's own response format over the agent's", () => {
     const stepResponseFormat = {
       type: 'json',
@@ -89,17 +68,6 @@ describe('inlineWorkflowStepAgents', () => {
     expect(steps[0].settings?.input).not.toHaveProperty('scope');
   });
 
-  it('reports each agent it inlined once, so its row is not rewritten from an agent edited since', () => {
-    expect(
-      inline({
-        steps: [
-          buildAgentStep({ agentId: 'agent-id' }),
-          { ...buildAgentStep({ agentId: 'agent-id' }), id: 'other-step-id' },
-        ],
-      }).inlinedAgentIds,
-    ).toEqual(['agent-id']);
-  });
-
   it('leaves other steps and agents it does not inline as they are', () => {
     const steps = [
       { id: 'code', type: 'CODE', settings: { input: {} } },
@@ -109,62 +77,7 @@ describe('inlineWorkflowStepAgents', () => {
     expect(inline({ steps })).toEqual({
       steps,
       hasChanged: false,
-      inlinedAgentIds: [],
-      keptSteps: [],
-      conversationalSteps: [],
-    });
-  });
-
-  it('reports the steps whose agent is kept', () => {
-    const steps = [buildAgentStep({ agentId: 'agent-id' })];
-
-    expect(inline({ steps, keptAgentIds: ['agent-id'] })).toEqual({
-      steps,
-      hasChanged: false,
-      inlinedAgentIds: [],
-      keptSteps: [
-        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
-      ],
-      conversationalSteps: [],
-    });
-  });
-
-  it('keeps the agent of a step with human input instructions', () => {
-    const steps = [
-      buildAgentStep({
-        agentId: 'agent-id',
-        prompt: 'Draft the email',
-        humanInputInstructions: 'Have every email reviewed.',
-      }),
-    ];
-
-    expect(inline({ steps })).toEqual({
-      steps,
-      hasChanged: false,
-      inlinedAgentIds: [],
-      keptSteps: [],
-      conversationalSteps: [
-        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
-      ],
-    });
-  });
-
-  it('keeps the agent of a step with a conversation', () => {
-    const steps = [
-      buildAgentStep({
-        agentId: 'agent-id',
-        conversation: { scope: 'KEY', key: 'support' },
-      }),
-    ];
-
-    expect(inline({ steps })).toEqual({
-      steps,
-      hasChanged: false,
-      inlinedAgentIds: [],
-      keptSteps: [],
-      conversationalSteps: [
-        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
-      ],
+      keptStepAgentIds: [],
     });
   });
 
@@ -177,7 +90,7 @@ describe('inlineWorkflowStepAgents', () => {
       id: 'conversational-step-id',
     };
 
-    const { steps, hasChanged } = inlineWorkflowStepAgents({
+    const { steps, hasChanged, keptStepAgentIds } = inlineWorkflowStepAgents({
       steps: [buildAgentStep({ agentId: 'agent-id' }), conversationalStep],
       inlineConfigByAgentId: new Map([
         ['agent-id', INLINE_CONFIG],
@@ -187,6 +100,7 @@ describe('inlineWorkflowStepAgents', () => {
     });
 
     expect(hasChanged).toBe(true);
+    expect(keptStepAgentIds).toEqual(['conversational-agent-id']);
     expect(steps).toEqual([
       buildAgentStep({
         instructions: 'Qualify the lead.',
@@ -199,22 +113,14 @@ describe('inlineWorkflowStepAgents', () => {
   });
 
   it('inlines a step whose human input instructions are blank', () => {
-    const { steps, hasChanged, conversationalSteps } = inline({
+    const { steps, hasChanged, keptStepAgentIds } = inline({
       steps: [
         buildAgentStep({ agentId: 'agent-id', humanInputInstructions: '  ' }),
       ],
     });
 
     expect(hasChanged).toBe(true);
-    expect(conversationalSteps).toEqual([]);
+    expect(keptStepAgentIds).toEqual([]);
     expect(steps[0].settings?.input).not.toHaveProperty('agentId');
-  });
-
-  it('is a no-op on steps already inlined', () => {
-    const { steps } = inline({
-      steps: [buildAgentStep({ agentId: 'agent-id' })],
-    });
-
-    expect(inline({ steps }).hasChanged).toBe(false);
   });
 });

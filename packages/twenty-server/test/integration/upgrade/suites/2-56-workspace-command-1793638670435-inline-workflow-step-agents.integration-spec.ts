@@ -60,7 +60,6 @@ const MANUAL_TRIGGER = {
 
 const STEP_NAME = 'Summarize the company';
 const STEP_PROMPT = 'Summarize the company you were given';
-const CONVERSATIONAL_WORKFLOW_NAME = 'Reviewed company summary';
 
 const STEP_AGENT_INSTRUCTIONS = 'You write short company summaries.';
 
@@ -133,17 +132,6 @@ type ModelCall = {
   offeredToolNames: string[];
 };
 
-const withStepInput = ({
-  step,
-  input,
-}: {
-  step: AiAgentStep;
-  input: Record<string, unknown>;
-}): AiAgentStep => ({
-  ...step,
-  settings: { ...step.settings, input: { ...step.settings.input, ...input } },
-});
-
 const inlineStepAgentOf = ({
   settings: {
     input: { agentId: _agentId, ...input },
@@ -200,21 +188,16 @@ const scriptModelAnsweringASummary = (): ModelCall[] => {
   return calls;
 };
 
-const EDITED_STEP_AGENT_INSTRUCTIONS = 'Summarize the company for a sales call';
-
 describe('2-56 workspace command - inline workflow step agents (integration)', () => {
   let command: InlineWorkflowStepAgentsCommand;
   let stepAgentRoleId: string;
   const roleIds: string[] = [];
-  let workspaceCustomApplicationId: string;
   let generateWorkflow: LegacyAiStepWorkflow;
   let conversationalWorkflow: LegacyAiStepWorkflow;
-  let seededSystemAgents: { id: string; label: string }[];
+  let seededSystemAgentIds: string[];
   const coreWorkflowIds: string[] = [];
   const workspaceWorkflowIds: string[] = [];
   const agentIds: string[] = [];
-  const pausedRunId = randomUUID();
-  const wakeUpId = randomUUID();
 
   const runCommand = () =>
     command.runOnWorkspace({
@@ -247,24 +230,9 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     return steps;
   };
 
-  const readPausedRun = async () => {
-    const [{ state }] = await global.testDataSource.query(
-      `SELECT state FROM ${SCHEMA}."workflowRun" WHERE id = $1`,
-      [pausedRunId],
-    );
-    const [{ payload }] = await global.testDataSource.query(
-      `SELECT payload FROM core."pendingWakeUp" WHERE id = $1`,
-      [wakeUpId],
-    );
-
-    return { steps: state.flow.steps, runSpec: payload.runSpec };
-  };
-
-  const readAgent = async (
-    agentId: string,
-  ): Promise<{ isSystem: boolean; label: string }> => {
+  const readAgent = async (agentId: string): Promise<{ isSystem: boolean }> => {
     const [agent] = await global.testDataSource.query(
-      `SELECT "isSystem", label FROM core."agent" WHERE id = $1`,
+      `SELECT "isSystem" FROM core."agent" WHERE id = $1`,
       [agentId],
     );
 
@@ -281,7 +249,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     conversationalCoreSteps: await readCoreSteps(
       conversationalWorkflow.coreWorkflowVersionId,
     ),
-    pausedRun: await readPausedRun(),
     generateAgent: await readAgent(generateWorkflow.agentId),
     conversationalAgent: await readAgent(conversationalWorkflow.agentId),
   });
@@ -373,11 +340,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       'InlineWorkflowStepAgentsCommand',
     );
 
-    [{ workspaceCustomApplicationId }] = await global.testDataSource.query(
-      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
-
     const [{ objectMetadataId, fieldMetadataId }] =
       await global.testDataSource.query(
         `SELECT object.id AS "objectMetadataId", field.id AS "fieldMetadataId"
@@ -454,59 +416,21 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       stepInput: { prompt: STEP_PROMPT },
     });
     conversationalWorkflow = await createLegacyAiStepWorkflow({
-      name: CONVERSATIONAL_WORKFLOW_NAME,
+      name: 'Reviewed company summary',
       stepInput: {
         prompt: STEP_PROMPT,
         humanInputInstructions: 'Have a person approve the summary',
       },
     });
 
-    await global.testDataSource.query(
-      `INSERT INTO ${SCHEMA}."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position)
-       VALUES ($1, 'Paused company summary', $2, $3, $4, $5, 'RUNNING', $6, 0)`,
-      [
-        pausedRunId,
-        generateWorkflow.workspaceWorkflowId,
-        generateWorkflow.workspaceWorkflowVersionId,
-        generateWorkflow.coreWorkflowId,
-        generateWorkflow.coreWorkflowVersionId,
-        JSON.stringify({
-          flow: { trigger: MANUAL_TRIGGER, steps: [generateWorkflow.step] },
-          stepInfos: {
-            trigger: { status: 'SUCCESS', result: {} },
-            [generateWorkflow.step.id]: { status: 'RUNNING' },
-          },
-        }),
-      ],
-    );
-    await global.testDataSource.query(
-      `INSERT INTO "core"."pendingWakeUp" (id, "workspaceId", "ownerType", "ownerId", "ownerKey", condition, payload)
-       VALUES ($1, $2, 'AGENT_RUN', $3, 'RUN', $4::jsonb, $5::jsonb)`,
-      [
-        wakeUpId,
-        SEED_APPLE_WORKSPACE_ID,
-        randomUUID(),
-        JSON.stringify({ type: 'ANSWER', threadId: randomUUID() }),
-        JSON.stringify({
-          caller: {
-            type: 'WORKFLOW_STEP',
-            ref: {
-              workflowRunId: pausedRunId,
-              stepId: generateWorkflow.step.id,
-            },
-          },
-          runSpec: { agentId: generateWorkflow.agentId, title: STEP_NAME },
-          summary: null,
-          continuationCount: 0,
-        }),
-      ],
-    );
+    const seededSystemAgents: { id: string }[] =
+      await global.testDataSource.query(
+        `SELECT id FROM core."agent"
+         WHERE "workspaceId" = $1 AND "isSystem" = true AND NOT (id = ANY($2::uuid[]))`,
+        [SEED_APPLE_WORKSPACE_ID, agentIds],
+      );
 
-    seededSystemAgents = await global.testDataSource.query(
-      `SELECT id, label FROM core."agent"
-       WHERE "workspaceId" = $1 AND "isSystem" = true AND NOT (id = ANY($2::uuid[]))`,
-      [SEED_APPLE_WORKSPACE_ID, agentIds],
-    );
+    seededSystemAgentIds = seededSystemAgents.map(({ id }) => id);
   });
 
   afterEach(() => {
@@ -514,10 +438,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   });
 
   afterAll(async () => {
-    await global.testDataSource.query(
-      `DELETE FROM "core"."pendingWakeUp" WHERE id = $1`,
-      [wakeUpId],
-    );
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."workflowRun" WHERE "coreWorkflowId" = ANY($1::uuid[])`,
       [coreWorkflowIds],
@@ -553,10 +473,8 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
 
     // the command also reveals the conversational step agents the dev seed creates
     await global.testDataSource.query(
-      `UPDATE core."agent" AS agent SET "isSystem" = true, label = seeded.label
-       FROM jsonb_to_recordset($1::jsonb) AS seeded(id uuid, label text)
-       WHERE agent.id = seeded.id`,
-      [JSON.stringify(seededSystemAgents)],
+      `UPDATE core."agent" SET "isSystem" = true WHERE id = ANY($1::uuid[])`,
+      [seededSystemAgentIds],
     );
     await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
       SEED_APPLE_WORKSPACE_ID,
@@ -580,7 +498,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     });
   });
 
-  it('keeps the agent of a step with human input and makes it visible under its workflow and step names', async () => {
+  it('keeps the agent of a step with human input and makes it visible', async () => {
     expect(
       await readCoreSteps(conversationalWorkflow.coreWorkflowVersionId),
     ).toEqual([conversationalWorkflow.step]);
@@ -591,26 +509,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     ).toEqual([conversationalWorkflow.step]);
     expect(await readAgent(conversationalWorkflow.agentId)).toEqual({
       isSystem: false,
-      label: `${CONVERSATIONAL_WORKFLOW_NAME} · ${STEP_NAME}`,
-    });
-  });
-
-  it('inlines the step agent in the saved flow of a paused run and in the spec it resumes from', async () => {
-    expect(await readPausedRun()).toEqual({
-      steps: [inlineStepAgentOf(generateWorkflow.step)],
-      runSpec: {
-        title: STEP_NAME,
-        agentId: null,
-        inlineConfig: {
-          instructions: STEP_AGENT_INSTRUCTIONS,
-          modelId: TEST_AI_MODEL_ID,
-          modelConfiguration: STEP_AGENT_MODEL_CONFIGURATION,
-          scope: STEP_AGENT_ROLE_SCOPE,
-          applicationId: workspaceCustomApplicationId,
-          promptCacheKey: `workflow-step:${generateWorkflow.step.id}`,
-        },
-        responseFormat: STEP_AGENT_RESPONSE_FORMAT,
-      },
     });
   });
 
@@ -641,48 +539,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       expect.arrayContaining(['find_many_companies', 'http_request']),
     );
     expect(calls[0].offeredToolNames).not.toContain('find_many_people');
-  });
-
-  it('leaves a step edited while it was being inlined for the next run', async () => {
-    const editedWorkflow = await createLegacyAiStepWorkflow({
-      name: 'Company summary edited mid-upgrade',
-      stepInput: { prompt: STEP_PROMPT },
-    });
-    const editedStep = withStepInput({
-      step: editedWorkflow.step,
-      input: { prompt: 'Summarize the company in one line' },
-    });
-    const query = global.testDataSource.query.bind(global.testDataSource);
-
-    jest
-      .spyOn(global.testDataSource, 'query')
-      .mockImplementation(async (sql: string, parameters?: unknown[]) => {
-        if (sql.startsWith('UPDATE core."workflowVersion" AS target')) {
-          await query(
-            `UPDATE core."workflowVersion" SET steps = $2 WHERE id = $1`,
-            [
-              editedWorkflow.coreWorkflowVersionId,
-              JSON.stringify([editedStep]),
-            ],
-          );
-        }
-
-        return query(sql, parameters);
-      });
-
-    await runCommand();
-
-    jest.restoreAllMocks();
-
-    expect(await readCoreSteps(editedWorkflow.coreWorkflowVersionId)).toEqual([
-      editedStep,
-    ]);
-
-    await runCommand();
-
-    expect(await readCoreSteps(editedWorkflow.coreWorkflowVersionId)).toEqual([
-      inlineStepAgentOf(editedStep),
-    ]);
   });
 
   it('keeps an archived step agent visible, so its step still stops and the agent can be restored', async () => {
@@ -718,43 +574,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_IS_INACTIVE });
   });
 
-  it('leaves a step whose agent was edited while it was being inlined for the next run', async () => {
-    const editedWorkflow = await createLegacyAiStepWorkflow({
-      name: 'Company summary whose agent was edited mid-upgrade',
-      stepInput: { prompt: STEP_PROMPT },
-    });
-    const query = global.testDataSource.query.bind(global.testDataSource);
-
-    jest
-      .spyOn(global.testDataSource, 'query')
-      .mockImplementation(async (sql: string, parameters?: unknown[]) => {
-        if (sql.startsWith('UPDATE core."workflowVersion" AS target')) {
-          await query(
-            `UPDATE core."agent" SET prompt = $2, "updatedAt" = now() WHERE id = $1`,
-            [editedWorkflow.agentId, EDITED_STEP_AGENT_INSTRUCTIONS],
-          );
-        }
-
-        return query(sql, parameters);
-      });
-
-    await runCommand();
-
-    jest.restoreAllMocks();
-
-    expect(await readCoreSteps(editedWorkflow.coreWorkflowVersionId)).toEqual([
-      editedWorkflow.step,
-    ]);
-
-    await runCommand();
-
-    expect(
-      (await readCoreSteps(editedWorkflow.coreWorkflowVersionId))[0].settings
-        .input,
-    ).toMatchObject({ instructions: EDITED_STEP_AGENT_INSTRUCTIONS });
-  });
-
-  it('keeps a step agent whose role has row-level predicates and makes it visible under its workflow and step names', async () => {
+  it('keeps a step agent whose role has row-level predicates and makes it visible', async () => {
     const { data: roleData } = await createOneRole({
       expectToFail: false,
       input: {
@@ -805,9 +625,8 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       },
     });
 
-    const rowLevelWorkflowName = 'Company summary limited to some companies';
     const rowLevelWorkflow = await createLegacyAiStepWorkflow({
-      name: rowLevelWorkflowName,
+      name: 'Company summary limited to some companies',
       stepInput: { prompt: STEP_PROMPT },
     });
 
@@ -823,7 +642,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     );
     expect(await readAgent(rowLevelWorkflow.agentId)).toEqual({
       isSystem: false,
-      label: `${rowLevelWorkflowName} · ${STEP_NAME}`,
     });
   });
 });
