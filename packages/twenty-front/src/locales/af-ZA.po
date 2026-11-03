@@ -12564,6 +12564,11 @@ msgstr "Kon nie ondertekeningsleutel herroep nie. Probeer asseblief weer later."
 msgid "Failed to revoke the recovery code."
 msgstr "Kon nie die herstelkode herroep nie."
 
+#. js-lingui-id: /CvX5S
+#: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
+msgid "Failed to save behavior settings. Try again."
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -12583,11 +12588,6 @@ msgstr "Kon nie die app-instellings stoor nie."
 #: src/modules/activities/emails/hooks/usePersistedCampaignDraft.ts
 msgid "Failed to save the campaign"
 msgstr "Kon nie die veldtog stoor nie"
-
-#. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
-msgid "Failed to save workspace instructions"
-msgstr "Kon nie werkruimte-instruksies stoor nie"
 
 #. js-lingui-id: GpNLad
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
