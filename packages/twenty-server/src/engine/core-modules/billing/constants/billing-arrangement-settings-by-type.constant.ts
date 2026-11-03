@@ -11,8 +11,8 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
   }
 > = {
   [BillingArrangementType.COMMITTED_SEATS]: {
-    required: ['seats', 'seatCapMode'],
-    optional: ['stripePriceId', 'endsAt'],
+    required: ['seats', 'seatCapMode', 'endsAt'],
+    optional: ['stripePriceId'],
   },
   [BillingArrangementType.FREE_SEATS]: {
     required: ['seats'],

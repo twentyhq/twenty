@@ -9,7 +9,7 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import { styled } from '@linaria/react';
 import { Fragment, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {

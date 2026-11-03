@@ -5,6 +5,7 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { useApolloClient, useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type CoreConnectedAccount = Omit<
   ConnectedAccount,
@@ -40,10 +41,16 @@ export const useMyConnectedAccounts = ({
     client: apolloClient,
   });
 
-  const { channels: messageChannels, loading: messageChannelsLoading } =
-    useMyMessageChannels();
-  const { channels: calendarChannels, loading: calendarChannelsLoading } =
-    useMyCalendarChannels();
+  const {
+    channels: messageChannels,
+    loading: messageChannelsLoading,
+    hasLoaded: hasLoadedMessageChannels,
+  } = useMyMessageChannels();
+  const {
+    channels: calendarChannels,
+    loading: calendarChannelsLoading,
+    hasLoaded: hasLoadedCalendarChannels,
+  } = useMyCalendarChannels();
 
   const accounts = useMemo<ConnectedAccount[]>(() => {
     if (!data?.myConnectedAccounts) {
@@ -67,6 +74,8 @@ export const useMyConnectedAccounts = ({
     accounts,
     loading:
       accountsLoading || messageChannelsLoading || calendarChannelsLoading,
+    hasLoaded:
+      isDefined(data) && hasLoadedMessageChannels && hasLoadedCalendarChannels,
     error,
     refetch,
   };

@@ -2,9 +2,16 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ONE_TIME_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
+import {
+  BillingArrangementType,
+  ONE_TIME_BILLING_ARRANGEMENT_TYPES,
+} from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementPeriod } from 'src/engine/core-modules/billing/types/billing-arrangement-period.type';
 import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
+
+type ScopedBillingArrangementPeriod = BillingArrangementPeriod &
+  Pick<BillingArrangementEntity, 'usageLimitId'>;
 
 const isBefore = ({
   date,
@@ -20,13 +27,21 @@ const isNeverActive = (period: BillingArrangementPeriod): boolean =>
     endDate: getBillingArrangementEndDate(period),
   });
 
+const isSameScope = (
+  arrangement: ScopedBillingArrangementPeriod,
+  otherArrangement: ScopedBillingArrangementPeriod,
+): boolean =>
+  arrangement.type === otherArrangement.type &&
+  (arrangement.type !== BillingArrangementType.LIMIT_OVERRIDE ||
+    arrangement.usageLimitId === otherArrangement.usageLimitId);
+
 export const findOverlappingBillingArrangement = <
-  TArrangement extends BillingArrangementPeriod,
+  TArrangement extends ScopedBillingArrangementPeriod,
 >({
   arrangement,
   workspaceArrangements,
 }: {
-  arrangement: BillingArrangementPeriod;
+  arrangement: ScopedBillingArrangementPeriod;
   workspaceArrangements: TArrangement[];
 }): TArrangement | undefined => {
   if (
@@ -40,7 +55,7 @@ export const findOverlappingBillingArrangement = <
 
   return workspaceArrangements.find(
     (existingArrangement) =>
-      existingArrangement.type === arrangement.type &&
+      isSameScope(arrangement, existingArrangement) &&
       !isNeverActive(existingArrangement) &&
       isBefore({ date: existingArrangement.startsAt, endDate }) &&
       isBefore({
