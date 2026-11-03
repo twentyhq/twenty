@@ -1,3 +1,12 @@
+import { CoreAgentCommandContextProvider } from '@/object-core/commands/components/CoreAgentCommandContextProvider';
+import { CoreAgentCommandRecordSyncEffect } from '@/object-core/commands/components/CoreAgentCommandRecordSyncEffect';
+import { AppNavigatorContext } from '@/app/contexts/AppNavigatorContext';
+import { CoreAgentMetadataEventsEffect } from '@/object-core/agents/components/CoreAgentMetadataEventsEffect';
+import { CoreAgentCommands } from '@/object-core/commands/components/CoreAgentCommands';
+import { useCoreAgentCommandOrigin } from '@/object-core/commands/hooks/useCoreAgentCommandOrigin';
+import { useCoreAgentCommands } from '@/object-core/commands/hooks/useCoreAgentCommands';
+import { useExecuteCoreAgentCommand } from '@/object-core/commands/hooks/useExecuteCoreAgentCommand';
+import { type CoreAgentCommandOrigin } from '@/object-core/commands/types/CoreAgentCommandOrigin';
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -25,7 +34,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   IconApps,
   IconArrowUpRight,
@@ -55,7 +64,13 @@ const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
   FALLBACK: IconLifebuoy,
 };
 
-export const SidePanelCommandMenuItemDisplayPage = () => {
+const SidePanelCommandMenuItemDisplayPageContent = ({
+  origin,
+  pageId,
+}: {
+  origin: CoreAgentCommandOrigin | null;
+  pageId: string;
+}) => {
   const { t } = useLingui();
   const { appActions } = useCommandMenuAppActions();
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -70,6 +85,19 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     coreSelectionSectionContext,
   } = useCoreObjectsCommands();
 
+  const {
+    commands: agentCommands,
+    objectContext: agentObjectContext,
+    selectionContext: agentSelectionContext,
+  } = useCoreAgentCommands(origin);
+  const { executeCoreAgentCommand } = useExecuteCoreAgentCommand({
+    origin,
+    pageId,
+  });
+  const agentCommandIds = (section: 'THIS_OBJECT' | 'SELECTION') =>
+    agentCommands
+      .filter((command) => command.section === section)
+      .map(({ id }) => `core-agent-${id}`);
   const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
   const currentViewSectionContext =
     useCommandMenuItemCurrentViewSectionContext();
@@ -125,7 +153,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       case 'CURRENT_VIEW':
         return t`View`;
       case 'THIS_OBJECT':
-        return isDefined(objectSectionContext) ? t`Object` : t`This object`;
+        if (origin?.target.type === 'record') {
+          return t`Agent`;
+        }
+        return isDefined(agentObjectContext ?? objectSectionContext)
+          ? t`Object`
+          : t`This object`;
       case 'ASK_AND_FIND':
         return t`Ask & find`;
       case 'CREATE_RECORD':
@@ -144,11 +177,13 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const getSectionContext = (section: CommandMenuItemSection) => {
     switch (section) {
       case 'SELECTION':
-        return coreSelectionSectionContext ?? selectionSectionContext;
+        return isDefined(origin)
+          ? agentSelectionContext
+          : (coreSelectionSectionContext ?? selectionSectionContext);
       case 'CURRENT_VIEW':
         return currentViewSectionContext;
       case 'THIS_OBJECT':
-        return objectSectionContext;
+        return isDefined(origin) ? agentObjectContext : objectSectionContext;
       case 'WORKSPACE':
         return workspaceSectionContext;
       default:
@@ -163,28 +198,31 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     if (section === 'THIS_OBJECT') {
       return [
         ...coreObjectCommandIds,
+        ...agentCommandIds('THIS_OBJECT'),
         ...getSectionAppActions(section).map((item) => item.id),
       ];
     }
 
     if (section === 'SELECTION') {
-      return coreSelectionCommandIds;
+      return [...coreSelectionCommandIds, ...agentCommandIds('SELECTION')];
     }
 
     return getSectionAppActions(section).map((item) => item.id);
   };
 
   const hasNoMatchingItems =
-    !matchingItems.length &&
-    appActions.length === 0 &&
-    coreObjectCommandIds.length === 0 &&
-    coreSelectionCommandIds.length === 0;
+    !isNonEmptyArray(matchingItems) &&
+    !isNonEmptyArray(appActions) &&
+    !isNonEmptyArray(coreObjectCommandIds) &&
+    !isNonEmptyArray(coreSelectionCommandIds) &&
+    !isNonEmptyArray(agentCommands);
 
   const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems &&
-    (fallbackCommandMenuItems.length > 0 || shouldDisplayAskAiFallbackItem);
+    (isNonEmptyArray(fallbackCommandMenuItems) ||
+      shouldDisplayAskAiFallbackItem);
 
   const shouldDisplayNoResults =
     isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
@@ -207,6 +245,14 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       selectableItemIds={selectableItemIds}
       noResults={shouldDisplayNoResults}
     >
+      {origin?.target.type === 'index' && <CoreAgentMetadataEventsEffect />}
+      {origin?.surfaceType === 'side-panel' &&
+        origin.target.type === 'record' && (
+          <>
+            <CoreAgentCommandRecordSyncEffect agentId={origin.target.agentId} />
+            <CoreAgentMetadataEventsEffect agentId={origin.target.agentId} />
+          </>
+        )}
       {COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.map((section) => {
         const sectionCommandMenuItems = commandMenuItemsBySection[section];
 
@@ -228,7 +274,14 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
               <CommandMenuItemRenderer item={item} key={item.id} />
             ))}
             {(section === 'THIS_OBJECT' || section === 'SELECTION') && (
-              <CoreObjectsCommands section={section} />
+              <>
+                <CoreObjectsCommands section={section} />
+                <CoreAgentCommands
+                  commands={agentCommands}
+                  section={section}
+                  executeCommand={executeCoreAgentCommand}
+                />
+              </>
             )}
             {getSectionAppActions(section).map((item) => {
               const handleClick = () => {
@@ -272,5 +325,35 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         </CommandMenuItemSectionGroup>
       )}
     </SidePanelList>
+  );
+};
+
+export const SidePanelCommandMenuItemDisplayPage = () => {
+  const { origin, pageId } = useCoreAgentCommandOrigin();
+  const navigator = useContext(AppNavigatorContext);
+  const { displayType, containerType, isInPreviewMode } =
+    useContext(CommandMenuContext);
+  const content = (
+    <SidePanelCommandMenuItemDisplayPageContent
+      origin={origin}
+      pageId={pageId}
+    />
+  );
+  return (
+    <AppNavigatorContext.Provider
+      value={isDefined(origin) ? origin.navigator : navigator}
+    >
+      {isDefined(origin) ? (
+        <CoreAgentCommandContextProvider
+          displayType={displayType}
+          containerType={containerType}
+          isInPreviewMode={isInPreviewMode}
+        >
+          {content}
+        </CoreAgentCommandContextProvider>
+      ) : (
+        content
+      )}
+    </AppNavigatorContext.Provider>
   );
 };

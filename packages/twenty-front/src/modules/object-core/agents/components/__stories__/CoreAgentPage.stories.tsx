@@ -1,3 +1,6 @@
+import { getAppPath } from 'twenty-shared/utils';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -16,7 +19,9 @@ import {
   type UpdateOneAgentMutationVariables,
 } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { AppPath } from 'twenty-shared/types';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
@@ -30,8 +35,22 @@ const meta = {
   title: 'Modules/ObjectCore/Agents/CoreAgentPage',
   component: CoreAgentPageExample,
   decorators: [
+    ContextStoreDecorator,
+    ObjectMetadataItemsDecorator,
     ComponentDecorator,
-    MemoryRouterDecorator,
+    (Story) => (
+      <MemoryRouter
+        initialEntries={[
+          getAppPath(AppPath.AgentShowPage, {
+            agentId: CORE_AGENT_AVATAR_STORY_AGENT.id,
+          }),
+        ]}
+      >
+        <MemoryRouterAppNavigatorProvider>
+          <Story />
+        </MemoryRouterAppNavigatorProvider>
+      </MemoryRouter>
+    ),
     IconsProviderDecorator,
     ToastDecorator,
   ],
@@ -61,6 +80,10 @@ const meta = {
     });
   },
   parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    },
     msw: {
       handlers: [
         graphql.query('FindOneAgent', () =>

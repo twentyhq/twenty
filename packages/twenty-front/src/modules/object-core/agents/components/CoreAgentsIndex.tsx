@@ -1,3 +1,4 @@
+import { CoreAgentHeaderCommands } from '@/object-core/commands/components/CoreAgentHeaderCommands';
 import { CoreAgentCommandOriginProvider } from '@/object-core/commands/components/CoreAgentCommandOriginProvider';
 import { CoreAgentsIcon } from '@/object-core/agents/components/CoreAgentsIcon';
 import { t } from '@lingui/core/macro';
@@ -93,6 +94,7 @@ export const CoreAgentsIndex = () => {
               selectedAgentIds={selectedAgentIds}
             />
             <CoreAgentsFilterButton isFilterActive={hasAppliedFilters} />
+            <CoreAgentHeaderCommands view="index" />
             <SidePanelToggleButton />
           </>
         }

@@ -1,3 +1,4 @@
+import { CoreAgentRecordSelectionResetEffect } from '@/object-core/commands/components/CoreAgentRecordSelectionResetEffect';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -72,7 +73,8 @@ export const RouteContextStoreProvider = () => {
     isCoreWorkflowShowPage ||
     isAiChatPage ||
     isMatchingLocation(location, AppPath.RecordShowPage);
-  const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
+  const isStandalonePage =
+    isCoreAgentPage || isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
@@ -139,8 +141,7 @@ export const RouteContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
-      isSettingsPage ||
-      isCoreAgentPage) &&
+      isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
@@ -148,13 +149,20 @@ export const RouteContextStoreProvider = () => {
   }
 
   return (
-    <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowPage || isAiChatPage ? undefined : viewId}
-      objectMetadataItem={objectMetadataItem}
-      isRecordIndexPage={isRecordIndexPage}
-      isRecordShowPage={isRecordShowPage}
-      isStandalonePage={isStandalonePage}
-      isSettingsPage={isSettingsPage}
-    />
+    <>
+      {isCoreAgentPage && <CoreAgentRecordSelectionResetEffect />}
+      <RouteContextStoreProviderEffect
+        viewId={
+          isCoreWorkflowPage || isAiChatPage || isCoreAgentPage
+            ? undefined
+            : viewId
+        }
+        objectMetadataItem={objectMetadataItem}
+        isRecordIndexPage={isRecordIndexPage}
+        isRecordShowPage={isRecordShowPage}
+        isStandalonePage={isStandalonePage}
+        isSettingsPage={isSettingsPage}
+      />
+    </>
   );
 };

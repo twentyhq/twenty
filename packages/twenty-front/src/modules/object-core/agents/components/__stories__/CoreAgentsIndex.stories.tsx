@@ -1,8 +1,10 @@
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -19,7 +21,9 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { AppPath } from 'twenty-shared/types';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
@@ -35,9 +39,17 @@ const meta = {
   title: 'Modules/ObjectCore/Agents/CoreAgentsIndex',
   component: CoreAgentsIndex,
   decorators: [
+    ContextStoreDecorator,
+    ObjectMetadataItemsDecorator,
     CatalogDecorator,
     IconsProviderDecorator,
-    MemoryRouterDecorator,
+    (Story) => (
+      <MemoryRouter initialEntries={[getAppPath(AppPath.AgentIndexPage)]}>
+        <MemoryRouterAppNavigatorProvider>
+          <Story />
+        </MemoryRouterAppNavigatorProvider>
+      </MemoryRouter>
+    ),
     ToastDecorator,
     (Story) => (
       <HelmetProvider>
@@ -46,6 +58,10 @@ const meta = {
     ),
   ],
   parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    },
     catalog: { options: { elementContainer: { width: 1000, height: 600 } } },
     msw: {
       handlers: [

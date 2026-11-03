@@ -1,3 +1,7 @@
+jest.mock(
+  '@/object-core/commands/components/CoreAgentRecordSelectionResetEffect',
+  () => ({ CoreAgentRecordSelectionResetEffect: () => null }),
+);
 import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
@@ -81,11 +85,13 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
     objectMetadataItem,
     isRecordIndexPage,
     isRecordShowPage,
+    isStandalonePage,
   }: {
     viewId?: string;
     objectMetadataItem?: { id: string };
     isRecordIndexPage: boolean;
     isRecordShowPage: boolean;
+    isStandalonePage: boolean;
   }) => (
     <div
       data-testid="route-context-store"
@@ -93,6 +99,7 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
       data-object-metadata-id={objectMetadataItem?.id}
       data-is-record-index-page={isRecordIndexPage}
       data-is-record-show-page={isRecordShowPage}
+      data-is-standalone-page={isStandalonePage}
     />
   ),
 }));
@@ -239,6 +246,10 @@ describe('RouteContextStoreProvider', () => {
 
       const routeContextStore = screen.getByTestId('route-context-store');
 
+      expect(routeContextStore).toHaveAttribute(
+        'data-is-standalone-page',
+        'true',
+      );
       expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
       expect(routeContextStore).not.toHaveAttribute('data-view-id');
       expect(routeContextStore).toHaveAttribute(

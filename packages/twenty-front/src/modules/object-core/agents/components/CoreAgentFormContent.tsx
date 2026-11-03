@@ -1,4 +1,6 @@
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CoreAgentDetailViewInitializationEffect } from '@/object-core/agents/components/CoreAgentDetailViewInitializationEffect';
+import { CoreAgentHeaderCommands } from '@/object-core/commands/components/CoreAgentHeaderCommands';
 import { CoreAgentCommandOriginProvider } from '@/object-core/commands/components/CoreAgentCommandOriginProvider';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
 import { CoreAgentEditSessionEffect } from '@/object-core/agents/components/CoreAgentEditSessionEffect';
@@ -60,6 +62,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       target={{ type: 'record', agentId: agent.id }}
     >
       <CoreAgentEditSessionEffect agent={agent} />
+      <CoreAgentDetailViewInitializationEffect agentId={agent.id} />
       {canReadRoles && <SettingsRolesQueryEffect />}
       {canReadRoles && isDefined(session?.roleId) && (
         <SettingsRoleDraftSyncEffect roleId={roleId} />
@@ -72,6 +75,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
             actionButton={
               <>
                 <CoreAgentHeaderActions agentId={agent.id} />
+                <CoreAgentHeaderCommands view="record" />
                 <SidePanelToggleButton />
               </>
             }

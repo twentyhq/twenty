@@ -1,3 +1,27 @@
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { CoreAgentsDeleteButton } from '@/object-core/agents/components/CoreAgentsDeleteButton';
+import { CORE_AGENT_STORY_AGENT } from '@/object-core/agents/components/__stories__/coreAgentStoryAgent';
+import { coreAgentEditSessionFamilyState } from '@/object-core/agents/states/coreAgentEditSessionFamilyState';
+import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
+import { coreAgentsSelectionFamilyState } from '@/object-core/agents/states/coreAgentsSelectionFamilyState';
+import { reconcileCoreAgentEditSession } from '@/object-core/agents/utils/reconcileCoreAgentEditSession';
+import { coreAgentCommandOriginFamilyState } from '@/object-core/commands/states/coreAgentCommandOriginFamilyState';
+import { type CoreAgentCommandTarget } from '@/object-core/commands/types/CoreAgentCommandTarget';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
+import { IconDotsVertical } from 'twenty-ui/icon';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FindManyAgentsDocument,
+} from '~/generated-metadata/graphql';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
   type Decorator,
@@ -35,7 +59,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
@@ -756,5 +780,233 @@ export const AppActionsHiddenInLayoutPreview: Story = {
     expect(canvas.queryByText('Copy link to page')).not.toBeInTheDocument();
     expect(canvas.queryByText(/Change theme to/)).not.toBeInTheDocument();
     expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
+  },
+};
+
+const AGENT_MENU_NAVIGATOR = { push: fn(), replace: fn() };
+const AGENT_MENU_PAGE_ID = 'agent-menu-story';
+const AGENT_MENU_SCOPE_ID = 'agent-menu-story-flow';
+const SOURCE_AGENT_TABLE_ID = 'agents-source-panel-table';
+const AGENT_MENU_PARAMETERS = {
+  msw: {
+    handlers: [
+      graphql.query('FindManyAgents', () =>
+        HttpResponse.json({
+          data: { findManyAgents: [CORE_AGENT_STORY_AGENT] },
+        }),
+      ),
+    ],
+  },
+};
+
+const createAgentMenuDecorator =
+  ({
+    target,
+    readonly = false,
+  }: {
+    target: CoreAgentCommandTarget;
+    readonly?: boolean;
+  }): Decorator =>
+  (Story) => {
+    AGENT_MENU_NAVIGATOR.push.mockClear();
+    AGENT_MENU_NAVIGATOR.replace.mockClear();
+    const agent = {
+      ...CORE_AGENT_STORY_AGENT,
+      applicationId: readonly
+        ? 'installed-application'
+        : CORE_AGENT_STORY_AGENT.applicationId,
+    };
+    const session = reconcileCoreAgentEditSession({
+      session: undefined,
+      agent,
+      hasRoleChanges: false,
+    });
+    jotaiStore.set(currentUserState.atom, mockedUserData);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      workspaceCustomApplication: {
+        ...mockCurrentWorkspace.workspaceCustomApplication,
+        id:
+          CORE_AGENT_STORY_AGENT.applicationId ??
+          mockCurrentWorkspace.workspaceCustomApplication.id,
+      },
+      featureFlags: [
+        {
+          __typename: 'FeatureFlag',
+          key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+          value: true,
+        },
+      ],
+    });
+    jotaiStore.set(
+      coreAgentEditSessionFamilyState.getAtom(agent.id, AGENT_MENU_SCOPE_ID),
+      {
+        ...session,
+        draft: { ...session.draft, prompt: 'Unsaved instructions' },
+      },
+    );
+    const filterSettings = {};
+    jotaiStore.set(coreAgentsFilterSettingsState.atom, filterSettings);
+    jotaiStore.set(
+      coreAgentsSelectionFamilyState.getAtom(SOURCE_AGENT_TABLE_ID, null),
+      { filterSettings, rowIds: [agent.id, agent.id, 'removed-agent'] },
+    );
+    mockedApolloClient.cache.writeQuery({
+      query: FindManyAgentsDocument,
+      data: { findManyAgents: [agent] },
+    });
+    jotaiStore.set(
+      coreAgentCommandOriginFamilyState.getAtom(
+        AGENT_MENU_PAGE_ID,
+        AGENT_MENU_SCOPE_ID,
+      ),
+      {
+        target,
+        scopeId: AGENT_MENU_SCOPE_ID,
+        navigator: AGENT_MENU_NAVIGATOR,
+        surfaceType: 'main',
+        workspaceId: mockCurrentWorkspace.id,
+        userId: mockedUserData.id,
+      },
+    );
+    jotaiStore.set(sidePanelNavigationStackState.atom, [
+      {
+        pageId: AGENT_MENU_PAGE_ID,
+        page: SidePanelPages.CommandMenuDisplay,
+        pageTitle: 'Command Menu',
+        pageIcon: IconDotsVertical,
+        routedFlowStateScopeId: AGENT_MENU_SCOPE_ID,
+      },
+    ]);
+    return (
+      <RoutedFlowStateScopeContext.Provider value={AGENT_MENU_SCOPE_ID}>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: AGENT_MENU_PAGE_ID }}
+        >
+          {target.type === 'index' && (
+            <CoreAgentsDeleteButton
+              tableId={SOURCE_AGENT_TABLE_ID}
+              selectedAgentIds={[agent.id]}
+            />
+          )}
+          <Story />
+        </SidePanelPageComponentInstanceContext.Provider>
+      </RoutedFlowStateScopeContext.Provider>
+    );
+  };
+
+export const AgentObjectAndCapturedSelection: Story = {
+  parameters: AGENT_MENU_PARAMETERS,
+  decorators: [
+    createAgentMenuDecorator({
+      target: { type: 'index', tableId: SOURCE_AGENT_TABLE_ID },
+    }),
+    createDecorator({
+      commandMenuItems: [],
+      sidePanelSearch: '',
+      pathname: getAppPath(AppPath.AgentIndexPage),
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(await canvas.findByText('Object: Agents')).toBeVisible();
+    await expect(await canvas.findByText('Selection: 1 Agent')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Create agent' }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Delete agent' }));
+    const dialog = await body.findByRole('dialog', { name: 'Delete agent?' });
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Cancel' }),
+    );
+  },
+};
+
+export const CurrentAgentCancelUsesItsEditingScope: Story = {
+  decorators: [
+    createAgentMenuDecorator({
+      target: { type: 'record', agentId: CORE_AGENT_STORY_AGENT.id },
+    }),
+    createDecorator({
+      commandMenuItems: [],
+      sidePanelSearch: '',
+      pathname: getAppPath(AppPath.AgentShowPage, {
+        agentId: CORE_AGENT_STORY_AGENT.id,
+      }),
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Agent: Researcher')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Save agent' }),
+    ).toBeEnabled();
+    await expect(
+      canvas.getByRole('button', { name: 'See runs' }),
+    ).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Cancel changes' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('button', { name: 'Save agent' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const ApplicationManagedAgentCommands: Story = {
+  decorators: [
+    createAgentMenuDecorator({
+      target: { type: 'record', agentId: CORE_AGENT_STORY_AGENT.id },
+      readonly: true,
+    }),
+    createDecorator({
+      commandMenuItems: [],
+      sidePanelSearch: '',
+      pathname: getAppPath(AppPath.AgentShowPage, {
+        agentId: CORE_AGENT_STORY_AGENT.id,
+      }),
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Agent: Researcher')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'See runs' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Save agent' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('button', { name: 'Delete agent' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AgentSelectionRuns: Story = {
+  parameters: AGENT_MENU_PARAMETERS,
+  decorators: [
+    createAgentMenuDecorator({
+      target: { type: 'index', tableId: SOURCE_AGENT_TABLE_ID },
+    }),
+    createDecorator({
+      commandMenuItems: [],
+      sidePanelSearch: '',
+      pathname: getAppPath(AppPath.AgentIndexPage),
+      permissionFlags: [PermissionFlagType.AI_SETTINGS],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Selection: 1 Agent')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'See runs' }));
+    await expect(AGENT_MENU_NAVIGATOR.push).toHaveBeenCalledWith(
+      `/agent/${CORE_AGENT_STORY_AGENT.id}?view=runs`,
+    );
   },
 };
