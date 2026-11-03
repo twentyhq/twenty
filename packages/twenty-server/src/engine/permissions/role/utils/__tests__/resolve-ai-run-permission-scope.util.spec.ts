@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -271,7 +271,9 @@ describe('resolveAiRunPermissionScope', () => {
     });
 
     it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
-      const isInsertDenied = (scope?: PermissionScope) =>
+      const isInsertDenied = (
+        scope?: PermissionsPrincipalsWithRolesContext['scope'],
+      ) =>
         isObjectOperationDeniedToPrincipal({
           principal: {
             workspaceId: 'workspace-id',
@@ -281,14 +283,7 @@ describe('resolveAiRunPermissionScope', () => {
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },
-            ...(isDefined(scope)
-              ? {
-                  limitingPrincipal: {
-                    type: 'ephemeralRole' as const,
-                    permissions: scope,
-                  },
-                }
-              : {}),
+            ...(isDefined(scope) ? { scope } : {}),
           },
           metadataMaps: {
             flatObjectMetadataMaps,

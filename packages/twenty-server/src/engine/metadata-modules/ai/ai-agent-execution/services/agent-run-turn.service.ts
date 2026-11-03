@@ -415,15 +415,15 @@ export class AgentRunTurnService {
     | 'additionalExcludedToolNames'
     | 'toolLoadingStrategy'
   >): Promise<AgentRegistryAccess> {
-    const runPermissions =
-      await this.agentRunPersonaService.resolveRunPermissions({
+    const runAuthContext =
+      await this.agentRunPersonaService.resolveRunAuthContext({
         workspaceId,
         persona,
         authContext,
       });
 
     if (
-      !isDefined(runPermissions) ||
+      !isDefined(runAuthContext) ||
       !isDefined(persona.permissions.explicitObjectGrants)
     ) {
       return { type: 'none' };
@@ -432,9 +432,8 @@ export class AgentRunTurnService {
     const toolContext: ToolContext = {
       workspaceId,
       agentId: persona.agentId ?? undefined,
-      authContext: runPermissions.authContext,
-      ephemeralRole: runPermissions.ephemeralRole,
-      application: getAuthContextApplication(runPermissions.authContext),
+      authContext: runAuthContext,
+      application: getAuthContextApplication(runAuthContext),
       actorContext,
       ...(isDefined(authContext) && isUserAuthContext(authContext)
         ? {

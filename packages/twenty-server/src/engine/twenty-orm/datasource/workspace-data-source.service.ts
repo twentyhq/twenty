@@ -101,7 +101,6 @@ export class WorkspaceDataSourceService
       pool,
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,
-      ephemeralRole: workspaceContext.ephemeralRole,
       objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
     });
   }

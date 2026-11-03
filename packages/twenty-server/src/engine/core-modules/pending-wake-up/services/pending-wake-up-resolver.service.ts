@@ -12,7 +12,6 @@ import { buildPendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-
 import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
 import { restrictPendingWakeUpEventToReadableRecord } from 'src/engine/core-modules/pending-wake-up/utils/restrict-pending-wake-up-event-to-readable-record.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { withPermissionsEphemeralRole } from 'src/engine/permissions/principal/storage/permissions-ephemeral-role.storage';
 
 const RECORD_READ_MAX_ATTEMPTS = 8;
 
@@ -114,22 +113,17 @@ export class PendingWakeUpResolverService {
 
     const [objectName, action] = event.eventName.split('.');
 
-    const { authContext, ephemeralRole } = readPermissions;
-    const { success, result, error } = await withPermissionsEphemeralRole(
-      isDefined(ephemeralRole) ? { authContext, ephemeralRole } : undefined,
-      () =>
-        this.findRecordsService.execute({
-          objectName,
-          // a deleted record only reads when the filter asks for deleted records
-          filter:
-            action === 'deleted'
-              ? { id: { eq: event.recordId }, deletedAt: { is: 'NOT_NULL' } }
-              : { id: { eq: event.recordId } },
-          limit: 1,
-          authContext,
-          shouldBuildEffectiveSelectFields: false,
-        }),
-    );
+    const { success, result, error } = await this.findRecordsService.execute({
+      objectName,
+      // a deleted record only reads when the filter asks for deleted records
+      filter:
+        action === 'deleted'
+          ? { id: { eq: event.recordId }, deletedAt: { is: 'NOT_NULL' } }
+          : { id: { eq: event.recordId } },
+      limit: 1,
+      authContext: readPermissions.authContext,
+      shouldBuildEffectiveSelectFields: false,
+    });
 
     if (!success) {
       if (recordReadAttempt < RECORD_READ_MAX_ATTEMPTS) {

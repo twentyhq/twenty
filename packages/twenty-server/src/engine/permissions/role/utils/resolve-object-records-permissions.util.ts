@@ -1,4 +1,3 @@
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -25,14 +24,12 @@ export type ObjectRecordsPermissionsResolution = {
 
 export const resolveObjectRecordsPermissions = ({
   authContext,
-  ephemeralRole,
   roleMaps,
   objectPermissionsByRoleId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   authContext: WorkspaceAuthContext;
-  ephemeralRole?: PermissionScope;
   roleMaps: PermissionsPrincipalRoleMaps;
   objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -49,7 +46,6 @@ export const resolveObjectRecordsPermissions = ({
   const permissionsPrincipal = resolvePermissionsPrincipalsWithRoles({
     authContext,
     roleMaps,
-    ephemeralRole,
   });
 
   if (!isDefined(permissionsPrincipal)) {

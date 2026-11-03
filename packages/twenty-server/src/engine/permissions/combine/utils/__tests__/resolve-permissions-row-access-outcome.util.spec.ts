@@ -154,24 +154,21 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(true);
   });
 
-  describe('for a principal limited by an ephemeral role', () => {
+  describe('for a principal narrowed by a scope', () => {
     const scopedPrincipal = ({
       canReadObjectRecords,
     }: {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipal,
-      limitingPrincipal: {
-        type: 'ephemeralRole',
-        permissions: {
-          objectsPermissions: {
-            [flatObjectMetadata.id]: {
-              ...readOnlyPermissions,
-              canReadObjectRecords,
-            },
+      scope: {
+        objectsPermissions: {
+          [flatObjectMetadata.id]: {
+            ...readOnlyPermissions,
+            canReadObjectRecords,
           },
-          permissionFlags: {},
         },
+        permissionFlags: {},
       },
     });
 
