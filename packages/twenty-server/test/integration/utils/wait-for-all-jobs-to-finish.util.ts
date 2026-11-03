@@ -221,6 +221,28 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
   global.jobDrainState.lastStalledFingerprint = null;
 };
 
+export const removeDelayedJobs = async ({
+  queueName,
+  jobNames,
+}: {
+  queueName: MessageQueue;
+  jobNames: string[];
+}): Promise<void> => {
+  const queue = getQueues().find(({ name }) => name === queueName);
+
+  if (!queue) {
+    return;
+  }
+
+  const delayedJobs = await queue.getDelayed();
+
+  await Promise.all(
+    delayedJobs
+      .filter((job) => jobNames.includes(job.name))
+      .map((job) => job.remove().catch(() => undefined)),
+  );
+};
+
 export const closeQueueConnections = async (): Promise<void> => {
   if (queues) {
     await Promise.allSettled(queues.map((queue) => queue.close()));
