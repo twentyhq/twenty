@@ -129,6 +129,7 @@ describe('WidgetActionMessageCompose', () => {
       screen.getByRole('menuitem', { name: /tim@outlook\.com/ }),
     );
 
+    expect(openComposerWithConnectedAccount).toHaveBeenCalledTimes(1);
     expect(openComposerWithConnectedAccount).toHaveBeenCalledWith(
       'account-microsoft',
     );
