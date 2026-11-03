@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
@@ -34,4 +35,6 @@ export type PermissionsPrincipalsWithRolesContext = {
   mainPrincipal: PermissionsMainPrincipalWithRole;
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
+  // narrows what the roles allow, and leaves no reach beyond them
+  scope?: Pick<PermissionScope, 'objectsPermissions'>;
 };

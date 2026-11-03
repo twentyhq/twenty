@@ -74,7 +74,7 @@ export class WorkflowVersionValidationWorkspaceService {
     const stepTypeIssues = steps.flatMap((step) => {
       if (step.type === WorkflowActionType.AI_AGENT) {
         return [
-          ...validateWorkflowAiAgentStep(step),
+          ...validateWorkflowAiAgentStep({ step }),
           ...validateWorkflowConversationStep(step),
         ];
       }

@@ -108,7 +108,6 @@ const buildAgentTools = (options?: {
   const manageableAgentService = new ManageableAgentService(
     agentService as unknown as AgentService,
     applicationService as unknown as ApplicationService,
-    workspaceCacheService as unknown as WorkspaceCacheService,
   );
 
   const tools = [
@@ -125,6 +124,7 @@ const buildAgentTools = (options?: {
     new DeleteAgentTool(
       agentService as unknown as AgentService,
       manageableAgentService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
     ),
   ];
 
@@ -174,21 +174,6 @@ const buildAgentTools = (options?: {
     permissionsService,
     workspaceCacheService,
   };
-};
-
-const workflowVersionsWithAgentStep = {
-  flatWorkflowVersionMaps: {
-    byUniversalIdentifier: {
-      'workflow-version-id': {
-        steps: [
-          {
-            type: WorkflowActionType.AI_AGENT,
-            settings: { input: { agentId } },
-          },
-        ],
-      },
-    },
-  },
 };
 
 describe('Agent tools', () => {
@@ -421,23 +406,6 @@ describe('Agent tools', () => {
         workspaceId,
       });
     });
-
-    it('refuses to change an agent backing a workflow step', async () => {
-      const { executeTool, agentService, workspaceCacheService } =
-        buildAgentTools();
-
-      workspaceCacheService.getOrRecompute.mockResolvedValue(
-        workflowVersionsWithAgentStep,
-      );
-
-      await expect(
-        executeTool({
-          toolName: 'update_agent',
-          args: { id: agentId, prompt: 'Something else' },
-        }),
-      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-      expect(agentService.updateOneAgent).not.toHaveBeenCalled();
-    });
   });
 
   describe('delete_agent', () => {
@@ -457,13 +425,24 @@ describe('Agent tools', () => {
       );
     });
 
-    it('refuses to delete an agent backing a workflow step', async () => {
+    it('refuses to delete a reusable agent that workflow steps run', async () => {
       const { executeTool, agentService, workspaceCacheService } =
         buildAgentTools();
 
-      workspaceCacheService.getOrRecompute.mockResolvedValue(
-        workflowVersionsWithAgentStep,
-      );
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkflowVersionMaps: {
+          byUniversalIdentifier: {
+            'workflow-version-id': {
+              steps: [
+                {
+                  type: WorkflowActionType.AI_AGENT,
+                  settings: { input: { agentId } },
+                },
+              ],
+            },
+          },
+        },
+      });
 
       await expect(
         executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
