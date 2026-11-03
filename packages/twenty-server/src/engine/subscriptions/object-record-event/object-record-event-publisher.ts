@@ -200,11 +200,16 @@ export class ObjectRecordEventPublisher {
       userWorkspaceId,
       applicationId: subscriberAuthContext.applicationId,
     }).catch((error) => {
-      if (error instanceof AuthException) {
-        return undefined;
+      if (!(error instanceof AuthException)) {
+        this.logger.warn(
+          `Failed to resolve the subscriber of stream ${streamChannelId} for ${workspaceEventBatch.name}, skipping it: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          error instanceof Error ? error.stack : undefined,
+        );
       }
 
-      throw error;
+      return undefined;
     });
 
     if (!isDefined(authContext)) {
