@@ -1,8 +1,12 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
-import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { getAllRecordFilterGroupDescendantsOfRecordFilterGroup } from '@/object-record/record-filter-group/utils/getAllRecordFilterGroupDescendantsOfRecordFilterGroup';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -25,13 +29,34 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
-  const { childRecordFilters } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId,
-  });
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const currentRecordFilterGroups = useAtomComponentStateValue(
+    currentRecordFilterGroupsComponentState,
+  );
 
   const handleRemove = () => {
-    for (const childRecordFilter of childRecordFilters ?? []) {
-      removeRecordFilter({ recordFilterId: childRecordFilter.id });
+    const descendantRecordFilters =
+      getAllRecordFilterDescendantsOfRecordFilterGroup({
+        recordFilterGroupId,
+        recordFilterGroups: currentRecordFilterGroups,
+        recordFilters: currentRecordFilters,
+      });
+
+    for (const descendantRecordFilter of descendantRecordFilters) {
+      removeRecordFilter({ recordFilterId: descendantRecordFilter.id });
+    }
+
+    const descendantRecordFilterGroups =
+      getAllRecordFilterGroupDescendantsOfRecordFilterGroup({
+        recordFilterGroupId,
+        recordFilterGroups: currentRecordFilterGroups,
+      });
+
+    for (const descendantRecordFilterGroup of descendantRecordFilterGroups) {
+      removeRecordFilterGroup(descendantRecordFilterGroup.id);
     }
 
     removeRecordFilterGroup(recordFilterGroupId);

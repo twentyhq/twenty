@@ -43,9 +43,42 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
           isDefined(predicate.relationFieldMetadataId),
       );
 
-      const otherObjectGroups = (
-        previousRole.rowLevelPermissionPredicateGroups ?? []
-      ).filter((group) => group.objectMetadataId !== objectMetadataItem.id);
+      const previousPredicateGroups =
+        previousRole.rowLevelPermissionPredicateGroups ?? [];
+
+      const previousPredicateGroupById = new Map(
+        previousPredicateGroups.map((group) => [group.id, group]),
+      );
+
+      // Predicates the builder does not edit keep their group chain, even if its rules were removed here
+      const groupIdsNeededByPredicatesNotManagedByFilters = new Set<string>();
+
+      for (const predicate of predicatesNotManagedByFilters) {
+        let groupId: string | null | undefined =
+          predicate.rowLevelPermissionPredicateGroupId;
+
+        while (
+          isDefined(groupId) &&
+          !groupIdsNeededByPredicatesNotManagedByFilters.has(groupId)
+        ) {
+          groupIdsNeededByPredicatesNotManagedByFilters.add(groupId);
+          groupId =
+            previousPredicateGroupById.get(
+              groupId,
+            )?.parentRowLevelPermissionPredicateGroupId;
+        }
+      }
+
+      const currentGroupIds = new Set(
+        currentRecordFilterGroups.map((group) => group.id),
+      );
+
+      const otherObjectGroups = previousPredicateGroups.filter(
+        (group) =>
+          !currentGroupIds.has(group.id) &&
+          (group.objectMetadataId !== objectMetadataItem.id ||
+            groupIdsNeededByPredicatesNotManagedByFilters.has(group.id)),
+      );
 
       const newPredicates = currentRecordFilters.map((filter) =>
         convertRecordFilterToPredicate(filter, roleId, objectMetadataItem.id),

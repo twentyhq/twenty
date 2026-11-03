@@ -8,6 +8,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { AdvancedFilterRecordFilterGroupOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
@@ -15,7 +16,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupOptionsDropdown';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell';
 import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions';
@@ -76,7 +76,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupC
       objectMetadataItem,
     });
 
-    // Groups holding no editable rule (e.g. only relation predicates) are kept but not shown
+    // Relation-backed predicates are not editable here, so a group holding only those would render empty
     const visibleChildren = childRecordFiltersAndRecordFilterGroups.filter(
       (child) =>
         !isRecordFilterGroupChildARecordFilterGroup(child) ||
@@ -112,7 +112,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupC
                   onClick={() => handleAddFilter(child)}
                 />
               </StyledGroupContainer>
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupOptionsDropdown
+              <AdvancedFilterRecordFilterGroupOptionsDropdown
                 recordFilterGroupId={child.id}
               />
             </StyledGroupRow>

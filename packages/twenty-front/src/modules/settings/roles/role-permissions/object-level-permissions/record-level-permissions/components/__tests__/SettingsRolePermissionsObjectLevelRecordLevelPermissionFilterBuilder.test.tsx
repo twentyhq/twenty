@@ -297,6 +297,39 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder',
     });
   });
 
+  it('keeps the groups of a relation-backed predicate when removing its group', async () => {
+    const { getDraftRole } = renderBuilder({
+      rowLevelPermissionPredicates: [
+        buildPredicate('mine', NESTED_OR_GROUP.id),
+        {
+          ...buildPredicate('via-company', NESTED_OR_GROUP.id),
+          relationFieldMetadataId: 'company-relation-field-id',
+        },
+      ],
+      rowLevelPermissionPredicateGroups: [ROOT_AND_GROUP, NESTED_OR_GROUP],
+    });
+
+    await userEvent.click(
+      await screen.findByLabelText('Filter group rule options'),
+    );
+    await userEvent.click(await screen.findByText('Remove rule group'));
+
+    expect(screen.queryByText('mine in OR')).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      const draftRole = getDraftRole();
+
+      expect(
+        (draftRole.rowLevelPermissionPredicates ?? []).map(({ id }) => id),
+      ).toEqual(['via-company']);
+      expect(
+        (draftRole.rowLevelPermissionPredicateGroups ?? [])
+          .map(({ id }) => id)
+          .sort(),
+      ).toEqual([NESTED_OR_GROUP.id, ROOT_AND_GROUP.id].sort());
+    });
+  });
+
   it('hides a nested group that holds no editable predicate', async () => {
     const emptyGroup = buildGroup({
       id: 'empty-group',
