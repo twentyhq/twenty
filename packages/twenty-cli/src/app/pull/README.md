@@ -26,7 +26,7 @@ See the [app tooling overview](../README.md) for package boundaries.
 
 Translation string extraction uses the CLI's TypeScript parser. Traversal, static-string rules, whitespace normalization and deduplication are checked against the SDK reference by parity tests. It does not depend on ts-morph or load parser tooling for help and command discovery.
 
-Workflows arrive in `manifest.workflows` and are written as `defineWorkflow` files. Their filter operands and form field types use SDK enums; filter group logical operators stay string literals, which every SDK with `defineWorkflow` accepts. A workflow the server cannot express as a definition is reported as `UNSUPPORTED` coverage, so its local file is kept.
+Workflows arrive in `manifest.workflows` and are written as `defineWorkflow` files. Their filter operands and form field types use SDK enums; filter group logical operators stay string literals, which every SDK with `defineWorkflow` accepts. A workflow the server cannot express as a definition is reported as `UNSUPPORTED` coverage, so its local file is kept. Each `CODE` step's source is written verbatim to `<workflow file name>/<step name>.code.ts` beside the workflow, which reads it with `readFileSync(join(__dirname, ...))` because a text import would not type-check in the app. These files hold no definition, so pull deletes the ones a regenerated or deleted workflow no longer references, even when the step survives under a new name.
 
 Skills and agents arrive in `manifest.skills` and `manifest.agents` and are written as `defineSkill` and `defineAgent` files, with no enum bindings. The server exports one only when its definition reproduces the stored entity; otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
 

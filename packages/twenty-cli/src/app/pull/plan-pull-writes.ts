@@ -7,7 +7,7 @@ import {
 } from '@/app/pull/build-pull-entities';
 import { resolvePullFileNameCollisions } from '@/app/pull/resolve-pull-file-name-collisions';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
-import { writeDefineFile } from '@/app/pull/write-define-file';
+import { writePullEntityFile } from '@/app/pull/write-pull-entity-file';
 import { dirname, posix } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,6 +31,8 @@ export type PullWritePlan = {
   writes: PullWrite[];
   unchanged: PullEntity[];
   deletions: PullDeletion[];
+  // A code step file holds no definition, so it goes even when its step stays under a new name
+  codeStepFileDeletions: PullDeletion[];
   localOnlyRelativePaths: string[];
 };
 
@@ -139,6 +141,9 @@ export const planPullWrites = ({
       JSON.stringify(entity.config),
     ]),
   );
+  const baseEntityByUniversalIdentifier = new Map(
+    baseEntities.map((entity) => [entity.universalIdentifier, entity]),
+  );
   const fileBaseNameByUniversalIdentifier =
     resolvePullFileNameCollisions(entities);
 
@@ -159,11 +164,33 @@ export const planPullWrites = ({
   const writes: PullWrite[] = [];
   const unchanged: PullEntity[] = [];
   const usedRelativePaths = new Set<string>();
-  const takenRelativePaths = new Set(
+  const scannedRelativePaths = new Set(
     scannedFiles.map((scannedFile) =>
       toReservationKey(toPosixPath(scannedFile.relativePath)),
     ),
   );
+  const takenRelativePaths = new Set(scannedRelativePaths);
+  const staleCodeStepFiles: PullDeletion[] = [];
+
+  const findLocalCodeStepFiles = ({
+    entity,
+    relativePath,
+  }: {
+    entity: PullEntity | undefined;
+    relativePath: string;
+  }): PullDeletion[] =>
+    isDefined(entity)
+      ? writePullEntityFile({ entity, relativePath })
+          .codeStepFiles.filter((codeStepFile) =>
+            scannedRelativePaths.has(
+              toReservationKey(codeStepFile.relativePath),
+            ),
+          )
+          .map(({ universalIdentifier, relativePath }) => ({
+            universalIdentifier,
+            relativePath,
+          }))
+      : [];
 
   for (const entity of entities) {
     const existingSourceFile = findExistingSourceFile({
@@ -231,17 +258,44 @@ export const planPullWrites = ({
       continue;
     }
 
+    const { codeStepFiles, ...definitionFile } = writePullEntityFile({
+      entity,
+      relativePath,
+    });
+
     writes.push({
       kind: entity.kind,
       universalIdentifier: entity.universalIdentifier,
       relativePath,
-      ...writeDefineFile({
-        definer: entity.definer,
-        config: entity.config,
-        enumBindings: entity.enumBindings,
-      }),
+      ...definitionFile,
       isRegeneration: isDefined(existingPath),
     });
+
+    for (const codeStepFile of codeStepFiles) {
+      const codeStepReservationKey = toReservationKey(
+        codeStepFile.relativePath,
+      );
+
+      writes.push({
+        kind: entity.kind,
+        ...codeStepFile,
+        requiredSdkExports: [],
+        isRegeneration: scannedRelativePaths.has(codeStepReservationKey),
+      });
+      usedRelativePaths.add(codeStepFile.relativePath);
+      takenRelativePaths.add(codeStepReservationKey);
+    }
+
+    if (isDefined(existingPath)) {
+      staleCodeStepFiles.push(
+        ...findLocalCodeStepFiles({
+          entity: baseEntityByUniversalIdentifier.get(
+            entity.universalIdentifier,
+          ),
+          relativePath: existingPath,
+        }),
+      );
+    }
   }
 
   const deletions: PullDeletion[] = [];
@@ -268,6 +322,16 @@ export const planPullWrites = ({
       universalIdentifier: baseUniversalIdentifier,
       relativePath,
     });
+
+    // An unsupported workflow keeps its file, which still reads its code step files
+    if (!workspaceUniversalIdentifiers.has(baseUniversalIdentifier)) {
+      staleCodeStepFiles.push(
+        ...findLocalCodeStepFiles({
+          entity: baseEntityByUniversalIdentifier.get(baseUniversalIdentifier),
+          relativePath,
+        }),
+      );
+    }
   }
 
   const localOnlyRelativePaths = scannedFiles
@@ -287,6 +351,9 @@ export const planPullWrites = ({
     writes,
     unchanged,
     deletions,
+    codeStepFileDeletions: staleCodeStepFiles.filter(
+      (codeStepFile) => !usedRelativePaths.has(codeStepFile.relativePath),
+    ),
     localOnlyRelativePaths,
   };
 };

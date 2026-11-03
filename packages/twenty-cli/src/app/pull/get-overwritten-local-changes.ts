@@ -7,7 +7,7 @@ import { type PullEntity } from '@/app/pull/build-pull-entities';
 import { hashContent } from '@/utils/hash-content';
 import { type PullDeletion, type PullWrite } from '@/app/pull/plan-pull-writes';
 import { planTranslationWrites } from '@/app/pull/plan-translation-writes';
-import { writeDefineFile } from '@/app/pull/write-define-file';
+import { writePullEntityFile } from '@/app/pull/write-pull-entity-file';
 
 export const getOverwrittenLocalChanges = async ({
   appPath,
@@ -30,15 +30,8 @@ export const getOverwrittenLocalChanges = async ({
     return [];
   }
 
-  const baseContents = new Map(
-    baseEntities.map((entity) => [
-      entity.universalIdentifier,
-      writeDefineFile({
-        definer: entity.definer,
-        config: entity.config,
-        enumBindings: entity.enumBindings,
-      }).content,
-    ]),
+  const baseEntityByUniversalIdentifier = new Map(
+    baseEntities.map((entity) => [entity.universalIdentifier, entity]),
   );
   const translationPlan = await planTranslationWrites({
     appPath,
@@ -71,9 +64,10 @@ export const getOverwrittenLocalChanges = async ({
       continue;
     }
 
-    const baseContent =
-      baseContents.get(universalIdentifier) ??
-      translationContents.get(relativePath);
+    const baseEntity = baseEntityByUniversalIdentifier.get(universalIdentifier);
+    const baseContent = isDefined(baseEntity)
+      ? writePullEntityFile({ entity: baseEntity, relativePath }).content
+      : translationContents.get(relativePath);
 
     if (
       baselineAbsentTranslationPaths.has(relativePath) ||

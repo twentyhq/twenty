@@ -95,10 +95,15 @@ export const pullApplication = async (
       baseEntities,
       protectedIdentifiers,
       writes: plan.writes,
-      deletions: plan.deletions.filter(
-        (deletion) =>
-          !protectedIdentifiers.has(deletion.universalIdentifier.toLowerCase()),
-      ),
+      deletions: [
+        ...plan.deletions.filter(
+          (deletion) =>
+            !protectedIdentifiers.has(
+              deletion.universalIdentifier.toLowerCase(),
+            ),
+        ),
+        ...plan.codeStepFileDeletions,
+      ],
       scannedFiles,
     });
     const dependencyPlan = await planDependencyWrites({

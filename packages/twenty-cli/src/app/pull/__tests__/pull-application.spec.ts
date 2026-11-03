@@ -26,6 +26,7 @@ import { type ToolingResult as BuildResult } from '@/app/types/tooling-result.ty
 import * as fileUtilities from '@/app/fs-utils';
 import { type AppExportCoverageEntry } from '@/app/types/app-export.type';
 import * as sourceScanner from '@/app/source/scan-project-source-files';
+import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
 
 const APPLICATION_IDENTIFIER = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const OBJECT_IDENTIFIER = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
@@ -813,6 +814,124 @@ export default defineField({
       { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
     ]);
     await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('writes the source of a code step next to its workflow, which reads it back', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const source = `export const main = async (params: { name: string }) => {
+  return { greeting: \`Hello \${params.name}\` };
+};
+`;
+    const workflowWithStep = ({
+      universalIdentifier = WORKFLOW_STEP_IDENTIFIER,
+      ...step
+    }: Record<string, unknown>) => {
+      const exported = createExport();
+
+      return {
+        ...exported,
+        manifest: {
+          ...exported.manifest,
+          workflows: [
+            {
+              universalIdentifier: WORKFLOW_IDENTIFIER,
+              name: 'Greet new pets',
+              version: {
+                trigger: {
+                  universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
+                  type: 'MANUAL',
+                  nextStepIds: [universalIdentifier],
+                },
+                steps: [{ universalIdentifier, nextStepIds: [], ...step }],
+              },
+            },
+          ],
+        },
+      };
+    };
+    const codeStep = {
+      type: 'CODE',
+      input: {
+        code: source,
+        logicFunctionInput: { name: '{{trigger.name}}' },
+      },
+    };
+    const withCodeStep = workflowWithStep({ name: 'Format name', ...codeStep });
+
+    const created = requireSuccess(await pull(withCodeStep));
+    expect(created.writes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ relativePath: workflowPath }),
+        expect.objectContaining({
+          relativePath: codeStepPath,
+          universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+          isRegeneration: false,
+        }),
+      ]),
+    );
+    expect(await read(codeStepPath)).toBe(source);
+
+    const extracted = await extractManifestFromFile({
+      appPath,
+      filePath: join(appPath, workflowPath),
+    });
+    expect(extracted.errors).toEqual([]);
+    expect(extracted.config).toEqual(withCodeStep.manifest.workflows[0]);
+
+    expect(requireSuccess(await pull(withCodeStep)).writes).toEqual([]);
+
+    const renamedPath = 'src/workflows/greet-new-pets/shout-name.code.ts';
+    const renamed = requireSuccess(
+      await pull(workflowWithStep({ name: 'Shout name', ...codeStep })),
+    );
+    expect(renamed.writes).toEqual([
+      expect.objectContaining({ relativePath: workflowPath }),
+      expect.objectContaining({ relativePath: renamedPath }),
+    ]);
+    expect(renamed.deletions).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: codeStepPath,
+      },
+    ]);
+    expect(await read(renamedPath)).toBe(source);
+
+    const unsupported = requireSuccess(
+      await pull(
+        createExport({
+          coverage: [
+            {
+              metadataName: 'workflow',
+              universalIdentifier: WORKFLOW_IDENTIFIER,
+              status: 'UNSUPPORTED',
+              reason: 'code step not yet migrated to inline source',
+            },
+          ],
+        }),
+      ),
+    );
+    expect(unsupported.deletions).toEqual([]);
+    expect(await read(renamedPath)).toBe(source);
+
+    const replaced = requireSuccess(
+      await pull(
+        workflowWithStep({
+          universalIdentifier: OTHER_IDENTIFIER,
+          name: 'Wait',
+          type: 'EMPTY',
+          input: {},
+        }),
+      ),
+    );
+    expect(replaced.deletions).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: renamedPath,
+      },
+    ]);
+    await expect(read(codeStepPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(read(renamedPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('writes agents and skills, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {
