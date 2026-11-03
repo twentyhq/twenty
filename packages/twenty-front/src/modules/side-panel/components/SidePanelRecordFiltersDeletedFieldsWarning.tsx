@@ -2,8 +2,8 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelRecordFiltersDeletedFieldsWarningProps = {
   validFieldMetadataIds?: Set<string>;
@@ -12,6 +12,7 @@ type SidePanelRecordFiltersDeletedFieldsWarningProps = {
 export const SidePanelRecordFiltersDeletedFieldsWarning = ({
   validFieldMetadataIds,
 }: SidePanelRecordFiltersDeletedFieldsWarningProps) => {
+  const { t } = useLingui();
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );

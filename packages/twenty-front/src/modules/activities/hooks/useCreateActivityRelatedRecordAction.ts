@@ -1,9 +1,9 @@
 import { useCreateActivityForTargetRecord } from '@/activities/hooks/useCreateActivityForTargetRecord';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCheckbox, IconNotes } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type UseCreateActivityRelatedRecordActionParams = {
   targetRecord: ActivityTargetableObject;
@@ -16,6 +16,7 @@ export const useCreateActivityRelatedRecordAction = ({
   targetRecord,
   activityObjectNameSingular,
 }: UseCreateActivityRelatedRecordActionParams): RelatedRecordActionBinding => {
+  const { t } = useLingui();
   const { canCreateActivity, createActivity } =
     useCreateActivityForTargetRecord({
       targetRecord,

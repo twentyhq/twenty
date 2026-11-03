@@ -6,11 +6,11 @@ import { MemberNameFields } from '@/settings/members/components/MemberNameFields
 import { MemberTwoFactorAuthenticationRecoverySection } from '@/settings/members/components/MemberTwoFactorAuthenticationRecoverySection';
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type MemberInfosTabProps = {
   member: WorkspaceMember;
@@ -38,6 +38,7 @@ export const MemberInfosTab = ({
   onDelete,
   twoFactorAuthenticationRecoveryUserId,
 }: MemberInfosTabProps) => {
+  const { t } = useLingui();
   const [firstName, setFirstName] = useState(member.name.firstName);
   const [lastName, setLastName] = useState(member.name.lastName);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(

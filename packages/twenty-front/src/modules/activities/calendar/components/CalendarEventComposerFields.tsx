@@ -19,11 +19,11 @@ import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSe
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Input, Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -59,6 +59,7 @@ export const CalendarEventComposerFields = ({
   onAddAccount,
   onReauthorize,
 }: CalendarEventComposerFieldsProps) => {
+  const { t } = useLingui();
   const recipientsByFieldId: EmailRecipientsByFieldId = {
     to: composerState.attendees,
     cc: [],

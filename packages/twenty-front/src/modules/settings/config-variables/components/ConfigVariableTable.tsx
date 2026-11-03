@@ -4,10 +4,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -27,6 +27,7 @@ type ConfigVariableTableProps = { configVariables: ConfigVariable[] };
 export const ConfigVariableTable = ({
   configVariables,
 }: ConfigVariableTableProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (
