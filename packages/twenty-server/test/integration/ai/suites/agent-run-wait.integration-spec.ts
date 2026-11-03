@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import gql from 'graphql-tag';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -393,7 +394,7 @@ describe('agent runs that wait (integration)', () => {
       }) => {
         const streamId = await holdConversation(threadId);
 
-        await context.memberMessageWriterService.writeMemberMessage({
+        await writeChatMemberMessage({
           actor: {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -560,7 +561,7 @@ describe('agent runs that wait (integration)', () => {
 
         const thread = await getStoredThread(threadId);
 
-        await context.memberMessageWriterService.writeMemberMessage({
+        await writeChatMemberMessage({
           actor: {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -594,7 +595,7 @@ describe('agent runs that wait (integration)', () => {
             const allowedMessageIds =
               await findAllowedQueuedMessageIds(replyPolicyRequest);
 
-            await context.memberMessageWriterService.writeMemberMessage({
+            await writeChatMemberMessage({
               actor: {
                 workspaceId,
                 userWorkspaceId: context.userWorkspaceId,
@@ -702,22 +703,21 @@ describe('agent runs that wait (integration)', () => {
         const thread = await getStoredThread(threadId);
 
         const streamId = await holdConversation(threadId);
-        const message =
-          await context.memberMessageWriterService.writeMemberMessage({
-            actor: {
-              workspaceId,
-              userWorkspaceId: context.userWorkspaceId,
-              workspaceMemberId: context.workspaceMemberId,
-            },
-            thread,
-            message: { text: 'Ada, continue after this update' },
-            placement: AgentChatMemberMessagePlacement.QUEUED,
-            assistantReplyContext: {
-              isAssistantMentioned: true,
-              isDirectAssistantChat: false,
-              isStructuredRequestContinuation: false,
-            },
-          });
+        const message = await writeChatMemberMessage({
+          actor: {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            workspaceMemberId: context.workspaceMemberId,
+          },
+          thread,
+          message: { text: 'Ada, continue after this update' },
+          placement: AgentChatMemberMessagePlacement.QUEUED,
+          assistantReplyContext: {
+            isAssistantMentioned: true,
+            isDirectAssistantChat: false,
+            isStructuredRequestContinuation: false,
+          },
+        });
         const executionContext =
           await getAppProviderByClassName<AgentTriggerRunnerService>(
             'AgentTriggerRunnerService',
@@ -902,7 +902,7 @@ describe('agent runs that wait (integration)', () => {
 
       const thread = await getStoredThread(threadId);
 
-      await context.memberMessageWriterService.writeMemberMessage({
+      await writeChatMemberMessage({
         actor: {
           workspaceId,
           userWorkspaceId: context.userWorkspaceId,

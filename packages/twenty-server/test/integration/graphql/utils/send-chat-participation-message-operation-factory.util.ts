@@ -51,7 +51,7 @@ export const sendChatParticipationMessageOperationFactory = ({
         isAssistantMentioned: $isAssistantMentioned
         mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
         recipientWorkspaceMemberIds: $recipientWorkspaceMemberIds
-        attachments: $attachments
+        fileAttachments: $attachments
       ) {
         messageId
         queued

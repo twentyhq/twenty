@@ -17,11 +17,13 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { isAgentSelectableAsWorkflowStep } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/isAgentSelectableAsWorkflowStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { WORKFLOW_ACTION_FEATURE_FLAGS } from 'twenty-shared/workflow';
+import {
+  isAgentRunnableAsWorkflowStep,
+  WORKFLOW_ACTION_FEATURE_FLAGS,
+} from 'twenty-shared/workflow';
 import {
   FeatureFlagKey,
   FindManyAgentsDocument,
@@ -88,7 +90,7 @@ export const SidePanelWorkflowSelectAction = ({
   });
 
   const stepAgents = (agentsData?.findManyAgents ?? []).filter(
-    isAgentSelectableAsWorkflowStep,
+    isAgentRunnableAsWorkflowStep,
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {

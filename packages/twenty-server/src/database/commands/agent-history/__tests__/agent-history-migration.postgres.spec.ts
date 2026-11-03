@@ -100,7 +100,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const workspaceDataSourceOptions = {
       pool,
       authContext: buildSystemAuthContext(WORKSPACE_ID),
-      objectPermissionsByRoleId: {},
       internalContext: {
         workspaceId: WORKSPACE_ID,
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
@@ -115,6 +114,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
+        rolesPermissions: {},
         flatRoleTargetByAgentIdMaps: {},
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
@@ -817,9 +817,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         { resolveMentionInTransaction: jest.fn() } as never,
         {} as never,
         conversationWriter,
-        new AgentChatMemberMessagePartsService({} as never),
         {} as never,
         { publish: jest.fn() } as never,
+      );
+      const memberMessageParts = new AgentChatMemberMessagePartsService(
+        {} as never,
       );
       const actor = {
         workspaceMemberId: MEMBER_ID,
@@ -829,13 +831,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const message = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
-        message: { text: 'Live message after upgrade' },
+        message: await memberMessageParts.prepareMemberMessage({
+          workspaceId: WORKSPACE_ID,
+          message: { text: 'Live message after upgrade' },
+        }),
         placement: AgentChatMemberMessagePlacement.RUNNING,
       });
       const queued = await memberMessageWriter.writeMemberMessage({
         actor,
         thread,
-        message: { text: 'Queued after upgrade' },
+        message: await memberMessageParts.prepareMemberMessage({
+          workspaceId: WORKSPACE_ID,
+          message: { text: 'Queued after upgrade' },
+        }),
         placement: AgentChatMemberMessagePlacement.QUEUED,
       });
       await queue.promoteQueuedMessage({

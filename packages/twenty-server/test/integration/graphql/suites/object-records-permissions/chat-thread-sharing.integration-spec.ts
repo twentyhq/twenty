@@ -1,3 +1,4 @@
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -38,7 +39,6 @@ import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolv
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
-import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
@@ -468,18 +468,15 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
-        const queued =
-          await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
-            'AgentChatMemberMessageWriterService',
-          ).writeMemberMessage({
-            actor: sender,
-            thread: await getAgentChatThreadService().getWritableThread({
-              ...sender,
-              threadId,
-            }),
-            message: { text: 'Use my permissions' },
-            placement: AgentChatMemberMessagePlacement.QUEUED,
-          });
+        const queued = await writeChatMemberMessage({
+          actor: sender,
+          thread: await getAgentChatThreadService().getWritableThread({
+            ...sender,
+            threadId,
+          }),
+          message: { text: 'Use my permissions' },
+          placement: AgentChatMemberMessagePlacement.QUEUED,
+        });
         const turnId = await queue.promoteQueuedMessage({
           workspaceId,
           threadId,

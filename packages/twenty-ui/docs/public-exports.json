@@ -1273,6 +1273,7 @@
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",
+      "isPageZoomGesture": "utilities/zoom/utils/isPageZoomGesture",
       "MOBILE_MEDIA_QUERY": "utilities/responsive/constants/MobileMediaQuery",
       "normalizeSearchText": "utilities/utils/normalizeSearchText",
       "parseThemeColor": "utilities/color/utils/parseThemeColor",

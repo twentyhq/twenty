@@ -12,6 +12,7 @@ O aplicație nouă generată de `twenty app init` arată astfel:
 ```text filename="my-twenty-app/"
 my-twenty-app/
   package.json
+  yarn.lock                                 # Created by app init; used by yarn install
   src/
     application-config.ts                   # Required — your app's entry point
     default-role.ts                         # Permissions for logic functions
@@ -28,6 +29,7 @@ my-twenty-app/
     __tests__/
       application-config.test.ts            # Unit test
       global-setup.ts                       # Integration test setup (sync + uninstall)
+      run-twenty.ts                         # CLI subprocess helper for tests
       schema.integration-test.ts            # Integration test against a live server
   .github/workflows/
     ci.yml                                  # Lint, typecheck, unit + integration tests
@@ -67,20 +69,9 @@ my-twenty-app/
 
 ## Dependențe
 
-Pachetele SDK și UI Twenty aparțin în `devDependencies`:
+`twenty app init` adaugă `twenty-sdk`, `twenty-client-sdk` și `twenty-ui` în `devDependencies`, fixate la versiunea SDK selectată de acea versiune CLI. Păstrați versiunile generate pentru o aplicație nouă și mențineți toate cele trei pachete sincronizate la actualizare. CLI-ul poate primi versiuni patch în mod independent, astfel încât versiunea sa nu trebuie să corespundă cu cea a acestor pachete.
 
-```json filename="package.json"
-{
-  "dependencies": {},
-  "devDependencies": {
-    "twenty-client-sdk": "2.40.0",
-    "twenty-sdk": "2.40.0",
-    "twenty-ui": "2.40.0"
-  }
-}
-```
-
-`twenty app init` fixează `twenty-sdk`, `twenty-client-sdk` și `twenty-ui` la propria sa versiune. Menține-le pe toate trei sincronizate atunci când faci actualizarea.
+Elementul generat `engines.twenty` stabilește versiunea minimă de server la versiunea majoră și minoră a acelui SDK. Fluxurile de lucru GitHub Actions generate fixează separat versiunea CLI.
 
 * **`twenty-sdk`** oferă definiții de aplicații, ajutoare pentru timpul de execuție și integrare cu motorul de randare. Utilizați pachetul **`twenty`** instalat separat pentru comenzile CLI și instrumentele de compilare/generare a structurii de bază.
 * **`twenty-client-sdk`** este importat de codul aplicației tale (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), dar Twenty îl furnizează la runtime — funcțiile de logică îl obțin dintr-un strat SDK generat, iar componentele de interfață îl rezolvă din module livrate de server. Copia instalată local este folosită doar pentru verificarea tipurilor și pentru build-ul la momentul de deploy, astfel că nu trebuie niciodată inclusă în bundle-ul livrat.

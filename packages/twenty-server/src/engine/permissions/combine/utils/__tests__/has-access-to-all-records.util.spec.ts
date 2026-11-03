@@ -40,7 +40,7 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const buildPrincipal = (
+const buildPrincipals = (
   roleId: string,
 ): PermissionsPrincipalsWithRolesContext => {
   const applicationId = APPLICATION_ID_BY_ROLE_ID[roleId];
@@ -74,7 +74,7 @@ const hasAccess = ({
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
 }) => {
   const request: PermissionsObjectAccessRequest = {
-    principal: buildPrincipal(roleId),
+    principals: buildPrincipals(roleId),
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),

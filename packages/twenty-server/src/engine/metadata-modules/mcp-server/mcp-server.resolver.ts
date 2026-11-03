@@ -9,30 +9,30 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
 import { UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { McpServerGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/mcp-server/interceptors/mcp-server-graphql-api-exception.interceptor';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+    requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
   }),
-  FeatureFlagGuard(FeatureFlagKey.IS_MCP_SERVERS_ENABLED),
-  SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,

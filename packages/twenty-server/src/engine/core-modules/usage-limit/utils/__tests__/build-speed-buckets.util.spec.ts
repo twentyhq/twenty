@@ -89,7 +89,7 @@ const agentRunContext = {
   type: 'user',
   workspace,
   userWorkspaceId: 'user-workspace-1',
-  viaApplication: { id: 'app-1', universalIdentifier: 'app-uid' },
+  application: { id: 'app-1', universalIdentifier: 'app-uid' },
 } as WorkspaceAuthContext;
 
 const systemContext = { type: 'system', workspace } as WorkspaceAuthContext;
