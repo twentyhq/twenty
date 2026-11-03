@@ -29,39 +29,42 @@ const getLegacyCodeStepLogicFunctionId = (
   return input.logicFunctionId;
 };
 
-// logicFunctionId stays so the previous version keeps running the step after a rollback
+// logicFunctionId stays so the previous version keeps running the step after a rollback;
+// a step whose function exists but has no readable source keeps running from it, only a gone function gets the stub
 export const inlineCodeStepSources = ({
   steps,
   sourceByLogicFunctionId,
-  oversizedLogicFunctionIds,
+  existingLogicFunctionIds,
 }: {
   steps: StoredWorkflowStep[];
   sourceByLogicFunctionId: ReadonlyMap<string, string>;
-  oversizedLogicFunctionIds: ReadonlySet<string>;
+  existingLogicFunctionIds: ReadonlySet<string>;
 }): { steps: StoredWorkflowStep[]; inlinedCodeSteps: InlinedCodeStep[] } => {
   const inlinedCodeSteps: InlinedCodeStep[] = [];
 
   const rewrittenSteps = steps.map((step) => {
     const logicFunctionId = getLegacyCodeStepLogicFunctionId(step);
 
-    if (
-      !isDefined(logicFunctionId) ||
-      oversizedLogicFunctionIds.has(logicFunctionId)
-    ) {
+    if (!isDefined(logicFunctionId)) {
+      return step;
+    }
+
+    const source = sourceByLogicFunctionId.get(logicFunctionId);
+
+    if (!isDefined(source) && existingLogicFunctionIds.has(logicFunctionId)) {
       return step;
     }
 
     inlinedCodeSteps.push({ stepId: step.id, logicFunctionId });
 
-    const code =
-      sourceByLogicFunctionId.get(logicFunctionId) ??
-      UNRECOVERABLE_CODE_STEP_SOURCE;
-
     return {
       ...step,
       settings: {
         ...step.settings,
-        input: { ...step.settings?.input, code },
+        input: {
+          ...step.settings?.input,
+          code: source ?? UNRECOVERABLE_CODE_STEP_SOURCE,
+        },
       },
     };
   });
