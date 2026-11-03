@@ -168,8 +168,7 @@ export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts'
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
-export { hasWorkflowAiAgentConversationConfig } from './utils/hasWorkflowAiAgentConversationConfig';
-export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';
+export { hasWorkflowAiAgentConfig } from './utils/hasWorkflowAiAgentConfig';
 export { isAgentRunnableAsWorkflowStep } from './utils/isAgentRunnableAsWorkflowStep';
 export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';

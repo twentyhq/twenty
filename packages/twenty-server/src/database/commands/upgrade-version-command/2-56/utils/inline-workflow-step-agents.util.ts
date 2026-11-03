@@ -1,6 +1,9 @@
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { hasWorkflowAiAgentConversationConfig } from 'twenty-shared/workflow';
+import {
+  hasWorkflowAiAgentConfig,
+  workflowAiAgentConversationConfigSchema,
+} from 'twenty-shared/workflow';
 
 import {
   type StepAgentInlineConfig,
@@ -33,12 +36,7 @@ export const inlineWorkflowStepAgents = ({
 
     const isConversational =
       inlineConfigByAgentId.has(agentId) &&
-      hasWorkflowAiAgentConversationConfig({
-        ...input,
-        humanInputInstructions: isString(input.humanInputInstructions)
-          ? input.humanInputInstructions
-          : undefined,
-      });
+      hasWorkflowAiAgentConfig(workflowAiAgentConversationConfigSchema, input);
 
     if (isConversational || keptAgentIds.has(agentId)) {
       keptStepAgentIds.add(agentId);

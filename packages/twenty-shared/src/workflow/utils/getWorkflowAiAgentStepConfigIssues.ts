@@ -3,8 +3,9 @@ import { type z } from 'zod';
 import { type workflowAiAgentActionSettingsSchema } from '@/workflow/schemas/ai-agent-action-settings-schema';
 import { type WorkflowAiAgentStepConfigIssueCode } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
 import { hasAiRunScopeRepeatedEntries } from '@/ai/utils/has-ai-run-scope-repeated-entries.util';
-import { hasWorkflowAiAgentConversationConfig } from '@/workflow/utils/hasWorkflowAiAgentConversationConfig';
-import { hasWorkflowAiAgentInlineConfig } from '@/workflow/utils/hasWorkflowAiAgentInlineConfig';
+import { workflowAiAgentConversationConfigSchema } from '@/workflow/schemas/ai-agent-conversation-config-schema';
+import { workflowAiAgentInlineConfigSchema } from '@/workflow/schemas/ai-agent-inline-config-schema';
+import { hasWorkflowAiAgentConfig } from '@/workflow/utils/hasWorkflowAiAgentConfig';
 import { isWorkflowAiAgentGenerateStep } from '@/workflow/utils/isWorkflowAiAgentGenerateStep';
 
 export const getWorkflowAiAgentStepConfigIssues = (
@@ -12,7 +13,10 @@ export const getWorkflowAiAgentStepConfigIssues = (
 ): WorkflowAiAgentStepConfigIssueCode[] => {
   if (isWorkflowAiAgentGenerateStep(input)) {
     return [
-      ...(hasWorkflowAiAgentConversationConfig(input)
+      ...(hasWorkflowAiAgentConfig(
+        workflowAiAgentConversationConfigSchema,
+        input,
+      )
         ? (['GENERATE_STEP_HAS_CONVERSATION_CONFIG'] as const)
         : []),
       ...(hasAiRunScopeRepeatedEntries(input.scope)
@@ -21,7 +25,7 @@ export const getWorkflowAiAgentStepConfigIssues = (
     ];
   }
 
-  return hasWorkflowAiAgentInlineConfig(input)
+  return hasWorkflowAiAgentConfig(workflowAiAgentInlineConfigSchema, input)
     ? ['AGENT_STEP_HAS_INLINE_CONFIG']
     : [];
 };
