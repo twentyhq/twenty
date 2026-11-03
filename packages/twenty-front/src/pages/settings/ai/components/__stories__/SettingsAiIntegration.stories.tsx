@@ -214,6 +214,26 @@ export const BehaviorSaveFailure: Story = {
     expect(inbox).toHaveTextContent('Auto');
     expect(fixture.saveBehavior).toHaveBeenCalledOnce();
 
+    fixture.failNextBehaviorSave(
+      'You do not have permission to change this behavior.',
+    );
+    await userEvent.click(directMessages);
+    const permissionDeniedOptions = await bodyQueries.findByRole('listbox', {
+      name: 'DMs',
+    });
+    await userEvent.click(
+      within(permissionDeniedOptions).getByRole('option', { name: 'Never' }),
+    );
+
+    await waitFor(() =>
+      expect(canvas.getByRole('alert')).toHaveTextContent(
+        'You do not have permission to change this behavior.',
+      ),
+    );
+    expect(directMessages).toHaveTextContent('Only when mentioned');
+    expect(inbox).toHaveTextContent('Auto');
+    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
+
     await userEvent.click(directMessages);
     const retryOptions = await bodyQueries.findByRole('listbox', {
       name: 'DMs',
@@ -225,7 +245,7 @@ export const BehaviorSaveFailure: Story = {
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
     expect(inbox).toHaveTextContent('Auto');
     expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
-    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
+    expect(fixture.saveBehavior).toHaveBeenCalledTimes(3);
     expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
     });

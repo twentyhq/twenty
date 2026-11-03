@@ -43,6 +43,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     | undefined;
   const instructionsSaveReleases = new Set<() => void>();
   let shouldFailNextBehaviorSave = false;
+  let nextBehaviorSaveErrorMessage: string | undefined;
   let shouldFailNextInstructionsSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
@@ -66,6 +67,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     saveBehavior.mockClear();
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
+    nextBehaviorSaveErrorMessage = undefined;
     shouldFailNextInstructionsSave = false;
     permissionFlags = options.permissionFlags;
     workspace = {
@@ -93,8 +95,9 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     );
   };
 
-  const failNextBehaviorSave = () => {
+  const failNextBehaviorSave = (userFriendlyMessage?: string) => {
     shouldFailNextBehaviorSave = true;
+    nextBehaviorSaveErrorMessage = userFriendlyMessage;
   };
 
   const pauseBehaviorSave = () => {
@@ -210,12 +213,14 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           : nextInstructionsSave?.pendingSave;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
+        const behaviorSaveErrorMessage = nextBehaviorSaveErrorMessage;
         const shouldRejectInstructionsSave =
           hasInstructionsUpdate && shouldFailNextInstructionsSave;
 
         if (hasBehaviorUpdate) {
           saveBehavior(variables.input);
           shouldFailNextBehaviorSave = false;
+          nextBehaviorSaveErrorMessage = undefined;
         }
 
         if (hasInstructionsUpdate) {
@@ -236,7 +241,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
 
         if (shouldRejectBehaviorSave) {
           return HttpResponse.json({
-            errors: [{ message: 'Behavior settings could not be saved' }],
+            errors: [
+              {
+                message: 'Behavior settings could not be saved',
+                extensions: { userFriendlyMessage: behaviorSaveErrorMessage },
+              },
+            ],
           });
         }
 

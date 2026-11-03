@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -12,6 +13,7 @@ import {
   PermissionFlagType,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 type AssistantModeField =
   | 'aiChatDirectMessageAssistantMode'
@@ -28,7 +30,8 @@ export const useSettingsAiBehavior = () => {
   const [updateWorkspace, { loading: isSaving }] = useMutation(
     UpdateWorkspaceDocument,
   );
-  const [hasSaveFailed, setHasSaveFailed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const defaultSaveErrorMessage = t`Failed to save behavior settings. Try again.`;
   const directMessageMode =
     currentWorkspace?.aiChatDirectMessageAssistantMode ?? null;
   const inboxMode = currentWorkspace?.aiChatInboxAssistantMode ?? null;
@@ -53,7 +56,7 @@ export const useSettingsAiBehavior = () => {
     }
 
     const workspaceId = currentWorkspace.id;
-    setHasSaveFailed(false);
+    setErrorMessage(undefined);
 
     try {
       const { data } = await updateWorkspace({
@@ -62,7 +65,7 @@ export const useSettingsAiBehavior = () => {
       const savedWorkspace = data?.updateWorkspace;
 
       if (!isDefined(savedWorkspace) || savedWorkspace.id !== workspaceId) {
-        setHasSaveFailed(true);
+        setErrorMessage(defaultSaveErrorMessage);
         return;
       }
 
@@ -71,8 +74,16 @@ export const useSettingsAiBehavior = () => {
           ? { ...previousWorkspace, [field]: savedWorkspace[field] }
           : previousWorkspace,
       );
-    } catch {
-      setHasSaveFailed(true);
+    } catch (error) {
+      const hasUserFriendlyMessage =
+        CombinedGraphQLErrors.is(error) &&
+        isDefined(error.errors[0]?.extensions?.userFriendlyMessage);
+
+      setErrorMessage(
+        hasUserFriendlyMessage
+          ? getErrorMessageFromApolloError(error)
+          : defaultSaveErrorMessage,
+      );
     }
   };
 
@@ -88,9 +99,7 @@ export const useSettingsAiBehavior = () => {
     isLoading,
     isSaving,
     isBehaviorVisible: isInboxEnabled && canEditBehavior,
-    errorMessage: hasSaveFailed
-      ? t`Failed to save behavior settings. Try again.`
-      : undefined,
+    errorMessage,
     saveDirectMessageMode,
     saveInboxMode,
   };
