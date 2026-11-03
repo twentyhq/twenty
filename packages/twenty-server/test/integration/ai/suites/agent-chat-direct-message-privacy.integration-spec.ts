@@ -54,8 +54,8 @@ const SET_THREAD_SHARE = parse(`
   }
 `);
 
-const SET_THREAD_PRIVATE = parse(`
-  mutation SetDirectMessagePrivate($target: RecordTargetInput!) {
+const MAKE_THREAD_PUBLIC = parse(`
+  mutation MakeDirectMessagePublic($target: RecordTargetInput!) {
     setRecordPrivate(target: $target, isPrivate: false) { isPrivate }
   }
 `);
@@ -400,7 +400,7 @@ describe('Direct message pair privacy', () => {
     }
 
     const publicResponse = await makeMetadataApiRequest(
-      { query: SET_THREAD_PRIVATE, variables: { target } },
+      { query: MAKE_THREAD_PUBLIC, variables: { target } },
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
 
