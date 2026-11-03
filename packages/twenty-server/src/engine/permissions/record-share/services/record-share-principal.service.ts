@@ -6,9 +6,6 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
@@ -31,7 +28,6 @@ export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
-    private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
 
   // Undefined for everyone, and for a member who left or whose membership is gone
@@ -157,30 +153,17 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      let memberAuthContext: UserWorkspaceAuthContext | undefined;
-
-      try {
-        memberAuthContext =
-          await this.userWorkspaceAuthContextService.resolveWorkspaceMember({
-            workspaceId,
-            workspaceMemberId: principal.principalId,
-            applicationId: null,
-          });
-      } catch (error) {
-        if (!(error instanceof AuthException)) {
-          throw error;
-        }
-      }
-
-      const hasGrant =
-        isDefined(memberAuthContext) &&
-        (await this.recordAccessPolicyService.hasAccessToRecords({
-          authContext: memberAuthContext,
-          flatObjectMetadata,
-          operationType: 'select',
-          recordIds,
-          transactionScope,
-        }));
+      const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
+        authContext: {
+          type: 'user',
+          workspace: { id: workspaceId },
+          workspaceMemberId: principal.principalId,
+        },
+        flatObjectMetadata,
+        operationType: 'select',
+        recordIds,
+        transactionScope,
+      });
 
       if (!hasGrant) {
         throw new RecordShareException(

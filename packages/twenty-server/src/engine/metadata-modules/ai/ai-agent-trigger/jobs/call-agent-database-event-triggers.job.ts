@@ -1,4 +1,3 @@
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
@@ -6,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
@@ -35,7 +34,6 @@ export class CallAgentDatabaseEventTriggersJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   @Process(CallAgentDatabaseEventTriggersJob.name)
@@ -69,19 +67,6 @@ export class CallAgentDatabaseEventTriggersJob {
       return;
     }
 
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceId,
-    );
-
-    if (!isDefined(workspace)) {
-      this.logger.warn(
-        `Workspace ${workspaceId} not found, skipping agent triggers for ${eventName}`,
-      );
-
-      return;
-    }
-
     const eventRecordAccessGate =
       this.recordAccessPolicyService.buildEventRecordAccessGate(
         workspaceEventBatch,
@@ -94,11 +79,12 @@ export class CallAgentDatabaseEventTriggersJob {
         continue;
       }
 
-      const agentAuthContext = buildApplicationAuthContext({
-        workspace,
+      const agentAuthContext: PermissionsAuthContext = {
+        type: 'application',
+        workspace: { id: workspaceId },
         application,
         agentId: flatAgent.id,
-      });
+      };
       const agentObjectsPermissions =
         await this.recordAccessPolicyService.findObjectsPermissions(
           agentAuthContext,

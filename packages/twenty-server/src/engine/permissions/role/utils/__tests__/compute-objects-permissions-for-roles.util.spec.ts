@@ -17,7 +17,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
@@ -97,14 +97,13 @@ const buildMemberAuthContext = ({
   workspaceMemberId: string;
   applicationId?: string;
   agentId?: string;
-}) =>
-  ({
-    type: 'user',
-    workspace: { id: 'workspace-id' },
-    workspaceMemberId,
-    ...(isDefined(applicationId) ? { application: { id: applicationId } } : {}),
-    ...(isDefined(agentId) ? { agentId } : {}),
-  }) as WorkspaceAuthContext;
+}): PermissionsAuthContext => ({
+  type: 'user',
+  workspace: { id: 'workspace-id' },
+  workspaceMemberId,
+  ...(isDefined(applicationId) ? { application: { id: applicationId } } : {}),
+  ...(isDefined(agentId) ? { agentId } : {}),
+});
 
 const buildApiKeyAuthContext = ({
   apiKeyId,
@@ -114,20 +113,19 @@ const buildApiKeyAuthContext = ({
   apiKeyId: string;
   agentId?: string;
   permissionScope?: PermissionScope;
-}) =>
-  ({
-    type: 'apiKey',
-    workspace: { id: 'workspace-id' },
-    apiKey: { id: apiKeyId },
-    ...(isDefined(agentId) ? { agentId } : {}),
-    ...(isDefined(permissionScope) ? { permissionScope } : {}),
-  }) as WorkspaceAuthContext;
+}): PermissionsAuthContext => ({
+  type: 'apiKey',
+  workspace: { id: 'workspace-id' },
+  apiKey: { id: apiKeyId },
+  ...(isDefined(agentId) ? { agentId } : {}),
+  ...(isDefined(permissionScope) ? { permissionScope } : {}),
+});
 
 const computeForAuthContext = ({
   authContext,
   roleMaps,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: PermissionsAuthContext;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): ObjectsPermissions => {
   const principal = resolvePermissionsPrincipalsWithRoles({
@@ -296,7 +294,7 @@ describe('computeObjectsPermissionsForRoles', () => {
           workspace: { id: 'workspace-id' },
           application: { id: 'application-id' },
           agentId: 'agent-id',
-        } as WorkspaceAuthContext,
+        },
         roleMaps,
       }),
     ).toEqual(defaultRolePermissions);
@@ -309,7 +307,7 @@ describe('computeObjectsPermissionsForRoles', () => {
           type: 'webhook',
           workspace: { id: 'workspace-id' },
           webhook: { id: 'webhook-id' },
-        } as WorkspaceAuthContext,
+        },
         roleMaps: buildRoleMaps(),
       }),
     ).toEqual({});

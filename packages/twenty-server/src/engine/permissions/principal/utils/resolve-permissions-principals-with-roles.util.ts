@@ -3,7 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import {
   type PermissionsApplicationPrincipal,
   type PermissionsLimitingPrincipal,
@@ -184,7 +184,7 @@ const toLimitingPrincipal = (
   isDefined(agentId) ? { type: 'agent', agentId } : undefined;
 
 const getPermissionsIdentitiesFromAuthContext = (
-  authContext: WorkspaceAuthContext,
+  authContext: PermissionsAuthContext,
 ): PermissionsIdentities | undefined => {
   switch (authContext.type) {
     case 'user':
@@ -233,7 +233,7 @@ export const resolvePermissionsPrincipalsWithRoles = ({
   authContext,
   roleMaps,
 }: {
-  authContext: WorkspaceAuthContext;
+  authContext: PermissionsAuthContext;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): PermissionsPrincipalsWithRolesContext | undefined => {
   const identities = getPermissionsIdentitiesFromAuthContext(authContext);

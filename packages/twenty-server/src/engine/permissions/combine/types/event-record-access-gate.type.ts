@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 export type EventRecordAccessGate = {
   resolveAdmittedRecordIds: (
-    authContext: WorkspaceAuthContext,
+    authContext: PermissionsAuthContext,
   ) => Promise<Set<string>>;
 };

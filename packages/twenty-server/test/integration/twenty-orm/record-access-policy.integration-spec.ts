@@ -12,7 +12,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -20,14 +20,14 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 describe('RecordAccessPolicyService', () => {
   const recordId = randomUUID();
-  let adminAuthContext: WorkspaceAuthContext;
+  let adminAuthContext: PermissionsAuthContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
   let recordAccessPolicyService: RecordAccessPolicyService;
-  const missingRoleAuthContext = {
+  const missingRoleAuthContext: PermissionsAuthContext = {
     type: 'apiKey',
     workspace: { id: SEED_APPLE_WORKSPACE_ID },
     apiKey: { id: randomUUID() },
-  } as WorkspaceAuthContext;
+  };
 
   // Other suites wipe every person, so the record under test is created here
   beforeAll(async () => {
@@ -83,7 +83,7 @@ describe('RecordAccessPolicyService', () => {
     recordIds,
     operationType = 'select',
   }: {
-    authContext: WorkspaceAuthContext;
+    authContext: PermissionsAuthContext;
     recordIds: string[];
     operationType?: OperationType;
   }): Promise<boolean> =>

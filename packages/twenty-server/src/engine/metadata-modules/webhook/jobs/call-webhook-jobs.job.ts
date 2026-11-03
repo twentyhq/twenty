@@ -1,4 +1,3 @@
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
@@ -6,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { buildWebhookAuthContext } from 'src/engine/core-modules/auth/utils/build-webhook-auth-context.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -34,7 +32,6 @@ export class CallWebhookJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -71,19 +68,6 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceEventBatch.workspaceId,
-    );
-
-    if (!isDefined(workspace)) {
-      this.logger.warn(
-        `Workspace ${workspaceEventBatch.workspaceId} not found, dropping the webhook batch`,
-      );
-
-      return;
-    }
-
     const eventRecordAccessGate =
       this.recordAccessPolicyService.buildEventRecordAccessGate({
         ...workspaceEventBatch,
@@ -109,9 +93,11 @@ export class CallWebhookJobsJob {
 
       const admittedRecordIds =
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
-        eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildWebhookAuthContext({ workspace, webhook }),
-        );
+        eventRecordAccessGate.resolveAdmittedRecordIds({
+          type: 'webhook',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          webhook,
+        });
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
 

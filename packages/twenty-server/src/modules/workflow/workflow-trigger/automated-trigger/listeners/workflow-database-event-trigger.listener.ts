@@ -34,7 +34,6 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
@@ -408,7 +407,6 @@ export class WorkflowDatabaseEventTriggerListener {
               ? enrichedPayload
               : payload,
             applicationId,
-            workspace,
           }),
         );
       }
@@ -497,11 +495,9 @@ export class WorkflowDatabaseEventTriggerListener {
   private async resolveAdmittedEvents({
     workspaceEventBatch,
     applicationId,
-    workspace,
   }: {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     applicationId: string;
-    workspace: FlatWorkspace;
   }): Promise<ObjectRecordEvent[]> {
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(
@@ -513,12 +509,12 @@ export class WorkflowDatabaseEventTriggerListener {
       flatApplicationMaps,
       applicationId,
     );
+
     if (!isDefined(application)) {
       return [];
     }
 
     return resolveEventsReadableByRole({
-      workspace,
       application,
       workspaceEventBatch,
       eventRecordAccessGate:

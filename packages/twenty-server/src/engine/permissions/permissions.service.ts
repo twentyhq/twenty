@@ -26,6 +26,7 @@ import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -216,7 +217,7 @@ export class PermissionsService {
   }
 
   public async findPrincipalWithRoles(
-    authContext: WorkspaceAuthContext,
+    authContext: PermissionsAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
     if (!canAuthContextHoldRoles(authContext)) {
       return undefined;
@@ -229,7 +230,7 @@ export class PermissionsService {
   }
 
   private async loadPrincipalRoleMaps(
-    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+    authContext: Pick<PermissionsAuthContext, 'type' | 'workspace'>,
   ): Promise<PermissionsPrincipalRoleMaps> {
     const workspaceId = authContext.workspace.id;
     const {
@@ -258,7 +259,7 @@ export class PermissionsService {
   }
 
   private async loadFlatWorkspaceMemberMaps(
-    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+    authContext: Pick<PermissionsAuthContext, 'type' | 'workspace'>,
   ) {
     if (authContext.type !== 'user') {
       return undefined;
@@ -274,7 +275,7 @@ export class PermissionsService {
   }
 
   private async loadFlatRoleTargetMaps(
-    authContext: Pick<WorkspaceAuthContext, 'type' | 'workspace'>,
+    authContext: Pick<PermissionsAuthContext, 'type' | 'workspace'>,
   ) {
     if (authContext.type !== 'webhook') {
       return undefined;

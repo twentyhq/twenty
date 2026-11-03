@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 export const canAuthContextHoldRoles = (
-  authContext: Pick<WorkspaceAuthContext, 'type'>,
+  authContext: Pick<PermissionsAuthContext, 'type'>,
 ): boolean =>
   authContext.type !== 'system' && authContext.type !== 'pendingActivationUser';

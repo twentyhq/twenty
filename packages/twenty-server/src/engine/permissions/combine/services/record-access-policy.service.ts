@@ -10,7 +10,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -49,7 +49,7 @@ type ObjectAccessRequest = Omit<
 >;
 
 type AuthContextAccessRequest = ObjectAccessRequest & {
-  authContext: WorkspaceAuthContext;
+  authContext: PermissionsAuthContext;
 };
 
 type RecordsAccessRequest = ObjectAccessRequest & {
@@ -88,7 +88,9 @@ export class RecordAccessPolicyService {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  forAuthContext(authContext: WorkspaceAuthContext): ScopedRecordAccessPolicy {
+  forAuthContext(
+    authContext: PermissionsAuthContext,
+  ): ScopedRecordAccessPolicy {
     const principal = this.resolvePrincipalsWithRoles(authContext);
 
     return {
@@ -206,7 +208,7 @@ export class RecordAccessPolicyService {
   }
 
   async getObjectsPermissionsOrThrow(
-    authContext: WorkspaceAuthContext,
+    authContext: PermissionsAuthContext,
   ): Promise<ObjectsPermissions> {
     const objectsPermissions = await this.findObjectsPermissions(authContext);
 
@@ -221,7 +223,7 @@ export class RecordAccessPolicyService {
   }
 
   async findObjectsPermissions(
-    authContext: WorkspaceAuthContext,
+    authContext: PermissionsAuthContext,
   ): Promise<ObjectsPermissions | undefined> {
     return this.findPrincipalObjectsPermissions(
       this.resolvePrincipalsWithRoles(authContext),
@@ -423,7 +425,7 @@ export class RecordAccessPolicyService {
   }
 
   private resolvePrincipalsWithRoles(
-    authContext: WorkspaceAuthContext,
+    authContext: PermissionsAuthContext,
   ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
     return this.permissionsService.findPrincipalWithRoles(authContext);
   }

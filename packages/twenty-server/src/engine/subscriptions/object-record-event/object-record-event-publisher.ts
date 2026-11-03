@@ -1,7 +1,6 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
@@ -17,7 +16,6 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-neste
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -29,7 +27,6 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
-import { isStreamQueryingObject } from 'src/engine/subscriptions/utils/is-stream-querying-object.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -41,6 +38,7 @@ import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/ob
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
@@ -51,8 +49,6 @@ type StreamPermissionsContext = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
-
-const SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY = 10;
 
 @Injectable()
 export class ObjectRecordEventPublisher {
@@ -102,12 +98,6 @@ export class ObjectRecordEventPublisher {
       string,
       Promise<WorkspaceAuthContext>
     >();
-
-    await this.prefetchSubscriberAuthContexts({
-      streamsData,
-      workspaceEventBatch: eventBatch,
-      subscriberAuthContexts,
-    });
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -176,38 +166,34 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
-
-    if (!isStreamQueryingObject({ streamData, objectNameSingular })) {
-      return;
-    }
-
-    let authContext: WorkspaceAuthContext;
-
-    try {
-      authContext = await this.findSubscriberAuthContext({
-        subscriberAuthContexts,
-        workspaceId: workspaceEventBatch.workspaceId,
-        userWorkspaceId,
-        applicationId: subscriberAuthContext.applicationId,
-      });
-    } catch (error) {
-      if (!(error instanceof AuthException)) {
-        this.logger.warn(
-          `Failed to resolve the subscriber of stream ${streamChannelId} for ${workspaceEventBatch.name} in workspace ${workspaceEventBatch.workspaceId}, skipping it: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-          error instanceof Error ? error.stack : undefined,
-        );
-      }
-
-      return;
-    }
+    const { applicationId } = subscriberAuthContext;
+    const permissionsAuthContext: PermissionsAuthContext = {
+      type: 'user',
+      workspace: { id: workspaceEventBatch.workspaceId },
+      workspaceMemberId,
+      ...(isDefined(applicationId)
+        ? { application: { id: applicationId } }
+        : {}),
+    };
 
     const objectsPermissions =
-      await this.recordAccessPolicyService.findObjectsPermissions(authContext);
+      await this.recordAccessPolicyService.findObjectsPermissions(
+        permissionsAuthContext,
+      );
 
     if (!isDefined(objectsPermissions)) {
+      return;
+    }
+
+    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
+
+    if (
+      !Object.values(streamData.queries).some(
+        (operationSignature) =>
+          isRecordGqlOperationSignature(operationSignature) &&
+          operationSignature.objectNameSingular === objectNameSingular,
+      )
+    ) {
       return;
     }
 
@@ -217,7 +203,9 @@ export class ObjectRecordEventPublisher {
     }[] = [];
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(authContext);
+      await eventRecordAccessGate.resolveAdmittedRecordIds(
+        permissionsAuthContext,
+      );
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -280,7 +268,13 @@ export class ObjectRecordEventPublisher {
             (matchedEvent) => matchedEvent.objectRecordEvent,
           ),
           workspaceId: workspaceEventBatch.workspaceId,
-          subscriberAuthContext: authContext,
+          subscriberAuthContext: this.findSubscriberAuthContext({
+            subscriberAuthContexts,
+            workspaceId: workspaceEventBatch.workspaceId,
+            userWorkspaceId,
+            applicationId: subscriberAuthContext.applicationId,
+          }),
+          permissionsAuthContext,
           objectsPermissions,
         });
       } catch (error) {
@@ -310,12 +304,14 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     subscriberAuthContext,
+    permissionsAuthContext,
     objectsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
-    subscriberAuthContext: WorkspaceAuthContext;
+    subscriberAuthContext: Promise<WorkspaceAuthContext>;
+    permissionsAuthContext: PermissionsAuthContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -349,7 +345,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          authContext: subscriberAuthContext,
+          authContext: permissionsAuthContext,
           flatObjectMetadataMaps,
         }),
       depth: 1,
@@ -371,6 +367,7 @@ export class ObjectRecordEventPublisher {
       commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
+    const resolvedSubscriberAuthContext = await subscriberAuthContext;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -379,7 +376,7 @@ export class ObjectRecordEventPublisher {
           flatFieldMetadataMaps,
           parentObjectMetadataItem: objectMetadata,
           parentObjectRecords: allRecords,
-          authContext: subscriberAuthContext,
+          authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
           relations: selectedFieldsResult.relations as Record<
             string,
@@ -387,50 +384,11 @@ export class ObjectRecordEventPublisher {
           >,
           selectedFields: selectedFieldsResult.select,
         }),
-      subscriberAuthContext,
+      resolvedSubscriberAuthContext,
     );
   }
 
   // Streams of one member share their auth context within a batch; null keeps the writer's application out
-  private async prefetchSubscriberAuthContexts({
-    streamsData,
-    workspaceEventBatch,
-    subscriberAuthContexts,
-  }: {
-    streamsData: Map<string, EventStreamData | undefined>;
-    workspaceEventBatch: Pick<
-      WorkspaceEventBatch<ObjectRecordEvent>,
-      'workspaceId' | 'objectMetadata'
-    >;
-    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
-  }): Promise<void> {
-    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
-    const subscribers = [...streamsData.values()]
-      .filter(isDefined)
-      .filter((streamData) =>
-        isStreamQueryingObject({ streamData, objectNameSingular }),
-      )
-      .flatMap(({ authContext: { userWorkspaceId, applicationId } }) =>
-        isDefined(userWorkspaceId) ? [{ userWorkspaceId, applicationId }] : [],
-      );
-
-    for (const subscriberChunk of chunk(
-      subscribers,
-      SUBSCRIBER_AUTH_CONTEXT_LOOKUP_CONCURRENCY,
-    )) {
-      await Promise.allSettled(
-        subscriberChunk.map(({ userWorkspaceId, applicationId }) =>
-          this.findSubscriberAuthContext({
-            subscriberAuthContexts,
-            workspaceId: workspaceEventBatch.workspaceId,
-            userWorkspaceId,
-            applicationId,
-          }),
-        ),
-      );
-    }
-  }
-
   private findSubscriberAuthContext({
     subscriberAuthContexts,
     workspaceId,
