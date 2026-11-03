@@ -101,7 +101,7 @@ export class MatchParticipantService<
         objectMetadataName,
         transactionScope,
         workspaceOrmManager: this.workspaceOrmManager,
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        shouldBypassPermissionChecks: true,
       },
     );
   }
@@ -150,7 +150,7 @@ export class MatchParticipantService<
         objectMetadataName: 'person',
         transactionScope,
         workspaceOrmManager: this.workspaceOrmManager,
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        shouldBypassPermissionChecks: true,
       });
 
     const participantRepository = this.getParticipantRepository({
@@ -164,7 +164,7 @@ export class MatchParticipantService<
           objectMetadataName: 'workspaceMember',
           transactionScope,
           workspaceOrmManager: this.workspaceOrmManager,
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+          shouldBypassPermissionChecks: true,
         },
       );
 
@@ -501,7 +501,7 @@ export class MatchParticipantService<
           objectMetadataName: 'messageChannelMessageAssociation',
           transactionScope,
           workspaceOrmManager: this.workspaceOrmManager,
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+          shouldBypassPermissionChecks: true,
         },
       ).find({
         where: {

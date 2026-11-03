@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_LINKEDIN_SETTINGS } from 'src/constants/default-linkedin-settings.constant';
@@ -8,6 +9,9 @@ const mocks = vi.hoisted(() => ({
   ingestMessages: vi.fn(),
   matchLinkedinParticipantPersonId: vi.fn(),
   createLinkedinPerson: vi.fn(),
+  importLinkedinMessageAttachments: vi.fn(),
+  resolveCounterpart: vi.fn(),
+  hasPersonNamedLikeLinkedinUser: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -25,8 +29,24 @@ vi.mock('src/logic-functions/utils/create-linkedin-person.util', () => ({
   createLinkedinPerson: mocks.createLinkedinPerson,
 }));
 
+vi.mock(
+  'src/logic-functions/utils/has-person-named-like-linkedin-user.util',
+  () => ({
+    hasPersonNamedLikeLinkedinUser: mocks.hasPersonNamedLikeLinkedinUser,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/utils/import-linkedin-message-attachments.util',
+  () => ({
+    importLinkedinMessageAttachments: mocks.importLinkedinMessageAttachments,
+  }),
+);
+
 const { ingestLinkedinMessages } =
   await import('src/logic-functions/utils/ingest-linkedin-messages.util');
+
+const DEADLINE_AT_MS = Date.parse('2026-10-29T08:00:00.000Z');
 
 const PRIYA = {
   id: 'ACoPRIYA',
@@ -45,6 +65,34 @@ const buildMessage = (isSender: boolean): UnipileMessage => ({
   is_event: false,
   provider: 'linkedin',
 });
+
+const UNRESOLVED_PRIYA = { id: PRIYA.id, display_name: PRIYA.display_name };
+
+const SAM = { id: 'ACoSAM', display_name: 'Sam Okafor' };
+
+const resolveCounterpartsLikeUnipile = (): string[] => {
+  const lookedUpUserIds: string[] = [];
+
+  mocks.resolveCounterpart.mockImplementation(
+    async ({
+      user,
+      shouldLookUp,
+    }: {
+      user: UnipileUser;
+      shouldLookUp?: () => Promise<boolean>;
+    }) => {
+      if (isDefined(shouldLookUp) && !(await shouldLookUp())) {
+        return user;
+      }
+
+      lookedUpUserIds.push(user.id);
+
+      return { ...user, public_identifier: user.id.toLowerCase() };
+    },
+  );
+
+  return lookedUpUserIds;
+};
 
 const ONE_TO_ONE_CHAT = {
   id: 'chat-1',
@@ -74,10 +122,13 @@ const ingest = ({
   chat?: typeof ONE_TO_ONE_CHAT | typeof GROUP_CHAT;
 } = {}) =>
   ingestLinkedinMessages({
+    unipileAccountId: 'acc_1',
+    attachmentDeadlineAtMs: DEADLINE_AT_MS,
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
     chat,
     counterparts,
+    resolveCounterpart: mocks.resolveCounterpart,
     messages,
   });
 
@@ -91,6 +142,115 @@ describe('ingestLinkedinMessages', () => {
     vi.clearAllMocks();
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
+    mocks.resolveCounterpart.mockImplementation(
+      async ({ user }: { user: UnipileUser }) => user,
+    );
+    mocks.hasPersonNamedLikeLinkedinUser.mockResolvedValue(false);
+  });
+
+  it('looks up the counterpart of an All chats conversation without checking names', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    await ingest({ counterparts: [UNRESOLVED_PRIYA] });
+
+    expect(lookedUpUserIds).toEqual([PRIYA.id]);
+    expect(mocks.hasPersonNamedLikeLinkedinUser).not.toHaveBeenCalled();
+  });
+
+  it('looks up nobody in a Contacts only chat with someone no Person is named after', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    await expect(
+      ingest({
+        settings: {
+          ...DEFAULT_LINKEDIN_SETTINGS,
+          importPolicy: 'CONTACTS_ONLY',
+        },
+        counterparts: [UNRESOLVED_PRIYA],
+      }),
+    ).resolves.toMatchObject({ skippedReason: 'NO_CONTACT' });
+    expect(lookedUpUserIds).toEqual([]);
+  });
+
+  it('looks up only the group members a Person is named after', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        user.public_identifier === 'acopriya' ? 'priya-id' : undefined,
+    );
+
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        counterparts: [UNRESOLVED_PRIYA, SAM],
+        messages: [buildMessage(false)],
+      }),
+    ).resolves.toMatchObject({ ingestedMessageCount: 1 });
+    expect(lookedUpUserIds).toEqual([PRIYA.id]);
+  });
+
+  it('looks up the other group members to create them once a contact is in the chat', async () => {
+    const lookedUpUserIds = resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        user.public_identifier === 'acopriya' ? 'priya-id' : undefined,
+    );
+
+    await ingest({ chat: GROUP_CHAT, counterparts: [UNRESOLVED_PRIYA, SAM] });
+
+    expect(lookedUpUserIds).toEqual([PRIYA.id, SAM.id]);
+    expect(mocks.createLinkedinPerson).toHaveBeenCalledExactlyOnceWith({
+      firstName: 'Sam',
+      lastName: 'Okafor',
+      handle: 'https://www.linkedin.com/in/acosam',
+    });
+  });
+
+  it('links a group member found by their profile URL instead of creating them', async () => {
+    resolveCounterpartsLikeUnipile();
+
+    mocks.hasPersonNamedLikeLinkedinUser.mockImplementation(
+      async (user: UnipileUser) => user.id === PRIYA.id,
+    );
+    mocks.matchLinkedinParticipantPersonId.mockImplementation(
+      async ({ user }: { user: UnipileUser }) =>
+        ({ acopriya: 'priya-id', acosam: 'sam-id' })[
+          user.public_identifier ?? ''
+        ],
+    );
+
+    await expect(
+      ingest({ chat: GROUP_CHAT, counterparts: [UNRESOLVED_PRIYA, SAM] }),
+    ).resolves.toMatchObject({ matchedPersonCount: 2, createdPersonCount: 0 });
+    expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
+    expect(ingestedParticipantPersonIds()).toContain('sam-id');
+  });
+
+  it('ingests under the public profile URL of the resolved counterpart', async () => {
+    mocks.resolveCounterpart.mockResolvedValue(PRIYA);
+
+    await ingest({
+      counterparts: [{ ...PRIYA, public_identifier: undefined }],
+    });
+
+    expect(
+      mocks.ingestMessages.mock.calls[0][0].messages[0].participants[1].handle,
+    ).toBe('https://www.linkedin.com/in/priya-nair');
+  });
+
+  it('looks up no profile for a page with no message to import', async () => {
+    await ingest({ messages: [{ ...buildMessage(false), is_event: true }] });
+
+    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
   });
 
   it('attaches the matched person to the participant', async () => {
@@ -140,6 +300,7 @@ describe('ingestLinkedinMessages', () => {
       }),
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.matchLinkedinParticipantPersonId).not.toHaveBeenCalled();
+    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
   });
 
   it('creates a person for an unknown profile the member messaged', async () => {
@@ -179,5 +340,30 @@ describe('ingestLinkedinMessages', () => {
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+    expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
+  });
+
+  it('imports the attachments of the ingested messages', async () => {
+    const message = {
+      ...buildMessage(true),
+      attachments: [
+        { id: 'attachment-1', type: 'img' as const, mimetype: 'image/png' },
+      ],
+    };
+
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(1);
+
+    await expect(ingest({ messages: [message] })).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+      importedAttachmentCount: 1,
+    });
+    expect(
+      mocks.importLinkedinMessageAttachments,
+    ).toHaveBeenCalledExactlyOnceWith({
+      unipileAccountId: 'acc_1',
+      messages: [message],
+      deadlineAtMs: DEADLINE_AT_MS,
+      onAttachmentFile: expect.any(Function),
+    });
   });
 });

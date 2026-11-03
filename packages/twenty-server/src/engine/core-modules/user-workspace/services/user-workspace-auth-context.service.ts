@@ -1,3 +1,4 @@
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -144,7 +145,12 @@ export class UserWorkspaceAuthContextService {
           'flatApplicationMaps',
         ]);
       application = flatApplicationMaps.byId[applicationId];
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+      // OAuth-only applications have no role and act with the member's role
+      if (
+        !isDefined(application) ||
+        (!isDefined(application.defaultRoleId) &&
+          !isOAuthOnlyApplication(application))
+      ) {
         throw new AuthException(
           'Application no longer has access',
           AuthExceptionCode.UNAUTHENTICATED,

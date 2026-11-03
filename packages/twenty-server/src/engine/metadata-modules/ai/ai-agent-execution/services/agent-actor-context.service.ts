@@ -116,9 +116,9 @@ export class AgentActorContextService {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          });
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            'workspaceMember',
+          );
 
         return workspaceMemberRepository.findOne({
           where: {

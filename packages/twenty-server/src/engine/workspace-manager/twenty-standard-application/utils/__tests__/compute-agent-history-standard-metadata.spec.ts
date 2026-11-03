@@ -138,6 +138,47 @@ describe('agent history workspace metadata', () => {
     });
   });
 
+  it.each([
+    'directMessageFirstWorkspaceMemberId',
+    'directMessageSecondWorkspaceMemberId',
+  ] as const)('keeps the fixed DM member field %s system managed', (name) => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields[name].universalIdentifier
+      ],
+    ).toMatchObject({
+      name,
+      type: FieldMetadataType.UUID,
+      isSystem: true,
+      isUIEditable: false,
+      isNullable: true,
+      disabledFieldPermissionActions: ['canUpdateFieldValue'],
+    });
+  });
+
+  it('reserves one DM identity per pair including soft-deleted threads', () => {
+    const { fields, indexes } = STANDARD_OBJECTS.agentChatThread;
+
+    expect(
+      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+        indexes.directMessagePairUniqueIndex.universalIdentifier
+      ],
+    ).toMatchObject({
+      isUnique: true,
+      indexWhereClause: null,
+      universalFlatIndexFieldMetadatas: [
+        {
+          fieldMetadataUniversalIdentifier:
+            fields.directMessageFirstWorkspaceMemberId.universalIdentifier,
+        },
+        {
+          fieldMetadataUniversalIdentifier:
+            fields.directMessageSecondWorkspaceMemberId.universalIdentifier,
+        },
+      ],
+    });
+  });
+
   it('retains messages when a sender member is deleted', () => {
     expect(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[

@@ -1,1 +1,0 @@
-export const APPLICATION_PREFERENCES_GENERAL_TAB_ID = 'general';

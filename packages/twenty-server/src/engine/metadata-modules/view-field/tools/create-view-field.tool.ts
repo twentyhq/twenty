@@ -7,6 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { createViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/create-view-field-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 @DefineTool({
   name: 'create_view_field',
@@ -20,14 +21,24 @@ export class CreateViewFieldTool extends BaseTool<
 > {
   readonly inputSchema = createViewFieldInputSchema;
 
-  constructor(private readonly viewFieldService: ViewFieldService) {
+  constructor(
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof createViewFieldInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+      viewId: input.viewId,
+      workspaceId,
+      userWorkspaceId,
+      operation: 'update',
+    });
+
     const viewField = await this.viewFieldService.createOne({
       createViewFieldInput: {
         viewId: input.viewId,

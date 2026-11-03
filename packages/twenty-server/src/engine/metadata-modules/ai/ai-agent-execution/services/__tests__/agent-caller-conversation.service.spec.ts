@@ -52,7 +52,6 @@ const buildService = ({ isCreated = true } = {}) => {
     agentInboxService as never,
     agentRunSuspensionService as never,
     {} as never,
-    {} as never,
   );
 
   return { service, agentInboxService, agentRunSuspensionService };

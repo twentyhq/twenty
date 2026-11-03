@@ -22,15 +22,13 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, authContext, rolePermissionConfig } =
-      params;
+    const { objectName, objectRecord, authContext } = params;
 
     try {
       const { queryRunnerContext, selectedFields, flatObjectMetadata } =
         await this.commonApiContextBuilder.build({
           authContext,
           objectName,
-          rolePermissionConfig,
         });
 
       if (

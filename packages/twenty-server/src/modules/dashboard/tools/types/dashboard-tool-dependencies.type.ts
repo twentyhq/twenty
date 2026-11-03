@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import type { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
@@ -5,7 +6,6 @@ import type { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-l
 import type { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type DashboardToolDependencies = {
   pageLayoutService: PageLayoutService;
@@ -22,5 +22,5 @@ export type DashboardToolContext = {
 };
 
 export type DashboardToolContextWithPermissions = DashboardToolContext & {
-  rolePermissionConfig: RolePermissionConfig;
+  authContext: WorkspaceAuthContext;
 };

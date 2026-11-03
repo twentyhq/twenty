@@ -7,7 +7,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
@@ -17,7 +17,6 @@ import { type RecordShareInput } from 'src/engine/permissions/record-share/types
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type RecordSharePrincipal = Pick<
   RecordShareInput,
@@ -125,9 +124,10 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const rolePrincipal: PermissionsPrincipal = {
+      const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
         workspaceId,
-        intersectionOf: { userWorkspaceRoleId: roleId },
+        mainPrincipal: { type: 'deprecatedRoleOnly', roleId },
+        applicationPrincipal: { type: 'customApplication' },
       };
 
       if (
@@ -153,15 +153,14 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const workspaceMember = await transactionScope
-        .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-          shouldBypassPermissionChecks: true,
-        })
-        .findOne({ where: { id: principal.principalId } });
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
-        principal: {
-          ...rolePrincipal,
-          workspaceMember: workspaceMember ?? undefined,
+        principals: {
+          workspaceId,
+          mainPrincipal: {
+            type: 'workspaceMember',
+            workspaceMemberId: principal.principalId,
+          },
+          applicationPrincipal: { type: 'customApplication' },
         },
         flatObjectMetadata,
         operationType: 'select',
