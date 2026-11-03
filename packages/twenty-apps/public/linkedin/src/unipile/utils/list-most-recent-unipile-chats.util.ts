@@ -8,10 +8,12 @@ const listMostRecentInboxChats = async ({
   accountId,
   inboxId,
   limit,
+  deadlineAtMs,
 }: {
   accountId: string;
   inboxId: string;
   limit: number;
+  deadlineAtMs?: number;
 }): Promise<UnipileChat[]> => {
   const chats: UnipileChat[] = [];
   let cursor: string | undefined;
@@ -22,6 +24,7 @@ const listMostRecentInboxChats = async ({
       inboxId,
       cursor,
       limit: limit - chats.length,
+      deadlineAtMs,
     });
 
     chats.push(...page.items);
@@ -44,16 +47,23 @@ export const listMostRecentUnipileChats = async ({
   accountId,
   inboxIds,
   limit,
+  deadlineAtMs,
 }: {
   accountId: string;
   inboxIds: string[];
   limit: number;
+  deadlineAtMs?: number;
 }): Promise<UnipileChat[]> => {
   const chats: UnipileChat[] = [];
 
   for (const inboxId of inboxIds) {
     chats.push(
-      ...(await listMostRecentInboxChats({ accountId, inboxId, limit })),
+      ...(await listMostRecentInboxChats({
+        accountId,
+        inboxId,
+        limit,
+        deadlineAtMs,
+      })),
     );
   }
 
