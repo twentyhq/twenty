@@ -1,9 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
-import gql from 'graphql-tag';
+import { createApiKey } from 'test/integration/graphql/utils/create-api-key.util';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 
@@ -48,17 +47,11 @@ export const createApiKeyWithObjectRecordGrants = async (
 
   const roleId = roleData.createOneRole.id;
 
-  const createApiKeyResponse = await makeMetadataApiRequest({
-    query: gql`
-      mutation CreateApiKey($input: CreateApiKeyInput!) {
-        createApiKey(input: $input) {
-          id
-        }
-      }
-    `,
-    variables: {
-      input: { name: label, expiresAt: API_KEY_EXPIRES_AT, roleId },
-    },
+  const createApiKeyResponse = await createApiKey({
+    name: label,
+    expiresAt: API_KEY_EXPIRES_AT,
+    roleId,
+    accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
   });
 
   const apiKeyId: string = createApiKeyResponse.body.data.createApiKey.id;

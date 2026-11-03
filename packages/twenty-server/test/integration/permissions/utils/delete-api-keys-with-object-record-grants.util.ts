@@ -1,21 +1,14 @@
-import gql from 'graphql-tag';
+import { revokeApiKey } from 'test/integration/graphql/utils/revoke-api-key.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type ApiKeyWithObjectRecordGrants } from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
 
 export const deleteApiKeysWithObjectRecordGrants = async (
   testApiKeys: ApiKeyWithObjectRecordGrants[],
 ) => {
   for (const { roleId, apiKeyId } of testApiKeys) {
-    const revokeResponse = await makeMetadataApiRequest({
-      query: gql`
-        mutation RevokeApiKey($input: RevokeApiKeyInput!) {
-          revokeApiKey(input: $input) {
-            id
-          }
-        }
-      `,
-      variables: { input: { id: apiKeyId } },
+    const revokeResponse = await revokeApiKey({
+      apiKeyId,
+      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     expect(revokeResponse.body.errors).toBeUndefined();
