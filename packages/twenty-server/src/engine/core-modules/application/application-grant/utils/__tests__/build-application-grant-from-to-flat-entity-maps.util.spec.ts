@@ -5,8 +5,8 @@ import {
 
 import {
   type ApplicationGrantFlatEntityMaps,
-  buildApplicationGrantFlatEntityOperations,
-} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-flat-entity-operations.util';
+  buildApplicationGrantFromToFlatEntityMaps,
+} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-from-to-flat-entity-maps.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -15,6 +15,7 @@ import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
@@ -197,36 +198,54 @@ const buildFlatEntityMaps = ({
   };
 };
 
-const buildCreateOperations = ({
+const buildFromTo = ({
   flatEntityMaps = buildFlatEntityMaps(),
   requested = requestedFlatRole,
+  existingGrant,
+  targetFlatApplication: target = targetFlatApplication,
 }: {
   flatEntityMaps?: ApplicationGrantFlatEntityMaps;
   requested?: FlatRole;
+  existingGrant?: { flatRole: FlatRole; flatRoleTarget: FlatRoleTarget };
+  targetFlatApplication?: { name: string; universalIdentifier: string };
 } = {}) =>
-  buildApplicationGrantFlatEntityOperations({
-    targetFlatApplication,
+  buildApplicationGrantFromToFlatEntityMaps({
+    targetFlatApplication: target,
     requestedFlatRole: requested,
-    existingGrantFlatRole: undefined,
-    existingGrantFlatRoleTarget: undefined,
+    existingGrant,
     workspaceCustomApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     flatEntityMaps,
     now: NOW,
   });
 
-describe('buildApplicationGrantFlatEntityOperations', () => {
+const listEntities = (
+  fromTo: FromToAllUniversalFlatEntityMaps,
+  flatEntityMapsKey: keyof FromToAllUniversalFlatEntityMaps,
+  side: 'from' | 'to',
+) =>
+  Object.values(fromTo[flatEntityMapsKey]?.[side].byUniversalIdentifier ?? {});
+
+describe('buildApplicationGrantFromToFlatEntityMaps', () => {
   describe('when the application has no grant yet', () => {
-    const operations = buildCreateOperations();
-    const [grantRole] = operations.role.flatEntityToCreate;
+    const fromTo = buildFromTo();
+    const [grantRole] = listEntities(fromTo, 'flatRoleMaps', 'to');
     const grantOwner = {
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       roleUniversalIdentifier: grantRole.universalIdentifier,
     };
 
-    it('should create a non-editable copy of the requested role, assignable to applications and agents only', () => {
-      expect(operations.role.flatEntityToCreate).toHaveLength(1);
+    it('starts from nothing', () => {
+      for (const flatEntityMapsKey of Object.keys(
+        fromTo,
+      ) as (keyof FromToAllUniversalFlatEntityMaps)[]) {
+        expect(listEntities(fromTo, flatEntityMapsKey, 'from')).toEqual([]);
+      }
+    });
+
+    it('wants a non-editable copy of the requested role, assignable to applications and agents only', () => {
+      expect(listEntities(fromTo, 'flatRoleMaps', 'to')).toHaveLength(1);
       expect(grantRole).toMatchObject({
         applicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -251,8 +270,8 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
       );
     });
 
-    it('should assign the grant to the application', () => {
-      expect(operations.roleTarget.flatEntityToCreate).toEqual([
+    it('wants the grant assigned to the application', () => {
+      expect(listEntities(fromTo, 'flatRoleTargetMaps', 'to')).toEqual([
         expect.objectContaining({
           ...grantOwner,
           targetApplicationUniversalIdentifier:
@@ -265,8 +284,8 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
       ]);
     });
 
-    it('should copy object permissions, field permissions and permission flags', () => {
-      expect(operations.objectPermission.flatEntityToCreate).toEqual([
+    it('copies object permissions, field permissions and permission flags', () => {
+      expect(listEntities(fromTo, 'flatObjectPermissionMaps', 'to')).toEqual([
         expect.objectContaining({
           ...grantOwner,
           objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
@@ -276,7 +295,7 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
           canDestroyObjectRecords: null,
         }),
       ]);
-      expect(operations.fieldPermission.flatEntityToCreate).toEqual([
+      expect(listEntities(fromTo, 'flatFieldPermissionMaps', 'to')).toEqual([
         expect.objectContaining({
           ...grantOwner,
           objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
@@ -285,7 +304,7 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
           canUpdateFieldValue: false,
         }),
       ]);
-      expect(operations.rolePermissionFlag.flatEntityToCreate).toEqual([
+      expect(listEntities(fromTo, 'flatRolePermissionFlagMaps', 'to')).toEqual([
         expect.objectContaining({
           ...grantOwner,
           permissionFlagUniversalIdentifier:
@@ -294,9 +313,12 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
       ]);
     });
 
-    it('should copy row-level rules with their groups, rewiring them to the copied groups', () => {
-      const copiedGroups =
-        operations.rowLevelPermissionPredicateGroup.flatEntityToCreate;
+    it('copies row-level rules with their groups, rewired to the copied groups', () => {
+      const copiedGroups = listEntities(
+        fromTo,
+        'flatRowLevelPermissionPredicateGroupMaps',
+        'to',
+      );
       const copiedParentGroup = copiedGroups.find(
         ({ logicalOperator }) =>
           logicalOperator ===
@@ -320,24 +342,25 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
           copiedParentGroup?.universalIdentifier,
         positionInRowLevelPermissionPredicateGroup: 1,
       });
-      expect(operations.rowLevelPermissionPredicate.flatEntityToCreate).toEqual(
-        [
-          expect.objectContaining({
-            ...grantOwner,
-            objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-            fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-            operand: RowLevelPermissionPredicateOperand.IS,
-            value: 'paid',
-            rowLevelPermissionPredicateGroupUniversalIdentifier:
-              copiedChildGroup?.universalIdentifier,
-            positionInRowLevelPermissionPredicateGroup: 0,
-          }),
-        ],
-      );
+      expect(
+        listEntities(fromTo, 'flatRowLevelPermissionPredicateMaps', 'to'),
+      ).toEqual([
+        expect.objectContaining({
+          ...grantOwner,
+          objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: 'paid',
+          rowLevelPermissionPredicateGroupUniversalIdentifier:
+            copiedChildGroup?.universalIdentifier,
+          positionInRowLevelPermissionPredicateGroup: 0,
+        }),
+      ]);
     });
 
-    it('should never reuse the requested role entities', () => {
+    it('never reuses the requested role entities', () => {
       const requestedUniversalIdentifiers = new Set([
+        requestedFlatRole.universalIdentifier,
         requestedObjectPermission.universalIdentifier,
         requestedFieldPermission.universalIdentifier,
         requestedRolePermissionFlag.universalIdentifier,
@@ -346,30 +369,23 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
         requestedPredicate.universalIdentifier,
       ]);
 
-      const createdUniversalIdentifiers = Object.values(operations).flatMap(
-        ({ flatEntityToCreate }) =>
-          flatEntityToCreate.map(
-            ({ universalIdentifier }) => universalIdentifier,
-          ),
+      const wantedUniversalIdentifiers = (
+        Object.keys(fromTo) as (keyof FromToAllUniversalFlatEntityMaps)[]
+      ).flatMap((flatEntityMapsKey) =>
+        listEntities(fromTo, flatEntityMapsKey, 'to').map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
       );
 
       expect(
-        createdUniversalIdentifiers.filter((universalIdentifier) =>
+        wantedUniversalIdentifiers.filter((universalIdentifier) =>
           requestedUniversalIdentifiers.has(universalIdentifier),
-        ),
-      ).toEqual([]);
-      expect(
-        Object.values(operations).flatMap(
-          ({ flatEntityToUpdate, flatEntityToDelete }) => [
-            ...flatEntityToUpdate,
-            ...flatEntityToDelete,
-          ],
         ),
       ).toEqual([]);
     });
   });
 
-  it('should suffix the label when it is taken', () => {
+  it('suffixes the label when it is taken', () => {
     const takenFlatRoles = ['Stripe role', 'Stripe role 2'].map(
       (label, index) =>
         buildFlatRole({
@@ -379,36 +395,33 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
         }),
     );
 
-    const operations = buildCreateOperations({
+    const fromTo = buildFromTo({
       flatEntityMaps: buildFlatEntityMaps({
         flatRoles: [requestedFlatRole, ...takenFlatRoles],
       }),
     });
 
-    expect(operations.role.flatEntityToCreate[0].label).toBe('Stripe role 3');
+    expect(listEntities(fromTo, 'flatRoleMaps', 'to')[0].label).toBe(
+      'Stripe role 3',
+    );
   });
 
-  it('should give twenty-standard a grant equivalent to Admin', () => {
+  it('gives twenty-standard a grant equivalent to Admin', () => {
     const adminFlatRole = buildFlatRole({});
 
-    const operations = buildApplicationGrantFlatEntityOperations({
+    const fromTo = buildFromTo({
+      requested: adminFlatRole,
       targetFlatApplication: {
         name: TWENTY_STANDARD_APPLICATION.name,
         universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
       },
-      requestedFlatRole: adminFlatRole,
-      existingGrantFlatRole: undefined,
-      existingGrantFlatRoleTarget: undefined,
-      workspaceCustomApplicationUniversalIdentifier:
-        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       flatEntityMaps: buildFlatEntityMaps({
         flatRoles: [adminFlatRole],
         flatObjectPermissions: [],
       }),
-      now: NOW,
     });
 
-    expect(operations.role.flatEntityToCreate[0]).toMatchObject({
+    expect(listEntities(fromTo, 'flatRoleMaps', 'to')[0]).toMatchObject({
       canUpdateAllSettings: true,
       canAccessAllTools: true,
       canAccessAllAgentChatChannels: true,
@@ -418,21 +431,34 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
       canDestroyAllObjectRecords: true,
     });
     expect(
-      [
-        operations.objectPermission,
-        operations.fieldPermission,
-        operations.rolePermissionFlag,
-        operations.rowLevelPermissionPredicate,
-        operations.rowLevelPermissionPredicateGroup,
-      ].map(({ flatEntityToCreate }) => flatEntityToCreate.length),
+      (
+        [
+          'flatObjectPermissionMaps',
+          'flatFieldPermissionMaps',
+          'flatRolePermissionFlagMaps',
+          'flatRowLevelPermissionPredicateMaps',
+          'flatRowLevelPermissionPredicateGroupMaps',
+        ] as const
+      ).map(
+        (flatEntityMapsKey) =>
+          listEntities(fromTo, flatEntityMapsKey, 'to').length,
+      ),
     ).toEqual([0, 0, 0, 0, 0]);
   });
 
   describe('when the application already has a grant', () => {
-    const firstOperations = buildCreateOperations();
-    const [createdGrantRole] = firstOperations.role.flatEntityToCreate;
-    const [createdObjectPermission] =
-      firstOperations.objectPermission.flatEntityToCreate;
+    const firstFromTo = buildFromTo();
+    const [createdGrantRole] = listEntities(firstFromTo, 'flatRoleMaps', 'to');
+    const [createdRoleTarget] = listEntities(
+      firstFromTo,
+      'flatRoleTargetMaps',
+      'to',
+    );
+    const [createdObjectPermission] = listEntities(
+      firstFromTo,
+      'flatObjectPermissionMaps',
+      'to',
+    );
 
     const staleObjectPermission = {
       ...createdObjectPermission,
@@ -455,16 +481,16 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
         extraObjectPermission.universalIdentifier,
       ],
     });
+    const existingGrantFlatRoleTarget = {
+      ...createdRoleTarget,
+      id: 'grant-role-target-id',
+    } as FlatRoleTarget;
 
-    const operations = buildApplicationGrantFlatEntityOperations({
-      targetFlatApplication,
-      requestedFlatRole,
-      existingGrantFlatRole,
-      existingGrantFlatRoleTarget: {
-        universalIdentifier: 'grant-role-target',
-      } as FlatRoleTarget,
-      workspaceCustomApplicationUniversalIdentifier:
-        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    const fromTo = buildFromTo({
+      existingGrant: {
+        flatRole: existingGrantFlatRole,
+        flatRoleTarget: existingGrantFlatRoleTarget,
+      },
       flatEntityMaps: buildFlatEntityMaps({
         flatRoles: [requestedFlatRole, existingGrantFlatRole],
         flatObjectPermissions: [
@@ -473,36 +499,42 @@ describe('buildApplicationGrantFlatEntityOperations', () => {
           extraObjectPermission,
         ],
       }),
-      now: NOW,
     });
 
-    it('should rewrite the grant role to match the requested role and keep its label', () => {
-      expect(operations.role.flatEntityToCreate).toEqual([]);
-      expect(operations.role.flatEntityToUpdate).toEqual([
+    it('starts from the current grant', () => {
+      expect(listEntities(fromTo, 'flatRoleMaps', 'from')).toEqual([
+        existingGrantFlatRole,
+      ]);
+      expect(listEntities(fromTo, 'flatRoleTargetMaps', 'from')).toEqual([
+        existingGrantFlatRoleTarget,
+      ]);
+      expect(listEntities(fromTo, 'flatObjectPermissionMaps', 'from')).toEqual([
+        staleObjectPermission,
+        extraObjectPermission,
+      ]);
+    });
+
+    it('keeps the grant role and its target, with the requested switches', () => {
+      expect(listEntities(fromTo, 'flatRoleMaps', 'to')).toEqual([
         expect.objectContaining({
-          universalIdentifier: createdGrantRole.universalIdentifier,
-          label: createdGrantRole.label,
+          universalIdentifier: existingGrantFlatRole.universalIdentifier,
+          label: existingGrantFlatRole.label,
           canAccessAllTools: true,
-          isEditable: false,
+        }),
+      ]);
+      expect(listEntities(fromTo, 'flatRoleTargetMaps', 'to')).toEqual([
+        expect.objectContaining({
+          universalIdentifier: existingGrantFlatRoleTarget.universalIdentifier,
         }),
       ]);
     });
 
-    it('should not create a second application target', () => {
-      expect(operations.roleTarget.flatEntityToCreate).toEqual([]);
-    });
-
-    it('should update changed copies in place and delete the ones no longer requested', () => {
-      expect(operations.objectPermission.flatEntityToCreate).toEqual([]);
-      expect(operations.objectPermission.flatEntityToUpdate).toEqual([
+    it('wants the same copies, without the ones no longer requested', () => {
+      expect(listEntities(fromTo, 'flatObjectPermissionMaps', 'to')).toEqual([
         expect.objectContaining({
-          id: staleObjectPermission.id,
           universalIdentifier: staleObjectPermission.universalIdentifier,
           canUpdateObjectRecords: true,
         }),
-      ]);
-      expect(operations.objectPermission.flatEntityToDelete).toEqual([
-        extraObjectPermission,
       ]);
     });
   });
