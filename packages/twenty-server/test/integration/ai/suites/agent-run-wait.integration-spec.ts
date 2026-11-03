@@ -24,7 +24,9 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { type AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
@@ -35,6 +37,7 @@ import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-c
 import { type AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -88,27 +91,6 @@ const findWaitCallStatus = async (threadId: string) => {
   );
 
   return part?.status;
-};
-
-const findCallerRoleId = async (roleTargetId: string): Promise<string> => {
-  const [{ roleId }] = await global.testDataSource.query(
-    `SELECT "roleId" FROM core."roleTarget"
-     WHERE $1 IN ("userWorkspaceId", "apiKeyId") AND "workspaceId" = $2`,
-    [roleTargetId, workspaceId],
-  );
-
-  return roleId;
-};
-
-const findApplicationDefaultRoleId = async (
-  applicationId: string,
-): Promise<string> => {
-  const [{ defaultRoleId }] = await global.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core.application WHERE id = $1`,
-    [applicationId],
-  );
-
-  return defaultRoleId;
 };
 
 const findTurnStatuses = async (threadId: string) =>
@@ -439,8 +421,6 @@ describe('agent runs that wait (integration)', () => {
         type: 'user',
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
-      roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      callerRoleSource: 'userWorkspaceRoleId',
     },
     {
       title: 'the API key that made it',
@@ -449,12 +429,10 @@ describe('agent runs that wait (integration)', () => {
         type: 'apiKey',
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
-      roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
-      callerRoleSource: 'apiKeyRoleId',
     },
   ])(
     'goes on with a waiting runAgent call as $title',
-    async ({ token, authContext, roleTargetId, callerRoleSource }) => {
+    async ({ token, authContext }) => {
       const runTurn = mockAgent(
         buildWaitingAgentExecutionResult(),
         replyingResult,
@@ -501,17 +479,16 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const agentRunRoleIds = {
-        [callerRoleSource]: await findCallerRoleId(roleTargetId),
-        applicationRoleId:
-          await findApplicationDefaultRoleId(agentApplicationId),
-      };
+      const agentRunAuthContext = expect.objectContaining({
+        agentId,
+        application: expect.objectContaining({ id: agentApplicationId }),
+      });
 
       expect(
         runTurn.mock.calls.map(
-          ([execution]) => execution.executionContext.agentRunRoleIds,
+          ([execution]) => execution.executionContext.authContext,
         ),
-      ).toEqual([agentRunRoleIds, agentRunRoleIds]);
+      ).toEqual([agentRunAuthContext, agentRunAuthContext]);
     },
   );
 
@@ -664,6 +641,55 @@ describe('agent runs that wait (integration)', () => {
       expect(await findWaiters(threadId)).toEqual([]);
     });
     expect(runTurn).toHaveBeenCalledTimes(2);
+  });
+
+  it('settles a run whose worker died when its job comes back, without running the agent again', async () => {
+    const runTurn = mockAgent(replyingResult);
+    const aiQueue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.aiQueue),
+    );
+    const enqueueRun = jest.spyOn(aiQueue, 'add');
+    const runOnThread = await buildRunOnThread({ waitForCompletion: false });
+
+    const { threadId, runId } = await runOnThread('Follow up tomorrow');
+
+    try {
+      await expectEventually(async () => {
+        expect(await findTurnStatuses(threadId)).toEqual(['completed']);
+      });
+
+      const [[, runJobData, runJobOptions]] = enqueueRun.mock.calls.filter(
+        ([jobName]) => jobName === RUN_AGENT_JOB_NAME,
+      );
+
+      await global.testDataSource.query(
+        `UPDATE "${schema}"."agentTurn" SET status = 'running', "endedAt" = NULL WHERE id = $1`,
+        [runId],
+      );
+      await getAppProviderByClassName<AgentChatStreamHeartbeatService>(
+        'AgentChatStreamHeartbeatService',
+      ).clear(await holdConversation(threadId));
+
+      await aiQueue.add(RUN_AGENT_JOB_NAME, runJobData, runJobOptions);
+
+      await expectEventually(async () => {
+        expect(
+          await getAppProviderByClassName<AgentRunSettlementService>(
+            'AgentRunSettlementService',
+          ).waitFor({ runId, timeoutMs: 1000 }),
+        ).toMatchObject({
+          status: 'FAILED',
+          error: AGENT_TURN_INTERRUPTED_ERROR.message,
+        });
+      });
+      expect(await findTurnStatuses(threadId)).toEqual(['failed']);
+      expect(await findUserMessageTexts(threadId)).toEqual([
+        'Follow up tomorrow',
+      ]);
+      expect(runTurn).toHaveBeenCalledTimes(1);
+    } finally {
+      await destroyAgentChatThread({ threadId });
+    }
   });
 
   it('sends the messages a member queued before a run that started waiting after them', async () => {

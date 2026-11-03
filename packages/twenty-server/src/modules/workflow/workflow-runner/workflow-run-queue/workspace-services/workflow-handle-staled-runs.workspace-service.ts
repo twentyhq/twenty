@@ -50,10 +50,10 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository = this.workspaceOrmManager.getRepository(
-        WorkflowRunWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workflowRunRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkflowRunWorkspaceEntity,
+        );
 
       const staledRunsCount = await workflowRunRepository.count({
         where: getStaledRunsFindOptions(),
@@ -283,10 +283,10 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository = this.workspaceOrmManager.getRepository(
-        WorkflowRunWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workflowRunRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkflowRunWorkspaceEntity,
+        );
 
       const runIds: string[] = [];
       let page: WorkflowRunWorkspaceEntity[];

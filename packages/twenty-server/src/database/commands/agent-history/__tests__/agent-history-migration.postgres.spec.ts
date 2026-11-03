@@ -3,6 +3,7 @@ import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/co
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -148,6 +149,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
+        getRepositoryWithoutPermissionChecks:
+          workspaceDataSource.getRepositoryWithoutPermissionChecks.bind(
+            workspaceDataSource,
+          ),
         runInWorkspaceTransaction:
           workspaceDataSource.transaction.bind(workspaceDataSource),
       };
@@ -230,6 +235,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       } as never,
     );
 
+    const participationService = new AgentChatParticipationService(
+      chatThreadService,
+      { resolveMentionInTransaction: jest.fn() } as never,
+      conversationWriter,
+      { withLock: (work: () => Promise<unknown>) => work() } as never,
+    );
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
@@ -240,7 +252,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         chatRecordEvents as never,
         conversationWriter,
         chatThreadService,
-        { resolveMentionInTransaction: jest.fn() } as never,
+        participationService,
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
@@ -250,7 +262,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {} as never,
         conversationWriter,
         chatThreadService,
-        { resolveMentionInTransaction: jest.fn() } as never,
+        participationService,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -264,7 +276,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceMemberId: MEMBER_ID,
           }),
         } as never,
-        {} as never,
         {} as never,
       );
 

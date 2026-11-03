@@ -7,7 +7,8 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
+import { type AgentChatMessageParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-participation.type';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -35,7 +36,7 @@ export class AgentChatQueueService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
-    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly participationService: AgentChatParticipationService,
   ) {}
 
   async queueMessage({
@@ -46,6 +47,7 @@ export class AgentChatQueueService {
     workspaceId,
     userWorkspaceId,
     workspaceMemberId,
+    participation,
     assistantReplyContext,
   }: {
     threadId: string;
@@ -55,6 +57,7 @@ export class AgentChatQueueService {
     workspaceId: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
+    participation?: AgentChatMessageParticipation;
     assistantReplyContext?: AgentChatAssistantReplyContext;
   }) {
     const messageValues = {
@@ -104,19 +107,18 @@ export class AgentChatQueueService {
         })),
     ];
 
-    await this.conversationWriterService.runInTransaction(
+    const savedMessage = await this.participationService.persistMessage({
       workspaceId,
-      async (scope) => {
-        await this.participantService.resolveMentionInTransaction({
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-          scope,
-        });
+      workspaceMemberId,
+      threadId,
+      participation,
+      persistMessage: async (scope) => {
         await scope.insert('agentMessage', messageValues);
         await scope.insert('agentMessagePart', parts);
+
+        return messageValues;
       },
-    );
+    });
 
     await this.threadService.notifyThreadActivityUpdated({
       threadId,
@@ -125,7 +127,7 @@ export class AgentChatQueueService {
       text,
     });
 
-    return messageValues;
+    return savedMessage;
   }
 
   async hasQueuedMessages({

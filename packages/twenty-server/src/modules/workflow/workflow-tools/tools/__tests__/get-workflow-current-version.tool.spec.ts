@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
@@ -5,13 +6,16 @@ import { createGetWorkflowCurrentVersionTool } from '../get-workflow-current-ver
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const CORE_WORKFLOW_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
-const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 const CORE_DRAFT_VERSION_ID = '20202020-dddd-4d02-bf25-6aeccf7ea419';
 const CORE_ACTIVE_VERSION_ID = '20202020-eeee-4d02-bf25-6aeccf7ea419';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const buildContext = () => ({
   workspaceId: WORKSPACE_ID,
-  rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: ROLE_ID } },
+  authContext: AUTH_CONTEXT,
 });
 
 const buildDeps = ({

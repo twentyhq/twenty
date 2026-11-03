@@ -18,7 +18,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
           ...DEFAULT_PARTICIPATION,
           mode,
           isDirectAssistantChat: true,
-          initialIsAssistantParticipant: false,
+          isInitialAssistantParticipant: false,
         }),
       ).toBe(true);
     },
@@ -31,7 +31,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         mode: AiChatAssistantMode.NEVER,
         isAssistantParticipant: true,
         isAssistantMentioned: true,
-        initialIsAssistantParticipant: true,
+        isInitialAssistantParticipant: true,
       }),
     ).toBe(false);
   });
@@ -42,7 +42,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         ...DEFAULT_PARTICIPATION,
         mode: AiChatAssistantMode.AUTOMATIC,
         isDirectMessage: true,
-        initialIsAssistantParticipant: false,
+        isInitialAssistantParticipant: false,
       }),
     ).toBe(true);
   });
@@ -53,7 +53,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         ...DEFAULT_PARTICIPATION,
         isDirectMessage: true,
         isInitialMessage: true,
-        initialIsAssistantParticipant: true,
+        isInitialAssistantParticipant: true,
       }),
     ).toBe(false);
   });
@@ -65,7 +65,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         isDirectMessage: true,
         isAssistantParticipant: true,
         isInitialMessage: true,
-        initialIsAssistantParticipant: true,
+        isInitialAssistantParticipant: true,
       }),
     ).toBe(false);
   });
@@ -87,7 +87,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
         mode: AiChatAssistantMode.AUTOMATIC,
         isAssistantParticipant: true,
         isInitialMessage: true,
-        initialIsAssistantParticipant: false,
+        isInitialAssistantParticipant: false,
       }),
     ).toBe(false);
   });
@@ -97,7 +97,7 @@ describe('resolveAgentChatAssistantParticipation', () => {
       resolveAgentChatAssistantParticipation({
         ...DEFAULT_PARTICIPATION,
         isAssistantMentioned: true,
-        initialIsAssistantParticipant: false,
+        isInitialAssistantParticipant: false,
       }),
     ).toBe(true);
   });

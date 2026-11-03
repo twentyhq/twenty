@@ -1,3 +1,4 @@
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -25,6 +26,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     UserRoleModule,
     ApiKeyModule,
+    RecordShareModule,
   ],
   providers: [
     CommonApiContextBuilderService,

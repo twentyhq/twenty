@@ -376,9 +376,8 @@ export class BillingSubscriptionUpdateService {
     return await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
-            { shouldBypassPermissionChecks: true },
           );
 
         return await workspaceMemberRepository.count();

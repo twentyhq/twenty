@@ -6,7 +6,7 @@ export const resolveAgentChatAssistantParticipation = ({
   isDirectMessage,
   isAssistantParticipant,
   isAssistantMentioned,
-  initialIsAssistantParticipant,
+  isInitialAssistantParticipant,
   isInitialMessage = false,
 }: {
   mode: AiChatAssistantMode;
@@ -14,7 +14,7 @@ export const resolveAgentChatAssistantParticipation = ({
   isDirectMessage: boolean;
   isAssistantParticipant: boolean;
   isAssistantMentioned: boolean;
-  initialIsAssistantParticipant?: boolean;
+  isInitialAssistantParticipant?: boolean;
   isInitialMessage?: boolean;
 }): boolean => {
   if (isDirectAssistantChat) {
@@ -34,7 +34,7 @@ export const resolveAgentChatAssistantParticipation = ({
   }
 
   const selectedParticipation = isInitialMessage
-    ? (initialIsAssistantParticipant ?? isAssistantParticipant)
+    ? (isInitialAssistantParticipant ?? isAssistantParticipant)
     : isAssistantParticipant;
 
   return selectedParticipation || isAssistantMentioned;
