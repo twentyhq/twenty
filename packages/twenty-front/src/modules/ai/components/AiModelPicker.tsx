@@ -19,14 +19,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 type AiModelPickerProps = {
   modelId: string;
   onModelIdChange: (modelId: string) => void;
-  label?: string;
   disabled?: boolean;
 };
 
 export const AiModelPicker = ({
   modelId,
   onModelIdChange,
-  label,
   disabled = false,
 }: AiModelPickerProps) => {
   const { t } = useLingui();
@@ -39,7 +37,7 @@ export const AiModelPicker = ({
   return (
     <AiModelPinSelect
       dropdownId={dropdownId}
-      label={label ?? t`Model`}
+      label={t`Model`}
       modelId={modelId}
       onChange={(selectedModelId) =>
         onModelIdChange(
