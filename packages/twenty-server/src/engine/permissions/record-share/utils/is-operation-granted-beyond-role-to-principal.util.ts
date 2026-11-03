@@ -15,7 +15,7 @@ export const isOperationGrantedBeyondRoleToPrincipal = ({
   PermissionsObjectAccessRequest,
   'principal' | 'flatObjectMetadata' | 'metadataMaps' | 'operationType'
 >): boolean =>
-  !isDefined(principal.scope) &&
+  !isDefined(principal.aiRunScope) &&
   isOperationGrantedBeyondRole({
     flatObjectMetadata,
     featureFlagsMap: metadataMaps.featureFlagsMap,

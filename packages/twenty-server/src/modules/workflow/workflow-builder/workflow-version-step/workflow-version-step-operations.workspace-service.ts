@@ -521,6 +521,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const defaultAgentId = isPlainObject(defaultAgentInput)
           ? defaultAgentInput.agentId
           : undefined;
+        // the prompt is the user's own text, so switching an AI step's kind or agent keeps it
+        const defaultPrompt =
+          isPlainObject(defaultAgentInput) && isString(defaultAgentInput.prompt)
+            ? defaultAgentInput.prompt
+            : '';
 
         if (isNonEmptyString(defaultAgentId)) {
           const agent =
@@ -537,7 +542,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 ...BASE_STEP_DEFINITION,
                 input: {
                   agentId: agent.id,
-                  prompt: '',
+                  prompt: defaultPrompt,
                 },
               },
             },
@@ -553,7 +558,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 instructions: '',
-                prompt: '',
+                prompt: defaultPrompt,
               },
             },
           },

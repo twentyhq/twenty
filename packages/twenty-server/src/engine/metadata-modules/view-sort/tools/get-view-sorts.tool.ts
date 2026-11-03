@@ -6,6 +6,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 
 const getViewSortsInputSchema = z.object({
   viewId: z
@@ -17,7 +18,7 @@ const getViewSortsInputSchema = z.object({
 @DefineTool({
   name: 'get_view_sorts',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
     'List all sorts applied to a view. Each sort defines a field and direction that determines the order records appear in the view.',
 })
