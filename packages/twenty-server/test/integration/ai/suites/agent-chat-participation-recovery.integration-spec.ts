@@ -1,10 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { EventEmitter, once } from 'node:events';
 
 import { isArray } from '@sniptt/guards';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { runWithRejectedChatWrite } from 'test/integration/ai/utils/run-with-rejected-chat-write.util';
-import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
@@ -104,11 +102,9 @@ describe('Chat message participation with real storage', () => {
       false,
     );
     expect(
-      await context.chatService.hasMessage({
+      await context.chatService.hasMessages({
         workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
         threadId,
-        messageId,
       }),
     ).toBe(true);
     expect(await context.readParticipants(threadId)).not.toContainEqual(
@@ -147,11 +143,9 @@ describe('Chat message participation with real storage', () => {
       ],
     });
     expect(
-      await context.chatService.hasMessage({
+      await context.chatService.hasMessages({
         workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
         threadId,
-        messageId,
       }),
     ).toBe(true);
     const participants = await context.readParticipants(threadId);
@@ -295,106 +289,6 @@ describe('Chat message participation with real storage', () => {
           : [DatabaseEventAction.CREATED],
       );
     }
-  });
-
-  it('serializes simultaneous initial sends until the first Ada selection and message commit', async () => {
-    const threadId = await context.createThread();
-    const firstMessageId = randomUUID();
-    const secondMessageId = randomUUID();
-    const writeEvents = new EventEmitter();
-    const writeStarted = once(writeEvents, 'started');
-    const writeResumed = once(writeEvents, 'resumed');
-    const addMessage = context.chatService.addMessage.bind(context.chatService);
-
-    jest
-      .spyOn(context.chatService, 'addMessage')
-      .mockImplementation(async (args) => {
-        if (args.id !== firstMessageId) {
-          return addMessage(args);
-        }
-
-        assertIsDefinedOrThrow(args.scope);
-
-        const [{ backendProcessId }] = await args.scope.executeRawQuery(
-          'SELECT pg_backend_pid() AS "backendProcessId"',
-        );
-
-        writeEvents.emit('started', backendProcessId);
-        await writeResumed;
-
-        return addMessage(args);
-      });
-
-    const firstSend = sendChatParticipationMessage({
-      threadId,
-      messageId: firstMessageId,
-      isAssistantParticipant: false,
-      shouldAssistantReply: false,
-      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-    }).then((response) => response);
-    const [blockingProcessId] = await Promise.race([
-      writeStarted,
-      firstSend.then(() => {
-        throw new Error('The first send completed before its message write');
-      }),
-    ]);
-    const secondSend = sendChatParticipationMessage({
-      threadId,
-      messageId: secondMessageId,
-      isAssistantParticipant: true,
-      shouldAssistantReply: false,
-      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-    }).then((response) => response);
-
-    try {
-      await waitForBlockedDatabaseQueryOrThrow(blockingProcessId);
-
-      expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-        true,
-      );
-      expect(
-        await context.chatService.hasMessages({
-          workspaceId: context.workspaceId,
-          threadId,
-        }),
-      ).toBe(false);
-    } finally {
-      writeEvents.emit('resumed');
-      await Promise.allSettled([firstSend, secondSend]);
-    }
-
-    const [firstResponse, secondResponse] = await Promise.all([
-      firstSend,
-      secondSend,
-    ]);
-
-    expect(firstResponse.body.errors).toBeUndefined();
-    expect(secondResponse.body.errors).toBeUndefined();
-    expect(
-      firstResponse.body.data.sendChatMessage
-        .recipientParticipantWorkspaceMemberIds,
-    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-    expect(
-      secondResponse.body.data.sendChatMessage
-        .recipientParticipantWorkspaceMemberIds,
-    ).toEqual([]);
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
-    expect(
-      await global.testDataSource.query(
-        `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
-        [threadId],
-      ),
-    ).toEqual(
-      expect.arrayContaining([{ id: firstMessageId }, { id: secondMessageId }]),
-    );
-    const participantIds = (await context.readParticipants(threadId)).map(
-      ({ workspaceMemberId }) => workspaceMemberId,
-    );
-
-    expect(participantIds).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
-    expect(participantIds).not.toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.TIM);
   });
 
   it('applies Never on a later accepted message without removing earlier messages', async () => {

@@ -189,7 +189,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const chatSharing = {
-      lockThreadForWriteInTransaction: jest.fn(),
       getThreadWithAccess: ({
         workspaceId,
         threadId,
@@ -234,9 +233,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
     const participationService = new AgentChatParticipationService(
       chatThreadService,
-      chatSharing as never,
       { resolveMentionInTransaction: jest.fn() } as never,
-      orm as never,
+      conversationWriter,
     );
 
     const createChatService = (messageRepository: typeof messages) =>

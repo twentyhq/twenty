@@ -16,7 +16,6 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -66,10 +65,6 @@ export const createChatParticipationTestContext = async () => {
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
     'AgentChatSharingService',
   );
-  const participationService =
-    getAppProviderByClassName<AgentChatParticipationService>(
-      'AgentChatParticipationService',
-    );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
   const wasInboxEnabled = await featureFlagService.isFeatureEnabled(
@@ -237,7 +232,6 @@ export const createChatParticipationTestContext = async () => {
     threadService,
     chatService,
     sharingService,
-    participationService,
     featureFlagService,
     setAssistantModes,
     setConversationType,

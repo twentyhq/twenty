@@ -49,7 +49,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 type RecordSharingArgs = RecordTargetInput & {
   authContext: UserWorkspaceAuthContext;
-  transactionScope?: WorkspaceTransactionScope;
 };
 
 type RecordSharingObject = ObjectSharing & {
@@ -62,8 +61,6 @@ type RecordSharingChange = {
   sharingObject: RecordSharingObject;
   creatorWorkspaceMemberId: string | undefined;
 };
-
-const RECORD_SHARING_SAVEPOINT_NAME = 'record_sharing_write';
 
 @Injectable()
 export class RecordSharingService {
@@ -90,10 +87,9 @@ export class RecordSharingService {
   async setPrivate(
     args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
-    return this.changeSharing({
-      args,
-      write: (change) => this.writeRecordPrivacy({ ...change, args }),
-    });
+    return this.changeSharing(args, (change) =>
+      this.writeRecordPrivacy({ ...change, args }),
+    );
   }
 
   async setShare(
@@ -111,9 +107,9 @@ export class RecordSharingService {
       ...maps,
     });
 
-    return this.changeSharing({
+    return this.changeSharing(
       args,
-      write: async ({ workspaceId, transactionScope, sharingObject }) => {
+      async ({ workspaceId, transactionScope, sharingObject }) => {
         await this.recordShareStorageService.setManualShare({
           workspaceId,
           transactionScope,
@@ -136,7 +132,7 @@ export class RecordSharingService {
           },
         );
       },
-    });
+    );
   }
 
   async removeShare(
@@ -144,31 +140,26 @@ export class RecordSharingService {
   ): Promise<RecordSharingDTO> {
     const principal = resolveRecordSharePrincipalOrThrow(args.principal);
 
-    return this.changeSharing({
-      args,
-      write: ({ workspaceId, transactionScope }) =>
-        this.recordShareStorageService.setManualShare({
-          workspaceId,
-          transactionScope,
-          enabled: false,
-          share: {
-            ...principal,
-            accessLevel: RecordShareAccessLevel.READ,
-            objectMetadataId: args.objectMetadataId,
-            recordId: args.recordId,
-            sourceId: args.recordId,
-          },
-        }),
-    });
+    return this.changeSharing(args, ({ workspaceId, transactionScope }) =>
+      this.recordShareStorageService.setManualShare({
+        workspaceId,
+        transactionScope,
+        enabled: false,
+        share: {
+          ...principal,
+          accessLevel: RecordShareAccessLevel.READ,
+          objectMetadataId: args.objectMetadataId,
+          recordId: args.recordId,
+          sourceId: args.recordId,
+        },
+      }),
+    );
   }
 
-  private async changeSharing({
-    args,
-    write,
-  }: {
-    args: RecordSharingArgs;
-    write: (change: RecordSharingChange) => Promise<void>;
-  }): Promise<RecordSharingDTO> {
+  private async changeSharing(
+    args: RecordSharingArgs,
+    write: (change: RecordSharingChange) => Promise<void>,
+  ): Promise<RecordSharingDTO> {
     const sharingObject = await this.getSharingObject(args);
     const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
@@ -177,87 +168,63 @@ export class RecordSharingService {
       throw new NotFoundError('Record not found');
     }
 
-    const writeInTransaction = async (
-      transactionScope: WorkspaceTransactionScope,
-    ) => {
-      await transactionScope.executeRawQuery(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [
-          buildRecordShareLockKey({
-            workspaceId,
-            objectMetadataId: args.objectMetadataId,
-            recordId: args.recordId,
-          }),
-        ],
-      );
-      await transactionScope.executeRawQuery(
-        `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 FOR UPDATE`,
-        [args.recordId],
-      );
-      const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          flatObjectMetadata.nameSingular,
-          transactionScope,
-        );
-      const { canUpdate: canUpdateRecord } = await this.getPermissions({
-        args: { ...args, transactionScope },
-        sharingObject,
-      });
-      if (
-        !canUpdateRecord ||
-        !repository.isObjectOperationPermittedByRole('update')
-      ) {
-        throw new NotFoundError('Record not found');
-      }
-      const { viewerAccessLevel, creatorWorkspaceMemberId } =
-        await this.getRecordShares({
-          ...args,
-          sharingObject,
-          transactionScope,
-        });
-      if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
-        throw new NotFoundError('Record not found');
-      }
-      await write({
-        workspaceId,
-        transactionScope,
-        sharingObject,
-        creatorWorkspaceMemberId,
-      });
-    };
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const transactionScope = args.transactionScope;
-
-      if (!isDefined(transactionScope)) {
-        await this.workspaceOrmManager.runInWorkspaceTransaction(
-          writeInTransaction,
-        );
-
-        return;
-      }
-
-      await transactionScope.executeRawQuery(
-        `SAVEPOINT ${RECORD_SHARING_SAVEPOINT_NAME}`,
-      );
-
-      try {
-        await writeInTransaction(transactionScope);
-      } catch (error) {
-        await transactionScope.executeRawQuery(
-          `ROLLBACK TO SAVEPOINT ${RECORD_SHARING_SAVEPOINT_NAME}`,
-        );
-        await transactionScope.executeRawQuery(
-          `RELEASE SAVEPOINT ${RECORD_SHARING_SAVEPOINT_NAME}`,
-        );
-
-        throw error;
-      }
-
-      await transactionScope.executeRawQuery(
-        `RELEASE SAVEPOINT ${RECORD_SHARING_SAVEPOINT_NAME}`,
-      );
-    }, args.authContext);
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            await transactionScope.executeRawQuery(
+              'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+              [
+                buildRecordShareLockKey({
+                  workspaceId,
+                  objectMetadataId: args.objectMetadataId,
+                  recordId: args.recordId,
+                }),
+              ],
+            );
+            // Lock the target as well as its grants, so deletion cannot leave an orphan grant.
+            await transactionScope.executeRawQuery(
+              `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 FOR UPDATE`,
+              [args.recordId],
+            );
+            const repository =
+              this.workspaceOrmManager.getRepositoryWithContextPermissions(
+                flatObjectMetadata.nameSingular,
+                transactionScope,
+              );
+            const writableIds =
+              await repository.findRecordIdsAllowedForOperation({
+                recordIds: [args.recordId],
+                operationType: 'update',
+                withDeleted: true,
+              });
+            // A grant may let someone edit a record beyond their role, never
+            // decide who else gets it
+            if (
+              writableIds.length !== 1 ||
+              !repository.isObjectOperationPermittedByRole('update')
+            ) {
+              throw new NotFoundError('Record not found');
+            }
+            const { viewerAccessLevel, creatorWorkspaceMemberId } =
+              await this.getRecordShares({
+                ...args,
+                sharingObject,
+                transactionScope,
+              });
+            if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
+              throw new NotFoundError('Record not found');
+            }
+            await write({
+              workspaceId,
+              transactionScope,
+              sharingObject,
+              creatorWorkspaceMemberId,
+            });
+          },
+        ),
+      args.authContext,
+    );
 
     const permissions = await this.getPermissions({ args, sharingObject });
 
@@ -592,7 +559,6 @@ export class RecordSharingService {
         authContext: args.authContext,
         flatObjectMetadata: sharingObject.flatObjectMetadata,
         recordIds: [args.recordId],
-        transactionScope: args.transactionScope,
       });
 
     return (
