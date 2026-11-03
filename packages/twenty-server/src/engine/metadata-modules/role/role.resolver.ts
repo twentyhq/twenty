@@ -64,7 +64,6 @@ import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
-import { resolveRoleIdsForUser } from 'src/engine/permissions/principal/utils/resolve-role-ids-for-user.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
@@ -284,13 +283,12 @@ export class RoleResolver {
       return undefined;
     }
 
-    return resolveRoleIdsForUser({
-      userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
+    return [
+      await this.userRoleService.getRoleIdForUserWorkspace({
         workspaceId,
         userWorkspaceId: actingUserWorkspaceId,
       }),
-      applicationRoleId: undefined,
-    });
+    ];
   }
 
   @Mutation(() => [ObjectPermissionDTO])
