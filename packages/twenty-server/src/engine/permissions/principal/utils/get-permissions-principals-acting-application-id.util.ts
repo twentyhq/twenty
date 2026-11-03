@@ -6,17 +6,17 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principa
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
-export const getPermissionsPrincipalActingApplicationId = ({
-  principal,
+export const getPermissionsPrincipalsActingApplicationId = ({
+  principals,
   flatApplicationMaps,
 }: {
-  principal: Pick<
+  principals: Pick<
     PermissionsPrincipalsWithRolesContext,
     'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): string | undefined => {
-  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = principal;
+  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = principals;
 
   if (mainPrincipal.type === 'application') {
     return mainPrincipal.applicationId;

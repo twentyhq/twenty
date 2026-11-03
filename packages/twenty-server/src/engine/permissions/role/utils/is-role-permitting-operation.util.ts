@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
+import { getPermissionsPrincipalsObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-objects-permissions.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 
 export const isRolePermittingOperation = ({
-  principal,
+  principals,
   metadataMaps,
   flatObjectMetadata,
   operationType,
@@ -13,8 +13,8 @@ export const isRolePermittingOperation = ({
   isObjectOperationPermitted({
     objectMetadata: flatObjectMetadata,
     operationType,
-    objectsPermissions: getPermissionsPrincipalObjectsPermissions({
-      principal,
+    objectsPermissions: getPermissionsPrincipalsObjectsPermissions({
+      principals,
       metadataMaps,
     }),
   });

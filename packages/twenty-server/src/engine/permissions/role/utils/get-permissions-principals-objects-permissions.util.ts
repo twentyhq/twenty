@@ -7,24 +7,24 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/typ
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
-const objectsPermissionsByMetadataMapsByPrincipal = new WeakMap<
+const objectsPermissionsByMetadataMapsByPrincipals = new WeakMap<
   PermissionsPrincipalsWithRolesContext,
   WeakMap<PermissionsMetadataMaps, ObjectsPermissions>
 >();
 
-export const getPermissionsPrincipalObjectsPermissions = ({
-  principal,
+export const getPermissionsPrincipalsObjectsPermissions = ({
+  principals,
   metadataMaps,
 }: {
-  principal: PermissionsPrincipalsWithRolesContext;
+  principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
 }): ObjectsPermissions => {
   const objectsPermissionsByMetadataMaps =
-    objectsPermissionsByMetadataMapsByPrincipal.get(principal) ??
+    objectsPermissionsByMetadataMapsByPrincipals.get(principals) ??
     new WeakMap<PermissionsMetadataMaps, ObjectsPermissions>();
 
-  objectsPermissionsByMetadataMapsByPrincipal.set(
-    principal,
+  objectsPermissionsByMetadataMapsByPrincipals.set(
+    principals,
     objectsPermissionsByMetadataMaps,
   );
 
@@ -36,7 +36,7 @@ export const getPermissionsPrincipalObjectsPermissions = ({
   }
 
   const objectsPermissions = computeObjectsPermissionsForRoles({
-    principal,
+    principals,
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,

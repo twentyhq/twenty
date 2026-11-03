@@ -31,7 +31,7 @@ import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/util
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { buildPermissionsPrincipalsRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principals-role-maps.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 
 const tableShapeCache = new WeakMap<
@@ -45,7 +45,7 @@ export class WorkspaceDataSource {
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
   private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
-  private permissionsPrincipal?: PermissionsPrincipalsWithRolesContext | null;
+  private permissionsPrincipals?: PermissionsPrincipalsWithRolesContext | null;
   private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
   constructor({
@@ -247,9 +247,9 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       permissionsMetadataMaps: this.resolvePermissionsMetadataMaps(),
-      permissionsPrincipal: shouldRepositoryBypassPermissionChecks
+      permissionsPrincipals: shouldRepositoryBypassPermissionChecks
         ? undefined
-        : this.resolvePermissionsPrincipal(),
+        : this.resolvePermissionsPrincipals(),
       shouldBypassPermissionChecks: shouldRepositoryBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
@@ -287,18 +287,18 @@ export class WorkspaceDataSource {
     });
   }
 
-  private resolvePermissionsPrincipal():
+  private resolvePermissionsPrincipals():
     | PermissionsPrincipalsWithRolesContext
     | undefined {
-    if (this.permissionsPrincipal === undefined) {
-      this.permissionsPrincipal =
+    if (this.permissionsPrincipals === undefined) {
+      this.permissionsPrincipals =
         resolvePermissionsPrincipalsWithRoles({
           authContext: this.authContext,
-          roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
+          roleMaps: buildPermissionsPrincipalsRoleMaps(this.internalContext),
         }) ?? null;
     }
 
-    return this.permissionsPrincipal ?? undefined;
+    return this.permissionsPrincipals ?? undefined;
   }
 
   // Shared by every repository of this data source so the engine's principal caches hit across them

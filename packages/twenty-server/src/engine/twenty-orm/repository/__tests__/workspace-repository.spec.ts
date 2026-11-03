@@ -143,7 +143,7 @@ const buildRepository = ({
       flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
       flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
-    permissionsPrincipal: {
+    permissionsPrincipals: {
       workspaceId: 'workspace-id',
       mainPrincipal: {
         type: 'apiKey',

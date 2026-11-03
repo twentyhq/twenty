@@ -17,18 +17,18 @@ import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rl
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
   objectMetadata: FlatObjectMetadata;
-  principal: PermissionsPrincipalsWithRolesContext;
+  principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
 };
 
 export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   records,
   objectMetadata,
-  principal,
+  principals,
   metadataMaps,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   const recordFilter = resolveRowLevelPermissionRecordFilter({
-    principal,
+    principals,
     metadataMaps,
     flatObjectMetadata: objectMetadata,
   });
