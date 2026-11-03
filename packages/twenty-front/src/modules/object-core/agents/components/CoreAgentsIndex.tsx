@@ -1,3 +1,4 @@
+import { CoreAgentCommandOriginProvider } from '@/object-core/commands/components/CoreAgentCommandOriginProvider';
 import { CoreAgentsIcon } from '@/object-core/agents/components/CoreAgentsIcon';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,11 +16,9 @@ import { CORE_AGENTS_CREATE_COMMAND_ID } from '@/object-core/agents/constants/Co
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import { CORE_AGENT_FILTER_FIELDS } from '@/object-core/agents/constants/CoreAgentFilterFields';
 import { CORE_AGENTS_DEFAULT_FILTER_SETTINGS } from '@/object-core/agents/constants/CoreAgentsDefaultFilterSettings';
-import {
-  CORE_AGENTS_INITIAL_SORT,
-  CORE_AGENTS_TABLE_ID,
-  useCoreAgents,
-} from '@/object-core/agents/hooks/useCoreAgents';
+import { CORE_AGENTS_INITIAL_SORT } from '@/object-core/agents/constants/CoreAgentsInitialSort';
+import { CORE_AGENTS_TABLE_ID } from '@/object-core/agents/constants/CoreAgentsTableId';
+import { useCoreAgents } from '@/object-core/agents/hooks/useCoreAgents';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
@@ -67,7 +66,7 @@ export const CoreAgentsIndex = () => {
   });
 
   return (
-    <>
+    <CoreAgentCommandOriginProvider target={{ type: 'index', tableId }}>
       <CoreAgentMetadataEventsEffect />
       <CoreAgentsSelectionCleanupEffect tableId={tableId} />
       <CoreObjectIndexPageLayout
@@ -139,6 +138,6 @@ export const CoreAgentsIndex = () => {
           />
         )}
       </CoreObjectIndexPageLayout>
-    </>
+    </CoreAgentCommandOriginProvider>
   );
 };

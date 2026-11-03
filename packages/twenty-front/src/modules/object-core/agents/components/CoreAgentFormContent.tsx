@@ -1,4 +1,5 @@
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CoreAgentCommandOriginProvider } from '@/object-core/commands/components/CoreAgentCommandOriginProvider';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
 import { CoreAgentEditSessionEffect } from '@/object-core/agents/components/CoreAgentEditSessionEffect';
 import { CoreAgentHeaderActions } from '@/object-core/agents/components/CoreAgentHeaderActions';
@@ -55,7 +56,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const showRuns = view === 'runs' && isAiChatInboxEnabled && canReadAgentRuns;
 
   return (
-    <>
+    <CoreAgentCommandOriginProvider
+      target={{ type: 'record', agentId: agent.id }}
+    >
       <CoreAgentEditSessionEffect agent={agent} />
       {canReadRoles && <SettingsRolesQueryEffect />}
       {canReadRoles && isDefined(session?.roleId) && (
@@ -102,6 +105,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
         </ScrollWrapper>
       </PageCardLayout>
       <CoreAgentDeleteConfirmationModal agentId={agent.id} />
-    </>
+    </CoreAgentCommandOriginProvider>
   );
 };
