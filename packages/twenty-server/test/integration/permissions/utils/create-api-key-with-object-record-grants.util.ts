@@ -4,8 +4,11 @@ import gql from 'graphql-tag';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 export type ApiKeyWithObjectRecordGrants = {
   roleId: string;
@@ -84,11 +87,19 @@ export const createApiKeyWithObjectRecordGrants = async (
 export const deleteApiKeysWithObjectRecordGrants = async (
   testApiKeys: ApiKeyWithObjectRecordGrants[],
 ) => {
-  for (const { roleId, apiKeyId } of testApiKeys) {
-    await global.testDataSource.query(
-      'DELETE FROM core."apiKey" WHERE id = $1',
-      [apiKeyId],
-    );
+  await global.testDataSource.query(
+    'DELETE FROM core."apiKey" WHERE id = ANY($1)',
+    [testApiKeys.map(({ apiKeyId }) => apiKeyId)],
+  );
+
+  await getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+    'apiKeyMap',
+    'flatRoleTargetMaps',
+  ]);
+
+  for (const { roleId } of testApiKeys) {
     await deleteOneRole({ input: { idToDelete: roleId }, expectToFail: false });
   }
 };

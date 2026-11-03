@@ -26,10 +26,15 @@ export const expectPermissionDeniedResponse = ({
   if (api === 'graphql') {
     expectPermissionDenied(response.body.errors);
 
+    for (const result of Object.values(response.body.data ?? {})) {
+      expect(result).toBeNull();
+    }
+
     return;
   }
 
   expect(response.status).toBe(403);
+  expect(response.body.data).toBeUndefined();
   expect(response.body.code).toBe(PermissionsExceptionCode.PERMISSION_DENIED);
   expect(response.body.messages).toStrictEqual([
     PermissionsExceptionMessage.PERMISSION_DENIED,
