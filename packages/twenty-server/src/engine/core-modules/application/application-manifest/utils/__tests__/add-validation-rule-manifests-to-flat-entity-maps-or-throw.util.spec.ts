@@ -1,0 +1,557 @@
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+
+import { addValidationRuleManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-validation-rule-manifests-to-flat-entity-maps-or-throw.util';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
+
+const OWNER_APPLICATION = {
+  id: 'owner-application-id',
+  universalIdentifier: 'owner-application',
+};
+const NOW = '2026-10-20T00:00:00.000Z';
+
+const buildField = (
+  field: Pick<
+    FlatFieldMetadata,
+    | 'universalIdentifier'
+    | 'name'
+    | 'type'
+    | 'objectMetadataUniversalIdentifier'
+  > &
+    Partial<FlatFieldMetadata>,
+) =>
+  getFlatFieldMetadataMock({
+    objectMetadataId: 'object-metadata-id',
+    applicationId: 'other-application-id',
+    ...field,
+  });
+
+const buildExistingRule = (
+  rule: Partial<FlatValidationRule>,
+): FlatValidationRule => ({
+  id: 'rule-id',
+  workspaceId: 'workspace-id',
+  applicationId: OWNER_APPLICATION.id,
+  universalIdentifier: 'rule',
+  applicationUniversalIdentifier: OWNER_APPLICATION.universalIdentifier,
+  objectMetadataId: 'object-metadata-id',
+  objectMetadataUniversalIdentifier: 'company',
+  errorFieldMetadataId: null,
+  errorFieldMetadataUniversalIdentifier: null,
+  name: 'Rule',
+  description: null,
+  icon: null,
+  expression: 'true',
+  bindings: {},
+  message: 'Message',
+  isActive: true,
+  createdAt: NOW,
+  updatedAt: NOW,
+  ...rule,
+});
+
+const buildMaps = () => {
+  const existingAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
+  const toAllUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
+
+  existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.company =
+    getFlatObjectMetadataMock({ universalIdentifier: 'company' });
+  existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+    buildField({
+      universalIdentifier: 'employees',
+      name: 'employees',
+      type: FieldMetadataType.NUMBER,
+      objectMetadataUniversalIdentifier: 'company',
+    });
+  existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.removedCode =
+    buildField({
+      universalIdentifier: 'removedCode',
+      name: 'removedCode',
+      type: FieldMetadataType.TEXT,
+      objectMetadataUniversalIdentifier: 'ticket',
+      applicationId: OWNER_APPLICATION.id,
+    });
+
+  toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
+    getFlatObjectMetadataMock({
+      universalIdentifier: 'ticket',
+      applicationUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
+    });
+  toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.reference =
+    buildField({
+      universalIdentifier: 'reference',
+      name: 'reference',
+      type: FieldMetadataType.TEXT,
+      objectMetadataUniversalIdentifier: 'ticket',
+    });
+  toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.company =
+    buildField({
+      universalIdentifier: 'company',
+      name: 'company',
+      type: FieldMetadataType.RELATION,
+      objectMetadataUniversalIdentifier: 'ticket',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+      relationTargetObjectMetadataUniversalIdentifier: 'company',
+    });
+
+  return { existingAllFlatEntityMaps, toAllUniversalFlatEntityMaps };
+};
+
+describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
+  it('binds own fields and fields of other applications reached through a relation', () => {
+    const maps = buildMaps();
+
+    addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      validationRules: [
+        {
+          universalIdentifier: 'rule',
+          objectUniversalIdentifier: 'ticket',
+          name: ' Large companies need a reference ',
+          expression: 'company.employees < 100 or isNonEmptyString(reference)',
+          message: 'Add a reference',
+          errorFieldUniversalIdentifier: 'reference',
+        },
+      ],
+      ownerFlatApplication: OWNER_APPLICATION,
+      inferDeletionFromMissingEntities: true,
+      ...maps,
+      now: NOW,
+    });
+
+    expect(
+      maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+        .byUniversalIdentifier.rule,
+    ).toEqual({
+      universalIdentifier: 'rule',
+      applicationUniversalIdentifier: OWNER_APPLICATION.universalIdentifier,
+      objectMetadataUniversalIdentifier: 'ticket',
+      errorFieldMetadataUniversalIdentifier: 'reference',
+      name: 'Large companies need a reference',
+      description: null,
+      icon: null,
+      expression: 'company.employees < 100 or isNonEmptyString(reference)',
+      bindings: {
+        company: 'company',
+        'company.employees': 'employees',
+        reference: 'reference',
+      },
+      message: 'Add a reference',
+      isActive: true,
+      createdAt: NOW,
+      updatedAt: NOW,
+    });
+  });
+
+  it('rejects an expression reading a field the manifest removes', () => {
+    expect(() =>
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [
+          {
+            universalIdentifier: 'rule',
+            objectUniversalIdentifier: 'ticket',
+            name: 'Ticket has a code',
+            expression: 'isNonEmptyString(removedCode)',
+            message: 'Add a code',
+          },
+        ],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...buildMaps(),
+        now: NOW,
+      }),
+    ).toThrow(
+      'Validation rule "Ticket has a code" has an invalid expression: Unknown field "removedCode"',
+    );
+  });
+
+  describe('when a field the rule reads is unavailable', () => {
+    const RULE = {
+      universalIdentifier: 'rule',
+      objectUniversalIdentifier: 'company',
+      name: 'Company has employees',
+      expression: 'employees > 0',
+      message: 'Add employees',
+    };
+    const EXISTING_RULE = buildExistingRule({
+      expression: RULE.expression,
+      bindings: { employees: 'employees' },
+    });
+
+    const sync = (maps: ReturnType<typeof buildMaps>) =>
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [RULE],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+    const syncedRule = (maps: ReturnType<typeof buildMaps>) =>
+      maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+        .byUniversalIdentifier.rule;
+
+    it('leaves the rule inactive when the workspace deactivated a field', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        buildField({
+          universalIdentifier: 'employees',
+          name: 'employees',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataUniversalIdentifier: 'company',
+          applicationUniversalIdentifier: 'other-application',
+          overrides: { workspace: { isActive: false } },
+        });
+
+      sync(maps);
+      expect(syncedRule(maps)).toMatchObject({
+        isActive: false,
+        bindings: { employees: 'employees' },
+      });
+    });
+
+    it.each(['employees > 0 and score > 0', 'score > 0 and employees > 0'])(
+      'fails on a field the application removed whatever the operand order: %s',
+      (expression) => {
+        const maps = buildMaps();
+
+        maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+          buildField({
+            universalIdentifier: 'employees',
+            name: 'employees',
+            type: FieldMetadataType.NUMBER,
+            objectMetadataUniversalIdentifier: 'company',
+            overrides: { workspace: { isActive: false } },
+          });
+        maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.ownScore =
+          buildField({
+            universalIdentifier: 'ownScore',
+            name: 'score',
+            type: FieldMetadataType.NUMBER,
+            objectMetadataUniversalIdentifier: 'company',
+            applicationId: OWNER_APPLICATION.id,
+          });
+        maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+          buildExistingRule({
+            expression,
+            bindings: { employees: 'employees', score: 'ownScore' },
+          });
+
+        expect(() =>
+          addValidationRuleManifestsToFlatEntityMapsOrThrow({
+            validationRules: [{ ...RULE, expression }],
+            ownerFlatApplication: OWNER_APPLICATION,
+            inferDeletionFromMissingEntities: true,
+            ...maps,
+            now: NOW,
+          }),
+        ).toThrow('uses the field "score", which no longer exists');
+      },
+    );
+
+    describe('when the workspace renamed a field the rule reads', () => {
+      const buildRenamedMaps = () => {
+        const maps = buildMaps();
+
+        maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+          buildField({
+            universalIdentifier: 'employees',
+            name: 'headcount',
+            type: FieldMetadataType.NUMBER,
+            objectMetadataUniversalIdentifier: 'company',
+          });
+        maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+          buildExistingRule({
+            expression: 'headcount > 0',
+            bindings: { headcount: 'employees' },
+          });
+
+        return maps;
+      };
+
+      it('keeps the renamed rule the workspace saved', () => {
+        const maps = buildRenamedMaps();
+
+        sync(maps);
+        expect(syncedRule(maps)).toMatchObject({
+          expression: 'headcount > 0',
+          bindings: { headcount: 'employees' },
+          isActive: true,
+        });
+      });
+
+      it('still fails when the manifest changed more than the field names', () => {
+        const maps = buildRenamedMaps();
+
+        expect(() =>
+          addValidationRuleManifestsToFlatEntityMapsOrThrow({
+            validationRules: [{ ...RULE, expression: 'employees > 5' }],
+            ownerFlatApplication: OWNER_APPLICATION,
+            inferDeletionFromMissingEntities: true,
+            ...maps,
+            now: NOW,
+          }),
+        ).toThrow('Unknown field "employees"');
+      });
+
+      it('fails when the manifest names a new field in place of one the app owns', () => {
+        const maps = buildRenamedMaps();
+
+        maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+          buildField({
+            universalIdentifier: 'employees',
+            name: 'headcount',
+            type: FieldMetadataType.NUMBER,
+            objectMetadataUniversalIdentifier: 'company',
+            applicationId: OWNER_APPLICATION.id,
+          });
+
+        expect(() => sync(maps)).toThrow('Unknown field "employees"');
+      });
+    });
+
+    it('leaves an existing rule inactive when its field left the workspace', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        undefined;
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        EXISTING_RULE;
+
+      sync(maps);
+      expect(syncedRule(maps)).toMatchObject({
+        isActive: false,
+        bindings: EXISTING_RULE.bindings,
+      });
+    });
+
+    it('fails with a clear error when the application removed the field itself', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        undefined;
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.ownEmployees =
+        buildField({
+          universalIdentifier: 'ownEmployees',
+          name: 'employeeCount',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataUniversalIdentifier: 'company',
+          applicationId: OWNER_APPLICATION.id,
+        });
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        { ...EXISTING_RULE, bindings: { employees: 'ownEmployees' } };
+
+      expect(() => sync(maps)).toThrow(
+        'Validation rule "Company has employees" uses the field "employees", which no longer exists. Update the rule\'s expression or add the field back to your app.',
+      );
+    });
+
+    it('fails when the application deactivated the field, then removed it', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        buildField({
+          universalIdentifier: 'employees',
+          name: 'employees',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataUniversalIdentifier: 'company',
+          applicationId: OWNER_APPLICATION.id,
+          isActive: false,
+        });
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        EXISTING_RULE;
+
+      expect(() => sync(maps)).toThrow(
+        'uses the field "employees", which no longer exists',
+      );
+    });
+
+    it('fails when a new rule names a field that exists nowhere', () => {
+      const maps = buildMaps();
+
+      expect(() =>
+        addValidationRuleManifestsToFlatEntityMapsOrThrow({
+          validationRules: [{ ...RULE, expression: 'employes > 0' }],
+          ownerFlatApplication: OWNER_APPLICATION,
+          inferDeletionFromMissingEntities: true,
+          ...maps,
+          now: NOW,
+        }),
+      ).toThrow('Unknown field "employes"');
+    });
+  });
+
+  it('keeps a rule off once it exists, and turns a new rule on', () => {
+    const maps = buildMaps();
+
+    maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.off =
+      buildExistingRule({ isActive: false, universalIdentifier: 'off' });
+
+    addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      validationRules: ['off', 'new'].map((universalIdentifier) => ({
+        universalIdentifier,
+        objectUniversalIdentifier: 'ticket',
+        name: universalIdentifier,
+        expression: 'isNonEmptyString(reference)',
+        message: 'Add a reference',
+      })),
+      ownerFlatApplication: OWNER_APPLICATION,
+      inferDeletionFromMissingEntities: true,
+      ...maps,
+      now: NOW,
+    });
+
+    const { byUniversalIdentifier } =
+      maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps;
+
+    expect(byUniversalIdentifier.off?.isActive).toBe(false);
+    expect(byUniversalIdentifier.new?.isActive).toBe(true);
+  });
+
+  describe('fields that remain after the sync', () => {
+    const buildRule = (expression: string) => ({
+      universalIdentifier: 'rule',
+      objectUniversalIdentifier: 'ticket',
+      name: 'Rule',
+      expression,
+      message: 'Message',
+    });
+
+    it('reads the reserved fields of an object this sync creates', () => {
+      const maps = buildMaps();
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isDefined(createdAt)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
+    });
+
+    it('reads an existing engine-owned field the manifest does not declare', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
+        getFlatObjectMetadataMock({ universalIdentifier: 'ticket' });
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.updatedAt =
+        buildField({
+          universalIdentifier: 'updatedAt',
+          name: 'updatedAt',
+          type: FieldMetadataType.DATE_TIME,
+          objectMetadataUniversalIdentifier: 'ticket',
+          applicationId: OWNER_APPLICATION.id,
+          isSystemSideEffect: true,
+        });
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isDefined(updatedAt)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
+    });
+
+    it('reads a field the manifest dropped when the sync does not prune', () => {
+      const maps = buildMaps();
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isNonEmptyString(removedCode)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: false,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
+    });
+  });
+
+  describe('when the declared error field is missing', () => {
+    const RULE = {
+      universalIdentifier: 'rule',
+      objectUniversalIdentifier: 'ticket',
+      name: 'Rule',
+      expression: 'isNonEmptyString(reference)',
+      message: 'Message',
+      errorFieldUniversalIdentifier: 'deletedField',
+    };
+
+    it('keeps the link detached when the workspace deleted the field', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        buildExistingRule({ errorFieldMetadataUniversalIdentifier: null });
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [RULE],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule,
+      ).toMatchObject({
+        errorFieldMetadataUniversalIdentifier: null,
+        isActive: true,
+      });
+    });
+
+    it('keeps the declared error field on a new rule', () => {
+      const maps = buildMaps();
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [RULE],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.errorFieldMetadataUniversalIdentifier,
+      ).toBe('deletedField');
+    });
+  });
+
+  it('rejects a rule on an unknown object', () => {
+    expect(() =>
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [
+          {
+            universalIdentifier: 'rule',
+            objectUniversalIdentifier: 'unknown',
+            name: 'Orphan rule',
+            expression: 'true',
+            message: 'Never shown',
+          },
+        ],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...buildMaps(),
+        now: NOW,
+      }),
+    ).toThrow(
+      'Validation rule "Orphan rule" references unknown object unknown',
+    );
+  });
+});

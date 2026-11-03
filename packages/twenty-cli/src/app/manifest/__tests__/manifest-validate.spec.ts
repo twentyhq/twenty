@@ -7,6 +7,7 @@ import {
   type Manifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  type ValidationRuleManifest,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -1145,6 +1146,103 @@ describe('manifestValidate', () => {
 
         expect(result.errors).toContain(
           `Page layout widget "App" defines heightBehavior, but its parent tab "Details" uses ${layoutMode}. heightBehavior is only supported for VERTICAL_LIST tabs.`,
+        );
+      },
+    );
+  });
+
+  describe('validation rule validation', () => {
+    const objectUniversalIdentifier = '550e8400-e29b-41d4-a716-446655440100';
+    const rule: ValidationRuleManifest = {
+      universalIdentifier: '550e8400-e29b-41d4-a716-446655440101',
+      objectUniversalIdentifier,
+      name: 'Has a score',
+      expression: 'score > 0',
+      message: 'Add a score',
+    };
+    const manifestWith = (validationRule: Partial<ValidationRuleManifest>) => ({
+      ...validManifest,
+      objects: [
+        {
+          universalIdentifier: objectUniversalIdentifier,
+          nameSingular: 'ticket',
+          namePlural: 'tickets',
+          labelSingular: 'Ticket',
+          labelPlural: 'Tickets',
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            validField.universalIdentifier,
+          fields: [{ ...validField, name: 'score' }],
+        },
+      ],
+      validationRules: [{ ...rule, ...validationRule }],
+    });
+
+    it('accepts an expression reading a field of the object', () => {
+      expect(manifestValidate(manifestWith({})).errors).toEqual([]);
+    });
+
+    it('accepts an expression reading a field Twenty generates', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'isDefined(createdAt)' }))
+          .errors,
+      ).toEqual([]);
+    });
+
+    it('names the rule when it reads a field the object does not declare', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'scor > 0' })).errors,
+      ).toEqual([
+        'Validation rule "Has a score" has an invalid expression: Unknown field "scor"',
+      ]);
+    });
+
+    it('rejects an error field outside the object', () => {
+      expect(
+        manifestValidate(
+          manifestWith({
+            errorFieldUniversalIdentifier:
+              '550e8400-e29b-41d4-a716-446655440102',
+          }),
+        ).errors,
+      ).toEqual([
+        expect.stringContaining("does not belong to the rule's object"),
+      ]);
+    });
+
+    it('only checks the syntax on an object outside the app', () => {
+      const outsideObject = '20202020-b374-4779-a561-80086cb2e17f';
+
+      expect(
+        manifestValidate(
+          manifestWith({ objectUniversalIdentifier: outsideObject }),
+        ).errors,
+      ).toEqual([]);
+      expect(
+        manifestValidate(
+          manifestWith({
+            objectUniversalIdentifier: outsideObject,
+            expression: 'score >',
+          }),
+        ).errors,
+      ).toEqual([expect.stringContaining('"Has a score"')]);
+    });
+
+    it.each([
+      ['company.employees > 0', []],
+      ['score[0] > 0', ['Bracket access is not supported']],
+      ['company . employees > 0', ['without spaces around the dot']],
+    ])(
+      'checks everything but the fields on an object outside the app: %s',
+      (expression, expectedErrors) => {
+        expect(
+          manifestValidate(
+            manifestWith({
+              objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+              expression,
+            }),
+          ).errors,
+        ).toEqual(
+          expectedErrors.map((error) => expect.stringContaining(error)),
         );
       },
     );
