@@ -13,18 +13,30 @@ const getLogicFunctionTypeValidationErrors = (
 describe('ConfigVariables', () => {
   describe('LOGIC_FUNCTION_TYPE', () => {
     it.each([
-      [{}, 1],
-      [{ LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: 'layer-bucket' }, 0],
-      [{ STORAGE_S3_NAME: 'storage-bucket' }, 0],
+      [{ LOGIC_FUNCTION_TYPE: 'LAMBDA' }, 1],
+      [
+        {
+          LOGIC_FUNCTION_TYPE: 'LAMBDA',
+          LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: 'layer-bucket',
+        },
+        0,
+      ],
+      [{ LOGIC_FUNCTION_TYPE: 'LAMBDA', STORAGE_S3_NAME: 'storage-bucket' }, 0],
+      [
+        {
+          LOGIC_FUNCTION_TYPE: 'LAMBDA',
+          LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: '',
+          STORAGE_S3_NAME: 'storage-bucket',
+        },
+        0,
+      ],
+      [{ LOGIC_FUNCTION_TYPE: 'LOCAL' }, 0],
     ])(
-      'should require a layer bucket for the Lambda driver with %o',
-      (bucketConfig, expectedErrorCount) => {
-        expect(
-          getLogicFunctionTypeValidationErrors({
-            LOGIC_FUNCTION_TYPE: 'LAMBDA',
-            ...bucketConfig,
-          }),
-        ).toHaveLength(expectedErrorCount);
+      'should validate the layer bucket of %o with %i error(s)',
+      (config, expectedErrorCount) => {
+        expect(getLogicFunctionTypeValidationErrors(config)).toHaveLength(
+          expectedErrorCount,
+        );
       },
     );
   });

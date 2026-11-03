@@ -8,20 +8,17 @@ import {
 } from 'class-validator';
 
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 
 @ValidatorConstraint({ async: false })
 export class HasLambdaLayerBucketConstraint implements ValidatorConstraintInterface {
   validate(logicFunctionType: unknown, { object }: ValidationArguments) {
-    const { LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET, STORAGE_S3_NAME } =
-      object as Pick<
-        ConfigVariables,
-        'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET' | 'STORAGE_S3_NAME'
-      >;
+    const layerBucket: unknown =
+      Reflect.get(object, 'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ||
+      Reflect.get(object, 'STORAGE_S3_NAME');
 
     return (
       logicFunctionType !== LogicFunctionDriverType.LAMBDA ||
-      isNonEmptyString(LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET ?? STORAGE_S3_NAME)
+      isNonEmptyString(layerBucket)
     );
   }
 

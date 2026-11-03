@@ -3,6 +3,10 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 export const getLambdaConnectionOptions = (
   twentyConfigService: TwentyConfigService,
@@ -19,12 +23,13 @@ export const getLambdaConnectionOptions = (
     'LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE',
   );
   const layerBucket =
-    twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ??
+    twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ||
     twentyConfigService.get('STORAGE_S3_NAME');
 
   if (!isNonEmptyString(layerBucket)) {
-    throw new Error(
+    throw new LogicFunctionException(
       'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET or STORAGE_S3_NAME must be set to use the Lambda logic function driver',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
     );
   }
 
