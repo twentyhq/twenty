@@ -1,48 +1,21 @@
-import { resolveViewChildEntityViewId } from 'src/engine/permissions/view/utils/resolve-view-child-entity-view-id.util';
 import { resolveViewChildEntityViewIds } from 'src/engine/permissions/view/utils/resolve-view-child-entity-view-ids.util';
 
-describe('resolveViewChildEntityViewId', () => {
+describe('resolveViewChildEntityViewIds', () => {
   it('reads the view named by the input', () => {
     expect(
-      resolveViewChildEntityViewId({
+      resolveViewChildEntityViewIds({
         args: { input: { viewId: 'view-id' } },
         body: undefined,
       }),
-    ).toBe('view-id');
-  });
-
-  it('reads the view named by the first of a bulk create', () => {
-    expect(
-      resolveViewChildEntityViewId({
-        args: { inputs: [{ viewId: 'view-id' }] },
-        body: undefined,
-      }),
-    ).toBe('view-id');
+    ).toEqual(['view-id']);
   });
 
   it('falls back to the REST body', () => {
     expect(
-      resolveViewChildEntityViewId({ args: {}, body: { viewId: 'view-id' } }),
-    ).toBe('view-id');
+      resolveViewChildEntityViewIds({ args: {}, body: { viewId: 'view-id' } }),
+    ).toEqual(['view-id']);
   });
 
-  it('returns null when no view is named', () => {
-    expect(
-      resolveViewChildEntityViewId({ args: {}, body: undefined }),
-    ).toBeNull();
-  });
-
-  it('does not accept an empty string as a named view', () => {
-    expect(
-      resolveViewChildEntityViewId({
-        args: { input: { viewId: '' } },
-        body: undefined,
-      }),
-    ).toBeNull();
-  });
-});
-
-describe('resolveViewChildEntityViewIds', () => {
   it('resolves all distinct views across bulk create inputs', () => {
     expect(
       resolveViewChildEntityViewIds({

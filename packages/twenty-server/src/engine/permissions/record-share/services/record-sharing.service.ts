@@ -7,6 +7,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -39,10 +40,10 @@ import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permiss
 import { type RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -476,12 +477,6 @@ export class RecordSharingService {
       'flatWorkspaceMemberMaps',
       'roleIdsWithAllRecordsAccess',
     ]);
-    const principalIds =
-      resolvePrincipalIdsFromAuthContext({
-        authContext,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-      }) ?? [];
     const principal = resolvePermissionsPrincipalsWithRoles({
       authContext,
       roleMaps: buildPermissionsPrincipalRoleMaps({
@@ -516,7 +511,12 @@ export class RecordSharingService {
       privateRecordState?.createdByWorkspaceMemberId ?? undefined;
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
-      principalIds,
+      principalIds: [
+        EVERYONE_PRINCIPAL_ID,
+        ...(isDefined(principal)
+          ? getPermissionsPrincipalShareKeys(principal)
+          : []),
+      ],
       implicitAccessLevels: isShareable
         ? [
             isPrivate ? null : RecordShareAccessLevel.READ_WRITE,

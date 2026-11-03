@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
@@ -8,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { MetadataToolIdentifierService } from 'src/engine/metadata-modules/object-metadata/tools/services/metadata-tool-identifier.service';
 
@@ -52,7 +52,7 @@ const getFieldMetadataInputSchema = z.object({
 @DefineTool({
   name: 'get_field_metadata',
   category: ToolCategory.METADATA,
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  accessPolicy: FIELD_METADATA_READ_ACCESS_POLICY,
   icon: 'IconSettings',
   description:
     "Returns { fields: [...] } in the result. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",

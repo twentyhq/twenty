@@ -340,13 +340,11 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     });
   });
 
-  describe('predicate whose operand is invalid for the field type', () => {
-    it('should throw a meaningful error for an IS operand on a text field', () => {
-      expect(() => build([TEXT_IS_ROLE_ID])).toThrow(
-        /Operand IS is not supported for field name of type TEXT/,
-      );
-    });
+  it('should compile an IS operand on a text field to a case-sensitive exact match', () => {
+    expect(build([TEXT_IS_ROLE_ID])).toEqual({ name: { eq: 'stale-value' } });
+  });
 
+  describe('predicate whose operand is invalid for the field type', () => {
     it('should throw a meaningful error for a contains operand on a select field', () => {
       expect(() => build([SELECT_CONTAINS_ROLE_ID])).toThrow(
         /Operand CONTAINS is not supported for field status of type SELECT/,

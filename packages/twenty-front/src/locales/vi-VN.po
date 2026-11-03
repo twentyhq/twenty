@@ -12564,6 +12564,11 @@ msgstr "Không thể thu hồi khóa ký. Vui lòng thử lại sau."
 msgid "Failed to revoke the recovery code."
 msgstr "Thu hồi mã khôi phục thất bại."
 
+#. js-lingui-id: /CvX5S
+#: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
+msgid "Failed to save behavior settings. Try again."
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -12583,11 +12588,6 @@ msgstr "Không thể lưu cài đặt ứng dụng."
 #: src/modules/activities/emails/hooks/usePersistedCampaignDraft.ts
 msgid "Failed to save the campaign"
 msgstr "Không thể lưu chiến dịch"
-
-#. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
-msgid "Failed to save workspace instructions"
-msgstr "Không thể lưu hướng dẫn của không gian làm việc"
 
 #. js-lingui-id: GpNLad
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
