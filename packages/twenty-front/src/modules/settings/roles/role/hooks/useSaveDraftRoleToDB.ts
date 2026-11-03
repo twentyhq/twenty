@@ -6,7 +6,7 @@ import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settin
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -24,6 +24,26 @@ import {
 import { getOperationName } from '~/utils/getOperationName';
 
 type RoleSaveSnapshot = ReturnType<typeof buildRoleSaveSnapshotOrThrow>;
+
+const getRoleAssignmentIdsToAdd = ({
+  draftTargets,
+  persistedTargets,
+  shouldAssign,
+}: {
+  draftTargets: { id: string }[];
+  persistedTargets: { id: string }[];
+  shouldAssign: boolean;
+}) => {
+  if (!shouldAssign) {
+    return [];
+  }
+
+  const persistedIds = new Set(persistedTargets.map(({ id }) => id));
+
+  return draftTargets
+    .filter(({ id }) => !persistedIds.has(id))
+    .map(({ id }) => id);
+};
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -51,6 +71,7 @@ export const useSaveDraftRoleToDB = ({
   onSuccess?: (savedRoleId: string) => void | Promise<void>;
 }) => {
   const store = useStore();
+  const client = useApolloClient();
   const routedFlowStateScopeId = useRoutedFlowStateScopeId();
   const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
   const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
@@ -421,41 +442,55 @@ export const useSaveDraftRoleToDB = ({
     snapshot: RoleSaveSnapshot;
     targetRoleId: string;
   }) => {
-    const { draftRole: settingsDraftRole, dirtyFields } = snapshot;
+    const { draftRole, persistedRole, dirtyFields } = snapshot;
+    const workspaceMemberIds = getRoleAssignmentIdsToAdd({
+      draftTargets: draftRole.workspaceMembers,
+      persistedTargets: persistedRole?.workspaceMembers ?? [],
+      shouldAssign:
+        isDefined(dirtyFields.workspaceMembers) &&
+        draftRole.canBeAssignedToUsers,
+    });
+    const agentIds = getRoleAssignmentIdsToAdd({
+      draftTargets: draftRole.agents,
+      persistedTargets: persistedRole?.agents ?? [],
+      shouldAssign:
+        isDefined(dirtyFields.agents) && draftRole.canBeAssignedToAgents,
+    });
+    const apiKeyIds = getRoleAssignmentIdsToAdd({
+      draftTargets: draftRole.apiKeys,
+      persistedTargets: persistedRole?.apiKeys ?? [],
+      shouldAssign:
+        isDefined(dirtyFields.apiKeys) && draftRole.canBeAssignedToApiKeys,
+    });
+    const hasAssignments = [workspaceMemberIds, agentIds, apiKeyIds].some(
+      isNonEmptyArray,
+    );
 
-    if (
-      isDefined(dirtyFields.workspaceMembers) &&
-      settingsDraftRole.canBeAssignedToUsers
-    ) {
-      await Promise.all(
-        settingsDraftRole.workspaceMembers.map(({ id: workspaceMemberId }) =>
-          updateWorkspaceMemberRole({
-            variables: { roleId: targetRoleId, workspaceMemberId },
-          }),
-        ),
-      );
+    if (!hasAssignments) {
+      return;
     }
 
-    if (
-      isDefined(dirtyFields.agents) &&
-      settingsDraftRole.canBeAssignedToAgents
-    ) {
-      await Promise.all(
-        settingsDraftRole.agents.map(({ id: agentId }) =>
-          assignRoleToAgent({ variables: { roleId: targetRoleId, agentId } }),
-        ),
-      );
-    }
+    const assignments = [
+      ...workspaceMemberIds.map((workspaceMemberId) =>
+        updateWorkspaceMemberRole({
+          variables: { roleId: targetRoleId, workspaceMemberId },
+        }),
+      ),
+      ...agentIds.map((agentId) =>
+        assignRoleToAgent({ variables: { roleId: targetRoleId, agentId } }),
+      ),
+      ...apiKeyIds.map((apiKeyId) =>
+        assignRoleToApiKey({ variables: { roleId: targetRoleId, apiKeyId } }),
+      ),
+    ];
 
-    if (
-      isDefined(dirtyFields.apiKeys) &&
-      settingsDraftRole.canBeAssignedToApiKeys
-    ) {
-      await Promise.all(
-        settingsDraftRole.apiKeys.map(({ id: apiKeyId }) =>
-          assignRoleToApiKey({ variables: { roleId: targetRoleId, apiKeyId } }),
-        ),
-      );
+    const results = await Promise.allSettled(assignments);
+    await client.query({ query: GET_ROLES, fetchPolicy: 'network-only' });
+
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        throw result.reason;
+      }
     }
   };
 
