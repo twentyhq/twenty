@@ -1,3 +1,4 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
@@ -124,7 +125,7 @@ const buildConditionOutcome = (
 };
 
 const readEverything: PermissionsPrincipalsWithRolesContext = {
-  workspaceId: 'workspace-id',
+  workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   mainPrincipal: {
     type: 'workspaceMember',
     roleId: FULL_ACCESS_ROLE_ID,
@@ -221,6 +222,85 @@ describe('buildPermissionsCondition', () => {
     expect(
       build({ principal: readEverything, flatObjectMetadata: note }),
     ).toEqual({ kind: 'open' });
+  });
+
+  it('denies classified DMs before the pair storage flag without reading pair columns', () => {
+    const conversationTypeField = getFlatFieldMetadataMock({
+      objectMetadataId: person.id,
+      type: FieldMetadataType.SELECT,
+      name: 'conversationType',
+      universalIdentifier:
+        STANDARD_OBJECTS.agentChatThread.fields.conversationType
+          .universalIdentifier,
+    });
+    const policy = buildConditionOutcome({
+      principal: readEverything,
+      metadataMaps: {
+        ...metadataMaps,
+        flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: conversationTypeField,
+          flatEntityMaps: createEmptyFlatEntityMaps(),
+        }),
+      },
+      tableAlias: 'thread',
+      flatObjectMetadata: person,
+      operationType: 'select',
+    });
+
+    if (policy.kind !== 'gated') {
+      throw new Error(
+        doNotTranslate('Expected the conversation type boundary'),
+      );
+    }
+
+    expect(policy.condition.sql).toContain(
+      '"thread"."conversationType" IS DISTINCT FROM \'DIRECT_MESSAGE\'',
+    );
+    expect(policy.condition.sql).not.toContain(
+      'directMessageFirstWorkspaceMemberId',
+    );
+  });
+
+  it('requires normal parent permissions in the child DM boundary', () => {
+    const message = {
+      ...buildObject({ id: 'message' }),
+      universalIdentifier: STANDARD_OBJECTS.agentMessage.universalIdentifier,
+    };
+    const policy = buildConditionOutcome({
+      principal: readEverything,
+      metadataMaps: {
+        ...sharingMetadataMaps,
+        flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: person,
+          flatEntityMaps: createEmptyFlatEntityMaps(),
+        }),
+        rolesPermissions: {
+          [FULL_ACCESS_ROLE_ID]: {
+            ...fullAccessByObjectId,
+            [message.id]: fullAccess,
+          },
+        },
+        featureFlagsMap: {
+          ...sharingMetadataMaps.featureFlagsMap,
+          [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: true,
+        },
+      },
+      tableAlias: 'message',
+      flatObjectMetadata: message,
+      operationType: 'select',
+    });
+
+    if (policy.kind !== 'gated') {
+      throw new Error(doNotTranslate('Expected the parent DM access boundary'));
+    }
+
+    expect(policy.condition.sql).toContain(
+      '"directMessagePermissionThread"."id" = "message"."threadId"',
+    );
+    expect(policy.condition.sql).toContain(
+      '"directMessagePermissionThread"."_isPrivate" = FALSE',
+    );
+    expect(Object.values(policy.condition.parameters)).toContain(person.id);
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
