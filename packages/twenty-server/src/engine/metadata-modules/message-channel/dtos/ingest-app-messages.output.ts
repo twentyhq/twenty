@@ -13,6 +13,10 @@ export class IngestedAppMessageDTO {
 
   @Field(() => UUIDScalarType)
   messageThreadId: string;
+
+  // lets the app skip downloading files a previous delivery already stored
+  @Field()
+  hasAttachments: boolean;
 }
 
 @ObjectType('IngestAppMessagesOutput')

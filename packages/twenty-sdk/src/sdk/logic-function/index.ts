@@ -69,9 +69,11 @@ export { updateMessageChannel } from '@/sdk/logic-function/messaging/update-mess
 export type { UpdateMessageChannelInput } from '@/sdk/logic-function/messaging/update-message-channel';
 export { deleteMessageChannel } from '@/sdk/logic-function/messaging/delete-message-channel';
 export { ingestMessages } from '@/sdk/logic-function/messaging/ingest-messages';
+export { uploadMessageAttachment } from '@/sdk/logic-function/messaging/upload-message-attachment';
 export type {
   IngestedMessage,
   IngestMessage,
+  IngestMessageAttachment,
   IngestMessageParticipant,
 } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';

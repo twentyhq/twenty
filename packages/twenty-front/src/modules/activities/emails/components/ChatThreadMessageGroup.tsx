@@ -1,11 +1,18 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import Linkify from 'linkify-react';
+import { Fragment } from 'react';
 
+import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { StyledChatMessageBubble } from '@/activities/emails/components/StyledChatMessageBubble';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
-import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldValueRestricted,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { MessageChannelVisibility } from '~/generated/graphql';
 import { beautifyExactDateTime } from '~/utils/date-utils';
@@ -51,23 +58,39 @@ export const ChatThreadMessageGroup = ({
           )}
         </StyledSenderRow>
       )}
-      {group.messages.map((message) =>
-        isFieldValueRestricted(message.text) ? (
-          <EmailThreadNotShared
-            key={message.id}
-            visibility={MessageChannelVisibility.METADATA}
-          />
-        ) : (
-          <StyledChatMessageBubble
-            key={message.id}
-            isOutgoing={group.isOutgoing}
-          >
-            <Linkify options={{ target: '_blank', rel: 'noopener noreferrer' }}>
-              {message.text}
-            </Linkify>
-          </StyledChatMessageBubble>
-        ),
-      )}
+      {group.messages.map((message) => {
+        if (isFieldValueRestricted(message.text)) {
+          return (
+            <EmailThreadNotShared
+              key={message.id}
+              visibility={MessageChannelVisibility.METADATA}
+            />
+          );
+        }
+
+        const attachments = message.attachments ?? [];
+
+        return (
+          <Fragment key={message.id}>
+            {(isNonEmptyString(message.text) ||
+              !isNonEmptyArray(attachments)) && (
+              <StyledChatMessageBubble isOutgoing={group.isOutgoing}>
+                <Linkify
+                  options={{ target: '_blank', rel: 'noopener noreferrer' }}
+                >
+                  {message.text}
+                </Linkify>
+              </StyledChatMessageBubble>
+            )}
+            {attachments.map((attachment) => (
+              <ChatThreadMessageAttachment
+                key={attachment.fileId}
+                file={attachment}
+              />
+            ))}
+          </Fragment>
+        );
+      })}
     </StyledGroup>
   );
 };

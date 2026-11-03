@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
@@ -476,6 +477,33 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIEditable: false,
       defaultValue: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  attachments: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'attachments',
+      type: FieldMetadataType.FILES,
+      label: i18nLabel(
+        msg({ message: `Attachments`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Files attached to the message`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconPaperclip',
+      isNullable: true,
+      isUIEditable: false,
+      settings: {
+        maxNumberOfValues: MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

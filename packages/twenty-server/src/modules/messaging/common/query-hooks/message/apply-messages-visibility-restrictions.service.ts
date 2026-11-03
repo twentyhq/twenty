@@ -19,7 +19,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
-const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text'];
+const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text', 'attachments'];
 
 @Injectable()
 export class ApplyMessagesVisibilityRestrictionsService
@@ -67,6 +67,10 @@ export class ApplyMessagesVisibilityRestrictionsService
 
       if ('text' in message) {
         message.text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+      }
+
+      if ('attachments' in message) {
+        message.attachments = [];
       }
 
       if (!subjectVisibleMessageIds.has(message.id) && 'subject' in message) {

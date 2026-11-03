@@ -32,6 +32,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **Message attachments in `twenty-sdk/logic-function`.** `uploadMessageAttachment({ filename, content })` uploads a file into the new Message **Attachments** field and returns `{ fileId, label }`, which `ingestMessages` takes in a message's `attachments`. Files are stored only while the message has none, so a later delivery can add them but never replaces them, and each `IngestedMessage` now reports `hasAttachments` so a redelivery can skip downloading them again. Uploading needs the `UPLOAD_FILE` permission flag on the app's role, and a Twenty server that has the Message **Attachments** field.
 - **`sendInboxMessage` in `twenty-sdk/front-component`.** A front component can post in members' inbox without a logic function in between. The message is still from your app; the call carries the component's token, so the member looking at the page needs the AI permission too, and an expired token is refreshed once before the call is retried. Open the conversation with `navigate`:
 
   ```tsx

@@ -14,6 +14,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -59,6 +60,20 @@ export class AppMessageParticipantInput {
   @IsOptional()
   @IsUUID()
   workspaceMemberId?: string;
+}
+
+@InputType('AppMessageAttachmentInput')
+export class AppMessageAttachmentInput {
+  // from completeFileUpload on the message attachments field
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  fileId: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  label: string;
 }
 
 @InputType('AppMessageInput')
@@ -110,6 +125,15 @@ export class AppMessageInput {
   @IsNotEmpty({ each: true })
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
+
+  // stored only while the message has none, so a later delivery can add files without replacing them
+  @Field(() => [AppMessageAttachmentInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES)
+  @ValidateNested({ each: true })
+  @Type(() => AppMessageAttachmentInput)
+  attachments?: AppMessageAttachmentInput[];
 }
 
 @InputType('IngestAppMessagesInput')
