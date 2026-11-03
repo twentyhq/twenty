@@ -139,17 +139,47 @@ describe('createCreateCompleteWorkflowTool', () => {
     });
   });
 
-  it('refuses CODE steps without creating anything', async () => {
+  it('refuses CODE steps without inline code, creating nothing', async () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = await tool.execute(
-      buildInput({ steps: [buildStep({ type: 'CODE' })] }),
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: { logicFunctionId: STEP_ID, logicFunctionInput: {} },
+          }),
+        ],
+      }),
     );
 
     expect(result.success).toBe(false);
     expect(
       coreWorkflowMutationService.createWorkflowWithContent,
     ).not.toHaveBeenCalled();
+  });
+
+  it('creates CODE steps carrying their source inline', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    const result = await tool.execute(
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'CODE',
+            input: {
+              code: 'export const main = async () => ({});',
+              logicFunctionInput: {},
+            },
+          }),
+        ],
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).toHaveBeenCalled();
   });
 
   it('creates AI_AGENT steps, which need no agent', async () => {
