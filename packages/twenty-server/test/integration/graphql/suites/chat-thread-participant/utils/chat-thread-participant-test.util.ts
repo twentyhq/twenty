@@ -338,7 +338,7 @@ export const setUpChatThreadParticipantTests = () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
-    await removeAgentChatSnoozeEndJobs();
+    await removeAgentChatSnoozeEndJobs({ threadIds: createdThreadIds });
 
     for (const manualShare of enabledManualShares.splice(0)) {
       await setShareWithMember({ ...manualShare, enabled: false });

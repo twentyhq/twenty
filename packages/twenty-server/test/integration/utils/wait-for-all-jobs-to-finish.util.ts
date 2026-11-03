@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq';
+import { type Job, Queue } from 'bullmq';
 import IORedis from 'ioredis';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -223,10 +223,10 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
 
 export const removeDelayedJobs = async ({
   queueName,
-  jobNames,
+  shouldRemove,
 }: {
   queueName: MessageQueue;
-  jobNames: string[];
+  shouldRemove: (job: Job) => boolean;
 }): Promise<void> => {
   const queue = getQueues().find(({ name }) => name === queueName);
 
@@ -237,9 +237,16 @@ export const removeDelayedJobs = async ({
   const delayedJobs = await queue.getDelayed();
 
   await Promise.all(
-    delayedJobs
-      .filter((job) => jobNames.includes(job.name))
-      .map((job) => job.remove().catch(() => undefined)),
+    delayedJobs.filter(shouldRemove).map(async (job) => {
+      try {
+        await job.remove();
+      } catch (error) {
+        // Promoted or removed since it was listed
+        if (await job.isDelayed()) {
+          throw error;
+        }
+      }
+    }),
   );
 };
 

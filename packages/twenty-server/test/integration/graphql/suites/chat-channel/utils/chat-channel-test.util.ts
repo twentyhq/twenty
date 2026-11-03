@@ -555,7 +555,7 @@ export const setUpChatChannelTests = () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
-    await removeAgentChatSnoozeEndJobs();
+    await removeAgentChatSnoozeEndJobs({ threadIds: createdThreadIds });
 
     const orphanedThreadCount =
       await countThreadsInDeletedChannels(createdChannelIds);
