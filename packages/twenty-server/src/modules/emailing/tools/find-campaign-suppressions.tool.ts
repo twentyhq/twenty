@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
@@ -8,6 +7,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
 const findCampaignSuppressionsInputSchema = z.object({
@@ -32,7 +32,7 @@ const findCampaignSuppressionsInputSchema = z.object({
 @DefineTool({
   name: 'find_campaign_suppressions',
   category: ToolCategory.ACTION,
-  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  accessPolicy: MESSAGE_CAMPAIGN_READ_ACCESS_POLICY,
   description:
     'List the email addresses that campaigns skip: bounces, spam complaints, unsubscribes (global or per topic) and tracking opt-outs, newest first. ' +
     'Use it to explain why someone is not receiving campaigns. Read only: suppressions can only be removed from the settings page.',

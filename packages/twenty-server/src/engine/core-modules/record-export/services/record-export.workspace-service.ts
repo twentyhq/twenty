@@ -494,7 +494,7 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportAuthContext> {
     if (
       !isApiKeyAuthContext(authContext) &&
-      (!isUserAuthContext(authContext) || isDefined(authContext.viaApplication))
+      (!isUserAuthContext(authContext) || isDefined(authContext.agentId))
     ) {
       throw new ForbiddenException(t`Sign in to export records.`);
     }
@@ -517,9 +517,7 @@ export class RecordExportWorkspaceService {
         applicationId: isUserAuthContext(authContext)
           ? authContext.application?.id
           : undefined,
-        agentId: isUserAuthContext(authContext)
-          ? authContext.agentId
-          : undefined,
+        agentId: undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
@@ -608,6 +606,7 @@ export class RecordExportWorkspaceService {
         userWorkspaceId: userWorkspace.id,
         workspaceMember,
         workspaceMemberId: workspaceMember.id,
+        userSessionVariant: 'standard',
         application,
       }),
     );

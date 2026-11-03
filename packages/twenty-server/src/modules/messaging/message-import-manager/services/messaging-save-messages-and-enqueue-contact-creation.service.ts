@@ -290,9 +290,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () =>
         this.workspaceOrmManager
-          .getRepository<MessageParticipantWorkspaceEntity>(
+          .getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
-            { shouldBypassPermissionChecks: true },
           )
           .find({ where: { messageId: Any(messageIds), personId: IsNull() } }),
       buildSystemAuthContext(workspaceId),

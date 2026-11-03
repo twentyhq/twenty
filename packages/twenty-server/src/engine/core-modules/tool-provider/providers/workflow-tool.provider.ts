@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -46,11 +47,10 @@ export class WorkflowToolProvider implements ToolProvider {
       return false;
     }
 
-    return this.permissionsService.checkRolesPermissions(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.WORKFLOWS,
-    );
+    return this.permissionsService.hasPermissionFlag({
+      authContext: context.authContext,
+      setting: PermissionFlagType.WORKFLOWS,
+    });
   }
 
   async generateDescriptors(
@@ -99,13 +99,13 @@ export class WorkflowToolProvider implements ToolProvider {
   private async buildToolSet(
     context: ToolProviderContext,
   ): Promise<ToolSet | null> {
-    if (!this.workflowToolService) {
+    if (!this.workflowToolService || !isDefined(context.authContext)) {
       return null;
     }
 
     return this.workflowToolService.generateWorkflowTools({
       workspaceId: context.workspaceId,
-      rolePermissionConfig: context.rolePermissionConfig,
+      authContext: context.authContext,
       userWorkspaceId: context.userWorkspaceId,
     });
   }

@@ -29,14 +29,33 @@ export const buildFrontComponentEntrySource = ({
     });
   }
 
-  return `import { defineFrontComponent } from 'twenty-sdk/define';
-import { ThemeProvider as TwentyThemeProvider } from 'twenty-ui/theme';
+  return `import { useSyncExternalStore as useTwentySyncExternalStore } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  THEME_DARK as TWENTY_THEME_DARK,
+  THEME_LIGHT as TWENTY_THEME_LIGHT,
+  ThemeProvider as TwentyThemeProvider,
+} from 'twenty-ui/theme';
 import { PageLayoutType as TwentyPageLayoutType } from 'twenty-shared/types';
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 ${source}
+const TWENTY_DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+function subscribeToTwentyColorScheme(onColorSchemeChange: () => void) {
+  const mediaQueryList = window.matchMedia(TWENTY_DARK_COLOR_SCHEME_QUERY);
+  mediaQueryList.addEventListener('change', onColorSchemeChange);
+  return () => mediaQueryList.removeEventListener('change', onColorSchemeChange);
+}
+function getTwentyColorScheme(): 'light' | 'dark' {
+  return window.matchMedia(TWENTY_DARK_COLOR_SCHEME_QUERY).matches ? 'dark' : 'light';
+}
 function ${FRONT_COMPONENT_WRAPPER_NAME}() {
-  return <TwentyThemeProvider colorScheme="light"><Component /></TwentyThemeProvider>;
+  const colorScheme = useTwentySyncExternalStore(subscribeToTwentyColorScheme, getTwentyColorScheme);
+  return (
+    <TwentyThemeProvider colorScheme={colorScheme} theme={colorScheme === 'dark' ? TWENTY_THEME_DARK : TWENTY_THEME_LIGHT}>
+      <Component />
+    </TwentyThemeProvider>
+  );
 }
 export default defineFrontComponent({
   universalIdentifier: ${JSON.stringify(componentId)},

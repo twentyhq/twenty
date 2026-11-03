@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -12,6 +11,7 @@ import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/uti
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
+import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-read-access-policy.constant';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 type InlinedObjectFieldSummary = {
@@ -63,7 +63,7 @@ const getObjectMetadataInputSchema = z.object({
 @DefineTool({
   name: 'get_object_metadata',
   category: ToolCategory.METADATA,
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  accessPolicy: OBJECT_METADATA_READ_ACCESS_POLICY,
   icon: 'IconSettings',
   description:
     "List object metadata, returned as { objects: [...] } in the result. Filter to a single object by id or objectName (singular or plural). Set includeFields to also return each object's fields ({id, name, type, label}) — enough to build a dashboard or view without a separate get_field_metadata call. System objects are otherwise returned as compact {id, nameSingular, namePlural}. Keep includeFullSystemObjects at its default (false); only set it true when you specifically need a system object's full configuration.",

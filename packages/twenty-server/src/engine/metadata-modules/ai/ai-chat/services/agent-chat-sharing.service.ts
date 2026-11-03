@@ -196,9 +196,7 @@ export class AgentChatSharingService {
     // batches that stay well under PostgreSQL's parameter limit
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          'agentChatThread',
-        );
+        this.workspaceOrmManager.getRepository('agentChatThread');
       const readableThreadIds: string[] = [];
 
       for (const threadIdBatch of chunk(
@@ -325,13 +323,13 @@ export class AgentChatSharingService {
     const admittedMemberIds = new Set(
       (
         await Promise.all(
-          [...roleIdByMemberId.entries()].map(async ([memberId, roleId]) => {
+          [...roleIdByMemberId.keys()].map(async (memberId) => {
             const grants = await Promise.all(
               AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
                 this.recordAccessPolicyService.hasAccessToRecords({
-                  principal: {
-                    workspaceId,
-                    roleIds: [roleId],
+                  authContext: {
+                    type: 'user',
+                    workspace: { id: workspaceId },
                     workspaceMemberId: memberId,
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
@@ -466,7 +464,7 @@ export class AgentChatSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
+          .getRepository('agentChatThread')
           .validateWriteIsPermitted({
             operationType: 'insert',
             columnsToReturn: ['id'],
@@ -686,7 +684,7 @@ export class AgentChatSharingService {
     operationType: OperationType,
   ): Promise<void> {
     const allowedIds = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions('agentChatThread')
+      .getRepository('agentChatThread')
       .findRecordIdsAllowedForOperation({
         recordIds: [threadId],
         operationType,

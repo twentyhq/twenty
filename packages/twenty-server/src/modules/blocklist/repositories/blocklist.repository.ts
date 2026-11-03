@@ -22,12 +22,10 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const blockListRepository = this.workspaceOrmManager.getRepository(
-        BlocklistWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+      const blockListRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          BlocklistWorkspaceEntity,
+        );
 
       return blockListRepository.findOne({
         where: { id },
@@ -50,12 +48,10 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const blockListRepository = this.workspaceOrmManager.getRepository(
-        BlocklistWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+      const blockListRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          BlocklistWorkspaceEntity,
+        );
 
       return blockListRepository.find({
         where: { id: In(ids) },
@@ -121,10 +117,10 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const blockListRepository = this.workspaceOrmManager.getRepository(
-        BlocklistWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const blockListRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          BlocklistWorkspaceEntity,
+        );
 
       return blockListRepository.find({ where });
     }, authContext);

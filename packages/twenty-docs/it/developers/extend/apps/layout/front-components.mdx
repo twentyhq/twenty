@@ -133,6 +133,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -152,8 +153,17 @@ Dichiarane quante te ne servono. La voce **Generale** di Twenty — aggiornament
 | `icon` *(facoltativo)*              | Nome dell'icona, risolto lato client; un nome sconosciuto usa un valore predefinito          |
 | `position` *(facoltativo)*          | Ordine di ordinamento, crescente. Il valore predefinito è `0`                                |
 | `scope` *(facoltativo)*             | `WORKSPACE` (predefinito) o `USER`                                                           |
+| `slug` *(facoltativo)*              | L'ID della scheda nell'URL della pagina, ad es. `#sync`. Vedi [URL delle schede](#tab-urls)  |
 
 `position` è un valore decimale, quindi una voce può essere inserita tra due voci esistenti senza rinumerarle. Le voci vengono ordinate per `position` crescente, con i pareggi risolti in base a `universalIdentifier`, così l'ordine è lo stesso in ogni workspace. Due voci della stessa app non possono condividere una posizione nello stesso ambito: la sincronizzazione lo rifiuta anziché lasciare che sia l'ordine di installazione a decidere quale venga visualizzata per prima.
+
+### URL delle schede
+
+La scheda di ciascun elemento è identificata da un hash nell'URL della pagina, quindi puoi collegarti direttamente a essa, ad esempio `/settings/applications/\<applicationId>#sync` o `/settings/app-preferences/\<applicationId>#sync`. Imposta `slug` per scegliere quell'hash; senza di esso, la scheda è identificata da `universalIdentifier` dell'elemento. L'aggiunta successiva di uno slug mantiene funzionanti i link che utilizzano `universalIdentifier`: aprono la stessa scheda.
+
+Uno slug è in kebab-case minuscolo (lettere, cifre e trattini singoli, ad esempio `sync` o `sync-settings`) e contiene al massimo 64 caratteri. `general` e `variables` sono riservati alle schede integrate, uno slug in formato UUID viene rifiutato perché potrebbe oscurare il link di un'altra scheda e due elementi della stessa app non possono condividere uno slug, nemmeno in ambiti diversi. Sia la build sia la sincronizzazione rifiutano uno slug che viola queste regole.
+
+Dopo che un membro collega o ricollega un account in **Impostazioni > Preferenze dell'app**, viene indirizzato alla prima scheda dell'elemento `USER` dell'app, in ordine di `position`, oppure a **Generali** quando l'app non ne dichiara alcuno.
 
 ### Ambito workspace e utente
 

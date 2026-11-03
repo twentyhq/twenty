@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -9,6 +8,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { updateViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/update-view-field-input.schema';
 import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 
 const updateManyViewFieldsInputSchema = z.object({
   viewFields: z
@@ -21,7 +21,7 @@ const updateManyViewFieldsInputSchema = z.object({
 @DefineTool({
   name: 'update_many_view_fields',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
   description:
     'Update multiple columns in a view at once. More efficient than calling update_view_field multiple times. Each item must include the view field ID and properties to update. Same constraints as update_view_field apply to each item.',
 })

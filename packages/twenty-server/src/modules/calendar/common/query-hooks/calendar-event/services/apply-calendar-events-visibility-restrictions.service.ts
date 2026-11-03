@@ -95,9 +95,8 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
-            .getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+            .getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
               'calendarChannelEventAssociation',
-              { shouldBypassPermissionChecks: true },
             )
             .find({
               where: { calendarEventId: In(calendarEventIds) },

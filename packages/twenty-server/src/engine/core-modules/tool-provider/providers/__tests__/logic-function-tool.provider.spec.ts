@@ -10,7 +10,6 @@ import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 const workspaceId = 'workspace-id';
-const roleId = 'role-id';
 
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER = 'invoice-preview-component';
 const FRONT_COMPONENT_ID = 'front-component-id';
@@ -68,7 +67,6 @@ const generateDescriptors = async (
   return (await provider.generateDescriptors(
     {
       workspaceId,
-      rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: roleId } },
       authContext,
       application,
     },
