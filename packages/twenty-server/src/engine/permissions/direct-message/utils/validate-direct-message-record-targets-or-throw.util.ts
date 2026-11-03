@@ -58,7 +58,13 @@ export const validateDirectMessageRecordTargetsOrThrow = async ({
   const recordBeforeById = new Map(
     recordsBefore.map((recordBefore) => [recordBefore.id, recordBefore]),
   );
-  const isUnchangedLink = (record: RowAccessRecord, joinColumnName: string) => {
+  const isUnchangedLink = ({
+    record,
+    joinColumnName,
+  }: {
+    record: RowAccessRecord;
+    joinColumnName: string;
+  }) => {
     const recordBefore = recordBeforeById.get(record.id);
 
     return (
@@ -76,7 +82,7 @@ export const validateDirectMessageRecordTargetsOrThrow = async ({
     const targetRecordIds = [
       ...new Set(
         directMessageTargets
-          .filter((record) => !isUnchangedLink(record, joinColumnName))
+          .filter((record) => !isUnchangedLink({ record, joinColumnName }))
           .map((record) => record[joinColumnName])
           .filter(isNonEmptyString),
       ),
