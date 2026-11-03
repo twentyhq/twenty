@@ -221,20 +221,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       );
     }
 
-    // an AI step's kind and agent are fixed once it exists: a different agent is a new step
-    if (isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step })) {
-      throw new WorkflowVersionStepException(
-        'An AI step cannot switch between generating and running an agent, or to another agent. Create a new step instead.',
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        {
-          userFriendlyMessage: msg`An AI step cannot change its agent. Create a new step instead.`,
-        },
-      );
-    }
+    // an AI step's kind and agent shape its settings, so switching them rebuilds it like a type change
+    const isStepRebuilt =
+      existingStep.type !== step.type ||
+      isWorkflowAiAgentStepKindChanged({ existingStep, updatedStep: step });
 
-    const isStepTypeChanged = existingStep.type !== step.type;
-
-    const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
+    const { updatedStep, additionalCreatedSteps } = isStepRebuilt
       ? await this.rebuildStepForTypeChange({
           existingStep,
           newStep: step,
@@ -259,7 +251,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         steps: updatedSteps,
       })
       .catch(async (error: unknown) => {
-        if (isStepTypeChanged) {
+        if (isStepRebuilt) {
           const stepsToDelete =
             error instanceof CoreWorkflowVersionPostCommitError
               ? [existingStep]
@@ -280,7 +272,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         throw error;
       });
 
-    if (isStepTypeChanged) {
+    if (isStepRebuilt) {
       await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
         {
           step: existingStep,
