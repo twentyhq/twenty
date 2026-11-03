@@ -83,6 +83,38 @@ describe('SettingsBillingPartnerCodeForm', () => {
     await waitFor(() => expect(setPartnerCodeResult).toHaveBeenCalled());
   });
 
+  it('should show why a code was refused under the field', async () => {
+    renderForm([
+      buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
+      {
+        request: {
+          query: SetBillingPartnerCodeDocument,
+          variables: { partnerCode: 'NORTHWNID' },
+        },
+        result: {
+          errors: [
+            {
+              message: 'Partner code NORTHWNID is not valid',
+              extensions: {
+                userFriendlyMessage: 'This partner code does not exist.',
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    await userEvent.type(
+      await screen.findByLabelText('Partner code'),
+      'NORTHWNID',
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+
+    expect(
+      await screen.findByText('This partner code does not exist.'),
+    ).toBeInTheDocument();
+  });
+
   it('should lock a code that is already set', async () => {
     renderForm([
       buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false }),

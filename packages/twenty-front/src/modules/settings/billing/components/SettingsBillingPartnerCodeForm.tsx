@@ -1,3 +1,4 @@
+import { isErrorLike } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -9,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import {
   BillingPartnerCodeDocument,
   SetBillingPartnerCodeDocument,
@@ -27,8 +29,11 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledHint = styled.span`
-  color: ${themeCssVariables.font.color.light};
+const StyledHint = styled.span<{ isError: boolean }>`
+  color: ${({ isError }) =>
+    isError
+      ? themeCssVariables.font.color.danger
+      : themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
@@ -49,6 +54,7 @@ export const SettingsBillingPartnerCodeForm = ({
   );
 
   const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isDefined(data)) {
     return null;
@@ -65,6 +71,11 @@ export const SettingsBillingPartnerCodeForm = ({
     ? t`Your workspace is linked to this partner. Contact support to change it.`
     : t`A partner code can no longer be added after the first payment. Contact support to add one.`;
 
+  const handleChange = (value: string) => {
+    setDraftPartnerCode(value);
+    setErrorMessage(null);
+  };
+
   const handleApply = async () => {
     if (!canApply) {
       return;
@@ -77,7 +88,11 @@ export const SettingsBillingPartnerCodeForm = ({
       setDraftPartnerCode(null);
       enqueueToast({ status: 'success', children: t`Partner code applied` });
     } catch (error) {
-      enqueueToast(getToastOptionsFromError({ error }));
+      if (isErrorLike(error)) {
+        setErrorMessage(getErrorMessageFromApolloError(error));
+      } else {
+        enqueueToast(getToastOptionsFromError({ error }));
+      }
     }
   };
 
@@ -89,7 +104,9 @@ export const SettingsBillingPartnerCodeForm = ({
           label={t`Partner code`}
           placeholder={t`Optional`}
           value={displayedPartnerCode}
-          onChange={setDraftPartnerCode}
+          onChange={handleChange}
+          error={errorMessage ?? undefined}
+          noErrorHelper
           onInputEnter={handleApply}
           disabled={!isEditable}
         />
@@ -102,8 +119,11 @@ export const SettingsBillingPartnerCodeForm = ({
           >{t`Apply`}</Button>
         )}
       </StyledRow>
-      <StyledHint>
-        {isEditable ? t`Once applied, the code cannot be changed.` : lockedHint}
+      <StyledHint isError={isDefined(errorMessage)}>
+        {errorMessage ??
+          (isEditable
+            ? t`Once applied, the code cannot be changed.`
+            : lockedHint)}
       </StyledHint>
     </StyledContainer>
   );
