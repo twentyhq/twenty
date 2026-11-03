@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +9,7 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -24,6 +25,10 @@ import {
 
 @Injectable()
 export class AgentChatReplyContinuationPolicyService {
+  private readonly logger = new Logger(
+    AgentChatReplyContinuationPolicyService.name,
+  );
+
   @InjectRepository(WorkspaceEntity)
   private readonly workspaceRepository: Repository<WorkspaceEntity>;
 
@@ -45,13 +50,13 @@ export class AgentChatReplyContinuationPolicyService {
   @Inject(AgentChatEventPublisherService)
   private readonly eventPublisherService: AgentChatEventPublisherService;
 
-  async shouldContinue({
+  async findAllowedQueuedMessageIds({
     workspaceId,
     threadId,
   }: {
     workspaceId: string;
     threadId: string;
-  }): Promise<boolean> {
+  }): Promise<string[]> {
     const [workspace, thread, queuedMessages] = await Promise.all([
       this.workspaceRepository.findOneByOrFail({ id: workspaceId }),
       this.threadRepository.findOneOrFail(workspaceId, {
@@ -68,7 +73,7 @@ export class AgentChatReplyContinuationPolicyService {
         relations: ['parts'],
       }),
     ]);
-    let hasAllowedMessage = false;
+    const allowedMessageIds: string[] = [];
     let hasCancelledMessage = false;
 
     for (const message of queuedMessages) {
@@ -90,7 +95,7 @@ export class AgentChatReplyContinuationPolicyService {
       });
 
       if (isExecutionAllowed) {
-        hasAllowedMessage = true;
+        allowedMessageIds.push(message.id);
 
         continue;
       }
@@ -105,14 +110,20 @@ export class AgentChatReplyContinuationPolicyService {
     }
 
     if (hasCancelledMessage) {
-      await this.eventPublisherService.publish({
-        workspaceId,
-        threadId,
-        event: { type: 'queue-updated' },
-      });
+      await this.eventPublisherService
+        .publish({
+          workspaceId,
+          threadId,
+          event: { type: 'queue-updated' },
+        })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not publish workspace-policy queue-updated event for thread ${threadId}: ${formatErrorWithCause(error)}`,
+          ),
+        );
     }
 
-    return hasAllowedMessage;
+    return allowedMessageIds;
   }
 
   private async shouldExecuteMessage({
