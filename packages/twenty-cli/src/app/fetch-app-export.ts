@@ -103,54 +103,56 @@ export const fetchAppExport = async ({
         files: { folder: true, path: true, content: true },
       },
     });
-  const data = await query(shouldIncludeSourceFiles)
-    .catch((error: unknown) => {
-      if (
-        shouldIncludeSourceFiles &&
-        isExportValidationError({
-          error: error,
-          messagePrefix:
-            'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
-        })
-      ) {
-        return query(false);
-      }
-      throw error;
-    })
-    .catch((error: unknown) => {
-      if (isApplicationNotFoundError({ error, field: 'exportApplication' })) {
-        throw createAppNotInstalledError({
-          universalIdentifier,
-          apiUrl: target.apiUrl,
-        });
-      }
-
-      if (
-        isExportValidationError({
-          error: error,
-          messagePrefix:
-            'Cannot query field "exportApplication" on type "Query".',
-        })
-      ) {
-        throw new CliError({
-          code: 'APP_EXPORT_UNSUPPORTED',
-          message: 'This server does not support application export.',
-        });
-      }
-
-      if (isNotExportableError(error)) {
-        throw new CliError({
-          code: 'APP_NOT_EXPORTABLE',
-          message: error.message,
-          hint: 'Only apps developed locally can be pulled: not the standard app, and not apps installed from a package.',
-          details: { universalIdentifier },
-        });
-      }
-
-      throw error;
+  try {
+    const data = await query(shouldIncludeSourceFiles).catch(
+      (error: unknown) => {
+        if (
+          shouldIncludeSourceFiles &&
+          isExportValidationError({
+            error,
+            messagePrefix:
+              'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
+          })
+        ) {
+          return query(false);
+        }
+        throw error;
+      },
+    );
+    return parseAppExport({
+      value: data?.exportApplication,
+      universalIdentifier,
     });
-  return parseAppExport({
-    value: data?.exportApplication,
-    universalIdentifier,
-  });
+  } catch (error) {
+    if (isApplicationNotFoundError({ error, field: 'exportApplication' })) {
+      throw createAppNotInstalledError({
+        universalIdentifier,
+        apiUrl: target.apiUrl,
+      });
+    }
+
+    if (
+      isExportValidationError({
+        error,
+        messagePrefix:
+          'Cannot query field "exportApplication" on type "Query".',
+      })
+    ) {
+      throw new CliError({
+        code: 'APP_EXPORT_UNSUPPORTED',
+        message: 'This server does not support application export.',
+      });
+    }
+
+    if (isNotExportableError(error)) {
+      throw new CliError({
+        code: 'APP_NOT_EXPORTABLE',
+        message: error.message,
+        hint: 'Only apps developed locally can be pulled: not the standard app, and not apps installed from a package.',
+        details: { universalIdentifier },
+      });
+    }
+
+    throw error;
+  }
 };

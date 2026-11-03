@@ -36,11 +36,9 @@ ${definition}`),
     expect(check(`${importSource}\n${definition}`)).toBeDefined();
   });
   it.each(['const broken = ;', 'const Component = () => <div><span></div>;'])(
-    'rejects malformed TSX: %s',
+    'leaves source syntax validation to the app build: %s',
     (invalidSource) => {
-      expect(check(`${invalidSource}\n${definition}`)).toBe(
-        'source contains syntax errors',
-      );
+      expect(check(`${invalidSource}\n${definition}`)).toBeUndefined();
     },
   );
   it('rejects computed metadata keys', () => {
