@@ -1,3 +1,4 @@
+import { coreAgentsDeleteTargetFamilyState } from '@/object-core/agents/states/coreAgentsDeleteTargetFamilyState';
 import { EMPTY_CORE_AGENTS_SELECTION } from '@/object-core/agents/constants/EmptyCoreAgentsSelection';
 import { coreAgentsSelectionFamilyState } from '@/object-core/agents/states/coreAgentsSelectionFamilyState';
 import { coreAgentsSelectionOwnerCountFamilyState } from '@/object-core/agents/states/coreAgentsSelectionOwnerCountFamilyState';
@@ -43,5 +44,6 @@ export const releaseCoreAgentsSelectionIfUnowned = ({
     coreAgentsSelectionFamilyState.getAtom(tableId, null),
     EMPTY_CORE_AGENTS_SELECTION,
   );
+  store.set(coreAgentsDeleteTargetFamilyState.getAtom(tableId, null), []);
   closeDialog(getCoreAgentsDeleteDialogId(tableId));
 };
