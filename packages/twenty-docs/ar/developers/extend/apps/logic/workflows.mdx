@@ -110,7 +110,13 @@ export default defineWorkflow({
 * تأخذ معاملات عامل التصفية قيم `ViewFilterOperand`، المُصدَّرة بواسطة `twenty-sdk/define`. تأخذ عوامل مجموعات التصفية قيماً نصية مثل `'AND'` أو `'OR'`.
 * تسمي حقول النموذج من النوع `RECORD` كائنها باستخدام `settings.objectUniversalIdentifier`. توفّر الحقول من النوعين `SELECT` و`MULTI_SELECT` خيارات حقل موجود من النوع نفسه، تمت تسميته باستخدام `settings.selectedFieldUniversalIdentifier`.
 * لتشغيل التعليمات البرمجية الخاصة بك، استخدم خطوة `LOGIC_FUNCTION`. خطوة التعليمات البرمجية في المنشئ غير متاحة.
-* تشغّل خطوات `AI_AGENT` أحد وكلاء تطبيقك، المُسمّى باستخدام `agentUniversalIdentifier`، وتستخدم إعدادات خطوة أداة الإنشاء التالية: `prompt` و`responseFormat` و`humanInputInstructions` و`conversation` و`workspaceMemberId` للعضو الذي تجري محادثة الوكيل معه.
+* تأتي خطوات `AI_AGENT` بنوعين لا يمكنك مزجهما:
+
+  * لا تحتوي خطوة Generate على وكيل. تحمل `instructions` و`modelId` و`modelConfiguration` و`scope` الخاصة بها، وتعمل مرة واحدة: دون محادثة أو إدخال بشري أو انتظار.
+  * تشغّل خطوة Agent أحد وكلاء تطبيقك، الذي يُسمّى باستخدام `agentUniversalIdentifier`، ويحمل تعليماته ونموذجه وأذوناته الخاصة. لا تقبل سوى خطوة Agent كلاً من `humanInputInstructions` و`conversation`.
+
+  يأخذ كلا النوعين `prompt` و`responseFormat` الخاصين بالمنشئ، و`workspaceMemberId` لعضو مساحة العمل الذي يجري الوكيل معه محادثته.
+* يقبل `scope` الخاص بخطوة `AI_AGENT` أذونات دور من دون هويته أو مسنداته على مستوى الصف: `canReadAllObjectRecords` و`objectPermissions` و`fieldPermissions` بحسب المعرّف الشامل، و`permissionFlagUniversalIdentifiers`، وما إلى ذلك. إنه يقيّد فقط: لا يمكن للذكاء الاصطناعي الخاص بالخطوة أبدًا الوصول إلى أكثر مما يمكن لمن يشغّل سير العمل الوصول إليه. يُفسَّر كدور تكون فيه علامات جميع السجلات معطّلة افتراضيًا: تُرفض إجراءات الكائنات وعلامات الأذونات التي لا يمنحها، وتظل كائنات النظام قابلة للقراءة ما لم يمنح المزيد، ويتبع الحقل الذي لا يدرجه كائنه. لا تحصل خطوة Generate التي لا تحتوي على `scope` على أي أدوات بيانات؛ وتعمل خطوة Agent بدور وكيلها.
 * لا تعمل خطوات البريد الإلكتروني والتقويم إلا إذا كان دور تطبيقك يتضمن علامة الإذن المطابقة: `SystemPermissionFlag.SEND_EMAIL_TOOL` لـ `SEND_EMAIL` و`DRAFT_EMAIL`، و`SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` لـ `CREATE_CALENDAR_EVENT`. تمنحها مساحة العمل عند تثبيت التطبيق، ويمكن للخطوة بعد ذلك استخدام أي حساب متصل في مساحة العمل، مثل سير عمل تم إنشاؤه في التطبيق.
 * معرّفات الحسابات المتصلة محلية لكل مساحة عمل، لذا لا تضمّن أحدها بصورة ثابتة. سمِّ الحساب بإحدى الطريقتين التاليتين:
 
