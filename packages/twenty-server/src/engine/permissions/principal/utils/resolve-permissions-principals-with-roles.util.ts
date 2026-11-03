@@ -23,6 +23,7 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/is-permission-main-principal-workspace-member.util';
 
 export type PermissionsPrincipalsRoleMaps = {
   flatWorkspaceMemberMaps: {
@@ -149,10 +150,9 @@ const resolveApplicationPrincipal = ({
 
   const applicationRoleId = resolveApplicationRoleId({
     application: flatApplication,
-    userRoleId:
-      mainPrincipal.type === 'workspaceMember'
-        ? mainPrincipal.roleId
-        : undefined,
+    userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
+      ? mainPrincipal.roleId
+      : undefined,
   });
 
   return isDefined(applicationRoleId)

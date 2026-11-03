@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/is-permission-main-principal-workspace-member.util';
 
 // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
 export const getPermissionsPrincipalsActingApplicationId = ({
@@ -24,7 +25,7 @@ export const getPermissionsPrincipalsActingApplicationId = ({
 
   if (
     applicationPrincipal.type === 'customApplication' ||
-    (mainPrincipal.type === 'workspaceMember' &&
+    (isPermissionMainPrincipalWorkspaceMember(mainPrincipal) &&
       applicationPrincipal.roleId === mainPrincipal.roleId) ||
     applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
