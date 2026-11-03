@@ -38,6 +38,7 @@ export const SelectModelAndEffort: Story = {
     await userEvent.click(
       await body.findByRole('option', { name: /^Reasoning One/ }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(1);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
       'story/reasoning-one',
     );
@@ -46,6 +47,7 @@ export const SelectModelAndEffort: Story = {
       await canvas.findByRole('button', { name: 'Default' }),
     );
     await userEvent.click(await body.findByRole('option', { name: 'High' }));
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(2);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
       'story/reasoning-one@high',
     );
@@ -56,6 +58,7 @@ export const SelectModelAndEffort: Story = {
     await userEvent.click(
       await body.findByRole('option', { name: /^Reasoning Two/ }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(3);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
       'story/reasoning-two@high',
     );
@@ -67,6 +70,7 @@ export const SelectModelAndEffort: Story = {
     await userEvent.click(
       await body.findByRole('option', { name: /^Fast Model/ }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(4);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith('story/fast');
     await expect(
       canvas.queryByRole('button', { name: 'High' }),
@@ -76,6 +80,7 @@ export const SelectModelAndEffort: Story = {
     await userEvent.click(
       await body.findByRole('option', { name: /^Balanced/ }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(5);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
       AUTO_SELECT_MODEL_ID_BY_TIER.balanced,
     );
@@ -86,6 +91,7 @@ export const SelectModelAndEffort: Story = {
         name: 'Workspace default · Balanced',
       }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(6);
     await expect(args.onModelIdChange).toHaveBeenLastCalledWith(
       AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     );
@@ -103,14 +109,18 @@ export const MissingPinnedModel: Story = {
         name: 'story/retired (unavailable)',
       }),
     );
-    await expect(
-      await body.findByRole('option', { name: 'story/retired (unavailable)' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    const unavailableModel = await body.findByRole('option', {
+      name: 'story/retired (unavailable)',
+    });
+
+    await expect(unavailableModel).toBeDisabled();
+    await userEvent.click(unavailableModel);
     await expect(args.onModelIdChange).not.toHaveBeenCalled();
 
     await userEvent.click(
       body.getByRole('option', { name: 'Workspace default · Balanced' }),
     );
+    await expect(args.onModelIdChange).toHaveBeenCalledTimes(1);
     await expect(args.onModelIdChange).toHaveBeenCalledWith(
       AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     );
@@ -136,6 +146,7 @@ export const CapabilitiesForReasoningVariant: Story = {
     ).not.toBeInTheDocument();
     await userEvent.click(webSearch);
     await expect(webSearch).toBeChecked();
+    await expect(args.onConfigurationChange).toHaveBeenCalledTimes(1);
     await expect(args.onConfigurationChange).toHaveBeenCalledWith({
       webSearch: { enabled: true, configuration: { maximumResults: 3 } },
       twitterSearch: { enabled: true, configuration: { language: 'en' } },
