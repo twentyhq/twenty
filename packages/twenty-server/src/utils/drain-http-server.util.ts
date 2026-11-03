@@ -15,13 +15,19 @@ export const drainHttpServer = async ({
     () => server.closeIdleConnections(),
     IDLE_CONNECTIONS_CLOSE_INTERVAL_MS,
   );
-  const closeAllConnectionsTimeout = setTimeout(
-    () => server.closeAllConnections(),
-    drainTimeoutMs,
-  );
 
-  await new Promise((resolve) => server.close(resolve));
+  await new Promise<void>((resolve) => {
+    // closeAllConnections() misses sockets mid TLS handshake or upgraded, so stop waiting on them too.
+    const drainTimeout = setTimeout(() => {
+      server.closeAllConnections();
+      resolve();
+    }, drainTimeoutMs);
+
+    server.close(() => {
+      clearTimeout(drainTimeout);
+      resolve();
+    });
+  });
 
   clearInterval(closeIdleConnectionsInterval);
-  clearTimeout(closeAllConnectionsTimeout);
 };

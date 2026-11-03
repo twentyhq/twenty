@@ -1,5 +1,7 @@
 import { once } from 'events';
 import { createServer, type Server, type ServerResponse } from 'http';
+import { connect } from 'net';
+import { type Duplex } from 'stream';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -70,4 +72,33 @@ describe('drainHttpServer', () => {
     await drainHttpServer({ server, drainTimeoutMs: 50 });
     await bodyRejected;
   });
+
+  it('stops waiting at the deadline for sockets the HTTP layer no longer tracks', async () => {
+    const server = createServer();
+    let upgradedSocket: Duplex | undefined;
+
+    server.on('upgrade', (_request, socket) => {
+      upgradedSocket = socket;
+      socket.write(
+        'HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: test\r\n\r\n',
+      );
+    });
+
+    const url = new URL(await listen(server));
+    const client = connect(Number(url.port), url.hostname);
+
+    try {
+      const upgraded = once(client, 'data');
+
+      client.write(
+        'GET / HTTP/1.1\r\nHost: localhost\r\nConnection: Upgrade\r\nUpgrade: test\r\n\r\n',
+      );
+      await upgraded;
+
+      await drainHttpServer({ server, drainTimeoutMs: 50 });
+    } finally {
+      client.destroy();
+      upgradedSocket?.destroy();
+    }
+  }, 3_000);
 });
