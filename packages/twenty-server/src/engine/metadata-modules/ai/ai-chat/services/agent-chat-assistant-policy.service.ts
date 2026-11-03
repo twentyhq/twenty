@@ -7,9 +7,13 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
+import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
+import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -20,11 +24,7 @@ type AssistantPolicyThread = Pick<
   | 'channelId'
   | 'workspaceMemberId'
   | 'writerWorkspaceMemberIds'
->;
-
-type AssistantPolicyWorkspace = Pick<
-  WorkspaceEntity,
-  'aiChatDirectMessageAssistantMode' | 'aiChatInboxAssistantMode'
+  | 'isAssistantParticipant'
 >;
 
 @Injectable()
@@ -41,42 +41,122 @@ export class AgentChatAssistantPolicyService {
   @Inject(RecordShareStorageService)
   private readonly recordShareStorageService: RecordShareStorageService;
 
+  @Inject(AgentChatSharingService)
+  private readonly sharingService: AgentChatSharingService;
+
   async resolve({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],
-    workspace,
+    isAssistantMentioned = false,
+    isInitialAssistantParticipant,
+    isInitialMessage,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds?: string[];
-    workspace?: AssistantPolicyWorkspace;
-  }): Promise<{
-    mode: AiChatAssistantMode;
-    isDirectAssistantChat: boolean;
-    isDirectMessage: boolean;
-  }> {
-    const currentWorkspace =
-      workspace ??
-      (await this.coreEntityCacheService.get('workspaceEntity', workspaceId));
+    isAssistantMentioned?: boolean;
+    isInitialAssistantParticipant?: boolean;
+    isInitialMessage: boolean;
+  }): Promise<boolean> {
+    const mode = await this.resolveMode({ workspaceId, thread });
+    const audience = await this.resolveAudience({
+      workspaceId,
+      thread,
+      candidateWorkspaceMemberIds,
+    });
 
-    assertIsDefinedOrThrow(currentWorkspace, WorkspaceNotFoundDefaultError);
+    return resolveAgentChatAssistantParticipation({
+      mode,
+      audience,
+      isAssistantParticipant: thread.isAssistantParticipant,
+      isAssistantMentioned,
+      isInitialAssistantParticipant,
+      isInitialMessage,
+    });
+  }
 
-    const isDirectMessage = thread.conversationType === 'DIRECT_MESSAGE';
-    const mode = isDirectMessage
-      ? (currentWorkspace.aiChatDirectMessageAssistantMode ??
-        AiChatAssistantMode.MENTION_ONLY)
-      : (currentWorkspace.aiChatInboxAssistantMode ??
-        AiChatAssistantMode.AUTOMATIC);
+  async resolveReplyDecision({
+    workspaceId,
+    workspaceMemberId,
+    thread,
+    candidateWorkspaceMemberIds = [],
+    isAssistantMentioned,
+    isReplyRequested,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    thread: AssistantPolicyThread;
+    candidateWorkspaceMemberIds?: string[];
+    isAssistantMentioned: boolean;
+    isReplyRequested: boolean;
+  }): Promise<AgentChatReplyDecision> {
+    const eligibleWorkspaceMemberIds =
+      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
+        workspaceId,
+        workspaceMemberId,
+        threadId: thread.id,
+        memberIds: candidateWorkspaceMemberIds,
+      });
+    const mode = await this.resolveMode({ workspaceId, thread });
+    const audience = await this.resolveAudience({
+      workspaceId,
+      thread,
+      candidateWorkspaceMemberIds: [
+        workspaceMemberId,
+        ...eligibleWorkspaceMemberIds,
+      ],
+    });
+
+    return resolveAgentChatReplyDecision({
+      mode,
+      audience,
+      isAssistantParticipant: thread.isAssistantParticipant,
+      isAssistantMentioned,
+      isReplyRequested,
+    });
+  }
+
+  private async resolveMode({
+    workspaceId,
+    thread,
+  }: {
+    workspaceId: string;
+    thread: Pick<AssistantPolicyThread, 'conversationType'>;
+  }): Promise<AiChatAssistantMode> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    return thread.conversationType === 'DIRECT_MESSAGE'
+      ? (workspace.aiChatDirectMessageAssistantMode ??
+          AiChatAssistantMode.MENTION_ONLY)
+      : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
+  }
+
+  private async resolveAudience({
+    workspaceId,
+    thread,
+    candidateWorkspaceMemberIds,
+  }: {
+    workspaceId: string;
+    thread: AssistantPolicyThread;
+    candidateWorkspaceMemberIds: string[];
+  }): Promise<AgentChatAudience> {
+    if (thread.conversationType === 'DIRECT_MESSAGE') {
+      return 'direct-message';
+    }
 
     if (
-      isDirectMessage ||
       (isDefined(thread.conversationType) &&
         thread.conversationType !== 'STANDARD') ||
       isDefined(thread.channelId) ||
       !isDefined(thread.workspaceMemberId)
     ) {
-      return { mode, isDirectAssistantChat: false, isDirectMessage };
+      return 'conversation';
     }
 
     const { flatObjectMetadataMaps } =
@@ -89,7 +169,7 @@ export class AgentChatAssistantPolicyService {
     );
 
     if (!isDefined(threadObjectMetadata)) {
-      return { mode, isDirectAssistantChat: false, isDirectMessage };
+      return 'conversation';
     }
 
     const [shares, memberCount] = await Promise.all([
@@ -113,8 +193,9 @@ export class AgentChatAssistantPolicyService {
         principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
         principalId !== thread.workspaceMemberId,
     );
-    const isDirectAssistantChat = !hasSharedAudience && memberCount <= 1;
 
-    return { mode, isDirectAssistantChat, isDirectMessage };
+    return !hasSharedAudience && memberCount <= 1
+      ? 'assistant-chat'
+      : 'conversation';
   }
 }

@@ -21,6 +21,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
+import { type AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -156,13 +157,23 @@ describe('Shared conversation API boundaries', () => {
 
   it('denies a viewer send, restore, queued deletion and cancellation while allowing an editor to delete a queued message', async () => {
     const threadId = await context.createThread(false);
-    const queued = await queue.queueMessage({
-      workspaceId: context.workspaceId,
-      threadId,
-      workspaceMemberId: context.workspaceMemberId,
-      userWorkspaceId: context.userWorkspaceId,
-      text: 'An existing queued message',
-    });
+    const queued =
+      await getAppProviderByClassName<AgentChatMemberMessageWriterService>(
+        'AgentChatMemberMessageWriterService',
+      ).write({
+        actor: {
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          userWorkspaceId: context.userWorkspaceId,
+        },
+        thread: await context.threadService.getWritableThread({
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          threadId,
+        }),
+        message: { text: 'An existing queued message' },
+        placement: 'queued',
+      });
     const streamId = randomUUID();
 
     await context.share({

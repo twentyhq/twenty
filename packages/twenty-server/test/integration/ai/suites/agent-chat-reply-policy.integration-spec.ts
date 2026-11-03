@@ -38,31 +38,53 @@ describe('Assistant reply selection with stored conversation participants', () =
     text?: string;
   }) => {
     const isAssistantMentionedInMessage = isAssistantMentioned ?? false;
-    const { thread, assistantPolicy } =
-      await context.threadService.applyAssistantParticipation({
-        threadId,
-        workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-        isAssistantMentioned: isAssistantMentionedInMessage,
-      });
+    const thread = await context.threadService.getWritableThread({
+      threadId,
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+    });
+    const participation = await context.assistantParticipationService.resolve({
+      thread,
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+      isAssistantMentioned: isAssistantMentionedInMessage,
+    });
+
+    await context.assistantParticipationService.save({
+      thread,
+      workspaceId: context.workspaceId,
+      participation,
+    });
+
+    const decision = isAiChatInboxEnabled
+      ? await context.assistantPolicyService.resolveReplyDecision({
+          workspaceId: context.workspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          thread: {
+            ...thread,
+            isAssistantParticipant: participation.isAssistantParticipant,
+          },
+          isAssistantMentioned: isAssistantMentionedInMessage,
+          isReplyRequested: shouldAssistantReply,
+        })
+      : 'REPLY';
 
     return context.replyPolicyService.shouldReply({
-      isAiChatInboxEnabled,
-      shouldAssistantReply,
-      thread,
-      assistantPolicy,
+      decision,
+      threadId,
+      pendingQuestionMessageId: thread.pendingQuestionMessageId,
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
-      isAssistantMentioned: isAssistantMentionedInMessage,
       text,
     });
   };
   const addJonyAsParticipant = (threadId: string) =>
-    context.threadService.deliverToParticipants({
+    context.inboxDeliveryService.addMembers({
       workspaceId: context.workspaceId,
       workspaceMemberId: context.workspaceMemberId,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'recipient',
     });
   const createGroup = async (isAssistantParticipant = true) => {
     const threadId = await context.createThread(isAssistantParticipant);

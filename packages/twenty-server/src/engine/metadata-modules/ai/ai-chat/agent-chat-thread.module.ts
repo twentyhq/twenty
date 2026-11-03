@@ -1,3 +1,6 @@
+import { AgentChatInboxDeliveryWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery-writer.service';
+import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
+import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -46,6 +49,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
+    AgentChatAssistantParticipationService,
+    AgentChatInboxDeliveryService,
+    AgentChatInboxDeliveryWriterService,
+
     AgentChatAssistantPolicyService,
     AgentChatChannelAccessService,
     AgentChatChannelRoleAccessListener,
@@ -64,6 +71,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RewriteAgentChatChannelGrantsJob,
   ],
   exports: [
+    AgentChatAssistantParticipationService,
+    AgentChatInboxDeliveryService,
     AgentChatAssistantPolicyService,
     AgentChatChannelGrantService,
     AgentChatChannelService,

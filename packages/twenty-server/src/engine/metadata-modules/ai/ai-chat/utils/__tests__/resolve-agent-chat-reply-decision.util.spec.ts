@@ -3,11 +3,10 @@ import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai
 
 const DEFAULT_REPLY_CONTEXT = {
   mode: AiChatAssistantMode.AUTOMATIC,
-  isDirectAssistantChat: false,
-  isDirectMessage: false,
+  audience: 'conversation',
   isAssistantParticipant: true,
   isAssistantMentioned: false,
-};
+} satisfies Parameters<typeof resolveAgentChatReplyDecision>[0];
 
 describe('resolveAgentChatReplyDecision', () => {
   it.each(Object.values(AiChatAssistantMode))(
@@ -17,12 +16,23 @@ describe('resolveAgentChatReplyDecision', () => {
         resolveAgentChatReplyDecision({
           ...DEFAULT_REPLY_CONTEXT,
           mode,
-          isDirectAssistantChat: true,
+          audience: 'assistant-chat',
           isAssistantParticipant: false,
+          isReplyRequested: false,
         }),
-      ).toBe('REPLY');
+      ).toBe('ASSISTANT_CHAT_REPLY');
     },
   );
+
+  it('skips a conversation reply when the member opts out despite a mention', () => {
+    expect(
+      resolveAgentChatReplyDecision({
+        ...DEFAULT_REPLY_CONTEXT,
+        isAssistantMentioned: true,
+        isReplyRequested: false,
+      }),
+    ).toBe('SKIP');
+  });
 
   it('skips a mention under Never', () => {
     expect(
@@ -67,14 +77,17 @@ describe('resolveAgentChatReplyDecision', () => {
   });
 
   it.each([
-    { isDirectMessage: false, isAssistantParticipant: true },
-    { isDirectMessage: true, isAssistantParticipant: false },
-  ])('evaluates an unmentioned automatic message with %o', (participation) => {
-    expect(
-      resolveAgentChatReplyDecision({
-        ...DEFAULT_REPLY_CONTEXT,
-        ...participation,
-      }),
-    ).toBe('EVALUATE');
-  });
+    { audience: 'conversation', isAssistantParticipant: true },
+    { audience: 'direct-message', isAssistantParticipant: false },
+  ] as const)(
+    'evaluates an unmentioned automatic message with %o',
+    (participation) => {
+      expect(
+        resolveAgentChatReplyDecision({
+          ...DEFAULT_REPLY_CONTEXT,
+          ...participation,
+        }),
+      ).toBe('EVALUATE');
+    },
+  );
 });

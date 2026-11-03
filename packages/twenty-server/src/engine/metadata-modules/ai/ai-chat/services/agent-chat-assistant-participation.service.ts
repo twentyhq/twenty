@@ -1,0 +1,136 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+import { Not } from 'typeorm';
+
+import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
+import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+
+@Injectable()
+export class AgentChatAssistantParticipationService {
+  @Inject(AgentChatAssistantPolicyService)
+  private readonly assistantPolicyService: AgentChatAssistantPolicyService;
+
+  @Inject(AgentChatSharingService)
+  private readonly sharingService: AgentChatSharingService;
+
+  @Inject(AgentConversationWriterService)
+  private readonly conversationWriterService: AgentConversationWriterService;
+
+  @Inject(AgentChatThreadRecordEventService)
+  private readonly threadRecordEventService: AgentChatThreadRecordEventService;
+
+  constructor(
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+  ) {}
+
+  async resolve({
+    workspaceId,
+    workspaceMemberId,
+    thread,
+    isInitialMessage: initialMessage,
+    isAssistantMentioned = false,
+    isInitialAssistantParticipant,
+    recipientWorkspaceMemberIds = [],
+    mentionedWorkspaceMemberIds = [],
+  }: AgentChatAssistantParticipationArgs & {
+    workspaceId: string;
+    workspaceMemberId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    isInitialMessage?: boolean;
+  }): Promise<AgentChatAssistantParticipation> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
+
+    const isInitialMessage =
+      initialMessage ??
+      !(await this.messageRepository.existsBy(workspaceId, {
+        threadId: thread.id,
+        role: Not(AgentMessageRole.SYSTEM),
+      }));
+    const candidateWorkspaceMemberIds =
+      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
+        workspaceId,
+        workspaceMemberId,
+        threadId: thread.id,
+        memberIds: [
+          ...mentionedWorkspaceMemberIds,
+          ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
+        ],
+      });
+    const isAssistantParticipant = await this.assistantPolicyService.resolve({
+      workspaceId,
+      thread,
+      candidateWorkspaceMemberIds: [
+        workspaceMemberId,
+        ...candidateWorkspaceMemberIds,
+      ],
+      isAssistantMentioned,
+      isInitialAssistantParticipant,
+      isInitialMessage,
+    });
+
+    return { isAssistantParticipant, isInitialMessage };
+  }
+
+  async save({
+    workspaceId,
+    thread,
+    participation,
+    scope,
+    shouldEmitEvent = true,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    participation: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant'
+    >;
+    scope?: AgentHistoryTransactionScope;
+    shouldEmitEvent?: boolean;
+  }): Promise<void> {
+    const { isAssistantParticipant } = participation;
+
+    if (thread.isAssistantParticipant === isAssistantParticipant) {
+      return;
+    }
+
+    const write = async (transactionScope: AgentHistoryTransactionScope) => {
+      const updatedThreadCount = await transactionScope.update(
+        'agentChatThread',
+        {
+          id: thread.id,
+          isAssistantParticipant: !isAssistantParticipant,
+        },
+        { isAssistantParticipant },
+      );
+
+      if (updatedThreadCount > 0 && shouldEmitEvent) {
+        transactionScope.afterCommit(() =>
+          this.threadRecordEventService.emitThreadUpdated({
+            workspaceId,
+            threadBefore: thread,
+          }),
+        );
+      }
+    };
+
+    if (isDefined(scope)) {
+      await write(scope);
+
+      return;
+    }
+
+    await this.conversationWriterService.runInTransaction(workspaceId, write);
+  }
+}

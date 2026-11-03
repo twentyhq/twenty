@@ -4,12 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
 import { AiEvaluationService } from 'src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
 const ASSISTANT_REPLY_PROBABILITY_THRESHOLD = 0.5;
 const ASSISTANT_REPLY_HISTORY_MESSAGE_LIMIT = 20;
@@ -26,46 +24,29 @@ export class AgentChatReplyPolicyService {
   private readonly conversationReaderService: AgentConversationReaderService;
 
   async shouldReply({
-    isAiChatInboxEnabled,
-    shouldAssistantReply,
-    thread,
-    assistantPolicy,
+    decision,
+    threadId,
+    pendingQuestionMessageId,
     workspaceId,
     userWorkspaceId,
-    isAssistantMentioned,
     text,
   }: {
-    isAiChatInboxEnabled: boolean;
-    shouldAssistantReply: boolean;
-    thread: Pick<
-      AgentChatThreadWorkspaceEntity,
-      'id' | 'isAssistantParticipant' | 'pendingQuestionMessageId'
-    >;
-    assistantPolicy: AgentChatAssistantParticipation['assistantPolicy'];
+    decision: AgentChatReplyDecision;
+    threadId: string;
+    pendingQuestionMessageId?: string | null;
     workspaceId: string;
     userWorkspaceId: string;
-    isAssistantMentioned: boolean;
     text: string;
   }): Promise<boolean> {
-    if (!isAiChatInboxEnabled || assistantPolicy.isDirectAssistantChat) {
+    if (decision === 'REPLY' || decision === 'ASSISTANT_CHAT_REPLY') {
       return true;
     }
 
-    if (!shouldAssistantReply) {
+    if (decision === 'SKIP') {
       return false;
     }
 
-    const replyDecision = resolveAgentChatReplyDecision({
-      ...assistantPolicy,
-      isAssistantParticipant: thread.isAssistantParticipant,
-      isAssistantMentioned,
-    });
-
-    if (replyDecision !== 'EVALUATE') {
-      return replyDecision === 'REPLY';
-    }
-
-    if (isDefined(thread.pendingQuestionMessageId)) {
+    if (isDefined(pendingQuestionMessageId)) {
       return true;
     }
 
@@ -77,7 +58,7 @@ export class AgentChatReplyPolicyService {
       const conversation =
         await this.conversationReaderService.loadRecentMessageTexts({
           workspaceId,
-          threadId: thread.id,
+          threadId,
           limit: ASSISTANT_REPLY_HISTORY_MESSAGE_LIMIT,
         });
       const { answers } = await this.aiEvaluationService.evaluate({
@@ -108,7 +89,7 @@ export class AgentChatReplyPolicyService {
     } catch (error) {
       this.logger.warn(
         doNotTranslate(
-          `Could not evaluate assistant reply for thread ${thread.id} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+          `Could not evaluate assistant reply for thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
         ),
       );
 

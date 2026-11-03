@@ -1,22 +1,27 @@
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { type AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-audience.type';
 import { type AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-reply-decision.type';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 
 export const resolveAgentChatReplyDecision = ({
   mode,
-  isDirectAssistantChat,
-  isDirectMessage,
+  audience,
   isAssistantParticipant,
   isAssistantMentioned,
+  isReplyRequested = true,
 }: {
   mode: AiChatAssistantMode;
-  isDirectAssistantChat: boolean;
-  isDirectMessage: boolean;
+  audience: AgentChatAudience;
   isAssistantParticipant: boolean;
   isAssistantMentioned: boolean;
+  isReplyRequested?: boolean;
 }): AgentChatReplyDecision => {
-  if (isDirectAssistantChat) {
-    return 'REPLY';
+  if (audience === 'assistant-chat') {
+    return 'ASSISTANT_CHAT_REPLY';
+  }
+
+  if (!isReplyRequested) {
+    return 'SKIP';
   }
 
   if (mode === AiChatAssistantMode.NEVER) {
@@ -33,8 +38,7 @@ export const resolveAgentChatReplyDecision = ({
 
   const isAssistantParticipating = resolveAgentChatAssistantParticipation({
     mode,
-    isDirectAssistantChat,
-    isDirectMessage,
+    audience,
     isAssistantParticipant,
     isAssistantMentioned,
   });
