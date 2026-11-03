@@ -1,9 +1,10 @@
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type DirectMessageThreadPair } from 'src/engine/permissions/direct-message/types/direct-message-thread-pair.type';
+import { getDirectMessageThreadPairFromRecord } from 'src/engine/permissions/direct-message/utils/get-direct-message-thread-pair-from-record.util';
 import { hasDirectMessageIdentityStorage } from 'src/engine/permissions/direct-message/utils/has-direct-message-identity-storage.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
@@ -38,16 +39,24 @@ export const findDirectMessageThreadPairs = async ({
     withDeleted: true,
   });
 
-  return new Map(
-    threads.map((thread) => [
-      thread.id,
-      {
+  const pairs = new Map<string, DirectMessageThreadPair>();
+
+  for (const thread of threads) {
+    const pair = getDirectMessageThreadPairFromRecord({
+      record: {
         conversationType: thread.conversationType,
         directMessageFirstWorkspaceMemberId:
-          thread.directMessageFirstWorkspaceMemberId ?? null,
+          thread.directMessageFirstWorkspaceMemberId,
         directMessageSecondWorkspaceMemberId:
-          thread.directMessageSecondWorkspaceMemberId ?? null,
+          thread.directMessageSecondWorkspaceMemberId,
       },
-    ]),
-  );
+      hasIdentityStorage,
+    });
+
+    if (isDefined(pair)) {
+      pairs.set(thread.id, pair);
+    }
+  }
+
+  return pairs;
 };
