@@ -7,9 +7,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfiguration } from '~/pages/settings/accounts/SettingsAccountsConfiguration';
-import { mockedUserData } from '~/testing/mock-data/users';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   GOOGLE_ACCOUNT_ID,
@@ -31,24 +29,6 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
-        graphql.query('GetCurrentUser', () =>
-          HttpResponse.json({
-            data: {
-              currentUser: {
-                ...mockedUserData,
-                currentWorkspace: {
-                  ...mockedUserData.currentWorkspace,
-                  featureFlags: [
-                    {
-                      key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-                      value: true,
-                    },
-                  ],
-                },
-              },
-            },
-          }),
-        ),
         graphql.mutation('StartChannelSync', () =>
           HttpResponse.json({
             data: {

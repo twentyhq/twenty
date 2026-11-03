@@ -85,7 +85,6 @@ jobs:
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 16
-      INTEGRATION_OPEN_HANDLE_DIAGNOSTICS: ${{ matrix.shard == 5 && 'true' || 'false' }}
       INTEGRATION_TEST_DB_RESET_STATUS_FILE: ${{ github.workspace }}/.cache/integration-db-reset-status
     steps:
       - name: Fetch custom Github Actions and base branch history
