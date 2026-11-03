@@ -32,7 +32,7 @@ export class BillingArrangementService {
     workspaceId: string;
     arrangement: BillingArrangementDraft;
     grantedByUserId: string | null;
-    entityManager: EntityManager;
+    entityManager?: EntityManager;
   }): Promise<BillingArrangementEntity> {
     const validationErrors = getBillingArrangementValidationErrors(arrangement);
 
@@ -43,8 +43,9 @@ export class BillingArrangementService {
       );
     }
 
-    const billingArrangementRepository =
-      this.billingArrangementRepository.withManager(entityManager);
+    const billingArrangementRepository = isDefined(entityManager)
+      ? this.billingArrangementRepository.withManager(entityManager)
+      : this.billingArrangementRepository;
 
     const overlappingArrangement = findOverlappingBillingArrangement({
       arrangement: { ...arrangement, revokedAt: null },
