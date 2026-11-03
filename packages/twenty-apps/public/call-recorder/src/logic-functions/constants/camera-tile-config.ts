@@ -8,7 +8,6 @@ export const CAMERA_TILE_PLATE_SIZE = 200;
 export const CAMERA_TILE_PLATE_RADIUS = 48;
 export const CAMERA_TILE_PLATE_COLOR = '#ffffff';
 export const CAMERA_TILE_PLATE_STROKE_COLOR = '#2e2e2e';
-export const CAMERA_TILE_LOGO_BOX_SIZE = 132;
 export const CAMERA_TILE_INITIAL_COLOR = '#333333';
 export const CAMERA_TILE_INITIAL_FONT_SIZE = 96;
 

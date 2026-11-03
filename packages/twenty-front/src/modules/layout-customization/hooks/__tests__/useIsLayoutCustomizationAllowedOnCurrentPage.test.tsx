@@ -9,6 +9,8 @@ describe('useIsLayoutCustomizationAllowedOnCurrentPage', () => {
     ['/chat', false],
     ['/chat/20202020-0000-4000-8000-000000000014', false],
     ['/settings/profile', false],
+    ['/agents', false],
+    ['/agent/agent-id', false],
     ['/settings/objects/companies', false],
     ['/object/companies', true],
     ['/object/company/20202020-0000-4000-8000-000000000014', true],

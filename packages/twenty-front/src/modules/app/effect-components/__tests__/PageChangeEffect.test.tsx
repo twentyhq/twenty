@@ -234,3 +234,23 @@ describe('PageChangeEffect', () => {
     ).toBe(true);
   });
 });
+
+it('restores workflow index hotkeys after leaving settings', async () => {
+  renderPageChangeEffect();
+  act(() => navigateMainPage?.('/settings/profile'));
+  await waitFor(() => {
+    expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+      PageFocusId.Settings,
+    );
+  });
+  act(() => navigateMainPage?.('/workflows'));
+  await waitFor(() => {
+    expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+      PageFocusId.RecordIndex,
+    );
+  });
+  expect(
+    jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+      .enableGlobalHotkeysConflictingWithKeyboard,
+  ).toBe(true);
+});

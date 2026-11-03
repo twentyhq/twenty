@@ -10,7 +10,6 @@ import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions
 import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/private-record/utils/build-permissions-creator-condition.util';
-import { isShareOnlyWhilePrivateRecordFlagDisabled } from 'src/engine/permissions/private-record/utils/is-share-only-while-private-record-flag-disabled.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/record-share/utils/build-permissions-share-condition.util';
 import { buildPermissionsRlsCondition } from 'src/engine/permissions/rls/utils/build-permissions-rls-condition.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/rls/utils/resolve-permissions-row-level-permission-filter.util';
@@ -52,10 +51,7 @@ export const buildPermissionsCondition = ({
     return outcome;
   }
 
-  // TODO(@charlesBochet): remove with isShareOnlyWhilePrivateRecordFlagDisabled after 2.55
-  const roleConditions = isShareOnlyWhilePrivateRecordFlagDisabled(sqlRequest)
-    ? []
-    : buildPermissionsRoleConditions(sqlRequest);
+  const roleConditions = buildPermissionsRoleConditions(sqlRequest);
 
   if (roleConditions === true) {
     return true;

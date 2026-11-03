@@ -1,6 +1,14 @@
 import { AppPath } from 'twenty-shared/types';
+import { render, screen } from '@testing-library/react';
 import { isValidElement, type ReactElement } from 'react';
-import { createMemoryRouter, matchRoutes } from 'react-router-dom';
+import {
+  createMemoryRouter,
+  createPath,
+  matchRoutes,
+  MemoryRouter,
+  useLocation,
+  useRoutes,
+} from 'react-router-dom';
 
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
@@ -9,6 +17,28 @@ import {
   isWorkspaceLocationExpandableFromSidePanel,
 } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+
+jest.mock('@/context-store/components/RouteContextStoreProvider', () => ({
+  RouteContextStoreProvider: () => null,
+}));
+
+const LocationProbe = () => {
+  const location = useLocation();
+
+  return <output aria-label="Current location">{createPath(location)}</output>;
+};
+
+const WorkflowRouteProbe = ({ surface }: { surface: 'main' | 'side-panel' }) =>
+  useRoutes(
+    getWorkspaceRouteObjectsForSurface(
+      createWorkspaceRouteObjects({}).map((route) =>
+        route.path === AppPath.WorkflowCoreIndexPage
+          ? { ...route, element: <LocationProbe /> }
+          : route,
+      ),
+      surface,
+    ),
+  );
 
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
@@ -42,6 +72,8 @@ describe('workspace route objects', () => {
     );
 
     expect(panelRoutes.map(({ path }) => path)).toEqual([
+      AppPath.WorkflowCoreIndexPage,
+      '/objects/workflows',
       AppPath.WorkflowCoreShowPage,
       AppPath.RecordIndexPage,
       AppPath.RecordShowPage,
@@ -55,6 +87,38 @@ describe('workspace route objects', () => {
     expect(panelRoutes).not.toContainEqual(
       expect.objectContaining({ path: AppPath.PageLayoutPage }),
     );
+  });
+
+  it.each(['main', 'side-panel'] as const)(
+    'preserves URL state when redirecting the legacy workflow index on %s',
+    async (surface) => {
+      render(
+        <MemoryRouter
+          initialEntries={['/objects/workflows?viewId=workflow-view#activity']}
+        >
+          <WorkflowRouteProbe surface={surface} />
+        </MemoryRouter>,
+      );
+
+      expect(
+        await screen.findByRole('status', { name: 'Current location' }),
+      ).toHaveTextContent('/workflows?viewId=workflow-view#activity');
+    },
+  );
+
+  it('keeps the agent routes on their existing main surface', () => {
+    const routes = createWorkspaceRouteObjects({});
+
+    expect(
+      isWorkspaceLocationAvailableOnSurface(routes, 'side-panel', '/agents'),
+    ).toBe(false);
+    expect(
+      isWorkspaceLocationAvailableOnSurface(
+        routes,
+        'side-panel',
+        '/agent/agent-id',
+      ),
+    ).toBe(false);
   });
 
   it('preserves settings guards while recursively filtering their leaves', () => {
@@ -117,6 +181,8 @@ describe('workspace route objects', () => {
 
   it.each([
     '/objects/companies?viewId=companies-view',
+    '/workflows?viewId=workflow-view#activity',
+    '/objects/workflows?viewId=workflow-view#activity',
     '/settings/objects',
     '/settings/objects/overview',
     '/settings/members',

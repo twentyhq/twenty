@@ -15,6 +15,13 @@ const AVAILABILITY_TYPES_REQUIRING_RECORD_CONTEXT = new Set([
 ]);
 
 export const doesCommandMenuItemMatchPageType =
-  (pageType: ContextStorePageType) => (item: CommandMenuItemFieldsFragment) =>
+  ({
+    pageType,
+    hasObjectContext,
+  }: {
+    pageType: ContextStorePageType;
+    hasObjectContext: boolean;
+  }) =>
+  (item: Pick<CommandMenuItemFieldsFragment, 'availabilityType'>) =>
     !AVAILABILITY_TYPES_REQUIRING_RECORD_CONTEXT.has(item.availabilityType) ||
-    PAGE_TYPES_WITH_RECORD_CONTEXT.has(pageType);
+    (hasObjectContext && PAGE_TYPES_WITH_RECORD_CONTEXT.has(pageType));

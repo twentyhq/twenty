@@ -1,3 +1,4 @@
+import { getNavigationMenuItemCurrentObjectMetadata } from '@/navigation-menu-item/display/utils/getNavigationMenuItemCurrentObjectMetadata';
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
@@ -42,11 +43,12 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const currentSearch = location.search;
   const currentPathWithSearch = location.pathname + location.search;
 
-  const currentObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) =>
-      item.namePlural === currentObjectNamePlural ||
-      item.nameSingular === currentObjectNameSingular,
-  );
+  const currentObjectMetadataItem = getNavigationMenuItemCurrentObjectMetadata({
+    activeObjectMetadataItems,
+    currentPath,
+    currentObjectNamePlural,
+    currentObjectNameSingular,
+  });
 
   const isOnRecordShowPage =
     isDefined(currentObjectMetadataItem) &&
@@ -159,12 +161,25 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       }
 
       const matchingViewNavigationMenuItemIds = navigationMenuItems
-        .filter(
-          (item) =>
-            item.type === NavigationMenuItemType.VIEW &&
-            isDefined(contextStoreCurrentViewId) &&
-            item.viewId === contextStoreCurrentViewId,
-        )
+        .filter((item) => {
+          if (item.type !== NavigationMenuItemType.VIEW) {
+            return false;
+          }
+
+          if (isDefined(contextStoreCurrentViewId)) {
+            return item.viewId === contextStoreCurrentViewId;
+          }
+
+          return isLinkNavigationMenuItemActive({
+            computedLink: getNavigationMenuItemComputedLink({
+              item,
+              objectMetadataItems,
+              views,
+              lastVisitedViewPerObjectMetadataItem,
+            }),
+            location: { pathname: currentPath, search: currentSearch },
+          });
+        })
         .map((item) => item.id);
 
       if (matchingViewNavigationMenuItemIds.length > 0) {

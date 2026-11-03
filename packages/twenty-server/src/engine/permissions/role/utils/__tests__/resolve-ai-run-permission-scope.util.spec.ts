@@ -272,7 +272,7 @@ describe('resolveAiRunPermissionScope', () => {
 
     it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
       const isInsertDenied = (
-        scope?: PermissionsPrincipalsWithRolesContext['scope'],
+        aiRunScope?: PermissionsPrincipalsWithRolesContext['aiRunScope'],
       ) =>
         isObjectOperationDeniedToPrincipal({
           principal: {
@@ -283,7 +283,7 @@ describe('resolveAiRunPermissionScope', () => {
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },
-            ...(isDefined(scope) ? { scope } : {}),
+            ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
           },
           metadataMaps: {
             flatObjectMetadataMaps,

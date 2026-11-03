@@ -4,7 +4,6 @@ import { createChatParticipationTestContext } from 'test/integration/ai/utils/cr
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
@@ -145,37 +144,16 @@ describe('Canonical direct message identity', () => {
     }
   });
 
-  it('keeps new identities private when record privacy is enabled', async () => {
-    const featureFlag = FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED;
-    const isPrivateRecordInitiallyEnabled =
-      await context.featureFlagService.isFeatureEnabled(
-        featureFlag,
-        context.workspaceId,
-      );
+  it('keeps new identities private', async () => {
+    const threadId = await getOrCreate();
+    const identity = await global.testDataSource
+      .createQueryBuilder()
+      .select(`thread."${IS_PRIVATE_COLUMN_NAME}"`, 'isPrivate')
+      .from(`${context.schema}.agentChatThread`, 'thread')
+      .where('thread.id = :threadId', { threadId })
+      .getRawOne<{ isPrivate: boolean }>();
 
-    try {
-      await context.featureFlagService.upsertWorkspaceFeatureFlag({
-        workspaceId: context.workspaceId,
-        featureFlag,
-        value: true,
-      });
-
-      const threadId = await getOrCreate();
-      const identity = await global.testDataSource
-        .createQueryBuilder()
-        .select(`thread."${IS_PRIVATE_COLUMN_NAME}"`, 'isPrivate')
-        .from(`${context.schema}.agentChatThread`, 'thread')
-        .where('thread.id = :threadId', { threadId })
-        .getRawOne<{ isPrivate: boolean }>();
-
-      expect(identity).toEqual({ isPrivate: true });
-    } finally {
-      await context.featureFlagService.upsertWorkspaceFeatureFlag({
-        workspaceId: context.workspaceId,
-        featureFlag,
-        value: isPrivateRecordInitiallyEnabled,
-      });
-    }
+    expect(identity).toEqual({ isPrivate: true });
   });
 
   it('allocates a normalized dormant identity without inbox or assistant side effects', async () => {

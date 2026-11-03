@@ -4,6 +4,7 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { isCoreAgentPath } from '@/object-core/agents/utils/isCoreAgentPath';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -48,14 +49,19 @@ const getViewId = ({
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const routeObjects = useWorkspaceRouteObjects();
-  const isRecordIndexPage = isMatchingLocation(
+  const isCoreWorkflowIndexPage = isMatchingLocation(
     location,
-    AppPath.RecordIndexPage,
+    AppPath.WorkflowCoreIndexPage,
   );
+  const isRecordIndexPage =
+    isCoreWorkflowIndexPage ||
+    isMatchingLocation(location, AppPath.RecordIndexPage);
   const isCoreWorkflowShowPage = isMatchingLocation(
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
+  const isCoreAgentPage = isCoreAgentPath(location.pathname);
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   // The chat page and the whole inbox act on chats: the chat on screen, or
   // the chats selected in the inbox list
@@ -70,7 +76,7 @@ export const RouteContextStoreProvider = () => {
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = isCoreWorkflowShowPage
+  const objectNameSingular = isCoreWorkflowPage
     ? CoreObjectNameSingular.Workflow
     : isAiChatPage
       ? CoreObjectNameSingular.AgentChatThread
@@ -133,7 +139,8 @@ export const RouteContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
-      isSettingsPage) &&
+      isSettingsPage ||
+      isCoreAgentPage) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
@@ -142,7 +149,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
+      viewId={isCoreWorkflowPage || isAiChatPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}

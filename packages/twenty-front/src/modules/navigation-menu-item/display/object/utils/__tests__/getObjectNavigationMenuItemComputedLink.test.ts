@@ -41,6 +41,17 @@ const mockViewsWithInitialView: Pick<
 ];
 
 describe('getObjectNavigationMenuItemComputedLink', () => {
+  it('keeps an existing workflow object pin on the dedicated index', () => {
+    const result = getObjectNavigationMenuItemComputedLink({
+      item: { targetObjectMetadataId: 'workflow-object' },
+      objectMetadataItems: [{ id: 'workflow-object', namePlural: 'workflows' }],
+      views: mockViewsWithInitialView,
+      lastVisitedViewId: 'view-42',
+    });
+
+    expect(result).toBe('/workflows');
+  });
+
   it('should link to the index view when no last visited view is provided', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },

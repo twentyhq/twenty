@@ -1,3 +1,4 @@
+import { getCoreObjectIndexPagePath } from '@/object-core/utils/getCoreObjectIndexPagePath';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
@@ -21,6 +22,14 @@ export const getObjectNavigationMenuItemComputedLink = ({
   );
   if (!isDefined(objectMetadataItem)) {
     return '';
+  }
+
+  const coreObjectIndexPagePath = getCoreObjectIndexPagePath(
+    objectMetadataItem.namePlural,
+  );
+
+  if (isDefined(coreObjectIndexPagePath)) {
+    return coreObjectIndexPagePath;
   }
 
   const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({

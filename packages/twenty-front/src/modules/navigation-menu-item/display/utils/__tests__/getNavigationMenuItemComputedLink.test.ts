@@ -37,6 +37,33 @@ const objectItem: NavigationMenuItem = {
 };
 
 describe('getNavigationMenuItemComputedLink', () => {
+  it('preserves an existing workflow view pin on its canonical destination', () => {
+    const link = getNavigationMenuItemComputedLink({
+      item: {
+        ...objectItem,
+        type: NavigationMenuItemType.VIEW,
+        viewId: 'workflow-view',
+      },
+      objectMetadataItems: [
+        ...objectMetadataItems,
+        {
+          ...objectMetadataItems[0],
+          id: 'workflow-object',
+          namePlural: 'workflows',
+        },
+      ],
+      views: [
+        {
+          ...views[0],
+          id: 'workflow-view',
+          objectMetadataId: 'workflow-object',
+        },
+      ],
+    });
+
+    expect(link).toBe('/workflows?viewId=workflow-view');
+  });
+
   it('should link an object item to its last visited view when one is recorded', () => {
     const link = getNavigationMenuItemComputedLink({
       item: objectItem,
