@@ -828,7 +828,7 @@ msgstr "Administrateurrol nie gevind nie."
 #. js-lingui-id: /KrRC2
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
-msgstr ""
+msgstr "Agent \"{label}\" is geargiveer of behoort aan 'n ander werkvloeistap, dus kan 'n nuwe stap dit nie uitvoer nie."
 
 #. js-lingui-id: eHJEyS
 #: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
@@ -1122,7 +1122,7 @@ msgstr "'n Agent met hierdie naam bestaan reeds."
 #. js-lingui-id: pk6kfE
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr ""
+msgstr "'n KI-stap kan nie sy agent verander nie. Skep eerder 'n nuwe stap."
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13494,7 +13494,7 @@ msgstr "Die {reservedViewKey}-aansigsleutel is vir die enjin se verstekaansig vo
 #. js-lingui-id: xAbdAA
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "The agent this step should run was not found."
-msgstr ""
+msgstr "Die agent wat hierdie stap moet uitvoer, is nie gevind nie."
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts

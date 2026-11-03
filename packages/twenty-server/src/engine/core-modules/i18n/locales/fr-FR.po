@@ -828,7 +828,7 @@ msgstr "Rôle administrateur introuvable."
 #. js-lingui-id: /KrRC2
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
-msgstr ""
+msgstr "L’agent \"{label}\" est archivé ou appartient à une autre étape du workflow, une nouvelle étape ne peut donc pas l’exécuter."
 
 #. js-lingui-id: eHJEyS
 #: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
@@ -1122,7 +1122,7 @@ msgstr "Un agent portant ce nom existe déjà."
 #. js-lingui-id: pk6kfE
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr ""
+msgstr "Une étape d’IA ne peut pas changer d’agent. Créez plutôt une nouvelle étape."
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13494,7 +13494,7 @@ msgstr "La clé de vue {reservedViewKey} est réservée à la vue par défaut g�
 #. js-lingui-id: xAbdAA
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "The agent this step should run was not found."
-msgstr ""
+msgstr "L’agent que cette étape doit exécuter est introuvable."
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts

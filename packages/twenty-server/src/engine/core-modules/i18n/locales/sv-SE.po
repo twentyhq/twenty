@@ -828,7 +828,7 @@ msgstr "Administratörsroll hittades inte."
 #. js-lingui-id: /KrRC2
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
-msgstr ""
+msgstr "Agenten \"{label}\" är arkiverad eller tillhör ett annat steg i arbetsflödet, så ett nytt steg kan inte köra den."
 
 #. js-lingui-id: eHJEyS
 #: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
@@ -1122,7 +1122,7 @@ msgstr "En agent med detta namn finns redan."
 #. js-lingui-id: pk6kfE
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr ""
+msgstr "Ett AI-steg kan inte ändra sin agent. Skapa ett nytt steg i stället."
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13500,7 +13500,7 @@ msgstr "Nyckeln för {reservedViewKey}-vyn är reserverad för motorns standardv
 #. js-lingui-id: xAbdAA
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "The agent this step should run was not found."
-msgstr ""
+msgstr "Agenten som det här steget ska köra hittades inte."
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts

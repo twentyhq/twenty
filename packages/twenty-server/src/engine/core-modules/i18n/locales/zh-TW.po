@@ -828,7 +828,7 @@ msgstr "找不到管理員角色。"
 #. js-lingui-id: /KrRC2
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
-msgstr ""
+msgstr "代理程式「{label}」已封存或屬於另一個工作流程步驟，因此新步驟無法執行它。"
 
 #. js-lingui-id: eHJEyS
 #: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
@@ -1122,7 +1122,7 @@ msgstr "此名稱的代理程式已存在."
 #. js-lingui-id: pk6kfE
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr ""
+msgstr "AI 步驟無法變更其代理程式。請改為建立新步驟。"
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13494,7 +13494,7 @@ msgstr "{reservedViewKey} 檢視鍵是保留給引擎擁有的預設檢視使用
 #. js-lingui-id: xAbdAA
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "The agent this step should run was not found."
-msgstr ""
+msgstr "找不到此步驟應執行的代理程式。"
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts

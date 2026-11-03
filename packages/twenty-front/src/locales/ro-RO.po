@@ -966,7 +966,7 @@ msgstr "{peopleCount, plural, one {{formattedPeopleCount} persoană} few {{forma
 #. js-lingui-id: fbTMCq
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "{permissionLabel} (denied)"
-msgstr ""
+msgstr "{permissionLabel} (refuzată)"
 
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -3263,7 +3263,7 @@ msgstr "Toate metadatele"
 #. js-lingui-id: vKmC3w
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
 msgid "all objects"
-msgstr ""
+msgstr "toate obiectele"
 
 #. js-lingui-id: zIk4M6
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -3301,7 +3301,7 @@ msgstr "Toate rolurile"
 #. js-lingui-id: 2ls1gc
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All settings"
-msgstr ""
+msgstr "Toate setările"
 
 #. js-lingui-id: shNsiv
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -3341,7 +3341,7 @@ msgstr "Toate obiectele standard"
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
-msgstr ""
+msgstr "Toate instrumentele"
 
 #. js-lingui-id: xYbZZH
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9626,7 +9626,7 @@ msgstr "Descendent"
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
-msgstr ""
+msgstr "Descrie rolul AI-ului și modul în care ar trebui să îndeplinească sarcina..."
 
 #. js-lingui-id: g+5exC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
@@ -12852,7 +12852,7 @@ msgstr "permisiune pentru câmp"
 #. js-lingui-id: XmkV4U
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "Field permissions on {objectLabel}"
-msgstr ""
+msgstr "Permisiuni pentru câmpuri pe {objectLabel}"
 
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -20869,7 +20869,7 @@ msgstr "Alte obiecte"
 #. js-lingui-id: lP+P1l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 msgid "Other permissions"
-msgstr ""
+msgstr "Alte permisiuni"
 
 #. js-lingui-id: 9LV44m
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -27394,12 +27394,12 @@ msgstr "Adresa de la care spațiul tău de lucru va trimite și va primi e-mailu
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
-msgstr ""
+msgstr "Agentul stabilește instrucțiunile, modelul și permisiunile."
 
 #. js-lingui-id: QKWHCt
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "The agent this step runs could not be loaded. It may have been deleted."
-msgstr ""
+msgstr "Agentul rulat de acest pas nu a putut fi încărcat. Este posibil să fi fost șters."
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

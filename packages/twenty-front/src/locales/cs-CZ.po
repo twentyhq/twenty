@@ -966,7 +966,7 @@ msgstr "{peopleCount, plural, one {{formattedPeopleCount} osoba} few {{formatted
 #. js-lingui-id: fbTMCq
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "{permissionLabel} (denied)"
-msgstr ""
+msgstr "{permissionLabel} (zamítnuto)"
 
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -3263,7 +3263,7 @@ msgstr "Všechna metadata"
 #. js-lingui-id: vKmC3w
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
 msgid "all objects"
-msgstr ""
+msgstr "všechny objekty"
 
 #. js-lingui-id: zIk4M6
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -3301,7 +3301,7 @@ msgstr "Všechny role"
 #. js-lingui-id: 2ls1gc
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All settings"
-msgstr ""
+msgstr "Všechna nastavení"
 
 #. js-lingui-id: shNsiv
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -3341,7 +3341,7 @@ msgstr "Všechny standardní objekty"
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
-msgstr ""
+msgstr "Všechny nástroje"
 
 #. js-lingui-id: xYbZZH
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9626,7 +9626,7 @@ msgstr "Sestupně"
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
-msgstr ""
+msgstr "Popište roli AI a způsob, jakým má úkol provést..."
 
 #. js-lingui-id: g+5exC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
@@ -12852,7 +12852,7 @@ msgstr "oprávnění k poli"
 #. js-lingui-id: XmkV4U
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "Field permissions on {objectLabel}"
-msgstr ""
+msgstr "Oprávnění k polím v {objectLabel}"
 
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -20869,7 +20869,7 @@ msgstr "Další objekty"
 #. js-lingui-id: lP+P1l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 msgid "Other permissions"
-msgstr ""
+msgstr "Další oprávnění"
 
 #. js-lingui-id: 9LV44m
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -27394,12 +27394,12 @@ msgstr "Adresa, ze které bude váš workspace odesílat a přijímat e-maily (n
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
-msgstr ""
+msgstr "Agent nastavuje pokyny, model a oprávnění."
 
 #. js-lingui-id: QKWHCt
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "The agent this step runs could not be loaded. It may have been deleted."
-msgstr ""
+msgstr "Agenta, kterého tento krok spouští, se nepodařilo načíst. Možná byl odstraněn."
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

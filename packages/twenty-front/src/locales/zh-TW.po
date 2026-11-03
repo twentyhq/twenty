@@ -966,7 +966,7 @@ msgstr ""
 #. js-lingui-id: fbTMCq
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "{permissionLabel} (denied)"
-msgstr ""
+msgstr "{permissionLabel}（已拒絕）"
 
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -3263,7 +3263,7 @@ msgstr "所有中繼資料"
 #. js-lingui-id: vKmC3w
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
 msgid "all objects"
-msgstr ""
+msgstr "所有物件"
 
 #. js-lingui-id: zIk4M6
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
@@ -3301,7 +3301,7 @@ msgstr "所有角色"
 #. js-lingui-id: 2ls1gc
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All settings"
-msgstr ""
+msgstr "所有設定"
 
 #. js-lingui-id: shNsiv
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
@@ -3341,7 +3341,7 @@ msgstr "所有標準對象"
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
-msgstr ""
+msgstr "所有工具"
 
 #. js-lingui-id: xYbZZH
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9626,7 +9626,7 @@ msgstr "降序"
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
-msgstr ""
+msgstr "描述 AI 的角色及其應如何執行任務……"
 
 #. js-lingui-id: g+5exC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
@@ -12852,7 +12852,7 @@ msgstr "欄位權限"
 #. js-lingui-id: XmkV4U
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "Field permissions on {objectLabel}"
-msgstr ""
+msgstr "{objectLabel} 的欄位權限"
 
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -20869,7 +20869,7 @@ msgstr "其他物件"
 #. js-lingui-id: lP+P1l
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 msgid "Other permissions"
-msgstr ""
+msgstr "其他權限"
 
 #. js-lingui-id: 9LV44m
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -27394,12 +27394,12 @@ msgstr "工作區將用來傳送與接收電子郵件的地址（例如：suppor
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
-msgstr ""
+msgstr "代理程式會設定指示、模型和權限。"
 
 #. js-lingui-id: QKWHCt
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "The agent this step runs could not be loaded. It may have been deleted."
-msgstr ""
+msgstr "此步驟執行的代理程式無法載入。它可能已被刪除。"
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

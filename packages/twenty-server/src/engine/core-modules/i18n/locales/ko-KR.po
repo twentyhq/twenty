@@ -828,7 +828,7 @@ msgstr "관리자 역할을 찾을 수 없음."
 #. js-lingui-id: /KrRC2
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
-msgstr ""
+msgstr "에이전트 \"{label}\"이 보관되었거나 다른 워크플로 단계에 속해 있으므로 새 단계에서 실행할 수 없습니다."
 
 #. js-lingui-id: eHJEyS
 #: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
@@ -1122,7 +1122,7 @@ msgstr "이 이름을 가진 에이전트가 이미 존재합니다."
 #. js-lingui-id: pk6kfE
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr ""
+msgstr "AI 단계에서는 에이전트를 변경할 수 없습니다. 대신 새 단계를 만드세요."
 
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -13494,7 +13494,7 @@ msgstr "{reservedViewKey} 보기 키는 엔진이 소유한 기본 보기를 위
 #. js-lingui-id: xAbdAA
 #: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
 msgid "The agent this step should run was not found."
-msgstr ""
+msgstr "이 단계에서 실행해야 하는 에이전트를 찾을 수 없습니다."
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
