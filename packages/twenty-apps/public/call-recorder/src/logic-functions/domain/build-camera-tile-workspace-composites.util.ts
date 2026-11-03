@@ -7,7 +7,10 @@ import {
   CAMERA_TILE_INITIAL_FONT_SIZE,
   CAMERA_TILE_PLATE_SIZE,
   CAMERA_TILE_PLATE_TOP,
+  CAMERA_TILE_POWERED_BY_LABEL,
   CAMERA_TILE_SAFE_ZONE_WIDTH,
+  CAMERA_TILE_SECONDARY_TEXT_OPACITY,
+  CAMERA_TILE_SUBTITLE_FONT_SIZE,
   CAMERA_TILE_TITLE_FONT_SIZE,
 } from 'src/logic-functions/constants/camera-tile-config';
 import { type WorkspaceBranding } from 'src/logic-functions/data/get-workspace-branding.util';
@@ -39,6 +42,13 @@ const renderInitial = async ({
   });
 };
 
+const renderPoweredBy = (renderText: CameraTileTextRenderer) =>
+  renderText({
+    text: CAMERA_TILE_POWERED_BY_LABEL,
+    fontSize: CAMERA_TILE_SUBTITLE_FONT_SIZE,
+    opacity: CAMERA_TILE_SECONDARY_TEXT_OPACITY,
+  });
+
 export const buildCameraTileWorkspaceComposites = async ({
   sharp,
   renderText,
@@ -63,12 +73,17 @@ export const buildCameraTileWorkspaceComposites = async ({
       return undefined;
     }
 
+    const { lineComposites, scrimSvg } = buildCameraTileTextBlock({
+      subtitle: await renderPoweredBy(renderText),
+    });
+
     return [
       await renderCameraTileSvgLayer({
         sharp,
-        content: buildCameraTilePlateSvg(),
+        content: scrimSvg + buildCameraTilePlateSvg(),
       }),
       logo,
+      ...lineComposites,
     ];
   }
 
@@ -81,6 +96,7 @@ export const buildCameraTileWorkspaceComposites = async ({
       fontSize: CAMERA_TILE_TITLE_FONT_SIZE,
       maxWidth: CAMERA_TILE_SAFE_ZONE_WIDTH,
     }),
+    subtitle: await renderPoweredBy(renderText),
   });
 
   return [
