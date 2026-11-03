@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsObject, IsString, IsUUID, MaxLength } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
+import { CODE_STEP_SOURCE_MAX_LENGTH } from 'twenty-shared/workflow';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -15,7 +16,7 @@ export class TestWorkflowCodeStepInput {
 
   @Field(() => String, { description: 'TypeScript source of the code step' })
   @IsString()
-  @MaxLength(256_000)
+  @MaxLength(CODE_STEP_SOURCE_MAX_LENGTH)
   code: string;
 
   @Field(() => graphqlTypeJson, { description: 'Payload in JSON format' })
