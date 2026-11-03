@@ -88,7 +88,7 @@ export class ServerAdminAccessService {
 
     if (isDefined(userEmail) && accessEmail !== userEmail.toLowerCase()) {
       this.logger.warn(
-        'Refused server admin request whose Cloudflare Access identity does not match the authenticated user',
+        `Refused server admin request on host ${request.get('host')} whose Cloudflare Access identity does not match the authenticated user`,
       );
 
       return false;

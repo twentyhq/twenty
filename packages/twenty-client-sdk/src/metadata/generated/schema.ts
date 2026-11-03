@@ -14,6 +14,12 @@ export type Scalars = {
     Upload: File,
 }
 
+export interface AdminConsoleLoginToken {
+    adminConsoleUrl: Scalars['String']
+    loginToken: Scalars['String']
+    __typename: 'AdminConsoleLoginToken'
+}
+
 export interface Agent {
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -1173,6 +1179,7 @@ export interface ClientAiModelTierConfig {
 }
 
 export interface ClientConfig {
+    adminConsoleUrl?: Scalars['String']
     aiEvaluationModels: ClientAiEvaluationModelConfig[]
     aiModelTiers: ClientAiModelTierConfig[]
     aiModels: ClientAiModelConfig[]
@@ -2308,6 +2315,7 @@ export interface Mutation {
     completeNewWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
+    createAdminConsoleLoginToken: AdminConsoleLoginToken
     createAgentChatChannel: AgentChatChannel
     createApiKey: ApiKey
     createAppMessageChannel: MessageChannel
@@ -4303,6 +4311,13 @@ displayName?: (Scalars['String'] | null)}
 
 export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],operationSignature: Scalars['JSON'],queryId: Scalars['String']}
 
+export interface AdminConsoleLoginTokenGenqlSelection{
+    adminConsoleUrl?: boolean | number
+    loginToken?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentGenqlSelection{
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -5523,6 +5538,7 @@ export interface ClientAiModelTierConfigGenqlSelection{
 }
 
 export interface ClientConfigGenqlSelection{
+    adminConsoleUrl?: boolean | number
     aiEvaluationModels?: ClientAiEvaluationModelConfigGenqlSelection
     aiModelTiers?: ClientAiModelTierConfigGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
@@ -6892,6 +6908,7 @@ export interface MutationGenqlSelection{
     completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String'], workspaceId: Scalars['String']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
+    createAdminConsoleLoginToken?: AdminConsoleLoginTokenGenqlSelection
     createAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
     createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
     createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })
@@ -9283,6 +9300,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+
+    const AdminConsoleLoginToken_possibleTypes: string[] = ['AdminConsoleLoginToken']
+    export const isAdminConsoleLoginToken = (obj?: { __typename?: any } | null): obj is AdminConsoleLoginToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminConsoleLoginToken"')
+      return AdminConsoleLoginToken_possibleTypes.includes(obj.__typename)
+    }
+    
 
 
     const Agent_possibleTypes: string[] = ['Agent']

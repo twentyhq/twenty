@@ -9,7 +9,7 @@ import {
 import { ServerAdminAccessService } from 'src/engine/core-modules/server-admin-access/services/server-admin-access.service';
 import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 
-// Backstop for the whole admin schema, so a resolver missing its admin guard is still refused.
+// Backstop for the whole admin schema: when configured, off-host or Access-less requests are refused even without a guard.
 @Injectable()
 export class ServerAdminAccessMiddleware implements NestMiddleware {
   constructor(

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { useMutation } from '@apollo/client/react';
+import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,7 +11,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useIsCurrentLocationOnAdminConsole } from '@/domain-manager/hooks/useIsCurrentLocationOnAdminConsole';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,7 +25,6 @@ export const useHandleImpersonate = () => {
   const { startImpersonating } = useImpersonationSession();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { redirect } = useRedirect();
   const { isOnAdminConsole } = useIsCurrentLocationOnAdminConsole();
   const apolloAdminClient = useApolloAdminClient();
   const [impersonate] = useMutation(ImpersonateFromAdminPanelDocument, {
@@ -53,15 +52,17 @@ export const useHandleImpersonate = () => {
         const { loginToken, workspace } = data.impersonateFromAdminPanel;
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
-        // The console holds no workspace session to swap, so the target opens on its own host, even in single-workspace mode.
+        // The console has no workspace session to swap, so the target opens on its own host (even single-workspace),
+        // without an opener the customer's workspace page could use to navigate the console tab.
         if (isOnAdminConsole) {
-          redirect(
+          window.open(
             buildWorkspaceUrl(
               getWorkspaceUrl(workspace.workspaceUrls),
               AppPath.Verify,
-              { loginToken: loginToken.token },
+              { loginToken: loginToken.token, locale: i18n.locale },
             ),
             '_blank',
+            'noopener,noreferrer',
           );
 
           return;

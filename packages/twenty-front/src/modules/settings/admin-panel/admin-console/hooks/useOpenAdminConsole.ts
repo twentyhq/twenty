@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildAdminConsoleSignInUrl } from '@/settings/admin-panel/admin-console/utils/buildAdminConsoleSignInUrl';
 import { useToast } from 'twenty-ui/components/feedback';
 import { CreateAdminConsoleLoginTokenDocument } from '~/generated-metadata/graphql';
 
@@ -14,34 +14,33 @@ export const useOpenAdminConsole = () => {
     CreateAdminConsoleLoginTokenDocument,
   );
 
+  const enqueueOpenAdminConsoleError = (message: string) =>
+    enqueueToast({
+      status: 'error',
+      children: t`Could not open the admin console. ${message}`,
+    });
+
   const openAdminConsole = async () => {
-    const { data, error } = await createAdminConsoleLoginToken();
-    const adminConsoleLoginToken = data?.createAdminConsoleLoginToken;
+    try {
+      const { data, error } = await createAdminConsoleLoginToken();
+      const adminConsoleLoginToken = data?.createAdminConsoleLoginToken;
 
-    if (!isDefined(adminConsoleLoginToken)) {
-      enqueueToast({
-        status: 'error',
-        children: t`Could not open the admin console. ${error?.message ?? ''}`,
-      });
+      if (!isDefined(adminConsoleLoginToken)) {
+        enqueueOpenAdminConsoleError(error?.message ?? '');
 
-      return;
+        return;
+      }
+
+      window.location.assign(
+        buildAdminConsoleSignInUrl({
+          adminConsoleUrl: adminConsoleLoginToken.adminConsoleUrl,
+          loginToken: adminConsoleLoginToken.loginToken,
+          returnToPath: `${location.pathname}${location.search}${location.hash}`,
+        }),
+      );
+    } catch (error) {
+      enqueueOpenAdminConsoleError(error instanceof Error ? error.message : '');
     }
-
-    const adminConsoleSignInUrl = new URL(
-      AppPath.Verify,
-      adminConsoleLoginToken.adminConsoleUrl,
-    );
-
-    adminConsoleSignInUrl.searchParams.set(
-      'loginToken',
-      adminConsoleLoginToken.loginToken,
-    );
-    adminConsoleSignInUrl.searchParams.set(
-      'returnToPath',
-      `${location.pathname}${location.search}${location.hash}`,
-    );
-
-    window.location.assign(adminConsoleSignInUrl.toString());
   };
 
   return { openAdminConsole, isOpeningAdminConsole: loading };

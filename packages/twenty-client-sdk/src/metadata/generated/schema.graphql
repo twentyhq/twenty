@@ -11,6 +11,11 @@ input AddQuerySubscriptionInput {
   queryId: String!
 }
 
+type AdminConsoleLoginToken {
+  adminConsoleUrl: String!
+  loginToken: String!
+}
+
 type Agent {
   applicationId: UUID
   createdAt: DateTime!
@@ -1303,6 +1308,7 @@ type ClientAiModelTierConfig {
 }
 
 type ClientConfig {
+  adminConsoleUrl: String
   aiEvaluationModels: [ClientAiEvaluationModelConfig!]!
   aiModelTiers: [ClientAiModelTierConfig!]!
   aiModels: [ClientAiModelConfig!]!
@@ -3316,6 +3322,7 @@ type Mutation {
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
   completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
+  createAdminConsoleLoginToken: AdminConsoleLoginToken!
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
