@@ -216,7 +216,7 @@ describe('AI agent step duplication and deletion (e2e)', () => {
 });
 
 describe('AI agent step kind change (e2e)', () => {
-  it('refuses to switch a Generate step to an agent', async () => {
+  it('refuses to switch a Generate step to an agent that does not exist', async () => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'AI Step Kind Change Test',
     });
@@ -251,7 +251,7 @@ describe('AI agent step kind change (e2e)', () => {
           },
         },
       }),
-    ).rejects.toThrow('Create a new step instead');
+    ).rejects.toThrow('not found');
 
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });

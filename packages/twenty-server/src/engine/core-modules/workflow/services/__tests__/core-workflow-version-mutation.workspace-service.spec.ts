@@ -91,30 +91,41 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     ['removes its agent', { agentId: 'agent-id' }, {}],
     ['adds an agent', {}, { agentId: 'agent-id' }],
     ['changes its agent', { agentId: 'agent-id' }, { agentId: 'other-id' }],
-  ])(
-    'refuses to update an AI step that %s',
-    async (_, existingInput, updatedInput) => {
-      const { service, coreWorkflowVersionWriteService } = await buildService({
+  ])('rebuilds an AI step that %s', async (_, existingInput, updatedInput) => {
+    const { service, workflowVersionStepOperationsWorkspaceService } =
+      await buildService({
         existingStep: buildAiAgentStep({
           input: { ...existingInput, prompt: 'Qualify' },
         }),
       });
+    const step = buildAiAgentStep({
+      input: { ...updatedInput, prompt: 'Qualify' },
+    });
+    const builtStep = buildAiAgentStep({ input: { prompt: '' } });
 
-      await expect(
-        service.updateStep({
-          workspaceId: WORKSPACE_ID,
-          userWorkspaceId: undefined,
-          coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
-          step: buildAiAgentStep({
-            input: { ...updatedInput, prompt: 'Qualify' },
-          }),
-        }),
-      ).rejects.toThrow('Create a new step instead');
-      expect(
-        coreWorkflowVersionWriteService.writeContent,
-      ).not.toHaveBeenCalled();
-    },
-  );
+    workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep.mockResolvedValue(
+      {
+        builtStep: { ...builtStep, nextStepIds: [], position: { x: 0, y: 0 } },
+      },
+    );
+
+    const updatedStep = await service.updateStep({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+      step,
+    });
+
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'step-id',
+        defaultSettings: step.settings,
+      }),
+    );
+    expect(updatedStep).toEqual(builtStep);
+  });
 
   it('updates an AI step in place when its agent is unchanged', async () => {
     const existingStep = buildAiAgentStep({
