@@ -3,6 +3,7 @@ import { createChatParticipationTestContext } from 'test/integration/ai/utils/cr
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -62,7 +63,7 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     const decision = isAiChatInboxEnabled
       ? participation.replyDecision
-      : 'REPLY';
+      : AgentChatReplyDecision.REPLY;
 
     return context.replyPolicyService.shouldReply({
       decision,
