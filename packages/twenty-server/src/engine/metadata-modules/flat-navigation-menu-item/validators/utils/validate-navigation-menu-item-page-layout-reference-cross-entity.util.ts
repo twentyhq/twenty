@@ -95,10 +95,7 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
       flatEntityMaps: optimisticUniversalFlatMaps.flatPageLayoutMaps,
     });
 
-    if (
-      !isDefined(referencedPageLayout) ||
-      referencedPageLayout.type === PageLayoutType.STANDALONE_PAGE
-    ) {
+    if (referencedPageLayout?.type === PageLayoutType.STANDALONE_PAGE) {
       continue;
     }
 
@@ -114,11 +111,19 @@ export const validateNavigationMenuItemPageLayoutReferenceCrossEntity = ({
         : 'update',
     });
 
-    failedValidation.errors.push({
-      code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      message: t`PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout`,
-      userFriendlyMessage: msg`A page layout navigation menu item can only point to a standalone page`,
-    });
+    failedValidation.errors.push(
+      isDefined(referencedPageLayout)
+        ? {
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`PAGE_LAYOUT navigation menu item must reference a STANDALONE_PAGE page layout`,
+            userFriendlyMessage: msg`A page layout navigation menu item can only point to a standalone page`,
+          }
+        : {
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`Target page layout not found`,
+            userFriendlyMessage: msg`Target page layout not found`,
+          },
+    );
 
     validationErrors.navigationMenuItem.push(failedValidation);
   }

@@ -158,23 +158,29 @@ describe('validateNavigationMenuItemPageLayoutReferenceCrossEntity', () => {
     );
   });
 
-  it('does not raise a type error when the referenced layout cannot be resolved', () => {
-    const result = run({
-      navigationMenuItems: [
-        navigationMenuItem(MISSING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER),
-      ],
-      pageLayouts: [pageLayout(PageLayoutType.STANDALONE_PAGE)],
-      report: reportFrom({
-        createdNavigationMenuItemUniversalIdentifiers: [
-          NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  it.each([
+    ['created', 'createdNavigationMenuItemUniversalIdentifiers'],
+    ['updated', 'updatedNavigationMenuItemUniversalIdentifiers'],
+  ] as const)(
+    'rejects a %s PAGE_LAYOUT item whose layout does not exist',
+    (_, reportKey) => {
+      const result = run({
+        navigationMenuItems: [
+          navigationMenuItem(MISSING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER),
         ],
-      }),
-    });
+        pageLayouts: [pageLayout(PageLayoutType.STANDALONE_PAGE)],
+        report: reportFrom({
+          [reportKey]: [NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER],
+        }),
+      });
 
-    expect(errorCodes(result)).not.toContain(
-      NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-    );
-  });
+      expect(
+        result.navigationMenuItem.flatMap((failed) =>
+          failed.errors.map((error) => error.message),
+        ),
+      ).toEqual(['Target page layout not found']);
+    },
+  );
 
   it('rejects an untouched item when its layout type is updated to a non-standalone type in the same migration', () => {
     const result = run({
