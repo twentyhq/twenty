@@ -253,8 +253,7 @@ export class AgentConversationWriterService {
     return messageId;
   }
 
-  // TODO: remove once 2.56 leaves the cross-upgrade window. Until
-  // upgrade:2-56:make-agent-turn-thread-optional reaches a workspace, its turns need a thread
+  // TODO: remove after 2.56; turns need a thread until make-agent-turn-thread-optional runs
   private async assertTurnWithoutThreadAllowedOrThrow(
     workspaceId: string,
   ): Promise<void> {

@@ -175,7 +175,8 @@ export class CodeInterpreterTool implements Tool {
               : {}),
           },
           sessionId: threadId ? `${workspaceId}:${threadId}` : undefined,
-          actorKey: `${sandboxPrincipal?.userWorkspaceId ?? 'anonymous'}:${sandboxPrincipal?.applicationId ?? 'none'}`,
+          // separate sandbox so a scoped run never inherits an unscoped run's token or kernel state
+          actorKey: `${sandboxPrincipal?.userWorkspaceId ?? 'anonymous'}:${sandboxPrincipal?.applicationId ?? 'none'}${isAiRunScoped ? ':scoped' : ''}`,
         },
         {
           onStdout: (line) => {

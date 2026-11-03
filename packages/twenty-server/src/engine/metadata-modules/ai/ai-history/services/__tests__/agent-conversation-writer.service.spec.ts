@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -21,14 +22,13 @@ const buildWriter = ({
     .mockResolvedValue({ identifiers: [{ id: TURN_ID }] });
   const getOrRecompute = jest.fn().mockResolvedValue({
     flatFieldMetadataMaps: {
-      byUniversalIdentifier:
-        threadFieldIsNullable === undefined
-          ? {}
-          : {
-              [STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier]: {
-                isNullable: threadFieldIsNullable,
-              },
+      byUniversalIdentifier: isDefined(threadFieldIsNullable)
+        ? {
+            [STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier]: {
+              isNullable: threadFieldIsNullable,
             },
+          }
+        : {},
     },
   });
 
@@ -54,6 +54,7 @@ describe('AgentConversationWriterService.insertTurn', () => {
       }),
     ).resolves.toBe(TURN_ID);
 
+    expect(insert).toHaveBeenCalledTimes(1);
     expect(insert).toHaveBeenCalledWith(
       WORKSPACE_ID,
       expect.objectContaining({ threadId: null }),

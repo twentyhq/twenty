@@ -282,4 +282,18 @@ describe('Code interpreter sandbox token', () => {
     expect(directRun.sessionId).toBe(applicationRun.sessionId);
     expect(directRun.actorKey).not.toBe(applicationRun.actorKey);
   });
+
+  it('never shares a sandbox between a scoped run and an unscoped run of the same caller', async () => {
+    const { sandboxContext: unscopedRun } = await runInterpreter(
+      buildUserContext({ application: { id: CALLING_APPLICATION_ID } }),
+    );
+    const { sandboxContext: scopedRun } = await runInterpreter(
+      buildUserContext({
+        application: { id: CALLING_APPLICATION_ID },
+        aiRunScope: { objectsPermissions: {}, permissionFlags: {} },
+      }),
+    );
+
+    expect(scopedRun.actorKey).not.toBe(unscopedRun.actorKey);
+  });
 });
