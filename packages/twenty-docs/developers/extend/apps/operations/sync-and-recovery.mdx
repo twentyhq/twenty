@@ -140,6 +140,7 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 - workflows, as `defineWorkflow()` files, when their stored version is the one the last sync wrote. For the workspace Custom application, it is the active version, whether a sync or the workflow builder published it, and apply publishes a changed definition as a new version, as described in [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application);
 - skills, as `defineSkill()` files;
 - agents, as `defineAgent()` files, with their triggers and the role your app binds them to;
+- validation rules, as `defineValidationRule()` files with their expression as a string. A rule with no expression or message yet, such as an unfinished draft from Settings, is left out;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
