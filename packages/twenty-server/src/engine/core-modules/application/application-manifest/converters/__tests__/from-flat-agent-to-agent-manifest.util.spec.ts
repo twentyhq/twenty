@@ -18,6 +18,8 @@ const AGENT_MANIFEST: Required<AgentManifest> = {
   name: 'lead-scorer',
   label: 'Lead Scorer',
   icon: 'IconRobot',
+  avatarColor: 'purple',
+  avatarShape: 'flower',
   description: 'Scores new leads',
   prompt: 'Score the lead and explain your reasoning.',
   modelId: 'gpt-4o',
@@ -85,6 +87,8 @@ describe('fromFlatAgentToAgentManifest', () => {
     const flatAgent: UniversalFlatAgent = {
       ...forward(AGENT_MANIFEST),
       icon: null,
+      avatarColor: null,
+      avatarShape: null,
       description: null,
       modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
       triggers: [

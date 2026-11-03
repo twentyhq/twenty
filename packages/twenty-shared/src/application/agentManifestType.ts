@@ -1,3 +1,5 @@
+import { type AgentAvatarColor } from '@/ai/types/AgentAvatarColor';
+import { type AgentAvatarShape } from '@/ai/types/AgentAvatarShape';
 import { type AgentResponseFormat } from '@/ai/types/AgentResponseFormat';
 import { type ModelConfiguration } from '@/ai/types/ModelConfiguration';
 import { type AgentTriggerManifest } from '@/application/agentTriggerType';
@@ -7,6 +9,8 @@ export type AgentManifest = SyncableEntityOptions & {
   name: string;
   label: string;
   icon?: string;
+  avatarColor?: AgentAvatarColor;
+  avatarShape?: AgentAvatarShape;
   description?: string;
   prompt: string;
   modelId?: string;

@@ -18,6 +18,8 @@ const appAgent: FlatAgent = {
   name: 'researcher',
   label: 'Researcher',
   icon: 'IconRobot',
+  avatarColor: null,
+  avatarShape: null,
   description: 'Finds things',
   prompt: 'Research the company',
   modelId: 'auto',
@@ -73,6 +75,8 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
       id: appAgent.id,
       name: appAgent.name,
       label: 'Market researcher',
+      avatarColor: 'purple',
+      avatarShape: 'flower',
       prompt: 'Research the market',
       modelId: 'gpt-4o',
       isActive: false,
@@ -81,12 +85,16 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     expect(flatAgentToUpdate).toMatchObject({
       name: 'researcher',
       label: 'Researcher',
+      avatarColor: null,
+      avatarShape: null,
       prompt: 'Research the company',
       modelId: 'auto',
       isActive: true,
       overrides: {
         [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
           label: 'Market researcher',
+          avatarColor: 'purple',
+          avatarShape: 'flower',
           prompt: 'Research the market',
           modelId: 'gpt-4o',
           isActive: false,
@@ -98,6 +106,8 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
     ).toMatchObject({
       name: 'researcher',
       label: 'Market researcher',
+      avatarColor: 'purple',
+      avatarShape: 'flower',
       prompt: 'Research the market',
       modelId: 'gpt-4o',
       isActive: false,
@@ -109,6 +119,8 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
       updateAgentInput: {
         id: appAgent.id,
         label: 'Researcher',
+        avatarColor: null,
+        avatarShape: null,
         isActive: true,
       },
       flatAgentMaps: addFlatEntityToFlatEntityMapsOrThrow({
@@ -117,6 +129,8 @@ describe('fromUpdateAgentInputToFlatAgentToUpdate', () => {
           overrides: {
             [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
               label: 'Market researcher',
+              avatarColor: 'purple',
+              avatarShape: 'flower',
               isActive: false,
             },
           },

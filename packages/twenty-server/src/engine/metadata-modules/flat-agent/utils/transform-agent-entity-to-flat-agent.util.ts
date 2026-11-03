@@ -29,6 +29,8 @@ export const transformAgentEntityToFlatAgent = ({
     name: agentEntity.name,
     label: agentEntity.label,
     icon: agentEntity.icon,
+    avatarColor: agentEntity.avatarColor ?? null,
+    avatarShape: agentEntity.avatarShape ?? null,
     description: agentEntity.description,
     prompt: agentEntity.prompt,
     modelId: agentEntity.modelId,

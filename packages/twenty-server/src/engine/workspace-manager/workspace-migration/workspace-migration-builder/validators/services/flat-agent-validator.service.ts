@@ -15,6 +15,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateAgentAvatar } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util';
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
@@ -68,6 +69,15 @@ export class FlatAgentValidatorService {
     validationResult.errors.push(
       ...validateAgentTriggers({ triggers: flatAgent.triggers }),
     );
+
+    const avatarsToValidate = [
+      flatAgent,
+      ...Object.values(flatAgent.overrides ?? {}).filter(isDefined),
+    ];
+
+    for (const avatar of avatarsToValidate) {
+      validationResult.errors.push(...validateAgentAvatar(avatar));
+    }
 
     return validationResult;
   }
@@ -220,6 +230,15 @@ export class FlatAgentValidatorService {
       validationResult.errors.push(
         ...validateAgentResponseFormat({ responseFormat }),
       );
+    }
+
+    const avatarsToValidate = [
+      flatEntityUpdate,
+      ...Object.values(flatEntityUpdate.overrides ?? {}).filter(isDefined),
+    ];
+
+    for (const avatar of avatarsToValidate) {
+      validationResult.errors.push(...validateAgentAvatar(avatar));
     }
 
     if (flatEntityUpdate.triggers !== undefined) {

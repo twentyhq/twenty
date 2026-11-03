@@ -66,6 +66,8 @@ Key points:
 - `prompt` is the system prompt that defines the agent's behavior.
 - `description` (optional) provides context about what the agent does.
 - `icon` (optional) sets the icon displayed in the UI.
+- `avatarColor` (optional) configures the avatar color: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` or `gray`. When omitted, avatar displays choose a color from the agent ID.
+- `avatarShape` (optional) configures the avatar shape: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` or `hexagon`. When omitted, avatar displays use `circle`.
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).

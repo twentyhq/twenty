@@ -7,6 +7,10 @@
  *                              |___/
  */
 
+export { AGENT_AVATAR_COLORS } from './constants/agent-avatar-colors.const';
+export { AGENT_AVATAR_SHAPES } from './constants/agent-avatar-shapes.const';
+export type { AgentAvatarColor } from './types/AgentAvatarColor';
+export type { AgentAvatarShape } from './types/AgentAvatarShape';
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
