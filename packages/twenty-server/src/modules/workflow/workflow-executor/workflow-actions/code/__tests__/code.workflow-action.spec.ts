@@ -5,7 +5,6 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
 import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
@@ -39,7 +38,7 @@ const buildCodeStep = (input: WorkflowCodeActionInput): WorkflowCodeAction => ({
   },
 });
 
-const buildAction = async ({ isBuildUpToDate = true } = {}) => {
+const buildAction = async () => {
   const codeStepRunnerService = {
     run: jest.fn().mockResolvedValue(EXECUTE_RESULT),
   };
@@ -48,15 +47,8 @@ const buildAction = async ({ isBuildUpToDate = true } = {}) => {
   };
   const logicFunctionFromSourceHelperService = {
     findLogicFunctionRunnableOnDemandOrThrow: jest.fn().mockResolvedValue({
-      flatLogicFunction: {
-        applicationId: APPLICATION.id,
-        name: 'Legacy',
-        isBuildUpToDate,
-      },
+      flatLogicFunction: { applicationId: APPLICATION.id, name: 'Legacy' },
     }),
-  };
-  const logicFunctionFromSourceService = {
-    buildOneFromSource: jest.fn().mockResolvedValue(undefined),
   };
   const workflowExecutionContextService = {
     getExecutionContext: jest.fn().mockResolvedValue({
@@ -79,10 +71,6 @@ const buildAction = async ({ isBuildUpToDate = true } = {}) => {
         useValue: logicFunctionFromSourceHelperService,
       },
       {
-        provide: LogicFunctionFromSourceService,
-        useValue: logicFunctionFromSourceService,
-      },
-      {
         provide: WorkflowExecutionContextService,
         useValue: workflowExecutionContextService,
       },
@@ -97,7 +85,6 @@ const buildAction = async ({ isBuildUpToDate = true } = {}) => {
     action: testingModule.get(CodeWorkflowAction),
     codeStepRunnerService,
     logicFunctionExecutorService,
-    logicFunctionFromSourceService,
     workflowExecutionContextService,
   };
 };
@@ -166,29 +153,5 @@ describe('CodeWorkflowAction', () => {
       payload: { a: 1 },
     });
     expect(codeStepRunnerService.run).not.toHaveBeenCalled();
-  });
-
-  it('builds the logic function of a legacy step whose build is stale before running it', async () => {
-    const { action, logicFunctionFromSourceService } = await buildAction({
-      isBuildUpToDate: false,
-    });
-
-    await runStep({
-      action,
-      step: buildCodeStep({
-        logicFunctionId: 'logic-function-id',
-        logicFunctionInput: {},
-      }),
-    });
-
-    expect(
-      logicFunctionFromSourceService.buildOneFromSource,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      logicFunctionFromSourceService.buildOneFromSource,
-    ).toHaveBeenCalledWith({
-      id: 'logic-function-id',
-      workspaceId: 'workspace-id',
-    });
   });
 });

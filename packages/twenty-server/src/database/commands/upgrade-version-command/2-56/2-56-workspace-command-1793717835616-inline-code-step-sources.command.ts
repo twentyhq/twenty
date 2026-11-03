@@ -4,22 +4,19 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { CODE_STEP_SOURCE_MAX_LENGTH } from 'twenty-shared/workflow';
 import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  inlineCodeStepSources,
-  OVERSIZED_CODE_STEP_SOURCE,
-} from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
+import { inlineCodeStepSources } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
 import {
   rewriteJsonbRowsWithCompareAndSet,
   type StoredJsonbRow,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -31,46 +28,33 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-
-// the max length of settings.input.code in the CODE step schema
-const CODE_STEP_SOURCE_MAX_LENGTH = 256_000;
 
 const SOURCE_READ_BATCH_SIZE = 20;
 
-const IN_FLIGHT_WORKFLOW_RUN_STATUSES = [
-  'NOT_STARTED',
-  'ENQUEUED',
-  'RUNNING',
-  'STOPPING',
-];
-
 type StepSource = {
   tableName: string;
-  stepsExpression: string;
   whereClause: string;
   whereParameters: unknown[];
 };
 
-type StepLogicFunctionReference = {
-  logicFunctionId: string;
-  isLegacyCodeStep: boolean;
+type FunctionSources = {
+  sourceByLogicFunctionId: Map<string, string>;
+  oversizedLogicFunctionIds: Set<string>;
 };
 
-// in-flight runs still execute the legacy step by logicFunctionId, so their functions are kept
+// expand only: steps keep logicFunctionId and no function is deleted, so a rollback still runs them
 @RegisteredWorkspaceCommand('2.56.0', 1793717835616)
 @Command({
   name: 'upgrade:2-56:inline-code-step-sources',
   description:
-    'Move the source of the hidden logic function behind each workflow CODE step into the step, then delete the functions nothing references anymore',
+    'Copy the source of the hidden logic function behind each legacy workflow CODE step into the step, keeping the function',
 })
 export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -94,7 +78,6 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     const workflowVersionSources: StepSource[] = [
       {
         tableName: 'core."workflowVersion"',
-        stepsExpression: 'steps',
         whereClause: '"workspaceId" = $1',
         whereParameters: [workspaceId],
       },
@@ -111,24 +94,15 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     ) {
       workflowVersionSources.push({
         tableName: `${schemaName}."workflowVersion"`,
-        stepsExpression: 'steps',
         whereClause: 'true',
         whereParameters: [],
       });
     }
 
-    const versionReferences = await this.findReferences({
+    const legacyLogicFunctionIds = await this.findLegacyLogicFunctionIds({
       dataSource,
       sources: workflowVersionSources,
     });
-
-    const legacyLogicFunctionIds = [
-      ...new Set(
-        versionReferences
-          .filter(({ isLegacyCodeStep }) => isLegacyCodeStep)
-          .map(({ logicFunctionId }) => logicFunctionId),
-      ),
-    ];
 
     if (legacyLogicFunctionIds.length === 0) {
       return;
@@ -147,21 +121,20 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
         .map((flatLogicFunction) => [flatLogicFunction.id, flatLogicFunction]),
     );
 
-    const flatLogicFunctionsToInline = legacyLogicFunctionIds
-      .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
-      .filter(isDefined);
+    const { sourceByLogicFunctionId, oversizedLogicFunctionIds } =
+      await this.readSources({
+        workspaceId,
+        flatApplicationMaps,
+        flatLogicFunctions: legacyLogicFunctionIds
+          .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
+          .filter(isDefined),
+      });
 
-    const sourceByLogicFunctionId = await this.readSources({
-      workspaceId,
-      flatApplicationMaps,
-      flatLogicFunctions: flatLogicFunctionsToInline,
-    });
-
-    const recoveredLogicFunctionIds = new Set(
-      [...sourceByLogicFunctionId.entries()]
-        .filter(([, source]) => source !== OVERSIZED_CODE_STEP_SOURCE)
-        .map(([logicFunctionId]) => logicFunctionId),
-    );
+    for (const logicFunctionId of oversizedLogicFunctionIds) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: the source of function ${logicFunctionId} is over the code step size limit, its steps keep running from the function`,
+      );
+    }
 
     const rewrittenRowCounts: number[] = [];
 
@@ -178,12 +151,13 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
             const { steps, inlinedCodeSteps } = inlineCodeStepSources({
               steps: value,
               sourceByLogicFunctionId,
+              oversizedLogicFunctionIds,
             });
 
             for (const { stepId, logicFunctionId } of inlinedCodeSteps) {
-              if (!recoveredLogicFunctionIds.has(logicFunctionId)) {
+              if (!sourceByLogicFunctionId.has(logicFunctionId)) {
                 this.logger.warn(
-                  `Workspace ${workspaceId}: the source of code step ${String(stepId)} in ${source.tableName} ${id} is ${sourceByLogicFunctionId.has(logicFunctionId) ? 'over the size limit' : 'missing'} (function ${logicFunctionId}), replaced with code that throws`,
+                  `Workspace ${workspaceId}: the source of code step ${String(stepId)} in ${source.tableName} ${id} is missing (function ${logicFunctionId}), replaced with code that throws`,
                 );
               }
             }
@@ -197,63 +171,14 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     const [coreWorkflowVersionCount, workflowVersionCount = 0] =
       rewrittenRowCounts;
 
-    // runs are created from the cached versions, so they must see the inlined steps before runs are scanned
     if (!isDryRun && coreWorkflowVersionCount > 0) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatWorkflowVersionMaps',
       ]);
     }
 
-    const referencedLogicFunctionIds = await this.findReferencedLogicFunctionIds(
-      {
-        dataSource,
-        workspaceId,
-        schemaName,
-        workflowVersionSources,
-        versionReferencesBeforeRewrite: isDryRun
-          ? versionReferences.filter(
-              ({ isLegacyCodeStep }) => !isLegacyCodeStep,
-            )
-          : undefined,
-      },
-    );
-
-    const [{ workspaceCustomApplicationId }]: {
-      workspaceCustomApplicationId: string | null;
-    }[] = await dataSource.query(
-      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-      [workspaceId],
-    );
-    const workspaceCustomFlatApplication = isDefined(
-      workspaceCustomApplicationId,
-    )
-      ? flatApplicationMaps.byId[workspaceCustomApplicationId]
-      : undefined;
-
-    // other applications own the functions they declare, only the custom application's are code step functions
-    const flatLogicFunctionsToDelete = [...recoveredLogicFunctionIds]
-      .filter(
-        (logicFunctionId) => !referencedLogicFunctionIds.has(logicFunctionId),
-      )
-      .map((logicFunctionId) => flatLogicFunctionById.get(logicFunctionId))
-      .filter(isDefined)
-      .filter(
-        ({ applicationId }) =>
-          applicationId === workspaceCustomFlatApplication?.id,
-      )
-      .filter(hasNoTriggerOutsideWorkflows);
-
-    const deletedLogicFunctionCount =
-      isDryRun || !isDefined(workspaceCustomFlatApplication)
-        ? flatLogicFunctionsToDelete.length
-        : await this.deleteLogicFunctions({
-            workspaceId,
-            workspaceCustomFlatApplication,
-            flatLogicFunctionsToDelete,
-          });
-
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the code of ${coreWorkflowVersionCount} core workflow version(s) and ${workflowVersionCount} workflow version(s), and deleted ${deletedLogicFunctionCount} code step function(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the code of ${coreWorkflowVersionCount} core workflow version(s) and ${workflowVersionCount} workflow version(s)`,
     );
   }
 
@@ -265,8 +190,9 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     workspaceId: string;
     flatApplicationMaps: FlatApplicationCacheMaps;
     flatLogicFunctions: FlatLogicFunction[];
-  }): Promise<Map<string, string>> {
+  }): Promise<FunctionSources> {
     const sourceByLogicFunctionId = new Map<string, string>();
+    const oversizedLogicFunctionIds = new Set<string>();
 
     for (const batch of chunk(flatLogicFunctions, SOURCE_READ_BATCH_SIZE)) {
       const sources = await Promise.all(
@@ -291,16 +217,17 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
           return;
         }
 
-        sourceByLogicFunctionId.set(
-          id,
-          source.length > CODE_STEP_SOURCE_MAX_LENGTH
-            ? OVERSIZED_CODE_STEP_SOURCE
-            : source,
-        );
+        if (source.length > CODE_STEP_SOURCE_MAX_LENGTH) {
+          oversizedLogicFunctionIds.add(id);
+
+          return;
+        }
+
+        sourceByLogicFunctionId.set(id, source);
       });
     }
 
-    return sourceByLogicFunctionId;
+    return { sourceByLogicFunctionId, oversizedLogicFunctionIds };
   }
 
   private async readSource({
@@ -333,133 +260,36 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     }
   }
 
-  // a dry run did not rewrite the versions, so it reuses what they will reference once inlined
-  private async findReferencedLogicFunctionIds({
-    dataSource,
-    workspaceId,
-    schemaName,
-    workflowVersionSources,
-    versionReferencesBeforeRewrite,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    schemaName: string;
-    workflowVersionSources: StepSource[];
-    versionReferencesBeforeRewrite?: StepLogicFunctionReference[];
-  }): Promise<Set<string>> {
-    const versionReferences =
-      versionReferencesBeforeRewrite ??
-      (await this.findReferences({
-        dataSource,
-        sources: workflowVersionSources,
-      }));
-
-    const hasWorkflowRunTable = await this.hasWorkspaceTable({
-      dataSource,
-      workspaceId,
-      objectUniversalIdentifier:
-        STANDARD_OBJECTS.workflowRun.universalIdentifier,
-      tableName: `${schemaName}."workflowRun"`,
-    });
-
-    const inFlightRunReferences = hasWorkflowRunTable
-      ? await this.findReferences({
-          dataSource,
-          sources: [
-            {
-              tableName: `${schemaName}."workflowRun"`,
-              stepsExpression: `state->'flow'->'steps'`,
-              whereClause: 'status::text = ANY($1::text[])',
-              whereParameters: [IN_FLIGHT_WORKFLOW_RUN_STATUSES],
-            },
-          ],
-        })
-      : [];
-
-    return new Set(
-      [...versionReferences, ...inFlightRunReferences].map(
-        ({ logicFunctionId }) => logicFunctionId,
-      ),
-    );
-  }
-
-  private async findReferences({
+  private async findLegacyLogicFunctionIds({
     dataSource,
     sources,
   }: {
     dataSource: DataSource;
     sources: StepSource[];
-  }): Promise<StepLogicFunctionReference[]> {
-    const references: StepLogicFunctionReference[] = [];
+  }): Promise<string[]> {
+    const logicFunctionIds = new Set<string>();
 
-    for (const {
-      tableName,
-      stepsExpression,
-      whereClause,
-      whereParameters,
-    } of sources) {
-      const rows: StepLogicFunctionReference[] = await dataSource.query(
-        `SELECT DISTINCT
-           step->'settings'->'input'->>'logicFunctionId' AS "logicFunctionId",
-           (step->>'type' = 'CODE'
-             AND (jsonb_typeof(step->'settings'->'input'->'code') IS DISTINCT FROM 'string'
-               OR step->'settings'->'input'->>'code' = '')) AS "isLegacyCodeStep"
+    for (const { tableName, whereClause, whereParameters } of sources) {
+      const rows: { logicFunctionId: string }[] = await dataSource.query(
+        `SELECT DISTINCT step->'settings'->'input'->>'logicFunctionId' AS "logicFunctionId"
          FROM ${tableName}
          CROSS JOIN LATERAL jsonb_array_elements(
-           CASE WHEN jsonb_typeof(${stepsExpression}) = 'array' THEN ${stepsExpression} ELSE '[]'::jsonb END
+           CASE WHEN jsonb_typeof(steps) = 'array' THEN steps ELSE '[]'::jsonb END
          ) AS step
          WHERE (${whereClause})
-           AND jsonb_typeof(step->'settings'->'input'->'logicFunctionId') = 'string'`,
+           AND step->>'type' = 'CODE'
+           AND jsonb_typeof(step->'settings'->'input'->'logicFunctionId') = 'string'
+           AND (jsonb_typeof(step->'settings'->'input'->'code') IS DISTINCT FROM 'string'
+             OR step->'settings'->'input'->>'code' = '')`,
         whereParameters,
       );
 
-      references.push(...rows);
-    }
-
-    return references;
-  }
-
-  private async deleteLogicFunctions({
-    workspaceId,
-    workspaceCustomFlatApplication,
-    flatLogicFunctionsToDelete,
-  }: {
-    workspaceId: string;
-    workspaceCustomFlatApplication: FlatApplication;
-    flatLogicFunctionsToDelete: FlatLogicFunction[];
-  }): Promise<number> {
-    if (flatLogicFunctionsToDelete.length === 0) {
-      return 0;
-    }
-
-    // the migration runner also deletes the functions' files and executors
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            logicFunction: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: flatLogicFunctionsToDelete,
-              flatEntityToUpdate: [],
-            },
-          },
-        },
+      rows.forEach(({ logicFunctionId }) =>
+        logicFunctionIds.add(logicFunctionId),
       );
-
-    // the steps are already inlined, so a function that cannot be deleted is only left over
-    if (result.status === 'fail') {
-      this.logger.error(
-        `Workspace ${workspaceId}: could not delete ${flatLogicFunctionsToDelete.length} code step function(s): ${JSON.stringify(result)}`,
-      );
-
-      return 0;
     }
 
-    return flatLogicFunctionsToDelete.length;
+    return [...logicFunctionIds];
   }
 
   private async hasWorkspaceTable({
@@ -497,11 +327,3 @@ export class InlineCodeStepSourcesCommand extends ProvisionedWorkspaceCommandRun
     return isDefined(table?.name);
   }
 }
-
-const hasNoTriggerOutsideWorkflows = (flatLogicFunction: FlatLogicFunction) =>
-  !isDefined(flatLogicFunction.cronTriggerSettings) &&
-  !isDefined(flatLogicFunction.databaseEventTriggerSettings) &&
-  !isDefined(flatLogicFunction.httpRouteTriggerSettings) &&
-  !isDefined(flatLogicFunction.serverRouteTriggerSettings) &&
-  !isDefined(flatLogicFunction.toolTriggerSettings) &&
-  !isDefined(flatLogicFunction.workflowActionTriggerSettings);

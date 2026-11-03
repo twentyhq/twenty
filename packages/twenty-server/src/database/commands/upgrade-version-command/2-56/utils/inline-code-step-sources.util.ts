@@ -3,19 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
-const buildThrowingCode = (errorMessage: string) =>
-  `export const main = async () => {
-  throw new Error('${errorMessage}');
+export const UNRECOVERABLE_CODE_STEP_SOURCE = `export const main = async () => {
+  throw new Error('The source of this code step could not be recovered during the upgrade; rewrite it.');
 };
 `;
-
-export const UNRECOVERABLE_CODE_STEP_SOURCE = buildThrowingCode(
-  'The source of this code step could not be recovered during the upgrade; rewrite it.',
-);
-
-export const OVERSIZED_CODE_STEP_SOURCE = buildThrowingCode(
-  'The source of this code step exceeded the size limit during the upgrade; rewrite it.',
-);
 
 export type InlinedCodeStep = {
   stepId: unknown;
@@ -38,33 +29,40 @@ const getLegacyCodeStepLogicFunctionId = (
   return input.logicFunctionId;
 };
 
+// logicFunctionId stays so the previous version keeps running the step after a rollback
 export const inlineCodeStepSources = ({
   steps,
   sourceByLogicFunctionId,
+  oversizedLogicFunctionIds,
 }: {
   steps: StoredWorkflowStep[];
   sourceByLogicFunctionId: ReadonlyMap<string, string>;
+  oversizedLogicFunctionIds: ReadonlySet<string>;
 }): { steps: StoredWorkflowStep[]; inlinedCodeSteps: InlinedCodeStep[] } => {
   const inlinedCodeSteps: InlinedCodeStep[] = [];
 
   const rewrittenSteps = steps.map((step) => {
     const logicFunctionId = getLegacyCodeStepLogicFunctionId(step);
 
-    if (!isDefined(logicFunctionId)) {
+    if (
+      !isDefined(logicFunctionId) ||
+      oversizedLogicFunctionIds.has(logicFunctionId)
+    ) {
       return step;
     }
 
     inlinedCodeSteps.push({ stepId: step.id, logicFunctionId });
 
-    const { logicFunctionId: _logicFunctionId, ...input } =
-      step.settings?.input ?? {};
     const code =
       sourceByLogicFunctionId.get(logicFunctionId) ??
       UNRECOVERABLE_CODE_STEP_SOURCE;
 
     return {
       ...step,
-      settings: { ...step.settings, input: { ...input, code } },
+      settings: {
+        ...step.settings,
+        input: { ...step.settings?.input, code },
+      },
     };
   });
 

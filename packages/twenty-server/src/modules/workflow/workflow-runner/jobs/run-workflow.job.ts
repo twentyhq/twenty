@@ -12,6 +12,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
@@ -31,6 +32,7 @@ export class RunWorkflowJob {
 
   constructor(
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly metricsService: MetricsService,
@@ -146,6 +148,11 @@ export class RunWorkflowJob {
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
+
+    await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+      workspaceId,
+      steps,
+    });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,

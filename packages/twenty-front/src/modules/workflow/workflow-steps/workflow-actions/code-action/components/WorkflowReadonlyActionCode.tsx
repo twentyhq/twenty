@@ -1,3 +1,4 @@
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -5,6 +6,7 @@ import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow
 import { useCodeStepInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useCodeStepInputSchema';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 
 const StyledCodeEditorContainer = styled.div`
@@ -19,12 +21,25 @@ type WorkflowReadonlyActionCodeProps = {
 export const WorkflowReadonlyActionCode = ({
   action,
 }: WorkflowReadonlyActionCodeProps) => {
-  const code = action.settings.input.code;
+  const legacyLogicFunctionId = isDefined(action.settings.input.code)
+    ? undefined
+    : action.settings.input.logicFunctionId;
+
+  const { sourceHandlerCode: legacySourceCode, loading } =
+    useGetLogicFunctionSourceCode({
+      logicFunctionId: legacyLogicFunctionId ?? '',
+    });
+
+  const code = action.settings.input.code ?? legacySourceCode ?? undefined;
 
   const { inputSchema } = useCodeStepInputSchema({
     stepId: action.id,
     sourceCode: code,
   });
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>

@@ -54,6 +54,7 @@ const buildService = async ({
   };
   const workflowVersionStepOperationsWorkspaceService = {
     runStepCreationSideEffectsAndBuildStep: jest.fn(),
+    runWorkflowVersionStepDeletionSideEffects: jest.fn(),
   };
 
   const testingModule = await Test.createTestingModule({
@@ -133,6 +134,9 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith(
       expect.objectContaining({ steps: [builtStep] }),
     );
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
+    ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
   });
 
   it('updates an AI step in place when its agent is unchanged', async () => {
@@ -165,6 +169,9 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     });
     expect(
       workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).not.toHaveBeenCalled();
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
     ).not.toHaveBeenCalled();
   });
 });

@@ -23,10 +23,11 @@ const inline = (steps: StoredWorkflowStep[]) =>
   inlineCodeStepSources({
     steps,
     sourceByLogicFunctionId: new Map([['logic-function-id', SOURCE]]),
+    oversizedLogicFunctionIds: new Set(['oversized-logic-function-id']),
   });
 
 describe('inlineCodeStepSources', () => {
-  it('replaces the logic function of a legacy code step with its source', () => {
+  it('writes the source of a legacy code step and keeps its logic function', () => {
     expect(
       inline([
         buildStep({
@@ -39,7 +40,11 @@ describe('inlineCodeStepSources', () => {
     ).toEqual({
       steps: [
         buildStep({
-          input: { logicFunctionInput: { a: '{{trigger.a}}' }, code: SOURCE },
+          input: {
+            logicFunctionId: 'logic-function-id',
+            logicFunctionInput: { a: '{{trigger.a}}' },
+            code: SOURCE,
+          },
         }),
       ],
       inlinedCodeSteps: [
@@ -59,10 +64,18 @@ describe('inlineCodeStepSources', () => {
           },
         }),
       ]).steps,
-    ).toEqual([buildStep({ input: { code: SOURCE, logicFunctionInput: {} } })]);
+    ).toEqual([
+      buildStep({
+        input: {
+          code: SOURCE,
+          logicFunctionId: 'logic-function-id',
+          logicFunctionInput: {},
+        },
+      }),
+    ]);
   });
 
-  it('replaces a step whose function source is unknown with code that throws', () => {
+  it('writes code that throws for a step whose function source is unknown', () => {
     expect(
       inline([
         buildStep({
@@ -76,6 +89,7 @@ describe('inlineCodeStepSources', () => {
       steps: [
         buildStep({
           input: {
+            logicFunctionId: 'unknown-logic-function-id',
             logicFunctionInput: {},
             code: UNRECOVERABLE_CODE_STEP_SOURCE,
           },
@@ -87,8 +101,14 @@ describe('inlineCodeStepSources', () => {
     });
   });
 
-  it('leaves code steps that already carry their code and logic function steps', () => {
+  it('leaves oversized sources, code steps that already carry their code and logic function steps', () => {
     const steps = [
+      buildStep({
+        input: {
+          logicFunctionId: 'oversized-logic-function-id',
+          logicFunctionInput: {},
+        },
+      }),
       buildStep({
         input: {
           code: 'export const main = async () => ({});',

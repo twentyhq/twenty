@@ -12,6 +12,7 @@ export const buildWorkflowVersionDependenciesDeleteSideEffects = ({
     flatWorkflowMaps,
     flatWorkflowVersionMaps,
     flatCommandMenuItemMaps,
+    flatLogicFunctionMaps,
   },
 }: BuildSideEffectsArgs<'workflowVersion'>): MetadataSideEffectResult => {
   const deletedWorkflowVersion =
@@ -34,7 +35,11 @@ export const buildWorkflowVersionDependenciesDeleteSideEffects = ({
     status: 'success',
     operations: buildWorkflowVersionDependenciesDeleteOperations({
       deletedWorkflowVersions: [deletedWorkflowVersion],
+      allFlatEntityOperationRecordByMetadataName,
+      flatWorkflowMaps,
+      flatWorkflowVersionMaps,
       flatCommandMenuItemMaps,
+      flatLogicFunctionMaps,
     }),
   };
 };
