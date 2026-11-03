@@ -55,6 +55,14 @@ export class UpdatePageLayoutWidgetInput {
   @IsOptional()
   conditionalDisplay?: ConditionalDisplay | null;
 
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Ignored. Use `conditionalDisplay` instead.',
+  })
+  @IsString()
+  @IsOptional()
+  conditionalAvailabilityExpression?: string | null;
+
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()

@@ -1359,8 +1359,11 @@ type CommandMenuItem {
   applicationId: UUID
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType!
-  conditionalAvailabilityExpression: String
-  conditionalPinnedExpression: String
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use `conditionalAvailability` instead.")
+  conditionalDisplay: JSON
+  conditionalPinned: JSON
+  conditionalPinnedExpression: String @deprecated(reason: "Use `conditionalPinned` instead.")
   coreWorkflowVersionId: UUID
   createdAt: DateTime!
   engineComponentKey: EngineComponentKey!
@@ -1530,8 +1533,11 @@ type CreateCalendarEventOutput {
 input CreateCommandMenuItemInput {
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
-  conditionalAvailabilityExpression: String
-  conditionalPinnedExpression: String
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalAvailability` instead.")
+  conditionalDisplay: JSON
+  conditionalPinned: JSON
+  conditionalPinnedExpression: String @deprecated(reason: "Ignored. Use `conditionalPinned` instead.")
   coreWorkflowVersionId: UUID
   engineComponentKey: EngineComponentKey!
   frontComponentId: UUID
@@ -1638,6 +1644,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   color: String
+  conditionalDisplay: JSON
   folderId: UUID
   icon: String
   id: UUID
@@ -1690,6 +1697,7 @@ input CreatePageLayoutInput {
 }
 
 input CreatePageLayoutTabInput {
+  conditionalDisplay: JSON
   layoutMode: PageLayoutTabLayoutMode = GRID
   pageLayoutId: UUID!
   position: Float
@@ -1786,6 +1794,7 @@ input CreateViewFieldGroupInput {
 
 input CreateViewFieldInput {
   aggregateOperation: AggregateOperations
+  conditionalDisplay: JSON
   fieldMetadataId: UUID!
   id: UUID
   isVisible: Boolean = true
@@ -3597,6 +3606,7 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   applicationId: UUID
   color: String
+  conditionalDisplay: JSON
   createdAt: DateTime!
   folderId: UUID
   icon: String
@@ -3852,6 +3862,7 @@ type PageLayout {
 
 type PageLayoutTab {
   applicationId: UUID!
+  conditionalDisplay: JSON
   createdAt: DateTime!
   deletedAt: DateTime
   icon: String
@@ -3884,7 +3895,8 @@ enum PageLayoutType {
 
 type PageLayoutWidget {
   applicationId: UUID!
-  conditionalAvailabilityExpression: String
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: WidgetConfiguration!
   createdAt: DateTime!
@@ -5078,6 +5090,7 @@ input UpdateCalendarChannelInputUpdates {
 input UpdateCommandMenuItemInput {
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
+  conditionalDisplay: JSON
   engineComponentKey: EngineComponentKey
   hotKeys: [String!]
   icon: String
@@ -5208,6 +5221,7 @@ input UpdateMessageFoldersInput {
 
 input UpdateNavigationMenuItemInput {
   color: String
+  conditionalDisplay: JSON
   folderId: UUID
   icon: String
   link: String
@@ -5263,6 +5277,7 @@ input UpdatePageLayoutInput {
 }
 
 input UpdatePageLayoutTabInput {
+  conditionalDisplay: JSON
   icon: String
   layoutMode: PageLayoutTabLayoutMode
   position: Float
@@ -5270,6 +5285,7 @@ input UpdatePageLayoutTabInput {
 }
 
 input UpdatePageLayoutTabWithWidgetsInput {
+  conditionalDisplay: JSON
   icon: String
   id: UUID!
   layoutMode: PageLayoutTabLayoutMode = GRID
@@ -5279,7 +5295,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
-  conditionalAvailabilityExpression: String
+  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: JSON
   isActive: Boolean
@@ -5291,7 +5307,7 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
-  conditionalAvailabilityExpression: String
+  conditionalAvailabilityExpression: String @deprecated(reason: "Ignored. Use `conditionalDisplay` instead.")
   conditionalDisplay: JSON
   configuration: JSON
   id: UUID!
@@ -5402,6 +5418,7 @@ input UpdateViewFieldInput {
 
 input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
+  conditionalDisplay: JSON
   isVisible: Boolean
   position: Float
   size: Float
@@ -5562,6 +5579,8 @@ input UpsertFieldPermissionsInput {
 }
 
 input UpsertFieldsWidgetFieldInput {
+  conditionalDisplay: JSON
+
   """
   The id of the field metadata. Used to create a new view field when viewFieldId is not provided.
   """
@@ -5642,6 +5661,7 @@ input UpsertViewWidgetInput {
 
 input UpsertViewWidgetViewFieldInput {
   aggregateOperation: AggregateOperations
+  conditionalDisplay: JSON
 
   """
   The field metadata id. Used to create a new view field when viewFieldId is not provided.
@@ -6032,6 +6052,7 @@ type ViewConfiguration {
 type ViewField {
   aggregateOperation: AggregateOperations
   applicationId: UUID!
+  conditionalDisplay: JSON
   createdAt: DateTime!
   deletedAt: DateTime
   fieldMetadataId: UUID!

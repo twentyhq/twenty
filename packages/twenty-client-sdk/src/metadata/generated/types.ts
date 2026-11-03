@@ -2945,8 +2945,17 @@ export default {
             "availabilityType": [
                 156
             ],
+            "conditionalAvailability": [
+                324
+            ],
             "conditionalAvailabilityExpression": [
                 1
+            ],
+            "conditionalDisplay": [
+                324
+            ],
+            "conditionalPinned": [
+                324
             ],
             "conditionalPinnedExpression": [
                 1
@@ -3347,8 +3356,17 @@ export default {
             "availabilityType": [
                 156
             ],
+            "conditionalAvailability": [
+                324
+            ],
             "conditionalAvailabilityExpression": [
                 1
+            ],
+            "conditionalDisplay": [
+                324
+            ],
+            "conditionalPinned": [
+                324
             ],
             "conditionalPinnedExpression": [
                 1
@@ -3627,6 +3645,9 @@ export default {
             "color": [
                 1
             ],
+            "conditionalDisplay": [
+                324
+            ],
             "folderId": [
                 534
             ],
@@ -3750,6 +3771,9 @@ export default {
             ]
         },
         "CreatePageLayoutTabInput": {
+            "conditionalDisplay": [
+                324
+            ],
             "layoutMode": [
                 407
             ],
@@ -3997,6 +4021,9 @@ export default {
         "CreateViewFieldInput": {
             "aggregateOperation": [
                 27
+            ],
+            "conditionalDisplay": [
+                324
             ],
             "fieldMetadataId": [
                 534
@@ -9694,6 +9721,9 @@ export default {
             "color": [
                 1
             ],
+            "conditionalDisplay": [
+                324
+            ],
             "createdAt": [
                 212
             ],
@@ -10162,6 +10192,9 @@ export default {
             "applicationId": [
                 534
             ],
+            "conditionalDisplay": [
+                324
+            ],
             "createdAt": [
                 212
             ],
@@ -10213,6 +10246,9 @@ export default {
         "PageLayoutWidget": {
             "applicationId": [
                 534
+            ],
+            "conditionalAvailability": [
+                324
             ],
             "conditionalAvailabilityExpression": [
                 1
@@ -13584,6 +13620,9 @@ export default {
             "availabilityType": [
                 156
             ],
+            "conditionalDisplay": [
+                324
+            ],
             "engineComponentKey": [
                 246
             ],
@@ -13892,6 +13931,9 @@ export default {
             "color": [
                 1
             ],
+            "conditionalDisplay": [
+                324
+            ],
             "folderId": [
                 534
             ],
@@ -14012,6 +14054,9 @@ export default {
             ]
         },
         "UpdatePageLayoutTabInput": {
+            "conditionalDisplay": [
+                324
+            ],
             "icon": [
                 1
             ],
@@ -14029,6 +14074,9 @@ export default {
             ]
         },
         "UpdatePageLayoutTabWithWidgetsInput": {
+            "conditionalDisplay": [
+                324
+            ],
             "icon": [
                 1
             ],
@@ -14343,6 +14391,9 @@ export default {
         "UpdateViewFieldInputUpdates": {
             "aggregateOperation": [
                 27
+            ],
+            "conditionalDisplay": [
+                324
             ],
             "isVisible": [
                 4
@@ -14704,6 +14755,9 @@ export default {
             ]
         },
         "UpsertFieldsWidgetFieldInput": {
+            "conditionalDisplay": [
+                324
+            ],
             "fieldMetadataId": [
                 534
             ],
@@ -14830,6 +14884,9 @@ export default {
         "UpsertViewWidgetViewFieldInput": {
             "aggregateOperation": [
                 27
+            ],
+            "conditionalDisplay": [
+                324
             ],
             "fieldMetadataId": [
                 534
@@ -15665,6 +15722,9 @@ export default {
             ],
             "applicationId": [
                 534
+            ],
+            "conditionalDisplay": [
+                324
             ],
             "createdAt": [
                 212

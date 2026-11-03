@@ -1232,7 +1232,12 @@ export interface CommandMenuItem {
     applicationId?: Scalars['UUID']
     availabilityObjectMetadataId?: Scalars['UUID']
     availabilityType: CommandMenuItemAvailabilityType
+    conditionalAvailability?: Scalars['JSON']
+    /** @deprecated Use `conditionalAvailability` instead. */
     conditionalAvailabilityExpression?: Scalars['String']
+    conditionalDisplay?: Scalars['JSON']
+    conditionalPinned?: Scalars['JSON']
+    /** @deprecated Use `conditionalPinned` instead. */
     conditionalPinnedExpression?: Scalars['String']
     coreWorkflowVersionId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -2602,6 +2607,7 @@ export interface NavigationMenuItem {
     agentChatChannelId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     color?: Scalars['String']
+    conditionalDisplay?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
@@ -2801,6 +2807,7 @@ export interface PageLayout {
 
 export interface PageLayoutTab {
     applicationId: Scalars['UUID']
+    conditionalDisplay?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     icon?: Scalars['String']
@@ -2825,6 +2832,8 @@ export type PageLayoutType = 'DASHBOARD' | 'RECORD_FORM' | 'RECORD_INDEX' | 'REC
 
 export interface PageLayoutWidget {
     applicationId: Scalars['UUID']
+    conditionalAvailability?: Scalars['JSON']
+    /** @deprecated Use `conditionalDisplay` instead. */
     conditionalAvailabilityExpression?: Scalars['String']
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
@@ -3981,6 +3990,7 @@ export interface ViewConfiguration {
 export interface ViewField {
     aggregateOperation?: AggregateOperations
     applicationId: Scalars['UUID']
+    conditionalDisplay?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     fieldMetadataId: Scalars['UUID']
@@ -5585,7 +5595,12 @@ export interface CommandMenuItemGenqlSelection{
     applicationId?: boolean | number
     availabilityObjectMetadataId?: boolean | number
     availabilityType?: boolean | number
+    conditionalAvailability?: boolean | number
+    /** @deprecated Use `conditionalAvailability` instead. */
     conditionalAvailabilityExpression?: boolean | number
+    conditionalDisplay?: boolean | number
+    conditionalPinned?: boolean | number
+    /** @deprecated Use `conditionalPinned` instead. */
     conditionalPinnedExpression?: boolean | number
     coreWorkflowVersionId?: boolean | number
     createdAt?: boolean | number
@@ -5698,7 +5713,7 @@ export interface CreateCalendarEventOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailability?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),conditionalPinned?: (Scalars['JSON'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
 
 export interface CreateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),handle: Scalars['String']}
 
@@ -5725,7 +5740,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -5743,7 +5758,7 @@ object: CreateObjectInput}
 
 export interface CreatePageLayoutInput {name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),type?: (PageLayoutType | null)}
 
-export interface CreatePageLayoutTabInput {layoutMode?: (PageLayoutTabLayoutMode | null),pageLayoutId: Scalars['UUID'],position?: (Scalars['Float'] | null),title: Scalars['String']}
+export interface CreatePageLayoutTabInput {conditionalDisplay?: (Scalars['JSON'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),pageLayoutId: Scalars['UUID'],position?: (Scalars['Float'] | null),title: Scalars['String']}
 
 export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
 
@@ -5763,7 +5778,7 @@ export interface CreateValidationRuleInput {description?: (Scalars['String'] | n
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),conditionalDisplay?: (Scalars['JSON'] | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -7188,6 +7203,7 @@ export interface NavigationMenuItemGenqlSelection{
     agentChatChannelId?: boolean | number
     applicationId?: boolean | number
     color?: boolean | number
+    conditionalDisplay?: boolean | number
     createdAt?: boolean | number
     folderId?: boolean | number
     icon?: boolean | number
@@ -7402,6 +7418,7 @@ export interface PageLayoutGenqlSelection{
 
 export interface PageLayoutTabGenqlSelection{
     applicationId?: boolean | number
+    conditionalDisplay?: boolean | number
     createdAt?: boolean | number
     deletedAt?: boolean | number
     icon?: boolean | number
@@ -7423,6 +7440,8 @@ export interface PageLayoutTabGenqlSelection{
 
 export interface PageLayoutWidgetGenqlSelection{
     applicationId?: boolean | number
+    conditionalAvailability?: boolean | number
+    /** @deprecated Use `conditionalDisplay` instead. */
     conditionalAvailabilityExpression?: boolean | number
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection
@@ -8435,7 +8454,7 @@ export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateC
 
 export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),excludePrivateEvents?: (Scalars['Boolean'] | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
 
-export interface UpdateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
+export interface UpdateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalDisplay?: (Scalars['JSON'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
 
 export interface UpdateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),id: Scalars['UUID']}
 
@@ -8475,7 +8494,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -8497,9 +8516,9 @@ id: Scalars['UUID'],update: UpdateObjectPayload}
 
 export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),objectMetadataId?: (Scalars['UUID'] | null),type?: (PageLayoutType | null)}
 
-export interface UpdatePageLayoutTabInput {icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),position?: (Scalars['Float'] | null),title?: (Scalars['String'] | null)}
+export interface UpdatePageLayoutTabInput {conditionalDisplay?: (Scalars['JSON'] | null),icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),position?: (Scalars['Float'] | null),title?: (Scalars['String'] | null)}
 
-export interface UpdatePageLayoutTabWithWidgetsInput {icon?: (Scalars['String'] | null),id: Scalars['UUID'],layoutMode?: (PageLayoutTabLayoutMode | null),position: Scalars['Float'],title: Scalars['String'],widgets: UpdatePageLayoutWidgetWithIdInput[]}
+export interface UpdatePageLayoutTabWithWidgetsInput {conditionalDisplay?: (Scalars['JSON'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],layoutMode?: (PageLayoutTabLayoutMode | null),position: Scalars['Float'],title: Scalars['String'],widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
 export interface UpdatePageLayoutWidgetInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),isActive?: (Scalars['Boolean'] | null),objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId?: (Scalars['UUID'] | null),position?: (Scalars['JSON'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null)}
 
@@ -8539,7 +8558,7 @@ id: Scalars['UUID'],
 /** The view field to update */
 update: UpdateViewFieldInputUpdates}
 
-export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
+export interface UpdateViewFieldInputUpdates {aggregateOperation?: (AggregateOperations | null),conditionalDisplay?: (Scalars['JSON'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
 export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
@@ -8589,7 +8608,7 @@ export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],wor
 
 export interface UpsertFieldPermissionsInput {fieldPermissions: FieldPermissionInput[],roleId: Scalars['UUID']}
 
-export interface UpsertFieldsWidgetFieldInput {
+export interface UpsertFieldsWidgetFieldInput {conditionalDisplay?: (Scalars['JSON'] | null),
 /** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
 fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],
 /** The id of the view field. Required if fieldMetadataId is not provided. */
@@ -8632,7 +8651,7 @@ viewSorts?: (UpsertViewWidgetViewSortInput[] | null),
 /** The id of the view widget (page layout widget). */
 widgetId: Scalars['UUID']}
 
-export interface UpsertViewWidgetViewFieldInput {aggregateOperation?: (AggregateOperations | null),
+export interface UpsertViewWidgetViewFieldInput {aggregateOperation?: (AggregateOperations | null),conditionalDisplay?: (Scalars['JSON'] | null),
 /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
 fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],size?: (Scalars['Float'] | null),
 /** The id of an existing view field to update. */
@@ -8957,6 +8976,7 @@ export interface ViewConfigurationGenqlSelection{
 export interface ViewFieldGenqlSelection{
     aggregateOperation?: boolean | number
     applicationId?: boolean | number
+    conditionalDisplay?: boolean | number
     createdAt?: boolean | number
     deletedAt?: boolean | number
     fieldMetadataId?: boolean | number
