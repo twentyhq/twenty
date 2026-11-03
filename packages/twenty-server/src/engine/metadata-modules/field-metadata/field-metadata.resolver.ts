@@ -49,7 +49,7 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
+import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 // structural type so ResolverValidationPipe skips FieldMetadataDTO decorators on loaded parents
@@ -272,7 +272,7 @@ export class FieldMetadataResolver {
     );
   }
 
-  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
@@ -290,7 +290,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
@@ -308,7 +308,7 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') deleteOneFieldInput: DeleteOneFieldInput,

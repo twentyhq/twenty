@@ -35,12 +35,12 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { FRONT_COMPONENT_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-access-policy.constant';
+import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/front-components`)
 @AllowSuspendedWorkspace()
-@UseGuards(AccessPolicyGuard(FRONT_COMPONENT_ACCESS_POLICY))
+@UseGuards(AccessPolicyGuard(FRONT_COMPONENT_READ_ACCESS_POLICY))
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,

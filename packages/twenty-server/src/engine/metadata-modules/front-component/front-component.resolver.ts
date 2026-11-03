@@ -43,7 +43,7 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { FRONT_COMPONENT_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-access-policy.constant';
+import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseInterceptors(
@@ -130,7 +130,7 @@ export class FrontComponentResolver {
 
   @Query(() => [FrontComponentDTO])
   @UseGuards(
-    AccessPolicyGuard(FRONT_COMPONENT_ACCESS_POLICY),
+    AccessPolicyGuard(FRONT_COMPONENT_READ_ACCESS_POLICY),
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()

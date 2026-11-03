@@ -48,6 +48,7 @@ import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/cr
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver(() => ViewDTO)
@@ -182,7 +183,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(
-    AccessPolicyGuard(VIEW_READ_ACCESS_POLICY),
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
     CreateViewPermissionGuard,
   )
   async createView(
@@ -203,7 +204,10 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   @UsePipes(ResolverValidationPipe)
   async updateView(
     @Args('id', { type: () => String }) id: string,
@@ -220,7 +224,10 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async deleteView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -234,7 +241,10 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async destroyView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

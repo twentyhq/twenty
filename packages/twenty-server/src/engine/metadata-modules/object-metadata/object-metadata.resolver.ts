@@ -58,6 +58,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { OBJECT_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-read-access-policy.constant';
+import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -374,7 +375,7 @@ export class ObjectMetadataResolver {
     return getEffectiveImageIdentifierFieldMetadataId(objectMetadata);
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async createOneObject(
     @Args('input') input: CreateOneObjectInput,
@@ -393,7 +394,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async deleteOneObject(
     @Args('input') deleteObjectInput: DeleteOneObjectInput,
@@ -412,7 +413,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') updateObjectInput: UpdateOneObjectInput,
@@ -431,7 +432,7 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_WRITE_ACCESS_POLICY))
   @Mutation(() => [ObjectMetadataDTO])
   async updateManyObjects(
     @Args('inputs', { type: () => [UpdateOneObjectInput] })

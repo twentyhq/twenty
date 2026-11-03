@@ -1,6 +1,6 @@
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-export const FRONT_COMPONENT_ACCESS_POLICY: AccessPolicy = {
+export const FRONT_COMPONENT_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
       standard: true,

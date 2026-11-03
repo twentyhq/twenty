@@ -54,10 +54,11 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
+import { FIELD_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/fields`)
-@UseGuards(JwtAuthGuard, AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
+@UseGuards(JwtAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   FieldMetadataRestApiExceptionFilter,
@@ -104,6 +105,7 @@ export class FieldMetadataController {
   }
 
   @Get()
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -139,6 +141,7 @@ export class FieldMetadataController {
   }
 
   @Get(':id')
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_READ_ACCESS_POLICY))
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -170,6 +173,7 @@ export class FieldMetadataController {
   }
 
   @Post()
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   async createOne(
     @Body() input: CreateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -187,6 +191,7 @@ export class FieldMetadataController {
   }
 
   @Patch(':id')
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   async updateOnePatch(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
@@ -196,6 +201,7 @@ export class FieldMetadataController {
   }
 
   @Put(':id')
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   async updateOnePut(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
@@ -205,6 +211,7 @@ export class FieldMetadataController {
   }
 
   @Delete(':id')
+  @UseGuards(AccessPolicyGuard(FIELD_METADATA_WRITE_ACCESS_POLICY))
   async deleteOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

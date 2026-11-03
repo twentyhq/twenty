@@ -20,7 +20,7 @@ import { UpdateValidationRuleInput } from 'src/engine/metadata-modules/validatio
 import { ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { VALIDATION_RULE_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-read-access-policy.constant';
+import { VALIDATION_RULE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -92,7 +92,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_WRITE_ACCESS_POLICY))
   async createValidationRule(
     @Args('input') input: CreateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -104,7 +104,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_WRITE_ACCESS_POLICY))
   async updateValidationRule(
     @Args('input') input: UpdateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -116,7 +116,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_WRITE_ACCESS_POLICY))
   async deleteValidationRule(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -52,10 +52,10 @@ import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-per
 import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/views`)
-@UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   ViewRestApiExceptionFilter,
@@ -71,7 +71,7 @@ export class ViewController {
   ) {}
 
   @Get()
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), CustomPermissionGuard)
   async findMany(
     @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
@@ -99,7 +99,7 @@ export class ViewController {
   }
 
   @Get(':id')
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
@@ -132,7 +132,10 @@ export class ViewController {
   }
 
   @Post()
-  @UseGuards(CreateViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    CreateViewPermissionGuard,
+  )
   async create(
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -153,7 +156,10 @@ export class ViewController {
   }
 
   @Patch(':id')
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
@@ -182,7 +188,10 @@ export class ViewController {
   }
 
   @Delete(':id')
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY),
+    ViewPermissionGuard,
+  )
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
