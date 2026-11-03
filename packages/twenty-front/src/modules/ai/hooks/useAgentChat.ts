@@ -119,6 +119,37 @@ export const useAgentChat = () => {
       return;
     }
 
+    const currentWorkspaceMemberId = store.get(
+      currentWorkspaceMemberState.atom,
+    )?.id;
+    const participantMentions = getParticipantMentionsFromSerializedDocument(
+      serializedContentToSend,
+    ).filter(
+      ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
+    );
+    const isAssistantMentioned =
+      isAgentChatAssistantMentionedInSerializedDocument(
+        serializedContentToSend,
+      );
+    const channelId = isNewChat
+      ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
+      : undefined;
+    const hasRecipients =
+      newThreadRecipients.isAssistantParticipant ||
+      isAssistantMentioned ||
+      isNonEmptyArray(newThreadRecipients.recipientWorkspaceMemberIds) ||
+      isNonEmptyArray(participantMentions) ||
+      isDefined(channelId);
+
+    if (isNewInboxChat && !hasRecipients) {
+      enqueueToast({
+        status: 'error',
+        children: t`Add a recipient or a channel before sending.`,
+      });
+
+      return;
+    }
+
     if (!canSendAgentChatMessage) {
       enqueueToast({
         status: 'error',
@@ -212,16 +243,6 @@ export const useAgentChat = () => {
       filename: file.filename,
     }));
 
-    // Members already following are sent too, so the mention brings the chat
-    // back to their inbox
-    const currentWorkspaceMemberId = store.get(
-      currentWorkspaceMemberState.atom,
-    )?.id;
-    const participantMentions = getParticipantMentionsFromSerializedDocument(
-      serializedContentToSend,
-    ).filter(
-      ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
-    );
     const initialRecipients = getAgentChatInitialRecipients({
       shouldIncludeInitialRecipients: isNewInboxChat,
       recipientWorkspaceMemberIds:
@@ -254,17 +275,12 @@ export const useAgentChat = () => {
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
               : undefined,
-          channelId: isNewChat
-            ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
-            : undefined,
+          channelId,
           shouldAssistantReply: isNonEmptyArray(aiModels),
           isAssistantParticipant: isNewInboxChat
             ? newThreadRecipients.isAssistantParticipant
             : undefined,
-          isAssistantMentioned:
-            isAgentChatAssistantMentionedInSerializedDocument(
-              serializedContentToSend,
-            ),
+          isAssistantMentioned,
           recipientWorkspaceMemberIds: isNewInboxChat
             ? newThreadRecipients.recipientWorkspaceMemberIds
             : undefined,

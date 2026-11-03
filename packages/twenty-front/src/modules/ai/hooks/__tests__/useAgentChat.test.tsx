@@ -6,6 +6,7 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -389,6 +390,32 @@ describe('useAgentChat', () => {
     });
   });
 
+  it('keeps the draft without sending when Ada is removed and no recipients remain', async () => {
+    const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
+    const recipients = {
+      isAssistantParticipant: false,
+      recipientWorkspaceMemberIds: [],
+    };
+    const result = renderAgentChat({
+      persistedDrafts: { [THREAD_ID]: draft },
+      sendChatMessageOutcomes: [],
+      isAiChatInboxEnabled: true,
+      newThreadRecipients: recipients,
+    });
+    const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
+
+    await send(result);
+
+    expect(mutate).not.toHaveBeenCalled();
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });
+    expect(result.current.newAiChatThreadId).toBe(THREAD_ID);
+    expect(
+      jotaiStore.get(
+        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+      ),
+    ).toEqual(recipients);
+  });
+
   it('sends a typed Ada mention independently of recipient selection', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
@@ -413,6 +440,36 @@ describe('useAgentChat', () => {
       expect.objectContaining({
         isAssistantParticipant: false,
         isAssistantMentioned: true,
+      }),
+    );
+  });
+
+  it('sends a participant mention when the recipient bar is empty', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializeMentionTagAsAdvancedTextEditorDocument({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          recordId: RECIPIENT_ID,
+          label: 'Jane',
+          shouldAddAsParticipant: true,
+        }),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [],
+      },
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isAssistantParticipant: false,
+        isAssistantMentioned: false,
+        mentionedWorkspaceMemberIds: [RECIPIENT_ID],
       }),
     );
   });
@@ -562,11 +619,17 @@ describe('useAgentChat', () => {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
       sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
       newThreadChannelId: CHANNEL_ID,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [],
+      },
     });
 
     await send(result);
 
+    expect(sentChannelId).toHaveBeenCalledTimes(1);
     expect(sentChannelId).toHaveBeenCalledWith(CHANNEL_ID);
     expect(jotaiStore.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
