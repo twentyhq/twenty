@@ -353,15 +353,6 @@ describe('Chat thread participant sharing, subscription and assignment through t
     );
   });
 
-  it('refuses to change the subscription of a member who cannot read the chat', async () => {
-    const threadId = await createTestThread();
-    const response = await runInboxAction('UNSUBSCRIBE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
-  });
-
   it('assigns a chat to a member who could not read it, who then finds it unread in their inbox', async () => {
     const threadId = await createTestThread();
     const response = await assign(

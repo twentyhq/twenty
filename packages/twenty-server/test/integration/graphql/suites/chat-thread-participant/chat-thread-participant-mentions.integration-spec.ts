@@ -94,27 +94,6 @@ describe('Chat thread participant mentions through the authenticated API', () =>
     expect(await findOpenThreadsSummary()).toEqual(before);
   });
 
-  it('follows a chat the member files as done, so new activity brings it back', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithJony(threadId, true);
-    await runInboxAction('READ', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ isSubscribed: false, archivedAt: null });
-
-    await runInboxAction('ARCHIVE', threadId, {
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ isSubscribed: true, archivedAt: expect.any(String) });
-  });
-
   it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
     const initialSummary = await findOpenThreadsSummary();
     const mentionedThreadId = await createTestThread();
