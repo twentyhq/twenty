@@ -117,6 +117,22 @@ export class AgentConversationWriterService {
     return (id ?? turnInsertResult.identifiers[0].id) as string;
   }
 
+  async recordTurnCreator({
+    workspaceId,
+    turnId,
+    createdBy,
+  }: {
+    workspaceId: string;
+    turnId: string;
+    createdBy: ActorMetadata;
+  }): Promise<void> {
+    await this.turnRepository.update(
+      workspaceId,
+      { id: turnId },
+      { createdBy },
+    );
+  }
+
   // A turn the agent opens has no user message: a system message gives the
   // model its context, and is written with the turn so neither exists alone
   async insertAgentOpenedTurn({

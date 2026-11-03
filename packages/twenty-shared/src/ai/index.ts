@@ -45,6 +45,7 @@ export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-na
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
+export type { AgentChatThreadRowMetadata } from './types/AgentChatThreadRowMetadata';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';

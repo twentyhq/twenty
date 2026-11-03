@@ -1,3 +1,6 @@
+import { AgentChatThreadRowMetadataListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-thread-row-metadata.listener';
+import { AgentChatThreadRowMetadataResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-row-metadata.resolver';
+import { AgentChatThreadRowMetadataService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-row-metadata.service';
 import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
@@ -77,6 +80,9 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AiFrontComponentModule,
   ],
   providers: [
+    AgentChatThreadRowMetadataListener,
+    AgentChatThreadRowMetadataResolver,
+    AgentChatThreadRowMetadataService,
     AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,

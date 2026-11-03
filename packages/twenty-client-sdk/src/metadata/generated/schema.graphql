@@ -144,6 +144,18 @@ type AgentChatThreadParticipant {
   updatedAt: DateTime!
 }
 
+type AgentChatThreadRowMetadata {
+  activityAt: String
+  executionOutcome: String
+  messageId: UUID
+  pendingQuestionMessageId: UUID
+  previewText: String
+  senderId: UUID
+  senderName: String
+  senderType: String!
+  threadId: UUID!
+}
+
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -4139,6 +4151,7 @@ type Query {
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
+  agentChatThreadRowMetadata(threadIds: [UUID!]!): [AgentChatThreadRowMetadata!]!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   aiChatUserCreditsUsage: AiChatUserCreditsUsage

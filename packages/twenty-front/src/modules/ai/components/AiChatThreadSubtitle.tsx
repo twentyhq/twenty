@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,7 +35,7 @@ export const AiChatThreadSubtitle = ({
   size = 'sm',
 }: AiChatThreadSubtitleProps) => {
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
-  const { isAwaitingAnswer, hasDraft, previewText } =
+  const { reason, hasDraft, previewText } =
     useAgentChatThreadSubtitleContent(thread);
 
   return (
@@ -44,12 +44,12 @@ export const AiChatThreadSubtitle = ({
       size={size}
       color={isUnread ? 'secondary' : 'tertiary'}
     >
-      {isAwaitingAnswer && (
-        <AiChatThreadReasonBadge reason="needsInput" isUnread={isUnread} />
+      {isDefined(reason) && (
+        <AiChatThreadReasonBadge reason={reason} isUnread={isUnread} />
       )}
-      {isAwaitingAnswer && hasDraft && <span aria-hidden>·</span>}
+      {isDefined(reason) && hasDraft && <span aria-hidden>·</span>}
       {hasDraft && <AiChatThreadReasonBadge reason="draft" />}
-      {(isAwaitingAnswer || hasDraft) && isNonEmptyString(previewText) && (
+      {(isDefined(reason) || hasDraft) && isNonEmptyString(previewText) && (
         <span aria-hidden>·</span>
       )}
       <Text render={<StyledPreview />} truncate>

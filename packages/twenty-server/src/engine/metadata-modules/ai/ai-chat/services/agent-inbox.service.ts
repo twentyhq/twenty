@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -152,6 +153,20 @@ export class AgentInboxService {
       turnId,
       openingMessageId,
       senderDescription: senderDetails.description,
+      senderActor:
+        sender.type === 'workflow'
+          ? {
+              source: FieldActorSource.WORKFLOW,
+              workspaceMemberId: null,
+              name: sender.workflowName,
+              context: { workflowId: sender.workflowId },
+            }
+          : {
+              source: FieldActorSource.APPLICATION,
+              workspaceMemberId: null,
+              name: sender.application.name,
+              context: { applicationId: sender.application.id },
+            },
     });
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
@@ -359,22 +374,33 @@ export class AgentInboxService {
     turnId,
     openingMessageId,
     senderDescription,
+    senderActor,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
     openingMessageId: string;
     senderDescription: string;
+    senderActor: ActorMetadata;
   }): Promise<void> {
-    await this.ignoreDuplicate(() =>
+    const isTurnCreated = await this.ignoreDuplicate(() =>
       this.conversationWriterService.insertTurn({
         workspaceId,
         id: turnId,
         threadId,
         agentId: null,
         status: AgentTurnStatus.COMPLETED,
+        createdBy: senderActor,
       }),
     );
+
+    if (!isTurnCreated) {
+      await this.conversationWriterService.recordTurnCreator({
+        workspaceId,
+        turnId,
+        createdBy: senderActor,
+      });
+    }
 
     await this.ignoreDuplicate(() =>
       this.conversationWriterService.insertMessage({

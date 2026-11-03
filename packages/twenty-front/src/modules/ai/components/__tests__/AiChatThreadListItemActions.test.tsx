@@ -38,6 +38,7 @@ const THREAD_TITLE = 'Qualify the lead';
 const THREAD_ACTIVITY_AT = '2026-10-21T09:00:00.000Z';
 const INBOX_EVENT_AT = '2026-10-22T09:00:00.000Z';
 const SNOOZED_UNTIL = '2026-10-30T09:00:00.000Z';
+let unsubscribeFromCurrentUserWorkspace: () => void = () => undefined;
 const SALES_CHANNEL = {
   id: '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f',
   name: 'Sales',
@@ -124,6 +125,10 @@ const renderThread = async ({
       CHAT_OBJECT_METADATA_ITEM,
     ],
     onInitializeJotaiStore: (store) => {
+      unsubscribeFromCurrentUserWorkspace = store.sub(
+        currentUserWorkspaceState.atom,
+        () => undefined,
+      );
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         featureFlags: [
@@ -197,6 +202,9 @@ const renderThread = async ({
 };
 
 describe('AiChatThreadListItem action availability', () => {
+  afterEach(() => {
+    unsubscribeFromCurrentUserWorkspace();
+  });
   beforeAll(() => {
     i18n.load({ [SOURCE_LOCALE]: messages });
     i18n.activate(SOURCE_LOCALE);

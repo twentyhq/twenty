@@ -137,6 +137,19 @@ export interface AgentChatThreadParticipant {
     __typename: 'AgentChatThreadParticipant'
 }
 
+export interface AgentChatThreadRowMetadata {
+    activityAt?: Scalars['String']
+    executionOutcome?: Scalars['String']
+    messageId?: Scalars['UUID']
+    pendingQuestionMessageId?: Scalars['UUID']
+    previewText?: Scalars['String']
+    senderId?: Scalars['UUID']
+    senderName?: Scalars['String']
+    senderType: Scalars['String']
+    threadId: Scalars['UUID']
+    __typename: 'AgentChatThreadRowMetadata'
+}
+
 export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3042,6 +3055,7 @@ export interface Query {
     agentChatChannelThreadIds: AgentChatChannelThreadIds
     agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
+    agentChatThreadRowMetadata: AgentChatThreadRowMetadata[]
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     aiChatUserCreditsUsage?: AiChatUserCreditsUsage
@@ -4448,6 +4462,20 @@ export interface AgentChatThreadParticipantGenqlSelection{
     snoozedUntil?: boolean | number
     threadId?: boolean | number
     updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatThreadRowMetadataGenqlSelection{
+    activityAt?: boolean | number
+    executionOutcome?: boolean | number
+    messageId?: boolean | number
+    pendingQuestionMessageId?: boolean | number
+    previewText?: boolean | number
+    senderId?: boolean | number
+    senderName?: boolean | number
+    senderType?: boolean | number
+    threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7697,6 +7725,7 @@ export interface QueryGenqlSelection{
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
+    agentChatThreadRowMetadata?: (AgentChatThreadRowMetadataGenqlSelection & { __args: {threadIds: Scalars['UUID'][]} })
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     aiChatUserCreditsUsage?: AiChatUserCreditsUsageGenqlSelection
@@ -9411,6 +9440,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const AgentChatThreadRowMetadata_possibleTypes: string[] = ['AgentChatThreadRowMetadata']
+    export const isAgentChatThreadRowMetadata = (obj?: { __typename?: any } | null): obj is AgentChatThreadRowMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadRowMetadata"')
+      return AgentChatThreadRowMetadata_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const AgentMessage_possibleTypes: string[] = ['AgentMessage']

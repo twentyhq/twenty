@@ -1,3 +1,4 @@
+import { AgentChatThreadRowMetadataEffect } from '@/ai/components/AgentChatThreadRowMetadataEffect';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -60,6 +61,7 @@ export const AiChatThreadList = ({
 
   return (
     <>
+      <AgentChatThreadRowMetadataEffect threads={threads} />
       {groupThreadsByDate({ threads, variant, calendarStartDay }).map(
         (dateGroup) => (
           <AiChatThreadListGroup

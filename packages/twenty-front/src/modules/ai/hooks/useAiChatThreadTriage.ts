@@ -1,3 +1,4 @@
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,10 +42,17 @@ export const useAiChatThreadTriage = ({
     { threadIds: [threadId], channelId },
   );
   const isInChannel = inboxStatus?.isChannelCopy ?? false;
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    threadId,
+  );
+  const canTriage = isInChannel
+    ? permissions?.canUpdate === true
+    : permissions?.canRead === true;
 
   return {
     status: getAiChatThreadTriageStatus({
-      hasAiPermission,
+      hasAiPermission: hasAiPermission && canTriage,
       isInboxEnabled,
       areParticipantsLoaded:
         isInChannel || isDefined(agentChatThreadParticipants),

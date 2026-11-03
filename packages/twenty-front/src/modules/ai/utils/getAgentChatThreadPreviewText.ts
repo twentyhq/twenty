@@ -1,3 +1,7 @@
+import {
+  AGENT_CHAT_ASSISTANT_NAME,
+  type AgentChatThreadRowMetadata,
+} from 'twenty-shared/ai';
 import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
@@ -6,12 +10,11 @@ import { getAgentChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlai
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-// Members' messages carry who wrote them; agent replies read as plain text,
-// as they do in the chat itself
 export const getAgentChatThreadPreviewText = ({
   thread,
   workspaceMembers,
   currentWorkspaceMemberId,
+  rowMetadata,
 }: {
   thread: Pick<
     AgentChatThreadRecord,
@@ -19,14 +22,41 @@ export const getAgentChatThreadPreviewText = ({
   >;
   workspaceMembers: PartialWorkspaceMember[];
   currentWorkspaceMemberId: string | undefined;
+  rowMetadata?: AgentChatThreadRowMetadata | null;
 }): string | null => {
-  const text = getAgentChatPreviewPlainText(thread.lastMessageText ?? '');
+  const previewSource = isDefined(rowMetadata)
+    ? rowMetadata.previewText
+    : thread.lastMessageText;
+  const text = getAgentChatPreviewPlainText(previewSource ?? '');
 
   if (!isNonEmptyString(text)) {
     return null;
   }
 
-  const senderId = thread.lastMessageSenderWorkspaceMemberId;
+  if (rowMetadata?.senderType === 'assistant') {
+    const senderName = isDefined(rowMetadata.senderId)
+      ? t`Assistant`
+      : AGENT_CHAT_ASSISTANT_NAME;
+    return t`${senderName}: ${text}`;
+  }
+
+  if (
+    rowMetadata?.senderType === 'application' ||
+    rowMetadata?.senderType === 'workflow'
+  ) {
+    const senderName = isNonEmptyString(rowMetadata.senderName)
+      ? rowMetadata.senderName
+      : rowMetadata.senderType === 'application'
+        ? t`Application`
+        : t`Workflow`;
+    return t`${senderName}: ${text}`;
+  }
+
+  const senderId = isDefined(rowMetadata)
+    ? rowMetadata.senderType === 'member'
+      ? rowMetadata.senderId
+      : null
+    : thread.lastMessageSenderWorkspaceMemberId;
 
   if (!isDefined(senderId)) {
     return text;

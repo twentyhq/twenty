@@ -1,3 +1,5 @@
+import { useAgentChatThreadRowMetadata } from '@/ai/hooks/useAgentChatThreadRowMetadata';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatDraftPreviewTextFamilySelector } from '@/ai/states/selectors/agentChatDraftPreviewTextFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadSubtitleContent } from '@/ai/utils/getAgentChatThreadSubtitleContent';
@@ -18,7 +20,12 @@ export const useAgentChatThreadSubtitleContent = (
     thread.id,
   );
 
+  const rowMetadata = useAgentChatThreadRowMetadata(thread);
+  const participants = useAtomStateValue(agentChatThreadParticipantsState);
+
   return getAgentChatThreadSubtitleContent({
+    rowMetadata,
+    participant: participants?.[thread.id],
     thread,
     draftPreviewText,
     workspaceMembers: currentWorkspaceMembers,

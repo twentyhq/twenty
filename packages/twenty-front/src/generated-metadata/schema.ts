@@ -7,12 +7,19 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: { input: any; output: any; }
+  /** Cursor for paging through collections */
   ConnectionCursor: { input: any; output: any; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: string; output: string; }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: { input: any; output: any; }
+  /** A UUID scalar type */
   UUID: { input: string; output: string; }
+  /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any; }
 };
 
@@ -169,6 +176,19 @@ export type AgentChatThreadParticipant = {
   snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
   threadId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AgentChatThreadRowMetadata = {
+  __typename?: 'AgentChatThreadRowMetadata';
+  activityAt?: Maybe<Scalars['String']['output']>;
+  executionOutcome?: Maybe<Scalars['String']['output']>;
+  messageId?: Maybe<Scalars['UUID']['output']>;
+  pendingQuestionMessageId?: Maybe<Scalars['UUID']['output']>;
+  previewText?: Maybe<Scalars['String']['output']>;
+  senderId?: Maybe<Scalars['UUID']['output']>;
+  senderName?: Maybe<Scalars['String']['output']>;
+  senderType: Scalars['String']['output'];
+  threadId: Scalars['UUID']['output'];
 };
 
 export type AgentIdInput = {
@@ -2345,6 +2365,8 @@ export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  /** @deprecated Use jobs instead. */
+  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2953,6 +2975,8 @@ export type IndexField = {
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+  isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
 };
 
@@ -3084,6 +3108,8 @@ export type ListAppConnectionsInput = {
   providerName?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<ConnectedAccountScope>;
   userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
+  /** @deprecated Use scope instead. */
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ListAppMessageChannelsInput = {
@@ -5243,6 +5269,7 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -5885,6 +5912,7 @@ export type Query = {
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
   agentChatChannels: Array<AgentChatChannel>;
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
+  agentChatThreadRowMetadata: Array<AgentChatThreadRowMetadata>;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   aiChatUserCreditsUsage?: Maybe<AiChatUserCreditsUsage>;
@@ -6046,6 +6074,11 @@ export type QueryAgentChatChannelThreadIdsArgs = {
   filter?: InputMaybe<AgentChatChannelThreadFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<AgentChatChannelThreadStatus>;
+};
+
+
+export type QueryAgentChatThreadRowMetadataArgs = {
+  threadIds: Array<Scalars['UUID']['input']>;
 };
 
 
@@ -6856,6 +6889,10 @@ export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
   input?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  messages?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  prompt?: InputMaybe<Scalars['String']['input']>;
   responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
@@ -7781,6 +7818,8 @@ export type UpdateViewFieldGroupInput = {
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
+  /** @deprecated Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead. */
+  deletedAt?: InputMaybe<Scalars['String']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;

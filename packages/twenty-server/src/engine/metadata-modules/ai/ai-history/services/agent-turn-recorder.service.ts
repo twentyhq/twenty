@@ -1,4 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { type AgentTurnStreamClaim } from 'src/engine/metadata-modules/ai/ai-history/types/agent-turn-stream-claim.type';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { AGENT_CHAT_TURN_STATUS_CHANGED_EVENT_NAME } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-chat-turn-status-changed-event-name.constant';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type AiRunUsage } from 'twenty-shared/application';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
@@ -20,11 +23,6 @@ import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai
 import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
 import { isAgentTurnStatusFinal } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-status-final.util';
 
-export type AgentTurnStreamClaim = {
-  threadId: string;
-  streamId: string;
-};
-
 const buildStreamClaimCondition = ({
   table,
   streamClaim,
@@ -44,6 +42,9 @@ const buildStreamClaimParameters = (streamClaim?: AgentTurnStreamClaim) =>
 @Injectable()
 export class AgentTurnRecorderService {
   private readonly logger = new Logger(AgentTurnRecorderService.name);
+
+  @Inject(EventEmitter2)
+  private readonly eventEmitter: EventEmitter2;
 
   constructor(
     @InjectAgentHistoryRepository('agentTurn')
@@ -66,12 +67,14 @@ export class AgentTurnRecorderService {
     createdBy?: ActorMetadata;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
-    return this.turnRepository.query(
+    const changedTurns = await this.turnRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         const isDefaultCreator = `"createdBySource" = '${FieldActorSource.SYSTEM}' AND $3::boolean`;
 
-        const runningTurns = await manager.query<{ id: string }[]>(
+        const runningTurns = await manager.query<
+          { id: string; threadId: string | null }[]
+        >(
           `UPDATE ${table('agentTurn')} SET
            "status" = '${AgentTurnStatus.RUNNING}',
            "startedAt" = COALESCE("startedAt", now()),
@@ -84,7 +87,7 @@ export class AgentTurnRecorderService {
            "createdBySource" = CASE WHEN ${isDefaultCreator} THEN $4 ELSE "createdBySource" END,
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 8 })}
-         RETURNING id`,
+         RETURNING id, "threadId"`,
           [
             turnId,
             modelId ?? null,
@@ -97,9 +100,14 @@ export class AgentTurnRecorderService {
           ],
         );
 
-        return runningTurns.length > 0;
+        return runningTurns;
       },
     );
+    await this.emitTurnStatusChanged({
+      workspaceId,
+      threadIds: changedTurns.map(({ threadId }) => threadId).filter(isDefined),
+    });
+    return changedTurns.length > 0;
   }
 
   // A stream that lost its claim leaves the turn to whoever took the claim
@@ -118,10 +126,12 @@ export class AgentTurnRecorderService {
     modelId?: string;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
-    return this.turnRepository.query(
+    const changedTurns = await this.turnRepository.query(
       workspaceId,
       async ({ manager, table }) => {
-        const finishedTurns = await manager.query<{ id: string }[]>(
+        const finishedTurns = await manager.query<
+          { id: string; threadId: string | null }[]
+        >(
           `UPDATE ${table('agentTurn')} SET
            "status" = $2,
            "error" = $3::jsonb,
@@ -129,7 +139,7 @@ export class AgentTurnRecorderService {
            "modelId" = COALESCE($5, "modelId"),
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 6 })}
-         RETURNING id`,
+         RETURNING id, "threadId"`,
           [
             turnId,
             status,
@@ -140,9 +150,14 @@ export class AgentTurnRecorderService {
           ],
         );
 
-        return finishedTurns.length > 0;
+        return finishedTurns;
       },
     );
+    await this.emitTurnStatusChanged({
+      workspaceId,
+      threadIds: changedTurns.map(({ threadId }) => threadId).filter(isDefined),
+    });
+    return changedTurns.length > 0;
   }
 
   // Credits were spent whatever became of the turn, so usage is never guarded by a stream claim, and a
@@ -212,11 +227,17 @@ export class AgentTurnRecorderService {
     messageId: string;
     status: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
-    await this.turnRepository.query(workspaceId, async ({ manager, table }) => {
-      await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
-        messageId,
-        status,
-      ]);
+    const changedTurns = await this.turnRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ threadId: string | null }[]>(
+          `${buildEndWaitingAgentTurnQuery({ table })} RETURNING turn."threadId"`,
+          [messageId, status],
+        ),
+    );
+    await this.emitTurnStatusChanged({
+      workspaceId,
+      threadIds: changedTurns.map(({ threadId }) => threadId).filter(isDefined),
     });
   }
 
@@ -233,7 +254,7 @@ export class AgentTurnRecorderService {
       error?: StreamErrorPayload | null;
     };
   }): Promise<boolean> {
-    return this.turnRepository.query(
+    const isReleased = await this.turnRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         const releasedThreads = await manager.query<{ id: string }[]>(
@@ -251,6 +272,10 @@ export class AgentTurnRecorderService {
         return releasedThreads.length > 0;
       },
     );
+    if (isReleased) {
+      await this.emitTurnStatusChanged({ workspaceId, threadIds: [threadId] });
+    }
+    return isReleased;
   }
 
   async findUsageOrThrow({
@@ -320,5 +345,27 @@ export class AgentTurnRecorderService {
     return latestTurn?.status === AgentTurnStatus.FAILED
       ? (latestTurn.error ?? null)
       : null;
+  }
+  private async emitTurnStatusChanged({
+    workspaceId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    threadIds: string[];
+  }): Promise<void> {
+    if (threadIds.length === 0) {
+      return;
+    }
+
+    await this.eventEmitter
+      .emitAsync(AGENT_CHAT_TURN_STATUS_CHANGED_EVENT_NAME, {
+        workspaceId,
+        threadIds,
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish turn status changes in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
   }
 }

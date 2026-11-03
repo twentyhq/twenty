@@ -1,3 +1,5 @@
+import { useAgentChatThreadRowMetadata } from '@/ai/hooks/useAgentChatThreadRowMetadata';
+import { IconApps, IconSettingsAutomation, IconSparkles } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
@@ -19,8 +21,44 @@ export const AiChatThreadAvatar = ({
 }: AiChatThreadAvatarProps) => {
   const { t } = useLingui();
   const threadMembers = useAgentChatThreadMembers(thread);
-
+  const rowMetadata = useAgentChatThreadRowMetadata(thread);
   const [onlyMember, secondMember] = threadMembers;
+
+  if (
+    rowMetadata?.senderType === 'application' ||
+    rowMetadata?.senderType === 'workflow'
+  ) {
+    return (
+      <Avatar
+        size={size}
+        shape="rounded-square"
+        name={
+          rowMetadata.senderName ??
+          (rowMetadata.senderType === 'workflow' ? t`Workflow` : t`Application`)
+        }
+        colorSeed={rowMetadata.senderId ?? undefined}
+        icon={
+          rowMetadata.senderType === 'workflow' ? (
+            <IconSettingsAutomation />
+          ) : (
+            <IconApps />
+          )
+        }
+      />
+    );
+  }
+
+  if (rowMetadata?.senderType === 'assistant' && !isDefined(secondMember)) {
+    return (
+      <Avatar
+        size={size}
+        shape="circle"
+        name={t`Assistant`}
+        icon={<IconSparkles />}
+        color="blue"
+      />
+    );
+  }
 
   if (isDefined(onlyMember) && !isDefined(secondMember)) {
     const name = getWorkspaceMemberNameOrEmail(onlyMember);

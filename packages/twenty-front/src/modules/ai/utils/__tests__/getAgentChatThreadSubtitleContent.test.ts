@@ -31,6 +31,7 @@ describe('getAgentChatThreadSubtitleContent', () => {
   it('has no content without a message, draft or pending question', () => {
     expect(getContent({})).toEqual({
       isAwaitingAnswer: false,
+      reason: null,
       hasDraft: false,
       previewText: null,
       hasContent: false,
@@ -67,5 +68,62 @@ describe('getAgentChatThreadSubtitleContent', () => {
         }),
       }),
     ).toMatchObject({ isAwaitingAnswer: false, hasContent: false });
+  });
+});
+
+describe('getAgentChatThreadSubtitleContent reasons', () => {
+  const rowMetadata = {
+    threadId: 'thread',
+    activityAt: null,
+    pendingQuestionMessageId: null,
+    messageId: 'message',
+    previewText: null,
+    senderType: 'assistant',
+    senderId: null,
+    senderName: null,
+    executionOutcome: 'finished',
+  } as const;
+
+  it('shows an execution outcome even without preview text', () => {
+    expect(
+      getAgentChatThreadSubtitleContent({
+        thread: buildThread(),
+        draftPreviewText: null,
+        workspaceMembers: [],
+        currentWorkspaceMemberId: undefined,
+        rowMetadata,
+      }),
+    ).toMatchObject({ reason: 'finished', hasContent: true });
+  });
+
+  it('prioritizes an unresolved mention over the execution outcome', () => {
+    expect(
+      getAgentChatThreadSubtitleContent({
+        thread: buildThread(),
+        draftPreviewText: null,
+        workspaceMembers: [],
+        currentWorkspaceMemberId: 'member',
+        rowMetadata,
+        participant: {
+          lastMentionedAt: '2026-11-03T10:00:00.000Z',
+          mentionsResolvedAt: null,
+        },
+      }),
+    ).toMatchObject({ reason: 'mentioned' });
+  });
+
+  it('clears the mention reason after resolution without inventing a new obligation', () => {
+    expect(
+      getAgentChatThreadSubtitleContent({
+        thread: buildThread(),
+        draftPreviewText: null,
+        workspaceMembers: [],
+        currentWorkspaceMemberId: 'member',
+        participant: {
+          lastMentionedAt: '2026-11-03T10:00:00.000Z',
+          mentionsResolvedAt: '2026-11-03T10:01:00.000Z',
+        },
+      }),
+    ).toMatchObject({ reason: null });
   });
 });

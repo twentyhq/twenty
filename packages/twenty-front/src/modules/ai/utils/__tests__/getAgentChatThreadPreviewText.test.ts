@@ -58,3 +58,60 @@ describe('getAgentChatThreadPreviewText', () => {
     ).toBe('Contact A$&B $$ Co next');
   });
 });
+
+describe('authoritative projected sender', () => {
+  const rowMetadata = {
+    threadId: 'thread',
+    activityAt: null,
+    pendingQuestionMessageId: null,
+    messageId: 'message',
+    previewText: 'Three deals moved to Proposal',
+    senderType: 'workflow',
+    senderId: 'workflow',
+    senderName: 'Pipeline digest',
+    executionOutcome: null,
+  } as const;
+
+  it('names the workflow independently of an old member preview field', () => {
+    expect(
+      getAgentChatThreadPreviewText({
+        thread: {
+          lastMessageText: 'Three deals moved to Proposal',
+          lastMessageSenderWorkspaceMemberId: 'me',
+        },
+        workspaceMembers: MEMBERS,
+        currentWorkspaceMemberId: 'me',
+        rowMetadata,
+      }),
+    ).toBe('Pipeline digest: Three deals moved to Proposal');
+  });
+
+  it('uses a neutral application label when its name is unavailable', () => {
+    expect(
+      getAgentChatThreadPreviewText({
+        thread: { lastMessageText: 'Review this update' },
+        workspaceMembers: MEMBERS,
+        currentWorkspaceMemberId: 'me',
+        rowMetadata: {
+          ...rowMetadata,
+          senderType: 'application',
+          senderName: null,
+          previewText: 'Review this update',
+        },
+      }),
+    ).toBe('Application: Review this update');
+  });
+  it('never attaches an older cached text to a tool-only projected sender', () => {
+    expect(
+      getAgentChatThreadPreviewText({
+        thread: {
+          lastMessageText: 'Old text',
+          lastMessageSenderWorkspaceMemberId: 'me',
+        },
+        workspaceMembers: MEMBERS,
+        currentWorkspaceMemberId: 'me',
+        rowMetadata: { ...rowMetadata, previewText: null },
+      }),
+    ).toBeNull();
+  });
+});
