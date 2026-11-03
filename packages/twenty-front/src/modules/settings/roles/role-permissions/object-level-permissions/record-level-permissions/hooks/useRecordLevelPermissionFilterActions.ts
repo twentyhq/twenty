@@ -11,20 +11,22 @@ import { v4 } from 'uuid';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type UseRecordLevelPermissionFilterActionsProps = {
@@ -54,9 +56,28 @@ export const useRecordLevelPermissionFilterActions = ({
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const { lastChildPosition } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId: rootRecordFilterGroup?.id,
-  });
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const currentRecordFilterGroups = useAtomComponentStateValue(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const getNextChildPosition = (recordFilterGroupId: string) =>
+    Math.max(
+      0,
+      ...[
+        ...currentRecordFilters.filter(
+          (recordFilter) =>
+            recordFilter.recordFilterGroupId === recordFilterGroupId,
+        ),
+        ...currentRecordFilterGroups.filter(
+          (recordFilterGroup) =>
+            recordFilterGroup.parentRecordFilterGroupId === recordFilterGroupId,
+        ),
+      ].map((child) => child.positionInRecordFilterGroup ?? 0),
+    ) + 1;
 
   const getDefaultFieldMetadataItemForRLS = () => {
     const availableFieldMetadataItemsForRls =
@@ -132,7 +153,13 @@ export const useRecordLevelPermissionFilterActions = ({
     setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
   };
 
-  const handleAddFilter = (recordFilterGroup: RecordFilterGroup) => {
+  const addDefaultFilterToGroup = ({
+    recordFilterGroupId,
+    positionInRecordFilterGroup,
+  }: {
+    recordFilterGroupId: string;
+    positionInRecordFilterGroup: number;
+  }) => {
     const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
     if (!isDefined(defaultFieldMetadataItemForRLS)) {
@@ -155,8 +182,8 @@ export const useRecordLevelPermissionFilterActions = ({
       operand: getRecordFilterOperands({ filterType })[0],
       value: '',
       displayValue: '',
-      recordFilterGroupId: recordFilterGroup.id,
-      positionInRecordFilterGroup: lastChildPosition + 1,
+      recordFilterGroupId,
+      positionInRecordFilterGroup,
       label: defaultFieldMetadataItemForRLS.label,
       subFieldName: defaultSubFieldName,
     };
@@ -165,8 +192,34 @@ export const useRecordLevelPermissionFilterActions = ({
     setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
   };
 
+  const handleAddFilter = (recordFilterGroup: RecordFilterGroup) => {
+    addDefaultFilterToGroup({
+      recordFilterGroupId: recordFilterGroup.id,
+      positionInRecordFilterGroup: getNextChildPosition(recordFilterGroup.id),
+    });
+  };
+
+  const handleAddFilterGroup = (parentRecordFilterGroup: RecordFilterGroup) => {
+    const newRecordFilterGroup: RecordFilterGroup = {
+      id: v4(),
+      logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      parentRecordFilterGroupId: parentRecordFilterGroup.id,
+      positionInRecordFilterGroup: getNextChildPosition(
+        parentRecordFilterGroup.id,
+      ),
+    };
+
+    upsertRecordFilterGroup(newRecordFilterGroup);
+
+    addDefaultFilterToGroup({
+      recordFilterGroupId: newRecordFilterGroup.id,
+      positionInRecordFilterGroup: 1,
+    });
+  };
+
   return {
     handleCreateFirstFilter,
     handleAddFilter,
+    handleAddFilterGroup,
   };
 };

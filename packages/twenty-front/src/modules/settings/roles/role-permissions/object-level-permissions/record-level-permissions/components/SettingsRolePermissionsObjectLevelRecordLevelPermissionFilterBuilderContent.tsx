@@ -3,21 +3,19 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconFilter, IconPlus } from 'twenty-ui/icon';
+import { IconFilter, IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
-import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildren } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildren';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
 import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions';
 import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterInitialization';
@@ -48,6 +46,8 @@ const StyledRootGroupSeparator = styled.div`
 `;
 
 const StyledActionButtonWrapper = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -94,11 +94,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       rootLevelRecordFilterGroupComponentSelector,
     );
 
-    const { childRecordFiltersAndRecordFilterGroups } =
-      useChildRecordFiltersAndRecordFilterGroups({
-        recordFilterGroupId: rootRecordFilterGroup?.id,
-      });
-
     // Kept out of the root group: the server ANDs them with it, so an OR group would widen access
     const ungroupedRecordFilters = currentRecordFilters.filter(
       (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
@@ -122,7 +117,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       hasInitialized,
     });
 
-    const { handleCreateFirstFilter, handleAddFilter } =
+    const { handleCreateFirstFilter, handleAddFilter, handleAddFilterGroup } =
       useRecordLevelPermissionFilterActions({
         objectMetadataItem,
       });
@@ -146,21 +141,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
               {isNonEmptyArray(ungroupedRecordFilters) && (
                 <StyledRootGroupSeparator>{t`And`}</StyledRootGroupSeparator>
               )}
-              <StyledFiltersContainer>
-                {childRecordFiltersAndRecordFilterGroups
-                  .filter(
-                    (child): child is RecordFilter =>
-                      !isRecordFilterGroupChildARecordFilterGroup(child),
-                  )
-                  .map((child, index) => (
-                    <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
-                      key={child.id}
-                      recordFilter={child}
-                      index={index}
-                      recordFilterGroup={rootRecordFilterGroup}
-                    />
-                  ))}
-              </StyledFiltersContainer>
+              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupChildren
+                recordFilterGroup={rootRecordFilterGroup}
+              />
               <StyledActionButtonWrapper>
                 <CommandMenuButton
                   command={{
@@ -170,6 +153,15 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
                     key: 'add-rule',
                   }}
                   onClick={() => handleAddFilter(rootRecordFilterGroup)}
+                />
+                <CommandMenuButton
+                  command={{
+                    Icon: IconLibraryPlus,
+                    label: t`Add rule group`,
+                    shortLabel: t`Add rule group`,
+                    key: 'add-rule-group',
+                  }}
+                  onClick={() => handleAddFilterGroup(rootRecordFilterGroup)}
                 />
               </StyledActionButtonWrapper>
             </>

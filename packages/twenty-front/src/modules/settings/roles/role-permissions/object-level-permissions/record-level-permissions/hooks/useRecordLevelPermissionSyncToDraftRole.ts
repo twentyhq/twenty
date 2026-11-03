@@ -43,25 +43,9 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
           isDefined(predicate.relationFieldMetadataId),
       );
 
-      const currentObjectGroupIds = new Set(
-        currentRecordFilters
-          .map((filter) => filter.recordFilterGroupId)
-          .filter(isDefined),
-      );
-
-      const currentObjectRootGroupIds = new Set(
-        currentRecordFilterGroups
-          .filter((group) => !group.parentRecordFilterGroupId)
-          .map((group) => group.id),
-      );
-
       const otherObjectGroups = (
         previousRole.rowLevelPermissionPredicateGroups ?? []
-      ).filter(
-        (group) =>
-          !currentObjectGroupIds.has(group.id) &&
-          !currentObjectRootGroupIds.has(group.id),
-      );
+      ).filter((group) => group.objectMetadataId !== objectMetadataItem.id);
 
       const newPredicates = currentRecordFilters.map((filter) =>
         convertRecordFilterToPredicate(filter, roleId, objectMetadataItem.id),
