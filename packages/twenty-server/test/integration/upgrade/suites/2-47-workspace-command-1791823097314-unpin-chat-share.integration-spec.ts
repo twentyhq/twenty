@@ -13,10 +13,20 @@ const RUN_ON_WORKSPACE_ARGS = {
 
 const CHAT_SHARE_UNIVERSAL_IDENTIFIER = 'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
 
-const UNPINNED_CHAT_SHARE = {
+type ChatShareState = {
+  isPinned: boolean;
+  conditionalAvailabilityExpression: string | null;
+};
+
+const UNPINNED_CHAT_SHARE: ChatShareState = {
   isPinned: false,
   conditionalAvailabilityExpression:
     'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
+};
+
+const SEEDED_CHAT_SHARE: ChatShareState = {
+  isPinned: false,
+  conditionalAvailabilityExpression: null,
 };
 
 const readChatShareIsPinned = async () => {
@@ -38,7 +48,7 @@ describe('2-47 workspace command - unpin chat share (integration)', () => {
   const setChatShare = async ({
     isPinned,
     conditionalAvailabilityExpression,
-  }: typeof UNPINNED_CHAT_SHARE) => {
+  }: ChatShareState) => {
     await global.testDataSource.query(
       `UPDATE core."commandMenuItem"
        SET "isPinned" = $3, "conditionalAvailabilityExpression" = $4
@@ -56,17 +66,18 @@ describe('2-47 workspace command - unpin chat share (integration)', () => {
     );
   };
 
-  beforeAll(() => {
+  beforeAll(async () => {
     command = getAppProviderByClassName<UnpinChatShareCommand>(
       'UnpinChatShareCommand',
     );
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+    await setChatShare(UNPINNED_CHAT_SHARE);
   });
 
   afterAll(async () => {
-    await setChatShare(UNPINNED_CHAT_SHARE);
+    await setChatShare(SEEDED_CHAT_SHARE);
   });
 
   it('pins the chat Share item on down, and unpins it on up', async () => {

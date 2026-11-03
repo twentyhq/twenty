@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import {
   FlatEntityMapsException,
@@ -46,7 +48,8 @@ type ComputeFromToAllFlatEntityMapsAndBuildOptionsArgs = {
 export class WorkspaceMigrationFlatEntityMapsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
   ) {}
 
@@ -78,7 +81,10 @@ export class WorkspaceMigrationFlatEntityMapsService {
           ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
           'flatApplicationMaps',
         ]),
-        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
+        this.workspaceRepository.findOne({
+          where: { id: workspaceId },
+          select: ['workspaceCustomApplicationId'],
+        }),
       ]);
 
     return {
