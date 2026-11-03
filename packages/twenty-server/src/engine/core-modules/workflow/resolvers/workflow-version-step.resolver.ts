@@ -247,7 +247,7 @@ export class WorkflowVersionStepResolver {
     userWorkspaceId,
     workflowVersionId,
   }: {
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
     userWorkspaceId: string;
     workflowVersionId: string;
   }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {

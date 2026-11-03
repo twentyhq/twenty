@@ -39,7 +39,7 @@ import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constant
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import {
   getInputSchemaFromSourceCode,
@@ -125,7 +125,7 @@ export const WorkflowEditActionCode = ({
     sourceCode: savedCode,
   });
 
-  const { availablePackages } =
+  const { availablePackages, isAvailablePackagesInitialLoading } =
     useWorkflowCodeStepAvailablePackages(workflowVersionId);
 
   const [functionInput, setFunctionInput] =
@@ -165,13 +165,24 @@ export const WorkflowEditActionCode = ({
     onSuccess: updateOutputSchemaFromTestResult,
   });
 
+  // Read after an await, so it must not be a render-time snapshot
+  // oxlint-disable-next-line twenty/no-state-useref
+  const codeEditGenerationRef = useRef(0);
+
   const persistCode = useDebouncedCallback(async (newCode: string) => {
     if (actionOptions.readonly === true) {
       return;
     }
 
+    const codeEditGeneration = codeEditGenerationRef.current;
+
     // Not per keystroke: concurrent dynamic imports resolve out of order
     const inferredJsonSchema = await getInputSchemaFromSourceCode(newCode);
+
+    // A newer edit was made meanwhile; persisting this one would save stale source
+    if (codeEditGeneration !== codeEditGenerationRef.current) {
+      return;
+    }
 
     const newFunctionInput = getFunctionInputFromInputSchema(
       jsonSchemaToInputSchema(inferredJsonSchema),
@@ -285,6 +296,7 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
+    codeEditGenerationRef.current += 1;
     setEditedCode(newCode);
     persistCode(newCode);
   };
@@ -388,7 +400,9 @@ export const WorkflowEditActionCode = ({
     isFullScreen,
   );
 
-  const isInitialLoading = loading && !isDefined(code);
+  // AutoTypings only reads the package versions when the editor mounts
+  const isInitialLoading =
+    (loading && !isDefined(code)) || isAvailablePackagesInitialLoading;
 
   return (
     !isInitialLoading && (

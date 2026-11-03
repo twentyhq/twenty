@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   isWorkflowAiAgentGenerateStep,
@@ -247,7 +247,7 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
     steps.some(
       (step) =>
         step.type === WorkflowActionType.CODE &&
-        !isString(step.settings.input.code),
+        !isNonEmptyString(step.settings.input.code),
     )
   ) {
     throw new WorkflowVersionStepException(
