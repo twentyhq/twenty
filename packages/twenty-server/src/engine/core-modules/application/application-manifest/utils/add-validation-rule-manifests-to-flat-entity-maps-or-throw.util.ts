@@ -313,18 +313,17 @@ const isErrorFieldDetachedByWorkspace = ({
     ],
   );
 
-const throwFieldRemovedFromApplication = ({
+const buildFieldRemovedFromApplicationException = ({
   validationRuleName,
   fieldName,
 }: {
   validationRuleName: string;
   fieldName: string;
-}): never => {
-  throw new ApplicationException(
+}): ApplicationException =>
+  new ApplicationException(
     `Validation rule "${validationRuleName}" uses the field "${fieldName}", which no longer exists. Update the rule's expression or add the field back to your app.`,
     ApplicationExceptionCode.INVALID_INPUT,
   );
-};
 
 const toComparableTokens = (expression: string) =>
   tokenizeValidationRuleExpression(expression).filter(
@@ -362,7 +361,13 @@ const isSavedExpressionRenamedFromManifest = ({
     );
   };
 
-  const isRenamedPath = (manifestPath: string, savedPath: string): boolean => {
+  const isRenamedPath = ({
+    manifestPath,
+    savedPath,
+  }: {
+    manifestPath: string;
+    savedPath: string;
+  }): boolean => {
     const manifestSegments = manifestPath.split('.');
     const savedSegments = savedPath.split('.');
 
@@ -393,7 +398,10 @@ const isSavedExpressionRenamedFromManifest = ({
       return (
         savedToken.text === manifestToken.text ||
         (savedToken.type === 'path' &&
-          isRenamedPath(manifestToken.text, savedToken.text))
+          isRenamedPath({
+            manifestPath: manifestToken.text,
+            savedPath: savedToken.text,
+          }))
       );
     })
   );
@@ -517,7 +525,7 @@ const resolveCompilationOutcome = ({
     });
 
     if (isDefined(removedFieldName)) {
-      throwFieldRemovedFromApplication({
+      throw buildFieldRemovedFromApplicationException({
         validationRuleName: validationRuleManifest.name,
         fieldName: removedFieldName,
       });
@@ -553,7 +561,7 @@ const resolveCompilationOutcome = ({
   }
 
   if (unavailableField.state === 'removedFromApplication') {
-    throwFieldRemovedFromApplication({
+    throw buildFieldRemovedFromApplicationException({
       validationRuleName: validationRuleManifest.name,
       fieldName: unavailableField.name,
     });
