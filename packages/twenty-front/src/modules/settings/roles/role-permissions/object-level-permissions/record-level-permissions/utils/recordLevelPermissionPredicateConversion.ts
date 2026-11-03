@@ -120,11 +120,17 @@ export const convertPredicateGroupToRecordFilterGroup = (
   };
 };
 
-export const convertRecordFilterGroupToPredicateGroup = (
-  filterGroup: RecordFilterGroup,
-  roleId: string,
-  objectMetadataId: string,
-): RowLevelPermissionPredicateGroup => {
+export const convertRecordFilterGroupToPredicateGroup = ({
+  filterGroup,
+  roleId,
+  objectMetadataId,
+  existingPredicateGroup,
+}: {
+  filterGroup: RecordFilterGroup;
+  roleId: string;
+  objectMetadataId: string;
+  existingPredicateGroup?: RowLevelPermissionPredicateGroup;
+}): RowLevelPermissionPredicateGroup => {
   return {
     __typename: 'RowLevelPermissionPredicateGroup',
     id: filterGroup.id,
@@ -136,10 +142,10 @@ export const convertRecordFilterGroupToPredicateGroup = (
         : RowLevelPermissionPredicateGroupLogicalOperator.OR,
     positionInRowLevelPermissionPredicateGroup:
       filterGroup.positionInRecordFilterGroup ?? null,
-    canReadRecords: false,
-    canUpdateRecords: false,
-    canSoftDeleteRecords: false,
-    canDestroyRecords: false,
+    canReadRecords: existingPredicateGroup?.canReadRecords ?? false,
+    canUpdateRecords: existingPredicateGroup?.canUpdateRecords ?? false,
+    canSoftDeleteRecords: existingPredicateGroup?.canSoftDeleteRecords ?? false,
+    canDestroyRecords: existingPredicateGroup?.canDestroyRecords ?? false,
     roleId,
     objectMetadataId,
   };
