@@ -188,7 +188,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ),
       ...buildApplicationBillingSummary(billsCredits),
     ];
+    // The summary builders translate through the global i18n
   }, [
+    t,
     requestedCapabilities,
     requestedIframeMediaPermissions,
     defaultRole,
