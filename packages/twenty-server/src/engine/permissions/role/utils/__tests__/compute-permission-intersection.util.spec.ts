@@ -298,55 +298,57 @@ describe('computePermissionIntersection', () => {
       roleId: string,
       constrainedFieldMetadataIds: string[],
       grants: AllRecordsGrants = ALL_GRANTED,
-    ): RoleRecordsPermissions =>
-      buildRoleRecordsPermissions({
-        [objectMetadataId1]:
-          constrainedFieldMetadataIds.length === 0
-            ? buildAllRecordsPermissions(grants)
-            : {
-                ...buildAllRecordsPermissions({
-                  canRead: false,
-                  canUpdate: false,
-                  canSoftDelete: false,
-                  canDestroy: false,
-                }),
-                rls: {
-                  canReadRecords: grants.canRead,
-                  canUpdateRecords: grants.canUpdate,
-                  canSoftDeleteRecords: grants.canSoftDelete,
-                  canDestroyRecords: grants.canDestroy,
-                  predicates: constrainedFieldMetadataIds.map(
-                    (fieldMetadataId) => ({
-                      id: `${roleId}-${fieldMetadataId}`,
-                      roleId,
-                      objectMetadataId: objectMetadataId1,
-                      fieldMetadataId,
-                      operand: RowLevelPermissionPredicateOperand.IS,
-                      value: null,
-                      subFieldName: null,
-                      rowLevelPermissionPredicateGroupId: null,
-                      workspaceMemberFieldMetadataId: null,
-                      workspaceMemberSubFieldName: null,
-                    }),
-                  ),
-                  predicateGroups: [
-                    {
-                      id: `${roleId}-group`,
-                      roleId,
-                      objectMetadataId: objectMetadataId1,
-                      logicalOperator:
-                        RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                      parentRowLevelPermissionPredicateGroupId: null,
-                      positionInRowLevelPermissionPredicateGroup: null,
-                      canReadRecords: false,
-                      canUpdateRecords: false,
-                      canSoftDeleteRecords: false,
-                      canDestroyRecords: false,
-                    },
-                  ],
-                },
+    ): RoleRecordsPermissions => {
+      if (constrainedFieldMetadataIds.length === 0) {
+        return buildRoleRecordsPermissions({
+          [objectMetadataId1]: buildAllRecordsPermissions(grants),
+        });
+      }
+
+      return buildRoleRecordsPermissions({
+        [objectMetadataId1]: {
+          ...buildAllRecordsPermissions({
+            canRead: false,
+            canUpdate: false,
+            canSoftDelete: false,
+            canDestroy: false,
+          }),
+          rls: {
+            canReadRecords: grants.canRead,
+            canUpdateRecords: grants.canUpdate,
+            canSoftDeleteRecords: grants.canSoftDelete,
+            canDestroyRecords: grants.canDestroy,
+            predicates: constrainedFieldMetadataIds.map((fieldMetadataId) => ({
+              id: `${roleId}-${fieldMetadataId}`,
+              roleId,
+              objectMetadataId: objectMetadataId1,
+              fieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              value: null,
+              subFieldName: null,
+              rowLevelPermissionPredicateGroupId: null,
+              workspaceMemberFieldMetadataId: null,
+              workspaceMemberSubFieldName: null,
+            })),
+            predicateGroups: [
+              {
+                id: `${roleId}-group`,
+                roleId,
+                objectMetadataId: objectMetadataId1,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                parentRowLevelPermissionPredicateGroupId: null,
+                positionInRowLevelPermissionPredicateGroup: null,
+                canReadRecords: false,
+                canUpdateRecords: false,
+                canSoftDeleteRecords: false,
+                canDestroyRecords: false,
               },
+            ],
+          },
+        },
       });
+    };
 
     const constrainedFieldMetadataIdsOf = (
       permissions: RoleRecordsPermissions,
