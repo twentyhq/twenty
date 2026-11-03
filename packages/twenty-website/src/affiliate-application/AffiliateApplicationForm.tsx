@@ -140,8 +140,8 @@ const INITIAL_STATE: FormState = {
   acceptsTerms: false,
 };
 
-// The route's schema is strict and rejects an empty optional, so blanks are
-// dropped rather than sent as ''.
+// The route's schema is strict and rejects an empty optional, so optional
+// blanks are dropped; the required main channel is always sent.
 function buildRequestBody(state: FormState) {
   const trimmedChannel = state.mainChannel.trim();
   const trimmedAudience = state.audienceSize.trim();

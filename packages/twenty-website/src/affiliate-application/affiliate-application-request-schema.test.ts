@@ -59,6 +59,15 @@ describe('affiliateApplicationRequestSchema', () => {
     );
   });
 
+  it('rejects an email typed as the main channel', () => {
+    const result = affiliateApplicationRequestSchema.safeParse({
+      ...VALID_REQUEST,
+      mainChannel: 'john@gmail.com',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('rejects a main channel that is not a URL', () => {
     const result = affiliateApplicationRequestSchema.safeParse({
       ...VALID_REQUEST,
