@@ -1,6 +1,7 @@
 'use client';
 
 import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { type FormEvent, useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
@@ -14,7 +15,15 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { Button, Field, Heading, Select, TextareaField, TextField } from '@/ui';
+import {
+  Button,
+  ExternalLink,
+  Field,
+  Heading,
+  Select,
+  TextareaField,
+  TextField,
+} from '@/ui';
 
 import { PARTNER_COUNTRY_OPTIONS } from '@/partner-application/data/partner-country-options';
 
@@ -62,6 +71,11 @@ const CheckboxStack = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: ${spacing(2)};
+`;
+
+const TermsLink = styled(ExternalLink)`
+  color: inherit;
+  text-decoration: underline;
 `;
 
 const CheckboxLabel = styled.label`
@@ -315,7 +329,14 @@ export function AffiliateApplicationForm() {
                 }
                 type="checkbox"
               />
-              {i18n._(COPY.fields.acceptsTerms)}
+              <span>
+                <Trans>
+                  I agree to the{' '}
+                  <TermsLink href="/affiliate-partners/terms">
+                    Affiliate Program Terms
+                  </TermsLink>
+                </Trans>
+              </span>
             </CheckboxLabel>
           </CheckboxStack>
           <Button

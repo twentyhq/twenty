@@ -17,7 +17,6 @@ export const AFFILIATE_APPLICATION_COPY = {
     promotionPlan: msg`How you plan to promote Twenty`,
     promotionPlanPlaceholder: msg`Reviews, tutorials, migration guides, client recommendations…`,
     isIntegrationPartner: msg`I'm already a Twenty integration partner`,
-    acceptsTerms: msg`I agree to the affiliate program terms sent with my referral link`,
   },
   errors: {
     name: msg`Please enter your full name.`,
