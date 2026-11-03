@@ -142,14 +142,14 @@ describe('SidePanelWorkflowSelectAction', () => {
     expect(screen.getByText('Generate')).toBeInTheDocument();
   });
 
-  it('lists only the agents with a JSON output, each creating a step that runs it', async () => {
+  it('lists agents whatever their output, each creating a step that runs it', async () => {
     const onActionSelected = jest.fn();
 
     renderPicker(onActionSelected);
 
     await userEvent.click(await screen.findByText('Lead scorer'));
 
-    expect(screen.queryByText('Chat helper')).not.toBeInTheDocument();
+    expect(screen.getByText('Chat helper')).toBeInTheDocument();
     expect(onActionSelected).toHaveBeenCalledWith({
       type: 'AI_AGENT',
       defaultSettings: { input: { agentId: 'lead-scorer' } },

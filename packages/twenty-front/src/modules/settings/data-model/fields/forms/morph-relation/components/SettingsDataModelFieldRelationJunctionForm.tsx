@@ -8,7 +8,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
-import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
+import { isJunctionLikeObject } from '@/object-record/record-field/ui/utils/junction/isJunctionLikeObject';
 import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -109,17 +109,10 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     ({ value }) => value === selectedJunctionTargetFieldId,
   );
 
-  const isJunctionLikeObject = junctionObjectMetadataItem.fields.every(
-    (field) =>
-      field.isSystem === true ||
-      getFieldRelations(field).every(
-        ({ type }) => type === RelationType.MANY_TO_ONE,
-      ),
-  );
-
   if (
     !isJunctionConfigEnabled &&
-    (junctionFieldOptions.length === 0 || !isJunctionLikeObject)
+    (junctionFieldOptions.length === 0 ||
+      !isJunctionLikeObject(junctionObjectMetadataItem.fields))
   ) {
     return null;
   }
