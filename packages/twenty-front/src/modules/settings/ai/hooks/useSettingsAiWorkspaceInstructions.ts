@@ -1,6 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { settingsAiWorkspaceInstructionsSaveFamilyState } from '@/settings/ai/states/settingsAiWorkspaceInstructionsSaveFamilyState';
+import { type SettingsAiWorkspaceInstructionsDraft } from '@/settings/ai/types/SettingsAiWorkspaceInstructionsDraft';
+import { getSettingsAiWorkspaceInstructionsDraftAfterSave } from '@/settings/ai/utils/getSettingsAiWorkspaceInstructionsDraftAfterSave';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client';
@@ -28,10 +30,8 @@ export const useSettingsAiWorkspaceInstructions = () => {
     currentWorkspaceState,
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
-  const [draft, setDraft] = useState<{
-    workspaceId: string;
-    value: string;
-  } | null>(null);
+  const [draft, setDraft] =
+    useState<SettingsAiWorkspaceInstructionsDraft | null>(null);
   const originalInstructions = currentWorkspace?.aiAdditionalInstructions ?? '';
   const workspaceInstructions =
     isDefined(draft) && draft.workspaceId === currentWorkspace?.id
@@ -62,10 +62,11 @@ export const useSettingsAiWorkspaceInstructions = () => {
 
       if (canSkipUnchangedSave) {
         setDraft((previousDraft) =>
-          previousDraft?.workspaceId === workspaceId &&
-          previousDraft.value === newValue
-            ? null
-            : previousDraft,
+          getSettingsAiWorkspaceInstructionsDraftAfterSave({
+            draft: previousDraft,
+            workspaceId,
+            savedInstructions: newValue,
+          }),
         );
         return;
       }
@@ -107,10 +108,11 @@ export const useSettingsAiWorkspaceInstructions = () => {
 
             if (requestId === store.get(saveStateAtom).latestRequestId) {
               setDraft((previousDraft) =>
-                previousDraft?.workspaceId === workspaceId &&
-                previousDraft.value === newValue
-                  ? null
-                  : previousDraft,
+                getSettingsAiWorkspaceInstructionsDraftAfterSave({
+                  draft: previousDraft,
+                  workspaceId,
+                  savedInstructions: newValue,
+                }),
               );
             }
           } catch (error) {
