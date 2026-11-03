@@ -50,9 +50,6 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
-  },
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,
@@ -94,7 +91,7 @@ const buildAgentTools = (options?: {
     }),
   };
   const permissionsService = {
-    checkRolesPermissions: jest
+    hasPermissionFlag: jest
       .fn()
       .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
   };
@@ -182,12 +179,11 @@ describe('Agent tools', () => {
       const { listToolNames, permissionsService } = buildAgentTools();
 
       await expect(listToolNames()).resolves.toHaveLength(4);
-      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledTimes(1);
-      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledWith(
-        context.rolePermissionConfig,
-        workspaceId,
-        PermissionFlagType.AI_SETTINGS,
-      );
+      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
+      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+        authContext: context.authContext,
+        setting: PermissionFlagType.AI_SETTINGS,
+      });
     });
 
     it('is not available without the AI settings permission', async () => {
@@ -216,7 +212,7 @@ describe('Agent tools', () => {
         success: false,
         message: 'Tool "list_agents" is not available',
       });
-      expect(permissionsService.checkRolesPermissions).not.toHaveBeenCalled();
+      expect(permissionsService.hasPermissionFlag).not.toHaveBeenCalled();
       expect(agentService.findManyAgents).not.toHaveBeenCalled();
     });
   });

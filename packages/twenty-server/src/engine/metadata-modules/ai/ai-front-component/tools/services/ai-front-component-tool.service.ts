@@ -35,11 +35,10 @@ export class AiFrontComponentToolService {
         FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
         context.workspaceId,
       )) ||
-      !(await this.permissionsService.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.APPLICATIONS,
-      ))
+      !(await this.permissionsService.hasPermissionFlag({
+        authContext: context.authContext,
+        setting: PermissionFlagType.APPLICATIONS,
+      }))
     ) {
       return {};
     }

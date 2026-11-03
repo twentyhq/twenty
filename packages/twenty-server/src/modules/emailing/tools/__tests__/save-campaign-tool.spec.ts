@@ -5,7 +5,7 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 import { SaveCampaignToolInputZodSchema } from 'src/modules/emailing/tools/save-campaign-tool.schema';
@@ -15,14 +15,15 @@ describe('SaveCampaignTool', () => {
   let saveDraft: jest.Mock;
 
   const campaignId = '20202020-0000-4000-8000-000000000001';
-  const scopedRolePermissionConfig: RolePermissionConfig = {
-    intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-    scope: { objectsPermissions: {}, permissionFlags: {} },
-  };
+  const memberAuthContext = {
+    type: 'user',
+    workspace: { id: 'workspace-1' },
+    userWorkspaceId: 'user-workspace-1',
+  } as WorkspaceAuthContext;
   const memberContext = {
     workspaceId: 'workspace-1',
     userWorkspaceId: 'user-workspace-1',
-    rolePermissionConfig: scopedRolePermissionConfig,
+    authContext: memberAuthContext,
   };
 
   beforeEach(async () => {
@@ -68,7 +69,7 @@ describe('SaveCampaignTool', () => {
     ]);
     expect(saveDraft).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
-      rolePermissionConfig: scopedRolePermissionConfig,
+      authContext: memberAuthContext,
       campaignId,
       name: undefined,
       subject: undefined,

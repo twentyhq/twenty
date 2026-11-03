@@ -38,7 +38,7 @@ export const captureCodeInterpreterSandboxTokens = async ({
     throw new Error(`Application ${applicationId} is not in the cache`);
   }
 
-  const { authContext: runAsJaneContext, roleId: janeRoleId } =
+  const { authContext: runAsJaneContext } =
     await getAppProviderByClassName<AgentActorContextService>(
       'AgentActorContextService',
     ).buildRunAsWorkspaceMemberContext({
@@ -59,17 +59,11 @@ export const captureCodeInterpreterSandboxTokens = async ({
     applicationRunAsJaneToken: requireToken(
       await captureCodeInterpreterSandboxToken({
         authContext: runAsJaneContext,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: janeRoleId },
-        },
       }),
     ),
     janeDirectRunToken: requireToken(
       await captureCodeInterpreterSandboxToken({
         authContext: janeContext,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: janeRoleId },
-        },
       }),
     ),
   };

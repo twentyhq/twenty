@@ -1,16 +1,10 @@
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
@@ -22,9 +16,8 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
-  getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type WorkspaceRepositoryOptions } from 'src/engine/twenty-orm/types/workspace-repository-options.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,6 +25,10 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+
+type OrmRepositoryOptions = WorkspaceRepositoryOptions & {
+  useReplica?: boolean;
+};
 
 @Injectable()
 export class WorkspaceOrmManager {
@@ -43,64 +40,32 @@ export class WorkspaceOrmManager {
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
-    workspaceEntity: Type<T>,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
-  ): WorkspaceRepository<T>;
-
-  getRepository<T extends ObjectLiteral = ObjectRecord>(
-    objectMetadataName: string,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
-  ): WorkspaceRepository<T>;
-
-  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
-    permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: {
-      useReplica?: boolean;
-      shouldSkipEventEmission?: boolean;
-    },
+    repositoryOptions?: OrmRepositoryOptions,
   ): WorkspaceRepository<T> {
-    const objectMetadataName = this.resolveObjectMetadataName(
-      workspaceEntityOrObjectMetadataName,
+    return this.getDataSource(repositoryOptions).getRepository<T>(
+      this.resolveObjectMetadataName(workspaceEntityOrObjectMetadataName),
+      { shouldSkipEventEmission: repositoryOptions?.shouldSkipEventEmission },
     );
-
-    return this.workspaceDataSourceService
-      .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
-      .getRepository<T>(objectMetadataName, permissionOptions, {
-        shouldSkipEventEmission:
-          repositoryOptions?.shouldSkipEventEmission ?? false,
-      });
   }
 
-  // Domain APIs must evaluate the same role intersection as ordinary record APIs.
-  getRepositoryWithContextPermissions<
-    TData extends ObjectLiteral = ObjectRecord,
-  >(
-    objectMetadataName: string,
-    transactionScope?: WorkspaceTransactionScope,
-  ): WorkspaceRepository<TData> {
-    const context = getWorkspaceContext();
-    const permissionConfig = resolveRolePermissionConfig(context);
-    if (!isDefined(permissionConfig)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-    return isDefined(transactionScope)
-      ? transactionScope.getRepository<TData>(
-          objectMetadataName,
-          permissionConfig,
-        )
-      : this.getRepository<TData>(objectMetadataName, permissionConfig);
+  // Only for work the system does itself, never on behalf of a caller
+  getRepositoryWithoutPermissionChecks<T extends ObjectLiteral = ObjectRecord>(
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    repositoryOptions?: OrmRepositoryOptions,
+  ): WorkspaceRepository<T> {
+    return this.getDataSource(
+      repositoryOptions,
+    ).getRepositoryWithoutPermissionChecks<T>(
+      this.resolveObjectMetadataName(workspaceEntityOrObjectMetadataName),
+      { shouldSkipEventEmission: repositoryOptions?.shouldSkipEventEmission },
+    );
+  }
+
+  private getDataSource(repositoryOptions?: OrmRepositoryOptions) {
+    return this.workspaceDataSourceService.getDataSource({
+      useReplica: repositoryOptions?.useReplica ?? false,
+    });
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(
@@ -172,11 +137,10 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
-    const flatWorkspaceMemberMaps =
-      await this.loadWorkspaceMemberMapsForRowLevelPermissions({
-        workspaceId,
-        flatRowLevelPermissionPredicateMaps,
-      });
+    const flatWorkspaceMemberMaps = await this.loadFlatWorkspaceMemberMaps({
+      authContext,
+      flatRowLevelPermissionPredicateMaps,
+    });
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       billingEntitlements,
@@ -210,23 +174,26 @@ export class WorkspaceOrmManager {
     };
   }
 
-  private async loadWorkspaceMemberMapsForRowLevelPermissions({
-    workspaceId,
+  // Member principals resolve their role through these maps; row-level predicates read them too
+  private async loadFlatWorkspaceMemberMaps({
+    authContext,
     flatRowLevelPermissionPredicateMaps,
   }: {
-    workspaceId: string;
+    authContext: WorkspaceAuthContext;
     flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   }): Promise<FlatWorkspaceMemberMaps | undefined> {
     if (
+      !isUserAuthContext(authContext) &&
       !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
     ) {
       return undefined;
     }
 
     const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['flatWorkspaceMemberMaps'],
+      );
 
     return flatWorkspaceMemberMaps;
   }

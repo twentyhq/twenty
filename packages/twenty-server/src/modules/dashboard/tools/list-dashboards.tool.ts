@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
@@ -26,17 +25,13 @@ export const createListDashboardsTool = (
   execute: async (parameters: { limit?: number }) => {
     try {
       const limit = parameters.limit ?? 20;
-      const authContext = buildSystemAuthContext(context.workspaceId);
 
       const dashboards =
         await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository(
-            'dashboard',
-            context.rolePermissionConfig,
-          );
+          const repo = deps.workspaceOrmManager.getRepository('dashboard');
 
           return repo.find({ take: limit, order: { position: 'ASC' } });
-        }, authContext);
+        }, context.authContext);
 
       const dashboardList = dashboards.map((d) => ({
         id: d.id,

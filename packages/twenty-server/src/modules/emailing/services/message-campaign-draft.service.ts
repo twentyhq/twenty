@@ -14,7 +14,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
@@ -23,7 +23,7 @@ import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/email
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
-  rolePermissionConfig: RolePermissionConfig;
+  authContext: WorkspaceAuthContext;
   campaignId?: string;
   name?: string;
   subject?: string;
@@ -49,7 +49,7 @@ export class MessageCampaignDraftService {
 
   async saveDraft({
     workspaceId,
-    rolePermissionConfig,
+    authContext,
     campaignId,
     name,
     subject,
@@ -78,9 +78,8 @@ export class MessageCampaignDraftService {
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
+      const campaignRepository = await this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
-        rolePermissionConfig,
       );
 
       if (!isDefined(campaignId)) {
@@ -156,7 +155,7 @@ export class MessageCampaignDraftService {
         blockCount: stampedDocument?.content?.length,
         variablesUsed,
       };
-    });
+    }, authContext);
   }
 
   private parseAndStampDocument(body: unknown): EmailDocument {

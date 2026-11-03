@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere } from 'typeorm';
 import { z } from 'zod';
 
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -49,14 +48,11 @@ export const createListWorkflowRunsTool = (
   inputSchema: listWorkflowRunsSchema,
   execute: async (parameters: ListWorkflowRunsInput) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
-
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
             deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
-              context.rolePermissionConfig,
             );
 
           const where: FindOptionsWhere<WorkflowRunWorkspaceEntity> = {};
@@ -89,7 +85,7 @@ export const createListWorkflowRunsTool = (
             })),
           };
         },
-        authContext,
+        context.authContext,
       );
     } catch (error) {
       return {

@@ -50,7 +50,7 @@ export class AgentRunPendingWakeUpHandlerService
     wakeUp: PendingWakeUpEntity;
     owner: AgentRunSuspension;
   }) {
-    const [{ authContext, agentRunRoleIds }, persona] = await Promise.all([
+    const [{ authContext }, persona] = await Promise.all([
       this.callerHandlerRegistry
         .getHandlerOrThrow(caller.type)
         .buildExecutionContext({ workspaceId, caller }),
@@ -59,16 +59,14 @@ export class AgentRunPendingWakeUpHandlerService
         spec: runSpec,
       }),
     ]);
-    const rolePermissionConfig =
-      await this.agentRunPersonaService.resolveRolePermissionConfig({
+    const runAuthContext =
+      await this.agentRunPersonaService.resolveRunAuthContext({
         workspaceId,
         persona,
-        agentRunRoleIds,
+        authContext,
       });
 
-    return isDefined(rolePermissionConfig)
-      ? { authContext, rolePermissionConfig }
-      : null;
+    return isDefined(runAuthContext) ? { authContext: runAuthContext } : null;
   }
 
   // the run removes its wake-up once it went on, so the conversation waits until then

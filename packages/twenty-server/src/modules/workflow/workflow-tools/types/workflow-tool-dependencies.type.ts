@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import type { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import type { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import type { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -7,7 +8,6 @@ import type { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/wo
 import type { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import type { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import type { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
@@ -29,6 +29,6 @@ export type WorkflowToolDependencies = {
 
 export type WorkflowToolContext = {
   workspaceId: string;
-  rolePermissionConfig: RolePermissionConfig;
   userWorkspaceId?: string;
+  authContext: WorkspaceAuthContext;
 };

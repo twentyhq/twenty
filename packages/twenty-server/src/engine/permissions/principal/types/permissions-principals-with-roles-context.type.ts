@@ -36,5 +36,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  scope?: Pick<PermissionScope, 'objectsPermissions'>;
+  scope?: PermissionScope;
 };

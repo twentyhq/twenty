@@ -31,10 +31,7 @@ type AgentCallerAwaitedToolCall = {
   toolName: string;
   arguments: Record<string, unknown>;
   // the caller's own permissions, the ones the call is resolved and run with
-  permissions: Pick<
-    ToolContext,
-    'authContext' | 'rolePermissionConfig' | 'application'
-  >;
+  permissions: Pick<ToolContext, 'authContext' | 'application'>;
   // called before the call is posted, so its answer always finds the caller waiting
   waitOnAnswer: (postedCall: {
     threadId: string;
@@ -264,7 +261,7 @@ export class AgentCallerConversationService {
     awaitedToolCall: {
       toolName,
       arguments: toolArguments,
-      permissions: { authContext, rolePermissionConfig, application },
+      permissions: { authContext, application },
     },
     summary,
   }: {
@@ -275,7 +272,6 @@ export class AgentCallerConversationService {
     const toolContext = {
       workspaceId,
       authContext,
-      rolePermissionConfig,
       application,
     } satisfies ToolContext;
 

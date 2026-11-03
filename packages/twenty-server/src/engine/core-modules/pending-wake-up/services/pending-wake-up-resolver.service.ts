@@ -121,7 +121,7 @@ export class PendingWakeUpResolverService {
           ? { id: { eq: event.recordId }, deletedAt: { is: 'NOT_NULL' } }
           : { id: { eq: event.recordId } },
       limit: 1,
-      ...readPermissions,
+      authContext: readPermissions.authContext,
       shouldBuildEffectiveSelectFields: false,
     });
 

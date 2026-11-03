@@ -496,10 +496,9 @@ describe('Conversation sharing through the authenticated API', () => {
           },
         });
 
-        expect(senderAuthorization?.rolePermissionConfig).toEqual({
-          intersectionOf: {
-            userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
-          },
+        expect(senderAuthorization?.authContext).toMatchObject({
+          type: 'user',
+          userWorkspaceId: sender.userWorkspaceId,
         });
         await expect(
           actors.authorizeJob({
