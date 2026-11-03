@@ -99,9 +99,7 @@ export class AgentRunnerService {
   async start(input: RunAgentJobData): Promise<void> {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
-      isDefined(input.conversation)
-        ? input
-        : { ...input, turnId: randomUUID() },
+      { ...input, turnId: input.turnId ?? randomUUID() },
       await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
         spec: input.spec,
@@ -264,13 +262,8 @@ export class AgentRunnerService {
       const run = async (
         stream: AgentRunStream | null,
       ): Promise<AgentRunnerResult | null> => {
-        // a one-shot run's turn id comes with its job, a conversation run's with its prompt
-        const retriedTurnId = turnId ?? prompt?.turnId;
-        const retriedTurn = isDefined(retriedTurnId)
-          ? await this.turnRecorderService.findTurn({
-              workspaceId,
-              turnId: retriedTurnId,
-            })
+        const retriedTurn = isDefined(turnId)
+          ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
           : null;
 
         // a stalled job's retry must not act twice; a waiting run goes on through its wake-up
@@ -652,7 +645,6 @@ export class AgentRunnerService {
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,
-      structuredOutputStrategy: spec.structuredOutputStrategy,
       abortSignal,
     };
 
@@ -737,7 +729,7 @@ export class AgentRunnerService {
     input: {
       workspaceId,
       conversation,
-      turnId: oneShotTurnId,
+      turnId,
       persona,
       prompt,
       executionContext,
@@ -759,8 +751,7 @@ export class AgentRunnerService {
       return {
         turnId: await this.conversationWriterService.insertTurn({
           workspaceId,
-          // a queued run's turn id comes with its job, an ai.generate call's with its run id
-          id: oneShotTurnId ?? prompt?.turnId,
+          id: turnId,
           threadId: null,
           agentId: persona.agentId,
           status: AgentTurnStatus.RUNNING,
@@ -779,17 +770,20 @@ export class AgentRunnerService {
       });
     }
 
-    const { turnId, promptMessageIds, hasTakenQueuedMessages } =
-      await this.agentRunConversationService.openTurn({
-        workspaceId,
-        threadId,
-        agentId: persona.agentId,
-        turnId: prompt?.turnId,
-        senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
-        senderApplicationId: prompt?.senderApplicationId ?? null,
-        createdBy: executionContext.turnCreatedBy,
-        messages: prompt?.messages ?? [],
-      });
+    const {
+      turnId: openedTurnId,
+      promptMessageIds,
+      hasTakenQueuedMessages,
+    } = await this.agentRunConversationService.openTurn({
+      workspaceId,
+      threadId,
+      agentId: persona.agentId,
+      turnId,
+      senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
+      senderApplicationId: prompt?.senderApplicationId ?? null,
+      createdBy: executionContext.turnCreatedBy,
+      messages: prompt?.messages ?? [],
+    });
 
     if (hasTakenQueuedMessages) {
       await this.eventPublisherService.publish({
@@ -808,7 +802,7 @@ export class AgentRunnerService {
       });
 
     return {
-      turnId,
+      turnId: openedTurnId,
       priorMessages: conversationMessages.filter(
         ({ id }) => !promptMessageIds.includes(id),
       ),

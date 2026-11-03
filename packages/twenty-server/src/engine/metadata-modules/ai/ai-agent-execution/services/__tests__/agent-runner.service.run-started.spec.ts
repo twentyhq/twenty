@@ -12,11 +12,11 @@ const JOB_DATA = {
   conversation: { threadId: 'thread-id', isCreated: true },
   caller: { type: 'AGENT_API_RUN', ref: { runId: 'run-id' } },
   spec: { agentId: 'agent-id', title: 'Follow up' },
+  turnId: 'run-id',
   prompt: {
     messages: [{ role: 'user', content: 'Follow up tomorrow' }],
     senderUserWorkspaceId: null,
     senderApplicationId: 'application-id',
-    turnId: 'run-id',
   },
 } as unknown as RunAgentJobData;
 

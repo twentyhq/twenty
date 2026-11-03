@@ -42,7 +42,6 @@ import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
-import { type AgentStructuredOutputStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-structured-output-strategy.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
@@ -76,15 +75,14 @@ type AgentRunTurnInput = {
   executionContext: AgentRunExecutionContext;
   additionalExcludedToolNames?: readonly string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
-  structuredOutputStrategy?: AgentStructuredOutputStrategy;
   abortSignal?: AbortSignal;
 };
 
 export type StartedAgentRunTurn = {
   turn: AgentTurn;
   source: AgentTurnStreamSource;
-  // decided when the turn starts, from the tools it was given
-  structuredOutputStrategy: AgentStructuredOutputStrategy;
+  // some models refuse a JSON response format alongside tools, so only a turn without any asks for it upfront
+  isStructuredOutputInSameRequest: boolean;
 };
 
 export type CompletedAgentRunTurn = AgentExecutionResult & {
@@ -126,7 +124,6 @@ export class AgentRunTurnService {
     executionContext,
     additionalExcludedToolNames = [],
     toolLoadingStrategy = 'preload',
-    structuredOutputStrategy = 'follow-up-request',
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
@@ -167,11 +164,6 @@ export class AgentRunTurnService {
       isNonEmptyArray(Object.keys(pausingTools)) ||
       (persona.modelConfiguration?.webSearch?.enabled ?? false) ||
       (persona.modelConfiguration?.twitterSearch?.enabled ?? false);
-    // some models refuse a JSON response format alongside function calling, so the output shares the request only without tools
-    const effectiveStructuredOutputStrategy: AgentStructuredOutputStrategy =
-      structuredOutputStrategy === 'same-request' && !hasTools
-        ? 'same-request'
-        : 'follow-up-request';
 
     const turn = await this.agentTurnService.start({
       workspace: workspace ?? undefined,
@@ -209,8 +201,7 @@ export class AgentRunTurnService {
       }),
       promptCacheKey: persona.promptCacheKey,
       output:
-        effectiveStructuredOutputStrategy === 'same-request' &&
-        responseFormat?.type === 'json'
+        !hasTools && responseFormat?.type === 'json'
           ? buildStructuredOutput(responseFormat.schema)
           : undefined,
       abortSignal,
@@ -253,13 +244,13 @@ export class AgentRunTurnService {
         modelConfig: turn.modelConfig,
         getStreamError: () => streamError,
       },
-      structuredOutputStrategy: effectiveStructuredOutputStrategy,
+      isStructuredOutputInSameRequest: !hasTools,
     };
   }
 
   // a follow-up structured output request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
-    started: { turn, structuredOutputStrategy },
+    started: { turn, isStructuredOutputInSameRequest },
     persona,
     responseFormat,
     workspaceId,
@@ -300,10 +291,7 @@ export class AgentRunTurnService {
     const isStructuredOutputExpected =
       isDefined(agentSchema) && !isPaused && !isDefined(stopReason);
 
-    if (
-      isStructuredOutputExpected &&
-      structuredOutputStrategy === 'same-request'
-    ) {
+    if (isStructuredOutputExpected && isStructuredOutputInSameRequest) {
       result = await this.readSameRequestOutputOrThrow(turn);
     } else if (isStructuredOutputExpected) {
       const structuredResult = await generateText({

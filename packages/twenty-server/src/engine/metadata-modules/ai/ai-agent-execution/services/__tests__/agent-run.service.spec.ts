@@ -146,7 +146,7 @@ describe('AgentRunService', () => {
 
       expect(agentRunnerService.start).toHaveBeenCalledWith(
         expect.objectContaining({
-          prompt: expect.objectContaining({ turnId: runId }),
+          turnId: runId,
         }),
       );
     });

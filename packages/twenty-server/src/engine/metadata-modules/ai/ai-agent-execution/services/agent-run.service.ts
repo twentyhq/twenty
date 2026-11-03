@@ -280,11 +280,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         },
         toolLoadingStrategy: 'lazy',
       },
+      turnId: runId,
       prompt: {
         messages,
         senderUserWorkspaceId: memberUserWorkspaceId,
         senderApplicationId: callerApplication?.id ?? null,
-        turnId: runId,
       },
     });
 

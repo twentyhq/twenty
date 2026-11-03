@@ -55,7 +55,6 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
       turnCreatedBy: {} as never,
       userWorkspaceId: null,
     },
-    structuredOutputStrategy: 'same-request',
   });
 
   return {
@@ -68,7 +67,7 @@ describe('AgentRunTurnService.startTurn', () => {
   it('asks for the structured output in the same request when the turn has no tools', async () => {
     const { started, output } = await startTurn(buildPersona(null));
 
-    expect(started.structuredOutputStrategy).toBe('same-request');
+    expect(started.isStructuredOutputInSameRequest).toBe(true);
     expect(output).toBeDefined();
   });
 
@@ -77,7 +76,7 @@ describe('AgentRunTurnService.startTurn', () => {
       buildPersona({ objectPermissions: [] }),
     );
 
-    expect(started.structuredOutputStrategy).toBe('follow-up-request');
+    expect(started.isStructuredOutputInSameRequest).toBe(false);
     expect(output).toBeUndefined();
   });
 });

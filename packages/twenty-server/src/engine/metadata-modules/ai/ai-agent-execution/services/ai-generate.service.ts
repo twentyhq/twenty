@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
+
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import {
   generateJsonFieldsSchema,
@@ -125,13 +127,12 @@ export class AiGenerateService {
           instructions: null,
           responseFormat,
           capabilities: { canAskHumans: false },
-          structuredOutputStrategy: 'same-request',
         },
+        turnId: requestedRunId ?? randomUUID(),
         prompt: {
           messages,
           senderUserWorkspaceId: requestUserWorkspaceId,
           senderApplicationId: callerApplication?.id ?? null,
-          turnId: requestedRunId,
         },
         streamChannelId,
       })
