@@ -37,9 +37,7 @@ export const useGetRecordFilterDisplayValue = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const currencies = useCurrencies({
-    shouldIncludeWithdrawnCurrencies: true,
-  });
+  const currencies = useCurrencies();
 
   const getRecordFilterDisplayValue = (
     recordFilter?: Nullable<RecordFilter>,

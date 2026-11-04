@@ -1,6 +1,6 @@
 import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { isDefined, isWithdrawnCurrencyCode } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { CurrencyPicker } from 'twenty-ui/components/input';
 
 import { useCurrencyPickerCurrencies } from '@/ui/input/components/internal/currency/hooks/useCurrencyPickerCurrencies';
@@ -31,10 +31,7 @@ export const CurrencyPickerDropdownButton = ({
 }: CurrencyPickerDropdownButtonProps) => {
   const { t } = useLingui();
   const dropdownId = useId();
-  const currencyPickerCurrencies = useCurrencyPickerCurrencies().filter(
-    ({ code }) =>
-      !isWithdrawnCurrencyCode(code) || code === selectedCurrencyCode,
-  );
+  const currencyPickerCurrencies = useCurrencyPickerCurrencies();
 
   const handleValueChange = (currencyCode: string | null) => {
     if (!isDefined(currencyCode)) {

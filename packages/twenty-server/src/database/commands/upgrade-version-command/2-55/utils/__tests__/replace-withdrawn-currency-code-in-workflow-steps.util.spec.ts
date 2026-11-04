@@ -2,6 +2,7 @@ import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/comman
 
 const CURRENCY_FIELD_ID = '11111111-1111-4111-8111-111111111111';
 const OTHER_FIELD_ID = '22222222-2222-4222-8222-222222222222';
+const RELATION_FIELD_ID = '33333333-3333-4333-8333-333333333333';
 
 const currencyFieldMetadataIds = new Set([CURRENCY_FIELD_ID]);
 const currencyFieldNamesByObjectNameSingular = new Map([
@@ -51,6 +52,34 @@ describe('replaceWithdrawnCurrencyCodeInWorkflowSteps', () => {
             },
           },
         },
+      ],
+      hasChanged: true,
+    });
+  });
+
+  it('replaces the currency code in Find Records filters on a related record currency field', () => {
+    const relatedCurrencyCodeRecordFilter = {
+      ...currencyCodeRecordFilter,
+      fieldMetadataId: RELATION_FIELD_ID,
+      relationTargetFieldMetadataId: CURRENCY_FIELD_ID,
+    };
+    const buildFindRecordsStep = (recordFilter: Record<string, unknown>) => ({
+      type: 'FIND_RECORDS',
+      settings: { input: { filter: buildFilter([recordFilter]) } },
+    });
+
+    expect(
+      replaceWithdrawnCurrencyCodeInWorkflowSteps({
+        steps: [buildFindRecordsStep(relatedCurrencyCodeRecordFilter)],
+        currencyFieldMetadataIds,
+        currencyFieldNamesByObjectNameSingular,
+      }),
+    ).toEqual({
+      value: [
+        buildFindRecordsStep({
+          ...relatedCurrencyCodeRecordFilter,
+          value: '["XCG","USD"]',
+        }),
       ],
       hasChanged: true,
     });

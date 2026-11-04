@@ -19,7 +19,7 @@ import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/command
 import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-filter-value.util';
 import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
 import { replaceWithdrawnCurrencyCodeInWorkflowTrigger } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-trigger.util';
-import { toMappedValue } from 'src/database/commands/upgrade-version-command/2-55/utils/to-mapped-value.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowTriggers } from 'src/database/commands/upgrade-version-command/2-55/utils/replace-withdrawn-currency-code-in-workflow-triggers.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -106,6 +106,10 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         ]?.nameSingular;
 
       if (!isDefined(objectNameSingular)) {
+        this.logger.warn(
+          `Skipping workflow steps of currency field ${field.id} in workspace ${workspaceId}: its object metadata is missing`,
+        );
+
         continue;
       }
 
@@ -209,61 +213,25 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         workspaceId,
         JSON.stringify([{ type: WorkflowTriggerType.DATABASE_EVENT }]),
       ],
-      mapRow: ({ value: triggers }) =>
-        Array.isArray(triggers)
-          ? toMappedValue({
-              original: triggers,
-              mapped: triggers.map(
-                (trigger) =>
-                  replaceWithdrawnCurrencyCodeInWorkflowTrigger({
-                    trigger,
-                    currencyFieldMetadataIds,
-                  }).value,
-              ),
-            })
-          : { value: triggers, hasChanged: false },
+      mapRow: ({ value }) =>
+        replaceWithdrawnCurrencyCodeInWorkflowTriggers({
+          triggers: value,
+          currencyFieldMetadataIds,
+        }),
     });
 
-    const workflowVersionFlatObjectMetadata =
-      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
-        flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-      });
-
-    const workspaceWorkflowVersionCount = isDefined(
-      workflowVersionFlatObjectMetadata,
-    )
-      ? await this.rewriteRows({
-          dataSource,
-          isDryRun,
-          tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
-          columnName: 'steps',
-          whereClause: `steps @> ANY($1::jsonb[])`,
-          whereParameters: [workflowStepTypeContainments],
-          mapRow: mapWorkflowVersionStepsRow,
-        })
-      : 0;
-
-    const workspaceWorkflowVersionTriggerCount = isDefined(
-      workflowVersionFlatObjectMetadata,
-    )
-      ? await this.rewriteRows({
-          dataSource,
-          isDryRun,
-          tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
-          columnName: 'trigger',
-          whereClause: `trigger @> $1::jsonb`,
-          whereParameters: [
-            JSON.stringify({ type: WorkflowTriggerType.DATABASE_EVENT }),
-          ],
-          mapRow: ({ value: trigger }) =>
-            replaceWithdrawnCurrencyCodeInWorkflowTrigger({
-              trigger,
-              currencyFieldMetadataIds,
-            }),
-        })
-      : 0;
+    const {
+      stepCount: workspaceWorkflowVersionCount,
+      triggerCount: workspaceWorkflowVersionTriggerCount,
+    } = await this.replaceInWorkspaceWorkflowVersions({
+      dataSource,
+      isDryRun,
+      workspaceId,
+      flatObjectMetadataMaps,
+      workflowStepTypeContainments,
+      mapWorkflowVersionStepsRow,
+      currencyFieldMetadataIds,
+    });
 
     if (
       !isDryRun &&
@@ -304,6 +272,65 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         `${isDryRun ? '[DRY RUN] ' : ''}Replaced ${WITHDRAWN_CURRENCY_CODE} with ${REPLACEMENT_CURRENCY_CODE} in workspace ${workspaceId}: ${fieldDefaultValueCount} field default value(s), ${recordCount} record(s), ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version step(s), ${coreWorkflowVersionTriggersCount} core workflow version trigger(s), ${workspaceWorkflowVersionCount} workflow version step(s), ${workspaceWorkflowVersionTriggerCount} workflow version trigger(s)`,
       );
     }
+  }
+
+  private async replaceInWorkspaceWorkflowVersions({
+    dataSource,
+    isDryRun,
+    workspaceId,
+    flatObjectMetadataMaps,
+    workflowStepTypeContainments,
+    mapWorkflowVersionStepsRow,
+    currencyFieldMetadataIds,
+  }: {
+    dataSource: DataSource;
+    isDryRun: boolean;
+    workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    workflowStepTypeContainments: string[];
+    mapWorkflowVersionStepsRow: RewriteRowsArgs<StoredJsonbRow>['mapRow'];
+    currencyFieldMetadataIds: Set<string>;
+  }): Promise<{ stepCount: number; triggerCount: number }> {
+    const workflowVersionFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+      });
+
+    if (!isDefined(workflowVersionFlatObjectMetadata)) {
+      return { stepCount: 0, triggerCount: 0 };
+    }
+
+    const tableName = `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`;
+
+    const stepCount = await this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName,
+      columnName: 'steps',
+      whereClause: `steps @> ANY($1::jsonb[])`,
+      whereParameters: [workflowStepTypeContainments],
+      mapRow: mapWorkflowVersionStepsRow,
+    });
+
+    const triggerCount = await this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName,
+      columnName: 'trigger',
+      whereClause: `trigger @> $1::jsonb`,
+      whereParameters: [
+        JSON.stringify({ type: WorkflowTriggerType.DATABASE_EVENT }),
+      ],
+      mapRow: ({ value }) =>
+        replaceWithdrawnCurrencyCodeInWorkflowTrigger({
+          trigger: value,
+          currencyFieldMetadataIds,
+        }),
+    });
+
+    return { stepCount, triggerCount };
   }
 
   private async replaceInFieldDefaultValues({
@@ -416,6 +443,10 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
         ];
 
       if (!isDefined(flatObjectMetadata)) {
+        this.logger.warn(
+          `Skipping records of currency field ${field.id} in workspace ${workspaceId}: its object metadata is missing`,
+        );
+
         continue;
       }
 
