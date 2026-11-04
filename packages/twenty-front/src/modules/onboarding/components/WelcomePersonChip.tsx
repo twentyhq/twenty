@@ -1,24 +1,16 @@
 import { styled } from '@linaria/react';
-import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type WelcomePersonChipSizeVariant = 'default' | 'compact';
-
-const StyledChip = styled.div<{ sizeVariant: WelcomePersonChipSizeVariant }>`
+const StyledChip = styled.div`
   align-items: center;
   display: inline-flex;
-  gap: ${({ sizeVariant }) =>
-    sizeVariant === 'compact'
-      ? themeCssVariables.spacing[1]
-      : themeCssVariables.spacing[2]};
-  padding: ${({ sizeVariant }) =>
-    sizeVariant === 'compact'
-      ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]}`
-      : `${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
 `;
 
 const StyledPersonName = styled.span`
@@ -34,25 +26,17 @@ const StyledPersonName = styled.span`
   }
 `;
 
-type WelcomePersonChipProps = {
-  avatarSize?: AvatarSize;
-  sizeVariant?: WelcomePersonChipSizeVariant;
-};
-
-export const WelcomePersonChip = ({
-  avatarSize = 'lg',
-  sizeVariant = 'default',
-}: WelcomePersonChipProps) => {
+export const WelcomePersonChip = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const firstName = currentWorkspaceMember?.name?.firstName ?? '';
   const lastName = currentWorkspaceMember?.name?.lastName ?? '';
   const fullName = `${firstName} ${lastName}`.trim();
 
   return (
-    <StyledChip sizeVariant={sizeVariant}>
+    <StyledChip>
       <Avatar
         shape="circle"
-        size={avatarSize}
+        size="xs"
         name={fullName}
         colorSeed={currentWorkspaceMember?.id}
         src={getAbsoluteImageUrl(currentWorkspaceMember?.avatarUrl)}
