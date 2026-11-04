@@ -140,6 +140,10 @@ export const SettingsApplicationContentItemsTable = ({
       return resolveObject(item.universalIdentifier)?.color;
     }
 
+    if (contentType === 'fields') {
+      return resolveObject(item.objectUniversalIdentifier)?.color;
+    }
+
     if (contentType === 'navigationMenuItems' && isDefined(item.tag)) {
       return getNavigationMenuItemColor(
         { type: item.tag as NavigationMenuItemType, color: item.color },
