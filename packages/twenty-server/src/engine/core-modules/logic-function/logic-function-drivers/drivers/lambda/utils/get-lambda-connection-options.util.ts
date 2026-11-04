@@ -3,6 +3,7 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
+import { getLambdaVpcConfig } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-vpc-config.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -41,6 +42,12 @@ export const getLambdaConnectionOptions = (
   const resourceNamespace = getLambdaResourceNamespace({
     lambdaRoleArn: lambdaRole,
   });
+  const vpcConfig = getLambdaVpcConfig({
+    subnetIds: twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_SUBNET_IDS'),
+    securityGroupIds: twentyConfigService.get(
+      'LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS',
+    ),
+  });
 
   return {
     credentials: isNonEmptyString(accessKeyId)
@@ -55,5 +62,6 @@ export const getLambdaConnectionOptions = (
     resourceNamespace,
     resourceTags:
       Object.keys(resourceTags).length > 0 ? resourceTags : undefined,
+    vpcConfig,
   };
 };
