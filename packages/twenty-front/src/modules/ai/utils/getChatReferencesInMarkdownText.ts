@@ -10,7 +10,13 @@ const PROBED_REFERENCE_OPENING_REGEX = new RegExp(
   'g',
 );
 
-const isBackslashEscaped = (text: string, index: number): boolean => {
+const isBackslashEscaped = ({
+  text,
+  index,
+}: {
+  text: string;
+  index: number;
+}): boolean => {
   let backslashCount = 0;
 
   while (text[index - backslashCount - 1] === '\\') {
@@ -20,12 +26,18 @@ const isBackslashEscaped = (text: string, index: number): boolean => {
   return backslashCount % 2 === 1;
 };
 
-const hasEscapedBrackets = (
-  text: string,
-  reference: ChatReferenceMatch,
-): boolean =>
-  isBackslashEscaped(text, reference.index) ||
-  isBackslashEscaped(text, reference.index + reference.fullMatch.length - 2);
+const hasEscapedBrackets = ({
+  text,
+  reference,
+}: {
+  text: string;
+  reference: ChatReferenceMatch;
+}): boolean =>
+  isBackslashEscaped({ text, index: reference.index }) ||
+  isBackslashEscaped({
+    text,
+    index: reference.index + reference.fullMatch.length - 2,
+  });
 
 const isListToken = (token: Token): token is Tokens.List =>
   token.type === 'list';
@@ -57,10 +69,13 @@ const getInlineTextRaws = (tokens: Token[]): string[] =>
       : getInlineTextRaws(getChildTokens(token)),
   );
 
-const insertProbeMarkers = (
-  text: string,
-  references: ChatReferenceMatch[],
-): string => {
+const insertProbeMarkers = ({
+  text,
+  references,
+}: {
+  text: string;
+  references: ChatReferenceMatch[];
+}): string => {
   let probedText = '';
   let lastIndex = 0;
 
@@ -80,7 +95,7 @@ export const getChatReferencesInMarkdownText = ({
   references: ChatReferenceMatch[];
 }): ChatReferenceMatch[] => {
   const unescapedReferences = references.filter(
-    (reference) => !hasEscapedBrackets(text, reference),
+    (reference) => !hasEscapedBrackets({ text, reference }),
   );
 
   if (unescapedReferences.length === 0) {
@@ -89,7 +104,7 @@ export const getChatReferencesInMarkdownText = ({
 
   const textTokenReferenceIndexes = new Set(
     getInlineTextRaws(
-      Lexer.lex(insertProbeMarkers(text, unescapedReferences)),
+      Lexer.lex(insertProbeMarkers({ text, references: unescapedReferences })),
     ).flatMap((raw) =>
       [...raw.matchAll(PROBED_REFERENCE_OPENING_REGEX)].map((match) =>
         Number(match[1]),
