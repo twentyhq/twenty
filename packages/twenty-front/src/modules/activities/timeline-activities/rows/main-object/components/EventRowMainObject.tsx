@@ -7,8 +7,8 @@ import {
   StyledEventRowContent,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type EventRowMainObjectProps = EventRowNativeComponentProps;
 
@@ -22,6 +22,7 @@ export const EventRowMainObject = ({
   happensAt,
   hasRenderer,
 }: EventRowMainObjectProps) => {
+  const { t } = useLingui();
   switch (eventAction) {
     case 'created': {
       return (

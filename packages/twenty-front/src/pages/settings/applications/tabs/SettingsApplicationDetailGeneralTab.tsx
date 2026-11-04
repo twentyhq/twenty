@@ -3,7 +3,6 @@ import { SettingsApplicationOverviewCard } from '@/settings/applications/compone
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { SettingsApplicationIframeMediaPermissionsSection } from '@/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -20,6 +19,7 @@ import { SettingsApplicationConnectionsSection } from '~/pages/settings/applicat
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '@/settings/applications/utils/isUpgradableApplicationSourceType';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationDetailGeneralTabProps = {
   application: Pick<
@@ -65,6 +65,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   isUninstalling,
   uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
+  const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(

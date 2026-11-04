@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconUserCircle } from 'twenty-ui/icon';
@@ -10,6 +9,7 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 type FormWorkspaceMemberFilterValueInputDropdownContentProps = {
   searchFilter: string;
@@ -33,6 +33,7 @@ export const FormWorkspaceMemberFilterValueInputDropdownContent = ({
   loading,
   onSelectChange,
 }: FormWorkspaceMemberFilterValueInputDropdownContentProps) => {
+  const { t } = useLingui();
   const isMeVisible = normalizeSearchText(t`Me`).includes(
     normalizeSearchText(searchFilter),
   );

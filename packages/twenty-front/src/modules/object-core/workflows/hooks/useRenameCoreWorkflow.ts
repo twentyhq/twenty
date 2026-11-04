@@ -1,10 +1,10 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { UpdateCoreWorkflowDocument } from '~/generated/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useRenameCoreWorkflow = ({
   coreWorkflowId,
@@ -13,6 +13,7 @@ export const useRenameCoreWorkflow = ({
   coreWorkflowId: string;
   currentName: string | undefined | null;
 }) => {
+  const { t } = useLingui();
   const client = useApolloCoreClient();
   const [updateWorkflow] = useMutation(UpdateCoreWorkflowDocument, { client });
   const { enqueueToast } = useToast();

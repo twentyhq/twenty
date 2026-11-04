@@ -397,6 +397,69 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
     });
   });
 
+  it('should keep group operations an update omits and clear the ones it sets to false', async () => {
+    const groupOperations = {
+      canReadRecords: true,
+      canUpdateRecords: true,
+      canSoftDeleteRecords: true,
+      canDestroyRecords: true,
+    };
+    const upsertGroup = async (
+      predicateGroup: UpsertRowLevelPermissionPredicatesInput['predicateGroups'][number],
+    ) => {
+      const { data } = await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: companyObjectMetadataId,
+          predicates: [],
+          predicateGroups: [predicateGroup],
+        },
+      });
+
+      return data.upsertRowLevelPermissionPredicates.predicateGroups[0];
+    };
+
+    const createdGroup = await upsertGroup({
+      objectMetadataId: companyObjectMetadataId,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      ...groupOperations,
+    });
+
+    jestExpectToBeDefined(createdGroup?.id);
+    expect(createdGroup).toMatchObject(groupOperations);
+
+    const groupUpdatedWithoutOperations = await upsertGroup({
+      id: createdGroup.id,
+      objectMetadataId: companyObjectMetadataId,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    });
+
+    expect(groupUpdatedWithoutOperations).toMatchObject({
+      id: createdGroup.id,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+      ...groupOperations,
+    });
+
+    const groupUpdatedWithOperationsOff = await upsertGroup({
+      id: createdGroup.id,
+      objectMetadataId: companyObjectMetadataId,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+      canReadRecords: false,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+    });
+
+    expect(groupUpdatedWithOperationsOff).toMatchObject({
+      id: createdGroup.id,
+      canReadRecords: false,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+    });
+  });
+
   it('should delete predicates and groups by not including them', async () => {
     const createInput: UpsertRowLevelPermissionPredicatesInput = {
       roleId: createdRoleId,

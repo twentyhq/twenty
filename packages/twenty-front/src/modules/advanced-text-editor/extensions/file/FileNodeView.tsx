@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { type ChangeEvent, useRef } from 'react';
 import { getSafeUrl, isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
@@ -9,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
 import { FileIcon } from '@/file/components/FileIcon';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFileLine = styled.div`
   align-items: center;
@@ -43,6 +43,7 @@ export const FileNodeView = ({
   getPos,
   updateAttributes,
 }: FileNodeViewProps) => {
+  const { t } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { onFileUpload, onFileUploadError } = editor.extensionStorage.upload;

@@ -18,6 +18,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-rls-grant-operations-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
@@ -54,6 +56,30 @@ export class RowLevelPermissionPredicateGroupEntity
 
   @Column({ nullable: true, type: 'double precision' })
   positionInRowLevelPermissionPredicateGroup: number | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canReadRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canUpdateRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canSoftDeleteRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RLS_GRANT_OPERATIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  canDestroyRecords: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
   roleId: string;

@@ -2,7 +2,6 @@ import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -14,6 +13,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
 import { type AiChatAssistantMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
@@ -43,6 +43,7 @@ export const SettingsAiBehaviorSection = ({
   disabled = false,
   errorMessage,
 }: SettingsAiBehaviorSectionProps) => {
+  const { t } = useLingui();
   const sectionId = useId();
   const directMessagesLabelId = `${sectionId}-direct-messages`;
   const inboxLabelId = `${sectionId}-inbox`;
