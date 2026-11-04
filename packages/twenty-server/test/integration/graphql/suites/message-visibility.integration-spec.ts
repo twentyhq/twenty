@@ -7,6 +7,7 @@ import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/fil
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const UNASSOCIATED_MESSAGE_ID = '20202020-ca1e-4000-8000-000000000101';
@@ -57,6 +58,15 @@ describe('message visibility restrictions (e2e)', () => {
     );
 
     expect(messageResponse.body.errors).toBeUndefined();
+
+    const [storedMessage] = await globalThis.testDataSource.query(
+      `SELECT attachments FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."message" WHERE id = $1`,
+      [UNASSOCIATED_MESSAGE_ID],
+    );
+
+    expect(storedMessage.attachments).toEqual([
+      expect.objectContaining({ fileId: attachmentFileId }),
+    ]);
 
     const participantResponse = await makeGraphqlApiRequest(
       createOneOperationFactory({

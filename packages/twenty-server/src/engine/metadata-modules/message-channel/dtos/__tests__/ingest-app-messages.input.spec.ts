@@ -2,10 +2,10 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { IngestAppMessagesInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
+import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
 
 const MESSAGE_CHANNEL_ID = '55555555-5555-4555-8555-555555555555';
 
