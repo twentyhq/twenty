@@ -5,4 +5,5 @@ export const OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES: ToolCategory[] = [
   ToolCategory.ACTION,
   ToolCategory.DASHBOARD,
   ToolCategory.WORKFLOW,
+  ToolCategory.MCP,
 ];

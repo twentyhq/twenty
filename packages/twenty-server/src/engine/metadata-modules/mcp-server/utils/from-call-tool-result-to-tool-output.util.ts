@@ -1,0 +1,58 @@
+import { type CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+
+type ToolOutputContentItem =
+  | { type: 'text'; text: string }
+  | { type: 'image' | 'audio'; mimeType: string }
+  | { type: 'resource'; uri: string }
+  | { type: 'resource_link'; uri: string; name: string };
+
+// Binary payloads are dropped: the model only reads text, and base64 blobs would flood the context.
+const toContentItem = (
+  item: CallToolResult['content'][number],
+): ToolOutputContentItem => {
+  switch (item.type) {
+    case 'text':
+      return { type: 'text', text: item.text };
+    case 'image':
+    case 'audio':
+      return { type: item.type, mimeType: item.mimeType };
+    case 'resource':
+      return { type: 'resource', uri: item.resource.uri };
+    case 'resource_link':
+      return { type: 'resource_link', uri: item.uri, name: item.name };
+  }
+};
+
+export const fromCallToolResultToToolOutput = ({
+  toolName,
+  result,
+}: {
+  toolName: string;
+  result: CallToolResult;
+}): ToolOutput => {
+  const content = result.content.map(toContentItem);
+
+  if (result.isError === true) {
+    const errorText = content
+      .flatMap((item) => (item.type === 'text' ? [item.text] : []))
+      .join('\n');
+
+    return {
+      success: false,
+      message: `MCP tool ${toolName} failed`,
+      error:
+        errorText.length > 0 ? errorText : 'The MCP server reported an error',
+    };
+  }
+
+  return {
+    success: true,
+    message: `MCP tool ${toolName} executed`,
+    result: isDefined(result.structuredContent)
+      ? result.structuredContent
+      : { content },
+  };
+};
