@@ -136,10 +136,15 @@ export const useAgentChat = () => {
     const channelId = isNewChat
       ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
       : undefined;
+    const initialRecipients = getAgentChatInitialRecipients({
+      recipientWorkspaceMemberIds:
+        newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
+      workspaceMembers: store.get(currentWorkspaceMembersState.atom),
+    });
     const hasRecipients =
-      newInboxChatRecipients?.isAssistantParticipant === true ||
+      newInboxChatRecipients?.isAssistantParticipant ||
       isAssistantMentioned ||
-      isNonEmptyArray(newInboxChatRecipients?.recipientWorkspaceMemberIds) ||
+      isNonEmptyArray(initialRecipients) ||
       isNonEmptyArray(participantMentions) ||
       isDefined(channelId);
 
@@ -245,11 +250,6 @@ export const useAgentChat = () => {
       filename: file.filename,
     }));
 
-    const initialRecipients = getAgentChatInitialRecipients({
-      recipientWorkspaceMemberIds:
-        newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
-      workspaceMembers: store.get(currentWorkspaceMembersState.atom),
-    });
     setAgentChatUploadedFiles([]);
 
     store.set(isSendingMessageAtom, true);
@@ -276,8 +276,11 @@ export const useAgentChat = () => {
           isAssistantParticipant:
             newInboxChatRecipients?.isAssistantParticipant,
           isAssistantMentioned,
-          recipientWorkspaceMemberIds:
-            newInboxChatRecipients?.recipientWorkspaceMemberIds,
+          recipientWorkspaceMemberIds: isDefined(newInboxChatRecipients)
+            ? initialRecipients.map(
+                ({ workspaceMemberId }) => workspaceMemberId,
+              )
+            : undefined,
         },
       });
 

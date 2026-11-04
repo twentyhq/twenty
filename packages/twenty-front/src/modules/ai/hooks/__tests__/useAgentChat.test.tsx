@@ -52,6 +52,7 @@ const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 const RECIPIENT_ID = '20202020-0000-4000-8000-0000000000bb';
+const FORMER_MEMBER_ID = '20202020-0000-4000-8000-0000000000ee';
 const EXISTING_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
 const COMPANY_TARGET = {
   objectNameSingular: 'company',
@@ -137,6 +138,9 @@ const renderAgentChat = ({
         newThreadRecipients,
       );
       store.set(agentChatNewThreadChannelIdState.atom, newThreadChannelId);
+      store.set(currentWorkspaceMembersState.atom, [
+        { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
+      ]);
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         featureFlags: [
@@ -243,12 +247,6 @@ describe('useAgentChat', () => {
           namePlural: 'agentChatThreads',
         },
       ],
-    });
-
-    act(() => {
-      jotaiStore.set(currentWorkspaceMembersState.atom, [
-        { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
-      ]);
     });
 
     const query = jest
@@ -405,7 +403,7 @@ describe('useAgentChat', () => {
     );
   });
 
-  it('sends selected recipients without turning them into mentions', async () => {
+  it('sends only selected workspace members, without turning them into mentions', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -414,7 +412,7 @@ describe('useAgentChat', () => {
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
         isAssistantParticipant: false,
-        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+        recipientWorkspaceMemberIds: [RECIPIENT_ID, FORMER_MEMBER_ID],
       },
     });
 
