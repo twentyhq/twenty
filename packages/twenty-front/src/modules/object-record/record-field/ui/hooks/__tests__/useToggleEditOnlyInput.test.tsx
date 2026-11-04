@@ -2,7 +2,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { booleanFieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
@@ -40,7 +40,7 @@ const mocks: MockedResponse[] = [
       data: {
         updateCompany: {
           ...generateMockRecordNode({
-            objectNameSingular: CoreObjectNameSingular.Company,
+            objectNameSingular: StandardObjectNameSingular.Company,
             input: { id: recordId },
             withDepthOneRelation: true,
           }),
@@ -56,7 +56,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });

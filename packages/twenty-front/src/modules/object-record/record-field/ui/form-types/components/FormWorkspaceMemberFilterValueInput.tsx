@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useCallback, useId, useMemo, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -86,7 +86,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
     useRecordsForSelect({
       searchFilterText: searchFilter,
       selectedIds: selectedRecordIds,
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       limit: 10,
       allowRequestsToTwentyIcons: false,
     });

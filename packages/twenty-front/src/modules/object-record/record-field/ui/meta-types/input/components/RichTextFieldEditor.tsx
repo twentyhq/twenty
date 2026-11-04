@@ -14,7 +14,7 @@ import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-tex
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -98,7 +98,7 @@ export const RichTextFieldEditor = ({
   });
 
   const { records: attachments } = useFindManyRecords<Attachment>({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
     filter: {
       [attachmentTargetFieldIdName]: {
         eq: recordId,

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -49,7 +49,7 @@ export const CampaignSentEnvelope = ({
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
 
   const { record: list, loading: isListLoading } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
     // A list deleted after the send must still name what the campaign went to.
     withSoftDeleted: true,
@@ -98,7 +98,7 @@ export const CampaignSentEnvelope = ({
         {isDefined(list) ? (
           <RecordChip
             record={list}
-            objectNameSingular={CoreObjectNameSingular.MessageList}
+            objectNameSingular={StandardObjectNameSingular.MessageList}
           />
         ) : !hasList ? (
           <StyledEmptyValue>{t`No list`}</StyledEmptyValue>
