@@ -1,5 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
@@ -113,19 +117,14 @@ describe('CommonSelectFieldsBuilder', () => {
       createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
     );
 
-  type RestrictedFields = Record<
-    string,
-    { canRead: boolean; canUpdate: boolean }
-  >;
-
   const createRecordsPermissions = ({
     objectIds,
     restrictedFields,
     restrictedFieldsByObjectId,
   }: {
     objectIds: string[];
-    restrictedFields?: RestrictedFields;
-    restrictedFieldsByObjectId?: Record<string, RestrictedFields>;
+    restrictedFields?: RestrictedFieldsPermissions;
+    restrictedFieldsByObjectId?: Record<string, RestrictedFieldsPermissions>;
   }): RoleRecordsPermissions => ({
     canReadAllRecords: true,
     canUpdateAllRecords: true,
