@@ -1,7 +1,7 @@
 import type z from 'zod';
 
-import { type aiChatAssistantProfileSchema } from '@/ai/schemas/ai-chat-assistant-profile-schema';
+import { type getAiChatAssistantProfileSchema } from '@/ai/schemas/get-ai-chat-assistant-profile-schema';
 
 export type AiChatAssistantProfile = z.infer<
-  typeof aiChatAssistantProfileSchema
+  ReturnType<typeof getAiChatAssistantProfileSchema>
 >;

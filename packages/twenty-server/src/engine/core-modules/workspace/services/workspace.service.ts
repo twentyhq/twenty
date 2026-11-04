@@ -10,7 +10,7 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import {
-  aiChatAssistantProfileSchema,
+  getAiChatAssistantProfileSchema,
   isAiModelTier,
   type AiModelTier,
 } from 'twenty-shared/ai';
@@ -442,7 +442,7 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const assistantProfileUpdate = aiChatAssistantProfileSchema
+    const assistantProfileUpdate = getAiChatAssistantProfileSchema()
       .partial()
       .safeParse(payload);
 
