@@ -2,7 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import { getTargetOptionColumnsByUniversalIdentifier } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import {
+  getTargetOptionColumnsByUniversalIdentifier,
+  isFieldMetadataOptionSyncSkipped,
+} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
@@ -57,6 +60,23 @@ export const addFieldMetadataOptionFromToFlatEntityMaps = ({
     fromToFlatFieldMetadataMaps.to.byUniversalIdentifier,
   )) {
     if (!isDefined(toFlatFieldMetadata)) {
+      continue;
+    }
+
+    if (isFieldMetadataOptionSyncSkipped(toFlatFieldMetadata)) {
+      for (const existingOption of Object.values(from.byUniversalIdentifier)) {
+        if (
+          existingOption?.fieldMetadataUniversalIdentifier ===
+          toFlatFieldMetadata.universalIdentifier
+        ) {
+          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
+            {
+              universalFlatEntity: existingOption,
+              universalFlatEntityMapsToMutate: to,
+            },
+          );
+        }
+      }
       continue;
     }
 

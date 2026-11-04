@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   getTargetOptionColumnsByUniversalIdentifier,
+  isFieldMetadataOptionSyncSkipped,
   type FieldMetadataOptionColumns,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -40,6 +41,10 @@ export const computeFieldMetadataOptionOperationsForField = ({
     flatEntityToUpdate: {},
     flatEntityToDelete: {},
   };
+
+  if (isFieldMetadataOptionSyncSkipped(targetUniversalFlatFieldMetadata)) {
+    return operations;
+  }
 
   const targetOptionColumnsByUniversalIdentifier =
     getTargetOptionColumnsByUniversalIdentifier(
