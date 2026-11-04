@@ -43,7 +43,7 @@ export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { accounts, loading } = useMyConnectedAccounts();
+  const { accounts, hasLoaded } = useMyConnectedAccounts();
   const activeAccounts = accounts.filter(
     (account) => !isDefined(account.archivedAt),
   );
@@ -62,7 +62,7 @@ export const GettingStartedMailboxAction = () => {
       skipMessageChannelConfiguration: true,
     });
 
-  if (loading) {
+  if (!hasLoaded) {
     return null;
   }
 

@@ -1,4 +1,4 @@
-import { GettingStartedChatThreadDoneCard } from '@/getting-started/components/GettingStartedChatThreadDoneCard';
+import { GettingStartedChatThreadDoneAction } from '@/getting-started/components/GettingStartedChatThreadDoneAction';
 import { GettingStartedPromptAction } from '@/getting-started/components/GettingStartedPromptAction';
 import { GettingStartedWorkflowAction } from '@/getting-started/components/GettingStartedWorkflowAction';
 import { GettingStartedWorkflowDoneCard } from '@/getting-started/components/GettingStartedWorkflowDoneCard';
@@ -22,20 +22,21 @@ export const GettingStartedStepAction = ({
 }: GettingStartedStepActionProps) => {
   switch (stepDefinition.kind) {
     case GettingStartedStepKind.PROMPT:
-      if (!isCompleted) {
-        return <GettingStartedPromptAction stepDefinition={stepDefinition} />;
+      if (isCompleted) {
+        return (
+          <GettingStartedChatThreadDoneAction stepDefinition={stepDefinition} />
+        );
       }
 
-      return isDefined(stepDefinition.doneChatThreadId) ? (
-        <GettingStartedChatThreadDoneCard
-          chatThreadId={stepDefinition.doneChatThreadId}
-          fallbackTitle={stepDefinition.title}
-        />
-      ) : null;
+      return <GettingStartedPromptAction stepDefinition={stepDefinition} />;
     case GettingStartedStepKind.WORKFLOW:
-      return isCompleted ? (
-        <GettingStartedWorkflowDoneCard stepDefinition={stepDefinition} />
-      ) : (
+      if (isCompleted) {
+        return (
+          <GettingStartedWorkflowDoneCard stepDefinition={stepDefinition} />
+        );
+      }
+
+      return (
         <GettingStartedWorkflowAction
           stepActionKey={stepDefinition.actionKey}
         />

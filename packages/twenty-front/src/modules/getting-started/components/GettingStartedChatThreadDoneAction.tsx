@@ -2,16 +2,16 @@ import { GettingStartedChatThreadDoneCard } from '@/getting-started/components/G
 import { isDefined } from 'twenty-shared/utils';
 import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
-type GettingStartedImportDoneActionProps = {
+type GettingStartedChatThreadDoneActionProps = {
   stepDefinition: Pick<
     GettingStartedStepDefinition,
     'doneChatThreadId' | 'title'
   >;
 };
 
-export const GettingStartedImportDoneAction = ({
+export const GettingStartedChatThreadDoneAction = ({
   stepDefinition: { doneChatThreadId, title },
-}: GettingStartedImportDoneActionProps) =>
+}: GettingStartedChatThreadDoneActionProps) =>
   isDefined(doneChatThreadId) ? (
     <GettingStartedChatThreadDoneCard
       chatThreadId={doneChatThreadId}
