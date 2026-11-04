@@ -4,13 +4,15 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { graphql, HttpResponse } from 'msw';
 import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { DirectMessagePresentationExample } from '@/ai/components/__stories__/DirectMessagePresentationExample';
 import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -20,14 +22,16 @@ import {
   type GetRecordPermissionsQueryVariables,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const DIRECT_MESSAGE_THREAD_ID = '20202020-0000-4000-8000-000000000041';
 const DIRECT_MESSAGE_PEER_ID = '20202020-0000-4000-8000-000000000042';
@@ -180,9 +184,36 @@ export const RefreshingMembersDisablesStaleRows: Story = {
 
 export const OpenMemberConversation: Story = {
   render: () => <DirectMessageRouteExample />,
-  decorators: [ObjectMetadataItemsDecorator, ToastDecorator, RootDecorator],
+  decorators: [ToastDecorator, RootDecorator],
   beforeEach: () => {
     openDirectMessageRequest.mockClear();
+    const noteMetadata = getMockObjectMetadataItemOrThrow(
+      StandardObjectNameSingular.Note,
+    );
+    const chatFields = noteMetadata.fields.filter((field) =>
+      ['id', 'title', 'createdAt', 'updatedAt', 'deletedAt'].includes(
+        field.name,
+      ),
+    );
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+      {
+        ...noteMetadata,
+        nameSingular: StandardObjectNameSingular.AgentChatThread,
+        namePlural: 'agentChatThreads',
+        labelSingular: 'Chat',
+        labelPlural: 'Chats',
+        fields: chatFields,
+        readableFields: chatFields,
+        updatableFields: chatFields,
+        indexMetadatas: [],
+        searchFieldMetadatas: [],
+      },
+    ]);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+    jotaiStore.set(
+      currentUserWorkspaceState.atom,
+      mockedUserData.currentUserWorkspace,
+    );
     jotaiStore.set(currentAiChatThreadState.atom, null);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
