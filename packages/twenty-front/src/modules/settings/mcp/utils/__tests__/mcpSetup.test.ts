@@ -76,6 +76,14 @@ describe('buildClaudeInstallLink', () => {
     expect(params.get('connectorName')).toBe('Twenty');
     expect(params.get('connectorUrl')).toBe(mcpServerUrl);
   });
+
+  it('names the connector after the workspace', () => {
+    const link = buildClaudeInstallLink(mcpServerUrl, 'Acme');
+
+    expect(new URL(link).searchParams.get('connectorName')).toBe(
+      'Twenty (Acme)',
+    );
+  });
 });
 
 describe('buildCursorInstallLink', () => {

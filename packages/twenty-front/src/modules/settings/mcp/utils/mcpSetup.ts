@@ -1,5 +1,6 @@
 import { MCP_SETUP } from '@/settings/mcp/constants/McpSetup';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const buildMcpServerUrl = (serverBaseUrl: string) =>
   `${serverBaseUrl.replace(/\/+$/, '')}/mcp`;
@@ -32,10 +33,15 @@ export const buildMcpConfig = (mcpServerUrl: string) =>
     2,
   );
 
-export const buildClaudeInstallLink = (mcpServerUrl: string) => {
+export const buildClaudeInstallLink = (
+  mcpServerUrl: string,
+  workspaceName?: string | null,
+) => {
   const params = new URLSearchParams({
     modal: 'add-custom-connector',
-    connectorName: MCP_SETUP.server.displayName,
+    connectorName: isNonEmptyString(workspaceName)
+      ? `${MCP_SETUP.server.displayName} (${workspaceName})`
+      : MCP_SETUP.server.displayName,
     connectorUrl: mcpServerUrl,
   });
 
