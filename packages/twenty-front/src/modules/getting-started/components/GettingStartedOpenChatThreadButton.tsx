@@ -15,6 +15,6 @@ export const GettingStartedOpenChatThreadButton = ({
   return (
     <Button
       onClick={() => openAskAiThread(chatThreadId)}
-    >{t`Open the conversation`}</Button>
+    >{t`Open the thread`}</Button>
   );
 };

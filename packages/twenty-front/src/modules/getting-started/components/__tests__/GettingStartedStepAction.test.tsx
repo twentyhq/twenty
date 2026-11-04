@@ -62,9 +62,7 @@ describe('GettingStartedStepAction once done', () => {
       screen.queryByRole('textbox', { name: 'Teammate email 1' }),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Invite in settings' }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'Invite more' }));
 
     expect(screen.getByTestId('pathname')).toHaveTextContent(
       '/settings/members',
@@ -81,7 +79,7 @@ describe('GettingStartedStepAction once done', () => {
       screen.queryByRole('button', { name: 'Upload file' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Open the conversation' }),
+      screen.getByRole('button', { name: 'Open the thread' }),
     ).toBeVisible();
   });
 
@@ -103,7 +101,7 @@ describe('GettingStartedStepAction once done', () => {
       screen.queryByRole('group', { name: 'Follow-up instructions' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Open the conversation' }),
+      screen.getByRole('button', { name: 'Open the thread' }),
     ).toBeVisible();
   });
 

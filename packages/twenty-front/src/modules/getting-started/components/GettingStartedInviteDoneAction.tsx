@@ -10,6 +10,6 @@ export const GettingStartedInviteDoneAction = () => {
   return (
     <Button
       onClick={() => navigateSettings(SettingsPath.WorkspaceMembersPage)}
-    >{t`Invite in settings`}</Button>
+    >{t`Invite more`}</Button>
   );
 };

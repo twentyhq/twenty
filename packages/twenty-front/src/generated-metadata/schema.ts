@@ -2798,6 +2798,7 @@ export type GettingStartedStepDefinition = {
   actionKey: GettingStartedStepActionKey;
   description: Scalars['String']['output'];
   doneChatThreadId?: Maybe<Scalars['String']['output']>;
+  doneDescription: Scalars['String']['output'];
   doneTitle: Scalars['String']['output'];
   icon: Scalars['String']['output'];
   iconColor: Scalars['String']['output'];

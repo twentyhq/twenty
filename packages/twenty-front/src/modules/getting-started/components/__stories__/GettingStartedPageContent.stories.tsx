@@ -316,21 +316,21 @@ export const DoneSteps: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('button', { name: 'Invite in settings' }),
+      await canvas.findByRole('button', { name: 'Invite more' }),
     ).toBeVisible();
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Follow-up request sent' }),
+      canvas.getByRole('button', { name: 'Deal follow-ups on track' }),
     );
 
-    const openConversationButton = await canvas.findByRole('button', {
-      name: 'Open the conversation',
+    const openThreadButton = await canvas.findByRole('button', {
+      name: 'Open the thread',
     });
 
-    await waitFor(() => expect(openConversationButton).toBeVisible());
+    await waitFor(() => expect(openThreadButton).toBeVisible());
   },
 };
 

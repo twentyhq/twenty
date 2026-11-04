@@ -120,6 +120,9 @@ export const GettingStartedStepCard = ({
   const DoneDescription = isCompleted
     ? GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS[stepDefinition.actionKey]
     : undefined;
+  const description = isCompleted
+    ? stepDefinition.doneDescription
+    : stepDefinition.description;
 
   return (
     <StyledCard
@@ -151,9 +154,9 @@ export const GettingStartedStepCard = ({
           </Heading>
           <StyledDescription>
             {isDefined(DoneDescription) ? (
-              <DoneDescription description={stepDefinition.description} />
+              <DoneDescription description={description} />
             ) : (
-              stepDefinition.description
+              description
             )}
           </StyledDescription>
         </StyledTitle>

@@ -21,6 +21,9 @@ export class GettingStartedStepDefinitionDTO {
   description: string;
 
   @Field(() => String)
+  doneDescription: string;
+
+  @Field(() => String)
   icon: string;
 
   @Field(() => String)

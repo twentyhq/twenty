@@ -5484,6 +5484,9 @@ export default {
             "doneChatThreadId": [
                 1
             ],
+            "doneDescription": [
+                1
+            ],
             "doneTitle": [
                 1
             ],

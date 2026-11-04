@@ -2644,6 +2644,7 @@ type GettingStartedStepDefinition {
   actionKey: GettingStartedStepActionKey!
   description: String!
   doneChatThreadId: String
+  doneDescription: String!
   doneTitle: String!
   icon: String!
   iconColor: String!

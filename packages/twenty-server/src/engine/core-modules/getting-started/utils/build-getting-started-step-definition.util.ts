@@ -19,8 +19,15 @@ export const buildGettingStartedStepDefinition = ({
   doneChatThreadId: string | null;
   translate: (descriptor: MessageDescriptor) => string;
 }): GettingStartedStepDefinitionDTO => {
-  const { title, doneTitle, description, icon, iconColor, prompt } =
-    GETTING_STARTED_STEP_CONTENT[stepActionKey];
+  const {
+    title,
+    doneTitle,
+    description,
+    doneDescription,
+    icon,
+    iconColor,
+    prompt,
+  } = GETTING_STARTED_STEP_CONTENT[stepActionKey];
 
   return {
     actionKey: stepActionKey,
@@ -32,6 +39,7 @@ export const buildGettingStartedStepDefinition = ({
     title: translate(title),
     doneTitle: translate(doneTitle),
     description: translate(description),
+    doneDescription: translate(doneDescription),
     icon,
     iconColor,
     promptLabel: isDefined(prompt) ? translate(prompt.label) : null,

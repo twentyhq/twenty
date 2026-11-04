@@ -27,8 +27,10 @@ describe('buildGettingStartedStepDefinition', () => {
       actionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
       kind: GettingStartedStepKind.WORKFLOW,
       title: 'Hand over won deals',
-      doneTitle: 'Workflow enabled',
+      doneTitle: 'Handover ready',
       description: 'Start the handover when a deal is won.',
+      doneDescription:
+        'Turn it on and won deals move to delivery on their own.',
       icon: 'IconSettingsAutomation',
       iconColor: 'gray',
       promptLabel: null,
