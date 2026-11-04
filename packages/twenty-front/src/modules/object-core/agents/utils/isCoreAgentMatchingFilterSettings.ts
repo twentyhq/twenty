@@ -5,9 +5,8 @@ import {
 } from 'twenty-shared/types';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
-import { CORE_AGENT_FILTER_FIELDS } from '@/object-core/agents/constants/CoreAgentFilterFields';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
-import { isUsableCoreObjectFilterRule } from '@/object-core/filters/utils/isUsableCoreObjectFilterRule';
+import { getUsableCoreAgentStepFilters } from '@/object-core/agents/utils/getUsableCoreAgentStepFilters';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 const isCoreAgentMatchingRule = ({
@@ -49,13 +48,7 @@ export const isCoreAgentMatchingFilterSettings = ({
   agent: CoreAgent;
   filterSettings: FilterSettings;
 }): boolean => {
-  const usableStepFilters = (filterSettings.stepFilters ?? []).filter(
-    (stepFilter) =>
-      isUsableCoreObjectFilterRule({
-        stepFilter,
-        filterFields: CORE_AGENT_FILTER_FIELDS,
-      }),
-  );
+  const usableStepFilters = getUsableCoreAgentStepFilters(filterSettings);
 
   if (usableStepFilters.length === 0) {
     return true;

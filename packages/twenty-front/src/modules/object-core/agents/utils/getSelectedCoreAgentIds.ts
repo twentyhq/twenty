@@ -1,5 +1,6 @@
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreAgentsSelection } from '@/object-core/agents/types/CoreAgentsSelection';
+import { areCoreAgentFilterSettingsEquivalent } from '@/object-core/agents/utils/areCoreAgentFilterSettingsEquivalent';
 import { getCustomCoreAgentIds } from '@/object-core/agents/utils/getCustomCoreAgentIds';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
@@ -14,7 +15,12 @@ export const getSelectedCoreAgentIds = ({
   coreAgents: Pick<CoreAgent, 'id' | 'applicationId'>[];
   workspaceCustomApplicationId?: string;
 }): string[] => {
-  if (selection.filterSettings !== filterSettings) {
+  if (
+    !areCoreAgentFilterSettingsEquivalent(
+      selection.filterSettings,
+      filterSettings,
+    )
+  ) {
     return [];
   }
 
