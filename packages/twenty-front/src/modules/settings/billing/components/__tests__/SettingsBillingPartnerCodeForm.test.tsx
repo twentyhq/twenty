@@ -95,14 +95,14 @@ describe('SettingsBillingPartnerCodeForm', () => {
       {
         request: {
           query: SetBillingPartnerCodeDocument,
-          variables: { partnerCode: 'NORTHWNID' },
+          variables: { partnerCode: 'NORTH WIND!' },
         },
         result: {
           errors: [
             {
-              message: 'Partner code NORTHWNID is not valid',
+              message: 'Partner code NORTH WIND! is not valid',
               extensions: {
-                userFriendlyMessage: 'This partner code does not exist.',
+                userFriendlyMessage: 'This partner code is not valid.',
               },
             },
           ],
@@ -112,12 +112,12 @@ describe('SettingsBillingPartnerCodeForm', () => {
 
     await userEvent.type(
       await screen.findByLabelText('Partner code'),
-      'NORTHWNID',
+      'NORTH WIND!',
     );
     await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
 
     expect(
-      await screen.findByText('This partner code does not exist.'),
+      await screen.findByText('This partner code is not valid.'),
     ).toBeInTheDocument();
   });
 

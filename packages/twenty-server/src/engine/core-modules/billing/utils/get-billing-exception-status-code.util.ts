@@ -25,7 +25,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
     case BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED:
-    case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_FOUND:
+    case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
     case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:

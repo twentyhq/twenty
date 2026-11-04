@@ -1148,16 +1148,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Twenty Partners endpoint that tells whether a partner code exists, called as GET <url>?code=<code> and answering {"exists":boolean}. When unset, any well-formed partner code is accepted',
-    type: ConfigVariableType.STRING,
-  })
-  @IsUrl({ require_tld: false, require_protocol: true })
-  @IsOptional()
-  BILLING_PARTNER_CODE_CHECK_URL?: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description:
       'Use the ClickHouse-backed poller (instead of Stripe billing alerts) as the source of truth for metered-credit cap enforcement',
     type: ConfigVariableType.BOOLEAN,
   })
