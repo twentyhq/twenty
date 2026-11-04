@@ -31,6 +31,22 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const EMAILING_SEND_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
 
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
@@ -68,22 +84,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => CancelMessageCampaignOutputDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(EMAILING_SEND_ACCESS_POLICY))
   async cancelMessageCampaign(
     @Args('input') input: CancelMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -122,22 +123,7 @@ export class EmailingSendResolver {
   }
 
   @Query(() => CampaignAudiencePreviewDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(EMAILING_SEND_ACCESS_POLICY))
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

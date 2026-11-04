@@ -21,6 +21,22 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const MESSAGE_SUPPRESSION_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
 
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
@@ -54,22 +70,7 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => MessageSuppressionDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(MESSAGE_SUPPRESSION_WRITE_ACCESS_POLICY))
   async createMessageSuppression(
     @Args('input') input: CreateMessageSuppressionInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -84,22 +85,7 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: true,
-          workspaceAgnostic: false,
-        },
-        apiKey: true,
-        oauthClient: true,
-        application: true,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(MESSAGE_SUPPRESSION_WRITE_ACCESS_POLICY))
   async deleteMessageSuppression(
     @Args('id', { type: () => UUIDScalarType }) suppressionId: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
