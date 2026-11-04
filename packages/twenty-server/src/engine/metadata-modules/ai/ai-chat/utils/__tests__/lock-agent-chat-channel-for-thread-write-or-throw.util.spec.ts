@@ -15,7 +15,7 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
 
     await expect(
       lockAgentChatChannelForThreadWriteOrThrow({
-        manager: { query },
+        transactionScope: { executeRawQuery: query },
         workspaceId: WORKSPACE_ID,
         channelId: CHANNEL_ID,
       }),
@@ -39,7 +39,7 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
 
     await expect(
       lockAgentChatChannelForThreadWriteOrThrow({
-        manager: { query },
+        transactionScope: { executeRawQuery: query },
         workspaceId: WORKSPACE_ID,
         channelId: CHANNEL_ID,
       }),
@@ -57,7 +57,7 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
       .mockResolvedValueOnce([{ id: CHANNEL_ID }]);
 
     await lockAgentChatChannelForThreadWriteOrThrow({
-      manager: { query },
+      transactionScope: { executeRawQuery: query },
       workspaceId: WORKSPACE_ID,
       channelId: CHANNEL_ID,
     });

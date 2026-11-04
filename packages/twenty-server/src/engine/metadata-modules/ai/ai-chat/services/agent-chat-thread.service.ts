@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { isString } from '@sniptt/guards';
+import { In, IsNull, Not } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -18,6 +19,9 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { getAgentChatThreadTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-table.util';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -42,6 +46,7 @@ export class AgentChatThreadService {
     private readonly channelAccessService: AgentChatChannelAccessService,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly assistantParticipationService: AgentChatAssistantParticipationService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async createThread({
@@ -273,17 +278,22 @@ export class AgentChatThreadService {
 
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
 
-    const setUpThreads = await this.threadRepository.query(
-      workspaceId,
-      (context) =>
-        this.sharingService.setUpCreatedThreadsInboxState({
-          ...context,
-          workspaceId,
-          workspaceMemberId,
-          threadIds: assignedThreadIds,
-          participantObjectMetadataId,
-        }),
-    );
+    const setUpThreads =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            (transactionScope) =>
+              this.sharingService.setUpCreatedThreadsInboxState({
+                transactionScope,
+                workspaceId,
+                workspaceMemberId,
+                threadIds: assignedThreadIds,
+                participantObjectMetadataId,
+              }),
+          ),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
 
     const assignedThreadRecords = await this.threadRepository.find(
       workspaceId,
@@ -503,53 +513,64 @@ export class AgentChatThreadService {
     }
 
     // Owner re-checked in the UPDATE: removing a member clears it on their channel chats
-    const movedThreadIds = await this.threadRepository.query(
-      args.workspaceId,
-      async ({ manager, table }) => {
-        if (isDefined(channelId)) {
-          await lockAgentChatChannelForThreadWriteOrThrow({
-            manager,
-            workspaceId: args.workspaceId,
-            channelId,
-          });
-        }
+    const movedThreadIds =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              if (isDefined(channelId)) {
+                await lockAgentChatChannelForThreadWriteOrThrow({
+                  transactionScope,
+                  workspaceId: args.workspaceId,
+                  channelId,
+                });
+              }
 
-        const [lockedThread] = await manager.query<
-          { channelId: string | null }[]
-        >(
-          `SELECT "channelId" FROM ${table('agentChatThread')} WHERE id = $1 FOR NO KEY UPDATE`,
-          [args.threadId],
-        );
+              const [lockedThread] = await transactionScope.executeRawQuery(
+                `SELECT "channelId" FROM ${getAgentChatThreadTable(args.workspaceId)} WHERE id = $1 FOR NO KEY UPDATE`,
+                [args.threadId],
+              );
 
-        if (!isDefined(lockedThread)) {
-          return throwAgentChatThreadNotFound();
-        }
+              if (!isDefined(lockedThread)) {
+                return throwAgentChatThreadNotFound();
+              }
 
-        const movedThreads = await manager.query<{ id: string }[]>(
-          `WITH moved_thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "channelId" = $2::uuid,
-               "channelArchivedAt" = NULL,
-               "channelSnoozedUntil" = NULL,
-               "updatedAt" = now()
-             WHERE id = $1
-               AND ($2::uuid IS NOT NULL OR "workspaceMemberId" IS NOT NULL)
-             RETURNING id
-           )
-           SELECT id FROM moved_thread`,
-          [args.threadId, channelId],
-        );
+              const threadRepository =
+                transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+                  'agentChatThread',
+                  { shouldSkipEventEmission: true },
+                );
+              const { generatedMaps: movedThreads } =
+                await threadRepository.update(
+                  isDefined(channelId)
+                    ? { id: args.threadId }
+                    : { id: args.threadId, workspaceMemberId: Not(IsNull()) },
+                  {
+                    channelId,
+                    channelArchivedAt: null,
+                    channelSnoozedUntil: null,
+                  },
+                );
+              const movedThreadIds: string[] = movedThreads.map(({ id }) => id);
 
-        await this.channelGrantService.rewriteThreadGrantsInTransaction({
-          manager,
-          workspaceId: args.workspaceId,
-          threadIds: movedThreads.map(({ id }) => id),
-          affectedChannelIds: [lockedThread.channelId, channelId],
-        });
+              await this.channelGrantService.rewriteThreadGrantsInTransaction({
+                transactionScope,
+                workspaceId: args.workspaceId,
+                threadIds: movedThreadIds,
+                affectedChannelIds: [
+                  isString(lockedThread.channelId)
+                    ? lockedThread.channelId
+                    : null,
+                  channelId,
+                ],
+              });
 
-        return movedThreads;
-      },
-    );
+              return movedThreadIds;
+            },
+          ),
+        buildSystemAuthContext(args.workspaceId),
+        { lite: true },
+      );
 
     if (movedThreadIds.length === 0) {
       throw new AiException(

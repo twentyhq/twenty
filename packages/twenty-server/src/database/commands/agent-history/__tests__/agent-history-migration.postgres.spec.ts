@@ -235,6 +235,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       {} as never,
       {} as never,
       {} as never,
+      {} as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>
@@ -769,7 +770,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `CREATE TABLE "${SCHEMA}"."recordShare" (id uuid DEFAULT public.uuid_generate_v4(), "objectMetadataId" uuid, "recordId" uuid, "principalId" uuid, "principalType" text, "accessLevel" text, "rowCause" text, "sourceId" uuid, UNIQUE ("recordId", "principalId"))`,
       );
       const args = {
-        manager: dataSource.manager,
+        transactionScope: {
+          executeRawQuery: (sql: string, parameters?: unknown[]) =>
+            dataSource.query(sql, parameters),
+        },
         workspaceId: WORKSPACE_ID,
         threadTableExpression: `"${SCHEMA}"."agentChatThread"`,
         recordIds: [THREAD_ID],

@@ -1,5 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
+import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
@@ -33,13 +34,15 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
-import { replaceAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-agent-chat-channel-rule-grants.util';
+import { getAgentChatThreadTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   AiException,
   AiExceptionCode,
@@ -74,6 +77,8 @@ export class AgentChatSharingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly channelGrantService: AgentChatChannelGrantService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
@@ -367,69 +372,86 @@ export class AgentChatSharingService {
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
 
-    return this.threadRepository.query(
-      args.workspaceId,
-      async ({ manager, table }) => {
-        if (isDefined(args.channelId)) {
-          await lockAgentChatChannelForThreadWriteOrThrow({
-            manager,
-            workspaceId: args.workspaceId,
-            channelId: args.channelId,
-          });
-        }
-        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-          manager,
-          workspaceId: args.workspaceId,
-          channelIds: [args.channelId],
-        });
-        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}"${isDefined(args.channelId) ? ', "channelId"' : ''})
-           VALUES ($1, $2, $3, true${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
-          [
-            args.id ?? randomUUID(),
-            args.title ?? null,
-            authContext.workspaceMemberId,
-            ...(isDefined(args.channelId) ? [args.channelId] : []),
-          ],
-        );
-        const record = records[0];
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId: args.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [record.id],
-          manager,
-        });
-        const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
-          manager,
-          workspaceId: args.workspaceId,
-          threadTableExpression: table('agentChatThread'),
-          recordIds: [record.id],
-        });
-        if (ownerGrantCount !== 1) {
-          throw new AiException(
-            'Thread owner is no longer a workspace member',
-            AiExceptionCode.THREAD_NOT_FOUND,
-          );
-        }
-        if (isDefined(args.channelId)) {
-          await replaceAgentChatChannelRuleGrants({
-            manager,
-            workspaceId: args.workspaceId,
-            scope: { threadIds: [record.id] },
-          });
-        }
-        const [setUpRecord] = await this.setUpCreatedThreadsInboxState({
-          manager,
-          table,
-          workspaceId: args.workspaceId,
-          workspaceMemberId: authContext.workspaceMemberId,
-          threadIds: [record.id],
-          participantObjectMetadataId,
-          isArchived: args.isArchived,
-          isSubscribed: args.isSubscribed,
-        });
-        return setUpRecord ?? record;
-      },
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            if (isDefined(args.channelId)) {
+              await lockAgentChatChannelForThreadWriteOrThrow({
+                transactionScope,
+                workspaceId: args.workspaceId,
+                channelId: args.channelId,
+              });
+            }
+            await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+              transactionScope,
+              workspaceId: args.workspaceId,
+              channelIds: [args.channelId],
+            });
+            const threadRepository =
+              transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+                'agentChatThread',
+                { shouldSkipEventEmission: true },
+              );
+            const {
+              generatedMaps: [record],
+            } = await threadRepository.insert({
+              id: args.id ?? randomUUID(),
+              title: args.title ?? null,
+              workspaceMemberId: authContext.workspaceMemberId,
+              ...(isDefined(args.channelId)
+                ? { channelId: args.channelId }
+                : {}),
+            });
+            await this.privateRecordStorageService.setPrivate({
+              workspaceId: args.workspaceId,
+              flatObjectMetadata: objectMetadata,
+              recordIds: [record.id],
+              isPrivate: true,
+              transactionScope,
+            });
+            await this.recordShareStorageService.deleteByRecordIds({
+              workspaceId: args.workspaceId,
+              objectMetadataId: objectMetadata.id,
+              recordIds: [record.id],
+              transactionScope,
+            });
+            const ownerGrantCount =
+              await backfillWorkspaceChatThreadOwnerGrants({
+                transactionScope,
+                workspaceId: args.workspaceId,
+                threadTableExpression: getAgentChatThreadTable(
+                  args.workspaceId,
+                ),
+                recordIds: [record.id],
+              });
+            if (ownerGrantCount !== 1) {
+              throw new AiException(
+                'Thread owner is no longer a workspace member',
+                AiExceptionCode.THREAD_NOT_FOUND,
+              );
+            }
+            if (isDefined(args.channelId)) {
+              await this.channelGrantService.replaceRuleGrantsInTransaction({
+                transactionScope,
+                workspaceId: args.workspaceId,
+                scope: { threadIds: [record.id] },
+              });
+            }
+            const [setUpRecord] = await this.setUpCreatedThreadsInboxState({
+              transactionScope,
+              workspaceId: args.workspaceId,
+              workspaceMemberId: authContext.workspaceMemberId,
+              threadIds: [record.id],
+              participantObjectMetadataId,
+              isArchived: args.isArchived,
+              isSubscribed: args.isSubscribed,
+            });
+            return setUpRecord ?? (record as AgentChatThreadWorkspaceEntity);
+          },
+        ),
+      buildSystemAuthContext(args.workspaceId),
+      { lite: true },
     );
   }
 
@@ -493,7 +515,10 @@ export class AgentChatSharingService {
         }
 
         const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
-          manager,
+          transactionScope: {
+            executeRawQuery: (sql, parameters) =>
+              manager.query(sql, parameters),
+          },
           workspaceId: args.workspaceId,
           threadTableExpression: table('agentChatThread'),
           recordIds: [thread.id],
@@ -535,15 +560,15 @@ export class AgentChatSharingService {
   // inbox. Threads already set up keep their state, so an upsert of an
   // existing thread through the record API cannot reset it.
   async setUpCreatedThreadsInboxState({
-    manager,
-    table,
+    transactionScope,
     workspaceId,
     workspaceMemberId,
     threadIds,
     participantObjectMetadataId,
     isArchived = false,
     isSubscribed = true,
-  }: AgentHistoryStorageContext & {
+  }: {
+    transactionScope: Pick<WorkspaceTransactionScope, 'executeRawQuery'>;
     workspaceId: string;
     workspaceMemberId: string;
     threadIds: string[];
@@ -551,9 +576,9 @@ export class AgentChatSharingService {
     isArchived?: boolean;
     isSubscribed?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
-    return manager.query<AgentChatThreadWorkspaceEntity[]>(
+    const threads = await transactionScope.executeRawQuery(
       `WITH thread AS (
-         UPDATE ${table('agentChatThread')}
+         UPDATE ${getAgentChatThreadTable(workspaceId)}
          SET "lastActivityAt" = clock_timestamp()
          WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
          RETURNING *
@@ -579,6 +604,8 @@ export class AgentChatSharingService {
         isSubscribed,
       ],
     );
+
+    return threads as unknown as AgentChatThreadWorkspaceEntity[];
   }
 
   async restoreThreadWithAccess(

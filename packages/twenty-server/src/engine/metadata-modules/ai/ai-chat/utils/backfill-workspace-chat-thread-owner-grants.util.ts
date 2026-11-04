@@ -1,22 +1,22 @@
-import { type EntityManager } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export const backfillWorkspaceChatThreadOwnerGrants = async ({
-  manager,
+  transactionScope,
   workspaceId,
   threadTableExpression,
   recordIds,
 }: {
-  manager: EntityManager;
+  transactionScope: Pick<WorkspaceTransactionScope, 'executeRawQuery'>;
   workspaceId: string;
   threadTableExpression: string;
   recordIds?: string[];
 }): Promise<number> => {
   const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
   // Membership removal must wait until the owner grant commits before cleanup.
-  const inserted = await manager.query<{ id: string }[]>(
+  const inserted = await transactionScope.executeRawQuery(
     `
     INSERT INTO ${schema}."recordShare"
       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")

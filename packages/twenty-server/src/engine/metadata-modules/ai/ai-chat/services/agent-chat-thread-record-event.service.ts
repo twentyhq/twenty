@@ -13,7 +13,6 @@ import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -116,26 +115,18 @@ export class AgentChatThreadRecordEventService {
       return;
     }
 
-    const { objectMetadata, flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { objectMetadata, flatFieldMetadataMaps } =
       await this.findThreadMetadata(workspaceId);
 
     if (!isDefined(objectMetadata)) {
       return;
     }
 
-    const formattedThreadSnapshots = formatResult<
-      [AgentChatThreadWorkspaceEntity, AgentChatThreadWorkspaceEntity][]
-    >(
-      threads.map(({ before, after }) => [before, after]),
-      objectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    );
-    const events = formattedThreadSnapshots
-      .map(([threadBefore, threadAfter]) =>
+    const events = threads
+      .map(({ before, after }) =>
         buildAgentChatThreadUpdateEvent({
-          threadBefore,
-          threadAfter,
+          threadBefore: before,
+          threadAfter: after,
           objectMetadata,
           flatFieldMetadataMaps,
         }),
@@ -209,7 +200,6 @@ export class AgentChatThreadRecordEventService {
         flatObjectMetadataMaps,
         'agentChatThread',
       ),
-      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     };
   }

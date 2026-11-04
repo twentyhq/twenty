@@ -493,7 +493,10 @@ export const setUpChatChannelTests = () => {
     const queryRunner = await startHeldTransaction();
 
     await acquireAgentChatChannelGrantLocks({
-      manager: queryRunner.manager,
+      transactionScope: {
+        executeRawQuery: (sql, parameters) =>
+          queryRunner.query(sql, parameters),
+      },
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       channelIds: [channelId],
       mode,
@@ -530,7 +533,10 @@ export const setUpChatChannelTests = () => {
     const queryRunner = await startHeldTransaction();
 
     await lockAgentChatChannelForThreadWriteOrThrow({
-      manager: queryRunner.manager,
+      transactionScope: {
+        executeRawQuery: (sql, parameters) =>
+          queryRunner.query(sql, parameters),
+      },
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       channelId,
     });

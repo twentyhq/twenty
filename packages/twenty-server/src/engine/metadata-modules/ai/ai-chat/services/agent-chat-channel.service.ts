@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Any } from 'typeorm';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -26,8 +27,10 @@ import {
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 type ChannelChanges = {
   name?: string;
@@ -49,6 +52,7 @@ export class AgentChatChannelService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
   ) {}
@@ -263,44 +267,65 @@ export class AgentChatChannelService {
       );
     }
 
-    const threadTable = `${getWorkspaceSchemaName(workspaceId)}.agentChatThread`;
-    const threadsAfter = await this.threadRepository.query(
-      workspaceId,
-      async ({ manager }) => {
-        await lockAgentChatChannelForThreadWriteOrThrow({
-          manager,
-          workspaceId,
-          channelId: destinationChannelId,
-        });
+    const { threadsBefore, threadsAfter } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              await lockAgentChatChannelForThreadWriteOrThrow({
+                transactionScope,
+                workspaceId,
+                channelId: destinationChannelId,
+              });
 
-        const movedThreads = await manager
-          .createQueryBuilder()
-          .update<AgentChatThreadWorkspaceEntity>(threadTable)
-          .set({
-            channelId: destinationChannelId,
-            updatedAt: () => 'CURRENT_TIMESTAMP',
-          })
-          .where('"channelId" = :sourceChannelId', {
-            sourceChannelId: channelId,
-          })
-          .returning('*')
-          .execute();
-        const threadsAfter: AgentChatThreadWorkspaceEntity[] = movedThreads.raw;
+              const threadRepository =
+                transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+                  'agentChatThread',
+                  { shouldSkipEventEmission: true },
+                );
+              const threadsBefore = await threadRepository.find({
+                where: { channelId },
+                withDeleted: true,
+              });
+              const movedThreadIds = threadsBefore.map(({ id }) => id);
 
-        await this.channelGrantService.rewriteThreadGrantsInTransaction({
-          manager,
-          workspaceId,
-          threadIds: threadsAfter.map(({ id }) => id),
-          affectedChannelIds: [channelId, destinationChannelId],
-        });
+              await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+                threadRepository
+                  .createQueryBuilder()
+                  .where({ channelId })
+                  .withDeleted(),
+                'update',
+              )
+                .set({ channelId: destinationChannelId })
+                .returning(['id'])
+                .execute();
 
-        return threadsAfter;
-      },
+              const threadsAfter = await threadRepository.find({
+                where: { id: Any(movedThreadIds) },
+                withDeleted: true,
+              });
+
+              await this.channelGrantService.rewriteThreadGrantsInTransaction({
+                transactionScope,
+                workspaceId,
+                threadIds: movedThreadIds,
+                affectedChannelIds: [channelId, destinationChannelId],
+              });
+
+              return { threadsBefore, threadsAfter };
+            },
+          ),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+    const threadAfterById = new Map(
+      threadsAfter.map((threadAfter) => [threadAfter.id, threadAfter]),
     );
 
-    return threadsAfter.map((after) => ({
-      before: { ...after, channelId },
-      after,
-    }));
+    return threadsBefore.flatMap((before) => {
+      const after = threadAfterById.get(before.id);
+
+      return isDefined(after) ? [{ before, after }] : [];
+    });
   }
 }
