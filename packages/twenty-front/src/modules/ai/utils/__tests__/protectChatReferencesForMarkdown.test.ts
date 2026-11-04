@@ -194,6 +194,12 @@ describe('protectChatReferencesForMarkdown', () => {
     ).toBe(`Write \`${MIA_MENTION}\` to ping ${MARKER}${MIA_MENTION}`);
   });
 
+  it('should ignore probe markers already in the text', () => {
+    const text = `\uFDD10[[ <span title="${MIA_MENTION}">Mia</span>`;
+
+    expect(protectChatReferencesForMarkdown(text)).toBe(text);
+  });
+
   it('should drop markers already in the text', () => {
     expect(
       protectChatReferencesForMarkdown(`Type ${MARKER}${ESCAPED_MIA_MENTION}`),

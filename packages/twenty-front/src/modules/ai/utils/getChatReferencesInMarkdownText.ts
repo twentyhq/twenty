@@ -69,6 +69,9 @@ const getInlineTextRaws = (tokens: Token[]): string[] =>
       : getInlineTextRaws(getChildTokens(token)),
   );
 
+const removeProbeMarkers = (text: string): string =>
+  text.replaceAll(PROBE_MARKER, '');
+
 const insertProbeMarkers = ({
   text,
   references,
@@ -80,11 +83,11 @@ const insertProbeMarkers = ({
   let lastIndex = 0;
 
   for (const [referenceIndex, reference] of references.entries()) {
-    probedText += `${text.slice(lastIndex, reference.index)}${PROBE_MARKER}${referenceIndex}`;
+    probedText += `${removeProbeMarkers(text.slice(lastIndex, reference.index))}${PROBE_MARKER}${referenceIndex}`;
     lastIndex = reference.index;
   }
 
-  return probedText + text.slice(lastIndex);
+  return probedText + removeProbeMarkers(text.slice(lastIndex));
 };
 
 export const getChatReferencesInMarkdownText = ({
