@@ -24,6 +24,7 @@ export const SettingsAiWorkspaceBehaviorSection = () => {
       onDirectMessageModeChange={saveDirectMessageMode}
       onInboxModeChange={saveInboxMode}
       isLoading={isLoading}
+      isDirectMessageModeVisible={false}
       disabled={isSaving}
       errorMessage={errorMessage}
     />

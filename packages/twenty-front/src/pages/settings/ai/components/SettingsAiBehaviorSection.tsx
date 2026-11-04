@@ -23,6 +23,7 @@ type SettingsAiBehaviorSectionProps = {
   onDirectMessageModeChange: (value: AiChatAssistantMode) => void;
   onInboxModeChange: (value: AiChatAssistantMode) => void;
   isLoading?: boolean;
+  isDirectMessageModeVisible?: boolean;
   disabled?: boolean;
   errorMessage?: string;
 };
@@ -40,6 +41,7 @@ export const SettingsAiBehaviorSection = ({
   onDirectMessageModeChange,
   onInboxModeChange,
   isLoading = false,
+  isDirectMessageModeVisible = true,
   disabled = false,
   errorMessage,
 }: SettingsAiBehaviorSectionProps) => {
@@ -65,21 +67,23 @@ export const SettingsAiBehaviorSection = ({
         aria-busy={isLoading}
       >
         <StyledSettingsSelectGroup controlWidth={BEHAVIOR_SELECT_CONTROL_WIDTH}>
-          <SettingsOptionCardContentSelect
-            Icon={IconMessage}
-            title={<span id={directMessagesLabelId}>{t`DMs`}</span>}
-            description={t`One-to-one conversations between people`}
-            divider
-          >
-            <SettingsAiBehaviorModeSelect
-              value={directMessageMode}
-              onChange={onDirectMessageModeChange}
-              labelledBy={directMessagesLabelId}
-              describedBy={describedBy}
-              disabled={isDisabled}
-              isLoading={isLoading}
-            />
-          </SettingsOptionCardContentSelect>
+          {isDirectMessageModeVisible && (
+            <SettingsOptionCardContentSelect
+              Icon={IconMessage}
+              title={<span id={directMessagesLabelId}>{t`DMs`}</span>}
+              description={t`One-to-one conversations between people`}
+              divider
+            >
+              <SettingsAiBehaviorModeSelect
+                value={directMessageMode}
+                onChange={onDirectMessageModeChange}
+                labelledBy={directMessagesLabelId}
+                describedBy={describedBy}
+                disabled={isDisabled}
+                isLoading={isLoading}
+              />
+            </SettingsOptionCardContentSelect>
+          )}
           <SettingsOptionCardContentSelect
             Icon={IconInbox}
             title={<span id={inboxLabelId}>{t`Global inbox`}</span>}

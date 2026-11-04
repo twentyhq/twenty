@@ -22,6 +22,36 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const TextOnlyDirectMessages: Story = {
+  args: { isDirectMessageModeVisible: false },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      canvas.queryByRole('combobox', { name: 'DMs' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole('combobox', { name: 'Global inbox' }),
+    );
+    const options = await within(canvasElement.ownerDocument.body).findByRole(
+      'listbox',
+    );
+
+    await userEvent.click(
+      within(options).getByRole('option', { name: 'Never' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('combobox', { name: 'Global inbox' }),
+      ).toHaveTextContent('Never'),
+    );
+    expect(args.onInboxModeChange).toHaveBeenLastCalledWith(
+      AiChatAssistantMode.NEVER,
+    );
+    expect(args.onDirectMessageModeChange).not.toHaveBeenCalled();
+  },
+};
+
 export const IndependentSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
