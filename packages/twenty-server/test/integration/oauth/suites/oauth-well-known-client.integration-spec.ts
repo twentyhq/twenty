@@ -274,6 +274,35 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   describe('Marketplace', () => {
+    it('should list ChatGPT and Claude as soon as their registrations exist', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query FindManyMarketplaceApps {
+            findManyMarketplaceApps {
+              id
+              name
+              isListed
+            }
+          }
+        `,
+      });
+
+      expect(response.body.data.findManyMarketplaceApps).toEqual(
+        expect.arrayContaining([
+          {
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+            name: 'ChatGPT',
+            isListed: true,
+          },
+          {
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            name: 'Claude',
+            isListed: true,
+          },
+        ]),
+      );
+    });
+
     it('should identify the Claude marketplace page as the well-known OAuth-only Claude client', async () => {
       const response = await makeMetadataApiRequest({
         query: gql`

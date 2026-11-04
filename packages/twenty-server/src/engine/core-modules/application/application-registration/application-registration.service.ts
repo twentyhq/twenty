@@ -1036,9 +1036,13 @@ export class ApplicationRegistrationService {
         'category',
         'manifest',
       ],
-      where: {
-        sourceType: ApplicationRegistrationSourceType.NPM,
-      },
+      where: [
+        { sourceType: ApplicationRegistrationSourceType.NPM },
+        {
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+          isListed: true,
+        },
+      ],
     });
 
     return registrations.map((registration) => ({
