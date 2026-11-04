@@ -7,6 +7,10 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import {
+  OnboardingException,
+  OnboardingExceptionCode,
+} from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
@@ -109,8 +113,9 @@ export class OnboardingInviteSuggestionsService {
         ),
         timeoutMs: ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS,
         createTimeoutError: () =>
-          new Error(
+          new OnboardingException(
             `Calendar read timed out after ${ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS} ms`,
+            OnboardingExceptionCode.EXTERNAL_PROVIDER_TIMEOUT,
           ),
       });
     } catch (error) {
