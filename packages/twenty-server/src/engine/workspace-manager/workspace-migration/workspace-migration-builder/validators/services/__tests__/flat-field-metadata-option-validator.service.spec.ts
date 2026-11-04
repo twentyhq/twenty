@@ -194,6 +194,23 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       ]);
     });
 
+    it('accepts a value that an update in the same migration frees', () => {
+      const option = buildOption();
+      const existingOption = buildOption();
+
+      expect(
+        validator.validateFlatFieldMetadataOptionCreation({
+          ...buildCommonValidationArgs({ existingOptions: [existingOption] }),
+          flatEntityToValidate: option,
+          finalFlatEntityMaps: buildOptionMaps([
+            option,
+            { ...existingOption, value: 'OPTION_B' },
+          ]),
+          remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+        }).errors,
+      ).toEqual([]);
+    });
+
     it('accepts a value used by an option of another field', () => {
       const otherSelectField = getFlatFieldMetadataMock({
         universalIdentifier: v4(),
