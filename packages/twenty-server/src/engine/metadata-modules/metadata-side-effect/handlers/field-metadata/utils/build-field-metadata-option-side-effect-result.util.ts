@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeFieldMetadataOptionOperationsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field.util';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -17,6 +18,10 @@ export const buildFieldMetadataOptionSideEffectResult = ({
   BuildSideEffectsArgs<'fieldMetadata'>,
   'relatedFlatEntityMaps' | 'context'
 >): MetadataSideEffectResult => {
+  if (!isFieldMetadataOptionEntityAvailable()) {
+    return { status: 'noop' };
+  }
+
   const existingFlatFieldMetadata =
     relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
       fieldMetadataUniversalIdentifier

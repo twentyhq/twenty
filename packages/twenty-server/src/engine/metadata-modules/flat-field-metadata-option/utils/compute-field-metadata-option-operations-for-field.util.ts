@@ -2,9 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   getTargetOptionColumnsByUniversalIdentifier,
-  isFieldMetadataOptionSyncSkipped,
   type FieldMetadataOptionColumns,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { isFieldMetadataOptionSyncSkipped } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-sync-skipped.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
@@ -14,10 +14,13 @@ type FieldMetadataOptionOperations = {
   flatEntityToDelete: Record<string, UniversalFlatFieldMetadataOption>;
 };
 
-const hasOptionColumnsChanged = (
-  existingOption: UniversalFlatFieldMetadataOption,
-  targetOptionColumns: FieldMetadataOptionColumns,
-) =>
+const hasOptionColumnsChanged = ({
+  existingOption,
+  targetOptionColumns,
+}: {
+  existingOption: UniversalFlatFieldMetadataOption;
+  targetOptionColumns: FieldMetadataOptionColumns;
+}) =>
   existingOption.value !== targetOptionColumns.value ||
   existingOption.label !== targetOptionColumns.label ||
   existingOption.color !== targetOptionColumns.color ||
@@ -62,7 +65,7 @@ export const computeFieldMetadataOptionOperationsForField = ({
       continue;
     }
 
-    if (hasOptionColumnsChanged(existingOption, targetOptionColumns)) {
+    if (hasOptionColumnsChanged({ existingOption, targetOptionColumns })) {
       operations.flatEntityToUpdate[existingOption.universalIdentifier] = {
         ...existingOption,
         ...targetOptionColumns,
