@@ -3321,6 +3321,11 @@ msgstr "電話撥號代碼衝突。"
 msgid "Conflicting phone country code."
 msgstr "電話國碼衝突。"
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "請先為此 MCP 伺服器連結帳戶。"
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "在中斷連線時要執行的邏輯函式未找到。"
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "MCP 請求參數無效。"
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "此 MCP 伺服器公開的工具過多，無法同步。"
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

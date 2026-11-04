@@ -3321,6 +3321,11 @@ msgstr "Widersprüchliche Telefonvorwahl."
 msgid "Conflicting phone country code."
 msgstr "Widersprüchlicher Telefon-Ländercode."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Verbinden Sie zuerst ein Konto für diesen MCP-Server."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "Die Logikfunktion, die beim Trennen der Verbindung ausgeführt werden so
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Die MCP-Anfrageparameter sind ungültig."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Der MCP-Server stellt zu viele Tools zum Synchronisieren bereit."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
