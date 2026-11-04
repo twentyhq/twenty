@@ -18,37 +18,35 @@ describe('getAiChatAssistantProfileSchema', () => {
       getAiChatAssistantProfileSchema()
         .partial()
         .parse({
-          aiChatAssistantDisplayName: `  ${displayName}  `,
+          displayName: `  ${displayName}  `,
         }),
-    ).toEqual({ aiChatAssistantDisplayName: displayName });
+    ).toEqual({ displayName });
   });
 
   it('preserves omitted fields and an explicit false animation update', () => {
     expect(getAiChatAssistantProfileSchema().partial().parse({})).toEqual({});
     expect(
       getAiChatAssistantProfileSchema().partial().parse({
-        isAiChatAssistantAvatarAnimated: false,
+        isAvatarAnimated: false,
       }),
-    ).toEqual({ isAiChatAssistantAvatarAnimated: false });
+    ).toEqual({ isAvatarAnimated: false });
   });
 
   it.each([
-    { aiChatAssistantDisplayName: null },
-    { aiChatAssistantDisplayName: '  ' },
+    { displayName: null },
+    { displayName: '  ' },
     {
-      aiChatAssistantDisplayName: 'A'.repeat(
-        AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH + 1,
-      ),
+      displayName: 'A'.repeat(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH + 1),
     },
-    { aiChatAssistantDisplayName: 42 },
-    { aiChatAssistantAvatarShape: null },
-    { aiChatAssistantAvatarShape: 'square' },
-    { aiChatAssistantAvatarColor: null },
-    { aiChatAssistantAvatarColor: 'violet' },
-    { aiChatAssistantAvatarFace: null },
-    { aiChatAssistantAvatarFace: 'angry' },
-    { isAiChatAssistantAvatarAnimated: null },
-    { isAiChatAssistantAvatarAnimated: 'true' },
+    { displayName: 42 },
+    { avatarShape: null },
+    { avatarShape: 'square' },
+    { avatarColor: null },
+    { avatarColor: 'violet' },
+    { avatarFace: null },
+    { avatarFace: 'angry' },
+    { isAvatarAnimated: null },
+    { isAvatarAnimated: 'true' },
   ])('rejects an invalid update %j', (update) => {
     expect(
       getAiChatAssistantProfileSchema().partial().safeParse(update).success,

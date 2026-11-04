@@ -1,13 +1,9 @@
-import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
-
 import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const ASSISTANT_PROFILE_PROPERTIES = Object.keys(
-  DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-);
-const CURRENT_COLUMNS = ['id', ...ASSISTANT_PROFILE_PROPERTIES].map(
+const ASSISTANT_PROFILE_COLUMN = 'aiChatAssistantProfile';
+const CURRENT_COLUMNS = ['id', ASSISTANT_PROFILE_COLUMN].map(
   (propertyName) => ({ propertyName, databaseName: propertyName }),
 );
 
@@ -20,13 +16,13 @@ const resolveWorkspaceUpgradeShape = (appliedSteps: string[]) =>
   });
 
 describe('WorkspaceEntity assistant profile upgrade shape', () => {
-  it('hides every assistant profile column while preserving id before introduction', () => {
+  it('hides the assistant profile column while preserving id before introduction', () => {
     expect(resolveWorkspaceUpgradeShape([]).hiddenPropertyNames).toEqual(
-      new Set(ASSISTANT_PROFILE_PROPERTIES),
+      new Set([ASSISTANT_PROFILE_COLUMN]),
     );
   });
 
-  it('reveals every assistant profile column and preserves id after introduction', () => {
+  it('reveals the assistant profile column and preserves id after introduction', () => {
     expect(
       resolveWorkspaceUpgradeShape([
         ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,

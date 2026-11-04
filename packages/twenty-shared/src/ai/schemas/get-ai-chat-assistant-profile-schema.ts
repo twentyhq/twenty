@@ -7,13 +7,13 @@ import { AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH } from '@/ai/constants/ai-cha
 
 export const getAiChatAssistantProfileSchema = () =>
   z.object({
-    aiChatAssistantDisplayName: z
+    displayName: z
       .string()
       .trim()
       .min(1)
       .max(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH),
-    aiChatAssistantAvatarShape: z.enum(AI_CHAT_ASSISTANT_AVATAR_SHAPES),
-    aiChatAssistantAvatarColor: z.enum(AI_CHAT_ASSISTANT_AVATAR_COLORS),
-    aiChatAssistantAvatarFace: z.enum(AI_CHAT_ASSISTANT_AVATAR_FACES),
-    isAiChatAssistantAvatarAnimated: z.boolean(),
+    avatarShape: z.enum(AI_CHAT_ASSISTANT_AVATAR_SHAPES),
+    avatarColor: z.enum(AI_CHAT_ASSISTANT_AVATAR_COLORS),
+    avatarFace: z.enum(AI_CHAT_ASSISTANT_AVATAR_FACES),
+    isAvatarAnimated: z.boolean(),
   });

@@ -2,9 +2,9 @@ import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/agent-chat-assistant-n
 import { type AiChatAssistantProfile } from '@/ai/types/AiChatAssistantProfile';
 
 export const DEFAULT_AI_CHAT_ASSISTANT_PROFILE = {
-  aiChatAssistantDisplayName: AGENT_CHAT_ASSISTANT_NAME,
-  aiChatAssistantAvatarShape: 'circle',
-  aiChatAssistantAvatarColor: 'blue',
-  aiChatAssistantAvatarFace: 'default',
-  isAiChatAssistantAvatarAnimated: true,
+  displayName: AGENT_CHAT_ASSISTANT_NAME,
+  avatarShape: 'circle',
+  avatarColor: 'blue',
+  avatarFace: 'default',
+  isAvatarAnimated: true,
 } as const satisfies AiChatAssistantProfile;

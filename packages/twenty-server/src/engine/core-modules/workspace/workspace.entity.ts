@@ -3,7 +3,6 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import GraphQLJSON from 'graphql-type-json';
 import {
-  AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
   DEFAULT_AI_AGENT_MODEL_TIER,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   DEFAULT_AI_CHAT_MODEL_TIER,
@@ -421,52 +420,11 @@ export class WorkspaceEntity {
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })
   @Column({
-    type: 'varchar',
-    length: AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
+    type: 'jsonb',
     nullable: false,
-    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.aiChatAssistantDisplayName,
+    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   })
-  aiChatAssistantDisplayName: AiChatAssistantProfile['aiChatAssistantDisplayName'];
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.aiChatAssistantAvatarShape,
-  })
-  aiChatAssistantAvatarShape: AiChatAssistantProfile['aiChatAssistantAvatarShape'];
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.aiChatAssistantAvatarColor,
-  })
-  aiChatAssistantAvatarColor: AiChatAssistantProfile['aiChatAssistantAvatarColor'];
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.aiChatAssistantAvatarFace,
-  })
-  aiChatAssistantAvatarFace: AiChatAssistantProfile['aiChatAssistantAvatarFace'];
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'boolean',
-    nullable: false,
-    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE.isAiChatAssistantAvatarAnimated,
-  })
-  isAiChatAssistantAvatarAnimated: AiChatAssistantProfile['isAiChatAssistantAvatarAnimated'];
+  aiChatAssistantProfile: AiChatAssistantProfile;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
