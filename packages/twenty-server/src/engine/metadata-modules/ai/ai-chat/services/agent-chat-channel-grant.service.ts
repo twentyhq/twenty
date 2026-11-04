@@ -16,6 +16,8 @@ import { replaceAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/a
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 // A chat's only RULE grants, so each rewrite owns every RULE grant in its scope
 @Injectable()
@@ -23,6 +25,8 @@ export class AgentChatChannelGrantService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
   ) {}
@@ -97,18 +101,10 @@ export class AgentChatChannelGrantService {
   }: {
     workspaceId: string;
   }): Promise<void> {
-    const channels = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) => {
-        const channelRepository = manager.getRepository(AgentChatChannelEntity);
-
-        return channelRepository.find({
-          select: { id: true },
-          where: { workspaceId },
-          order: { id: 'ASC' },
-        });
-      },
-    );
+    const channels = await this.channelRepository.find(workspaceId, {
+      select: { id: true },
+      order: { id: 'ASC' },
+    });
 
     for (const { id: channelId } of channels) {
       await this.rewriteChannelGrants({ workspaceId, channelId });

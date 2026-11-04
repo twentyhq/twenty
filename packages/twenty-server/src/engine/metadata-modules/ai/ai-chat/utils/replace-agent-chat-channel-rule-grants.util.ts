@@ -1,17 +1,16 @@
-import chunk from 'lodash.chunk';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { type AgentChatChannelGrantScope } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-grant-scope.type';
-import { buildAgentChatChannelGrantScopeConditions } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-scope-conditions.util';
-import { buildAgentChatChannelRuleGrantsQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-rule-grants-query.util';
+import { buildAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-rule-grants.util';
 import { deleteObsoleteAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/delete-obsolete-agent-chat-channel-rule-grants.util';
-import { findAgentChatChannelGrantScopeThreadIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-channel-grant-scope-thread-ids.util';
+import { diffAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/diff-agent-chat-channel-rule-grants.util';
+import { findAgentChatChannelGrantScopeThreads } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-channel-grant-scope-threads.util';
+import { findAgentChatChannelRuleRoleIdsByChannelId } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-channel-rule-role-ids-by-channel-id.util';
 import { findAgentChatThreadObjectMetadataId } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-object-metadata-id.util';
+import { findExistingAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-existing-agent-chat-channel-rule-grants.util';
 import { insertMissingAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/insert-missing-agent-chat-channel-rule-grants.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-
-const CHANNEL_RULE_GRANT_THREAD_BATCH_SIZE = 1000;
 
 export const replaceAgentChatChannelRuleGrants = async ({
   manager,
@@ -36,42 +35,46 @@ export const replaceAgentChatChannelRuleGrants = async ({
   }
 
   const schema = getWorkspaceSchemaName(workspaceId);
-  const threadTable = `${schema}.agentChatThread`;
   const recordShareTable = `${schema}.recordShare`;
-  const scopeConditions = buildAgentChatChannelGrantScopeConditions(scope);
-  const channelRuleGrantsQuery = buildAgentChatChannelRuleGrantsQuery({
+  const scopeThreads = await findAgentChatChannelGrantScopeThreads({
     manager,
-    workspaceId,
-    threadTable,
+    threadTable: `${schema}.agentChatThread`,
+    scope,
   });
-  const scopedChannelRuleGrantsQuery = channelRuleGrantsQuery
-    .clone()
-    .andWhere(scopeConditions.thread, scopeConditions.parameters);
+  const ruleRoleIdsByChannelId =
+    await findAgentChatChannelRuleRoleIdsByChannelId({
+      manager,
+      workspaceId,
+      channelIds: scopeThreads
+        .map(({ channelId }) => channelId)
+        .filter(isDefined),
+    });
+  const channelRuleGrants = buildAgentChatChannelRuleGrants({
+    threads: scopeThreads,
+    ruleRoleIdsByChannelId,
+  });
+  const existingChannelRuleGrants =
+    await findExistingAgentChatChannelRuleGrants({
+      manager,
+      recordShareTable,
+      threadObjectMetadataId,
+      scope,
+    });
+  const { obsoleteGrantIds, missingGrants } = diffAgentChatChannelRuleGrants({
+    channelRuleGrants,
+    existingChannelRuleGrants,
+  });
 
   await deleteObsoleteAgentChatChannelRuleGrants({
     manager,
     recordShareTable,
-    threadObjectMetadataId,
-    recordShareScopeCondition: scopeConditions.recordShare,
-    channelRuleGrantsQuery: scopedChannelRuleGrantsQuery,
+    obsoleteGrantIds,
   });
 
-  const scopeThreadIds = await findAgentChatChannelGrantScopeThreadIds({
+  await insertMissingAgentChatChannelRuleGrants({
     manager,
-    threadTable,
-    scope,
+    recordShareTable,
+    threadObjectMetadataId,
+    missingGrants,
   });
-
-  for (const threadIds of chunk(
-    scopeThreadIds,
-    CHANNEL_RULE_GRANT_THREAD_BATCH_SIZE,
-  )) {
-    await insertMissingAgentChatChannelRuleGrants({
-      manager,
-      recordShareTable,
-      threadObjectMetadataId,
-      channelRuleGrantsQuery,
-      threadIds,
-    });
-  }
 };

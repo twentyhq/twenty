@@ -4,18 +4,9 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import {
-  type EntityManager,
-  type ObjectLiteral,
-  type SelectQueryBuilder,
-} from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
-import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
-
-type ChannelRuleGrant = Pick<
-  RecordShareInput,
-  'recordId' | 'principalId' | 'sourceId'
->;
+import { type AgentChatChannelRuleGrant } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-rule-grant.type';
 
 const CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE = 1000;
 
@@ -23,37 +14,15 @@ export const insertMissingAgentChatChannelRuleGrants = async ({
   manager,
   recordShareTable,
   threadObjectMetadataId,
-  channelRuleGrantsQuery,
-  threadIds,
+  missingGrants,
 }: {
   manager: Pick<EntityManager, 'createQueryBuilder'>;
   recordShareTable: string;
   threadObjectMetadataId: string;
-  channelRuleGrantsQuery: SelectQueryBuilder<ObjectLiteral>;
-  threadIds: string[];
+  missingGrants: AgentChatChannelRuleGrant[];
 }): Promise<void> => {
-  const existingChannelRuleGrantQuery = manager
-    .createQueryBuilder()
-    .select('1')
-    .from(recordShareTable, 'record_share')
-    .where('record_share."objectMetadataId" = :threadObjectMetadataId')
-    .andWhere('record_share."rowCause" = :rowCause')
-    .andWhere('record_share."recordId" = thread.id')
-    .andWhere('record_share."principalId" = role.id')
-    .andWhere('record_share."sourceId" = thread."channelId"')
-    .andWhere('record_share."deletedAt" IS NULL');
-  const missingChannelRuleGrants = await channelRuleGrantsQuery
-    .clone()
-    .andWhere('thread.id = ANY(:threadIds::uuid[])', { threadIds })
-    .andWhere(`NOT EXISTS (${existingChannelRuleGrantQuery.getQuery()})`)
-    .setParameters({
-      threadObjectMetadataId,
-      rowCause: RecordShareRowCause.RULE,
-    })
-    .getRawMany<ChannelRuleGrant>();
-
-  for (const channelRuleGrantBatch of chunk(
-    missingChannelRuleGrants,
+  for (const missingGrantBatch of chunk(
+    missingGrants,
     CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE,
   )) {
     await manager
@@ -69,7 +38,7 @@ export const insertMissingAgentChatChannelRuleGrants = async ({
         'rowCause',
       ])
       .values(
-        channelRuleGrantBatch.map(({ recordId, principalId, sourceId }) => ({
+        missingGrantBatch.map(({ recordId, principalId, sourceId }) => ({
           objectMetadataId: threadObjectMetadataId,
           recordId,
           principalId,
