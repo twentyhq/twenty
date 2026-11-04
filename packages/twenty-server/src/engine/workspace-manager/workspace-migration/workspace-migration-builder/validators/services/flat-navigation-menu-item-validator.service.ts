@@ -8,8 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
+import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
   type FailedFlatEntityValidation,
@@ -20,6 +22,10 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
+
+type NavigationMenuItemUniversalForeignKey = ToUniversalForeignKey<
+  MetadataManyToOneJoinColumn<'navigationMenuItem'> & string
+>;
 
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
@@ -122,6 +128,83 @@ export class FlatNavigationMenuItemValidatorService {
     }
 
     return errors;
+  }
+
+  // Deletes run before navigation menu item updates and cascade to items still
+  // pointing at the deleted target, so the update would silently find no row.
+  private getRetargetFromDeletedTargetValidationErrors({
+    fromFlatNavigationMenuItem,
+    toFlatNavigationMenuItem,
+    flatObjectMetadataMaps,
+    flatViewMaps,
+    flatPageLayoutMaps,
+  }: {
+    fromFlatNavigationMenuItem: MetadataUniversalFlatEntity<'navigationMenuItem'>;
+    toFlatNavigationMenuItem: MetadataUniversalFlatEntity<'navigationMenuItem'>;
+    flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>;
+    flatViewMaps: MetadataUniversalFlatEntityMaps<'view'>;
+    flatPageLayoutMaps: MetadataUniversalFlatEntityMaps<'pageLayout'>;
+  }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
+    const isObjectGone = (universalIdentifier: string) =>
+      !isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      );
+
+    // A view also goes when its object is deleted, through the database cascade.
+    const isViewGone = (universalIdentifier: string) => {
+      const view = findFlatEntityByUniversalIdentifier({
+        universalIdentifier,
+        flatEntityMaps: flatViewMaps,
+      });
+
+      return (
+        !isDefined(view) || isObjectGone(view.objectMetadataUniversalIdentifier)
+      );
+    };
+
+    const isPageLayoutGone = (universalIdentifier: string) =>
+      !isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier,
+          flatEntityMaps: flatPageLayoutMaps,
+        }),
+      );
+
+    const targetChecks: [
+      NavigationMenuItemUniversalForeignKey,
+      (universalIdentifier: string) => boolean,
+    ][] = [
+      ['viewUniversalIdentifier', isViewGone],
+      ['targetObjectMetadataUniversalIdentifier', isObjectGone],
+      ['pageLayoutUniversalIdentifier', isPageLayoutGone],
+    ];
+
+    const isRetargetedFromDeletedTarget = targetChecks.some(
+      ([property, isGone]) => {
+        const previousTarget = fromFlatNavigationMenuItem[property];
+
+        return (
+          isDefined(previousTarget) &&
+          previousTarget !== toFlatNavigationMenuItem[property] &&
+          isGone(previousTarget)
+        );
+      },
+    );
+
+    if (!isRetargetedFromDeletedTarget) {
+      return [];
+    }
+
+    return [
+      {
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`Cannot re-point a navigation menu item away from a target deleted in the same sync`,
+        userFriendlyMessage: msg`Re-point this menu item first, then remove its previous target in a later sync`,
+      },
+    ];
   }
 
   public validateFlatNavigationMenuItemCreation({
@@ -248,6 +331,7 @@ export class FlatNavigationMenuItemValidatorService {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
+      flatPageLayoutMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
@@ -300,6 +384,13 @@ export class FlatNavigationMenuItemValidatorService {
         flatNavigationMenuItem: toFlatNavigationMenuItem,
         flatObjectMetadataMaps,
         flatViewMaps,
+      }),
+      ...this.getRetargetFromDeletedTargetValidationErrors({
+        fromFlatNavigationMenuItem,
+        toFlatNavigationMenuItem,
+        flatObjectMetadataMaps,
+        flatViewMaps,
+        flatPageLayoutMaps,
       }),
     );
 
