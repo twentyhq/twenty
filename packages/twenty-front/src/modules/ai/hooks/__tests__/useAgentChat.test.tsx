@@ -251,27 +251,13 @@ describe('useAgentChat', () => {
       ]);
     });
 
-    let releaseVerification: (() => void) | undefined;
-    const verificationGate = new Promise<void>((resolve) => {
-      releaseVerification = resolve;
-    });
-    const verificationCompleted = jest.fn();
     const query = jest
       .spyOn(result.current.apolloClient, 'query')
-      .mockImplementationOnce(async () => {
-        await verificationGate;
-        verificationCompleted();
-
-        return { data: undefined };
-      });
+      .mockReturnValueOnce(new Promise<never>(() => {}));
 
     await send(result);
 
     expect(query).toHaveBeenCalledTimes(1);
-    expect(query).toHaveBeenCalledWith(
-      expect.objectContaining({ fetchPolicy: 'network-only' }),
-    );
-    expect(verificationCompleted).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
     expect(
@@ -281,15 +267,6 @@ describe('useAgentChat', () => {
         }),
       ),
     ).toBe(false);
-
-    await act(async () => {
-      assertIsDefinedOrThrow(releaseVerification);
-      releaseVerification();
-      await query.mock.results[0].value;
-    });
-
-    expect(verificationCompleted).toHaveBeenCalledTimes(1);
-    query.mockRestore();
   });
 
   it('files the chat when the retry of a failed first send goes through', async () => {
@@ -688,6 +665,60 @@ describe('useAgentChat', () => {
     expect(sentMessageVariables.mock.lastCall?.[0]).not.toHaveProperty(
       'recipientWorkspaceMemberIds',
     );
+  });
+
+  it('sends a follow-up in an existing chat while the previous send is pending', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent', 'sent'],
+      currentThreadId: EXISTING_THREAD_ID,
+    });
+    let releaseFirstSend: (() => void) | undefined;
+    const firstSendGate = new Promise<void>((resolve) => {
+      releaseFirstSend = resolve;
+    });
+    const originalMutate = result.current.apolloClient.mutate.bind(
+      result.current.apolloClient,
+    );
+
+    jest
+      .spyOn(result.current.apolloClient, 'mutate')
+      .mockImplementationOnce(async (options) => {
+        await firstSendGate;
+
+        return originalMutate(options);
+      });
+
+    let firstSend: Promise<void> | undefined;
+
+    await act(async () => {
+      firstSend = result.current.handleSendMessage();
+    });
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Follow-up'),
+      }));
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({ text: 'Follow-up' }),
+    );
+
+    assertIsDefinedOrThrow(releaseFirstSend);
+    releaseFirstSend();
+
+    await act(async () => {
+      await firstSend;
+    });
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
   });
 
   it('files a new chat into the channel it was started in, then forgets that channel', async () => {

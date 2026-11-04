@@ -14,20 +14,9 @@ const workspaceMembers = [
 ];
 
 describe('getAgentChatInitialRecipients', () => {
-  it('does not apply initial recipients to other sends', () => {
-    expect(
-      getAgentChatInitialRecipients({
-        shouldIncludeInitialRecipients: false,
-        recipientWorkspaceMemberIds: ['jane'],
-        workspaceMembers,
-      }),
-    ).toEqual([]);
-  });
-
   it('resolves selected members once without inventing missing recipients', () => {
     expect(
       getAgentChatInitialRecipients({
-        shouldIncludeInitialRecipients: true,
         recipientWorkspaceMemberIds: ['jane', 'missing', 'jane'],
         workspaceMembers,
       }),

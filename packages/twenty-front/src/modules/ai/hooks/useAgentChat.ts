@@ -97,18 +97,20 @@ export const useAgentChat = () => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threadId =
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
+    const isNewChat = threadId === newAiChatThreadId;
     const isSendingMessageAtom =
       agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
 
-    if (store.get(isSendingMessageAtom)) {
+    if (isNewChat && store.get(isSendingMessageAtom)) {
       return;
     }
 
-    const isNewChat = threadId === newAiChatThreadId;
-    const isNewInboxChat = isNewChat && isAiChatInboxEnabled;
-    const newThreadRecipients = store.get(
-      agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-    );
+    const newInboxChatRecipients =
+      isNewChat && isAiChatInboxEnabled
+        ? store.get(
+            agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
+          )
+        : undefined;
     const serializedContentToSend =
       store.get(agentChatDraftsByThreadIdState.atom)[threadId] ?? '';
     const contentToSend = tipTapDocumentToMarkdown(
@@ -135,13 +137,13 @@ export const useAgentChat = () => {
       ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
       : undefined;
     const hasRecipients =
-      newThreadRecipients.isAssistantParticipant ||
+      newInboxChatRecipients?.isAssistantParticipant === true ||
       isAssistantMentioned ||
-      isNonEmptyArray(newThreadRecipients.recipientWorkspaceMemberIds) ||
+      isNonEmptyArray(newInboxChatRecipients?.recipientWorkspaceMemberIds) ||
       isNonEmptyArray(participantMentions) ||
       isDefined(channelId);
 
-    if (isNewInboxChat && !hasRecipients) {
+    if (isDefined(newInboxChatRecipients) && !hasRecipients) {
       enqueueToast({
         status: 'error',
         children: t`Add a recipient or a channel before sending.`,
@@ -244,9 +246,8 @@ export const useAgentChat = () => {
     }));
 
     const initialRecipients = getAgentChatInitialRecipients({
-      shouldIncludeInitialRecipients: isNewInboxChat,
       recipientWorkspaceMemberIds:
-        newThreadRecipients.recipientWorkspaceMemberIds,
+        newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
       workspaceMembers: store.get(currentWorkspaceMembersState.atom),
     });
     setAgentChatUploadedFiles([]);
@@ -272,13 +273,11 @@ export const useAgentChat = () => {
               : undefined,
           channelId,
           shouldAssistantReply: isNonEmptyArray(aiModels),
-          isAssistantParticipant: isNewInboxChat
-            ? newThreadRecipients.isAssistantParticipant
-            : undefined,
+          isAssistantParticipant:
+            newInboxChatRecipients?.isAssistantParticipant,
           isAssistantMentioned,
-          recipientWorkspaceMemberIds: isNewInboxChat
-            ? newThreadRecipients.recipientWorkspaceMemberIds
-            : undefined,
+          recipientWorkspaceMemberIds:
+            newInboxChatRecipients?.recipientWorkspaceMemberIds,
         },
       });
 
