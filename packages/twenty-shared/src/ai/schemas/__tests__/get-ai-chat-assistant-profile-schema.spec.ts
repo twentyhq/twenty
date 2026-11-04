@@ -11,12 +11,25 @@ describe('getAiChatAssistantProfileSchema', () => {
     ).toEqual(DEFAULT_AI_CHAT_ASSISTANT_PROFILE);
   });
 
-  it('trims a bounded display name without supplying omitted update fields', () => {
+  it('accepts and trims a display name at the maximum length', () => {
+    const displayName = 'A'.repeat(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH);
+
+    expect(
+      getAiChatAssistantProfileSchema()
+        .partial()
+        .parse({
+          aiChatAssistantDisplayName: `  ${displayName}  `,
+        }),
+    ).toEqual({ aiChatAssistantDisplayName: displayName });
+  });
+
+  it('preserves omitted fields and an explicit false animation update', () => {
+    expect(getAiChatAssistantProfileSchema().partial().parse({})).toEqual({});
     expect(
       getAiChatAssistantProfileSchema().partial().parse({
-        aiChatAssistantDisplayName: '  Nimbus  ',
+        isAiChatAssistantAvatarAnimated: false,
       }),
-    ).toEqual({ aiChatAssistantDisplayName: 'Nimbus' });
+    ).toEqual({ isAiChatAssistantAvatarAnimated: false });
   });
 
   it.each([
@@ -27,9 +40,14 @@ describe('getAiChatAssistantProfileSchema', () => {
         AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH + 1,
       ),
     },
+    { aiChatAssistantDisplayName: 42 },
+    { aiChatAssistantAvatarShape: null },
     { aiChatAssistantAvatarShape: 'square' },
+    { aiChatAssistantAvatarColor: null },
     { aiChatAssistantAvatarColor: 'violet' },
+    { aiChatAssistantAvatarFace: null },
     { aiChatAssistantAvatarFace: 'angry' },
+    { isAiChatAssistantAvatarAnimated: null },
     { isAiChatAssistantAvatarAnimated: 'true' },
   ])('rejects an invalid update %j', (update) => {
     expect(
