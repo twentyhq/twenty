@@ -1,5 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
+
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CreateMessageSuppressionInput } from 'src/engine/core-modules/emailing-domain/dtos/create-message-suppression.input';
@@ -17,7 +20,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
-import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseFilters(
@@ -52,7 +54,22 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => MessageSuppressionDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+    }),
+  )
   async createMessageSuppression(
     @Args('input') input: CreateMessageSuppressionInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -67,7 +84,22 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+    }),
+  )
   async deleteMessageSuppression(
     @Args('id', { type: () => UUIDScalarType }) suppressionId: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

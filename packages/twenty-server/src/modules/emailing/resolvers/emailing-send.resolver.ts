@@ -30,7 +30,6 @@ import { MessageCampaignScheduleService } from 'src/modules/emailing/services/me
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
-import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseFilters(
@@ -69,7 +68,22 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => CancelMessageCampaignOutputDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+    }),
+  )
   async cancelMessageCampaign(
     @Args('input') input: CancelMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -108,7 +122,22 @@ export class EmailingSendResolver {
   }
 
   @Query(() => CampaignAudiencePreviewDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_READ_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+    }),
+  )
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

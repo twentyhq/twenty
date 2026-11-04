@@ -1,5 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
+
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CreateUnsubscribeTopicInput } from 'src/engine/core-modules/emailing-domain/dtos/create-unsubscribe-topic.input';
 import { UnsubscribeTopicDTO } from 'src/engine/core-modules/emailing-domain/dtos/unsubscribe-topic.dto';
@@ -11,10 +14,24 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
-import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    },
+    requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  }),
+)
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
@@ -28,7 +45,6 @@ export class UnsubscribeTopicResolver {
   ) {}
 
   @Query(() => [UnsubscribeTopicDTO])
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_READ_ACCESS_POLICY))
   async unsubscribeTopics(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<UnsubscribeTopicDTO[]> {
@@ -40,7 +56,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => UnsubscribeTopicDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
   async createUnsubscribeTopic(
     @Args('input') input: CreateUnsubscribeTopicInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -54,7 +69,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => UnsubscribeTopicDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
   async updateUnsubscribeTopic(
     @Args('input') input: UpdateUnsubscribeTopicInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -68,7 +82,6 @@ export class UnsubscribeTopicResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
   async deleteUnsubscribeTopic(
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
