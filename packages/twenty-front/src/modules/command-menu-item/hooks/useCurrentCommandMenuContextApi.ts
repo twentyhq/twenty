@@ -151,7 +151,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   );
   const objectPermissions = isDefined(objectMetadataItem)
     ? getCommandMenuContextApiObjectPermissions({
-        objectPermissions: currentObjectPermissions,
+        objectMetadataId: objectMetadataItem.id,
+        objectRecordsPermissions: currentObjectPermissions,
       })
     : EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions;
 

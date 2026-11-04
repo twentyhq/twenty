@@ -3,6 +3,7 @@ import {
   type ObjectPermissionAction,
 } from 'twenty-shared/application';
 import {
+  type ObjectRecordsPermissions,
   type RestrictedFieldPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -13,7 +14,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatFieldMetadatasWithDisabledActionsByObjectId } from 'src/engine/permissions/role/utils/get-flat-field-metadatas-with-disabled-actions-by-object-id.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION: Record<

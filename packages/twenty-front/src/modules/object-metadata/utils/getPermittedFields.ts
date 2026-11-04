@@ -1,14 +1,11 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type GetPermittedFieldsArgs = {
   fields: FieldMetadataItem[];
-  objectPermissions: Pick<
-    ObjectRecordsPermissionsWithObjectMetadataId,
-    'restrictedFields'
-  >;
+  objectPermissions: Pick<ObjectRecordsPermissions, 'restrictedFields'>;
 };
 
 const getFieldWithPermittedMorphTargets = ({

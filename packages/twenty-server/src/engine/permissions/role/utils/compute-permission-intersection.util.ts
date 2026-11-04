@@ -1,13 +1,12 @@
 import {
+  type ObjectRecordsPermissions,
   type RestrictedFieldPermissions,
   type RowLevelPermissionPredicate,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // Keeping a field constrained by one role alone would let it cancel another role's deny in the insert guard

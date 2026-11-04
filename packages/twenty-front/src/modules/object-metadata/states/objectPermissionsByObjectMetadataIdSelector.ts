@@ -12,37 +12,19 @@ export const objectPermissionsByObjectMetadataIdSelector =
         get(currentUserWorkspaceObjectRecordsPermissionsSelector) ?? [];
 
       return Object.fromEntries(
-        allObjectRecordsPermissions.map((objectRecordsPermissions) => {
-          const rowLevelRecordsPermissions =
-            objectRecordsPermissions.rowLevelRecordsPermissions;
-
-          return [
-            objectRecordsPermissions.objectMetadataId,
-            {
-              objectMetadataId: objectRecordsPermissions.objectMetadataId,
-              canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
-              canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
-              canSoftDeleteAllRecords:
-                objectRecordsPermissions.canSoftDeleteAllRecords,
-              canDestroyAllRecords:
-                objectRecordsPermissions.canDestroyAllRecords,
-              canReadSomeRecords:
-                objectRecordsPermissions.canReadAllRecords ||
-                (rowLevelRecordsPermissions?.canReadRecords ?? false),
-              canUpdateSomeRecords:
-                objectRecordsPermissions.canUpdateAllRecords ||
-                (rowLevelRecordsPermissions?.canUpdateRecords ?? false),
-              canSoftDeleteSomeRecords:
-                objectRecordsPermissions.canSoftDeleteAllRecords ||
-                (rowLevelRecordsPermissions?.canSoftDeleteRecords ?? false),
-              canDestroySomeRecords:
-                objectRecordsPermissions.canDestroyAllRecords ||
-                (rowLevelRecordsPermissions?.canDestroyRecords ?? false),
-              restrictedFields: objectRecordsPermissions.restrictedFields,
-              rowLevelRecordsPermissions: rowLevelRecordsPermissions ?? null,
-            },
-          ];
-        }),
+        allObjectRecordsPermissions.map((objectRecordsPermissions) => [
+          objectRecordsPermissions.objectMetadataId,
+          {
+            canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
+            canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
+            canSoftDeleteAllRecords:
+              objectRecordsPermissions.canSoftDeleteAllRecords,
+            canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
+            restrictedFields: objectRecordsPermissions.restrictedFields,
+            rowLevelRecordsPermissions:
+              objectRecordsPermissions.rowLevelRecordsPermissions,
+          },
+        ]),
       );
     },
   });

@@ -1,8 +1,8 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 const OBJECT_METADATA_ID = 'object-metadata-id';
 const TARGET_OBJECT_METADATA_ID = 'target-object-metadata-id';
@@ -10,19 +10,13 @@ const FIELD_METADATA_ID = 'field-metadata-id';
 const INVERSE_FIELD_METADATA_ID = 'inverse-field-metadata-id';
 
 const buildObjectPermissions = (
-  overrides: Partial<ObjectRecordsPermissionsWithObjectMetadataId> = {},
-): ObjectRecordsPermissionsWithObjectMetadataId => ({
-  objectMetadataId: OBJECT_METADATA_ID,
+  overrides: Partial<ObjectRecordsPermissions> = {},
+): ObjectRecordsPermissions => ({
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  canReadSomeRecords: true,
-  canUpdateSomeRecords: true,
-  canSoftDeleteSomeRecords: true,
-  canDestroySomeRecords: true,
   restrictedFields: {},
-  rowLevelRecordsPermissions: null,
   ...overrides,
 });
 
@@ -68,7 +62,7 @@ describe('isRecordFieldReadOnly', () => {
         ...baseParams,
         objectPermissionsByObjectMetadataId: {
           [OBJECT_METADATA_ID]: buildObjectPermissions({
-            canUpdateSomeRecords: false,
+            canUpdateAllRecords: false,
           }),
         },
       }),
@@ -121,8 +115,7 @@ describe('isRecordFieldReadOnly', () => {
         objectPermissionsByObjectMetadataId: {
           ...baseParams.objectPermissionsByObjectMetadataId,
           [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
-            objectMetadataId: TARGET_OBJECT_METADATA_ID,
-            canUpdateSomeRecords: false,
+            canUpdateAllRecords: false,
           }),
         },
       }),
@@ -136,9 +129,7 @@ describe('isRecordFieldReadOnly', () => {
         fieldDefinition: oneToManyFieldDefinition,
         objectPermissionsByObjectMetadataId: {
           ...baseParams.objectPermissionsByObjectMetadataId,
-          [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
-            objectMetadataId: TARGET_OBJECT_METADATA_ID,
-          }),
+          [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions(),
         },
       }),
     ).toBe(false);
@@ -152,7 +143,6 @@ describe('isRecordFieldReadOnly', () => {
         objectPermissionsByObjectMetadataId: {
           ...baseParams.objectPermissionsByObjectMetadataId,
           [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
-            objectMetadataId: TARGET_OBJECT_METADATA_ID,
             restrictedFields: {
               [INVERSE_FIELD_METADATA_ID]: { canUpdate: false },
             },

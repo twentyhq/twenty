@@ -1,4 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectRecordsPermissions,
+} from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -8,7 +11,6 @@ import {
 } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';

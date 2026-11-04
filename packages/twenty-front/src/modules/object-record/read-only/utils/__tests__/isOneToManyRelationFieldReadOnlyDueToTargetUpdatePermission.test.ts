@@ -18,10 +18,6 @@ const buildObjectPermissions = (opts: {
   canUpdateAllRecords: opts.canUpdate ?? true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  canReadSomeRecords: true,
-  canUpdateSomeRecords: opts.canUpdate ?? true,
-  canSoftDeleteSomeRecords: true,
-  canDestroySomeRecords: true,
   restrictedFields: opts.restrictedFields ?? {},
   rowLevelRecordsPermissions: null,
 });

@@ -1,14 +1,14 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectRecordsPermissionsWithObjectMetadataId
+  ObjectRecordsPermissions
 >;
 
 type CategorizeRelationFieldsArgs = {
@@ -29,18 +29,24 @@ const canReadRelationTarget = (
 ): boolean => {
   const canReadRelation =
     isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
-    getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      fieldMetadataItem.relation?.targetObjectMetadata.id,
-    ).canReadSomeRecords;
+    canReachSomeRecords({
+      objectRecordsPermissions: getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        fieldMetadataItem.relation?.targetObjectMetadata.id,
+      ),
+      operationType: 'select',
+    });
 
   const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
     (morphRelation) =>
       isDefined(morphRelation.targetObjectMetadata.id) &&
-      getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        morphRelation.targetObjectMetadata.id,
-      ).canReadSomeRecords,
+      canReachSomeRecords({
+        objectRecordsPermissions: getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          morphRelation.targetObjectMetadata.id,
+        ),
+        operationType: 'select',
+      }),
   );
 
   return canReadRelation || (canReadMorphRelation ?? false);

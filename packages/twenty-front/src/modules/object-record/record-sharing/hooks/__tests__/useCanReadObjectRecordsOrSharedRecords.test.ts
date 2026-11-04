@@ -11,7 +11,11 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 }));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   useObjectPermissionsForObject: () => ({
-    canReadSomeRecords: mockCanReadObjectRecords(),
+    canReadAllRecords: mockCanReadObjectRecords(),
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: true,
+    restrictedFields: {},
   }),
 }));
 

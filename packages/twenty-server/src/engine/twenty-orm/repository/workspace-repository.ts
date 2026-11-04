@@ -5,7 +5,7 @@ import {
   type ObjectRecord,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -43,7 +43,6 @@ import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principals.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';

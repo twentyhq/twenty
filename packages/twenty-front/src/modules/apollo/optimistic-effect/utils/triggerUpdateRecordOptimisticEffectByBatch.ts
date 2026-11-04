@@ -1,11 +1,11 @@
 import { type ApolloCache } from '@apollo/client';
 
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const triggerUpdateRecordOptimisticEffectByBatch = ({
   cache,
@@ -21,10 +21,7 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
   currentRecords: RecordGqlNode[];
   updatedRecords: RecordGqlNode[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   for (const [index, currentRecord] of currentRecords.entries()) {

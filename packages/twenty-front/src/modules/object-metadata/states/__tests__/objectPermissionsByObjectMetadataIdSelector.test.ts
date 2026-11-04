@@ -4,7 +4,6 @@ import {
   type CurrentUserWorkspace,
   currentUserWorkspaceState,
 } from '@/auth/states/currentUserWorkspaceState';
-import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -14,7 +13,7 @@ import {
 } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const COMPANY_OBJECT_RECORDS_PERMISSIONS: CurrentUserWorkspaceObjectRecordsPermissions =
+const COMPANY_OBJECT_RECORDS_PERMISSIONS: CurrentUserWorkspace['objectRecordsPermissions'][number] =
   {
     objectMetadataId: 'company-object-metadata-id',
     canReadAllRecords: true,
@@ -53,7 +52,7 @@ const PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP: RowLevelPermissionPredicateGr
     roleId: 'role-id',
   };
 
-const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorkspaceObjectRecordsPermissions =
+const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorkspace['objectRecordsPermissions'][number] =
   {
     objectMetadataId: 'person-object-metadata-id',
     canReadAllRecords: false,
@@ -106,28 +105,22 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
     expect(store.get(objectPermissionsByObjectMetadataIdSelector.atom)).toEqual(
       {
         'company-object-metadata-id': {
-          objectMetadataId: 'company-object-metadata-id',
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          canReadSomeRecords: true,
-          canUpdateSomeRecords: false,
-          canSoftDeleteSomeRecords: false,
-          canDestroySomeRecords: false,
           restrictedFields: {
             'company-name-field-metadata-id': {
               canRead: true,
               canUpdate: false,
             },
           },
-          rowLevelRecordsPermissions: null,
         },
       },
     );
   });
 
-  it('should allow the operations reachable through row level permissions', () => {
+  it('should keep the row level permissions of the object', () => {
     const store = createStore();
 
     store.set(
@@ -142,15 +135,10 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
         'person-object-metadata-id'
       ],
     ).toEqual({
-      objectMetadataId: 'person-object-metadata-id',
       canReadAllRecords: false,
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      canReadSomeRecords: true,
-      canUpdateSomeRecords: true,
-      canSoftDeleteSomeRecords: false,
-      canDestroySomeRecords: false,
       restrictedFields: {},
       rowLevelRecordsPermissions:
         PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS.rowLevelRecordsPermissions,

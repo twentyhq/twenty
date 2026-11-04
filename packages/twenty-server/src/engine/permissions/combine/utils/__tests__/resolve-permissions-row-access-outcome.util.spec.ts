@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type ObjectRecordsPermissions,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
@@ -9,7 +13,6 @@ import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combi
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';

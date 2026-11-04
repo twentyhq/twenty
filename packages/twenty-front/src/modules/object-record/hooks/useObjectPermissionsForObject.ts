@@ -1,12 +1,12 @@
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const useObjectPermissionsForObject = (
   objectMetadataId: string,
-): ObjectRecordsPermissionsWithObjectMetadataId => {
+): ObjectRecordsPermissions => {
   const objectPermissionsByObjectMetadataId = useAtomStateValue(
     objectPermissionsByObjectMetadataIdSelector,
   );

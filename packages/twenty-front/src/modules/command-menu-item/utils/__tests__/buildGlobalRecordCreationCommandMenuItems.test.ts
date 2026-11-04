@@ -56,12 +56,10 @@ it('does not offer objects without read or write permissions', () => {
       company: {
         ...getObjectPermissionsForObject({}, 'company'),
         canUpdateAllRecords: false,
-        canUpdateSomeRecords: false,
       },
       task: {
         ...getObjectPermissionsForObject({}, 'task'),
         canReadAllRecords: false,
-        canReadSomeRecords: false,
       },
     },
     createRecordCommand,

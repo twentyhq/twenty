@@ -18,19 +18,15 @@ const ROW_LEVEL_PERMISSION_PREDICATE: RowLevelPermissionPredicate = {
 };
 
 describe('getCommandMenuContextApiObjectPermissions', () => {
-  it('should expose the some records permissions under the names read by availability expressions', () => {
+  it('should expose the reachable records permissions under the names read by availability expressions', () => {
     expect(
       getCommandMenuContextApiObjectPermissions({
-        objectPermissions: {
-          objectMetadataId: 'person-object-metadata-id',
+        objectMetadataId: 'person-object-metadata-id',
+        objectRecordsPermissions: {
           canReadAllRecords: false,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          canReadSomeRecords: true,
-          canUpdateSomeRecords: true,
-          canSoftDeleteSomeRecords: false,
-          canDestroySomeRecords: false,
           restrictedFields: {},
           rowLevelRecordsPermissions: {
             canReadRecords: true,

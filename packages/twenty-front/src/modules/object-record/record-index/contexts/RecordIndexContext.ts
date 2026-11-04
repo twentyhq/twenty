@@ -1,10 +1,10 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { createRequiredContext } from '~/utils/createRequiredContext';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export type RecordIndexContextValue = {
   indexIdentifierUrl: (recordId: string) => string;
@@ -12,10 +12,7 @@ export type RecordIndexContextValue = {
   objectNamePlural: string;
   objectNameSingular: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   recordIndexId: string;
   viewBarInstanceId: string;
   recordFieldByFieldMetadataItemId: Record<string, RecordField>;

@@ -1,9 +1,11 @@
 import { type DocumentNode, parse } from 'graphql';
 
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlFields } from 'twenty-shared/types';
+import {
+  type ObjectRecordsPermissions,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -15,10 +17,7 @@ type GenerateRecordCacheFragmentArgs = {
   >;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
 
 // Same source, same document: Apollo memoizes document transforms by identity

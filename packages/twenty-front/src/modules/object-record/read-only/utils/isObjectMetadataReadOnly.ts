@@ -1,12 +1,9 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type IsObjectMetadataReadOnlyParams = {
-  objectPermissions?: Pick<
-    ObjectRecordsPermissionsWithObjectMetadataId,
-    'canUpdateSomeRecords'
-  >;
+  objectPermissions?: ObjectRecordsPermissions;
   objectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
     'isUIEditable' | 'isRemote'
@@ -18,7 +15,11 @@ export const isObjectMetadataReadOnly = ({
   objectMetadataItem,
 }: IsObjectMetadataReadOnlyParams) => {
   return (
-    (isDefined(objectPermissions) && !objectPermissions.canUpdateSomeRecords) ||
+    (isDefined(objectPermissions) &&
+      !canReachSomeRecords({
+        objectRecordsPermissions: objectPermissions,
+        operationType: 'update',
+      })) ||
     (isDefined(objectMetadataItem) &&
       (!objectMetadataItem.isUIEditable || objectMetadataItem.isRemote))
   );

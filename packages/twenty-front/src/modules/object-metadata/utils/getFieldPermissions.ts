@@ -1,10 +1,7 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type GetFieldPermissionsArgs = {
-  objectPermissions: Pick<
-    ObjectRecordsPermissionsWithObjectMetadataId,
-    'restrictedFields'
-  >;
+  objectPermissions: Pick<ObjectRecordsPermissions, 'restrictedFields'>;
   fieldMetadataId: string;
 };
 

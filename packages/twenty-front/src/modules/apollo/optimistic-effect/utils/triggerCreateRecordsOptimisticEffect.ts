@@ -1,7 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { buildSortedConnectionEdges } from '@/apollo/optimistic-effect/utils/buildSortedConnectionEdges';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -17,6 +16,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 // TODO: new records join every cached list regardless of its variables unless shouldMatchRootQueryFilter;
 // make matching the default once RecordTable keeps a created row in local state.
@@ -27,10 +27,7 @@ type TriggerCreateRecordsOptimisticEffectArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
   shouldMatchRootQueryFilter?: boolean;
   checkForRecordInCache?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 

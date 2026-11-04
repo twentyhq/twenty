@@ -7,7 +7,11 @@ import {
 } from 'twenty-shared/application';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import {
+  camelToSnakeCase,
+  canReachSomeRecords,
+  isDefined,
+} from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -36,7 +40,6 @@ import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

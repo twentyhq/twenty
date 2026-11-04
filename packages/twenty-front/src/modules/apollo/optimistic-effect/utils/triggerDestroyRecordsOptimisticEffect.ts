@@ -1,6 +1,5 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
@@ -13,6 +12,7 @@ import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRe
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
   cache,
@@ -27,10 +27,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 }) => {
   cache.modify<StoreObject>({
     fields: {

@@ -1,10 +1,12 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { gql } from '@apollo/client';
-import { type RecordGqlFields } from 'twenty-shared/types';
+import {
+  type ObjectRecordsPermissions,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 export const generateUpdateOneRecordMutation = ({
@@ -18,10 +20,7 @@ export const generateUpdateOneRecordMutation = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   recordGqlFields?: RecordGqlFields;
   computeReferences: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 }) => {
   const appliedRecordGqlFields =
     recordGqlFields ??

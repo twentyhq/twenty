@@ -1,13 +1,10 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type IsObjectReadOnlyParams = {
   isLayoutCustomizationModeEnabled: boolean;
-  objectPermissions: Pick<
-    ObjectRecordsPermissionsWithObjectMetadataId,
-    'canUpdateSomeRecords'
-  >;
+  objectPermissions: ObjectRecordsPermissions;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'isUIEditable' | 'isRemote'

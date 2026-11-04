@@ -1,9 +1,9 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const getNonReadableFieldInfoForViewField = ({
   fieldMetadataId,
@@ -16,10 +16,7 @@ export const getNonReadableFieldInfoForViewField = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   readableFieldIds: Set<string>;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 }): { fieldLabel?: string; objectLabel: string } | undefined => {
   const { fieldMetadataItem } = getFieldMetadataItemById({
     fieldMetadataId,
@@ -56,7 +53,12 @@ export const getNonReadableFieldInfoForViewField = ({
     targetObjectMetadataItem.id,
   );
 
-  if (!targetObjectPermissions.canReadSomeRecords) {
+  if (
+    !canReachSomeRecords({
+      objectRecordsPermissions: targetObjectPermissions,
+      operationType: 'select',
+    })
+  ) {
     return {
       objectLabel: targetObjectMetadataItem.labelSingular,
     };

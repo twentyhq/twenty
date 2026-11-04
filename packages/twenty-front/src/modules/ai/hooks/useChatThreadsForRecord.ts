@@ -4,7 +4,11 @@ import {
   type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  canReachSomeRecords,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
@@ -119,9 +123,13 @@ export const useChatThreadsForRecord = ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
-  const { canReadSomeRecords } = useObjectPermissionsForObject(
+  const junctionObjectPermissions = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
+  const canReadSomeRecords = canReachSomeRecords({
+    objectRecordsPermissions: junctionObjectPermissions,
+    operationType: 'select',
+  });
 
   const { threads, refetchLimit } = getChatThreadsForRecordPage({
     links,

@@ -1,4 +1,3 @@
-import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -11,6 +10,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type FieldsWidgetFieldItemProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -19,10 +19,7 @@ type FieldsWidgetFieldItemProps = {
   restrictedFieldNames: string[];
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectRecordsPermissionsWithObjectMetadataId
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   isRecordReadOnly: boolean;
   useUpdateRecord: RecordUpdateHook;
   recordLoading: boolean;

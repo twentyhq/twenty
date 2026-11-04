@@ -27,5 +27,5 @@ export class ObjectRecordsPermissionsDTO {
   restrictedFields: RestrictedFieldsPermissions;
 
   @Field(() => RowLevelRecordsPermissionsDTO, { nullable: true })
-  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO;
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO | null;
 }
