@@ -23,14 +23,15 @@ export const AssistantAvatar = ({
     isNonEmptyString(ariaLabel) || isNonEmptyString(ariaLabelledBy);
   const usesBrightPalette = color === 'sky' || color === 'yellow';
   const faceShade = usesBrightPalette ? 11 : 10;
-  const avatarStyle = {
+  const avatarStyle: CSSProperties &
+    Record<`--assistant-avatar-${string}`, string> = {
     '--assistant-avatar-body-color': themeCssVariables.color[`${color}4`],
     '--assistant-avatar-face-color':
       themeCssVariables.color[`${color}${faceShade}`],
     width: size,
     height: size,
     ...style,
-  } as CSSProperties;
+  };
 
   return (
     <span
