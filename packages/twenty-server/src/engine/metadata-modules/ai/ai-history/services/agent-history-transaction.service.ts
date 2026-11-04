@@ -1,10 +1,11 @@
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { isArray, isString } from '@sniptt/guards';
+import { isArray, isNull, isString } from '@sniptt/guards';
 import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -94,8 +95,12 @@ export class AgentHistoryTransactionService {
                     threadId = threadIdsByMessageId.get(record.messageId);
                   }
 
-                  if (!isString(recordId) || !isString(threadId)) {
+                  if (name === 'agentTurn' && isNull(threadId)) {
                     continue;
+                  }
+
+                  if (!isString(recordId) || !isString(threadId)) {
+                    return throwAgentChatThreadNotFound();
                   }
 
                   if (name === 'agentMessage') {
