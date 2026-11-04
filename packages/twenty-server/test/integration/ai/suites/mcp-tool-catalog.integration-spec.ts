@@ -87,8 +87,10 @@ const listMcpTools = async (
 ): Promise<
   {
     name: string;
+    title?: string;
     inputSchema: { type?: string };
     annotations?: {
+      title?: string;
       readOnlyHint: boolean;
       openWorldHint: boolean;
       destructiveHint: boolean;
@@ -335,6 +337,19 @@ describe('MCP tool catalog (integration)', () => {
       expect(toolsWithoutObjectRoot).toEqual([]);
     });
 
+    it('should give every listed tool a title', async () => {
+      const tools = await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH);
+
+      const toolsWithoutTitle = tools
+        .filter((tool) => !tool.title || tool.annotations?.title !== tool.title)
+        .map((tool) => tool.name);
+
+      expect(toolsWithoutTitle).toEqual([]);
+      expect(tools.find((tool) => tool.name === 'load_skills')?.title).toBe(
+        'Load Skills',
+      );
+    });
+
     it('should call a listed tool by name', async () => {
       const result = await callMcpTool(
         adminApiKeyToken,
@@ -358,7 +373,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+    it('should mark read tools read-only and write tools destructive', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -366,15 +381,22 @@ describe('MCP tool catalog (integration)', () => {
         ]),
       );
 
-      expect(annotationsByToolName.find_many_people).toEqual({
+      const readOnlyHints = {
         readOnlyHint: true,
         openWorldHint: false,
         destructiveHint: false,
-      });
-      expect(annotationsByToolName.create_one_person).toEqual({
+      };
+      const destructiveHints = {
         readOnlyHint: false,
         openWorldHint: true,
-        destructiveHint: false,
+        destructiveHint: true,
+      };
+
+      expect(annotationsByToolName).toMatchObject({
+        find_many_people: readOnlyHints,
+        get_views: readOnlyHints,
+        create_one_person: destructiveHints,
+        create_view: destructiveHints,
       });
     });
 

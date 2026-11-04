@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { asSchema, type ToolExecuteFunction } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,6 +12,7 @@ import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
+import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
 import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.constant';
 import {
@@ -129,18 +130,25 @@ export class McpToolExecutorService {
     const tools = await Promise.all(
       Object.entries(toolSet)
         .filter(([, tool]) => isDefined(tool.inputSchema))
-        .map(async ([name, tool]): Promise<McpListedTool> => ({
-          name,
-          // AI SDK v7 also allows a description resolver, which MCP clients cannot call
-          description: isString(tool.description)
-            ? tool.description
-            : undefined,
-          inputSchema: {
-            ...(await asSchema(tool.inputSchema).jsonSchema),
-            type: 'object',
-          },
-          annotations: tool.annotations,
-        })),
+        .map(async ([name, tool]): Promise<McpListedTool> => {
+          const title = isNonEmptyString(tool.annotations.title)
+            ? tool.annotations.title
+            : humanizeToolName(name);
+
+          return {
+            name,
+            title,
+            // AI SDK v7 also allows a description resolver, which MCP clients cannot call
+            description: isString(tool.description)
+              ? tool.description
+              : undefined,
+            inputSchema: {
+              ...(await asSchema(tool.inputSchema).jsonSchema),
+              type: 'object',
+            },
+            annotations: { ...tool.annotations, title },
+          };
+        }),
     );
 
     return { tools };

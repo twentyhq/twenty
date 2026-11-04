@@ -1,5 +1,7 @@
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
+import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
@@ -40,8 +42,20 @@ describe('getMcpRegistryToolAnnotations', () => {
     },
   );
 
+  it.each<[string, McpToolAnnotations]>([
+    ['get_view_fields', MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS],
+    ['search_help_center', MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS],
+  ])(
+    'should return read-only annotations for the static tool %p',
+    (toolId, expectedAnnotations) => {
+      expect(getMcpRegistryToolAnnotations({ kind: 'static', toolId })).toEqual(
+        expectedAnnotations,
+      );
+    },
+  );
+
   it.each<[ToolExecutionRef]>([
-    [{ kind: 'static', toolId: 'get_view_fields' }],
+    [{ kind: 'static', toolId: 'create_view_field' }],
     [
       {
         kind: 'logic_function',
