@@ -94,7 +94,7 @@ The owner and the manager are mentioned, so each has a mention to resolve; the s
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
 - A mentioned member gets the conversation in their inbox, unread, with a mention to resolve, as when a teammate mentions them. They don't need to be in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A member who is both listed and mentioned gets the mention.
 - A mentioned member must be able to have the conversation, like a listed one: otherwise the call fails with `THREAD_NOT_FOUND` and writes neither the message nor any mention.
-- Mentions are read when the message is first written. Sending it again with the same keys notifies no one, even with a different `text`; a new `idempotencyKey` mentions again.
+- Mentions are read when the message is written. Once it is, sending it again with the same keys notifies no one, even with a different `text`, while a retry after a failed send delivers them; a new `idempotencyKey` mentions again.
 - Only a complete mention notifies. One in inline code or a code block, one whose brackets are escaped (`\[\[`), and a typed `@name` notify no one. A record reference never notifies, and never shares the record.
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
 
