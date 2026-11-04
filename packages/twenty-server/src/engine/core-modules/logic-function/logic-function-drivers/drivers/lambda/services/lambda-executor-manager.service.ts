@@ -26,6 +26,7 @@ import {
   BUILD_LOCK_MAX_RETRIES,
   BUILD_LOCK_RETRY_MS,
   BUILD_LOCK_TTL_MS,
+  EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS,
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
@@ -119,6 +120,15 @@ export class LambdaExecutorManagerService {
           // see it. Without this, every queued waiter rebuilds again.
           const refreshedContext = await this.refreshBuildContext(context);
 
+          // The cached function can predate a create or update still running
+          // on AWS, and Lambda rejects a new update until that one finishes.
+          await this.clearLambdaExecutorCache(
+            refreshedContext.flatLogicFunction,
+          );
+          await this.waitForExecutorChangeInProgress(
+            refreshedContext.flatLogicFunction,
+          );
+
           const { canSkip: canSkipAfterLock, lambdaExecutor } =
             await this.checkBuildStatus(refreshedContext);
 
@@ -126,10 +136,13 @@ export class LambdaExecutorManagerService {
             return;
           }
 
-          await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
-          await this.clearLambdaExecutorCache(
-            refreshedContext.flatLogicFunction,
-          );
+          try {
+            await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
+          } finally {
+            await this.clearLambdaExecutorCache(
+              refreshedContext.flatLogicFunction,
+            );
+          }
         },
         lockKey,
         {
@@ -179,6 +192,29 @@ export class LambdaExecutorManagerService {
       ...context,
       flatApplication: refreshedFlatApplication ?? context.flatApplication,
     };
+  }
+
+  private async waitForExecutorChangeInProgress(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<void> {
+    const configuration = (await this.getLambdaExecutor(flatLogicFunction))
+      ?.Configuration;
+
+    if (configuration?.State === 'Pending') {
+      await this.awsClient.waitFunctionActive(
+        flatLogicFunction.id,
+        EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS,
+      );
+    } else if (configuration?.LastUpdateStatus === 'InProgress') {
+      await this.awsClient.waitFunctionUpdated(
+        flatLogicFunction.id,
+        EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS,
+      );
+    } else {
+      return;
+    }
+
+    await this.clearLambdaExecutorCache(flatLogicFunction);
   }
 
   async installPrebuiltBundle(context: ExecutorBuildContext): Promise<void> {
@@ -374,7 +410,10 @@ export class LambdaExecutorManagerService {
         sdkLayerArn,
         sdkClientCoreChecksum,
       });
-      await this.awsClient.waitFunctionActive(flatLogicFunction.id);
+      await this.awsClient.waitFunctionActive(
+        flatLogicFunction.id,
+        EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS,
+      );
 
       return;
     }
@@ -385,7 +424,10 @@ export class LambdaExecutorManagerService {
       sdkLayerArn,
       currentVpcConfig: lambdaExecutor.Configuration?.VpcConfig,
     });
-    await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
+    await this.awsClient.waitFunctionUpdated(
+      flatLogicFunction.id,
+      EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS,
+    );
 
     const functionArn = lambdaExecutor.Configuration?.FunctionArn;
 

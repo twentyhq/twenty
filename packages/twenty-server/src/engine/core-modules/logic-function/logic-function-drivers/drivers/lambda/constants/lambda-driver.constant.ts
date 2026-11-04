@@ -3,6 +3,8 @@ import { join, resolve } from 'path';
 import { ASSET_PATH } from 'src/constants/assets-path';
 
 export const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
+// Attaching an executor to a VPC subnet and security group pair for the first time can take several minutes.
+export const EXECUTOR_CONFIGURATION_TIMEOUT_IN_SECONDS = 300;
 export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60;
 
 export const LAMBDA_CLIENT_MAX_ATTEMPTS = 8;
