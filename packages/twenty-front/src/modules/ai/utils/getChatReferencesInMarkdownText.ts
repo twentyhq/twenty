@@ -31,7 +31,7 @@ const hasEscapedBrackets = ({
   reference,
 }: {
   text: string;
-  reference: ChatReferenceMatch;
+  reference: Pick<ChatReferenceMatch, 'index' | 'fullMatch'>;
 }): boolean =>
   isBackslashEscaped({ text, index: reference.index }) ||
   isBackslashEscaped({
@@ -77,7 +77,7 @@ const insertProbeMarkers = ({
   references,
 }: {
   text: string;
-  references: ChatReferenceMatch[];
+  references: Pick<ChatReferenceMatch, 'index'>[];
 }): string => {
   let probedText = '';
   let lastIndex = 0;
