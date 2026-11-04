@@ -15,9 +15,10 @@ export const lockAgentChatChannelForThreadWriteInTestOrThrow = ({
       query: manager.query.bind(manager),
       getRepository: <Entity extends ObjectLiteral>(
         target: EntityTarget<Entity>,
-      ) =>
-        manager.getRepository<Entity>(
-          isFunction(target) ? target.name : target,
-        ),
+      ) => {
+        const appEntityTarget = isFunction(target) ? target.name : target;
+
+        return manager.getRepository<Entity>(appEntityTarget);
+      },
     },
   });

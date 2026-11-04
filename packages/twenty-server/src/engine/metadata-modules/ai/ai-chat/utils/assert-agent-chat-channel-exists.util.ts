@@ -13,7 +13,8 @@ export const assertAgentChatChannelExists = async ({
   workspaceId: string;
   channelId: string;
 }): Promise<void> => {
-  const channel = await manager.getRepository(AgentChatChannelEntity).findOne({
+  const channelRepository = manager.getRepository(AgentChatChannelEntity);
+  const channel = await channelRepository.findOne({
     select: { id: true },
     where: { id: channelId, workspaceId },
     lock: { mode: 'for_key_share' },

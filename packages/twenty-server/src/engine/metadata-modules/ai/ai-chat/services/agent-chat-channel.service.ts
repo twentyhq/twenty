@@ -240,11 +240,12 @@ export class AgentChatChannelService {
       after: AgentChatThreadWorkspaceEntity;
     }[]
   > {
+    const channelRepository = this.coreDataSource.getRepository(
+      AgentChatChannelEntity,
+    );
     const [doesSourceChannelExist, doesSourceChannelHaveThreads] =
       await Promise.all([
-        this.coreDataSource
-          .getRepository(AgentChatChannelEntity)
-          .existsBy({ id: channelId, workspaceId }),
+        channelRepository.existsBy({ id: channelId, workspaceId }),
         this.threadRepository.existsBy(workspaceId, { channelId }),
       ]);
 

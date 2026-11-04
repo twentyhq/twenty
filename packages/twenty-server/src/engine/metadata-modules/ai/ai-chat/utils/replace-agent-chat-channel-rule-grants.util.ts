@@ -32,7 +32,7 @@ type QueryBuilderManager = Pick<EntityManager, 'createQueryBuilder'>;
 
 type ChannelRuleGrantWrite = {
   manager: QueryBuilderManager;
-  schema: string;
+  recordShareTable: string;
   threadObjectMetadataId: string;
   channelRuleGrantsQuery: SelectQueryBuilder<ObjectLiteral>;
 };
@@ -79,7 +79,7 @@ const findThreadObjectMetadataId = async ({
 
 const deleteObsoleteChannelRuleGrants = async ({
   manager,
-  schema,
+  recordShareTable,
   threadObjectMetadataId,
   recordShareScopeCondition,
   channelRuleGrantsQuery,
@@ -96,7 +96,7 @@ const deleteObsoleteChannelRuleGrants = async ({
   const obsoleteGrantIdsQuery = manager
     .createQueryBuilder()
     .select('record_share.id')
-    .from(`${schema}.recordShare`, 'record_share')
+    .from(recordShareTable, 'record_share')
     .where('record_share."objectMetadataId" = :threadObjectMetadataId', {
       threadObjectMetadataId,
     })
@@ -110,7 +110,7 @@ const deleteObsoleteChannelRuleGrants = async ({
   await manager
     .createQueryBuilder()
     .delete()
-    .from(`${schema}.recordShare`)
+    .from(recordShareTable)
     .where(`id IN (${obsoleteGrantIdsQuery.getQuery()})`)
     .setParameters(obsoleteGrantIdsQuery.getParameters())
     .execute();
@@ -118,11 +118,11 @@ const deleteObsoleteChannelRuleGrants = async ({
 
 const findScopeThreadIds = async ({
   manager,
-  schema,
+  threadTable,
   scope,
 }: {
   manager: QueryBuilderManager;
-  schema: string;
+  threadTable: string;
   scope: AgentChatChannelGrantScope;
 }): Promise<string[]> => {
   if ('threadIds' in scope) {
@@ -132,7 +132,7 @@ const findScopeThreadIds = async ({
   const channelThreads = await manager
     .createQueryBuilder()
     .select('thread.id', 'id')
-    .from(`${schema}.agentChatThread`, 'thread')
+    .from(threadTable, 'thread')
     .where('thread."channelId" = :channelId', { channelId: scope.channelId })
     .orderBy('thread.id')
     .getRawMany<{ id: string }>();
@@ -142,7 +142,7 @@ const findScopeThreadIds = async ({
 
 const insertMissingChannelRuleGrants = async ({
   manager,
-  schema,
+  recordShareTable,
   threadObjectMetadataId,
   channelRuleGrantsQuery,
   threadIds,
@@ -150,7 +150,7 @@ const insertMissingChannelRuleGrants = async ({
   const existingChannelRuleGrantQuery = manager
     .createQueryBuilder()
     .select('1')
-    .from(`${schema}.recordShare`, 'record_share')
+    .from(recordShareTable, 'record_share')
     .where('record_share."objectMetadataId" = :threadObjectMetadataId')
     .andWhere('record_share."rowCause" = :rowCause')
     .andWhere('record_share."recordId" = thread.id')
@@ -176,7 +176,7 @@ const insertMissingChannelRuleGrants = async ({
     await manager
       .createQueryBuilder()
       .insert()
-      .into(`${schema}.recordShare`, [
+      .into(recordShareTable, [
         'objectMetadataId',
         'recordId',
         'principalId',
@@ -224,13 +224,15 @@ export const replaceAgentChatChannelRuleGrants = async ({
   }
 
   const schema = getWorkspaceSchemaName(workspaceId);
+  const threadTable = `${schema}.agentChatThread`;
+  const recordShareTable = `${schema}.recordShare`;
   const scopeConditions = buildScopeConditions(scope);
   const channelRuleGrantsQuery = manager
     .createQueryBuilder()
     .select('thread.id', 'recordId')
     .addSelect('role.id', 'principalId')
     .addSelect('thread."channelId"', 'sourceId')
-    .from(`${schema}.agentChatThread`, 'thread')
+    .from(threadTable, 'thread')
     .innerJoin(
       AgentChatChannelEntity,
       'channel',
@@ -244,18 +246,23 @@ export const replaceAgentChatChannelRuleGrants = async ({
     )
     .where(ROLE_CAN_ACCESS_THREAD_CHANNEL)
     .setParameter('workspaceId', workspaceId);
+  const scopedChannelRuleGrantsQuery = channelRuleGrantsQuery
+    .clone()
+    .andWhere(scopeConditions.thread, scopeConditions.parameters);
 
   await deleteObsoleteChannelRuleGrants({
     manager,
-    schema,
+    recordShareTable,
     threadObjectMetadataId,
     recordShareScopeCondition: scopeConditions.recordShare,
-    channelRuleGrantsQuery: channelRuleGrantsQuery
-      .clone()
-      .andWhere(scopeConditions.thread, scopeConditions.parameters),
+    channelRuleGrantsQuery: scopedChannelRuleGrantsQuery,
   });
 
-  const scopeThreadIds = await findScopeThreadIds({ manager, schema, scope });
+  const scopeThreadIds = await findScopeThreadIds({
+    manager,
+    threadTable,
+    scope,
+  });
 
   for (const threadIds of chunk(
     scopeThreadIds,
@@ -263,7 +270,7 @@ export const replaceAgentChatChannelRuleGrants = async ({
   )) {
     await insertMissingChannelRuleGrants({
       manager,
-      schema,
+      recordShareTable,
       threadObjectMetadataId,
       channelRuleGrantsQuery,
       threadIds,

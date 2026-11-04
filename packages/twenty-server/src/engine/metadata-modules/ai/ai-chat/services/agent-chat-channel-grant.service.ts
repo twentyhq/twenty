@@ -99,12 +99,15 @@ export class AgentChatChannelGrantService {
   }): Promise<void> {
     const channels = await this.threadRepository.query(
       workspaceId,
-      ({ manager }) =>
-        manager.getRepository(AgentChatChannelEntity).find({
+      ({ manager }) => {
+        const channelRepository = manager.getRepository(AgentChatChannelEntity);
+
+        return channelRepository.find({
           select: { id: true },
           where: { workspaceId },
           order: { id: 'ASC' },
-        }),
+        });
+      },
     );
 
     for (const { id: channelId } of channels) {

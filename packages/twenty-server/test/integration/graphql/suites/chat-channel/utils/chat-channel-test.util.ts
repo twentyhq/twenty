@@ -474,8 +474,8 @@ export const setUpChatChannelTests = () => {
   };
 
   const startHeldTransaction = async (): Promise<QueryRunner> => {
-    const queryRunner =
-      getAppProviderByClassName<DataSource>('DataSource').createQueryRunner();
+    const coreDataSource = getAppProviderByClassName<DataSource>('DataSource');
+    const queryRunner = coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     heldQueryRunners.push(queryRunner);

@@ -606,9 +606,11 @@ describe('Chat channel access and triage through the authenticated API', () => {
         { principalType: 'ROLE', sourceId: channelId },
       ]);
 
-      await getAppProviderByClassName<AgentChatThreadService>(
+      const threadService = getAppProviderByClassName<AgentChatThreadService>(
         'AgentChatThreadService',
-      ).createThreadIfMissing({
+      );
+
+      await threadService.createThreadIfMissing({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workspaceMemberId: JANE,
         threadId,
