@@ -29,7 +29,10 @@ import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/str
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
@@ -221,7 +224,7 @@ export const AdvancedFilterSidePanelValueFormInput = ({
     !isDefined(recordFilter.relationTargetFieldMetadataId) &&
     isFieldRelationManyToOne(field) &&
     field.metadata.relationObjectMetadataNameSingular ===
-      CoreObjectNameSingular.WorkspaceMember;
+      StandardObjectNameSingular.WorkspaceMember;
 
   if (isDirectWorkspaceMemberRelationFilter) {
     return (

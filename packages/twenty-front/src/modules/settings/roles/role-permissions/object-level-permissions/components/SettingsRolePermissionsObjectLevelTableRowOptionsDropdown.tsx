@@ -1,11 +1,11 @@
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
@@ -20,6 +20,7 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
   objectPermissionDetailUrl,
   isEditable,
 }: SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps) => {
+  const { t } = useLingui();
   const dropdownId = `settings-role-object-level-options-${objectMetadataId}`;
 
   const { resetObjectPermission } = useResetObjectPermission(roleId);

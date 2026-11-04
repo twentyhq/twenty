@@ -25,6 +25,7 @@ export const mapUIMessagePartsToDBParts = (
           return {
             ...basePart,
             textContent: part.text,
+            providerMetadata: part.providerMetadata ?? null,
           };
         case 'reasoning':
           return {

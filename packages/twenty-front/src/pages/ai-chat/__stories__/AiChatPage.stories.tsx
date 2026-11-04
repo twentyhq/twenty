@@ -6,7 +6,7 @@ import {
 import { graphql, HttpResponse } from 'msw';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -99,7 +99,9 @@ const allowSelectedConversationUpdates = () => {
   const threadId = jotaiStore.get(currentAiChatThreadState.atom);
   const objectMetadataTemplate = jotaiStore
     .get(flatObjectMetadataItemsSelector.atom)
-    .find(({ nameSingular }) => nameSingular === CoreObjectNameSingular.Note);
+    .find(
+      ({ nameSingular }) => nameSingular === StandardObjectNameSingular.Note,
+    );
 
   if (
     !isDefined(workspace) ||
@@ -114,7 +116,7 @@ const allowSelectedConversationUpdates = () => {
     ...objectMetadataTemplate,
     id: CHAT_OBJECT_METADATA_ID,
     universalIdentifier: CHAT_OBJECT_METADATA_ID,
-    nameSingular: CoreObjectNameSingular.AgentChatThread,
+    nameSingular: StandardObjectNameSingular.AgentChatThread,
     namePlural: 'agentChatThreads',
     labelSingular: 'Chat',
     labelPlural: 'Chats',

@@ -31,4 +31,5 @@ export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
   canAccessFullAdminPanel: false,
   objectMetadataItem: {},
   objectMetadataLabel: '',
+  coreObjectName: null,
 };

@@ -1,9 +1,9 @@
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '~/utils/parseAndValidateVariableFriendlyStringifiedJson';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowExpectedOutputBodyInputProps = {
   label?: string;
@@ -20,6 +20,7 @@ export const WorkflowExpectedOutputBodyInput = ({
   readonly,
   onChange,
 }: WorkflowExpectedOutputBodyInputProps) => {
+  const { t } = useLingui();
   const [error, setError] = useState<string | undefined>();
   const [errorVisible, setErrorVisible] = useState(false);
 

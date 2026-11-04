@@ -17,7 +17,7 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Decorator } from '@storybook/react-vite';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -79,7 +79,7 @@ export const getCallRecordingWidgetStoryDecorator =
 
     const testObjectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
     const calendarEventObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-      CoreObjectNameSingular.CalendarEvent,
+      StandardObjectNameSingular.CalendarEvent,
     );
     const createCallRecordingFieldMetadataItem = ({
       id,
@@ -149,7 +149,7 @@ export const getCallRecordingWidgetStoryDecorator =
       {
         ...calendarEventObjectMetadataItem,
         id: CALL_RECORDING_OBJECT_METADATA_ID,
-        nameSingular: CoreObjectNameSingular.CallRecording,
+        nameSingular: StandardObjectNameSingular.CallRecording,
         namePlural: 'callRecordings',
         labelSingular: 'Call Recording',
         labelPlural: 'Call Recordings',
@@ -197,7 +197,8 @@ export const getCallRecordingWidgetStoryDecorator =
               layoutType: PageLayoutType.RECORD_PAGE,
               targetRecordIdentifier: {
                 id: 'calendar-event-id',
-                targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
+                targetObjectNameSingular:
+                  StandardObjectNameSingular.CalendarEvent,
               },
             }}
           >

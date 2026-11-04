@@ -67,12 +67,19 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         convertRecordFilterToPredicate(filter, roleId, objectMetadataItem.id),
       );
 
-      const newPredicateGroups = currentRecordFilterGroups.map((group) =>
-        convertRecordFilterGroupToPredicateGroup(
-          group,
-          roleId,
-          objectMetadataItem.id,
+      const previousPredicateGroupById = new Map(
+        (previousRole.rowLevelPermissionPredicateGroups ?? []).map(
+          (predicateGroup) => [predicateGroup.id, predicateGroup],
         ),
+      );
+
+      const newPredicateGroups = currentRecordFilterGroups.map((group) =>
+        convertRecordFilterGroupToPredicateGroup({
+          filterGroup: group,
+          roleId,
+          objectMetadataId: objectMetadataItem.id,
+          existingPredicateGroup: previousPredicateGroupById.get(group.id),
+        }),
       );
 
       return {

@@ -14,7 +14,7 @@ import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -62,16 +62,16 @@ export const SidePanelSearchRecordsPage = () => {
           <SidePanelGroup heading={t`Results`}>
             {searchResultItems.map((item) => {
               const isTaskOrNote = [
-                CoreObjectNameSingular.Task,
-                CoreObjectNameSingular.Note,
-              ].includes(item.objectNameSingular as CoreObjectNameSingular);
+                StandardObjectNameSingular.Task,
+                StandardObjectNameSingular.Note,
+              ].includes(item.objectNameSingular as StandardObjectNameSingular);
 
               const handleClick = () => {
                 if (isTaskOrNote) {
                   openRecordInSidePanel({
                     recordId: item.recordId,
                     objectNameSingular:
-                      item.objectNameSingular as CoreObjectNameSingular,
+                      item.objectNameSingular as StandardObjectNameSingular,
                   });
                 } else {
                   closeCommandMenu();

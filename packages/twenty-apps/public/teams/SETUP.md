@@ -123,6 +123,14 @@ setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#sett
 
 Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
+This adds a workspace-shared connection.
+
+Members can also add a personal connection from **Settings > App preferences**,
+which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. Each
+personal connection imports the meetings its account organizes, so every
+organizer connects their own account. Members can only finish connecting once
+a Microsoft 365 admin has consented to `OnlineMeetingTranscript.Read.All` for
+the organization. Personal connections do not claim a tenant for chat.
 
 Transcript imports are on by default. Connecting an account creates a Microsoft
 Graph subscription to the transcripts of the meetings that account organizes.

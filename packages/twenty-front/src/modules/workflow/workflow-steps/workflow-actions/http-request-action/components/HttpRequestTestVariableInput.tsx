@@ -6,9 +6,9 @@ import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-act
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledVariableInputsContainer = styled.div`
   display: flex;
@@ -27,6 +27,7 @@ export const HttpRequestTestVariableInput = ({
   actionId,
   readonly,
 }: HttpRequestTestVariableInputProps) => {
+  const { t } = useLingui();
   const httpRequestTestData = useAtomFamilyStateValue(
     httpRequestTestDataFamilyState,
     actionId,

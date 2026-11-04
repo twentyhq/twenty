@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -12,7 +12,7 @@ export const getAvatarUrl = (
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
   allowRequestsToTwentyIcons?: boolean | undefined,
 ) => {
-  if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
+  if (objectNameSingular === StandardObjectNameSingular.WorkspaceMember) {
     return record.avatarUrl ?? undefined;
   }
 

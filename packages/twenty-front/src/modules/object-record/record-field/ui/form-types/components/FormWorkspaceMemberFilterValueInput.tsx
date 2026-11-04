@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useCallback, useId, useMemo, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -28,6 +27,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -58,6 +58,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
   readonly,
   VariablePicker,
 }: FormWorkspaceMemberFilterValueInputProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const componentId = useId();
@@ -85,7 +86,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
     useRecordsForSelect({
       searchFilterText: searchFilter,
       selectedIds: selectedRecordIds,
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       limit: 10,
       allowRequestsToTwentyIcons: false,
     });
@@ -190,6 +191,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
     recordsToSelect,
     selectedRecordIds,
     selectedRecords,
+    t,
   ]);
 
   const triggerContent = (

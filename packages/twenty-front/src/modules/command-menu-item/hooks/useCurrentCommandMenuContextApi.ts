@@ -5,6 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
+import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
@@ -34,7 +35,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -50,6 +51,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const contextStoreCurrentCoreObjectName = useAtomComponentStateValue(
+    contextStoreCurrentCoreObjectNameComponentState,
   );
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
@@ -105,7 +110,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   );
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
-      CoreObjectNameSingular.AgentChatThread &&
+      StandardObjectNameSingular.AgentChatThread &&
     isDefined(agentChatThreadParticipants)
       ? (recordIds ?? [])
       : [];
@@ -228,5 +233,6 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     canAccessFullAdminPanel,
     objectMetadataItem: objectMetadataItem ?? {},
     objectMetadataLabel,
+    coreObjectName: contextStoreCurrentCoreObjectName,
   };
 };
