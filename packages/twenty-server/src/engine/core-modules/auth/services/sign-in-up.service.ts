@@ -321,11 +321,11 @@ export class SignInUpService {
         shouldShowConnectAccountStep: true,
       });
 
-      await this.addUserToWorkspaceWithinSeatLimit(
+      await this.addUserToWorkspaceWithinSeatLimit({
         user,
-        params.workspace,
-        params.roleId,
-      );
+        workspace: params.workspace,
+        roleId: params.roleId,
+      });
 
       return user;
     }
@@ -337,20 +337,24 @@ export class SignInUpService {
 
     const user = userData.existingUser;
 
-    await this.addUserToWorkspaceWithinSeatLimit(
+    await this.addUserToWorkspaceWithinSeatLimit({
       user,
-      params.workspace,
-      params.roleId,
-    );
+      workspace: params.workspace,
+      roleId: params.roleId,
+    });
 
     return user;
   }
 
-  private async addUserToWorkspaceWithinSeatLimit(
-    user: UserEntity,
-    workspace: WorkspaceEntity,
-    roleId?: string | null,
-  ) {
+  private async addUserToWorkspaceWithinSeatLimit({
+    user,
+    workspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    roleId?: string | null;
+  }) {
     try {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,

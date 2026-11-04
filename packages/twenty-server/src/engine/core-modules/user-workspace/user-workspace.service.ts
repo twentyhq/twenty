@@ -237,9 +237,9 @@ export class UserWorkspaceService {
     );
 
     const userWorkspace =
-      await this.billingSeatService.addMemberWithinSeatLimit(
-        workspace.id,
-        async () => {
+      await this.billingSeatService.addMemberWithinSeatLimit({
+        workspaceId: workspace.id,
+        addMember: async () => {
           const createdUserWorkspace = await this.create({
             userId: user.id,
             workspaceId: workspace.id,
@@ -251,7 +251,7 @@ export class UserWorkspaceService {
 
           return createdUserWorkspace;
         },
-      );
+      });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',

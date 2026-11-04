@@ -251,20 +251,24 @@ export class BillingSubscriptionUpdateService {
   ): Promise<void> {
     await this.cacheLockService.withLock(
       () =>
-        this.applySubscriptionUpdate(
+        this.applySubscriptionUpdate({
           workspaceId,
           subscriptionId,
           subscriptionUpdate,
-        ),
+        }),
       buildBillingSubscriptionUpdateLockKey(workspaceId),
     );
   }
 
-  private async applySubscriptionUpdate(
-    workspaceId: string,
-    subscriptionId: string,
-    subscriptionUpdate: SubscriptionUpdate,
-  ): Promise<void> {
+  private async applySubscriptionUpdate({
+    workspaceId,
+    subscriptionId,
+    subscriptionUpdate,
+  }: {
+    workspaceId: string;
+    subscriptionId: string;
+    subscriptionUpdate: SubscriptionUpdate;
+  }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
       {
@@ -286,7 +290,7 @@ export class BillingSubscriptionUpdateService {
     );
 
     const currentPrices =
-      await this.billingPriceService.getSubscriptionPricesFromItems(
+      await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
         stripeSubscription.items.data,
       );
 
@@ -328,7 +332,7 @@ export class BillingSubscriptionUpdateService {
         assertIsDefinedOrThrow(currentPhase);
 
         const nextPhasePrices =
-          await this.billingPriceService.getSubscriptionPricesFromItems(
+          await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
             nextPhase.items,
           );
 
@@ -373,7 +377,7 @@ export class BillingSubscriptionUpdateService {
         assertIsDefinedOrThrow(refreshedCurrentPhase);
 
         const nextPhasePrices =
-          await this.billingPriceService.getSubscriptionPricesFromItems(
+          await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
             nextPhase.items,
           );
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(

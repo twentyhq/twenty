@@ -93,10 +93,13 @@ export class BillingSeatService {
     });
   }
 
-  async addMemberWithinSeatLimit<TResult>(
-    workspaceId: string,
-    addMember: () => Promise<TResult>,
-  ): Promise<TResult> {
+  async addMemberWithinSeatLimit<TResult>({
+    workspaceId,
+    addMember,
+  }: {
+    workspaceId: string;
+    addMember: () => Promise<TResult>;
+  }): Promise<TResult> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return await addMember();
     }

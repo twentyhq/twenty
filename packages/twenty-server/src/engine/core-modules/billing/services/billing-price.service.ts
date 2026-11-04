@@ -194,7 +194,7 @@ export class BillingPriceService {
     );
   }
 
-  async getSubscriptionPricesFromItems(
+  async getSubscriptionPricesFromItemsOrThrow(
     items: { price: string | { id: string }; quantity?: number }[],
   ): Promise<SubscriptionStripePrices> {
     const phaseItemPriceIds = items.map((item) =>
