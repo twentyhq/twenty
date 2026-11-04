@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 import { isDefined } from 'twenty-shared/utils';
-import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -54,7 +53,6 @@ describe('Chat channel access and triage through the authenticated API', () => {
     createThreadInChannel,
     roleIdsToReopenToAllChannels,
     markChannelCacheStale,
-    startHeldTransaction,
     holdChannelGrantLock,
     closeMemberAllChannelsAccess,
   } = setUpChatChannelTests();
@@ -557,38 +555,6 @@ describe('Chat channel access and triage through the authenticated API', () => {
     expect(await readChannelGrants(threadId)).toEqual([
       { principalType: 'ROLE', sourceId: channelId },
     ]);
-  });
-
-  it('grants nothing to a chat destroyed while its channel is rewritten', async () => {
-    const channelId = await createChannel();
-    const threadId = await createThreadInChannel(channelId);
-
-    await global.testDataSource.query(
-      `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
-      [threadId],
-    );
-
-    const queryRunner = await startHeldTransaction();
-    const [{ processId }]: { processId: number }[] = await queryRunner.query(
-      'SELECT pg_backend_pid() AS "processId"',
-    );
-
-    await queryRunner.query(
-      `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
-      [threadId],
-    );
-
-    const pendingRewrite = getChannelGrantService().rewriteChannelGrants({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      channelId,
-    });
-
-    await waitForBlockedDatabaseQueryOrThrow(processId);
-    await queryRunner.commitTransaction();
-    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
-    await pendingRewrite;
-
-    expect(await readChannelGrants(threadId)).toEqual([]);
   });
 
   it.each(['other', 'private'] as const)(

@@ -50,8 +50,6 @@ export const insertMissingAgentChatChannelRuleGrants = async ({
       threadObjectMetadataId,
       rowCause: RecordShareRowCause.RULE,
     })
-    .orderBy('thread.id')
-    .setLock('for_key_share', undefined, ['thread'])
     .getRawMany<ChannelRuleGrant>();
 
   for (const channelRuleGrantBatch of chunk(

@@ -20,7 +20,6 @@ export const findAgentChatChannelGrantScopeThreadIds = async ({
     .select('thread.id', 'id')
     .from(threadTable, 'thread')
     .where('thread."channelId" = :channelId', { channelId: scope.channelId })
-    .orderBy('thread.id')
     .getRawMany<{ id: string }>();
 
   return channelThreads.map(({ id }) => id);
