@@ -1,0 +1,119 @@
+---
+title: Ввод
+description: Текстовое поле ввода с нативными атрибутами, интеграцией с полями и двумя размерами.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## Обзор
+
+`Input` отображает текстовое поле ввода и принимает нативные атрибуты ввода, такие как `type`, `name`, `required`, `disabled` и `autoComplete`.
+
+<StoryEmbed storyId="ui-input-input--display" title="Пример Input" height={140} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultValue`, чтобы задать начальный адрес электронной почты. Поле ввода управляет последующими изменениями.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Визуальные варианты
+
+Сравните малые и средние поля ввода в состояниях по умолчанию, фокуса, ошибки и отключения. Используйте обратную связь при валидации вместе с оформлением ошибки.
+
+<StoryEmbed storyId="ui-input-input--catalog" title="Визуальные варианты поля ввода" height={380} />
+
+## Простой внешний вид
+
+Используйте `variant="plain"` внутри существующей строки или поверхности. Он убирает заливку, границу, скруглённые углы и внутренние отступы и использует естественную высоту. Родительский элемент задаёт отступы и размеры строки. Стили текста, заполнителя и отключённого состояния остаются общими. Синяя обводка соответствует нативному поведению браузера для `:focus-visible`. Для текстовых элементов управления это может включать фокус указателя и автофокусировку, а также фокус клавиатуры. Недопустимое состояние использует контур опасности без изменения макета.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+`InputGroup` автоматически придает своему полю ввода простой вид и оставляет группу единственной рамкой фокуса и валидации. Его высоты `sm` и `md` остаются равными 24px и 32px. Отдельные простые поля ввода не используют фиксированную высоту, связанную с `size`.
+
+## Контролируемое состояние
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять тем же адресом электронной почты в состоянии React. Callback-функция получает следующее строковое значение и сведения о событии.
+
+```tsx
+import { useState } from 'react';
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
+
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Добавьте дополнение
+
+`InputGroup` управляет окружающей рамкой и высотой макета. Размер ввода определяется явным дочерним `size`, затем значением группы по умолчанию, затем `md`. Сгруппированный ввод растягивается внутри общей рамки, поэтому для изменения общей высоты поля используйте `size` группы.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## Настройка нативного элемента управления и обёртки
+
+Нативные атрибуты, обработчики, `className`, `style` и `ref` относятся к вводу. Ref получает `HTMLInputElement`. Используйте `render`, чтобы скомпоновать другой компонент ввода и перенаправить предоставленные props и ref его нативному элементу ввода.
+
+`onChange` получает событие изменения React для нативного элемента ввода. `onValueChange(value, details)` получает следующую строку и сведения о событии Base UI, включая `event`, `reason`, `cancel` и `allowPropagation`. Событие нацелено на элемент ввода. Отмена сведений сохраняет политику валидации Base UI; она не отменяет нативное редактирование. Управляемые вызывающие стороны определяют, какое значение фиксировать.
+
+При настройке окружающей обёртки задавайте стили макета, атрибуты и ref для `InputGroup`. Группа не владеет значением. Нативные `name`, `form`, `required`, `readOnly`, `disabled`, а также поведение отправки и сброса остаются у элемента ввода, а именование и валидация Field предоставляются через `Field.Root`.
+
+## Свойства
+
+Справочник включает свойства, специфичные для компонента, и унаследованные свойства Base UI. Также поддерживаются нативные атрибуты ввода. Для автономного элемента ввода по умолчанию используется `md`; внутри группы размер элемента ввода `size`, если он не указан, наследует размер группы.
+
+<InputReference />
+
+<PageBanner illustration="page-cover-input" />

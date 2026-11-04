@@ -2,8 +2,8 @@ import { useMutation } from '@apollo/client/react';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type ApplicationHealthCheckResult,
   RunApplicationHealthCheckDocument,
+  type RunApplicationHealthCheckMutation,
 } from '~/generated-metadata/graphql';
 
 export const useApplicationHealthCheck = ({
@@ -18,7 +18,9 @@ export const useApplicationHealthCheck = ({
   );
 
   const [healthCheckResult, setHealthCheckResult] =
-    useState<ApplicationHealthCheckResult | null>(null);
+    useState<RunApplicationHealthCheckMutation['runApplicationHealthCheck']>(
+      null,
+    );
 
   const runHealthCheck = useCallback(async () => {
     if (!isDefined(healthCheckLogicFunctionId)) {

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -30,6 +32,7 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
+import { validateRichTextWidgetBodyOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-rich-text-widget-body-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -48,6 +51,27 @@ export class PageLayoutWidgetService {
     private readonly applicationService: ApplicationService,
     private readonly dashboardSyncService: DashboardSyncService,
   ) {}
+
+  async findWidgetApplication({
+    applicationId,
+    workspaceId,
+    workspaceCustomApplicationId,
+    callingApplication,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): Promise<
+    Pick<FlatApplication, 'name' | 'grantedIframeMediaPermissions'> | undefined
+  > {
+    return this.applicationService.findReadableInstalledFlatApplication({
+      applicationId,
+      workspaceId,
+      workspaceCustomApplicationId,
+      callingApplication,
+    });
+  }
 
   private async getFlatPageLayoutWidgetMaps(
     workspaceId: string,
@@ -98,9 +122,9 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async enrichRichTextConfigurationBody(
+  private enrichRichTextConfigurationBody(
     configuration: AllPageLayoutWidgetConfiguration,
-  ): Promise<AllPageLayoutWidgetConfiguration> {
+  ): AllPageLayoutWidgetConfiguration {
     if (
       configuration.configurationType !==
       WidgetConfigurationType.STANDALONE_RICH_TEXT
@@ -108,18 +132,16 @@ export class PageLayoutWidgetService {
       return configuration;
     }
 
-    if (!isDefined(configuration.body)) {
+    if (!isPlainObject(configuration.body)) {
       return configuration;
     }
 
-    try {
-      return {
-        ...configuration,
-        body: await transformRichTextValue(configuration.body),
-      };
-    } catch {
-      return configuration;
-    }
+    validateRichTextWidgetBodyOrThrow(configuration.body);
+
+    return {
+      ...configuration,
+      body: transformRichTextValue(configuration.body),
+    };
   }
 
   private async validateConfigurationFieldReferences({
@@ -225,7 +247,7 @@ export class PageLayoutWidgetService {
     const createInput = isDefined(input.configuration)
       ? {
           ...input,
-          configuration: await this.enrichRichTextConfigurationBody(
+          configuration: this.enrichRichTextConfigurationBody(
             input.configuration,
           ),
         }
@@ -362,7 +384,7 @@ export class PageLayoutWidgetService {
       isConfigurationBeingUpdated && isDefined(updateData.configuration)
         ? {
             ...updateData,
-            configuration: await this.enrichRichTextConfigurationBody(
+            configuration: this.enrichRichTextConfigurationBody(
               updateData.configuration,
             ),
           }

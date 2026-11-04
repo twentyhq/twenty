@@ -84,6 +84,7 @@ export class DeleteGaugeWidgetsCommand extends ProvisionedWorkspaceCommandRunner
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             pageLayoutWidget: {
               flatEntityToCreate: [],

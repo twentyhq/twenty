@@ -1,0 +1,21 @@
+---
+title: رموز التصميم
+description: استعرض متغيرات CSS المُولَّدة والقيم الفاتحة والداكنة المستخدمة بواسطة Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import TokenReference from '/snippets/ui/generated/tokens.mdx';
+
+## نظرة عامة
+
+يتم إنشاء هذا المرجع من تعريفات الرموز نفسها التي تُستخدم في أوراق أنماط سمة Twenty UI. تتوافق مسارات الرموز مع الإدخالات في `themeCssVariables` و`useTheme()`؛ ويمكن استخدام أسماء متغيرات CSS مباشرةً في أوراق الأنماط.
+
+* فضّل الرموز الدلالية مثل `background.primary` و`font.color.primary` لأسطح التطبيق والنصوص.
+* الرموز الرقمية بلا وحدات في CSS. اضربها في طول عند الحاجة، على سبيل المثال `calc(var(--t-icon-size-md) * 1px)`. ضمن `ThemeProvider` مُركّب مع تحميل ورقة أنماط السمة، تحوّل `useTheme()` هذه القيم إلى أرقام JavaScript؛ ومن دون موفّر، تُرجع مراجع متغيرات CSS.
+* القيم التي تحتوي على `var(...)` أو `calc(...)` هي تعبيرات CSS، وليست قياسات محسوبة مسبقًا.
+* القيم أدناه هي قيم ورقة الأنماط الأساسية. يمكن لتجاوزات السمة وأنماط squircle المدعومة تغيير القيم المحسوبة. تُضاعف أنماط squircle رموز نصف القطر المحددة؛ بينما تحتفظ رموز round وpill الصريحة بأنصاف أقطارها الأساسية.
+
+<TokenReference />
+
+<PageBanner illustration="page-cover-palette" />

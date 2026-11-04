@@ -9,7 +9,13 @@ import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-
 
 type CalendarEventsPage = {
   calendarEvents?: {
-    edges?: Array<{ node: CalendarEventCandidate }>;
+    edges?: Array<{
+      node: {
+        id: string;
+        startsAt?: string | null;
+        conferenceLink?: CalendarEventCandidate['conferenceLink'];
+      };
+    }>;
     pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
   };
 };
@@ -60,9 +66,17 @@ export const listCalendarEventsInWindow = async ({
     });
     const pageInfo = queryResult.calendarEvents?.pageInfo;
 
-    calendarEvents.push(
-      ...(queryResult.calendarEvents?.edges ?? []).map((edge) => edge.node),
-    );
+    for (const { node } of queryResult.calendarEvents?.edges ?? []) {
+      if (!isNonEmptyString(node.startsAt)) {
+        return undefined;
+      }
+
+      calendarEvents.push({
+        id: node.id,
+        startsAt: node.startsAt,
+        conferenceLink: node.conferenceLink ?? null,
+      });
+    }
 
     if (pageInfo?.hasNextPage !== true) {
       return calendarEvents;

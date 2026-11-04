@@ -4,6 +4,11 @@
   @include CardOwner.card-owner;
 
   --card-section-background-color: initial;
+  --card-default-section-background-color: initial;
+  --card-header-padding: initial;
+  --card-header-border-width: initial;
+  --card-content-padding: initial;
+  --card-footer-padding: initial;
 
   background-color: var(--card-background-color, transparent);
   border: 1px solid var(--t-border-color-medium);
@@ -16,5 +21,13 @@
 
   &[data-full-width] {
     width: 100%;
+  }
+
+  &[data-variant='compact'] {
+    --card-default-section-background-color: var(--t-background-secondary);
+    --card-header-padding: var(--t-spacing-2);
+    --card-header-border-width: 0px;
+    --card-content-padding: 0 var(--t-spacing-2);
+    --card-footer-padding: var(--t-spacing-2);
   }
 }

@@ -1,6 +1,4 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
-
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
 import {
@@ -9,8 +7,10 @@ import {
 } from 'twenty-shared/metadata';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useLingui } from '@lingui/react/macro';
 
 export const useMetadataErrorHandler = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const TRANSLATED_OPERATION_TYPE = {
@@ -49,15 +49,20 @@ export const useMetadataErrorHandler = () => {
     frontComponent: t`front component`,
     navigationMenuItem: t`navigation menu item`,
     webhook: t`webhook`,
+    mcpServer: t`MCP server`,
     viewSort: t`view sort`,
     applicationVariable: t`application variable`,
     connectionProvider: t`connection provider`,
+    messagingProvider: t`messaging provider`,
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
     settingsMenuItem: t`settings menu item`,
+    relatedRecordPath: t`related record path`,
     validationRule: t`validation rule`,
     workflow: t`workflow`,
     workflowVersion: t`workflow version`,
+    agentChatChannel: t`channel`,
+    agentChatChannelRole: t`channel role`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

@@ -2,11 +2,13 @@
 title: Display Number of Emails Received
 description: Create a workflow to automatically count and display the number of emails received from each contact.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}}/>
-
 ## Overview
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}}/>
 
 This workflow triggers every time a new email is received and updates a custom field on the Person record with the total count of emails from that sender.
 
@@ -68,3 +70,5 @@ The `totalCount` value from the Search Records action represents the total numbe
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 - [Create Custom Fields](/user-guide/data-model/how-tos/customize-your-data-model)
 - [Search Records Action](/user-guide/workflows/capabilities/workflow-actions#search-records)
+
+<PageBanner illustration="page-cover-email" />

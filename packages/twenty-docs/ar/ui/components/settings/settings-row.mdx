@@ -1,0 +1,189 @@
+---
+title: صف الإعدادات
+description: صف مفتاح تبديل مُسمّى بخصائص عناصر تحكم مسطّحة وتكوين تسمية أصلي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## نظرة عامة
+
+يجمع `SettingsRow` بين مظهر [ListItem](/ar/ui/primitives/navigation/list-item) و[Switch](/ar/ui/primitives/input/switch). يعرض تسمية أصلية مرتبطة بمفتاح التبديل الخاص به. يوفّر تطبيقك محتوى الصف ويتولى أي تحديثات للتفضيلات.
+
+<StoryEmbed storyId="ui-components-settingsrow--display" title="مثال على صف الإعدادات" height={110} />
+
+## استخدام
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## خيارات العرض
+
+قارن أحجام مفاتيح التبديل وحالات التفعيل والتعطيل والقراءة فقط.
+
+<StoryEmbed storyId="ui-components-settingsrow--catalog" title="أحجام وحالات صف الإعدادات" height={520} />
+
+## تهيئة مفتاح التبديل
+
+مرّر [خصائص Switch](/ar/ui/primitives/input/switch) مباشرةً إلى `SettingsRow`. تُهيّئ حالة التحديد وتفاصيل الحدث وسلوك التعطيل والقراءة فقط والحجم وإعدادات النموذج الأصلية والمعالجات والمراجع وتركيب العرض المفتاح. يوفّر `children` تسمية الصف المرئية.
+
+استخدم `checked` و`onCheckedChange` عندما يملك تطبيقك القيمة. يتلقى المعالج حالة التحديد التالية وتفاصيل حدث Base UI. يؤدي النقر على التسمية أو المفتاح إلى استدعائه مرة واحدة. استدعِ `eventDetails.cancel()` لرفض تغيير، وأبقِ قيمتك المتحكَّم بها دون تغيير عند إلغاء التغيير.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startElement={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+استخدم `defaultChecked` لإعداد غير متحكَّم به. يركّز مستخدمو لوحة المفاتيح على المفتاح ويضغطون مفتاح المسافة. يعطّل `disabled` عنصر التحكم ويطبّق مظهر الصف المعطّل. يمنع `readOnly` التغييرات مع إبقاء المفتاح قابلاً للتركيز.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## محتوى الصف والنص المتاح
+
+تقبل `children` و`startElement` و`description` العُقد التي يملكها المستدعي. يوفّر العنصران الفرعيان الاسم المتاح للمفتاح، ويوفّر الوصف وصفه المتاح. أبقِ المحتوى داخل التسمية غير تفاعلي. استخدم [ListItemButton](/ar/ui/components/navigation/list-item-button) لصفوف الإجراءات، أو أنشئ [ListItem](/ar/ui/primitives/navigation/list-item) مع رابط للتنقل.
+
+<StoryEmbed storyId="ui-components-settingsrow--with-description" title="صف إعدادات مع وصف" height={110} />
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+عيّن `aria-label` أو `aria-labelledby` أو `aria-describedby` لتوفير النص المتاح الخاص بك للمفتاح. يستبدل `aria-label` الصريح ارتباط الاسم المُنشأ؛ وتستبدل قيمتا `aria-labelledby` و`aria-describedby` الصريحتان الارتباطات المُنشأة المقابلة.
+
+## الأهداف الأصلية والتركيب
+
+تُهيّئ الخصائص الأصلية العادية عنصر التحكم. لتخصيص التسمية اسمان صريحان:
+
+| الخصائص                                                                   | الهدف                                  |
+| ------------------------------------------------------------------------- | -------------------------------------- |
+| السمات الأصلية والمعالجات و`className` و`style` و`ref` و`render`          | جذر Switch المرئي                      |
+| `inputRef` و`name` و`value` و`uncheckedValue` و`required` و`form`         | مربع الاختيار الأصلي الأساسي لـ Switch |
+| `labelRef` والسمات والمعالجات والفئات والأنماط المتوفرة عبر `labelRender` | التسمية الأصلية الخارجية               |
+
+تتم إدارة `htmlFor` الخاصة بالتسمية داخليًا وتتبع `id`، أو معرّف عنصر تحكم مُنشأ عند عدم توفير أي معرّف. باستخدام تركيب Switch الافتراضي، يحدد هذا المعرّف مربع الاختيار الأساسي. باستخدام `nativeButton`، يحدد الزر المرئي. يستهدف `ref` الجذر المرئي في كلتا الحالتين.
+
+استخدم `labelRender` لتخصيص التسمية الأصلية للصف. احتفظ بعنصر تسمية ومرّر خصائص رد نداء العرض إلى عنصرك. تحتوي `props.children` الخاصة به على الصف الكامل، بما في ذلك المفتاح. يدمج تركيب العنصر فئاته وأنماطه مع الإعدادات الافتراضية للصف.
+
+```tsx
+import { useRef } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const ComposedNotificationSetting = () => {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const controlRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <SettingsRow
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+يتلقى `onClick` نقرات عنصر التحكم. تتلقى المعالجات الأصلية المتوفرة عبر `labelRender` أحداث التسمية وأحداث عنصر التحكم الفقاعية. يمنع استدعاء `preventDefault()` عند النقر على تسمية تفعيل عنصر التحكم الأصلي الخاص بها. استخدم `onCheckedChange` لتحديثات التفضيلات، بدلاً من استنتاج الحالة من نقرة على تسمية.
+
+يكون حجم المفتاح افتراضيًا `size="sm"`؛ استخدم `"md"` لمفتاح أكبر. يبقى ارتفاع الصف كما هو. يطبّق `focused` مظهر الصف المميز دون نقل تركيز لوحة المفاتيح. تقبل `className` و`style` و`render` ردود نداء حالة Switch وتخصص عنصر التحكم. وفّر فئات التسمية وأنماطها عبر `labelRender` لتخصيص الصف.
+
+## عارض مكوّن الواجهة الأمامية
+
+داخل مكوّن واجهة أمامية، استخدم تركيب الزر الأصلي لمفتاح متداخل في تسمية الصف:
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const FrontComponentNotificationSetting = () => (
+  <SettingsRow nativeButton render={<button />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+يُفعّل هذا التركيب مرة واحدة عند النقر على التسمية أو عنصر التحكم. لا يمكن لجسر الأحداث غير المتزامن للعارض إلغاء التفعيل الافتراضي لتسمية المضيف في الوقت المناسب لعنصر تحكم قائم على span، مما قد ينتج عنه ردود نداء تغيير مكررة عند النقر المباشر على عنصر التحكم. تُرشَّح أيضًا سمات التحقق من النموذج الأصلية مثل `required` بواسطة العارض الحالي. يحتفظ `SettingsRow` المستقل بعقد نموذج Switch الكامل.
+
+## النماذج وإعادة التعيين
+
+تُهيّئ `name` و`value` و`required` مربع الاختيار الأساسي لإرسال النموذج والتحقق منه. يرسل المفتاح المحدد قيمته. يهمل المفتاح غير المحدد القيمة ما لم يتم توفير `uncheckedValue`. استخدم `form` لربط الإدخال بنموذج خارج شجرة أصل الصف.
+
+لإعادة تعيين نموذج متحكَّم به، استعد قيمة التحديد التي يملكها التطبيق في معالج `onReset` الخاص بالنموذج. لا يستعيد Base UI 1.8 حالة المفتاح غير المتحكَّم بها عند إعادة تعيين النموذج الأصلية. يحافظ `SettingsRow` على هذا السلوك السابق.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const NotificationPreferences = () => {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <form onReset={() => setEnabled(true)}>
+      <SettingsRow
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+      >
+        Notifications
+      </SettingsRow>
+      <Button type="reset">Reset</Button>
+    </form>
+  );
+};
+```
+
+## الخصائص
+
+<SettingsRowReference />
+
+<PageBanner illustration="settings" />

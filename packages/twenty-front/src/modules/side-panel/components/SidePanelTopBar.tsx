@@ -228,12 +228,17 @@ export const SidePanelTopBar = ({
           <>
             <Input
               variant="plain"
+              hasFocusRing={false}
               size="sm"
               aria-label={t`Search`}
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
               value={sidePanelSearch}
-              placeholder={t`Type anything...`}
+              placeholder={
+                sidePanelPage === SidePanelPages.SearchAiChats
+                  ? t`Search chat titles...`
+                  : t`Type anything...`
+              }
               onChange={handleSearchChange}
               onKeyDownCapture={handleInputKeyDownCapture}
               onFocus={handleInputFocus}

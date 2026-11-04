@@ -9,13 +9,20 @@ import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 
 const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
+  __typename: 'Agent',
   id: 'agent-1',
   name: 'leadQualifier',
   label: 'Lead qualifier',
+  description: null,
+  icon: null,
   prompt: 'Prompt',
   modelId: 'workspace-default-model',
-  isCustom: true,
+  responseFormat: null,
+  roleId: null,
+  modelConfiguration: null,
+  applicationId: null,
   isSystem: false,
+  isActive: true,
   triggers: [],
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
@@ -71,6 +78,48 @@ describe('isCoreAgentMatchingFilterSettings', () => {
     expect(
       isCoreAgentMatchingFilterSettings({ agent: systemAgent, filterSettings }),
     ).toBe(false);
+  });
+
+  it('should match names exactly and case sensitively with IS', () => {
+    const filterSettings = {
+      stepFilters: [
+        buildNameStepFilter({
+          operand: ViewFilterOperand.IS,
+          value: 'Lead qualifier',
+        }),
+      ],
+    };
+
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: userAgent, filterSettings }),
+    ).toBe(true);
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: systemAgent, filterSettings }),
+    ).toBe(false);
+    expect(
+      isCoreAgentMatchingFilterSettings({
+        agent: buildAgent({ label: 'lead qualifier' }),
+        filterSettings,
+      }),
+    ).toBe(false);
+  });
+
+  it('should leave out the exact name with IS_NOT', () => {
+    const filterSettings = {
+      stepFilters: [
+        buildNameStepFilter({
+          operand: ViewFilterOperand.IS_NOT,
+          value: 'Lead qualifier',
+        }),
+      ],
+    };
+
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: userAgent, filterSettings }),
+    ).toBe(false);
+    expect(
+      isCoreAgentMatchingFilterSettings({ agent: systemAgent, filterSettings }),
+    ).toBe(true);
   });
 
   it('should honor the root logical operator', () => {

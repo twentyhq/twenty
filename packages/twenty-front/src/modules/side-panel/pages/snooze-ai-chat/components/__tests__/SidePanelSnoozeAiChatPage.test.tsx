@@ -6,6 +6,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -14,11 +15,18 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
+const snoozeAgentChatThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
   useUpdateAgentChatThreadInboxState: () => ({
     updateAgentChatThreadInboxState,
+  }),
+}));
+
+jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+  useSnoozeAgentChatThreadsInChannel: () => ({
+    snoozeAgentChatThreadsInChannel,
   }),
 }));
 
@@ -65,6 +73,25 @@ describe('SidePanelSnoozeAiChatPage', () => {
     expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       action: 'SNOOZE',
+      snoozedUntil: new Date(2026, 9, 1, 18, 0),
+    });
+  });
+
+  it('snoozes the chats for their channel from a channel view', () => {
+    jotaiStore.set(
+      isSnoozeAiChatForChannelComponentState.atomFamily({
+        instanceId: PAGE_ID,
+      }),
+      true,
+    );
+
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByText('This evening'));
+
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
+      threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
   });

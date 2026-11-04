@@ -3,7 +3,7 @@ title: Configura un trigger webhook
 description: Ricevi dati da servizi esterni per attivare i flussi di lavoro.
 ---
 
-I trigger webhook consentono ai servizi esterni di avviare i tuoi flussi di lavoro inviando dati a un URL univoco. Usali per connettere moduli, app di terze parti e integrazioni personalizzate.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Quando utilizzare i webhook
 
@@ -61,12 +61,12 @@ Ora aggiungi azioni che utilizzano i dati del webhook:
 2. Seleziona l'oggetto **People**
 3. Mappa i campi:
 
-| Campo   | Valore                                            |
-| ------- | ------------------------------------------------- |
-| Nome    | `{{trigger.body.firstName}}`                      |
-| Cognome | `{{trigger.body.lastName}}`                       |
-| Email   | `{{trigger.body.email}}`                          |
-| Azienda | Cerca o crea in base a `{{trigger.body.company}}` |
+| Campo   | Valore                                       |
+| ------- | -------------------------------------------- |
+| Nome    | `{{trigger.firstName}}`                      |
+| Cognome | `{{trigger.lastName}}`                       |
+| Email   | `{{trigger.email}}`                          |
+| Azienda | Cerca o crea in base a `{{trigger.company}}` |
 
 ### Passaggio 5: Testa il webhook
 
@@ -107,7 +107,7 @@ Se il tuo webhook invia dati annidati:
 }
 ```
 
-Fai riferimento con: `{{trigger.body.contact.email}}`
+Fai riferimento con: `{{trigger.contact.email}}`
 
 ### Array
 
@@ -168,3 +168,5 @@ Per maggiori dettagli sulla gestione degli array, vedi [Gestire gli array nelle 
 
 * [Trigger dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-triggers)
 * [Azioni dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="card-page-webhooks" />

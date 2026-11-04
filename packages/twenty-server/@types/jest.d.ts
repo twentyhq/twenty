@@ -36,6 +36,7 @@ declare global {
   var workflowTestServices: ReturnType<typeof createWorkflowTestServices>;
   var app: INestApplication;
   var dataSourceService: DataSourceService;
+  var jobDrainState: { lastStalledFingerprint: string | null };
 }
 
 export {};

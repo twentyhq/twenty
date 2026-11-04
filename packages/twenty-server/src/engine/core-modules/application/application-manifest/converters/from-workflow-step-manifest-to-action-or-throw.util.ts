@@ -22,11 +22,16 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
   index: number;
   references: WorkflowManifestReferences;
 }): WorkflowAction => {
-  const { resolve, objectName, field, fieldReference } =
-    buildWorkflowManifestReferenceResolvers({
-      references,
-      subject: `Workflow step ${step.name}`,
-    });
+  const {
+    resolve,
+    objectName,
+    field,
+    fieldReference,
+    connectedAccountIdOrThrow,
+  } = buildWorkflowManifestReferenceResolvers({
+    references,
+    subject: `Workflow step ${step.name}`,
+  });
   let input: unknown;
   switch (step.type) {
     case 'LOGIC_FUNCTION':
@@ -41,14 +46,27 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       break;
     case 'AI_AGENT': {
       const { agentUniversalIdentifier, ...rest } = step.input;
-      input = {
-        ...rest,
-        agentId: resolve(
-          references.agentIdByUniversalIdentifier,
-          agentUniversalIdentifier,
-          'application agent',
-        ),
-      };
+
+      // the scope names objects and fields by universal identifier, so it is checked rather than rewritten
+      for (const { objectUniversalIdentifier } of rest.scope
+        ?.objectPermissions ?? []) {
+        objectName(objectUniversalIdentifier);
+      }
+      for (const { objectUniversalIdentifier, fieldUniversalIdentifier } of rest
+        .scope?.fieldPermissions ?? []) {
+        field(fieldUniversalIdentifier, objectUniversalIdentifier);
+      }
+
+      input = isDefined(agentUniversalIdentifier)
+        ? {
+            ...rest,
+            agentId: resolve(
+              references.agentIdByUniversalIdentifier,
+              agentUniversalIdentifier,
+              'application agent',
+            ),
+          }
+        : rest;
       break;
     }
     case 'CREATE_RECORD':
@@ -131,6 +149,37 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     }
     case 'FORM':
       input = step.input.map((formField) => {
+        if (formField.type === 'SELECT' || formField.type === 'MULTI_SELECT') {
+          const { selectedFieldUniversalIdentifier, ...settings } =
+            formField.settings ?? {};
+          if (typeof selectedFieldUniversalIdentifier !== 'string') {
+            throw new ApplicationException(
+              'Select fields require the universal identifier of the field whose options they offer',
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`The workflow select field must reference an existing field.`,
+              },
+            );
+          }
+          const selectedField = field(selectedFieldUniversalIdentifier);
+          if (selectedField.type !== formField.type) {
+            throw new ApplicationException(
+              `Select field ${formField.name} must reference a ${formField.type} field`,
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`The workflow select field must reference a field of the same type.`,
+              },
+            );
+          }
+          return {
+            ...formField,
+            settings: {
+              selectType: 'EXISTING_FIELD',
+              ...settings,
+              selectedFieldId: selectedField.id,
+            },
+          };
+        }
         if (formField.type !== 'RECORD') {
           return formField;
         }
@@ -163,6 +212,21 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
         ),
       };
       break;
+    case 'SEND_EMAIL':
+    case 'DRAFT_EMAIL':
+    case 'CREATE_CALENDAR_EVENT': {
+      const { connectedAccountHandle, ...rest } = step.input;
+      input = isDefined(connectedAccountHandle)
+        ? {
+            ...rest,
+            connectedAccountId: connectedAccountIdOrThrow({
+              stepType: step.type,
+              handle: connectedAccountHandle,
+            }),
+          }
+        : rest;
+      break;
+    }
     default:
       input = step.input;
   }
@@ -172,7 +236,9 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     type: step.type,
     valid: true,
     nextStepIds: step.nextStepIds,
-    position: step.position ?? { x: 0, y: (index + 1) * 180 },
+    ...(step.position === null
+      ? {}
+      : { position: step.position ?? { x: 0, y: (index + 1) * 180 } }),
     settings: {
       input: structuredClone(input),
       outputSchema: structuredClone(

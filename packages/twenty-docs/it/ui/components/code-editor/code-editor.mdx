@@ -1,0 +1,194 @@
+---
+title: CodeEditor
+description: Modifica e visualizza il codice in un editor Monaco con lo stile del tema Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CodeEditorReference from '/snippets/ui/generated/components/code-editor/code-editor.mdx';
+import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-editor/code-editor-header.mdx';
+
+## Panoramica
+
+`CodeEditor` esegue il rendering di un editor [Monaco](https://microsoft.github.io/monaco-editor/) che segue il tema Twenty in modalità chiara e scura. `CodeEditorHeader` aggiunge sopra di esso una barra per un titolo, schede o azioni. Entrambi provengono da `twenty-ui/components/code-editor`, un punto di ingresso separato, quindi il resto di Twenty UI funziona senza Monaco.
+
+<StoryEmbed storyId="ui-components-codeeditor--display" title="Esempio di editor di codice" height={280} />
+
+## Utilizzo
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+
+export const WorkspaceEditor = () => (
+  <>
+    <CodeEditorHeader title="workspace.json" />
+    <CodeEditor
+      variant="with-header"
+      language="json"
+      defaultValue={JSON.stringify(
+        { name: 'Acme', plan: 'Pro', seats: 12 },
+        null,
+        2,
+      )}
+      height={160}
+    />
+  </>
+);
+```
+
+## Impostazione
+
+Installa le dipendenze peer facoltative dell'editor:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+L'editor carica il pacchetto `monaco-editor` installato anziché una copia da una CDN. Monaco esegue funzionalità del linguaggio come la convalida e il completamento automatico nei web worker, e la creazione di questi worker dipende dal tuo bundler. Prima che venga montato un editor, definisci `MonacoEnvironment.getWorker` come descritto nella [guida all'integrazione ESM di Monaco](https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md). Senza di esso, l'editor viene comunque renderizzato, ma le funzionalità del linguaggio non sono disponibili.
+
+L'editor di codice non viene ancora eseguito all'interno dei [front component](/it/developers/extend/apps/layout/front-components).
+
+## Contenuto controllato
+
+```tsx
+import { useState } from 'react';
+import { isDefined } from 'twenty-ui/utilities';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const PayloadEditor = () => {
+  const [payload, setPayload] = useState('{\n  "name": "Acme"\n}');
+
+  return (
+    <CodeEditor
+      language="json"
+      value={payload}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          setPayload(value);
+        }
+      }}
+      height={200}
+    />
+  );
+};
+```
+
+`CodeEditorProps` include il contratto dell'editor Monaco React installato. `onChange(value, event)` riceve il contenuto (`string | undefined`) e l'`IModelContentChangedEvent` originale, inclusi gli intervalli modificati, la versione e i dettagli di annullamento/ripristino. Gestisci un valore non definito nel punto di confine in cui la tua applicazione richiede una stringa.
+
+`beforeMount(monaco)` viene eseguito dopo la definizione del tema Twenty e prima della creazione dell'editor. `onMount(editor, monaco)` riceve l'istanza dell'editor dopo l'applicazione del tema selezionato. `onValidate(markers)` riceve le diagnostiche di Monaco senza modifiche. `overrideServices` viene passato alla creazione dell'editor.
+
+Viene visualizzato un `Loader` di Twenty finché Monaco non viene caricato. Passa `loading` per personalizzare quel contenuto oppure imposta `isLoading` per mantenerlo visibile mentre vengono caricati i tuoi dati. `isLoading` smonta un editor esistente e segue le regole di eliminazione dei modelli di Monaco React.
+
+## Modelli e valori
+
+Usa `defaultValue`, `defaultLanguage` e `defaultPath` per inizializzare un modello non controllato, oppure `value`, `language` e `path` per gli aggiornamenti. Queste prop mantengono il comportamento di Monaco React, incluse le sue regole per la scelta dei valori iniziali e il riutilizzo di un URI di modello esistente. La modifica di `defaultValue` non sovrascrive un modello già esistente.
+
+La modifica di `path` seleziona o crea un modello. `saveViewState` è impostato su true per impostazione predefinita e ripristina lo stato del cursore e dello scorrimento del modello quando si torna indietro. `line` mostra una riga quando l'editor viene montato o la prop cambia. `keepCurrentModel` è impostato su false per impostazione predefinita; quando è true, il chiamante gestisce l'eliminazione del modello conservato.
+
+```tsx
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const FileEditor = () => (
+  <CodeEditor
+    defaultPath="file:///workspace/settings.json"
+    defaultLanguage="json"
+    defaultValue={'{\n  "name": "Acme"\n}'}
+    saveViewState
+  />
+);
+```
+
+## Integrazione nativa
+
+`ref` punta al div esterno del gruppo Twenty, che usa `display: contents` per impostazione predefinita. Questo mantiene la sezione Monaco nel layout flex e nel dimensionamento del genitore. Il div esterno non ha un riquadro di layout misurabile.
+
+Usa `containerProps` per gli attributi nativi, i gestori di eventi, la classe e lo stile del div esterno. Sfondo, bordo, spaziatura interna e dimensioni richiedono la sostituzione di `display`. Per gli stili di layout e un ref nativo misurabile, preferisci la sezione `wrapperProps` di Monaco React. `className` seleziona il div del contenitore dell'editor all'interno di quella sezione; usa `onMount` per l'istanza dell'editor Monaco.
+
+La sezione Monaco React contiene il proprio contenuto di caricamento finché l'editor non è pronto. Durante la configurazione iniziale di Monaco inclusa nel bundle o con `isLoading`, Twenty esegue il rendering di un loader separato senza `wrapperProps` o `className`. `containerProps` e `ref` esterni rimangono disponibili in questi stati.
+
+```tsx
+import { useRef } from 'react';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const NamedEditor = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <CodeEditor
+      ref={containerRef}
+      containerProps={{ id: 'payload-editor' }}
+      wrapperProps={{ 'data-editor-surface': 'payload' }}
+      options={{ ariaLabel: 'Payload code' }}
+    />
+  );
+};
+```
+
+## Aggiungi un'intestazione
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ScriptEditorProps = {
+  script: string;
+  onRun: () => void;
+};
+
+export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
+  <div>
+    <CodeEditorHeader
+      title="index.ts"
+      endElement={
+        <Button size="sm" onClick={onRun}>
+          Run
+        </Button>
+      }
+    />
+    <CodeEditor language="typescript" value={script} variant="with-header" />
+  </div>
+);
+```
+
+`variant="with-header"` rimuove il bordo superiore dell'editor affinché si unisca all'intestazione. Usa `borderless` quando l'editor si trova all'interno di una superficie che ha già un bordo.
+
+L'intestazione accetta contenuto di nodi in `title`, `startElement` e `endElement`. Usa frammenti per più schede o azioni. Le prop native, `className`, `style` e `ref` hanno come destinazione il relativo div radice. Usa `render` per sostituire tale radice, ad esempio `render={<header />}`. La prop `title` fornisce contenuto visibile; per impostare un attributo title nativo, passalo all'elemento fornito a `render`.
+
+## Dimensioni e aspetto
+
+L'editor è alto 450px e largo 100% per impostazione predefinita. `width` e `height` accettano pixel o una lunghezza CSS.
+
+Il dimensionamento segue questo ordine:
+
+1. `resizable` parte dall'altezza visualizzata, incluse le lunghezze CSS, entro i limiti da 50px a 500px della maniglia di ridimensionamento. Aggiunge una maniglia dopo il montaggio di Monaco. Il trascinamento o l'input da tastiera impostano quindi un'altezza in pixel. La modifica di `height` la reimposta entro gli stessi limiti.
+2. Altrimenti, `autoHeight` usa l'altezza del contenuto di Monaco. L'altezza esplicita o predefinita viene usata finché il contenuto non viene misurato.
+3. Altrimenti, viene applicato il valore `height` esplicito o predefinito.
+
+Monaco React abilita `automaticLayout` per impostazione predefinita. Se lo disabiliti in `options`, la tua applicazione deve chiamare `editor.layout()` quando il contenitore cambia dimensione. Il valore nativo `wrapperProps.style` viene passato senza modifiche e può sovrascrivere la larghezza o l'altezza della sezione.
+
+Passa un `resizeLabel` localizzato per denominare la maniglia di ridimensionamento per gli screen reader.
+
+Twenty fornisce valori predefiniti per carattere, formattazione, barra di scorrimento, minimappa e spaziatura interna. `contentPadding="comfortable"` aumenta anche lo spazio tra i numeri di riga e il codice. Le `options` del chiamante sostituiscono i valori predefiniti corrispondenti, inclusi l'intero oggetto `padding` e `lineDecorationsWidth`.
+
+Un `theme` esplicito ha la precedenza su `options.theme`; altrimenti l'editor segue il tema chiaro o scuro di Twenty. Definisci temi Monaco personalizzati in `beforeMount`. I temi Monaco sono globali, quindi la modifica di uno di essi influisce sugli altri editor Monaco nella stessa pagina. `transparentBackground` controlla in modo indipendente l'aspetto del wrapper di Twenty.
+
+## Convalida
+
+Monaco segnala le proprie diagnostiche, ad esempio gli errori di sintassi JSON, tramite `onValidate`. Per aggiungere le tue, restituisci i dati dei marcatori da `setMarkers`. Viene eseguito al montaggio, alla selezione del modello e a ogni modifica del contenuto del modello, inclusi gli aggiornamenti dei valori controllati, e sostituisce i marker personalizzati per il modello corrente.
+
+## Tastiera
+
+Mentre l'editor ha il focus, impedisce la propagazione degli eventi della tastiera. Gli handler delle chiavi React sui componenti padre e le scorciatoie a livello di documento non ricevono le sequenze di tasti digitate nell'editor.
+
+## Props
+
+### CodeEditor
+
+<CodeEditorReference />
+
+### CodeEditorHeader
+
+<CodeEditorHeaderReference />
+
+<PageBanner illustration="dev-api" />

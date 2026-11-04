@@ -1,8 +1,13 @@
 ---
 title: 4. Building the UI
-icon: "table-columns"
 description: Views, sidebar navigation, a command, and front components.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Overview
 
 Right now the objects are only reachable through Settings. Let's give the app a
 real presence in the UI: list views, sidebar entries, a one-click
@@ -312,6 +317,11 @@ Now editors write templates in a proper rich-text editor:
 **After this step:** documents preview beautifully and templates are editable
 in-app. Next, let an AI agent generate them from a chat.
 
-<Card title="Next: an AI agent →" icon="robot" href="/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>Next: an AI agent →</CardTitle>
   Add an agent and a skill that call your tool.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

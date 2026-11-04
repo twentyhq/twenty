@@ -5,12 +5,12 @@
 
   background-color: var(
     --card-section-background-color,
-    var(--t-background-secondary)
+    var(--card-default-section-background-color, var(--t-background-secondary))
   );
   border: 0;
   font-size: inherit;
   font-weight: inherit;
-  padding: var(--t-spacing-4);
+  padding: var(--card-content-padding, var(--t-spacing-4));
   width: 100%;
 
   &[data-divider] {

@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AddPeopleToMessageListJobService } from 'src/modules/emailing/services/add-people-to-message-list-job.service';
 import { AddPeopleToMessageListService } from 'src/modules/emailing/services/add-people-to-message-list.service';
@@ -15,13 +14,12 @@ import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.m
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -63,19 +61,21 @@ import { MessageListDuplicationService } from 'src/modules/emailing/services/mes
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
+import { FindCampaignSuppressionsTool } from 'src/modules/emailing/tools/find-campaign-suppressions.tool';
+import { PreviewCampaignSendTool } from 'src/modules/emailing/tools/preview-campaign-send.tool';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+import { SendCampaignTestTool } from 'src/modules/emailing/tools/send-campaign-test.tool';
+import { SendCampaignTool } from 'src/modules/emailing/tools/send-campaign.tool';
 
 @Module({
   imports: [
     ActorModule,
     CacheLockModule,
     CoreCommonApiModule,
-    RecordCrudModule,
     UserWorkspaceModule,
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
-    FeatureFlagModule,
     FileUrlModule,
     PermissionsModule,
     UserRoleModule,
@@ -114,6 +114,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicService,
     EmailingDomainSenderService,
     SaveCampaignTool,
+    PreviewCampaignSendTool,
+    SendCampaignTestTool,
+    SendCampaignTool,
+    FindCampaignSuppressionsTool,
     EmailingSendResolver,
     MessageListDuplicationService,
     AddPeopleToMessageListService,

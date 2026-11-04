@@ -1,4 +1,4 @@
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.util';
 
 describe('sanitizeFile', () => {
   it('should strip <script> from an SVG string', () => {

@@ -1,7 +1,6 @@
 ---
 title: Stockage clé-valeur
 description: Conservez des résultats intermédiaires, mettez les données en cache et partagez l’état entre les exécutions de fonctions logiques avec le magasin clé-valeur intégré à l’application.
-icon: database
 ---
 
 Les fonctions logiques s'exécutent dans des processus Node.js isolés et de courte durée — une fois une exécution terminée, rien de ce qui était conservé en mémoire ne survit. Lorsque vous avez besoin de **vous souvenir de quelque chose entre les exécutions** (mettre en cache une réponse d’API coûteuse, stocker un curseur pour des synchronisations incrémentales, appliquer un anti-rebond, ou transférer l’état d’une fonction à une autre), conservez-le dans le magasin clé-valeur intégré.

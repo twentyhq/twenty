@@ -3,9 +3,11 @@ title: Generate a PDF from Twenty
 description: Create a workflow to generate and attach a PDF (such as a quote) to a record.
 ---
 
-Automatically generate or fetch a PDF and attach it to a record in Twenty. This is commonly used to create quotes, invoices, or reports that are linked to Companies, Opportunities, or other objects.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Overview
+
+Automatically generate or fetch a PDF and attach it to a record in Twenty. This is commonly used to create quotes, invoices, or reports that are linked to Companies, Opportunities, or other objects.
 
 This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Logic Function** handles:
 1. Downloading the PDF from a URL (from a PDF generation service)
@@ -317,3 +319,4 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 - [Logic Functions](/user-guide/workflows/capabilities/workflow-actions#code)
 - [Generate a Quote or Invoice from Twenty](/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
 
+<PageBanner illustration="card-page-tutorial-documents" />

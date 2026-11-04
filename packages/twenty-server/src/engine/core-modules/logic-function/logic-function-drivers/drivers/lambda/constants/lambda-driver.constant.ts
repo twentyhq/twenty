@@ -28,7 +28,10 @@ export const BUILDER_FUNCTION_NAME_PREFIX = 'twenty-builder';
 export const SDK_LAYER_PREFIX_IN_ZIP = 'nodejs/node_modules/twenty-client-sdk';
 
 export const LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG = 'twenty:bundle-checksum';
+export const LAMBDA_SDK_CLIENT_CHECKSUM_TAG = 'twenty:sdk-client-checksum';
 export const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+
+export const LAMBDA_FUNCTION_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const BUILD_LOCK_TTL_MS = 120_000;
 export const BUILD_LOCK_RETRY_MS = 1_000;

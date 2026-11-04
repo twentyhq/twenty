@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { getClientIpKey } from './client-ip-key';
@@ -18,19 +19,33 @@ const applicationSecretSchema = z.string().trim().min(1);
 const MAX_BODY_BYTES = 16 * 1024;
 const WEBHOOK_TIMEOUT_MS = 8_000;
 
-type WebhookForwardingRouteConfig<TSchema extends z.ZodType> = {
-  webhookUrlEnvVar: string;
-  secretEnvVar: string;
-  schema: TSchema;
-  buildPayload: (data: z.infer<TSchema>) => object;
-  logTag: string;
-  notConfiguredMessage: string;
-  failureMessage: string;
+// Logic functions answer { ok: true }; Twenty workflow webhooks answer
+// { success: true } and cannot read headers, so they take no secret.
+type UpstreamConfig =
+  | { upstreamKind?: 'logic-function'; secretEnvVar: string }
+  | { upstreamKind: 'workflow-webhook'; secretEnvVar?: never };
+
+type UpstreamKind = NonNullable<UpstreamConfig['upstreamKind']>;
+
+type WebhookForwardingRouteConfig<TSchema extends z.ZodType> =
+  UpstreamConfig & {
+    webhookUrlEnvVar: string;
+    schema: TSchema;
+    buildPayload: (data: z.infer<TSchema>) => object;
+    logTag: string;
+    notConfiguredMessage: string;
+    failureMessage: string;
+  };
+
+const UPSTREAM_SUCCESS_KEY: Record<UpstreamKind, string> = {
+  'logic-function': 'ok',
+  'workflow-webhook': 'success',
 };
 
 export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
   webhookUrlEnvVar,
   secretEnvVar,
+  upstreamKind = 'logic-function',
   schema,
   buildPayload,
   logTag,
@@ -46,13 +61,15 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     const webhookUrlResult = webhookUrlSchema.safeParse(
       process.env[webhookUrlEnvVar],
     );
-    const secretResult = applicationSecretSchema.safeParse(
-      process.env[secretEnvVar],
-    );
+    const secretResult = isDefined(secretEnvVar)
+      ? applicationSecretSchema.safeParse(process.env[secretEnvVar])
+      : undefined;
 
-    if (!webhookUrlResult.success || !secretResult.success) {
+    if (!webhookUrlResult.success || secretResult?.success === false) {
       const rawWebhookUrl = process.env[webhookUrlEnvVar];
-      const rawSecret = process.env[secretEnvVar];
+      const rawSecret = isDefined(secretEnvVar)
+        ? process.env[secretEnvVar]
+        : undefined;
       console.error(
         `[${logTag}] 503 — endpoint env vars failed validation`,
         JSON.stringify({
@@ -64,14 +81,17 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
               ? null
               : (webhookUrlResult.error.issues[0]?.message ?? 'unknown'),
           },
-          [secretEnvVar]: {
-            present: rawSecret !== undefined,
-            isEmptyAfterTrim: (rawSecret ?? '').trim() === '',
-            length: (rawSecret ?? '').length,
-            parseError: secretResult.success
-              ? null
-              : (secretResult.error.issues[0]?.message ?? 'unknown'),
-          },
+          ...(isDefined(secretEnvVar) && {
+            [secretEnvVar]: {
+              present: rawSecret !== undefined,
+              isEmptyAfterTrim: (rawSecret ?? '').trim() === '',
+              length: (rawSecret ?? '').length,
+              parseError:
+                secretResult?.success === false
+                  ? (secretResult.error.issues[0]?.message ?? 'unknown')
+                  : null,
+            },
+          }),
           envFileHint:
             'Next dev reads .env.local. After editing env vars restart the dev server — Next does not hot-reload them.',
         }),
@@ -83,7 +103,7 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     }
 
     const webhookUrl = webhookUrlResult.data;
-    const applicationSecret = secretResult.data;
+    const applicationSecret = secretResult?.data;
 
     const rateLimit = checkRateLimit(getClientIpKey(request));
     if (!rateLimit.allowed) {
@@ -136,7 +156,9 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
         body: JSON.stringify(payload),
         headers: {
           'Content-Type': 'application/json',
-          'X-Application-Secret': applicationSecret,
+          ...(isDefined(applicationSecret) && {
+            'X-Application-Secret': applicationSecret,
+          }),
         },
         method: 'POST',
       },
@@ -184,10 +206,12 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     if (
       typeof logicResult !== 'object' ||
       logicResult === null ||
-      (logicResult as Record<string, unknown>)['ok'] !== true
+      (logicResult as Record<string, unknown>)[
+        UPSTREAM_SUCCESS_KEY[upstreamKind]
+      ] !== true
     ) {
       console.error(
-        `[${logTag}] logic function returned non-ok result`,
+        `[${logTag}] upstream returned a non-success result`,
         JSON.stringify({
           body: upstreamBody.slice(0, 2000),
           payloadKeys: Object.keys(payload),

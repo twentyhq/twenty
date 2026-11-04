@@ -25,7 +25,8 @@ export const RecordTableCellFieldContextGeneric = ({
   recordField,
   children,
 }: RecordTableCellFieldContextGenericProps) => {
-  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly, restrictedFieldNames } =
+    useRecordTableRowContextOrThrow();
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
@@ -103,6 +104,10 @@ export const RecordTableCellFieldContextGeneric = ({
     }
   }
 
+  const isFieldRestricted = restrictedFieldNames.includes(
+    fieldDefinition.metadata.fieldName,
+  );
+
   return (
     <FieldContext.Provider
       value={{
@@ -121,6 +126,7 @@ export const RecordTableCellFieldContextGeneric = ({
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
           isInvalidJunctionRelation ||
+          isFieldRestricted ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
             objectMetadataId: objectMetadataItem.id,
@@ -128,7 +134,7 @@ export const RecordTableCellFieldContextGeneric = ({
             fieldDefinition,
             objectPermissionsByObjectMetadataId,
           }),
-        isForbidden: !hasObjectReadPermissions,
+        isForbidden: !hasObjectReadPermissions || isFieldRestricted,
       }}
     >
       {children}

@@ -24,6 +24,7 @@ describe('Core REST API Find Many endpoint', () => {
 
   beforeAll(async () => {
     await deleteAllRecords('person');
+    await deleteAllRecords('company');
 
     await makeRestApiRequest({
       method: 'post',

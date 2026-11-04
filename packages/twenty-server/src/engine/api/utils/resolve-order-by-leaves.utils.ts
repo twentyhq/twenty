@@ -134,8 +134,8 @@ const resolveRelationLeaf = ({
 
   assertFieldIsReadableOrThrow({
     objectsPermissions,
-    objectMetadataId: targetObjectMetadata.id,
-    fieldMetadataId: targetFieldMetadata.id,
+    flatObjectMetadata: targetObjectMetadata,
+    flatFieldMetadata: targetFieldMetadata,
   });
 
   if (isCompositeFieldMetadataType(targetFieldMetadata.type)) {
@@ -247,8 +247,8 @@ export const resolveOrderByLeaves = ({
 
       assertFieldIsReadableOrThrow({
         objectsPermissions,
-        objectMetadataId: flatObjectMetadata.id,
-        fieldMetadataId: fieldMetadata.id,
+        flatObjectMetadata,
+        flatFieldMetadata: fieldMetadata,
       });
 
       if (

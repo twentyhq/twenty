@@ -1,0 +1,63 @@
+---
+title: ColorSample
+description: Отображает цвет темы или пользовательский цвет рядом с текстовой меткой.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+## Обзор
+
+`ColorSample` — неинтерактивный образец цвета. Используйте его рядом с меткой, чтобы значение не зависело только от цвета. Выбор относится к окружающему элементу управления.
+
+<StoryEmbed storyId="ui-data-display-colorsample--display" title="Пример ColorSample" height={90} />
+
+## Использование
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
+    High priority
+  </Text>
+);
+```
+
+`colorName` выбирает запись палитры темы для заливки и границы. `variant` принимает `default` или `circle`. Если не указывать его, используется форма по умолчанию.
+
+## Пользовательские цвета
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
+    Brand blue
+  </Text>
+);
+```
+
+Пользовательское значение `color` переопределяет заливку; `colorName` остается обязательным и по-прежнему определяет цвет границы. Нативные свойства, `className`, `style` и `ref` применяются к div-элементу образца. `render` принимает элемент или обратный вызов через композицию Base UI, например элемент span внутри текста. Пользовательские стили переопределяют заливку, границу или геометрию по умолчанию. Декоративные образцы используют `aria-hidden="true"`; отдельный значимый образец использует `role="img"` с `aria-label` или `aria-labelledby`. Чтобы предложить выбираемые цвета, разместите образец внутри [ListItem](/ru/ui/primitives/navigation/list-item) с меткой.
+
+## Миграция
+
+`ColorSampleProps` и `ColorSampleVariant` по-прежнему доступны из семейства data-display. Неиспользуемый вариант `pipeline` удалён. Индикаторы, специфичные для продукта, должны находиться в приложении с использованием нативных стилей или композиции. Образцы default и circle сохраняют существующий внешний вид.
+
+## Свойства
+
+<ColorSampleReference />
+
+<PageBanner illustration="page-cover-palette" />

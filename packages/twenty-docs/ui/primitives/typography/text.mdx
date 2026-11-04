@@ -3,9 +3,13 @@ title: Text
 description: Compose theme typography with single-line truncation or a limited number of lines.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## Overview
 
 `Text` provides typography and overflow handling. It renders a `div` by default. Omit `size`, `weight` and `color` to keep inheriting typography from its surroundings.
 
@@ -109,3 +113,5 @@ Native attributes, children, refs, class names, and styles target the rendered t
 ## Migration
 
 `color` now selects a semantic theme color. Move arbitrary CSS color values from a native `color` attribute to `style={{ color: customColor }}`. Existing styles, classes and render composition continue to target the text element.
+
+<PageBanner illustration="section-document-generator" />

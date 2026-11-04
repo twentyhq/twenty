@@ -3,6 +3,8 @@ title: Legal FAQ
 description: Frequently asked legal questions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Data residency and international transfers
 
 <AccordionGroup>
@@ -26,14 +28,17 @@ EU Standard Contractual Clauses, together with the UK Addendum and Swiss amendme
 <Accordion title="Where can we find the current Data Processing Agreement?">
 You can generate your signed DPA at https://{your-domain}/settings/legal/dpa (e.g. https://getting-started.twenty.com/settings/legal/dpa).
 </Accordion>
+<Accordion title="Is the DPA available on every plan?">
+Yes. The standard DPA is available on every plan and can be signed in one click from Settings → Legal → DPA. Changes to the standard terms, such as a different contracting entity or custom notification deadlines, are available on the Enterprise plan.
+</Accordion>
 <Accordion title="Does Twenty act as the data processor for merchant and contact information stored in the CRM, while our company remains the data controller?">
 As per our [Privacy Policy](https://twenty.com/privacy-policy), Twenty acts as the data processor for merchant and contact information stored in the CRM, while your company remains the data controller.
 </Accordion>
 <Accordion title="Is CRM content ever used to train Twenty or third-party AI models?">
-CRM content can be used to train AI models depending on sub-processors' Terms and Conditions. Twenty does not have its own AI model — all AI models available on Twenty Cloud are provided by our sub-processors.
+No. Twenty does not have its own AI model and does not train any model on your data. The AI providers used by default on Twenty Cloud (Azure OpenAI, OpenAI, Anthropic and Mistral) do not train on it under their terms. Some optional models, such as Google Gemini, and TypeSafe (used by the workflow Classify action) are only used if an admin enables them; their terms are listed in [our Trust Center](https://trust.twenty.com/?tab=subprocessors).
 </Accordion>
 <Accordion title="If optional AI processing exists, can it be fully disabled for our workspace?">
-AI can be fully disabled by turning off all AI models in Settings → AI → Models. Additionally, no data is sent to AI unless you actively interact with the AI chat or an AI node in a workflow.
+No data is sent to an AI provider unless someone in your workspace runs AI: the AI chat, an AI agent, or an AI step in a workflow. To block AI entirely, set a workspace AI usage limit of 0 in Settings → Billing, which applies to every member, admins included. You can also remove the Ask AI permission from your editable roles in Settings → Roles; the built-in Admin role always keeps it.
 </Accordion>
 </AccordionGroup>
 
@@ -44,7 +49,13 @@ AI can be fully disabled by turning off all AI models in Settings → AI → Mod
 All data is encrypted in transit and at rest. Tenant data is isolated through a schema-per-tenant setup, and encryption keys are periodically rotated.
 </Accordion>
 <Accordion title="Which Twenty personnel or sub-processors may access customer workspaces, for what purposes, and how is access approved and logged?">
-Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Security, and it stays off until you turn it back on.
+Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Security, and it stays off until you turn it back on. Support access requires two-factor authentication on Twenty's side, and on the Organization plan and above each session is recorded in your audit logs. While someone from Twenty is impersonating you, the session also appears with an Impersonation label in Settings → Profile → Devices.
+</Accordion>
+<Accordion title="Can members of our workspace impersonate each other?">
+Members whose role has the Impersonate permission can view the workspace as any other member, including workspace admins, so only grant it to roles you trust. You control who has this permission in Settings → Roles.
+</Accordion>
+<Accordion title="How long are audit logs kept?">
+Audit logs are available on the Organization plan and above. You can set how long they are kept in Settings → General → Security.
 </Accordion>
 <Accordion title="What is your incident-notification process and target notification timeframe following a confirmed security incident affecting our data?">
 In the event of a confirmed personal data breach affecting your data, we will notify you without undue delay, targeting no later than 72 hours from verification of the incident, as set out in section 4.6 of our DPA. Our notification will include, to the extent known at the time: the nature of the breach, the categories and approximate volume of data and individuals affected, likely consequences, and the remediation and mitigation measures taken or planned. We will provide updates as the investigation progresses.
@@ -123,3 +134,5 @@ Applications that only interact with Twenty via its published APIs/SDKs can be l
 </AccordionGroup>
 
 If you have more questions, please check our [Terms and Conditions](https://twenty.com/terms), [Privacy Policy](https://twenty.com/privacy-policy) and [Trust Center](https://trust.twenty.com/). If your questions are still unanswered, send them to [contact@twenty.com](mailto:contact@twenty.com) or via support chat.
+
+<PageBanner illustration="section-legal" />

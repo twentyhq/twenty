@@ -147,29 +147,7 @@ export class EmailVerificationService {
       );
     }
 
-    const existingToken = await this.appTokenRepository.findOne({
-      where: {
-        userId: user.id,
-        type: AppTokenType.EmailVerificationToken,
-      },
-    });
-
-    if (existingToken) {
-      const cooldownDuration = ms('1m');
-      const timeToWaitMs = differenceInMilliseconds(
-        addMilliseconds(existingToken.createdAt, cooldownDuration),
-        new Date(),
-      );
-
-      if (timeToWaitMs > 0) {
-        throw new EmailVerificationException(
-          `Please wait ${ms(timeToWaitMs, { long: true })} before requesting another verification email`,
-          EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
-        );
-      }
-
-      await this.appTokenRepository.delete(existingToken.id);
-    }
+    await this.deleteExistingTokensAfterCooldownOrThrow({ userId: user.id });
 
     await this.sendVerificationEmail({
       userId: user.id,
@@ -180,5 +158,41 @@ export class EmailVerificationService {
     });
 
     return { success: true };
+  }
+
+  async deleteExistingTokensAfterCooldownOrThrow({
+    userId,
+  }: {
+    userId: string;
+  }) {
+    const existingToken = await this.appTokenRepository.findOne({
+      where: {
+        userId,
+        type: AppTokenType.EmailVerificationToken,
+      },
+      order: { createdAt: 'DESC' },
+    });
+
+    if (!isDefined(existingToken)) {
+      return;
+    }
+
+    const cooldownDuration = ms('1m');
+    const timeToWaitMs = differenceInMilliseconds(
+      addMilliseconds(existingToken.createdAt, cooldownDuration),
+      new Date(),
+    );
+
+    if (timeToWaitMs > 0) {
+      throw new EmailVerificationException(
+        `Please wait ${ms(timeToWaitMs, { long: true })} before requesting another verification email`,
+        EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
+      );
+    }
+
+    await this.appTokenRepository.delete({
+      userId,
+      type: AppTokenType.EmailVerificationToken,
+    });
   }
 }

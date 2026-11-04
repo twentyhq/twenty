@@ -1,0 +1,103 @@
+---
+title: ReactionButton
+description: Переключение реакции-эмодзи со счётчиком и управляемым состоянием нажатия.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ReactionButtonReference from '/snippets/ui/generated/components/input/reaction-button.mdx';
+
+## Обзор
+
+`ReactionButton` компонует [Button](/ru/ui/primitives/input/button) в компактную реакцию-эмодзи со счётчиком. Ваше приложение задаёт состояние нажатия, доступное имя и обработчик изменения.
+
+<StoryEmbed storyId="ui-components-reactionbutton--display" title="Управляемая полезная реакция с подсказкой и действием сброса" height={160} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import {
+  ReactionButton,
+  type ReactionButtonProps,
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const ReactionButtonExample = ({
+  emoji = '👍',
+  disabled,
+  loading,
+}: Partial<Pick<ReactionButtonProps, 'emoji' | 'disabled' | 'loading'>>) => {
+  const [pressed, setPressed] = useState(false);
+  const count = pressed ? 3 : 2;
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
+      <Text>Was this helpful?</Text>
+      <Text
+        render={<span />}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
+      >
+        <Tooltip content={`${count} people found this helpful`}>
+          <ReactionButton
+            aria-label="Helpful"
+            emoji={emoji}
+            count={count}
+            pressed={pressed}
+            onPressedChange={setPressed}
+            disabled={disabled}
+            loading={loading}
+          />
+        </Tooltip>
+        <Button size="sm" variant="ghost" onClick={() => setPressed(false)}>
+          Reset
+        </Button>
+      </Text>
+    </Text>
+  );
+};
+```
+
+## Внешний вид
+
+Элемент управления имеет высоту 24px, скруглённые углы, эмодзи размером 16px и небольшой счётчик. Для нажатых реакций используются акцентные поверхность и текст темы. Для ненажатых реакций используются прозрачная поверхность и вторичный текст.
+
+`count` принимает число или строку, отформатированную вызывающей стороной. Ваше приложение отвечает за форматирование и сокращение чисел, а также за решение, отображать ли реакцию с нулевым счётчиком.
+
+<StoryEmbed storyId="ui-components-reactionbutton--catalog" title="Выбор реакции, счётчики и недоступные состояния" height={300} />
+
+## Управление состоянием
+
+`pressed` является обязательным и управляется вашим приложением. Активация вызывает `onPressedChange` с запрошенным следующим значением. Компонент продолжает отображать переданные `pressed` и `count`, пока ваше приложение не обновит их.
+
+Установите `loading`, пока ожидается выполнение мутации, чтобы показать индикатор загрузки Button и предотвратить повторную активацию. Он сохраняет переданное значение `pressed` и помечает элемент управления как занятый. Используйте `disabled`, когда реакция недоступна. Выбор, счётчики, разрешения, сохранение и любые оптимистичные обновления остаются в приложении.
+
+Нативный `onClick` выполняется до запроса на изменение. Вызов `event.preventDefault()` в этом обработчике отменяет запрос. Другие нативные атрибуты кнопки, обработчики, стили, имена классов и refs передаются кнопке. Элемент управления всегда использует `type="button"`.
+
+## Доступность и подсказки
+
+Укажите `aria-label` или `aria-labelledby` с локализованным названием реакции. Эмодзи и счётчик являются декоративными и скрыты от вспомогательных технологий, поэтому при необходимости включите информацию о счётчике или участниках в предоставленное имя или описание. Сохраняйте название реакции неизменным при изменении её состояния; `aria-pressed` сообщает о выборе.
+
+Нативная кнопка поддерживает фокусировку с помощью Tab и активацию клавишами Enter или Space. И `disabled`, и `loading` предотвращают активацию. Ссылка ref указывает на нативную кнопку.
+
+Комбинируйте [Tooltip](/ru/ui/primitives/surfaces/tooltip) для отображения сведений об участниках при наведении и фокусе с клавиатуры, как показано выше, или передайте нативный `title`. Содержимое подсказки задаётся вызывающей стороной и не заменяет доступное имя. Длинные доступные метки не увеличивают видимый элемент управления.
+
+## Свойства
+
+<ReactionButtonReference />
+
+<PageBanner illustration="page-cover-emoji" />

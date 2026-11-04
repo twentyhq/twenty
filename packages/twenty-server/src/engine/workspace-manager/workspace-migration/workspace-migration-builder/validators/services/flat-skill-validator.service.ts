@@ -4,9 +4,10 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
-import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -141,10 +142,8 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    const isActiveUpdate = flatEntityUpdate.isActive;
-
-    const hasNonIsActiveUpdates = Object.keys(flatEntityUpdate).some(
-      (key) => key !== 'isActive',
+    const isWorkspaceLocalStateUpdate = Object.keys(flatEntityUpdate).every(
+      (key) => WORKSPACE_LOCAL_STATE_PROPERTIES.has(key),
     );
 
     const isTwentyStandardSkill = belongsToTwentyStandardApp({
@@ -156,41 +155,37 @@ export class FlatSkillValidatorService {
     if (
       !isCallerTwentyStandardApp(buildOptions) &&
       isTwentyStandardSkill &&
-      hasNonIsActiveUpdates
+      !isWorkspaceLocalStateUpdate
     ) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
-        message: t`Cannot update standard skill properties (only activation/deactivation allowed)`,
-        userFriendlyMessage: msg`Cannot update standard skill properties (only activation/deactivation allowed)`,
+        message: t`Cannot update standard skill properties (only overrides and activation/deactivation allowed)`,
+        userFriendlyMessage: msg`Cannot update standard skill properties (only overrides and activation/deactivation allowed)`,
       });
     }
 
-    if (
-      isTwentyStandardSkill &&
-      isDefined(isActiveUpdate) &&
-      !hasNonIsActiveUpdates
-    ) {
-      return validationResult;
-    }
+    const optimisticFlatSkill = { ...fromFlatSkill, ...flatEntityUpdate };
 
-    const optimisticFlatSkill: UniversalFlatSkill = {
-      ...fromFlatSkill,
-      ...flatEntityUpdate,
-    };
-
-    const labelUpdate = flatEntityUpdate.label;
-
-    if (isDefined(labelUpdate)) {
+    if (isDefined(flatEntityUpdate.label)) {
       validationResult.errors.push(
         ...validateSkillLabelIsDefined({ flatSkill: optimisticFlatSkill }),
       );
     }
 
-    const contentUpdate = flatEntityUpdate.content;
-
-    if (isDefined(contentUpdate)) {
+    if (isDefined(flatEntityUpdate.content)) {
       validationResult.errors.push(
         ...validateSkillContentIsDefined({ flatSkill: optimisticFlatSkill }),
+      );
+    }
+
+    if (isDefined(flatEntityUpdate.overrides)) {
+      validationResult.errors.push(
+        ...validateSkillRequiredProperties({
+          flatSkill: resolveEffectiveFlatEntity({
+            metadataName: 'skill',
+            flatEntity: optimisticFlatSkill,
+          }),
+        }),
       );
     }
 

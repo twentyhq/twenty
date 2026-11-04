@@ -3,8 +3,12 @@ title: OverflowingList
 description: Fit a row of items into the available space and show the complete list in a popup.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import OverflowingListReference from '/snippets/ui/generated/components/layout/overflowing-list.mdx';
+
+## Overview
 
 `OverflowingList` measures its available width, keeps fitting items in a compact row, and offers a `+N` button that opens the complete list in a popup. The count updates when the container, item content or ordered list changes. Empty lists and lists that fit have no overflow button or exposed popup.
 
@@ -139,3 +143,5 @@ The popup continues to show the complete list and uses "Show all items" by defau
 ## Props
 
 <OverflowingListReference />
+
+<PageBanner illustration="section-apps-data" />

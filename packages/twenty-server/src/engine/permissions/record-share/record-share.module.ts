@@ -1,0 +1,37 @@
+/* @license Enterprise */
+
+import { RecordSharingResolver } from 'src/engine/permissions/record-share/resolvers/record-sharing.resolver';
+import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
+import { Module } from '@nestjs/common';
+
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
+import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
+import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
+import { RecordPermissionsModule } from 'src/engine/permissions/record-permissions/record-permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+
+@Module({
+  imports: [
+    WorkspaceCacheModule,
+    RecordShareStorageModule,
+    RecordPermissionsModule,
+    PermissionsModule,
+  ],
+  providers: [
+    ShareWithService,
+    RecordAccessPolicyService,
+    RecordSharePrincipalService,
+    RecordSharingService,
+    RecordSharingResolver,
+  ],
+  exports: [
+    RecordShareStorageModule,
+    ShareWithService,
+    RecordAccessPolicyService,
+    RecordSharePrincipalService,
+    RecordSharingService,
+  ],
+})
+export class RecordShareModule {}

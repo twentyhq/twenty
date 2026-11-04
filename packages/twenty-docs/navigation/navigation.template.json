@@ -4,7 +4,7 @@
       "label": "Getting Started",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Getting Started"
         },
         "coreConcepts": {
           "label": "Core Concepts"
@@ -15,7 +15,7 @@
       "label": "User Guide",
       "groups": {
         "userGuideOverview": {
-          "label": "Overview"
+          "label": "User Guide"
         },
         "dataModel": {
           "label": "Data Model",
@@ -168,7 +168,7 @@
       "label": "Developers",
       "groups": {
         "developersOverview": {
-          "label": "Overview"
+          "label": "Developers"
         },
         "apps": {
           "label": "Apps",

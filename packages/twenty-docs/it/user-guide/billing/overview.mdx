@@ -1,29 +1,37 @@
 ---
 title: Fatturazione
+sidebarTitle: Panoramica
 description: Comprendi i prezzi di Twenty e gestisci il tuo abbonamento.
 ---
 
-Twenty offre piani tariffari flessibili per soddisfare le esigenze del tuo team. Gestisci il tuo abbonamento, tieni traccia dei crediti dei flussi di lavoro e accedi alle fatture direttamente da **Impostazioni → Fatturazione**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Cosa c'è in questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Piani tariffari" icon="tags" href="/it/user-guide/billing/capabilities/pricing-plans">
-    Scopri i piani tariffari di Twenty e cosa includono.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>Piani Prezzi</CardTitle>
+    Scopri i piani tariffari di Twenty's e ciò che è incluso.
   </Card>
-  <Card title="FAQ" icon="circle-question" href="/it/user-guide/billing/how-tos/billing-faq">
-    Domande frequenti su prezzi e fatturazione.
+  <Card href="/it/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>Limiti di utilizzo</CardTitle>
+    Cap ciò che il tuo workspace, membri, chiavi API e applicazioni possono spendere.
+  </Card>
+  <Card href="/it/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>FAQ</CardTitle>
+    Domande frequenti sui prezzi e sulla fatturazione.
   </Card>
 </CardGroup>
 
 ## A colpo d'occhio
 
-| Piano                            | Funzionalità principali                                                                                                                                                                                                     |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Gratuito (self-hosted)**       | Tutte le funzionalità Pro, supporto della community                                                                                                                                                                         |
-| **Pro (Cloud)**                  | Tutto tranne le funzionalità Premium (SSO, autorizzazioni a livello di riga e altro), supporto standard                                                                                                                     |
-| **Organizzazione (Cloud)**       | Tutto dal piano Pro + le funzionalità Premium (SSO, autorizzazioni a livello di riga e altro), supporto prioritario                                                                                                         |
-| **Organizzazione (self-hosted)** | Tutto dal piano Pro + le funzionalità Premium (SSO, autorizzazioni a livello di riga e altro), supporto del team Twenty, non è richiesto pubblicare il tuo codice personalizzato come open-source prima della distribuzione |
+| Piano                            | Funzionalità principali                                                                                                                                                                                                       |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Gratuito (self-hosted)**       | Tutte le funzionalità CRM Pro, più ruoli personalizzati, IA con le chiavi del tuo provider, supporto della community                                                                                                          |
+| **Pro (Cloud)**                  | Tutto tranne le funzionalità Premium (ruoli personalizzati, autorizzazioni a livello di riga, SSO e altro), utilizzo personale dell'IA, 1 credito workspace per utente al mese, supporto via email e chat                     |
+| **Organizzazione (Cloud)**       | Tutto dal piano Pro + le funzionalità Premium, utilizzo personale dell'IA 5 volte maggiore, 4 crediti workspace per utente al mese, supporto prioritario                                                                      |
+| **Organizzazione (self-hosted)** | Tutto dal piano Free + le funzionalità Premium (autorizzazioni a livello di riga, SSO e altro), supporto del team Twenty, non è necessario pubblicare il tuo codice personalizzato come open-source prima della distribuzione |
 
 ## Risposte rapide
 
@@ -37,3 +45,5 @@ Sì! Ospita Twenty in self-hosting e ottieni tutte le funzionalità Pro senza co
 Vai su **Impostazioni → Fatturazione** e fai clic su **Passa a Organizzazione** o **Passa ad Annuale**.
 
 Per altre domande, consulta le [FAQ sulla fatturazione](/it/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

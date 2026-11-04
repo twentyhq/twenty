@@ -1,15 +1,22 @@
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
+import { buildFallbackProposedToolCall } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -20,6 +27,12 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
+const getFeatureFlagService = () =>
+  getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
+const getInboxDeliveryService = () =>
+  getAppProviderByClassName<AgentChatInboxDeliveryService>(
+    'AgentChatInboxDeliveryService',
+  );
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
@@ -34,10 +47,17 @@ const QUESTION = {
   options: [{ label: 'Pro' }, { label: 'Team' }],
 };
 
+const PROPOSAL_INPUT = {
+  toolName: 'create_company',
+  arguments: { name: 'Acme' },
+  summary: 'Create Acme',
+};
+
 describe('Answering a chat tool call', () => {
   const threadId = randomUUID();
   let chat: AgentChatService;
   let enqueueStream: jest.SpyInstance;
+  let wasRecordSharingEnabled: boolean;
   const spies: jest.SpyInstance[] = [];
 
   const pauseOnQuestions = async (...toolCallIds: string[]) => {
@@ -80,6 +100,25 @@ describe('Answering a chat tool call', () => {
     return { assistantMessageId };
   };
 
+  const pauseOnProposal = async (toolCallId: string) => {
+    await pauseOnQuestions(toolCallId);
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."agentMessagePart"
+       SET "toolName" = 'propose_tool_call', "toolInput" = $2::jsonb,
+         "toolOutput" = $3::jsonb
+       WHERE "toolCallId" = $1`,
+      [
+        toolCallId,
+        JSON.stringify(PROPOSAL_INPUT),
+        JSON.stringify(
+          buildProposeToolCallPendingOutput(
+            buildFallbackProposedToolCall(PROPOSAL_INPUT),
+          ),
+        ),
+      ],
+    );
+  };
+
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
       toolCall: { threadId, toolCallId },
@@ -102,6 +141,44 @@ describe('Answering a chat tool call', () => {
       )
     )[0]?.toolOutput?.result?.status;
 
+  const markAsMentioned = async () => {
+    const inboxDeliveryService = getInboxDeliveryService();
+
+    await inboxDeliveryService.deliverThreadToMemberInboxes({
+      workspaceId,
+      workspaceMemberId,
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
+    });
+    await inboxDeliveryService.deliverThreadToMemberInboxes({
+      workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      threadId,
+      workspaceMemberIds: [workspaceMemberId],
+      reason: AgentChatInboxDeliveryReason.MENTION,
+    });
+  };
+
+  const readMentionState = async (memberId = workspaceMemberId) => {
+    const [participant]: {
+      lastMentionedAt: Date | null;
+      mentionsResolvedAt: Date | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "lastMentionedAt", "mentionsResolvedAt" FROM "${schema}"."agentChatThreadParticipant"
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, memberId],
+    );
+
+    return participant;
+  };
+
+  const expectMentionResolved = async () => {
+    const participant = await readMentionState();
+
+    expect(participant.mentionsResolvedAt).toEqual(participant.lastMentionedAt);
+  };
+
   const stopStream = () =>
     makeMetadataApiRequest({
       query: parse(
@@ -112,6 +189,15 @@ describe('Answering a chat tool call', () => {
 
   beforeAll(async () => {
     chat = getAppProviderByClassName<AgentChatService>('AgentChatService');
+    wasRecordSharingEnabled = await getFeatureFlagService().isFeatureEnabled(
+      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      workspaceId,
+    );
+    await getFeatureFlagService().upsertWorkspaceFeatureFlag({
+      workspaceId,
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: true,
+    });
 
     const aiModelRegistryService =
       getAppProviderByClassName<AiModelRegistryService>(
@@ -147,6 +233,11 @@ describe('Answering a chat tool call', () => {
   afterAll(async () => {
     spies.forEach((spy) => spy.mockRestore());
     await destroyAgentChatThread({ threadId });
+    await getFeatureFlagService().upsertWorkspaceFeatureFlag({
+      workspaceId,
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: wasRecordSharingEnabled,
+    });
   });
 
   afterEach(async () => {
@@ -173,6 +264,7 @@ describe('Answering a chat tool call', () => {
         streamId: response.body.data.answerToolCall.streamId,
         userWorkspaceId,
       }),
+      expect.anything(),
     );
 
     await stopStream();
@@ -209,6 +301,75 @@ describe('Answering a chat tool call', () => {
         threadId,
         streamId: last.body.data.answerToolCall.streamId,
       }),
+      expect.anything(),
+    );
+  });
+
+  it('resolves only the answering member while another request remains pending', async () => {
+    await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
+    await getInboxDeliveryService().deliverThreadToMemberInboxes({
+      workspaceId,
+      workspaceMemberId,
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: AgentChatInboxDeliveryReason.MENTION,
+    });
+    await markAsMentioned();
+
+    const otherMemberBefore = await readMentionState(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    const response = await answerQuestions('mention-first-answer');
+
+    expect(response.body.errors).toBeUndefined();
+
+    await expectMentionResolved();
+    expect(await readMentionState(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
+      otherMemberBefore,
+    );
+    expect(await readToolCallStatus('mention-pending-answer')).toBe('pending');
+    expect(await readPendingQuestionMessageId()).not.toBeNull();
+  });
+
+  it('preserves a new mention arriving while an accepted approval executes', async () => {
+    const toolCallId = 'mention-during-approved-execution';
+
+    await pauseOnProposal(toolCallId);
+    await markAsMentioned();
+
+    const acceptedMention = await readMentionState();
+    const toolRegistry = getAppProviderByClassName<ToolRegistryService>(
+      'ToolRegistryService',
+    );
+    const executeTool = jest
+      .spyOn(toolRegistry, 'resolveAndExecute')
+      .mockImplementationOnce(async () => {
+        await expectMentionResolved();
+        expect(await readToolCallStatus(toolCallId)).toBe('running');
+
+        await markAsMentioned();
+
+        return { success: true, message: 'Company created', result: {} };
+      });
+
+    spies.push(executeTool);
+
+    const response = await answerToolCall({
+      toolCall: { threadId, toolCallId },
+      response: { decision: 'approve' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(await readToolCallStatus(toolCallId)).toBe('approved');
+
+    const participant = await readMentionState();
+
+    expect(participant.mentionsResolvedAt).toEqual(
+      acceptedMention.lastMentionedAt,
+    );
+    expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
+      participant.mentionsResolvedAt!.getTime(),
     );
   });
 

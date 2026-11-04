@@ -1,0 +1,119 @@
+---
+title: إدخال
+description: حقل إدخال نصي بسمات أصلية وتكامل مع الحقول وحجمين.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## نظرة عامة
+
+يعرض `Input` حقل إدخال نصي ويقبل سمات الإدخال الأصلية مثل `type` و`name` و`required` و`disabled` و`autoComplete`.
+
+<StoryEmbed storyId="ui-input-input--display" title="مثال على الإدخال" height={140} />
+
+## استخدام
+
+### الحالة غير المتحكم بها
+
+استخدم `defaultValue` لتعيين عنوان البريد الإلكتروني الأولي. يتحكم الإدخال في التغييرات اللاحقة.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## الخيارات المرئية
+
+قارن بين حقول الإدخال الصغيرة والمتوسطة في حالاتها الافتراضية، والمركّزة، وغير الصالحة، والمعطّلة. استخدم ملاحظات التحقق إلى جانب تنسيق الحالة غير الصالحة.
+
+<StoryEmbed storyId="ui-input-input--catalog" title="الخيارات المرئية لحقل الإدخال" height={380} />
+
+## مظهر عادي
+
+استخدم `variant="plain"` داخل صف أو سطح موجود. يزيل التعبئة والحدود والزوايا المستديرة والحشوة، ويستخدم الارتفاع الطبيعي. يوفر العنصر الأب التباعد وأبعاد الصف. تظل أنماط النص والعنصر النائب والحالة المعطلة مشتركة. يتبع المخطط الأزرق سلوك المتصفح الأصلي لـ `:focus-visible`. بالنسبة إلى عناصر التحكم النصية، يمكن أن يشمل ذلك تركيز المؤشر والتركيز التلقائي، بالإضافة إلى تركيز لوحة المفاتيح. تستخدم الحالة غير الصالحة مخططًا تحذيريًا دون تغيير التخطيط.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+يمنح `InputGroup` حقل الإدخال الخاص به تلقائيًا المظهر البسيط، ويحافظ على المجموعة باعتبارها إطار التركيز والتحقق الوحيد. يبقى ارتفاعا `sm` و`md` 24px و32px. لا تستخدم حقول الإدخال البسيطة المستقلة الارتفاع الثابت المرتبط بـ`size`.
+
+## الحالة المتحكم بها
+
+مرر `value` وحدّثه باستخدام `onValueChange` للتحكم في عنوان البريد الإلكتروني نفسه في حالة React. تتلقى دالة رد النداء قيمة السلسلة التالية وتفاصيل الحدث.
+
+```tsx
+import { useState } from 'react';
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
+
+  return (
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## أضف ملحقا
+
+يمتلك `InputGroup` الحد المحيط وارتفاع التخطيط. يُحدَّد حجم الإدخال من `size` الصريح للعنصر الابن، ثم الإعداد الافتراضي للمجموعة، ثم `md`. يتمدد الإدخال المجمّع داخل الحد المشترك، لذا استخدم `size` الخاص بالمجموعة لتغيير الارتفاع الكلي للحقل.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## تخصيص عنصر التحكم الأصلي والغلاف
+
+تستهدف السمات الأصلية والمعالجات و`className` و`style` و`ref` الإدخال. يتلقى ref عنصر `HTMLInputElement`. استخدم `render` لتكوين مكوّن إدخال آخر وتمرير الخصائص وref المتوفرين إلى الإدخال الأصلي الخاص به.
+
+يتلقى `onChange` حدث تغيير من React للإدخال الأصلي. يتلقى `onValueChange(value, details)` السلسلة التالية وتفاصيل حدث Base UI، بما في ذلك `event` و`reason` و`cancel` و`allowPropagation`. يستهدف الحدث الإدخال. يحافظ إلغاء التفاصيل على نهج التحقق في Base UI؛ ولا يتراجع عن تعديل أصلي. يحدد المستدعون المتحكمون القيمة التي ستُعتمد.
+
+ضع أنماط التخطيط والسمات وrefs على `InputGroup` عند تخصيص الغلاف المحيط. لا تمتلك المجموعة أي قيمة. تبقى `name` و`form` و`required` و`readOnly` و`disabled` الأصلية، وسلوك الإرسال وإعادة التعيين على الإدخال، مع توفير التسمية والتحقق لـ Field عبر `Field.Root`.
+
+## الإزاحة
+
+يتضمن المرجع خصائص Base UI الخاصة بالمكوّن والموروثة. تُقبل أيضا سمات الإدخال الأصلية. يكون الإدخال المستقل افتراضيًا `md`؛ وداخل مجموعة، يرث `size` الإدخال المحذوف حجم المجموعة.
+
+<InputReference />
+
+<PageBanner illustration="page-cover-input" />

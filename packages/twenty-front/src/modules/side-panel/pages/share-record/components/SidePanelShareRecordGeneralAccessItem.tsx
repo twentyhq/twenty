@@ -1,89 +1,86 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconLock, IconUsers } from 'twenty-ui/icon';
+import { IconLock, IconPencil } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
-import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
-import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
+import { getRecordSharingGeneralAccess } from '@/object-record/record-sharing/utils/getRecordSharingGeneralAccess';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SidePanelShareRecordGeneralAccessItemProps = {
-  itemId: string;
-  generalAccessLevel: RecordShareAccessLevel | null | undefined;
-  defaultGeneralAccessLevel: RecordShareAccessLevel | null | undefined;
+  isPrivate: boolean;
   hasManagedGeneralAccess: boolean;
   objectLabelPlural: string;
-  saving: boolean;
-  setGeneralAccess: ReturnType<typeof useRecordSharing>['setGeneralAccess'];
+  isSaving: boolean;
+  setPrivate: ReturnType<typeof useRecordSharing>['setPrivate'];
 };
 
 export const SidePanelShareRecordGeneralAccessItem = ({
-  itemId,
-  generalAccessLevel,
-  defaultGeneralAccessLevel,
+  isPrivate,
   hasManagedGeneralAccess,
   objectLabelPlural,
-  saving,
-  setGeneralAccess,
+  isSaving,
+  setPrivate,
 }: SidePanelShareRecordGeneralAccessItemProps) => {
   const { t } = useLingui();
-  const isRestricted =
-    !isDefined(generalAccessLevel) ||
-    generalAccessLevel === RecordShareAccessLevel.NONE;
-  const hasWorkspaceAccess = !isRestricted || hasManagedGeneralAccess;
-  const withDefaultMarker = (
-    label: string,
-    accessLevel: RecordShareAccessLevel,
-  ) =>
-    accessLevel === defaultGeneralAccessLevel ? t`${label} (default)` : label;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const workspaceName = currentWorkspace?.displayName ?? '';
+  const { hasGeneralAccess, label: generalAccessLabel } =
+    getRecordSharingGeneralAccess({
+      sharing: { isShareable: true, isPrivate, hasManagedGeneralAccess },
+      objectLabelPlural,
+    });
 
   return (
     <SidePanelShareRecordDropdownItem
-      itemId={itemId}
-      label={
-        hasWorkspaceAccess
-          ? t`Everyone with access to ${objectLabelPlural}`
-          : t`Restricted`
+      label={hasGeneralAccess ? t(generalAccessLabel) : t`Restricted`}
+      Icon={IconLock}
+      LeftComponent={
+        hasGeneralAccess ? (
+          <ListItemIconContainer>
+            <Avatar
+              name={workspaceName}
+              colorSeed={getWorkspaceAvatarColorSeed(workspaceName)}
+              src={getAbsoluteImageUrl(
+                currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+              )}
+              shape="square"
+            />
+          </ListItemIconContainer>
+        ) : undefined
       }
-      Icon={hasWorkspaceAccess ? IconUsers : IconLock}
-      description={
-        isRestricted
-          ? undefined
-          : getRecordShareAccessLevelLabel(generalAccessLevel)
-      }
-      disabled={saving}
-      width={280}
+      description={isPrivate ? undefined : t`As their role allows`}
+      disabled={isSaving}
+      width={GenericDropdownContentWidth.Medium}
     >
       <Dropdown.Section>
         <Dropdown.OptionItem
-          selected={!hasWorkspaceAccess}
-          disabled={isRestricted || saving}
+          startIcon={<IconLock />}
+          selected={isPrivate}
+          disabled={isPrivate || isSaving}
           onSelect={() => {
-            void setGeneralAccess(RecordShareAccessLevel.NONE);
+            void setPrivate(true);
           }}
         >
-          {withDefaultMarker(t`Restricted`, RecordShareAccessLevel.NONE)}
+          {t`Restricted`}
         </Dropdown.OptionItem>
-      </Dropdown.Section>
-      <Dropdown.Separator />
-      <Dropdown.Section label={t`Everyone with access to ${objectLabelPlural}`}>
-        {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
-          // Full access lets its holder manage sharing, so it is only granted by name
-          (option) => option.value !== RecordShareAccessLevel.FULL,
-        ).map((option) => (
-          <Dropdown.OptionItem
-            key={option.value}
-            selected={generalAccessLevel === option.value}
-            disabled={generalAccessLevel === option.value || saving}
-            onSelect={() => {
-              void setGeneralAccess(option.value);
-            }}
-          >
-            {withDefaultMarker(t(option.label), option.value)}
-          </Dropdown.OptionItem>
-        ))}
+        <Dropdown.OptionItem
+          startIcon={<IconPencil />}
+          selected={!isPrivate}
+          disabled={!isPrivate || isSaving}
+          onSelect={() => {
+            void setPrivate(false);
+          }}
+        >
+          {t(generalAccessLabel)}
+        </Dropdown.OptionItem>
       </Dropdown.Section>
     </SidePanelShareRecordDropdownItem>
   );

@@ -1,0 +1,139 @@
+---
+title: Значок
+description: Отображение компактной встроенной информации с содержимым, предоставленным вызывающей стороной.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+## Обзор
+
+`Badge` отображает компактную встроенную информацию, включая короткие метки и количества. Используйте [Tag](/ru/ui/primitives/data-display/tag) для категорий, [Chip](/ru/ui/primitives/data-display/chip) для компактных элементов управления или [Status](/ru/ui/primitives/data-display/status) для именованного состояния с индикатором.
+
+<StoryEmbed storyId="ui-data-display-badge--display" title="Пример Badge" height={90} />
+
+## Использование
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Badge>Preview</Badge>;
+```
+
+Передавайте текст, числа или узлы в качестве дочерних элементов. Badge отображает предоставленное вами содержимое и не добавляет форматирование количества или правила видимости. Элементом по умолчанию является неинтерактивный `span`.
+
+## С иконкой
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Badge>
+    <IconPaperclip size={12} aria-hidden />
+    Attachment
+  </Badge>
+);
+```
+
+Иконки являются обычными дочерними узлами. Задайте для декоративных иконок `aria-hidden` и оставьте видимую метку, поясняющую содержимое.
+
+## Внешний вид
+
+<StoryEmbed storyId="ui-data-display-badge--catalog" title="Размеры и формы бейджей" height={200} />
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BadgeAppearances = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <Badge size="sm" color="tertiary" shape="pill">
+      Preview
+    </Badge>
+    <Badge size="md" color="inherit">
+      In review
+    </Badge>
+    <Badge size="xs" color="primary" shape="circle">
+      3
+    </Badge>
+    <Badge size="xs" color="secondary" shape="circle">
+      12
+    </Badge>
+    <Badge color="accent">Last used</Badge>
+  </Text>
+);
+```
+
+`size` принимает значения `xs`, `sm` или `md`. `color` принимает `tertiary`, `inherit`, `primary`, `secondary` или `accent`. Вариант `accent` сочетает заливку accent-tertiary с текстом accent11 в обеих темах. Сплошной вариант `primary` сохраняет синюю заливку и текст на акцентном фоне. `shape` принимает значения `pill` или `circle`. Значения по умолчанию: `sm`, `tertiary` и `pill`. Круглый вариант имеет фиксированную ширину, равную его высоте. Используйте `pill` для более длинного содержимого, включая сокращенные количества.
+
+<StoryEmbed storyId="ui-data-display-badge--colors" title="Цвета текста бейджей" height={140} />
+
+<StoryEmbed storyId="ui-data-display-badge--accent" title="Мягкие акцентные бейджи в светлой и тёмной темах" height={140} />
+
+## Количество и видимость
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type InboxButtonProps = {
+  count: number;
+};
+
+export const InboxButton = ({ count }: InboxButtonProps) => (
+  <Button aria-label={`Inbox, ${count} unread messages`}>
+    Inbox
+    {count > 0 && (
+      <Badge size="xs" color="primary" shape="pill" aria-hidden>
+        {count > 99 ? '99+' : count}
+      </Badge>
+    )}
+  </Button>
+);
+```
+
+Ваше приложение отвечает за форматирование чисел, сокращения, ограничение значений, видимость нуля и переведенные метки. Если компактное количество является декоративным, укажите его полное значение в доступном имени окружающего элемента управления. Автономный Badge может использовать нативные атрибуты доступности, включая `aria-label` или `aria-labelledby`.
+
+## Нативная композиция
+
+```tsx
+import { useRef } from 'react';
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const BuildStatus = () => {
+  const badgeRef = useRef<HTMLSpanElement>(null);
+
+  return (
+    <Badge ref={badgeRef} title="Current build status" data-build="preview">
+      Preview
+    </Badge>
+  );
+};
+```
+
+Нативные атрибуты, обработчики событий, `className`, `style` и `ref` применяются к фактическому корневому элементу. `render` принимает элемент или обратный вызов через композицию Base UI. Выберите подходящий нативный элемент-владелец для интерактивного содержимого:
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ReleaseLink = () => (
+  <Badge render={<Button href="#release-notes" size="sm" />}>
+    Release notes
+  </Badge>
+);
+```
+
+Отрисованный Button отвечает за поведение навигации и семантику ссылки. Badge сохраняет свое представительное поведение по умолчанию и не определяет интерактивность на основе содержимого.
+
+## Свойства
+
+Типы и значения по умолчанию генерируются из публичного типа `BadgeProps`. Также поддерживаются нативные атрибуты и обработчики событий.
+
+<BadgeReference />
+
+<PageBanner illustration="page-cover-checkbox" />

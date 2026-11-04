@@ -11,7 +11,6 @@
   "license": "AGPL-3.0",
   "keywords": [
     "twenty",
-    "create-twenty-app",
     "mcp",
     "oauth",
     "crm",
@@ -29,11 +28,7 @@
     "longDescription": "Scaffold, develop, deploy, and publish Twenty apps end-to-end. Five focused skills cover app creation, entity development (objects, fields, logic, layouts, front components), remote/sync/deploy operations, marketplace publishing assets, and workspace data retrieval via MCP. The bundled Twenty docs MCP server keeps guidance current, and the setup helper wires per-user workspace MCP with OAuth in one command.",
     "developerName": "Twenty PBC",
     "category": "Coding",
-    "capabilities": [
-      "Interactive",
-      "Read",
-      "Write"
-    ],
+    "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://twenty.com/",
     "privacyPolicyURL": "https://twenty.com/privacy-policy",
     "termsOfServiceURL": "https://twenty.com/terms",

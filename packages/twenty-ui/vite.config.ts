@@ -93,6 +93,7 @@ export default defineConfig(({ command }) => {
       // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
       include: [
         '@base-ui/utils/store',
+        'react-datepicker',
         'react',
         'react-dom',
         'react-dom/client',
@@ -145,6 +146,7 @@ export default defineConfig(({ command }) => {
       },
       rollupOptions: {
         external: (id: string) =>
+          id !== 'react-datepicker/dist/react-datepicker.css' &&
           externalDeps.some((dep) => id === dep || id.startsWith(dep + '/')),
         output: [
           {

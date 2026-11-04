@@ -1,5 +1,6 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
+import { getFormFieldBorderColor } from '@/ui/input/utils/getFormFieldBorderColor';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +20,7 @@ export const StyledControlContainer = styled.div<{
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
+  isFocused?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   align-items: center;
@@ -38,12 +40,18 @@ export const StyledControlContainer = styled.div<{
       : hasRightElement
         ? '0'
         : themeCssVariables.border.radius.md};
-  border-right: ${({ hasRightElement, $variant }) =>
+  border-color: ${({ isFocused, hasRightElement, $variant }) =>
+    getFormFieldBorderColor({ isFocused, hasRightElement, variant: $variant })};
+  border-right: ${({ isFocused, hasRightElement, $variant }) =>
     $variant === 'transparent'
       ? 'none'
       : hasRightElement
         ? 'none'
-        : `1px solid ${themeCssVariables.border.color.medium}`};
+        : `1px solid ${getFormFieldBorderColor({
+            isFocused,
+            hasRightElement,
+            variant: $variant,
+          })}`};
   border-top-left-radius: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ hasRightElement, $variant }) =>
@@ -112,6 +120,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
+  isFocused?: boolean;
   variant?: FormFieldInputVariant;
 };
 
@@ -123,6 +132,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
+  isFocused = false,
   variant = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
@@ -137,6 +147,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
+      isFocused={isFocused}
       $variant={variant}
       title={selectedOption.fullLabel}
     >

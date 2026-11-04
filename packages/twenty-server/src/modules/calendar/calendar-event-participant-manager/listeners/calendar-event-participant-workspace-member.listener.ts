@@ -41,10 +41,13 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         {
           workspaceId: payload.workspaceId,
           participantMatching: {
-            personIds: [],
             personEmails: [],
             workspaceMemberIds: [eventPayload.recordId],
           },
+        },
+        {
+          workspaceId: payload.workspaceId,
+          isWorkspaceJob: true,
         },
       );
     }
@@ -68,10 +71,13 @@ export class CalendarEventParticipantWorkspaceMemberListener {
           {
             workspaceId: payload.workspaceId,
             participantMatching: {
-              personIds: [],
               personEmails: [],
               workspaceMemberIds: [eventPayload.recordId],
             },
+          },
+          {
+            workspaceId: payload.workspaceId,
+            isWorkspaceJob: true,
           },
         );
       }

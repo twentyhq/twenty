@@ -13,9 +13,14 @@ import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTranspor
 import { workerScrollStore } from '@/polyfills/scroll/states/workerScrollStore';
 import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
 
+type RemoteRenderRoot = {
+  renderContainer: Element;
+  flushPendingMutations: () => void;
+};
+
 export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,
-): Element => {
+): RemoteRenderRoot => {
   const batchedConnection = new BatchingRemoteConnection({
     call: connection.call,
     mutate: (records) =>
@@ -42,5 +47,8 @@ export const attachRemoteRenderRootToWorkerDocument = (
   workerScrollStore.setRootElement(remoteRoot);
   installStyleBridge(styleContainer);
 
-  return renderContainer;
+  return {
+    renderContainer,
+    flushPendingMutations: () => batchedConnection.flush(),
+  };
 };

@@ -3,6 +3,10 @@ title: Dark mode
 description: Load both Twenty UI palettes and switch the active color scheme.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Load both theme stylesheets when your application can switch schemes. `ThemeProvider` selects a palette by applying the `light` or `dark` class.
 
 ```tsx
@@ -55,3 +59,5 @@ export const Preview = () => (
 ```
 
 Use `useThemeColorScheme()` from `twenty-ui/theme` to read the provider's active scheme. In a Twenty front component, use `useColorScheme()` from `twenty-sdk/front-component` to read the workspace scheme supplied by the host.
+
+<PageBanner illustration="page-cover-palette" />

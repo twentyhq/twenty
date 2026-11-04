@@ -291,8 +291,8 @@ export async function createBandSession({
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
       tile: { value: halftoneSettings.scale },
-      s_3: { value: halftoneSettings.power },
-      s_4: { value: halftoneSettings.width },
+      halftonePower: { value: halftoneSettings.power },
+      halftoneWidth: { value: halftoneSettings.width },
       applyToDarkAreas: {
         value: halftoneSettings.toneTarget === 'dark' ? 1 : 0,
       },

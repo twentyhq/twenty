@@ -1,0 +1,230 @@
+---
+title: Taburi
+description: Comutați între panouri asociate folosind navigarea accesibilă prin file.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Prezentare generală
+
+`Tabs` conectează fiecare filă la un panou de conținut asociat folosind o valoare `value` comună. Păstrați valorile unice în cadrul unei rădăcini. Utilizați [TabButton](/ro/ui/components/navigation/tab-button) pentru linkuri de rută și acțiuni adiacente.
+
+<StoryEmbed storyId="ui-navigation-tabs--display" title="Exemplu de file" height={160} />
+
+## Utilizare
+
+Utilizați `defaultValue` pentru a seta selecția inițială. Rădăcina gestionează modificările ulterioare.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` acceptă `startIcon`, `endIcon`, `badge` și o `size` de `compact`, `sm` sau `md` (`sm` implicit). Props-urile rămase păstrează contractul Base UI instalat. Valorile nu sunt restricționate la șiruri sau numere. Valorile de referință trebuie să utilizeze aceeași identitate în filă, panou și rădăcină. O valoare de rădăcină `null` nu selectează niciun panou.
+
+### File compacte
+
+Utilizați `size="compact"` pentru fiecare filă, pentru controale de intrare/ieșire scurte în interiorul unui card. Filele compacte au o înălțime minimă a rândului de 24px, text mic și spațiere interioară a conținutului de 4px pe fiecare parte. Dimensiunile existente `sm` și `md` își păstrează înălțimea minimă de 40px. Filele compacte folosesc același indicator, același contur de focalizare și aceeași activare de la tastatură ca celelalte dimensiuni.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-tabs--compact" title="File compacte de intrare și ieșire" height={110} />
+
+## Anatomie
+
+Plasați filele și un indicator opțional în `Tabs.List`. Plasați panourile acestora lângă listă, toate în cadrul aceleiași `Tabs.Root`.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| Componentă  | Cerință                                     | Scop                                                               |
+| ----------- | ------------------------------------------- | ------------------------------------------------------------------ |
+| `Root`      | Obligatoriu                                 | Gestionează valoarea selectată și orientarea.                      |
+| `Listă`     | Obligatoriu                                 | Grupează filele și oferă navigare prin focalizare de la tastatură. |
+| `Filă`      | Unul pentru fiecare panou                   | Activează panoul cu același `value`.                               |
+| `Panel`     | Unul pentru fiecare vizualizare de conținut | Afișează conținutul său când `value` este activ.                   |
+| `Indicator` | Opțional                                    | Afișează poziția filei active cu stilizare bazată pe temă.         |
+
+Dați listei un nume accesibil și asociați `value` fiecărei file cu `value` al panoului său. Base UI furnizează ID-urile filei și panoului, precum și relațiile `aria-controls` și `aria-labelledby`.
+
+Când furnizați un `id` personalizat pentru `Tabs.Panel`, setați `aria-controls` pe `Tabs.Tab` corespunzător la același ID. Implementarea instalată Base UI 1.8.0 necesită această relație explicită. ID-urile personalizate ale filelor sunt înregistrate corect pentru `aria-labelledby` al panoului.
+
+Adăugați un `Tabs.Indicator` atunci când doriți sublinierea activă. `List` nu inserează un indicator.
+
+## Stare controlată și detalii despre evenimente
+
+Transmiteți `value` și actualizați-l cu `onValueChange` pentru a gestiona selecția. Callback-ul primește valoarea următoare și detaliile evenimentului Base UI, inclusiv `event`, `reason`, `activationDirection` și `cancel()`.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Activarea de către utilizator are motivul `none`. În rădăcinile necontrolate, revenirea automată poate avea motivul `initial`, `disabled` sau `missing`. Revenirea automată poate selecta `null` atunci când nu mai rămâne nicio filă activată. Aceste modificări automate nu pot fi anulate. Rădăcinile controlate păstrează selecția sub controlul aplicației.
+
+Anulați o modificare a utilizatorului înainte de actualizarea stării controlate sau utilizați același callback cu o rădăcină necontrolată:
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## Activare de la tastatură, orientare și direcție
+
+`Tabs.List` utilizează activarea manuală în mod implicit (`activateOnFocus={false}`). Tastele săgeată mută focalizarea; Enter sau Space activează fila focalizată. Setați `activateOnFocus` pentru a selecta o filă când focalizarea de la tastatură ajunge la aceasta. Ambele politici funcționează cu starea controlată și necontrolată.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+Listele orizontale utilizează Stânga și Dreapta; listele verticale utilizează Sus și Jos. Home și End focalizează prima și ultima filă activată. Filele dezactivate sunt omise. `loopFocus` este `true` în mod implicit; setați-l la `false` pentru a vă opri la oricare dintre limite.
+
+Utilizați [DirectionProvider](/ro/ui/primitives/layout/direction-provider) pentru direcția tastaturii RTL și `dir="rtl"` pe rădăcină pentru aspect. Setați `orientation="vertical"` pe `Root` pentru o listă verticală și un indicator.
+
+## Durata de viață a panoului
+
+Utilizați `keepMounted` când conținutul panoului trebuie să își păstreze starea cât timp este inactiv. Panourile inactive montate rămân ascunse și nu ocupă spațiu în aspect.
+
+## Aspectul panoului
+
+`Panel` umple spațiul rămas de listă și se poate micșora sub dimensiunea conținutului său pe ambele axe, astfel încât să rămână într-o rădăcină cu înălțime fixă. Pentru a derula conținutul acestuia, setați `overflow: auto` pe panou sau pe un element copil care îl umple, cum ar fi un copil `flex: 1` al unui panou flex pe coloană.
+
+## Props-uri native, compoziție de redare și referințe
+
+Toate cele cinci părți păstrează props-urile native, gestionarele de evenimente, referințele și compoziția `render` Base UI. `className` și `style` ale acestora pot fi, de asemenea, funcții ale stării părții. Elementele implicite sunt un `div` pentru Root, List și Panel, un `button` pentru Tab și un `span` pentru Indicator. Referințele indică elementele efectiv redate.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
+
+  return (
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
+        </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
+      </Tabs.List>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Păstrați `nativeButton` consecvent cu elementul compus pentru o filă. Utilizați `nativeButton={false}` pentru un element interactiv personalizat care nu este un buton nativ și care transmite props-urile și referința furnizate. O ancoră de rută aparține în `TabButton`, unde ruta gestionează navigarea și `aria-current`.
+
+## Accent vizuală.
+
+Utilizați `highlighted` pe `Tabs.Tab` pentru a-i evidenția conținutul independent de selecție, de exemplu atunci când setările sale sunt deschise. Selecția rămâne gestionată de `Tabs.Root`.
+
+## Proprietăți
+
+Referința generată include props-urile publice pentru fiecare parte. Tipurile de stare publică ale părților și tipurile de detalii/motiv ale modificării Root sunt disponibile din `twenty-ui/primitives/navigation`.
+
+<TabsReference />
+
+## Migrare
+
+Adăugați un `Tabs.Indicator` explicit la listele care trebuie să păstreze sublinierea activă. Eliminați indicatorii duplicați din compozițiile care se bazau anterior pe inserarea unuia de către `List`. Păstrați linkurile de rută, controalele de creare și controalele de depășire în afara `Tabs.List`, ale cărui elemente copil selectează panouri asociate.
+
+<PageBanner illustration="layout" />

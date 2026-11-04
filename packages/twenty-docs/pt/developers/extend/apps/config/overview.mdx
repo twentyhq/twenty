@@ -1,7 +1,6 @@
 ---
 title: Visão Geral
 description: Configure a própria aplicação — a sua identidade, permissões predefinidas e o que é executado no momento da instalação.
-icon: screwdriver-wrench
 ---
 
 A **camada de configuração** de uma aplicação Twenty é o que descreve a aplicação *para a plataforma* — a sua identidade, as permissões que detém e o código que é executado durante a instalação ou atualização. Estas declarações não adicionam novos formatos de dados nem comportamento em tempo de execução; dizem à Twenty *quem é a aplicação* e *como configurá-la*.
@@ -37,10 +36,10 @@ A **camada de configuração** de uma aplicação Twenty é o que descreve a apl
   <Card title="Configuração da aplicação" icon="rocket" href="/pt/developers/extend/apps/config/application">
     `defineApplication` — identidade, função predefinida, variáveis, metadados do marketplace.
   </Card>
-  <Card title="Funções e Permissões" icon="shield-halved" href="/pt/developers/extend/apps/config/roles">
+  <Card title="Funções e Permissões" icon="shield-half" href="/pt/developers/extend/apps/config/roles">
     `defineRole` — declara o que as funções de lógica da sua aplicação podem ler e escrever.
   </Card>
-  <Card title="Hooks de instalação" icon="wrench" href="/pt/developers/extend/apps/config/install-hooks">
+  <Card title="Hooks de instalação" icon="tool" href="/pt/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction` — criam cópias de segurança dos dados, inicializam valores predefinidos, validam atualizações e fazem a limpeza na remoção.
   </Card>
 </CardGroup>

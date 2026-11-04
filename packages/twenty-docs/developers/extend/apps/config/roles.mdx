@@ -1,8 +1,11 @@
 ---
 title: Roles & Permissions
 description: Declare what objects and fields your app's logic functions and front components can read and write.
-icon: 'shield-halved'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role marked with `defineApplicationRole()` (see [The default function role](#the-default-function-role) below).
 
@@ -22,6 +25,7 @@ export default defineRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
+  canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
@@ -46,9 +50,19 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+<Note>
+  `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`
+  are available from `twenty-sdk` 2.54 onward; earlier versions name them
+  `CONNECTED_ACCOUNTS` and `APPLICATIONS`. The old names are deprecated aliases
+  for the same flags, and a role keeps each flag once. Enumerating
+  `SystemPermissionFlag`, for example with `Object.keys`, still lists the old
+  names. The API also reports these flags under their old keys, for example in
+  `currentUserWorkspace.permissionFlags`.
+</Note>
 
 ## Row-level security
 
@@ -212,11 +226,12 @@ Notes:
 
 - Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
 - Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
-- Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`. The identifier must match a role your app defines, or the build fails.
+- Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`. It can also name a role your app does not define, such as the workspace custom application's built-in default role kept by `twenty app pull`; the build then cannot check that role, so it must exist in the target workspace.
+- A role that workspace members or API keys can be assigned (`canBeAssignedToUsers` or `canBeAssignedToApiKeys`, both `true` when omitted) is a custom role and requires the **Organization plan or above**: on other plans the install is refused. Keep both `false` on roles that only your app and its agents run as.
 
 ### Agent roles
 
-The application role is what a workspace reviews when it installs your app, so it must cover everything the app itself can do. Any role you assign to an agent through `roleUniversalIdentifier` on `defineAgent()` must not grant more than the application role: no object action, field access, permission flag or row-level scope the application role lacks. If it does, the build fails with an error listing the excess grants. Roles your app ships for workspace members or API keys are not held to this rule, since the app never runs with them.
+The application role is what a workspace reviews when it installs your app, so it must cover everything the app itself can do. Any role you assign to an agent through `roleUniversalIdentifier` on `defineAgent()` must not grant more than the application role: no object action, field access, permission flag or row-level scope the application role lacks. If it does, the build fails with an error listing the excess grants. Roles your app ships for workspace members or API keys are not held to this rule, since the app never runs with them. The check needs the application role in your app's source, so it is skipped when the default role is defined elsewhere.
 
 ## Best practices
 
@@ -225,3 +240,5 @@ The application role is what a workspace reviews when it installs your app, so i
 - `permissionFlagUniversalIdentifiers` control access to platform-level capabilities. Keep them minimal.
 - A permission flag your app declares with `definePermissionFlag()` carries a `permissionType`: `'tool'` (the default) for a capability an agent or a user can be granted, `'settings'` for a flag that unlocks a settings area.
 - See a working example: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="card-page-roles" />

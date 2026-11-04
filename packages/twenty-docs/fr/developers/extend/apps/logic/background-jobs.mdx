@@ -1,7 +1,6 @@
 ---
 title: Tâches en arrière-plan
 description: Confiez les travaux longs ou soumis à des limitations de débit aux workers de Twenty en mettant en file d’attente une autre exécution de fonction logique au lieu de tout faire en ligne.
-icon: layer-group
 ---
 
 Une exécution de fonction logique est limitée par son `timeoutSeconds` (900 secondes maximum). Tout ce qui ne peut pas se terminer dans cette fenêtre — une resynchronisation complète, une diffusion par enregistrement, une API tierce qui vous applique des limitations de débit — doit être découpé en exécutions plus petites.

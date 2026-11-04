@@ -22,6 +22,7 @@ const APP_TOOL_FLAG = 'APP_SEND_NOTIFICATION';
 
 const permissionFlags = [
   {
+    __typename: 'PermissionFlag' as const,
     id: 'app-settings',
     applicationId: 'notification-app',
     key: APP_SETTINGS_FLAG,
@@ -31,6 +32,7 @@ const permissionFlags = [
     permissionType: 'settings',
   },
   {
+    __typename: 'PermissionFlag' as const,
     id: 'app-tool',
     applicationId: 'notification-app',
     key: APP_TOOL_FLAG,
@@ -40,6 +42,7 @@ const permissionFlags = [
     permissionType: 'tool',
   },
   {
+    __typename: 'PermissionFlag' as const,
     id: 'standard-settings',
     applicationId: 'standard-app',
     key: PermissionFlagType.APPLICATIONS,

@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThan, type ObjectLiteral } from 'typeorm';
+import { Any, In, MoreThan, type ObjectLiteral } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -13,6 +13,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type LinkedTimelineActivityHappensAtSyncUpdate } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import {
   buildTimelineActivityMergeKey,
@@ -83,6 +84,27 @@ export class TimelineActivityRepository {
     }, authContext);
   }
 
+  async deleteLinkedTimelineActivities({
+    workspaceId,
+    linkedObjectMetadataId,
+    linkedRecordIds,
+  }: LinkedTimelineActivityDeletion) {
+    if (linkedRecordIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks<ObjectLiteral>('timelineActivity')
+        .delete({
+          linkedObjectMetadataId,
+          linkedRecordId: Any(linkedRecordIds),
+        });
+    }, authContext);
+  }
+
   private async syncLinkedTimelineActivitiesHappensAtFromSourceRecords({
     sourceObjectNameSingular,
     happensAtFieldName,
@@ -90,9 +112,8 @@ export class TimelineActivityRepository {
     linkedRecordIds,
   }: LinkedTimelineActivityHappensAtSyncUpdate) {
     const sourceRepository =
-      this.workspaceOrmManager.getRepository<ObjectLiteral>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
         sourceObjectNameSingular,
-        { shouldBypassPermissionChecks: true },
       );
 
     // Queue retries can replay an older event, so read the value from the source row rather than the event snapshot
@@ -119,9 +140,8 @@ export class TimelineActivityRepository {
     }
 
     const timelineActivityRepository =
-      this.workspaceOrmManager.getRepository<ObjectLiteral>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
         'timelineActivity',
-        { shouldBypassPermissionChecks: true },
       );
 
     const timelineActivities = await timelineActivityRepository.find({
@@ -173,9 +193,9 @@ export class TimelineActivityRepository {
           });
 
           const timelineActivityRepository =
-            transactionScope.getRepository<ObjectLiteral>('timelineActivity', {
-              shouldBypassPermissionChecks: true,
-            });
+            transactionScope.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
+              'timelineActivity',
+            );
 
           const recentTimelineActivities =
             await this.findRecentTimelineActivities({
@@ -237,8 +257,8 @@ export class TimelineActivityRepository {
                 )
                 .find(
                   (timelineActivity) =>
-                    !isDefined(payload.linkedRecordId) ||
-                    timelineActivity.linkedRecordId === payload.linkedRecordId,
+                    (timelineActivity.linkedRecordId ?? null) ===
+                    (payload.linkedRecordId ?? null),
                 );
 
             if (isDefined(recentTimelineActivity)) {
@@ -298,10 +318,10 @@ export class TimelineActivityRepository {
       return payloads;
     }
 
-    const targetRepository = transactionScope.getRepository<ObjectLiteral>(
-      objectSingularName,
-      { shouldBypassPermissionChecks: true },
-    );
+    const targetRepository =
+      transactionScope.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
+        objectSingularName,
+      );
 
     const existingRecords = await targetRepository.find({
       select: ['id'],
@@ -339,6 +359,7 @@ export class TimelineActivityRepository {
             payload.recordId,
             payload.workspaceMemberId ?? null,
             payload.timelineActivityTypeId,
+            payload.linkedRecordId ?? null,
           ]),
         ),
       ),
@@ -373,6 +394,12 @@ export class TimelineActivityRepository {
       ),
       createdAt: MoreThan(tenMinutesAgo),
     };
+
+    const linkedRecordIds = payloads.map((payload) => payload.linkedRecordId);
+
+    if (linkedRecordIds.every(isDefined)) {
+      whereConditions.linkedRecordId = In(linkedRecordIds);
+    }
 
     // Every candidate is needed: a single row would let only one payload of a multi-record batch merge
     return await timelineActivityRepository.find({

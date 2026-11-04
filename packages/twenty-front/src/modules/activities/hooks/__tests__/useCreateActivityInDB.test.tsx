@@ -5,7 +5,7 @@ import { createOneActivityOperationSignatureFactory } from '@/activities/graphql
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -24,10 +24,12 @@ const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
-const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
-const bodyV2WithoutTypename = isDefined(bodyV2)
-  ? { blocknote: bodyV2.blocknote, markdown: bodyV2.markdown }
-  : bodyV2;
+const { id, title, status, dueAt } = mockedTasks[0];
+const bodyV2 = {
+  markdown: null,
+  tiptap:
+    '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"paragraph","content":[{"type":"text","text":"Arrange a follow-up call"}]}]}',
+};
 const mockedActivity = {
   id,
   title,
@@ -49,7 +51,7 @@ if (!isDefined(activityTargetFieldName)) {
 }
 
 const operationSignature = createOneActivityOperationSignatureFactory({
-  objectNameSingular: CoreObjectNameSingular.Task,
+  objectNameSingular: StandardObjectNameSingular.Task,
 });
 
 const createOneTaskMutation = generateCreateOneRecordMutation({
@@ -79,7 +81,7 @@ const mocks: MockedResponse[] = [
       variables: {
         input: {
           ...mockedActivity,
-          bodyV2: bodyV2WithoutTypename,
+          bodyV2,
         },
       },
     },
@@ -96,7 +98,7 @@ describe('useCreateActivityInDB', () => {
     const { result } = renderHook(
       () =>
         useCreateActivityInDB({
-          activityObjectNameSingular: CoreObjectNameSingular.Task,
+          activityObjectNameSingular: StandardObjectNameSingular.Task,
         }),
       {
         wrapper: Wrapper,

@@ -8,13 +8,17 @@ import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
 const TOPICS = [
   {
+    __typename: 'UnsubscribeTopic' as const,
     id: 'topic-newsletter',
     name: 'Newsletter',
+    description: null,
     visibility: UnsubscribeTopicVisibility.PUBLIC,
   },
   {
+    __typename: 'UnsubscribeTopic' as const,
     id: 'topic-untitled',
     name: null,
+    description: null,
     visibility: UnsubscribeTopicVisibility.PUBLIC,
   },
 ];

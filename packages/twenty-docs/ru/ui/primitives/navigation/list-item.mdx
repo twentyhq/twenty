@@ -1,0 +1,403 @@
+---
+title: ListItem
+description: Создавайте согласованные строки со значками, описаниями, индикаторами и действиями.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Обзор
+
+`ListItem` предоставляет визуальную структуру, общую для строк списков и меню. По умолчанию он отображает `div` для пассивного содержимого. Используйте [ListItemButton](/ru/ui/components/navigation/list-item-button) для обычных строк действий. При необходимости используйте `ListItem` с якорем для навигации или с пользовательским семантическим владельцем. Используйте [Dropdown](/ru/ui/components/navigation/dropdown) или [Select](/ru/ui/primitives/input/select), когда вам нужен полноценный владелец всплывающего окна или выбора.
+
+<StoryEmbed storyId="ui-navigation-listitem--display" title="Пример ListItem" height={100} />
+
+## Использование
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
+
+## Анатомия
+
+`ListItem` предоставляет слоты содержимого через props. Эти слоты размещают содержимое в одной строке; они не являются отдельно экспортируемыми компонентами.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| Слот                                  | Требование                         | Назначение                                                                                 |
+| ------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| `children`                            | Требуется для видимой метки строки | Предоставляет основной текст.                                                              |
+| `startIcon`, `endIcon`                | Необязательно                      | Добавляйте значки, аватары, метаданные или независимые элементы управления с любого конца. |
+| `description`                         | Необязательно                      | Добавляет дополнительное содержимое в строке, под меткой или в конце.                      |
+| `действия`                            | Необязательно                      | Добавляет завершающее содержимое, например отдельно фокусируемое действие.                 |
+| `indicator`, `shortcut`, `hasSubmenu` | Необязательно                      | Настройте встроенные метки выбора, подсказки сочетаний клавиш и индикатор подменю.         |
+
+Строка предоставляет компоновку. `render` принимает элемент или обратный вызов, получающий нативные props и визуальное состояние. При использовании обратного вызова распределите эти props по фактическому корневому элементу. Нативные атрибуты, обработчики событий, `className`, `style` и `ref` передаются этому корневому элементу. Для строки с независимыми кнопками действий оставьте саму строку неинтерактивной, чтобы эти кнопки оставались отдельными элементами управления.
+
+## Многострочные строки
+
+Установите `descriptionPlacement="below"`, чтобы разместить дополнительное содержимое под меткой. Заголовок сохраняет существующее поведение усечения, а дополнительное содержимое переносится в пределах доступной ширины. Стандартное размещение `inline` и размещение `end` сохраняют существующий внешний вид.
+
+<StoryEmbed storyId="ui-navigation-listitem-multiline--display" title="Пример многострочного ListItem" height={150} />
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+Для более коротких предварительных просмотров передайте компонент [Text](/ru/ui/primitives/typography/text) с `truncate` или `lineClamp` в качестве `description`. Пользовательское содержимое самостоятельно управляет своей компоновкой и доступными метками.
+
+### Независимые визуальные состояния
+
+Все визуальные состояния принадлежат вызывающему коду. `active` определяет открытую или текущую строку, не выбирая её. `selected` обозначает выбор, а `focused` — подсветку навигации с клавиатуры без перемещения фокуса DOM. `active` применяет фон текущей строки. Установите `selectionAppearance="accent"`, чтобы добавить акцентную заливку выбранным строкам независимо от размещения описания. Внешний вид по умолчанию сохраняет существующее оформление выбора на основе индикатора. `focused` применяет общий подсвеченный фон, в том числе когда владелец использует его для подсветки указателем. Контур фокуса следует за фактическим фокусом с клавиатуры на корневом элементе или его элементах управления.
+
+Эти свойства не добавляют доступных состояний. Укажите `aria-current`, `aria-selected` или состояние `checked` элемента управления на соответствующем семантическом владельце. Фактический фокус с клавиатуры также сохраняет нативный контур фокуса.
+
+### Независимые элементы управления
+
+Сохраняйте корневой `div` по умолчанию, если строка содержит настоящий флажок или независимые кнопки действий. Используйте `startIcon` для флажка, а `actions` — для кнопок. Декоративный `indicator` не нужен, если настоящий флажок уже отображает выбор.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+Выбор и открытие — отдельные взаимодействия. Приложение управляет распространением событий, а также любой активацией строк и политикой клавиатуры. `ListItem.disabled` изменяет только внешний вид; передайте `disabled` каждому настоящему элементу управления, чтобы предотвратить его активацию.
+
+Существующее поведение видимости действий применяется к многострочным строкам: `actionsVisibility="hover"` показывает действия при наведении или фокусе внутри строки и сохраняет их видимыми на сенсорных устройствах. Установите значение `always` для постоянно отображаемых действий, в том числе когда открыто всплывающее окно, принадлежащее вызывающему коду. При ширине строки 480px или менее многострочные действия перемещаются на отдельную строку и переносятся по мере необходимости.
+
+## Строка действия
+
+Используйте [ListItemButton](/ru/ui/components/navigation/list-item-button), чтобы сочетать стилизацию строки с нативным взаимодействием кнопки. Передайте `disabled` один раз, чтобы управлять и внешним видом, и активацией.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+Пользовательский владелец кнопки по-прежнему может компоновать `ListItem` через `render`. Этот владелец предоставляет нативный фокус, активацию клавишами Enter и Space, а также поведение disabled. `ListItem.disabled` предоставляет только соответствующий визуальный стиль. `shortcut` отображает подсказки; сочетания клавиш регистрирует ваше приложение.
+
+<StoryEmbed storyId="ui-navigation-listitem--button-owner" title="Пользовательская композиция кнопки" height={100} />
+
+## Навигация и явные ссылки
+
+Передайте якорь через `render`, если навигация выполняется по всей строке. Разместите атрибуты якоря, включая `href`, `target` и `rel`, на этом элементе.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
+  </ListItem>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-listitem--link-owner" title="Строка ссылки" height={100} />
+
+Строковые метки остаются текстом, включая строки в формате URL. ListItem не создаёт ссылки. Чтобы добавить ссылку в часть неинтерактивной строки, предоставьте якорь как содержимое, принадлежащее вызывающей стороне. Сохраните эту строку как `div`, чтобы избежать вложенных ссылок или кнопок. Строковые метки сохраняют усечение и всплывающую подсказку при переполнении; для пользовательского содержимого можно использовать [OverflowingTextWithTooltip](/ru/ui/primitives/typography/overflowing-text-with-tooltip) с явно отрисованным якорем.
+
+У ссылок нет нативного атрибута `disabled`. Если назначение недоступно, владелец ссылки должен обеспечить соответствующую семантику, порядок перехода по Tab и политику навигации. Одна лишь стилизация с помощью `ListItem.disabled` не предотвращает навигацию.
+
+## Владелец элемента всплывающего меню
+
+Используйте `Dropdown.ActionItem` или `Dropdown.OptionItem` внутри их владельца всплывающего окна. Эти части уже компонуют макет ListItem и предоставляют его визуальные слоты. Владелец всплывающего меню предоставляет роли, фокус, навигацию с клавиатуры, активацию и поведение disabled.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Владелец элемента Dropdown" height={420} />
+
+## Политика нативных событий
+
+ListItem перенаправляет нативные объекты событий и обработчики. Щелчки всплывают обычным образом, включая щелчки по элементам управления завершающих действий. Установите любое намеренное ограничение на интерактивном владельце или в обработчике вызывающей стороны.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+Вызывающей стороне также принадлежит любая политика `preventDefault()`, например предотвращение навигации по ссылке. Передача `onClick` не добавляет роль, не делает `div` доступным для управления с клавиатуры и не изменяет распространение событий.
+
+## Перетаскивание и навигация редактора, управляемые приложением
+
+Создавайте строки с возможностью изменения порядка с помощью `ListItem` внутри хоста перетаскивания вашего приложения. Разместите атрибуты и слушатели перетаскивания хоста на его рукоятке и передайте рукоятку или захват через `startIcon`. Сохраняйте отдельные элементы управления видимостью, редактированием и удалением в `actions`. Хост перетаскивания управляет изменением порядка с помощью указателя и клавиатуры, отключением перетаскивания и доступными метками рукоятки.
+
+Для предложений редактора сохраните существующий listbox редактора и владельца активного варианта. Отрисовывайте каждый `ListItem` с `role="option"` и `aria-selected`, а для внешнего вида активной строки используйте `focused`. Редактор управляет навигацией стрелками и активацией клавишей Enter, пока фокус остается в области редактирования. Предотвращайте изменения фокуса при нажатии указателем, когда этого требует редактор, и обрабатывайте выбор указателем в обработчике строки приложения.
+
+Для предложений на странице Dropdown используйте `Dropdown.OptionItem` или `Dropdown.ActionItem`, чтобы эта страница управляла навигацией и активацией. Не добавляйте второй обработчик Enter или Space владельцу, который уже активируется с клавиатуры.
+
+## Строка настроек
+
+Используйте [SettingsRow](/ru/ui/components/settings/settings-row) для строки переключателя с меткой. Он объединяет `ListItem` и `Switch`, управляет их доступной связью и использует отключенное состояние переключателя для внешнего вида строки.
+
+## Индикатор выбора
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+`active`, `selected`, `focused` и `disabled` независимо управляют оформлением строки. Они не регистрируют действия, не перемещают DOM-фокус, не добавляют доступные роли или состояния и не подавляют события. Индикаторы `check` и `checkbox` являются декоративными; для элемента управления формы используйте настоящий [Checkbox](/ru/ui/primitives/input/checkbox). Установите `aria-pressed`, `aria-selected` или семантику другого состояния на владельце, которому они нужны.
+
+## Строки выбора
+
+Выбор принадлежит родительскому элементу. У `ListItem` нет неконтролируемого состояния выбора: передайте `selected` и обновляйте его из `onClick`. Используйте `indicator="check"` для одного варианта и `indicator="checkbox"` для нескольких вариантов. Оба индикатора декоративные; интерактивный владелец обрабатывает активацию.
+
+В существующем listbox передайте `role="option"` и `aria-selected`, а управление фокусом и клавишами со стрелками оставьте в listbox. Для полноценного виджета выбора используйте [Select](/ru/ui/primitives/input/select). Автономные кнопки выбора могут использовать `aria-pressed`, как в этих примерах.
+
+### Одиночный выбор
+
+Поместите [Avatar](/ru/ui/primitives/data-display/avatar) в `startIcon`, чтобы обозначить запись. Используйте `description` для вспомогательного текста и `descriptionPlacement="end"` для значения в конце.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--single-selection" title="Строки с одиночным выбором" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### Множественный выбор
+
+Используйте [Tag](/ru/ui/primitives/data-display/tag) в качестве содержимого строки для значений с тегами или поместите [ColorSample](/ru/ui/primitives/data-display/color-sample) в `startIcon` для выбора цвета. Строка также может содержать обычный текст или аватар.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--multiple-selection" title="Строки с множественным выбором" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+Индикатор флажка не является элементом управления формы и не отправляет значение. Используйте [Checkbox](/ru/ui/primitives/input/checkbox), если вам нужно участие в форме. Установите нативный `disabled` на отрисованной кнопке, чтобы предотвратить активацию и удалить её из порядка перехода по Tab. Также передайте `ListItem.disabled` для её визуального оформления.
+
+## Слоты
+
+Используйте `startIcon` и `endIcon` для значков или содержимого, принадлежащего вызывающему коду, `description` — для вспомогательного текста, `actions` — для конечного содержимого, а `hasSubmenu` — для индикатора подменю. `descriptionPlacement` принимает значения `inline`, `end` или `below`. `color="danger"` задаёт стиль для деструктивного действия. Не вкладывайте интерактивные элементы управления в строку, отрисованную как кнопка.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
+
+## Метки
+
+Используйте `shortcutJoinLabel`, чтобы настроить текст между последовательными шагами сочетания клавиш. По умолчанию используется `then`; пустая строка удаляет текст-соединитель. То же свойство доступно в частях элемента `Dropdown`.
+
+## Свойства
+
+Справочник создаётся на основе публичных типов компонента. Поддерживаются нативные атрибуты и обработчики `div`, включая доступные имена и нативные события. Разместите специфичные для кнопки или якоря атрибуты на элементе, предоставленном через `render`. И `ref`, и ref отрисованного элемента указывают на фактический корневой элемент DOM.
+
+<ListItemReference />
+
+Передайте `shortcut={['Mod', 'Enter']}` для одновременного нажатия клавиш или `shortcut={[['G'], ['P']]}` для последовательных нажатий. См. [Shortcut](/ru/ui/primitives/typography/shortcut) для вложенных комбинаций и общего форматировщика строк.
+
+<PageBanner illustration="section-apps-data" />

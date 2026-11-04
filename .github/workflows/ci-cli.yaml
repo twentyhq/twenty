@@ -23,6 +23,8 @@ jobs:
         packages/twenty-client-sdk/**
         packages/twenty-apps/fixtures/**
         packages/twenty-ui/**
+        packages/twenty-server/**
+        .github/actions/spawn-twenty-server/**
         packages/twenty-oxlint-rules/**
         .github/actions/yarn-install/**
         .github/actions/restore-cache/**
@@ -65,17 +67,17 @@ jobs:
         uses: ./.github/actions/restore-cache
         with:
           key: cli-test
-      - name: Build the CLI and the SDK used by parity tests
+      - name: Build the CLI and SDK authoring exports
         run: npx nx run-many --target=build --projects=twenty-sdk,twenty-cli
       - name: Lint
         run: npx nx lint twenty-cli
       - name: Typecheck
         run: npx tsgo -p packages/twenty-cli/tsconfig.json --noEmit
       - name: Unit tests
-        run: npx vitest run --maxWorkers=2 --exclude src/app/manifest/__tests__/manifest-parity.spec.ts
+        run: npx vitest run --maxWorkers=2 --exclude src/app/manifest/__tests__/manifest-fixtures.spec.ts
         working-directory: packages/twenty-cli
-      - name: Manifest parity tests
-        run: npx vitest run --maxWorkers=1 src/app/manifest/__tests__/manifest-parity.spec.ts
+      - name: Manifest fixture tests
+        run: npx vitest run --maxWorkers=1 src/app/manifest/__tests__/manifest-fixtures.spec.ts
         working-directory: packages/twenty-cli
       - name: Test app publishing with an isolated local registry
         run: |
@@ -85,11 +87,36 @@ jobs:
         uses: ./.github/actions/save-cache
         with:
           key: ${{ steps.restore-cli-test-cache.outputs.cache-primary-key }}
+  cli-e2e-test:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest-4-cores
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build the CLI and application dependencies
+        run: npx nx run-many --target=build --projects=twenty-cli,twenty-sdk,twenty-client-sdk,twenty-ui
+      - name: Start test server and worker
+        id: server
+        uses: ./.github/actions/spawn-twenty-server
+      - name: Test scaffolding, installation and function execution
+        env:
+          TWENTY_API_URL: ${{ steps.server.outputs.server-url }}
+          TWENTY_ACCESS_TOKEN: ${{ steps.server.outputs.api-key }}
+        run: node --test packages/twenty-cli/scripts/test-app-lifecycle.mjs
+      - name: Dump server and worker logs on failure
+        if: failure()
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, cli-package-test, cli-test]
+    needs: [changed-files-check, cli-package-test, cli-test, cli-e2e-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

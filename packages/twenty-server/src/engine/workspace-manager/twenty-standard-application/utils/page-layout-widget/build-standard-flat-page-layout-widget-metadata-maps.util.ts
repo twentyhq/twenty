@@ -105,6 +105,7 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   workflowAutomatedTrigger: 'workflowAutomatedTriggerRecordPageFields',
   workflowRun: 'workflowRunRecordPageFields',
   workflowVersion: 'workflowVersionRecordPageFields',
+  workspaceMember: 'workspaceMemberRecordPageFields',
 };
 
 const buildRecordPageWidgetConfigurations = ({

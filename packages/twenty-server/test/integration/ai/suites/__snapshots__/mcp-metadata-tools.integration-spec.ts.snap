@@ -1,0 +1,946 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP metadata tools (integration) should describe the metadata tools to the model 1`] = `
+[
+  {
+    "description": "List object metadata, returned as { objects: [...] } in the result. Filter to a single object by id or objectName (singular or plural). Set includeFields to also return each object's fields ({id, name, type, label}) — enough to build a dashboard or view without a separate get_field_metadata call. System objects are otherwise returned as compact {id, nameSingular, namePlural}. Keep includeFullSystemObjects at its default (false); only set it true when you specifically need a system object's full configuration.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Object ID. Returns one object if set.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "includeFields": {
+          "default": false,
+          "description": "When true, each returned object includes its fields as a compact array of {id, name, type, label}. Use this to fetch an object and all the field ids you need in a single call (e.g. before building a dashboard) instead of a separate get_field_metadata call.",
+          "type": "boolean",
+        },
+        "includeFullSystemObjects": {
+          "default": false,
+          "description": "Keep false (default) for listing or locating objects — system objects then return as compact {id, nameSingular, namePlural}, which is enough to find an object and read its id. Only set true when you specifically need a system object's full configuration (e.g. building a relation to workspaceMember).",
+          "type": "boolean",
+        },
+        "limit": {
+          "default": 100,
+          "description": "Max objects to return.",
+          "type": "integer",
+        },
+        "objectName": {
+          "description": "Filter by object name, singular or plural (e.g. "opportunity" or "opportunities"). Lets you locate an object by name in one call without scanning the full list.",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_object_metadata",
+  },
+  {
+    "description": "Create a new object in the workspace data model.",
+    "inputSchema": {
+      "properties": {
+        "description": {
+          "description": "Description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconBuildingSkyscraper, IconPaw, IconTargetArrow). Always set one matching what the object represents.",
+          "type": "string",
+        },
+        "isLabelSyncedWithName": {
+          "description": "Sync label with name",
+          "type": "boolean",
+        },
+        "isRemote": {
+          "description": "Remote object",
+          "type": "boolean",
+        },
+        "labelPlural": {
+          "description": "Plural label (e.g. "Companies")",
+          "type": "string",
+        },
+        "labelSingular": {
+          "description": "Singular label (e.g. "Company")",
+          "type": "string",
+        },
+        "namePlural": {
+          "description": "Plural name (e.g. "companies")",
+          "type": "string",
+        },
+        "nameSingular": {
+          "description": "Singular name (e.g. "company")",
+          "type": "string",
+        },
+        "shortcut": {
+          "description": "Keyboard shortcut",
+          "type": "string",
+        },
+      },
+      "required": [
+        "nameSingular",
+        "namePlural",
+        "labelSingular",
+        "labelPlural",
+      ],
+      "type": "object",
+    },
+    "name": "create_object_metadata",
+  },
+  {
+    "description": "Update an object. Provide object ID and properties to change.",
+    "inputSchema": {
+      "properties": {
+        "description": {
+          "description": "Description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Tabler icon name (e.g. IconBuildingSkyscraper)",
+          "type": "string",
+        },
+        "id": {
+          "description": "Object ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "imageIdentifierFieldMetadataId": {
+          "description": "Image identifier field ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "isActive": {
+          "description": "Active state",
+          "type": "boolean",
+        },
+        "isLabelSyncedWithName": {
+          "description": "Sync label with name",
+          "type": "boolean",
+        },
+        "labelIdentifierFieldMetadataId": {
+          "description": "Label identifier field ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "labelPlural": {
+          "description": "Plural label",
+          "type": "string",
+        },
+        "labelSingular": {
+          "description": "Singular label",
+          "type": "string",
+        },
+        "namePlural": {
+          "description": "Plural name",
+          "type": "string",
+        },
+        "nameSingular": {
+          "description": "Singular name",
+          "type": "string",
+        },
+        "shortcut": {
+          "description": "Keyboard shortcut",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_object_metadata",
+  },
+  {
+    "description": "Delete an object by ID. Also deletes associated fields.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Object ID",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_object_metadata",
+  },
+  {
+    "description": "Create multiple objects at once. Batch version of create_object_metadata.",
+    "inputSchema": {
+      "properties": {
+        "objects": {
+          "description": "Objects to create (max 20).",
+          "items": {
+            "properties": {
+              "description": {
+                "description": "Description",
+                "type": "string",
+              },
+              "icon": {
+                "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconBuildingSkyscraper, IconPaw, IconTargetArrow). Always set one matching what the object represents.",
+                "type": "string",
+              },
+              "isLabelSyncedWithName": {
+                "description": "Sync label with name",
+                "type": "boolean",
+              },
+              "isRemote": {
+                "description": "Remote object",
+                "type": "boolean",
+              },
+              "labelPlural": {
+                "description": "Plural label (e.g. "Companies")",
+                "type": "string",
+              },
+              "labelSingular": {
+                "description": "Singular label (e.g. "Company")",
+                "type": "string",
+              },
+              "namePlural": {
+                "description": "Plural name (e.g. "companies")",
+                "type": "string",
+              },
+              "nameSingular": {
+                "description": "Singular name (e.g. "company")",
+                "type": "string",
+              },
+              "shortcut": {
+                "description": "Keyboard shortcut",
+                "type": "string",
+              },
+            },
+            "required": [
+              "nameSingular",
+              "namePlural",
+              "labelSingular",
+              "labelPlural",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "objects",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_object_metadata",
+  },
+  {
+    "description": "Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) or a labelIdentifierFieldMetadataId change cannot share a batch with another object: send each of those as its own call.",
+    "inputSchema": {
+      "properties": {
+        "objects": {
+          "description": "Objects to update (max 20).",
+          "items": {
+            "properties": {
+              "description": {
+                "description": "Description",
+                "type": "string",
+              },
+              "icon": {
+                "description": "Tabler icon name (e.g. IconBuildingSkyscraper)",
+                "type": "string",
+              },
+              "id": {
+                "description": "Object ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "imageIdentifierFieldMetadataId": {
+                "description": "Image identifier field ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "isActive": {
+                "description": "Active state",
+                "type": "boolean",
+              },
+              "isLabelSyncedWithName": {
+                "description": "Sync label with name",
+                "type": "boolean",
+              },
+              "labelIdentifierFieldMetadataId": {
+                "description": "Label identifier field ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "labelPlural": {
+                "description": "Plural label",
+                "type": "string",
+              },
+              "labelSingular": {
+                "description": "Singular label",
+                "type": "string",
+              },
+              "namePlural": {
+                "description": "Plural name",
+                "type": "string",
+              },
+              "nameSingular": {
+                "description": "Singular name",
+                "type": "string",
+              },
+              "shortcut": {
+                "description": "Keyboard shortcut",
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "objects",
+      ],
+      "type": "object",
+    },
+    "name": "update_many_object_metadata",
+  },
+  {
+    "description": "Returns { fields: [...] } in the result. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Field ID. Returns one field if set.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "includeFullSystemFields": {
+          "default": false,
+          "description": "Keep false (default) for listing or inspecting fields — system fields then return as compact {id, name, type}, which is enough to know which fields exist and their types. Only set true when you specifically need a system field's full configuration (settings, defaultValue, relation targets).",
+          "type": "boolean",
+        },
+        "limit": {
+          "default": 100,
+          "description": "Max fields to return.",
+          "type": "integer",
+        },
+        "objectMetadataId": {
+          "description": "Filter by object ID.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "objectName": {
+          "description": "Filter by object name, singular or plural (e.g. "opportunity" or "opportunities"). Convenient alternative to objectMetadataId so you do not need to resolve the object id first.",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_field_metadata",
+  },
+  {
+    "description": "Create a new field on an object.",
+    "inputSchema": {
+      "properties": {
+        "defaultValue": {
+          "description": "Default value",
+        },
+        "description": {
+          "description": "Description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconCurrencyDollar, IconCalendarTime, IconPaw). Set one matching the field meaning; falls back to a type-based default.",
+          "type": "string",
+        },
+        "isLabelSyncedWithName": {
+          "description": "Sync label with name",
+          "type": "boolean",
+        },
+        "isNullable": {
+          "description": "Nullable",
+          "type": "boolean",
+        },
+        "isRemoteCreation": {
+          "description": "Remote field creation",
+          "type": "boolean",
+        },
+        "isUnique": {
+          "description": "Unique constraint",
+          "type": "boolean",
+        },
+        "label": {
+          "description": "Display label",
+          "type": "string",
+        },
+        "name": {
+          "description": "Field name (camelCase)",
+          "type": "string",
+        },
+        "objectMetadataId": {
+          "description": "Target object ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "options": {
+          "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+        },
+        "relationCreationPayload": {
+          "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
+          "properties": {
+            "targetFieldIcon": {
+              "description": "Tabler icon name for the inverse field (e.g. IconBuildingSkyscraper). Falls back to the relation default.",
+              "type": "string",
+            },
+            "targetFieldLabel": {
+              "description": "Display label of the inverse relation field created on the target object",
+              "type": "string",
+            },
+            "targetObjectMetadataId": {
+              "description": "Target object ID",
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": {
+              "description": "Relation direction from the perspective of the object the field is created on. MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.",
+              "enum": [
+                "MANY_TO_ONE",
+                "ONE_TO_MANY",
+              ],
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "targetObjectMetadataId",
+            "targetFieldLabel",
+          ],
+          "type": "object",
+        },
+        "settings": {
+          "description": "Field settings",
+        },
+        "type": {
+          "description": "Field type",
+          "enum": [
+            "ACTOR",
+            "ADDRESS",
+            "ARRAY",
+            "BOOLEAN",
+            "CURRENCY",
+            "DATE",
+            "DATE_TIME",
+            "EMAILS",
+            "FILES",
+            "FULL_NAME",
+            "LINKS",
+            "MORPH_RELATION",
+            "MULTI_SELECT",
+            "NUMBER",
+            "NUMERIC",
+            "PHONES",
+            "POSITION",
+            "RATING",
+            "RAW_JSON",
+            "RELATION",
+            "RICH_TEXT",
+            "SELECT",
+            "TEXT",
+            "TS_VECTOR",
+            "UUID",
+          ],
+          "type": "string",
+        },
+      },
+      "required": [
+        "objectMetadataId",
+        "type",
+        "name",
+        "label",
+      ],
+      "type": "object",
+    },
+    "name": "create_field_metadata",
+  },
+  {
+    "description": "Update a field. Provide field ID and properties to change.",
+    "inputSchema": {
+      "properties": {
+        "defaultValue": {
+          "description": "Default value",
+        },
+        "description": {
+          "description": "Description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Tabler icon name (e.g. IconCurrencyDollar)",
+          "type": "string",
+        },
+        "id": {
+          "description": "Field ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "isActive": {
+          "description": "Active state",
+          "type": "boolean",
+        },
+        "isLabelSyncedWithName": {
+          "description": "Sync label with name",
+          "type": "boolean",
+        },
+        "isNullable": {
+          "description": "Nullable",
+          "type": "boolean",
+        },
+        "isUnique": {
+          "description": "Unique constraint",
+          "type": "boolean",
+        },
+        "label": {
+          "description": "Display label",
+          "type": "string",
+        },
+        "name": {
+          "description": "Field name",
+          "type": "string",
+        },
+        "options": {
+          "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+        },
+        "settings": {
+          "description": "Field settings",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_field_metadata",
+  },
+  {
+    "description": "Delete a field by ID.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Field ID",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_field_metadata",
+  },
+  {
+    "description": "Create multiple field metadata at once on one or more objects. More efficient than calling create_field_metadata multiple times. Each item follows the same schema as create_field_metadata.",
+    "inputSchema": {
+      "properties": {
+        "fields": {
+          "description": "Fields to create (max 20).",
+          "items": {
+            "properties": {
+              "defaultValue": {
+                "description": "Default value",
+              },
+              "description": {
+                "description": "Description",
+                "type": "string",
+              },
+              "icon": {
+                "description": "Tabler icon name, PascalCase with "Icon" prefix (e.g. IconCurrencyDollar, IconCalendarTime, IconPaw). Set one matching the field meaning; falls back to a type-based default.",
+                "type": "string",
+              },
+              "isLabelSyncedWithName": {
+                "description": "Sync label with name",
+                "type": "boolean",
+              },
+              "isNullable": {
+                "description": "Nullable",
+                "type": "boolean",
+              },
+              "isRemoteCreation": {
+                "description": "Remote field creation",
+                "type": "boolean",
+              },
+              "isUnique": {
+                "description": "Unique constraint",
+                "type": "boolean",
+              },
+              "label": {
+                "description": "Display label",
+                "type": "string",
+              },
+              "name": {
+                "description": "Field name (camelCase)",
+                "type": "string",
+              },
+              "objectMetadataId": {
+                "description": "Target object ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "options": {
+                "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+              },
+              "relationCreationPayload": {
+                "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
+                "properties": {
+                  "targetFieldIcon": {
+                    "description": "Tabler icon name for the inverse field (e.g. IconBuildingSkyscraper). Falls back to the relation default.",
+                    "type": "string",
+                  },
+                  "targetFieldLabel": {
+                    "description": "Display label of the inverse relation field created on the target object",
+                    "type": "string",
+                  },
+                  "targetObjectMetadataId": {
+                    "description": "Target object ID",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "type": {
+                    "description": "Relation direction from the perspective of the object the field is created on. MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.",
+                    "enum": [
+                      "MANY_TO_ONE",
+                      "ONE_TO_MANY",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "type",
+                  "targetObjectMetadataId",
+                  "targetFieldLabel",
+                ],
+                "type": "object",
+              },
+              "settings": {
+                "description": "Field settings",
+              },
+              "type": {
+                "description": "Field type",
+                "enum": [
+                  "ACTOR",
+                  "ADDRESS",
+                  "ARRAY",
+                  "BOOLEAN",
+                  "CURRENCY",
+                  "DATE",
+                  "DATE_TIME",
+                  "EMAILS",
+                  "FILES",
+                  "FULL_NAME",
+                  "LINKS",
+                  "MORPH_RELATION",
+                  "MULTI_SELECT",
+                  "NUMBER",
+                  "NUMERIC",
+                  "PHONES",
+                  "POSITION",
+                  "RATING",
+                  "RAW_JSON",
+                  "RELATION",
+                  "RICH_TEXT",
+                  "SELECT",
+                  "TEXT",
+                  "TS_VECTOR",
+                  "UUID",
+                ],
+                "type": "string",
+              },
+            },
+            "required": [
+              "objectMetadataId",
+              "type",
+              "name",
+              "label",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "fields",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_field_metadata",
+  },
+  {
+    "description": "Update multiple field metadata at once. More efficient than calling update_field_metadata multiple times. Each item must include the field ID and the properties to update.",
+    "inputSchema": {
+      "properties": {
+        "fields": {
+          "description": "Fields to update (max 20).",
+          "items": {
+            "properties": {
+              "defaultValue": {
+                "description": "Default value",
+              },
+              "description": {
+                "description": "Description",
+                "type": "string",
+              },
+              "icon": {
+                "description": "Tabler icon name (e.g. IconCurrencyDollar)",
+                "type": "string",
+              },
+              "id": {
+                "description": "Field ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "isActive": {
+                "description": "Active state",
+                "type": "boolean",
+              },
+              "isLabelSyncedWithName": {
+                "description": "Sync label with name",
+                "type": "boolean",
+              },
+              "isNullable": {
+                "description": "Nullable",
+                "type": "boolean",
+              },
+              "isUnique": {
+                "description": "Unique constraint",
+                "type": "boolean",
+              },
+              "label": {
+                "description": "Display label",
+                "type": "string",
+              },
+              "name": {
+                "description": "Field name",
+                "type": "string",
+              },
+              "options": {
+                "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+              },
+              "settings": {
+                "description": "Field settings",
+              },
+            },
+            "required": [
+              "id",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "fields",
+      ],
+      "type": "object",
+    },
+    "name": "update_many_field_metadata",
+  },
+  {
+    "description": "Create multiple relation fields between objects at once.",
+    "inputSchema": {
+      "properties": {
+        "relations": {
+          "description": "Relations to create (max 20).",
+          "items": {
+            "properties": {
+              "description": {
+                "description": "Description",
+                "type": "string",
+              },
+              "icon": {
+                "description": "Tabler icon name for the relation field (e.g. IconUsers)",
+                "type": "string",
+              },
+              "label": {
+                "description": "Display label",
+                "type": "string",
+              },
+              "name": {
+                "description": "Field name (camelCase)",
+                "type": "string",
+              },
+              "objectMetadataId": {
+                "description": "Source object ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "targetFieldIcon": {
+                "description": "Inverse field Tabler icon name (e.g. IconBuildingSkyscraper)",
+                "type": "string",
+              },
+              "targetFieldLabel": {
+                "description": "Inverse field label",
+                "type": "string",
+              },
+              "targetObjectMetadataId": {
+                "description": "Target object ID",
+                "format": "uuid",
+                "type": "string",
+              },
+              "type": {
+                "description": "Relation direction from the perspective of the object the field is created on. MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.",
+                "enum": [
+                  "MANY_TO_ONE",
+                  "ONE_TO_MANY",
+                ],
+                "type": "string",
+              },
+            },
+            "required": [
+              "objectMetadataId",
+              "name",
+              "label",
+              "type",
+              "targetObjectMetadataId",
+              "targetFieldLabel",
+              "targetFieldIcon",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "relations",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_relation_fields",
+  },
+  {
+    "description": "List the validation rules of an object: conditions a record must meet to be saved.",
+    "inputSchema": {
+      "properties": {
+        "objectName": {
+          "description": "Object name, singular or plural (e.g. "company" or "companies").",
+          "type": "string",
+        },
+      },
+      "required": [
+        "objectName",
+      ],
+      "type": "object",
+    },
+    "name": "get_validation_rules",
+  },
+  {
+    "description": "Check a validation rule expression against an object without saving anything. An invalid expression is rejected with the reason.",
+    "inputSchema": {
+      "properties": {
+        "expression": {
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list). To require a field, use not isEmpty(field).",
+          "type": "string",
+        },
+        "objectName": {
+          "description": "Object name, singular or plural (e.g. "company" or "companies").",
+          "type": "string",
+        },
+      },
+      "required": [
+        "objectName",
+        "expression",
+      ],
+      "type": "object",
+    },
+    "name": "validate_validation_rule_expression",
+  },
+  {
+    "description": "Create a validation rule on an object. An invalid expression is rejected with the reason. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), they mean that rule: update it with update_validation_rule instead of creating another one.",
+    "inputSchema": {
+      "properties": {
+        "errorFieldMetadataId": {
+          "description": "ID of the field the message is shown on. Omit to show it on the whole record.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "expression": {
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list). To require a field, use not isEmpty(field).",
+          "type": "string",
+        },
+        "message": {
+          "description": "Message shown to the person saving the record when the expression is false.",
+          "type": "string",
+        },
+        "name": {
+          "description": "Short rule name",
+          "type": "string",
+        },
+        "objectName": {
+          "description": "Object name, singular or plural (e.g. "company" or "companies").",
+          "type": "string",
+        },
+      },
+      "required": [
+        "objectName",
+        "name",
+        "expression",
+        "message",
+      ],
+      "type": "object",
+    },
+    "name": "create_validation_rule",
+  },
+  {
+    "description": "Update a validation rule. Only the provided properties change. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), requests about a rule are about that one. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression. Keep the rule inactive unless the user asks to activate it.",
+    "inputSchema": {
+      "properties": {
+        "errorFieldMetadataId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "ID of the field the message is shown on, or null to show it on the whole record.",
+        },
+        "expression": {
+          "description": "Condition that must be true for a record to be saved. When it is false, the write is rejected and the message is shown. Reference fields by name, as returned by get_field_metadata. Use dot access for a composite field part (amount.amountMicros, name.firstName) and for a field of a many-to-one related record (company.name), never brackets. Compare select and multi-select fields with option values, e.g. stage == 'CUSTOMER'. Currency amounts are in micros: amount.amountMicros > 1000000000 means more than 1000. Write text in single quotes. Operators: == != < <= > >= + - * / and or not, and value in [a, b]. now is the date and time of the write; true and false are booleans. Functions: isDefined(value) is true when the value is set, even to an empty text; isEmpty(value) is true when the value is not set, an empty text, an empty list, or a composite field with every part empty; isNonEmptyString(value); includes(listOrText, value) is true when a multi-select or array contains the value, or a text contains a text, case-sensitive; arrayLength(list). To require a field, use not isEmpty(field).",
+          "type": "string",
+        },
+        "id": {
+          "description": "Validation rule ID",
+          "format": "uuid",
+          "type": "string",
+        },
+        "isActive": {
+          "description": "Set false to turn the rule off without deleting it.",
+          "type": "boolean",
+        },
+        "message": {
+          "description": "Message shown to the person saving the record when the expression is false.",
+          "type": "string",
+        },
+        "name": {
+          "description": "Short rule name",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_validation_rule",
+  },
+]
+`;

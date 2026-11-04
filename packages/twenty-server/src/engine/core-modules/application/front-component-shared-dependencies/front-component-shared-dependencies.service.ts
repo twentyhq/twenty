@@ -10,7 +10,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
-import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE = 'application/javascript';

@@ -21,13 +21,13 @@ The current model is:
 
 Use these surfaces for different jobs:
 
-| Surface | Use it for | Primary app entity |
-| --- | --- | --- |
-| Standalone page | A full workspace page that is not tied to one record | `STANDALONE_PAGE` + `PAGE_LAYOUT` navigation item + `FRONT_COMPONENT` widget |
-| Record page layout | Tabs and widgets for one object record | `RECORD_PAGE` page layout or page layout tab |
-| Dashboard | Metric and report composition from built-in widgets | `DASHBOARD` page layout |
-| Command or side panel | Short actions, focused forms, one selected record, or background commands | `defineFrontComponent` plus command menu item |
-| Settings menu item | Configuration the app's admins set up, as a tab on the app's page under Settings > Apps, see `layout.md` | `defineFrontComponent` plus `defineSettingsMenuItem` |
+| Surface               | Use it for                                                                                               | Primary app entity                                                           |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Standalone page       | A full workspace page that is not tied to one record                                                     | `STANDALONE_PAGE` + `PAGE_LAYOUT` navigation item + `FRONT_COMPONENT` widget |
+| Record page layout    | Tabs and widgets for one object record                                                                   | `RECORD_PAGE` page layout or page layout tab                                 |
+| Dashboard             | Metric and report composition from built-in widgets                                                      | `DASHBOARD` page layout                                                      |
+| Command or side panel | Short actions, focused forms, one selected record, or background commands                                | `defineFrontComponent` plus command menu item                                |
+| Settings menu item    | Configuration the app's admins set up, as a tab on the app's page under Settings > Apps, see `layout.md` | `defineFrontComponent` plus `defineSettingsMenuItem`                         |
 
 ## Removing The Scaffolded Placeholder
 
@@ -63,9 +63,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import {
-  MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-} from '../constants/universal-identifiers';
+import { MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers';
 
 const MissionControl = () => {
   return (
@@ -93,10 +91,7 @@ export default defineFrontComponent({
 ```
 
 ```ts src/page-layouts/mission-control.page-layout.ts
-import {
-  definePageLayout,
-  PageLayoutTabLayoutMode,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   MISSION_CONTROL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -138,9 +133,7 @@ import {
   NavigationMenuItemType,
 } from 'twenty-sdk/define';
 
-import {
-  MISSION_CONTROL_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
-} from '../constants/universal-identifiers';
+import { MISSION_CONTROL_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '61d44a63-16e8-4fbe-bccb-9c220d44fdb9',
@@ -340,9 +333,7 @@ import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const KnownGoodStandalonePage = () => (
-  <main
-    style={{ minHeight: '100%', padding: themeCssVariables.spacing[4] }}
-  >
+  <main style={{ minHeight: '100%', padding: themeCssVariables.spacing[4] }}>
     <Heading level={1}>Standalone page runtime is working</Heading>
   </main>
 );
@@ -355,7 +346,7 @@ If this renders but the full page does not, the issue is inside the full compone
 Use bounded apply for deployment and verification. Use `../manage-app/cli-and-sync.md` for exact command behavior, remote setup, verbose troubleshooting, deploys, and logs.
 
 ```bash
-yarn twenty apply
+twenty app apply
 ```
 
 Install and update flow:

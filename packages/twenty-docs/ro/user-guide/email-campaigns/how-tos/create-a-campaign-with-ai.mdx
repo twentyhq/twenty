@@ -1,0 +1,118 @@
+---
+title: Utilizați AI pentru campanii de vânzări
+description: Utilizați AI și fluxuri de lucru pentru a crea liste de vânzări bine definite și pentru a redacta campania.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+AI este utilă atunci când aveți un obiectiv de vânzări, dar nu doriți să începeți cu o listă goală sau cu un e-mail gol. Spune-i ce încerci să faci. Poate căuta în CRM-ul tău, poate crea o listă concentrată și poate redacta o campanie pentru acea listă. Revizuiești rezultatul, trimiți un test, apoi decizi dacă îl trimiți.
+
+<Note>
+  AI poate pregăti o campanie, dar nu poate trimite una. Trimiterea este întotdeauna
+  decizia ta.
+</Note>
+
+<Note>
+  Campaniile sunt de tip unu-la-mai-mulți. AI creează o singură schiță cu un singur subiect și un singur corp de e-mail
+  pentru lista selectată; nu scrie o schiță separată pentru fiecare client potențial.
+</Note>
+
+## Cu ce poate ajuta AI
+
+| Sarcină                    | Exemplu                                                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Găsește persoane**       | "Găsește factori de decizie la companii de software din Germania cu un titlu de Head sau VP."              |
+| **Creează o listă**        | "Creează o listă pentru oportunități deschise din industria sănătății."                                    |
+| **Redactează campania**    | Scrie subiectul, textul, îndemnul la acțiune și personalizarea pentru scenariul de vânzări.                |
+| **Personalizează**         | Adaugă variabile precum `{{name.firstName}}` pentru ca campania să includă acea valoare când este trimisă. |
+| **Îmbunătățește o schiță** | "Fă acest text mai direct", "Adaugă un CTA pentru demo" sau "Oferă-mi trei variante de subiect."           |
+
+AI respectă permisiunile tale. Poate vedea și modifica numai înregistrările la care rolul tău are acces.
+
+## Asociază AI cu fluxuri de lucru
+
+AI te ajută să decizi ce să spui și cui să îi spui. Fluxurile de lucru mențin datele și listele pregătite pentru următoarea campanie.
+
+Listele și membrii listelor sunt înregistrări în Twenty. Un flux de lucru le poate crea sau actualiza pe măsură ce CRM-ul tău se modifică. Acest lucru îți oferă o modalitate repetabilă de a crea segmente de vânzări, în loc să o iei de la zero de fiecare dată.
+
+| Scenariu de vânzări            | Ce face fluxul de lucru                                                                                        | Unde ajută AI                                                  |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Clienți potențiali ICP noi** | Când un client potențial nou corespunde criteriilor tale, adaugă-l la o listă de prospectare.                  | Redactează o campanie pentru acel segment.                     |
+| **Oportunități blocate**       | Găsește tranzacții care au rămas inactive o perioadă stabilită și creează o listă de urmărire.                 | Redactează o campanie pentru lista de urmărire selectată.      |
+| **Extinderea contului**        | Adaugă contacte când un cont ajunge la data reînnoirii, la o schimbare de plan sau la un alt moment important. | Redactează o campanie pentru lista de reînnoire sau extindere. |
+
+Fluxurile de lucru pregătesc sau actualizează lista. AI poate analiza datele CRM și poate redacta o campanie pentru acea listă. Tu tot revizuiești audiența și alegi când să trimiți.
+
+Consultă [Fluxuri de lucru](/ro/user-guide/workflows/overview) pentru a crea automatizarea din spatele unui scenariu de vânzări.
+
+## Partea 1: Deschide AI
+
+Apasă `@` oriunde în Twenty sau apasă `Cmd+K` (`Ctrl+K` pe Windows) și alege **Întreabă AI**.
+
+## Partea 2: Creează-ți audiența
+
+Spune-i AI-ului cine ar trebui să primească e-mailul. Folosește câmpurile din spațiul tău de lucru, exact ca atunci când vorbești cu un coleg.
+
+> Creează o listă numită "actualizare produs T4" cu toate persoanele din companii care au mai mult de 50 de angajați și activează în industria sănătății.
+
+AI caută înregistrările tale, creează lista și adaugă persoanele pe care le găsește. Deschide lista și verifică membrii înainte de a trimite.
+
+<Warning>
+  Adaugă numai persoane care și-au dat acordul să primească e-mailurile tale. CRM-ul tău poate include persoane
+  cu care ai făcut doar schimb de e-mailuri. Consultă
+  Practici recomandate pentru campaniile
+  de e-mail.
+</Warning>
+
+## Partea 3: Scrie campania
+
+Spune-i AI-ului obiectivul, punctele-cheie, tonul și îndemnul la acțiune de care ai nevoie.
+
+> Scrie un mesaj de urmărire pentru persoanele cu oportunități deschise din industria sănătății. Păstrează subiectul sub 50 de caractere. Începe cu o introducere scurtă și prietenoasă care salută fiecare persoană pe numele mic, menționează trei motive pentru care tabloul de bord de raportare poate ajuta echipa acesteia și încheie cu un buton "Programează un demo" care trimite la https://example.com/demo.
+
+AI creează o schiță cu un nume, un subiect și un corp de e-mail. Deschide-o din **Campanii** pentru a o revizui în editor.
+
+<img src="/images/user-guide/email-campaigns/ai-chat-campaign.png" style={{ width: '50%' }} />
+
+Pentru a face modificări, continuă conversația. Deschide mai întâi campania, astfel încât AI să știe la care te referi:
+
+* "Fă tonul mai direct."
+* "Scurtează introducerea la două propoziții."
+* "Înlocuiește textul butonului cu Programează un demo."
+* "Sugerează alte trei variante de subiect."
+
+Poți edita schița chiar tu în orice moment.
+
+## Partea 4: Revizuiește și trimite
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+AI scrie schița. Tu alegi expeditorul, audiența și momentul trimiterii:
+
+1. Deschide fila **E-mail** a campaniei.
+2. Alege adresa **De la**, lista din **Către** și, opțional, un **Subiect de dezabonare**.
+3. Citește e-mailul. Verifică faptele, linkurile și prețurile.
+4. Fă clic pe **Test** și trimite-ți o copie.
+5. Fă clic pe **Trimite**, apoi alege **Trimite acum** sau **Trimite mai târziu**.
+
+Fiecare pas este prezentat detaliat în [Trimite prima ta campanie](/ro/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+## Sfaturi pentru prompturi bune
+
+* **Folosește numele câmpului.** "Persoane din companii din industria sănătății" este mai clar decât "clienți potențiali din sănătate."
+* **Oferă-i informațiile.** Nu îți cunoaște oferta, prețul sau procesul de vânzări decât dacă i le spui sau informațiile se află în CRM-ul tău.
+* **Dă-i o sarcină.** Spune pentru cine este, ce vrei să facă aceștia și de ce contează pentru ei.
+* **Cere opțiuni.** Încearcă trei variante de subiect sau două versiuni ale aceluiași mesaj pentru segmente diferite.
+* **Verifică dimensiunea listei.** Întreabă "Câte persoane sunt în lista de actualizare produs T4?" înainte de a trimite.
+
+## Limitări
+
+* AI poate edita numai campaniile care sunt încă în starea **Schiță**.
+* Subiectele de dezabonare și lista de dezabonare sunt gestionate în **Setări**, nu prin AI. Consultă [Gestionează dezabonările și subiectele](/ro/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+* AI poate greși informațiile. Citește întotdeauna e-mailul înainte de a-l trimite.
+
+Consultă [Chatbot AI](/ro/user-guide/ai/capabilities/ai-chatbot) pentru mai multe informații despre ce poate face AI în întregul tău spațiu de lucru.
+
+<PageBanner illustration="card-page-ai-campaign" />

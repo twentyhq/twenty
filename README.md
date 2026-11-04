@@ -39,7 +39,10 @@ The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and 
 Scaffold a new app with the Twenty CLI:
 
 ```bash
-npx create-twenty-app my-app
+npm install -g twenty
+twenty app init my-app
+cd my-app
+yarn install
 ```
 
 Define objects, fields, and views as code:
@@ -63,7 +66,8 @@ export default defineObject({
 Then ship it to your workspace:
 
 ```bash
-npx twenty app:publish --private
+twenty auth login --url https://your-workspace.twenty.com
+twenty app publish --private
 ```
 
 See the [app development guide](https://docs.twenty.com/developers/extend/apps/getting-started) for objects, views, agents, and logic functions.

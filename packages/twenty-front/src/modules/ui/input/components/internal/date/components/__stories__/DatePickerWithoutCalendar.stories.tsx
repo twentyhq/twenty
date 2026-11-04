@@ -1,7 +1,7 @@
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const INITIAL_PLAIN_DATE = '2023-01-01';
@@ -35,7 +35,6 @@ type Story = StoryObj<typeof DatePickerWithoutCalendar>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Calendar grid is hidden; only the month/year header should be present.
     const monthSelect = await canvas.findByText(
       'January',
       {},
@@ -64,7 +63,40 @@ export const OpensOnlyItsOwnYearSelect: Story = {
     await userEvent.click(firstYearSelect);
 
     await waitFor(() => {
-      expect(body.getAllByRole('dialog', { name: '2023' })).toHaveLength(1);
+      expect(body.getAllByRole('listbox')).toHaveLength(1);
     });
+  },
+};
+
+export const ChangesMonthWithoutShowingDays: Story = {
+  args: { date: '2023-01-31', onChange: fn() },
+  render: ({ date, onChange }) => (
+    <DatePickerWithoutCalendar
+      date={date}
+      onChange={onChange}
+      instanceId="month-only"
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.queryByRole('gridcell')).not.toBeInTheDocument();
+    await userEvent.click(await canvas.findByRole('button', { name: 'Next' }));
+    expect(args.onChange).toHaveBeenCalledWith('2023-02-28');
+  },
+};
+
+export const KeepsEmptySelection: Story = {
+  args: { date: null, onChange: fn() },
+  render: ({ date, onChange }) => (
+    <DatePickerWithoutCalendar
+      date={date}
+      onChange={onChange}
+      instanceId="empty-month-only"
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Next' }));
+    expect(args.onChange).toHaveBeenCalledWith(null);
   },
 };

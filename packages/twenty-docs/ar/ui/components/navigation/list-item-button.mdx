@@ -1,0 +1,165 @@
+---
+title: ListItemButton
+description: أزرار إجراءات أصلية بمظهر صف القائمة المشترك.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+## نظرة عامة
+
+استخدم `ListItemButton` لصفوف الإجراءات وأزرار الاختيار المستقلة. يجمع بين تخطيط [ListItem](/ar/ui/primitives/navigation/list-item) وزر أصلي، بما في ذلك التفعيل بمفتاحي Enter وSpace، والتركيز، وسلوك التعطيل. يكون افتراضيًا `type="button"`.
+
+<StoryEmbed storyId="ui-components-listitembutton--display" title="مثال ListItemButton" height={110} />
+
+## استخدام
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+## الإجراءات وحالة التعطيل
+
+مرر `onClick` و`disabled` مباشرةً. تستخدم الأزرار المعطلة مظهر الصف المطابق، وتمنع التفعيل، وتبقى في ترتيب التنقل بعلامة التبويب.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    onClick={onDuplicate}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--disabled" title="صف إجراء معطل" height={110} />
+
+اضبط `focusableWhenDisabled` لإبقاء زر معطل قابلاً للتركيز. يستخدم `aria-disabled` ويستمر في حظر التفعيل. تصل سمات الزر الأصلي وأحداثه وأنماطه وأسماء فئاته ومرجع `HTMLButtonElement` إلى الزر. تنتشر الأحداث بصورة طبيعية؛ ويوفر المستدعون أي سياسة لـ `stopPropagation()` أو `preventDefault()`.
+
+## الاختيار والمواضع المرئية
+
+يتحكم تطبيقك في الحالات المستقلة `active` و`selected` و`focused`. استخدم `active` للصف المفتوح أو الحالي. اقرن `selected` بالحالة المناسبة لإمكانية الوصول، مثل `aria-pressed` لزر التبديل. يبرز `focused` الصف دون نقل تركيز DOM. المؤشرات وتلميحات الاختصارات للزينة؛ يسجل تطبيقك الاختصارات ويتعامل مع التنقل.
+
+```tsx
+import { useState } from 'react';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItemButton
+      aria-pressed={selected}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItemButton>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--selected" title="صف الإجراء المحدد" height={110} />
+
+استخدم `startIcon` و`endIcon` و`description` و`descriptionPlacement` للمحتوى الداعم. يحدد `color="danger"` إجراءً إتلافيًا. يتحكم `shortcutJoinLabel` في النص بين الاختصارات المتتالية، ويعرض `hasSubmenu` مؤشر قائمة فرعية.
+
+## محتوى داعم متعدد الأسطر
+
+عيّن `descriptionPlacement="below"` للالتفاف بالنص الداعم أسفل التسمية. تحتفظ التسمية بسلوك اقتطاعها. مرر [Text](/ar/ui/primitives/typography/text) مع `truncate` أو `lineClamp` باعتباره `description` عندما تحتاج إلى معاينة أقصر. يحتفظ الموضعان `inline` و`end` بمظهرهما الحالي.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type PlanningActionProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const PlanningAction = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: PlanningActionProps) => (
+  <ListItemButton
+    active={active}
+    disabled={disabled}
+    descriptionPlacement="below"
+    description="Review the proposed timeline and confirm the next steps with the team."
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    onClick={onOpen}
+  >
+    Quarterly planning
+  </ListItemButton>
+);
+```
+
+يطبّق `active` خلفية الصف الحالي. عيّن `selectionAppearance="accent"` لتعبئة مميزة في الصفوف المحددة مع أي موضع للوصف؛ ويحافظ الإعداد الافتراضي على تنسيق التحديد الحالي المستند إلى المؤشر. يطبّق `focused` الخلفية المميزة المشتركة؛ ويتبع مخطط التركيز المرئي التركيز الفعلي للوحة المفاتيح. لا تضيف هذه الخصائص حالة قابلة للوصول ولا تنقل التركيز. يبقى سلوك التنشيط والتعطيل الأصلي للزر دون تغيير.
+
+## عناصر تحكم مستقلة
+
+أبقِ الأزرار المستقلة ومربعات الاختيار بجانب `ListItemButton` لكي يحتفظ كل منها بتركيزه وتنشيطه الخاصين. لا تضمّنها داخل فتحات المحتوى أو الأيقونة الخاصة به. لا يحتوي المكون على موضع `actions`. استخدم `ListItem` مع جذر `div` الافتراضي الخاص به لـ[صف يحتوي على عناصر تحكم مستقلة](/ar/ui/primitives/navigation/list-item#independent-controls)، ووفّر سلوك التعطيل وانتشار الأحداث لكل عنصر تحكم.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ContactActionsProps = {
+  onOpen: () => void;
+  onDetails: () => void;
+};
+
+export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ListItemButton onClick={onOpen} description="Account owner">
+      Alex Morgan
+    </ListItemButton>
+    <Button onClick={onDetails} aria-label="Open Alex Morgan's details">
+      Details
+    </Button>
+  </div>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--independent-action" title="عناصر تحكم الإجراءات الشقيقة" height={110} />
+
+استخدم `ListItem` للمحتوى السلبي أو الروابط أو المالكين الدلاليين المخصصين. استخدم أجزاء العناصر الموجودة في [Dropdown](/ar/ui/components/navigation/dropdown) و[Select](/ar/ui/primitives/input/select) ضمن مالكي النوافذ المنبثقة الخاصة بها، التي توفر الأدوار والتنقل باستخدام لوحة المفاتيح.
+
+## الإزاحة
+
+<ListItemButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

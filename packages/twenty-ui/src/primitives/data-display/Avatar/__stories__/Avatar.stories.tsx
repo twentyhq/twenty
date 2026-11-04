@@ -1,4 +1,9 @@
-import { type MouseEvent, type MouseEventHandler, useState } from 'react';
+import {
+  Fragment,
+  type MouseEvent,
+  type MouseEventHandler,
+  useState,
+} from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -18,12 +23,22 @@ import { type AvatarRootProps } from '@ui/primitives/data-display/Avatar/types/A
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 import { type AvatarSize } from '@ui/primitives/data-display/Avatar/types/AvatarSize';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconUser, IconUserCircle } from '@ui/icon';
+import { IconGitBranch, IconUser, IconUserCircle, IconUserOff } from '@ui/icon';
 import { themeCssVariables } from '@ui/theme';
 
 const VALID_IMAGE = illustrationUserUrl;
 const INVALID_IMAGE = 'data:image/png;base64,invalid';
 const UPLOAD_AVATAR_ICON_SIZE = 16;
+const AVATAR_SIZE_CASES = [
+  { size: 'xs', dimension: 12 },
+  { size: 'sm', dimension: 14 },
+  { size: 'md', dimension: 16 },
+  { size: 'lg', dimension: 24 },
+  { size: 'xl', dimension: 32 },
+  { size: 'xxl', dimension: 40 },
+] as const;
+
+const CustomFallbackIcon = () => <IconUserOff size={48} />;
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI/Data Display/Avatar',
@@ -163,6 +178,75 @@ export const IconTileInteraction: Story = {
       computedStyle.getPropertyValue('--t-border-radius-sm').trim(),
     );
   },
+};
+
+export const FallbackIconSizes: Story = {
+  decorators: [ComponentDecorator],
+  render: ({ variant }) => (
+    <>
+      {AVATAR_SIZE_CASES.map(({ size }) => (
+        <Fragment key={size}>
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Branch"
+            icon={<IconGitBranch />}
+            role="img"
+            aria-label={`Native ${size}`}
+          />
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Unavailable user"
+            icon={<CustomFallbackIcon />}
+            role="img"
+            aria-label={`Custom ${size}`}
+          />
+          <Avatar.Root
+            size={size}
+            variant={variant}
+            name="User"
+            role="img"
+            aria-label={`Composed ${size}`}
+          >
+            <Avatar.Fallback aria-hidden>
+              <IconUser />
+            </Avatar.Fallback>
+          </Avatar.Root>
+        </Fragment>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const { size, dimension } of AVATAR_SIZE_CASES) {
+      for (const label of ['Native', 'Custom', 'Composed']) {
+        const avatar = canvas.getByRole('img', { name: `${label} ${size}` });
+        const avatarBounds = avatar.getBoundingClientRect();
+        const iconBounds = avatar.querySelector('svg')?.getBoundingClientRect();
+        const expectedIconSize = Math.min(24, avatar.clientWidth);
+
+        await expect(avatarBounds.width).toBe(dimension);
+        await expect(avatarBounds.height).toBe(dimension);
+        await expect(iconBounds?.width).toBe(expectedIconSize);
+        await expect(iconBounds?.height).toBe(expectedIconSize);
+        await expect(iconBounds?.left).toBeGreaterThanOrEqual(
+          avatarBounds.left,
+        );
+        await expect(iconBounds?.top).toBeGreaterThanOrEqual(avatarBounds.top);
+        await expect(iconBounds?.right).toBeLessThanOrEqual(avatarBounds.right);
+        await expect(iconBounds?.bottom).toBeLessThanOrEqual(
+          avatarBounds.bottom,
+        );
+      }
+    }
+  },
+};
+
+export const OutlinedFallbackIconSizes: Story = {
+  ...FallbackIconSizes,
+  args: { variant: 'outline' },
 };
 
 export const NoAvatarPictureRounded: Story = {

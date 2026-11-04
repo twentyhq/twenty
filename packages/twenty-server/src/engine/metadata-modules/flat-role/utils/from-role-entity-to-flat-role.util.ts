@@ -65,5 +65,12 @@ export const fromRoleEntityToFlatRole = (
       roleEntity.rowLevelPermissionPredicateGroups.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
+    agentChatChannelRoleIds: roleEntity.agentChatChannelRoles.map(
+      ({ id }) => id,
+    ),
+    agentChatChannelRoleUniversalIdentifiers:
+      roleEntity.agentChatChannelRoles.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
   };
 };

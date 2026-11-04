@@ -1,5 +1,8 @@
 import { getApplicationsWithPreferences } from '@/settings/app-preferences/utils/getApplicationsWithPreferences';
-import { SettingsMenuItemScope } from '~/generated-metadata/graphql';
+import {
+  ConnectionProviderScope,
+  SettingsMenuItemScope,
+} from '~/generated-metadata/graphql';
 
 const RECORDER_APPLICATION_ID = 'recorder-application-id';
 const NOTETAKER_APPLICATION_ID = 'notetaker-application-id';
@@ -30,6 +33,7 @@ const buildSettingsMenuItem = ({
   position?: number;
   scope?: SettingsMenuItemScope;
 }) => ({
+  __typename: 'SettingsMenuItem' as const,
   id: `${universalIdentifier}-id`,
   universalIdentifier,
   applicationId,
@@ -38,6 +42,7 @@ const buildSettingsMenuItem = ({
   icon: null,
   position,
   scope,
+  slug: null,
 });
 
 const buildVariable = ({
@@ -53,6 +58,7 @@ const buildVariable = ({
   isRequired?: boolean;
   isSecret?: boolean;
 }) => ({
+  __typename: 'UserApplicationVariableValue' as const,
   key,
   value,
   isDeprecated,
@@ -62,6 +68,26 @@ const buildVariable = ({
   isRequired,
   type: 'TEXT',
   options: null,
+});
+
+const buildUserConnectionProvider = ({
+  applicationId,
+}: {
+  applicationId: string;
+}) => ({
+  __typename: 'ApplicationConnectionProvider' as const,
+  id: `${applicationId}-connection-provider-id`,
+  applicationId,
+  type: 'oauth',
+  name: 'linear',
+  displayName: 'Linear',
+  scope: ConnectionProviderScope.USER,
+  logoUrl: null,
+  oauth: {
+    __typename: 'ApplicationConnectionProviderOAuthConfig' as const,
+    scopes: ['read'],
+    isClientCredentialsConfigured: true,
+  },
 });
 
 const CURRENT_WORKSPACE = {
@@ -86,11 +112,15 @@ describe('getApplicationsWithPreferences', () => {
           applicationId: RECORDER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'RECORD_MY_MEETINGS' })],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
         {
           applicationId: NOTETAKER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -122,6 +152,8 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           variables: [],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -149,6 +181,8 @@ describe('getApplicationsWithPreferences', () => {
               isDeprecated: true,
             }),
           ],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -187,6 +221,8 @@ describe('getApplicationsWithPreferences', () => {
               isDeprecated: true,
             }),
           ],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -211,6 +247,8 @@ describe('getApplicationsWithPreferences', () => {
               isSecret: true,
             }),
           ],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -228,12 +266,38 @@ describe('getApplicationsWithPreferences', () => {
           applicationId: RECORDER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'OLD_FLAG', isDeprecated: true })],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(result).toEqual([]);
+  });
+
+  it('should keep an application whose only preference is a connection provider', () => {
+    const [result] = getApplicationsWithPreferences({
+      applicationPreferences: [
+        {
+          __typename: 'ApplicationPreferences' as const,
+          applicationId: RECORDER_APPLICATION_ID,
+          settingsMenuItems: [],
+          variables: [],
+          connectionProviders: [
+            buildUserConnectionProvider({
+              applicationId: RECORDER_APPLICATION_ID,
+            }),
+          ],
+        },
+      ],
+      currentWorkspace: CURRENT_WORKSPACE,
+    });
+
+    expect(result.application.id).toBe(RECORDER_APPLICATION_ID);
+    expect(result.connectionProviders.map(({ name }) => name)).toEqual([
+      'linear',
+    ]);
   });
 
   it('should leave out an application that is not installed', () => {
@@ -243,6 +307,8 @@ describe('getApplicationsWithPreferences', () => {
           applicationId: UNINSTALLED_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
+          connectionProviders: [],
+          __typename: 'ApplicationPreferences',
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,

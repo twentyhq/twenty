@@ -39,6 +39,10 @@
   Disables the text input. Controls in actions keep their own state.
 </ParamField>
 
+<ParamField body="hasFocusRing" type="boolean" default="false">
+  Shows the group focus border. Defaults to false for all search inputs. Set true to opt in. Error styling remains visible.
+</ParamField>
+
 <ParamField body="id" type="string">
   Input ID, generated when omitted.
 </ParamField>
@@ -73,6 +77,10 @@
 <ParamField body="style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
   Style applied to the element, or a function that
   returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="textAlign" type="&quot;end&quot; | &quot;start&quot;">
+  Aligns text to the logical start or end of the input. Follows the text direction.
 </ParamField>
 
 <ParamField body="value" type="string | number | readonly string[]">

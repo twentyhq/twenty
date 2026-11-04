@@ -1,5 +1,6 @@
 import { createRecordExportConnection } from '@/record-export/utils/createRecordExportConnection';
 import { createClient, type ExecutionResult, type Sink } from 'graphql-sse';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { type ExportRecordsSubscription } from '~/generated-metadata/graphql';
 
 let mockSink: Sink<ExecutionResult<ExportRecordsSubscription>>;
@@ -26,9 +27,12 @@ const update = (values: Partial<ExportRecordsSubscription['exportRecords']>) =>
   mockSink.next({
     data: {
       exportRecords: {
+        __typename: 'RecordExport',
         id: 'export',
         filename: 'person.csv',
         progress: 42,
+        errorMessage: null,
+        downloadPath: null,
         ...values,
       },
     },
@@ -95,6 +99,7 @@ describe('createRecordExportConnection', () => {
         expect.objectContaining({
           url: `${expectedBaseUrl}/metadata`,
           credentials: 'include',
+          headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
         }),
       );
       update({

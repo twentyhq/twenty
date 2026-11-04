@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 
+import { getRichTextFieldSerializedContent } from '@/object-record/record-field/ui/utils/getRichTextFieldSerializedContent';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -8,16 +9,13 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { type StandaloneRichTextConfiguration } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
+const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding-left: ${({ isPageLayoutInEditMode }) =>
-    isPageLayoutInEditMode ? themeCssVariables.spacing[5] : 0};
   width: 100%;
 `;
 
@@ -39,16 +37,13 @@ export const StandaloneRichTextWidget = ({
     | StandaloneRichTextConfiguration
     | undefined;
 
-  const currentBody = configuration?.body?.blocknote ?? '';
+  const currentBody = getRichTextFieldSerializedContent(configuration?.body);
 
   const isThisWidgetBeingEdited = pageLayoutEditingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode;
 
   return (
-    <StyledContainer
-      ref={containerElementRef}
-      isPageLayoutInEditMode={isPageLayoutInEditMode}
-    >
+    <StyledContainer ref={containerElementRef}>
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >

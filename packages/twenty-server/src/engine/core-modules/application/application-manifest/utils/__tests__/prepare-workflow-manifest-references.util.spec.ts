@@ -131,4 +131,86 @@ describe('workflow manifest references', () => {
     expect(references.fieldByUniversalIdentifier?.has('field')).toBe(false);
     expect(references.agentIdByUniversalIdentifier?.size).toBe(0);
   });
+
+  describe("other applications' workflow actions", () => {
+    const installedWithOtherApplicationFunctions = () => {
+      const installed = createEmptyAllFlatEntityMaps();
+      const otherApplicationFunction = (
+        overrides: Partial<FlatLogicFunction>,
+      ) =>
+        ({
+          applicationId: 'other-application',
+          deletedAt: null,
+          workflowActionTriggerSettings: {
+            outputSchema: [
+              { type: 'object', properties: { matched: { type: 'number' } } },
+            ],
+          },
+          ...overrides,
+        }) as FlatLogicFunction;
+      installed.flatLogicFunctionMaps.byUniversalIdentifier.enrich =
+        otherApplicationFunction({
+          id: 'enrich-id',
+          universalIdentifier: 'enrich',
+        });
+      installed.flatLogicFunctionMaps.byUniversalIdentifier.internal =
+        otherApplicationFunction({
+          id: 'internal-id',
+          universalIdentifier: 'internal',
+          workflowActionTriggerSettings: null,
+        });
+      installed.flatLogicFunctionMaps.byUniversalIdentifier.removed =
+        otherApplicationFunction({
+          id: 'removed-id',
+          universalIdentifier: 'removed',
+          deletedAt: '2026-10-26T00:00:00.000Z',
+        });
+      installed.flatLogicFunctionMaps.byUniversalIdentifier.dropped =
+        otherApplicationFunction({
+          id: 'dropped-id',
+          universalIdentifier: 'dropped',
+          applicationId: OWNER,
+        });
+      return installed;
+    };
+
+    it('are resolved when the owner may reference them', () => {
+      const references = prepareWorkflowManifestReferences({
+        existingAllFlatEntityMaps: installedWithOtherApplicationFunctions(),
+        toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+        ownerApplicationId: OWNER,
+        idByUniversalIdentifierByMetadataName: {},
+        canReferenceOtherApplicationsWorkflowActions: true,
+      });
+
+      expect(
+        references.logicFunctionIdByUniversalIdentifier.get('enrich'),
+      ).toBe('enrich-id');
+      expect(
+        references.logicFunctionOutputSchemaByUniversalIdentifier?.get(
+          'enrich',
+        ),
+      ).toMatchObject({ matched: { isLeaf: true, type: 'number' } });
+      expect(
+        references.logicFunctionIdByUniversalIdentifier.has('internal'),
+      ).toBe(false);
+      expect(
+        references.logicFunctionIdByUniversalIdentifier.has('removed'),
+      ).toBe(false);
+      expect(
+        references.logicFunctionIdByUniversalIdentifier.has('dropped'),
+      ).toBe(false);
+    });
+
+    it('are not resolved otherwise', () => {
+      const references = prepareWorkflowManifestReferences({
+        existingAllFlatEntityMaps: installedWithOtherApplicationFunctions(),
+        toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+        ownerApplicationId: OWNER,
+        idByUniversalIdentifierByMetadataName: {},
+      });
+
+      expect(references.logicFunctionIdByUniversalIdentifier.size).toBe(0);
+    });
+  });
 });

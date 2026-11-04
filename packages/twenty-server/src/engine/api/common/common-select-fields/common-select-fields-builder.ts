@@ -17,11 +17,48 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
-  buildFromDepth = ({
+  constructor(
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+  ) {}
+
+  // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
+  async findReadableObjectMetadataIds({
+    authContext,
+    flatObjectMetadataMaps,
+  }: {
+    authContext: PermissionsAuthContext;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  }): Promise<Set<string>> {
+    const flatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    const recordAccessPolicy =
+      this.recordAccessPolicyService.forAuthContext(authContext);
+    const readableFlags = await Promise.all(
+      flatObjectMetadatas.map((flatObjectMetadata) =>
+        recordAccessPolicy.hasAccessToSomeRecords({
+          flatObjectMetadata,
+          operationType: 'select',
+        }),
+      ),
+    );
+
+    return new Set(
+      flatObjectMetadatas
+        .filter((_, index) => readableFlags[index])
+        .map((flatObjectMetadata) => flatObjectMetadata.id),
+    );
+  }
+
+  buildFromDepth({
     objectsPermissions,
+    readableObjectMetadataIds,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatObjectMetadata,
@@ -32,6 +69,7 @@ export class CommonSelectFieldsBuilder {
     maximumDefaultFieldCount,
   }: {
     objectsPermissions: ObjectsPermissions;
+    readableObjectMetadataIds: ReadonlySet<string>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -42,7 +80,7 @@ export class CommonSelectFieldsBuilder {
     maximumDefaultFieldCount?: number;
   }): {
     selectedFields: CommonSelectedFields;
-  } => {
+  } {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id].restrictedFields;
 
@@ -86,6 +124,7 @@ export class CommonSelectFieldsBuilder {
       flatFieldMetadataMaps,
       flatObjectMetadata,
       objectsPermissions,
+      readableObjectMetadataIds,
       depth,
       onlyUseLabelIdentifierFieldsInRelations,
       recurseIntoJunctionTableRelations,
@@ -104,7 +143,7 @@ export class CommonSelectFieldsBuilder {
         ...relationsSelectFields,
       },
     };
-  };
+  }
 
   private validateRequestedFields({
     requestedFields,

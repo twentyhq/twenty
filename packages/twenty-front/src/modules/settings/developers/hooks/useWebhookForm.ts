@@ -15,17 +15,18 @@ import {
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
+  GetApiKeyRolesDocument,
   GetWebhookDocument,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { useLingui } from '@lingui/react/macro';
 
 type UseWebhookFormProps = {
   webhookId?: string;
@@ -37,9 +38,11 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
+  roleId: '',
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
 
@@ -66,6 +69,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     },
   });
 
+  const {
+    data: rolesData,
+    loading: rolesLoading,
+    error: rolesError,
+  } = useQuery(GetApiKeyRolesDocument);
+  const roles = rolesData?.getApiKeyRoles ?? [];
+
   useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
@@ -81,6 +91,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         description: webhook.description || '',
         operations,
         secret: webhook.secret || '',
+        roleId: webhook.role?.id ?? '',
       });
     }
   }, [webhookData, formConfig]);
@@ -213,13 +224,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   return {
     formConfig,
-    loading,
+    loading: loading || rolesLoading,
+    roles,
     canSave,
     handleSave,
     updateOperation,
     removeOperation,
     handleDelete,
     isCreationMode,
-    error,
+    error: error ?? rolesError,
   };
 };

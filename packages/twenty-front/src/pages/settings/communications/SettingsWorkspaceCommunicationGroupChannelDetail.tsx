@@ -187,7 +187,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               <SettingsDiscoveryHeroCardFooter
                 Icon={IconMail}
                 title={t`Set up forwarding and DNS`}
-                description={t`Follow the guide for your email provider.`}
+                description={t`See which parts you need and how to set each one up.`}
                 action={
                   <Button
                     size="sm"
@@ -196,7 +196,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                       openUrlInNewTab(
                         getDocumentationUrl({
                           locale: currentWorkspaceMember?.locale,
-                          path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
+                          path: '/user-guide/calendar-emails/capabilities/email-channels',
                         }),
                       )
                     }

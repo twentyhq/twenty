@@ -123,6 +123,14 @@ setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#sett
 
 Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
+This adds a workspace-shared connection.
+
+Members can also add a personal connection from **Settings > App preferences**,
+which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. Each
+personal connection imports the meetings its account organizes, so every
+organizer connects their own account. Members can only finish connecting once
+a Microsoft 365 admin has consented to `OnlineMeetingTranscript.Read.All` for
+the organization. Personal connections do not claim a tenant for chat.
 
 Transcript imports are on by default. Connecting an account creates a Microsoft
 Graph subscription to the transcripts of the meetings that account organizes.
@@ -237,8 +245,10 @@ yarn install --immutable
 yarn lint
 yarn typecheck
 yarn test:unit
-yarn twenty dev:build
+twenty app build
 ```
+
+Install the standalone CLI with `npm install -g twenty`.
 
 Installation tests use a disposable Twenty workspace. Configure
 `TWENTY_API_URL` and `TWENTY_API_KEY` for that workspace, then run `yarn test`.
@@ -247,16 +257,16 @@ workspace. Public apps use the monorepo CI workflows.
 
 ## Release checklist
 
-- Deploy the Twenty server changes that add Teams to the vetted and
+- Deploy the Twenty server changes that add Teams to the featured and
   billing-exempt application lists **before publishing and the first catalog
-  sync**. Publishing the npm package alone does not make imports free. Vetting
+  sync**. Publishing the npm package alone does not make imports free. Listing
   is set when the catalog first creates the registration; a later catalog sync
-  does not change an existing registration's vetted status.
+  does not change an existing registration's listing status.
 - Confirm the release version in `package.json`, run the development checks
   above, and inspect the built package before publishing with npm provenance.
   Publish through the Twenty CLI so the manifest and built files are included.
 - Complete [registration and shared-webhook setup](#twenty-registration-and-shared-webhook).
-  Confirm the app appears with **Vetted only** enabled and that its owner
+  Confirm the app appears in the marketplace and that its owner
   workspace and Microsoft OAuth credentials are configured.
 - Run a live pilot from a second workspace: consent and connection, the 31-day
   initial import, a newly transcribed meeting, calendar linking, and a repeated

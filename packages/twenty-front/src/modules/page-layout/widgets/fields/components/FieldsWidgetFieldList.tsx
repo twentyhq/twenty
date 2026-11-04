@@ -5,6 +5,7 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { FieldsWidgetFieldItem } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldItem';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -36,6 +37,8 @@ export const FieldsWidgetFieldList = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(targetRecord.id);
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: targetRecord.id,
     objectMetadataId: objectMetadataItem.id,
@@ -52,6 +55,7 @@ export const FieldsWidgetFieldList = ({
       fieldMetadataItem={fieldMetadataItem}
       globalIndex={globalIndex}
       recordId={targetRecord.id}
+      restrictedFieldNames={restrictedFieldNames}
       objectMetadataItem={objectMetadataItem}
       objectMetadataItems={objectMetadataItems}
       objectPermissionsByObjectMetadataId={objectPermissionsByObjectMetadataId}

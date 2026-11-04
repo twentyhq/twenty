@@ -1,8 +1,4 @@
-const APPLICATION_LOCAL_METADATA_PROPERTIES = [
-  'overrides',
-  'universalOverrides',
-  'isActive',
-] as const;
+import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 
 export const preserveApplicationLocalMetadataState = <TEntity extends object>({
   existingEntity,
@@ -22,7 +18,7 @@ export const preserveApplicationLocalMetadataState = <TEntity extends object>({
     return manifestEntity;
   }
 
-  for (const property of APPLICATION_LOCAL_METADATA_PROPERTIES) {
+  for (const property of WORKSPACE_LOCAL_STATE_PROPERTIES) {
     if (property in existingEntityRecord && property in mergedEntityRecord) {
       mergedEntityRecord[property] = existingEntityRecord[property];
     }

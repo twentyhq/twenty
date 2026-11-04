@@ -31,6 +31,9 @@ vi.mock('@/oauth/open-browser', () => ({ openBrowser: vi.fn() }));
 const CLIENT_ID = 'cli-client';
 
 type Scenario = {
+  codeExchangeGate?: Promise<void>;
+  isTokenExchangeRejected?: boolean;
+  theme?: 'light' | 'dark';
   refreshDelayMilliseconds?: number;
   isDeclined?: boolean;
   returnedState?: string;
@@ -115,6 +118,10 @@ const server = await startTestServer((request, response) => {
       callback.searchParams.set('iss', returnedIssuer);
     }
 
+    if (isDefined(state.scenario.theme)) {
+      callback.searchParams.set('theme', state.scenario.theme);
+    }
+
     response.writeHead(302, { location: callback.href });
 
     return response.end();
@@ -135,7 +142,11 @@ const server = await startTestServer((request, response) => {
           .update(parameters.code_verifier)
           .digest('base64url') === state.codeChallenge;
 
-      if (!state.isVerifierValid || parameters.client_id !== CLIENT_ID) {
+      if (
+        state.scenario.isTokenExchangeRejected ||
+        !state.isVerifierValid ||
+        parameters.client_id !== CLIENT_ID
+      ) {
         return sendJson(response, 400, { error: 'invalid_grant' });
       }
     } else {
@@ -164,6 +175,12 @@ const server = await startTestServer((request, response) => {
 
     if (parameters.grant_type === 'refresh_token') {
       setTimeout(sendTokens, state.scenario.refreshDelayMilliseconds ?? 0);
+      return;
+    }
+
+    if (isDefined(state.scenario.codeExchangeGate)) {
+      void state.scenario.codeExchangeGate.then(sendTokens);
+
       return;
     }
 
@@ -298,6 +315,78 @@ describe('browser sign-in and session refresh', () => {
       workspaceName: 'Cloud',
     });
     expect(remotes.cloud).not.toHaveProperty('apiKey');
+  });
+
+  it.each(['light', 'dark'] as const)(
+    'shows the %s success page only after the token exchange completes',
+    async (theme) => {
+      const tokenExchange = Promise.withResolvers<void>();
+      const browserPage = Promise.withResolvers<string>();
+      let hasBrowserResponse = false;
+      let authorizationUrl = '';
+
+      state.scenario = { codeExchangeGate: tokenExchange.promise, theme };
+      vi.mocked(openBrowser).mockImplementation((url) => {
+        authorizationUrl = url;
+        void fetch(url)
+          .then(async (response) => {
+            hasBrowserResponse = true;
+            browserPage.resolve(await response.text());
+          })
+          .catch(browserPage.reject);
+      });
+
+      const signInResult = signIn();
+
+      try {
+        await vi.waitFor(() => expect(state.codeExchanges).toBe(1));
+        expect(hasBrowserResponse).toBe(false);
+
+        const duplicateCallback = await fetch(authorizationUrl);
+
+        expect(duplicateCallback.status).toBe(409);
+        expect(state.codeExchanges).toBe(1);
+      } finally {
+        tokenExchange.resolve();
+      }
+
+      const { exitCode } = await signInResult;
+      const page = await browserPage.promise;
+
+      expect(exitCode).toBe(0);
+      expect(page).toContain('<h1>Authentication successful</h1>');
+      expect(page).toContain(
+        'You can close this window and return to the terminal.',
+      );
+      expect(page).toContain(
+        theme === 'dark' ? '<html lang="en" class="dark">' : '<html lang="en">',
+      );
+      expect(page).not.toContain('authorization-code');
+      expect((await readConfigFile()).remotes.cloud).toBeDefined();
+    },
+  );
+
+  it('shows failure and saves nothing when the token exchange is rejected', async () => {
+    const browserPage = Promise.withResolvers<string>();
+
+    state.scenario = { isTokenExchangeRejected: true };
+    vi.mocked(openBrowser).mockImplementation((url) => {
+      void fetch(url)
+        .then(async (response) => {
+          browserPage.resolve(await response.text());
+        })
+        .catch(browserPage.reject);
+    });
+
+    const { exitCode, stderr } = await signIn();
+    const page = await browserPage.promise;
+
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('The token endpoint answered 400.');
+    expect(page).toContain('<h1>Authentication failed</h1>');
+    expect(page).not.toContain('Authentication successful');
+    expect(state.codeExchanges).toBe(1);
+    await expectNothingSaved();
   });
 
   it.each<[string, Scenario, string]>([

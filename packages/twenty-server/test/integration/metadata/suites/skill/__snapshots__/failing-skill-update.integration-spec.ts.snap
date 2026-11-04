@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Skill update should fail should fail when attempting to update a standard skill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "SKILL_IS_STANDARD",
-    "userFriendlyMessage": "Standard skills cannot be modified.",
-  },
-  "message": "Cannot update standard skill",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Skill update should fail should fail when updating a non-existent skill 1`] = `
 {
   "extensions": {

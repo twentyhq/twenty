@@ -93,7 +93,7 @@ export const PopupTrigger: Story = {
     const closedBackground = getComputedStyle(trigger).backgroundColor;
 
     await userEvent.click(trigger);
-    await body.findByRole('dialog', { name: 'Details' });
+    const popup = await body.findByRole('dialog', { name: 'Details' });
     await userEvent.unhover(trigger);
     await expect(trigger).toHaveAttribute('data-popup-open');
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -113,6 +113,7 @@ export const PopupTrigger: Story = {
 
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).not.toHaveAttribute('data-popup-open'));
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.unhover(trigger);
     await expect(getComputedStyle(trigger).backgroundColor).toBe(
@@ -121,9 +122,12 @@ export const PopupTrigger: Story = {
 
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(trigger).toHaveAttribute('data-popup-open'));
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Details' });
     await expect(args.onClick).toHaveBeenCalledTimes(2);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).not.toHaveAttribute('data-popup-open'));
+    await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

@@ -1,5 +1,6 @@
 declare const classNames: {
   readonly container: 'container';
+  readonly fullWidth: 'fullWidth';
   readonly icon: 'icon';
   readonly iconOnly: 'iconOnly';
   readonly item: 'item';

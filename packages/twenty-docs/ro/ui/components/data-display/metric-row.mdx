@@ -1,0 +1,77 @@
+---
+title: MetricRow
+description: Aliniază o etichetă de metrică și o valoare formatată cu progres opțional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## Prezentare generală
+
+`MetricRow` aliniază o etichetă, o pictogramă opțională și o valoare preformatată. Un [ProgressRing](/ro/ui/primitives/feedback/progress-ring) opțional folosește eticheta vizibilă drept nume accesibil.
+
+<StoryEmbed storyId="ui-data-display-metricrow--display" title="Exemplu de rând de metrică" height={100} />
+
+## Utilizare
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { IconFiles } from 'twenty-ui/icon';
+
+export const ImportMetric = () => (
+  <MetricRow
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
+  >
+    Imported files
+  </MetricRow>
+);
+```
+
+Transmiteți o etichetă de text nevidă ca elemente copil obligatorii și valoarea formatată prin `value`. Adăugați `progress` atunci când metrica are un procent cunoscut.
+
+Aplicația gestionează calculele, unitățile, formatarea numerelor și semnificația metricii. `progressColor` acceptă o culoare CSS pentru arcul umplut.
+
+## Valori fără progres
+
+Omiteți `progress` pentru a afișa o valoare simplă. Zero numeric este afișat ca `0`; conținutul nu este niciodată înlocuit cu un substituent. Furnizați propriul substituent atunci când datele nu sunt disponibile.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## Compoziție și accesibilitate
+
+Conținutul etichetei acceptă noduri. Textul său accesibil denumește inelul de progres prin `aria-labelledby`, inclusiv textul imbricat. Furnizați o etichetă vizibilă semnificativă. O valoare șir nevidă este, de asemenea, expusă ca text al valorii accesibile. Pentru conținutul valorii formatate, furnizați `progressValueText` atunci când un procentaj nu descrie complet metrica. Acest text înlocuiește valoarea de rezervă a șirului. Fără acesta, alt conținut păstrează textul valorii procentuale a inelului. Un `progressValueText` gol utilizează, de asemenea, procentajul, inclusiv atunci când `value` este un șir. Nodul opțional `startIcon` este decorativ. Apelantul îi controlează dimensiunile și conturul.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    <Text render={<strong />}>Storage</Text>
+  </MetricRow>
+);
+```
+
+Înlocuiți `startIcon={IconDatabase}` cu `startIcon={<IconDatabase size={14} />}`. Valorile rămân preformatate de aplicație.
+
+Atributele native, `className`, `style` și `ref` vizează rândul exterior. `render` poate înlocui acel element. Progresul rămâne controlat și limitat între 0 și 100, cu același comportament pentru mișcare redusă ca `ProgressRing`.
+
+## Proprietăți
+
+<MetricRowReference />
+
+<PageBanner illustration="dashboards" />

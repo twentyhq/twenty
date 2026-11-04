@@ -2,9 +2,10 @@ import {
   type FieldCurrencyValue,
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { t } from '@lingui/core/macro';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
@@ -17,6 +18,7 @@ import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordFormCurrencyFieldInputProps = {
   label?: string;
@@ -35,6 +37,11 @@ export const RecordFormCurrencyFieldInput = ({
   readonly,
   placeholder,
 }: RecordFormCurrencyFieldInputProps) => {
+  const { t } = useLingui();
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
   const amountMicros = defaultValue?.amountMicros ?? null;
 
   const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(
@@ -73,10 +80,12 @@ export const RecordFormCurrencyFieldInput = ({
 
     if (!canBeCastAsNumberOrNull(trimmedAmountText)) {
       setErrorMessage(t`Invalid number`);
+      setRecordFieldInputIsFieldInError(true);
       return;
     }
 
     setErrorMessage(undefined);
+    setRecordFieldInputIsFieldInError(false);
 
     const amount = castAsNumberOrNull(trimmedAmountText);
 

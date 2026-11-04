@@ -1,7 +1,6 @@
 ---
 title: 개요
 description: 앱 자체를 구성합니다. 앱의 ID, 기본 권한, 그리고 설치 시점에 무엇이 실행되는지를 설정합니다.
-icon: screwdriver-wrench
 ---
 
 Twenty 앱의 **구성 레이어(config layer)** 는 앱의 ID, 보유한 권한, 설치나 업그레이드 시 실행되는 코드를 포함해, 앱을 *플랫폼에 어떻게 설명할지* 정의합니다. 이 선언들은 새로운 데이터 구조나 런타임 동작을 추가하지 않습니다. 대신 Twenty에게 앱이 무엇인지와 어떻게 설정해야 하는지를 알려줍니다.
@@ -37,10 +36,10 @@ Twenty 앱의 **구성 레이어(config layer)** 는 앱의 ID, 보유한 권한
   <Card title="애플리케이션 구성" icon="rocket" href="/ko/developers/extend/apps/config/application">
     `defineApplication` — ID, 기본 역할, 변수, 마켓플레이스 메타데이터를 정의합니다.
   </Card>
-  <Card title="역할 및 권한" icon="shield-halved" href="/ko/developers/extend/apps/config/roles">
+  <Card title="역할 및 권한" icon="shield-half" href="/ko/developers/extend/apps/config/roles">
     `defineRole` — 앱의 로직 함수가 무엇을 읽고 쓸 수 있는지 선언합니다.
   </Card>
-  <Card title="설치 훅" icon="wrench" href="/ko/developers/extend/apps/config/install-hooks">
+  <Card title="설치 훅" icon="tool" href="/ko/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, 그리고 `defineUninstallLogicFunction` — 데이터를 백업하고, 기본값을 시드하며, 업그레이드를 검증하고, 제거 시 정리를 수행합니다.
   </Card>
 </CardGroup>

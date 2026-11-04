@@ -17,6 +17,7 @@ import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
+import { MergeManyRecordsService } from 'src/engine/core-modules/record-crud/services/merge-many-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
@@ -51,6 +52,7 @@ export class ToolExecutorService {
     private readonly upsertManyRecordsService: UpsertManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
+    private readonly mergeManyRecordsService: MergeManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly recordFilesResolverService: RecordFilesResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -142,7 +144,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: true,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -156,7 +157,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: isDefined(select),
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -172,7 +172,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -192,7 +191,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -218,7 +216,6 @@ export class ToolExecutorService {
           objectRecordId: id as string,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -231,7 +228,6 @@ export class ToolExecutorService {
           filter: args.filter as Record<string, unknown>,
           data: args.data as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -247,7 +243,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -260,7 +255,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecordId: args.id as string,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
         });
 
@@ -269,7 +263,15 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           filter: args.filter as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
+        });
+
+      case 'merge_many':
+        return this.mergeManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          ids: args.ids as string[],
+          conflictPriorityIndex: args.conflictPriorityIndex as number,
+          dryRun: args.dryRun as boolean | undefined,
+          authContext,
         });
 
       case 'group_by': {
@@ -293,7 +295,6 @@ export class ToolExecutorService {
           orderBy: groupByOrderBy as 'ASC' | 'DESC' | undefined,
           filter: groupByFilter,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
     }

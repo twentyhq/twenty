@@ -81,7 +81,11 @@ export const generateRecordOrderByJsonSchema = ({
       type: 'object',
       properties: Object.fromEntries(
         compositeType.properties
-          .filter((property) => property.hidden !== true)
+          .filter(
+            (property) =>
+              property.hidden !== true &&
+              !isDefined(property.deprecationReason),
+          )
           .map((property) => [property.name, direction]),
       ),
       additionalProperties: false,

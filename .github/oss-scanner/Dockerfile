@@ -1,7 +1,7 @@
 # Builds Twenty for Anthropic's OSS Scanner (https://github.com/anthropics/oss-scanner).
 # Mirrors .github/workflows/ci-server.yaml: Yarn 4 install, twenty-shared/twenty-emails/twenty-server builds,
 # then a local Postgres + Redis initialized and seeded so the server and integration tests run offline.
-FROM node:24-bookworm
+FROM node:26-bookworm
 ENV DEBIAN_FRONTEND=noninteractive \
     CI=true \
     NX_NO_CLOUD=true \
@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get update && apt-get install -y --no-install-recommends postgresql-18 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN corepack enable
+# Node 26 images no longer bundle Corepack.
+RUN npm install -g corepack && corepack enable
 
 # scanner contract: the checkout lives inside the image, at /src
 COPY . /src

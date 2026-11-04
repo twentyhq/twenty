@@ -1,0 +1,84 @@
+---
+title: LightIconButton
+description: Presenta azioni icona leggere con enfasi standard o discreta.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
+
+## Panoramica
+
+`LightIconButton` compone [IconButton](/it/ui/components/input/icon-button) con una superficie ghost e dimensioni ridotte. Fornisci un nome accessibile e contenuto dell'icona decorativo.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--display" title="Pulsante icona leggero" height={100} />
+
+## Utilizzo
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
+  </LightIconButton>
+);
+```
+
+L'enfasi standard utilizza testo neutro secondario; l'enfasi discreta utilizza testo terziario. L'aspetto esplicito dell'elemento figlio ha la precedenza sui valori di ButtonGroup, seguito dai valori predefiniti del componente. I colori semantici mantengono il proprio trattamento del contrasto. I controlli piccoli sono di 24px con un'icona di 14px; i controlli medi sono di 32px con un'icona di 16px. I controlli compatti utilizzano `size="xs"` e sono di 20px.
+
+## Opzioni visive
+
+Confronta l'enfasi nelle dimensioni piccola e media, inclusi gli stati selezionato, di caricamento e disabilitato.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--catalog" title="Enfasi, dimensioni e stati del pulsante icona chiara" height={410} />
+
+## Stato e interazione
+
+Il pulsante gestisce l'attivazione tramite tastiera, il comportamento disabilitato e di caricamento, i ref, gli attributi nativi e la composizione del rendering. Il valore predefinito nativo è `type="button"`. Utilizza `aria-pressed` per gli interruttori e `aria-expanded` per le divulgazioni. L'applicazione gestisce questi stati e può impostare `color="accent"` per evidenziare un'azione selezionata. Lo stato attivo da tastiera utilizza l'anello di focus condiviso.
+
+Il testo del tooltip è facoltativo e non sostituisce un nome accessibile da `aria-label` o `aria-labelledby`. Imposta `href` per un link. Per il routing gestito dall'applicazione, fornisci `render`, `nativeButton={false}` e `role="link"`.
+
+## Aggiornamento dei controlli esistenti
+
+Importa `LightIconButton` da `twenty-ui/components`. Sostituisci `Icon={IconPlus}` con i figli `<IconPlus />`, `small`/`medium` con `sm`/`md`, `accent="tertiary"` con `emphasis="subtle"` e `testId` con `data-testid`. Sostituisci i flag sintetici `active` e `focus` con lo stato semantico e l'effettivo focus da tastiera.
+
+Sostituisci `LightIconButtonGroup` con [ButtonGroup](/it/ui/primitives/input/button-group) utilizzando `attached={false}` e figli espliciti. Imposta `disabled` sulle azioni non disponibili, incluse le azioni senza un gestore di clic. I wrapper e gli attivatori di tooltip possono rimanere attorno a ciascun figlio.
+
+## Azioni della riga
+
+Usa un [ListItem](/it/ui/primitives/navigation/list-item) passivo con uno slot `actions` per controlli indipendenti. Passa direttamente un `LightIconButton` oppure utilizza `ButtonGroup` per più pulsanti. Ogni pulsante dispone del proprio nome accessibile, gestore di clic e stato disabilitato. Avvolgi gli attivatori dei menu a discesa direttamente attorno al pulsante.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordActions = () => (
+  <ListItem
+    actions={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  >
+    Record
+  </ListItem>
+);
+```
+
+Un pulsante senza un gestore `onClick` può rimanere abilitato quando un menu a discesa circostante gestisce la sua interazione. Imposta esplicitamente `disabled` per i pulsanti non disponibili. Mantieni i controlli indipendenti accanto a un [ListItemButton](/it/ui/components/navigation/list-item-button) azionabile affinché ciascuno mantenga il proprio stato attivo e attivazione.
+
+## Props
+
+<LightIconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

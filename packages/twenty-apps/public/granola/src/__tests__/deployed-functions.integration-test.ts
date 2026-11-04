@@ -1,36 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { functionExecute } from 'twenty-sdk/cli';
+import { executeDeployedFunctionOrThrow } from './execute-deployed-function-or-throw';
+import { readManifestLogicFunctionNamesOrThrow } from './read-manifest-logic-function-names-or-throw';
 import { describe, expect, it } from 'vitest';
-import { z } from 'zod';
 
 import { GRANOLA_BACKFILL_ROUTE_PATH } from 'src/constants/granola-backfill-route-path';
-
-const APP_PATH = process.cwd();
-const MANIFEST_SCHEMA = z.object({
-  logicFunctions: z.array(z.object({ name: z.string() })),
-});
-
-const executeDeployedFunction = async ({
-  functionName,
-  payload,
-}: {
-  functionName: string;
-  payload: Record<string, unknown>;
-}) => {
-  const result = await functionExecute({
-    appPath: APP_PATH,
-    functionName,
-    payload,
-  });
-  if (!result.success) {
-    throw new Error(
-      `Could not execute ${functionName}: ${result.error.message}`,
-    );
-  }
-  return result.data;
-};
 
 const buildBackfillRoutePayload = (body: Record<string, unknown>) => ({
   headers: {},
@@ -45,27 +18,19 @@ const buildBackfillRoutePayload = (body: Record<string, unknown>) => ({
 
 describe('Granola deployed functions', () => {
   it('deploys every function declared by the built application', async () => {
-    const manifest = MANIFEST_SCHEMA.parse(
-      JSON.parse(
-        readFileSync(
-          join(APP_PATH, '.twenty', 'output', 'manifest.json'),
-          'utf8',
-        ),
-      ),
-    );
     const result = await new MetadataApiClient().query({
       findManyLogicFunctions: { name: true },
     });
     const deployedNames = result.findManyLogicFunctions.map(
       (logicFunction) => logicFunction.name,
     );
-    for (const { name } of manifest.logicFunctions) {
+    for (const name of await readManifestLogicFunctionNamesOrThrow()) {
       expect(deployedNames).toContain(name);
     }
   });
 
   it('reports the missing API key from the deployed connection status route', async () => {
-    const execution = await executeDeployedFunction({
+    const execution = await executeDeployedFunctionOrThrow({
       functionName: 'granola-connection-status',
       payload: {},
     });
@@ -76,7 +41,7 @@ describe('Granola deployed functions', () => {
   it.each([0, -1, 3651, 1.5, '31'])(
     'rejects the invalid backfill window %s before enqueueing',
     async (days) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName: 'granola-backfill',
         payload: buildBackfillRoutePayload({ days }),
       });
@@ -114,7 +79,7 @@ describe('Granola deployed functions', () => {
   ])(
     'validates inputs in deployed $functionName',
     async ({ functionName, payload, error }) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName,
         payload,
       });
@@ -133,7 +98,7 @@ describe('Granola deployed functions', () => {
   ])(
     'reports the missing key from deployed $functionName',
     async ({ functionName, payload }) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName,
         payload,
       });

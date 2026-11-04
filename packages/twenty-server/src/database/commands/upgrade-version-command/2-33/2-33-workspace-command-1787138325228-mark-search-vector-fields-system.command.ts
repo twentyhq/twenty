@@ -1,15 +1,12 @@
-import { Command } from 'nest-commander';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import groupBy from 'lodash.groupby';
-import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.33.0', 1787138325228)
 @Command({
@@ -20,8 +17,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -30,72 +27,25 @@ export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCom
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
+    const filter = `"workspaceId" = $1 AND type = 'TS_VECTOR' AND writability <> 'SYSTEM'`;
 
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+    if (options.dryRun) {
+      const [{ count }] = await this.coreDataSource.query(
+        `SELECT COUNT(*)::int AS "count" FROM core."fieldMetadata" WHERE ${filter}`,
+        [workspaceId],
+      );
 
-    const flatFieldMetadatasToUpdate = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatFieldMetadata) =>
-          flatFieldMetadata.type === FieldMetadataType.TS_VECTOR &&
-          flatFieldMetadata.writability !== MetadataWritability.SYSTEM,
-      )
-      .map((flatFieldMetadata) => ({
-        ...flatFieldMetadata,
-        writability: MetadataWritability.SYSTEM,
-      }));
+      this.logger.log(
+        `[DRY RUN] Would mark ${count} search vector field(s) as SYSTEM for workspace ${workspaceId}`,
+      );
 
-    if (flatFieldMetadatasToUpdate.length === 0) {
       return;
     }
 
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] Would mark' : 'Marking'} ${flatFieldMetadatasToUpdate.length} search vector field(s) as SYSTEM for workspace ${workspaceId}`,
+    // Nothing reads writability at runtime, but a later upgrade turns SYSTEM into disabled actions
+    await this.coreDataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'SYSTEM' WHERE ${filter}`,
+      [workspaceId],
     );
-
-    const flatFieldMetadatasToUpdateByApplicationUniversalIdentifier = groupBy(
-      flatFieldMetadatasToUpdate,
-      (flatFieldMetadata) => flatFieldMetadata.applicationUniversalIdentifier,
-    );
-
-    for (const [
-      applicationUniversalIdentifier,
-      flatEntityToUpdate,
-    ] of Object.entries(
-      flatFieldMetadatasToUpdateByApplicationUniversalIdentifier,
-    )) {
-      const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            isSystemBuild: true,
-            workspaceId,
-            applicationUniversalIdentifier,
-            dryRun: isDryRun,
-            allFlatEntityOperationByMetadataName: {
-              fieldMetadata: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: [],
-                flatEntityToUpdate,
-              },
-            },
-          },
-        );
-
-      if (validateAndBuildResult.status === 'fail') {
-        this.logger.error(
-          `Failed to mark search vector fields as SYSTEM:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-        );
-
-        throw new Error(
-          `Failed to mark search vector fields as SYSTEM for workspace ${workspaceId}`,
-        );
-      }
-    }
   }
 }

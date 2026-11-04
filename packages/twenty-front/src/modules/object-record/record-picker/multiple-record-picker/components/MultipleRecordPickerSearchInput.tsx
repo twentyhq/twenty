@@ -1,18 +1,26 @@
-import { useCallback } from 'react';
+import { type ChangeEvent, type KeyboardEvent } from 'react';
 import { useStore } from 'jotai';
+import { Key } from 'ts-key-enum';
 
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useDebouncedCallback } from 'use-debounce';
+import { useLingui } from '@lingui/react/macro';
+
+const SEARCH_DEBOUNCE_DELAY_IN_MILLISECONDS = 500;
 
 export const MultipleRecordPickerSearchInput = () => {
+  const { t } = useLingui();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
+  const { isActive } = useDropdownPage();
+  const store = useStore();
 
   const [
     multipleRecordPickerSearchFilter,
@@ -21,39 +29,49 @@ export const MultipleRecordPickerSearchInput = () => {
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const store = useStore();
+  const debouncedSearch = useDebouncedCallback((searchFilter: string) => {
+    if (!isActive) {
+      return;
+    }
 
-  const debouncedSearch = useDebouncedCallback(
-    useCallback(
-      (searchFilter: string) => {
-        store.set(
-          multipleRecordPickerSearchFilterComponentState.atomFamily({
-            instanceId: componentInstanceId,
-          }),
-          searchFilter,
-        );
+    void performSearch({
+      multipleRecordPickerInstanceId: componentInstanceId,
+      forceSearchFilter: searchFilter,
+    });
+  }, SEARCH_DEBOUNCE_DELAY_IN_MILLISECONDS);
 
-        performSearch({
-          multipleRecordPickerInstanceId: componentInstanceId,
-          forceSearchFilter: searchFilter,
-        });
-      },
-      [componentInstanceId, performSearch, store],
-    ),
-    500,
-  );
-
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newSearchFilter = event.currentTarget.value;
     setMultipleRecordPickerSearchFilter(newSearchFilter);
     debouncedSearch(newSearchFilter);
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== Key.Enter || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    const { searchFilter: searchedFilter } = store.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
+
+    if (searchedFilter === multipleRecordPickerSearchFilter) {
+      return;
+    }
+
+    event.preventDefault();
+    debouncedSearch.flush();
+  };
+
   return (
-    <DropdownMenuSearchInput
+    <Dropdown.Search
+      aria-label={t`Search records`}
+      placeholder={t`Search`}
       value={multipleRecordPickerSearchFilter}
       onChange={handleFilterChange}
-      autoFocus
+      onKeyDown={handleKeyDown}
     />
   );
 };

@@ -49,6 +49,21 @@ function CheckMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function CrossMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="m1 4 8 8m0-8-8 8" stroke={color} strokeWidth={strokeWidth} />
+    </svg>
+  );
+}
+
 function CodeMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -112,6 +127,56 @@ function EyeMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function InfoMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx={8} cy={8} r={6} stroke={color} strokeWidth={strokeWidth} />
+      <path
+        d="M8 7.5V11"
+        stroke={color}
+        strokeLinecap="round"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d="M8 5h.01"
+        stroke={color}
+        strokeLinecap="round"
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
+function InfinityMark({
+  color,
+  sizePx,
+  strokeWidth = 2,
+}: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.885 6.115a2.667 2.667 0 1 0 0 3.771 6.667 6.667 0 0 0 1.448-1.885 6.667 6.667 0 0 1 1.448-1.886 2.667 2.667 0 1 1 0 3.771 6.667 6.667 0 0 1-1.448-1.885 6.667 6.667 0 0 0-1.448-1.886"
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function SearchMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -161,6 +226,25 @@ function TagMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function TickMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m1 8.5 3.5 3.5L11 4.5"
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function UsersMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -196,15 +280,30 @@ function UsersMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
 }
 
 export const INFORMATIVE_MARKS: Record<
-  'book' | 'check' | 'code' | 'edit' | 'eye' | 'search' | 'tag' | 'users',
+  | 'book'
+  | 'check'
+  | 'code'
+  | 'cross'
+  | 'edit'
+  | 'eye'
+  | 'infinity'
+  | 'info'
+  | 'search'
+  | 'tag'
+  | 'tick'
+  | 'users',
   ComponentType<InformativeMarkProps>
 > = {
   book: BookMark,
   check: CheckMark,
   code: CodeMark,
+  cross: CrossMark,
   edit: EditMark,
   eye: EyeMark,
+  infinity: InfinityMark,
+  info: InfoMark,
   search: SearchMark,
   tag: TagMark,
+  tick: TickMark,
   users: UsersMark,
 };

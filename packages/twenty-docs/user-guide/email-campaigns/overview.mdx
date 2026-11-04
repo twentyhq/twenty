@@ -1,7 +1,13 @@
 ---
 title: Email Campaigns
+sidebarTitle: Overview
 description: Use the CRM data, workflows, and reporting your sales team already relies on.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Campaigns for sales teams
 
 <Warning>
 **Beta Feature**: Email campaigns are in beta. Contact us via chat to enable them for your workspace.
@@ -15,8 +21,6 @@ Campaigns are one-to-many. You create one email for a focused list, not a separa
   src="/images/user-guide/email-campaigns/campaigns-list.png"
   style={{ width: '100%' }}
 />
-
-## Campaigns for sales teams
 
 Use campaigns to run sales plays that would be hard to manage one email at a time:
 
@@ -61,20 +65,26 @@ Your workspace can send up to 1,000 campaign emails a day. Need a higher limit? 
 
 Set up your sending domain once. Then start with a small group of people who expect to hear from you.
 
-<CardGroup cols={2}>
-  <Card title="Set up your sending domain" icon="globe" href="/user-guide/email-campaigns/how-tos/set-up-a-sending-domain">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/user-guide/email-campaigns/how-tos/set-up-a-sending-domain" img="/images/user-guide/halftone/card-page-sending-domain.svg">
+    <CardTitle>Set up your sending domain</CardTitle>
     Verify your domain and send from an address people recognize.
   </Card>
-  <Card title="Send your first campaign" icon="paper-plane" href="/user-guide/email-campaigns/how-tos/send-your-first-campaign">
+  <Card href="/user-guide/email-campaigns/how-tos/send-your-first-campaign" img="/images/user-guide/halftone/card-page-first-campaign.svg">
+    <CardTitle>Send your first campaign</CardTitle>
     Build the list, write the email, test it, and send when you are ready.
   </Card>
 </CardGroup>
 
-<CardGroup cols={2}>
-  <Card title="Create a campaign with AI" icon="wand-magic-sparkles" href="/user-guide/email-campaigns/how-tos/create-a-campaign-with-ai">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/user-guide/email-campaigns/how-tos/create-a-campaign-with-ai" img="/images/user-guide/halftone/card-page-ai-campaign.svg">
+    <CardTitle>Create a campaign with AI</CardTitle>
     Ask AI to build the list and draft the email, then review it yourself.
   </Card>
-  <Card title="Campaign best practices" icon="list" href="/user-guide/email-campaigns/how-tos/email-campaign-best-practices">
+  <Card href="/user-guide/email-campaigns/how-tos/email-campaign-best-practices" img="/images/user-guide/halftone/card-page-campaign-practices.svg">
+    <CardTitle>Campaign best practices</CardTitle>
     Learn how to keep your emails welcome in the inbox.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="section-email-campaigns" />

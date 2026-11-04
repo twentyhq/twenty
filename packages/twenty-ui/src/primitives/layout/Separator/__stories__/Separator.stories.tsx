@@ -53,39 +53,4 @@ export const Vertical: Story = {
   },
 };
 
-export const LabeledComposition: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(canvas.getAllByRole('separator')).toHaveLength(1);
-    expect(canvas.getByRole('separator', { name: 'New' })).toBeVisible();
-  },
-  render: () => (
-    <Text
-      role="separator"
-      aria-label="New"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        color: 'var(--t-tag-text-red)',
-      }}
-    >
-      <Separator
-        aria-hidden
-        style={{ flexGrow: 1, width: 'auto', backgroundColor: 'currentColor' }}
-      />
-      <Text
-        render={<span />}
-        style={{
-          marginInline: 'var(--t-spacing-2)',
-          fontSize: 11,
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-        }}
-      >
-        New
-      </Text>
-    </Text>
-  ),
-};
-
 export const VerticalDocumentation: Story = { args: Vertical.args };

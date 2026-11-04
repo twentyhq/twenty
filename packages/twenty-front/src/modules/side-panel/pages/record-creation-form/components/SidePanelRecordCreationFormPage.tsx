@@ -11,10 +11,12 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
+import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordCreationFormSettingsInSidePanel } from '@/side-panel/hooks/useOpenRecordCreationFormSettingsInSidePanel';
@@ -30,10 +32,10 @@ import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/g
 import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useStore } from 'jotai';
 import { useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -49,6 +51,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -95,6 +98,7 @@ export const SidePanelRecordCreationFormPage = () => {
       requestId={recordCreationFormRequest.requestId}
       objectMetadataId={recordCreationFormRequest.objectMetadataId}
       initialDraftRecord={recordCreationFormRequest.initialDraftRecord}
+      canCreateAnother={recordCreationFormRequest.canCreateAnother}
     />
   );
 };
@@ -103,11 +107,14 @@ const SidePanelRecordCreationForm = ({
   requestId,
   objectMetadataId,
   initialDraftRecord,
+  canCreateAnother,
 }: {
   requestId: string;
   objectMetadataId: string;
   initialDraftRecord: Partial<ObjectRecord>;
+  canCreateAnother: boolean;
 }) => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
@@ -115,6 +122,7 @@ const SidePanelRecordCreationForm = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const theme = useTheme();
 
+  const store = useStore();
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
   const { enqueueToast } = useToast();
 
@@ -131,6 +139,8 @@ const SidePanelRecordCreationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formResetCount, setFormResetCount] = useState(0);
   const contentId = useId();
+  const formMountId = useId();
+  const formInstanceId = `${formMountId}-${formResetCount}`;
   const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
@@ -171,18 +181,20 @@ const SidePanelRecordCreationForm = ({
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
   const editableFieldsCount = editableRecordFormFields.length;
 
+  const displayedFieldMetadataItems = [
+    ...visibleFieldMetadataItems,
+    ...(recordCreationFormAreHiddenFieldsShown ? hiddenFieldMetadataItems : []),
+  ];
+
   const { violationsByFieldMetadataId, recordViolations } =
     groupValidationRuleViolationsByField({
       violations: [
         ...draftValidationRuleViolations,
         ...serverValidationRuleViolations,
       ],
-      displayedFieldMetadataIds: [
-        ...visibleFieldMetadataItems,
-        ...(recordCreationFormAreHiddenFieldsShown
-          ? hiddenFieldMetadataItems
-          : []),
-      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+      displayedFieldMetadataIds: displayedFieldMetadataItems.map(
+        (fieldMetadataItem) => fieldMetadataItem.id,
+      ),
     });
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
@@ -218,6 +230,27 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const getFieldInputIsInErrorAtom = (fieldMetadataId: string) =>
+    recordFieldInputIsFieldInErrorComponentState.atomFamily({
+      instanceId: getRecordFormFieldInputInstanceId({
+        formInstanceId,
+        fieldMetadataId,
+      }),
+    });
+
+  const handleHiddenFieldsToggleClick = () => {
+    // Collapsed inputs unmount and come back without their error text, so drop their error state too.
+    if (recordCreationFormAreHiddenFieldsShown) {
+      for (const fieldMetadataItem of hiddenFieldMetadataItems) {
+        store.set(getFieldInputIsInErrorAtom(fieldMetadataItem.id), false);
+      }
+    }
+
+    setRecordCreationFormAreHiddenFieldsShown(
+      !recordCreationFormAreHiddenFieldsShown,
+    );
+  };
+
   const revealHiddenFieldsIfTargeted = (
     targetedFieldMetadataIds: (string | null)[],
   ) => {
@@ -243,6 +276,16 @@ const SidePanelRecordCreationForm = ({
     shouldKeepOpen: boolean;
   }) => {
     if (isSubmitting) {
+      return;
+    }
+
+    const isAnyDisplayedFieldInputInError = displayedFieldMetadataItems.some(
+      (fieldMetadataItem) =>
+        store.get(getFieldInputIsInErrorAtom(fieldMetadataItem.id)),
+    );
+
+    if (isAnyDisplayedFieldInputInError) {
+      scrollToFirstFieldViolation();
       return;
     }
 
@@ -324,13 +367,20 @@ const SidePanelRecordCreationForm = ({
     keys: [
       `${Key.Meta}+${Key.Enter}`,
       `${Key.Control}+${Key.Enter}`,
-      `${Key.Alt}+${Key.Enter}`,
+      ...(canCreateAnother ? [`${Key.Alt}+${Key.Enter}`] : []),
     ],
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
     callback: (keyboardEvent) =>
       keyboardEvent.altKey ? handleCreateAnotherClick() : handleCreateClick(),
-    dependencies: [currentFocusId, handleCreateClick, handleCreateAnotherClick],
+    dependencies: [
+      canCreateAnother,
+      currentFocusId,
+      handleCreateClick,
+      handleCreateAnotherClick,
+    ],
   });
+
+  const isOptionsDropdownShown = canCreateAnother || hasLayoutsPermission;
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
@@ -358,6 +408,7 @@ const SidePanelRecordCreationForm = ({
           }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
+          formInstanceId={formInstanceId}
         />
         {hiddenFieldsCount > 0 && (
           <StyledHiddenFieldsToggle>
@@ -369,11 +420,7 @@ const SidePanelRecordCreationForm = ({
                   <IconChevronDown />
                 )
               }
-              onClick={() =>
-                setRecordCreationFormAreHiddenFieldsShown(
-                  !recordCreationFormAreHiddenFieldsShown,
-                )
-              }
+              onClick={handleHiddenFieldsToggleClick}
             >
               {recordCreationFormAreHiddenFieldsShown
                 ? t`Hide fields`
@@ -391,6 +438,7 @@ const SidePanelRecordCreationForm = ({
             }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
+            formInstanceId={formInstanceId}
           />
         )}
       </StyledContent>
@@ -405,25 +453,31 @@ const SidePanelRecordCreationForm = ({
       )}
       <SidePanelFooter
         actions={[
-          <SidePanelOptionsDropdown
-            key="options"
-            dropdownId={optionsDropdownId}
-          >
-            <Dropdown.ActionItem
-              startIcon={<IconPlus />}
-              shortcut={['Alt', 'Enter']}
-              disabled={isSubmitting}
-              onClick={handleCreateAnotherClick}
-            >{t`Create another`}</Dropdown.ActionItem>
-            {hasLayoutsPermission && (
-              <Dropdown.ActionItem
-                startIcon={<IconEdit />}
-                onClick={() =>
-                  openRecordCreationFormSettingsInSidePanel(objectMetadataItem)
-                }
-              >{t`Edit form`}</Dropdown.ActionItem>
-            )}
-          </SidePanelOptionsDropdown>,
+          isOptionsDropdownShown && (
+            <SidePanelOptionsDropdown
+              key="options"
+              dropdownId={optionsDropdownId}
+            >
+              {canCreateAnother && (
+                <Dropdown.ActionItem
+                  startIcon={<IconPlus />}
+                  shortcut={['Alt', 'Enter']}
+                  disabled={isSubmitting}
+                  onClick={handleCreateAnotherClick}
+                >{t`Create another`}</Dropdown.ActionItem>
+              )}
+              {hasLayoutsPermission && (
+                <Dropdown.ActionItem
+                  startIcon={<IconEdit />}
+                  onClick={() =>
+                    openRecordCreationFormSettingsInSidePanel(
+                      objectMetadataItem,
+                    )
+                  }
+                >{t`Edit form`}</Dropdown.ActionItem>
+              )}
+            </SidePanelOptionsDropdown>
+          ),
           <Button
             key="create-record"
             startIcon={<IconPlus />}

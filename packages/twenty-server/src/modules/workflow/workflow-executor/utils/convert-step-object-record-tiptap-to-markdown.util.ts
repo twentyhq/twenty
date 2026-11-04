@@ -1,11 +1,34 @@
-import { richTextValueSchema } from 'twenty-shared/types';
-import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  type RichTextMetadata,
+  richTextValueSchema,
+} from 'twenty-shared/types';
+import {
+  convertTipTapBlocksToMarkdown,
+  isDefined,
+  parseTipTapJsonDocument,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
-// The step editor is TipTap but saves its JSON under a key named blocknote
-const workflowStepTipTapValueSchema = richTextValueSchema;
+const convertStepRichTextValueToMarkdown = ({
+  tiptap,
+  blocknote,
+}: RichTextMetadata): string | undefined => {
+  const tipTapDocument = isNonEmptyString(tiptap)
+    ? parseTipTapJsonDocument(tiptap)
+    : undefined;
+
+  if (isDefined(tipTapDocument)) {
+    return tipTapDocumentToMarkdown(tipTapDocument);
+  }
+
+  return isDefined(blocknote)
+    ? convertTipTapBlocksToMarkdown(blocknote)
+    : undefined;
+};
 
 export const convertStepObjectRecordTipTapToMarkdown = (
   stepObjectRecord: Record<string, unknown>,
@@ -17,15 +40,12 @@ export const convertStepObjectRecordTipTapToMarkdown = (
   const objectRecord = { ...stepObjectRecord };
 
   for (const fieldName of findRichTextFieldNames(objectMetadataInfo)) {
-    const parsedStepValue = workflowStepTipTapValueSchema.safeParse(
+    const parsedStepValue = richTextValueSchema.safeParse(
       stepObjectRecord[fieldName],
     );
 
-    const tipTapJson = parsedStepValue.success
-      ? parsedStepValue.data.blocknote
-      : undefined;
-    const tipTapMarkdown = isDefined(tipTapJson)
-      ? convertTipTapBlocksToMarkdown(tipTapJson)
+    const tipTapMarkdown = parsedStepValue.success
+      ? convertStepRichTextValueToMarkdown(parsedStepValue.data)
       : undefined;
 
     // TODO: steps built through the API can hold markdown only, BlockNote or a variable instead of TipTap.

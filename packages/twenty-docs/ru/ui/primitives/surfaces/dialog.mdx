@@ -1,0 +1,199 @@
+---
+title: Диалог
+description: Отобразите целевую задачу поверх текущей страницы.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## Обзор
+
+Используйте `Dialog` для форм, сведений и других задач, открывающихся поверх страницы. Он управляет фокусом, закрытием с клавиатуры, внешними щелчками и прокруткой. Используйте [AlertDialog](/ru/ui/primitives/surfaces/alert-dialog), когда пользователь должен явно ответить на решение.
+
+Этот API предназначен для автономного Twenty UI и хост-приложения Twenty. Фронтальные компоненты должны использовать [`openCommandConfirmationModal`](/ru/developers/extend/apps/layout/front-components#host-communication-api) из SDK вместо непосредственного рендеринга `Dialog` или `AlertDialog`. Нативные диалоговые окна и всплывающие элементы браузера также запрещены в средстве рендеринга фронтальных компонентов.
+
+<StoryEmbed storyId="ui-surfaces-dialog--display" title="Пример диалога" height={440} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+По умолчанию `Root` управляет видимостью. Задайте `defaultOpen` для его начального состояния. Триггеры, элементы управления закрытием, Escape и внешние щелчки обновляют это состояние.
+
+```tsx
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger render={<Button>Edit account</Button>} />
+    <Dialog.Portal>
+      <Dialog.Backdrop />
+      <Dialog.Viewport>
+        <Dialog.Popup>
+          <Dialog.Header>
+            <Dialog.Title>Edit account</Dialog.Title>
+            <Dialog.Description>Update the account details.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Field.Root name="company">
+              <Field.Label>Company name</Field.Label>
+              <Input defaultValue="Acme" />
+            </Field.Root>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
+            <Dialog.Close render={<Button>Save</Button>} />
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  </Dialog.Root>
+);
+```
+
+## Структура
+
+```text
+Dialog.Root
+├── Dialog.Trigger
+└── Dialog.Portal
+    ├── Dialog.Backdrop
+    └── Dialog.Viewport
+        └── Dialog.Popup
+            ├── Dialog.Header
+            │   ├── Dialog.Title
+            │   └── Dialog.Description
+            ├── Dialog.Body
+            └── Dialog.Footer
+                └── Dialog.Close
+```
+
+| Часть                      | Нативный элемент и цель ref                                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `Root`                     | Координирует видимость и модальное поведение. Не рендерит DOM-узел и не принимает нативные атрибуты или DOM ref.                   |
+| `Триггер`                  | По умолчанию — кнопка. Открывает диалоговое окно и предоставляет цель для восстановления фокуса.                                   |
+| `Portal`                   | Div портала. Управляет целевым контейнером и тем, остаётся ли закрытое содержимое смонтированным.                                  |
+| `Backdrop`                 | Div фона под всплывающим окном. Необязательно; не указывайте его, если видимый фон не нужен.                                       |
+| `Viewport`                 | Div для позиционирования вокруг всплывающего окна.                                                                                 |
+| `Popup`                    | Div диалогового окна. Управляет содержимым, размером, целями фокуса и семантикой диалогового окна.                                 |
+| `Заголовок`                | По умолчанию — `h2`. Предоставляет доступное имя. При его отсутствии укажите `aria-label` для `Popup`.                             |
+| `Description`              | По умолчанию — абзац. Связывает вспомогательный текст с диалогом.                                                                  |
+| `Header`, `Body`, `Footer` | Необязательные div, располагающие заголовки, содержимое и действия.                                                                |
+| `Закрыть`                  | По умолчанию — кнопка. Предоставляет видимое действие закрытия, в том числе для программ чтения с экрана на сенсорных устройствах. |
+
+Явно соберите `Portal`, `Backdrop`, `Viewport` и `Popup`. Каждая DOM-часть принимает собственные нативные атрибуты, обработчики, `className`, `style`, ref и композицию `render`. Ref указывает на отрендеренный элемент этой части. `Popup` не создаёт портал, фон или область просмотра.
+
+## Контролируемое состояние
+
+Передайте `open` и `onOpenChange`, когда приложение управляет видимостью. Колбэк получает запрошенное состояние и сведения о событии Base UI, включая `reason`, `event`, `trigger` и `cancel()`. Обновите состояние, чтобы принять изменение, или вызовите `eventDetails.cancel()`, чтобы отклонить его. `onOpenChangeComplete` выполняется, когда завершается анимация открытия или закрытия.
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger render={<Button>Edit account</Button>} />
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title>Edit account</Dialog.Title>
+              <Dialog.Description>
+                Update the account details.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Field.Root name="company">
+                <Field.Label>Company name</Field.Label>
+                <Input defaultValue="Acme" />
+              </Field.Root>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button variant="outline">Close</Button>} />
+              <Dialog.Close render={<Button>Save</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+```
+
+Для асинхронной формы не закрывайте диалог во время отправки. Закройте его после успеха и отображайте ошибки внутри диалога.
+
+## Композиция
+
+`Trigger` и `Close` принимают `render` для композиции с `Button`, как показано выше. Пользовательские обёртки должны [перенаправлять предоставленные свойства и ссылки](/ru/ui/primitives/overview#custom-components). DOM-части сохраняют зависящие от состояния имена классов, стили и контракты колбэков `render` из Base UI. `Header`, `Body` и `Footer` сохраняют стилизованную компоновку и нативную композицию div.
+
+Вложите другой `Dialog.Root` во всплывающее окно, чтобы открыть второй диалог. При закрытии вложенного диалога фокус возвращается к его триггеру в родительском диалоге.
+
+Чтобы открыть одно диалоговое окно из триггеров за пределами `Root`, один раз создайте дескриптор с помощью `Dialog.createHandle\<TPayload>()` и передайте его в `handle` как для `Root`, так и для каждого `Trigger`. Значения `payload` триггера доступны в функции рендеринга `Root`. `Dialog.Handle` и публичный тип `DialogHandle` предоставляют контракт установленного дескриптора:
+
+| Член                       | Назначение                                                               |
+| -------------------------- | ------------------------------------------------------------------------ |
+| `open(triggerId)`          | Открывает с соответствующим триггером в качестве активного триггера.     |
+| `open(null)`               | Открывает без привязки к триггеру.                                       |
+| `openWithPayload(payload)` | Открывает с типизированной полезной нагрузкой и без связанного триггера. |
+| `close()`                  | Запрашивает закрытие.                                                    |
+| `isOpen`                   | Проверяет, открыто ли связанное диалоговое окно.                         |
+
+Императивные действия выполняются, только пока связанный Root смонтирован. `actionsRef` Root также предоставляет `close()` и `unmount()` для явного управления переходами. Чтобы управлять внешней анимацией закрытия, вызовите `eventDetails.preventUnmountOnClose()` в `onOpenChange`, затем вызовите действие `unmount()`, когда анимация завершится.
+
+`Title` использует `Heading` и по умолчанию отображается как `h2` с крупным шрифтом, основным цветом текста, выравниванием по центру и отступом spacing-4 под ним. Используйте `level`, чтобы изменить уровень заголовка независимо от `size`, или `color`, чтобы изменить цвет его текста. Нативные `className`, `style`, ссылки и `render` перенаправляются в заголовок. При использовании `render` сохраняйте элемент заголовка. `Description` выровнено по центру, как `Title`; AlertDialog сохраняет оба выровненными по левому краю.
+
+`Popup` не имеет внутренних отступов. `Header`, `Body` и `Footer` обеспечивают внутренний отступ, поэтому содержимое, размещенное непосредственно в `Popup`, располагается у его краев.
+
+## Фокус, прокрутка и закрытие
+
+`Root.modal` управляет границей взаимодействия:
+
+| Значение              | Фокус                              | Прокрутка страницы и внешнее взаимодействие                       |
+| --------------------- | ---------------------------------- | ----------------------------------------------------------------- |
+| `true` (по умолчанию) | Ограничено внутри диалогового окна | Прокрутка страницы и внешнее взаимодействие заблокированы.        |
+| `"trap-focus"`        | Удерживается внутри диалога        | Прокрутка страницы и взаимодействие вне окна остаются доступными. |
+| `ложь`                | Может покинуть диалог              | Прокрутка страницы и внешнее взаимодействие остаются доступными.  |
+
+Не указывайте `Backdrop`, если видимый фон не нужен. Для немодального диалогового окна, область просмотра которого должна пропускать события указателя на страницу, используйте `\<Dialog.Viewport data-backdrop-hidden="true">`; Popup остаётся интерактивным. Само по себе отсутствие визуального фона не изменяет `Root.modal`.
+
+Задайте для `Popup.initialFocus` или `Popup.finalFocus` ссылку либо обратный вызов, чтобы выбрать цели фокуса; `false` отключает это автоматическое перемещение фокуса. Колбэки фокуса получают тип взаимодействия и сохраняют поведение возврата boolean, element, null и undefined из Base UI. При обычном закрытии фокус восстанавливается на триггере или ранее сфокусированном элементе.
+
+`Root.disablePointerDismissal` предотвращает запросы на закрытие при внешних щелчках. Чтобы предотвратить закрытие по Escape, отмените изменение `escape-key` в `onOpenChange`. Всегда предоставляйте видимый способ закрыть модальный диалог.
+
+## Размеры и порталы
+
+`Popup.size` принимает `sm`, `compact`, `md`, `lg`, `xl` и `fullscreen`; по умолчанию используется `md`. Длинное содержимое прокручивается внутри всплывающего окна. Ширина ограничена областью просмотра.
+
+Укажите `Portal.container`, чтобы выбрать назначение:
+
+| Значение                  | Разрешение                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Не указан или `undefined` | Использует ближайший контейнер области темы. При его отсутствии Base UI использует родительский портал или body документа.                 |
+| Element или `ShadowRoot`  | Использует это явно указанное назначение вместо области темы.                                                                              |
+| Ref                       | Base UI разрешает его текущий элемент. Ref, текущее значение которого равно null, возвращается к родительскому порталу или body документа. |
+| `null`                    | Ожидает без монтирования. Укажите назначение при последующем рендеринге для монтирования.                                                  |
+
+`Portal.keepMounted` сохраняет содержимое и состояние формы в закрытом состоянии. `Viewport` и `Popup` переносят предоставленное направление текста во внешний контейнер; их явные props `dir` имеют приоритет. Без провайдера направления или явного `dir` они наследуют его от назначения. См. [темизацию](/ru/ui/theming) и [DirectionProvider](/ru/ui/primitives/layout/direction-provider).
+
+Настраивайте `Backdrop` и `Viewport` через их собственные props. Их нативные атрибуты, обработчики, refs и `render` применяются к этим элементам независимо от Popup. `forceRender` Backdrop при необходимости сохраняет видимым фон вложенного диалогового окна. Состояния открытия и перехода Base UI остаются доступными для стилей, зависящих от состояния, и колбэков рендеринга.
+
+## Миграция
+
+Оберните существующее содержимое `Dialog.Popup` в `Dialog.Portal` и `Dialog.Viewport`, а внутри Portal добавьте соседний `Dialog.Backdrop`. Переместите `container` и `keepMounted` из Popup в Portal. Переместите прежние props `backdrop` в Backdrop; замените `backdrop={false}` отсутствием Backdrop. Переместите `viewportProps` в Viewport, сохранив `data-backdrop-hidden="true"`, если область просмотра должна пропускать внешние события указателя. Сохраните `size`, `initialFocus`, `finalFocus`, нативные атрибуты popup и refs popup в Popup. Объединённые props сборки Popup удалены.
+
+Root, Trigger, Close, Title, Description, Header, Body, Footer и существующие дескрипторы сохраняют свои роли. Публичные props частей, состояния, действия и типы сведений о событиях экспортируются из `twenty-ui/primitives/surfaces`.
+
+## Свойства
+
+<DialogReference />
+
+<PageBanner illustration="layout" />

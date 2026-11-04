@@ -7,9 +7,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 const OBJECT_NAME_SINGULAR = 'deferredGadget';
 const SYSTEM_RELATION_OBJECT_NAMES = [
@@ -43,13 +41,6 @@ describe('Deferred workspace migration actions', () => {
   let indexNamesBeforeObjectCreation: Record<string, string[]>;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     indexNamesBeforeObjectCreation =
       await findIndexNamesBySystemRelationObjectName();
 
@@ -87,12 +78,6 @@ describe('Deferred workspace migration actions', () => {
         expectToFail: false,
         input: { idToDelete: objectMetadataId },
       });
-    });
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 

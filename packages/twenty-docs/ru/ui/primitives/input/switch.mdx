@@ -1,0 +1,119 @@
+---
+title: Переключить
+description: Элемент управления с меткой для включения или выключения с контролируемым и неконтролируемым состоянием.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+## Обзор
+
+Используйте `Switch` для настройки включения или выключения. Добавьте элементу управления видимую метку или доступное имя.
+
+<StoryEmbed storyId="ui-input-switch-switch--display" title="Пример переключателя" height={90} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultChecked`, чтобы задать начальное состояние переключателя. Переключатель управляет последующими изменениями.
+
+```tsx
+import { useId } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+## Варианты внешнего вида
+
+Сравните два размера во включенном, выключенном, отключенном, доступном только для чтения и сфокусированном состояниях. Используйте включенные примеры, чтобы попробовать переключение.
+
+<StoryEmbed storyId="ui-input-switch-switch--catalog" title="Варианты внешнего вида переключателя" height={440} />
+
+## Контролируемое состояние
+
+Передайте `checked` и обновляйте его с помощью `onCheckedChange`, чтобы управлять тем же предпочтением в состоянии React.
+
+```tsx
+import { useId, useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch
+        id={switchId}
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+`onCheckedChange` получает следующее булево значение и сведения о событии. Свойство `size` принимает `sm` или `md`; по умолчанию используется `md`.
+
+Для единообразной полноширинной строки со значком, описанием и переключателем используйте [SettingsRow](/ru/ui/components/settings/settings-row).
+
+## Клавиатура и формы
+
+Клавиша Tab переводит фокус на переключатель; клавиша Space переключает его. Щелчок по связанной с ним метке также переключает его. Используйте `disabled`, чтобы запретить взаимодействие, или `readOnly`, чтобы сохранить доступный для фокусировки элемент управления, значение которого нельзя изменить.
+
+Именованный переключатель отправляет своё значение, когда включён. Используйте `value`, чтобы настроить это значение, и `uncheckedValue`, если форма также должна отправлять значение, когда переключатель выключен.
+
+## Части и пользовательское содержимое
+
+`Switch` собирает стилизованный корневой элемент и его бегунок по умолчанию. Используйте `Switch.Root` с `Switch.Thumb`, чтобы управлять содержимым бегунка. Root управляет состоянием и внешним видом дорожки; Thumb отображает предоставленное вами содержимое.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` и `SwitchThumbProps` — это публичные типы, экспортируемые из `twenty-ui/primitives/input`. Обе части принимают нативные атрибуты, обработчики, ссылки, `render` и зависящие от состояния обратные вызовы `className` и `style`. `ref` Root указывает на видимый элемент управления; `inputRef` указывает на нативный ввод. Ссылка части указывает на отображаемый ею элемент. Передайте `nativeButton` с `render={<button />}`, когда заменяете Root кнопкой. Свойства внешнего вида относятся к Root; явные классы и стили объединяются со значениями по умолчанию.
+
+Thumb получает текущее состояние checked, disabled, readOnly, required и Field. Его положение следует направлению чтения.
+
+<StoryEmbed storyId="ui-input-switch-parts--composition" title="Композиция частей Switch" height={90} />
+
+Вызываемая сборка и её тип `SwitchProps` по-прежнему поддерживаются. Замените сборку на Root и его часть, когда предоставляете пользовательское содержимое бегунка, вместо добавления другой части к дочерним элементам сборки.
+
+Для сброса управляемой формы обработайте `onReset` формы и восстановите `checked` до исходного значения. Base UI 1.8 не восстанавливает состояние неуправляемого компонента при нативном сбросе формы. `required`, `form`, `value` и `uncheckedValue` сохраняют исходное поведение нативного ввода.
+
+## Свойства
+
+Справочник включает свойства Base UI, специфичные для компонента и унаследованные. Также поддерживаются нативные атрибуты, такие как `aria-label` и `data-*`.
+
+<SwitchReference />
+
+<PageBanner illustration="page-cover-switch" />

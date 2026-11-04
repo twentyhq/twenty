@@ -9,7 +9,6 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     sourcePackage
     latestAvailableVersion
     isListed
-    isVetted
     description
     author
     category
@@ -24,6 +23,11 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     installCount
     defaultRoleUniversalIdentifier
     requestedCapabilities
+    requestedIframeMediaPermissions {
+      origin
+      microphone
+      camera
+    }
     billsCredits
     objects {
       universalIdentifier

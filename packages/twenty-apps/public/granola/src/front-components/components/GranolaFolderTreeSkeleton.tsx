@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledSkeletonBlock } from 'src/front-components/components/StyledSkeletonBlock';
 

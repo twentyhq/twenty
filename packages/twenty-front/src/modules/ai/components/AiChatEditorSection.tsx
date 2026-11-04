@@ -13,6 +13,7 @@ import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMe
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
+import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
@@ -20,6 +21,7 @@ import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
@@ -182,6 +184,7 @@ const EditableAiChatEditorSection = () => {
           <>
             <AiChatAddMenu editor={editor} />
             <AiChatDictationButton />
+            <AiChatContextUsageButton />
           </>
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
@@ -217,6 +220,7 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
+        <AiChatUserCreditsExhaustedBanner />
         <AiChatParticipantMentionBar editor={editor} />
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>

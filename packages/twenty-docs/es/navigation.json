@@ -4,7 +4,7 @@
       "label": "Primeros pasos",
       "groups": {
         "welcome": {
-          "label": "Bienvenido"
+          "label": "Comenzando"
         },
         "coreConcepts": {
           "label": "Conceptos clave"
@@ -15,7 +15,7 @@
       "label": "Guía de usuario",
       "groups": {
         "userGuideOverview": {
-          "label": "Resumen"
+          "label": "Guía de usuario"
         },
         "dataModel": {
           "label": "Modelo de datos",
@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Campañas de correo electrónico",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "Guías prácticas"
+            }
+          }
+        },
         "workflows": {
           "label": "Flujos de trabajo",
           "groups": {
@@ -69,7 +77,7 @@
                   "label": "Configuraciones avanzadas"
                 },
                 "needMoreHelp": {
-                  "label": "¿Necesitas más ayuda?"
+                  "label": "¿Necesitas más ayuda"
                 }
               }
             }
@@ -160,7 +168,7 @@
       "label": "Desarrolladores",
       "groups": {
         "developersOverview": {
-          "label": "Resumen"
+          "label": "Desarrolladores"
         },
         "apps": {
           "label": "Aplicaciones",
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "Contribuir"
+        },
+        "uiLibrary": {
+          "label": "Biblioteca de IU",
+          "groups": {
+            "uiGuides": {
+              "label": "Guías"
+            },
+            "uiPrimitives": {
+              "label": "Primitivas",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "Accesibilidad"
+                },
+                "uiDataDisplay": {
+                  "label": "Visualización de datos"
+                },
+                "uiFeedback": {
+                  "label": "Retroalimentación"
+                },
+                "uiForms": {
+                  "label": "Formularios"
+                },
+                "uiLayout": {
+                  "label": "Diseño"
+                },
+                "uiNavigation": {
+                  "label": "Navegación"
+                },
+                "uiSurfaces": {
+                  "label": "Superficies"
+                },
+                "uiTypography": {
+                  "label": "Tipografía"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Componentes",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Visualización de datos"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Retroalimentación"
+                },
+                "uiComponentsInput": {
+                  "label": "Entrada"
+                },
+                "uiComponentsLayout": {
+                  "label": "Diseño"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Navegación"
+                },
+                "uiComponentsSettings": {
+                  "label": "Configuración"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Editor de código"
+                }
+              }
+            }
+          }
         }
       }
     }

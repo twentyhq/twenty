@@ -1,4 +1,5 @@
 import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
+import { RICH_TEXT_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/RichTextBlockSlashCommands';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
 import {
@@ -6,7 +7,11 @@ import {
   IconH1,
   IconH2,
   IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
   IconList,
+  IconListCheck,
   IconListNumbers,
   IconTextSize,
 } from 'twenty-ui/icon';
@@ -57,6 +62,39 @@ const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
   {
+    id: 'h4',
+    title: msg`Heading 4`,
+    description: msg`Subsection heading`,
+    icon: IconH4,
+    keywords: [msg`heading`, msg`h4`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 4 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 4 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 4 }).run(),
+  },
+  {
+    id: 'h5',
+    title: msg`Heading 5`,
+    description: msg`Minor subsection heading`,
+    icon: IconH5,
+    keywords: [msg`heading`, msg`h5`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 5 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 5 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 5 }).run(),
+  },
+  {
+    id: 'h6',
+    title: msg`Heading 6`,
+    description: msg`Smallest heading`,
+    icon: IconH6,
+    keywords: [msg`heading`, msg`h6`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 6 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 6 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 6 }).run(),
+  },
+  {
     id: 'blockquote',
     title: msg`Quote`,
     description: msg`Highlighted quotation`,
@@ -92,10 +130,22 @@ const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
+  {
+    id: 'taskList',
+    title: msg`Check List`,
+    description: msg`List with checkboxes`,
+    icon: IconListCheck,
+    keywords: [msg`check`, msg`todo`, msg`task`, msg`checkbox`],
+    getIsActive: (editor) => editor.isActive('taskList'),
+    getIsVisible: (editor) => editor.can().toggleTaskList?.() ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).toggleTaskList().run(),
+  },
 ];
 
 export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
   ...TEXT_SLASH_COMMANDS,
   ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
   ...LIST_SLASH_COMMANDS,
+  ...RICH_TEXT_BLOCK_SLASH_COMMANDS,
 ];

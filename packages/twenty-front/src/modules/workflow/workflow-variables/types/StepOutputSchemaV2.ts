@@ -4,12 +4,12 @@ import {
 } from '@/workflow/types/Workflow';
 import { type CodeOutputSchema } from '@/workflow/workflow-variables/types/CodeOutputSchema';
 import { type FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
-import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
 import { type IteratorOutputSchema } from '@/workflow/workflow-variables/types/IteratorOutputSchema';
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type WaitForEventOutputSchema } from '@/workflow/workflow-variables/types/WaitForEventOutputSchema';
 import {
   type BaseOutputSchemaV2,
+  type FormOutputSchema,
   type ManualTriggerOutputSchema,
 } from 'twenty-shared/workflow';
 

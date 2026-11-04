@@ -17,6 +17,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { type ApolloManager } from '@/apollo/types/ApolloManager';
+import { isSessionSupersededGraphQLError } from '@/apollo/utils/isSessionSupersededGraphQLError';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -29,6 +30,7 @@ import {
   type SelectionNode,
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty');
@@ -104,6 +106,7 @@ export class ApolloFactory implements ApolloManager {
           headers: {
             ...headers,
             ...optionHeaders,
+            [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
             'x-locale': locale,
             ...(isDefined(this.appVersion) && {
               'X-App-Version': this.appVersion,
@@ -194,7 +197,23 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
+      const supersededSessionRetryLink = new ErrorLink(
+        ({ error, operation, forward }) => {
+          if (
+            this.isSupersededSessionRejection(error) &&
+            !operation.getContext().skipRetry &&
+            isDefined(getSessionGeneration())
+          ) {
+            return forward(operation);
+          }
+        },
+      );
+
       const errorLink = new ErrorLink(({ error, operation }) => {
+        if (this.isSupersededSessionRejection(error)) {
+          return;
+        }
+
         const requestSessionGeneration =
           operation.getContext().sessionGeneration;
         // Missing context must keep sign-out behavior if the link chain changes.
@@ -275,6 +294,7 @@ export class ApolloFactory implements ApolloManager {
 
       // Cast because third-party links (apollo-link-rest, apollo-upload-client) reference their own ApolloLink type.
       const links = [
+        supersededSessionRetryLink,
         errorLink,
         authLink,
         ...(extraLinks || []),
@@ -314,6 +334,13 @@ export class ApolloFactory implements ApolloManager {
 
   private isAuthenticationError(error: ErrorLike): boolean {
     return ServerError.is(error) && error.statusCode === 401;
+  }
+
+  private isSupersededSessionRejection(error: ErrorLike): boolean {
+    return (
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.some(isSessionSupersededGraphQLError)
+    );
   }
 
   private isPayloadTooLargeError(error: ErrorLike): boolean {

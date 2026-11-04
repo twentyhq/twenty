@@ -1031,6 +1031,19 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  accessGroup: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
+    fields: STANDARD_OBJECT_FIELDS.accessGroup,
+    indexes: {
+      roleIdIndex: {
+        universalIdentifier: '933f2eee-0856-46fd-b144-ffd4bad7e9c8',
+      },
+      groupHashUniqueIndex: {
+        universalIdentifier: 'dcb0d254-43ae-442e-9223-8ac052eddb28',
+      },
+    },
+    views: {},
+  },
   recordShare: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.recordShare,
     fields: STANDARD_OBJECT_FIELDS.recordShare,
@@ -1446,6 +1459,25 @@ export const STANDARD_OBJECTS = {
       },
     },
     views: {
+      workspaceMemberRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
+        fields: STANDARD_OBJECT_FIELDS.workspaceMember,
+        viewFieldNames: [
+          'userEmail',
+          'jobTitle',
+          'createdAt',
+          'updatedAt',
+          'assignedTasks',
+          'accountOwnerForCompanies',
+          'ownedOpportunities',
+        ],
+        viewFieldGroupNames: {
+          general: 'General',
+          system: 'System',
+          relations: 'Relations',
+        },
+      }),
       allWorkspaceMembers: buildStandardObjectIndexView({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
@@ -1463,11 +1495,17 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     fields: STANDARD_OBJECT_FIELDS.agentChatThread,
     indexes: {
+      directMessagePairUniqueIndex: {
+        universalIdentifier: '365c5b24-cd52-4ebc-98d2-23c5684216d5',
+      },
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
       assigneeIndex: {
         universalIdentifier: 'a65524f8-c999-448b-b9f4-c9ecce15fd13',
+      },
+      channelLastActivityIndex: {
+        universalIdentifier: 'bd129bd1-db66-4c74-a64e-819d2edd3062',
       },
     },
   },

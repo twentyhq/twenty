@@ -11,7 +11,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { msg, t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -40,6 +40,7 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
+import { useLingui } from '@lingui/react/macro';
 
 type AdminApplicationRegistration =
   FindAllApplicationRegistrationsQuery['findAllApplicationRegistrations']['registrations'][number];
@@ -79,6 +80,7 @@ const SOURCE_TYPE_FILTER_OPTIONS: {
 ];
 
 export const SettingsAdminApps = () => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
@@ -283,7 +285,7 @@ export const SettingsAdminApps = () => {
               >
                 <TableHeader>{t`Name`}</TableHeader>
                 <TableHeader>{t`Author`}</TableHeader>
-                <TableHeader align="right">{t`Vetted`}</TableHeader>
+                <TableHeader align="right">{t`Listed`}</TableHeader>
                 <TableHeader align="right">{t`Installs`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
@@ -322,6 +324,7 @@ type SettingsAdminAppsTableRowProps = {
 const SettingsAdminAppsTableRow = ({
   registration,
 }: SettingsAdminAppsTableRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (
@@ -344,7 +347,7 @@ const SettingsAdminAppsTableRow = ({
       </StyledNameTableCell>
       <TableCell overflow="hidden">{registration.author ?? '—'}</TableCell>
       <TableCell align="right">
-        {registration.isVetted ? t`Yes` : t`No`}
+        {registration.isListed ? t`Yes` : t`No`}
       </TableCell>
       <TableCell align="right">{registration.installCount}</TableCell>
       <TableCell align="right">

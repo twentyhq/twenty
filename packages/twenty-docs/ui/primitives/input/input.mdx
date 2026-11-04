@@ -3,8 +3,12 @@ title: Input
 description: A text input with native attributes, field integration, and two sizes.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## Overview
 
 `Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
 
@@ -119,3 +123,5 @@ Put layout styles, attributes, and refs on `InputGroup` when customizing the sur
 The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, an omitted input `size` inherits the group's size.
 
 <InputReference />
+
+<PageBanner illustration="page-cover-input" />

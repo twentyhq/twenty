@@ -5,7 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type DocumentNode } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { type ReactNode, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useDebounce } from 'use-debounce';
@@ -66,7 +66,7 @@ export const LinkActivitiesDropdownContent = <
   const { data, loading } = useQuery<TSearchData>(searchQuery, {
     client: apolloCoreClient,
     variables: {
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: relatedCompany.id,
       searchInput: debouncedSearch,
     },
@@ -76,15 +76,17 @@ export const LinkActivitiesDropdownContent = <
     ? getSearchResults(data)
     : { recordActivities: [], otherActivities: [] };
 
-  const { linkedActivityIds, pendingActivityIds, toggleActivityLink } =
-    useToggleActivityLink({
-      targetRecord,
-      activityLinkConfig,
-      activityIds: [...recordActivities, ...otherActivities].map(
-        ({ id }) => id,
-      ),
-      timelineQuery,
-    });
+  const {
+    linkedActivityIds,
+    pendingActivityIds,
+    areActivityLinksReady,
+    toggleActivityLink,
+  } = useToggleActivityLink({
+    targetRecord,
+    activityLinkConfig,
+    activityIds: [...recordActivities, ...otherActivities].map(({ id }) => id),
+    timelineQuery,
+  });
 
   const areActivitiesStale = loading || debouncedSearch !== trimmedSearch;
 
@@ -98,7 +100,9 @@ export const LinkActivitiesDropdownContent = <
         selected={linkedActivityIds.has(activity.id)}
         indicator="checkbox"
         disabled={
-          areActivitiesStale || pendingActivityIds.includes(activity.id)
+          areActivitiesStale ||
+          !areActivityLinksReady ||
+          pendingActivityIds.includes(activity.id)
         }
         startIcon={startIcon}
         description={description}

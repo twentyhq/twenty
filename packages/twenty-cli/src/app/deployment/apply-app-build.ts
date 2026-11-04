@@ -42,7 +42,7 @@ export const applyAppBuild = async ({
   build: ToolingBuild;
   appPath: string;
   context: TargetCommandContext;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
   isCreationApproved: boolean;
   isDeletionApproved: boolean;
   approvalSignal?: AbortSignal;
@@ -188,7 +188,7 @@ export const applyAppBuild = async ({
       question: `Apply ${summary.destructive} ${deletionLabel} stored data on ${target.apiUrl}?`,
       code: 'CONFIRMATION_REQUIRED',
       message: `The plan includes ${summary.destructive} ${deletionLabel} stored data.`,
-      hint: 'Review it with twenty app plan, then pass --yes to apply it, or --no-delete to keep entities missing from source.',
+      hint: 'Review it with twenty app plan, then pass --yes to apply it, or --no-prune to keep entities missing from source.',
     });
   }
 

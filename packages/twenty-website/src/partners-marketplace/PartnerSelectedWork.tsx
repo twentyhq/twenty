@@ -219,7 +219,7 @@ const CaseAction = styled.span`
 `;
 
 function caseLayout(index: number, total: number): 'compact' | 'featured' {
-  return index === 0 && total > 1 ? 'featured' : 'compact';
+  return index === 0 && total % 2 === 1 ? 'featured' : 'compact';
 }
 
 export function PartnerSelectedWork({

@@ -1,28 +1,23 @@
-import { FeatureFlagKey, RelationType } from 'twenty-shared/types';
+import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 
 export const getDeferredForeignKeyValidation = ({
   flatAction,
-  featureFlagsMap,
+  shouldDeferActions,
 }: {
   flatAction: FlatCreateFieldAction;
-  featureFlagsMap?: Partial<FeatureFlagMap>;
+  shouldDeferActions?: boolean;
 }):
   | {
       name: 'validate_foreignKey';
       payload: DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>;
     }
   | undefined => {
-  if (
-    !featureFlagsMap?.[
-      FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-    ]
-  ) {
+  if (!shouldDeferActions) {
     return undefined;
   }
 

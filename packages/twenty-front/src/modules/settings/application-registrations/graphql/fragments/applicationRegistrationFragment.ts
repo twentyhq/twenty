@@ -14,7 +14,6 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     sourcePackage
     latestAvailableVersion
     isListed
-    isVetted
     isPreInstalled
     isConfigured
     ownerWorkspaceId

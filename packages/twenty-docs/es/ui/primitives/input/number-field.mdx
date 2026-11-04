@@ -1,0 +1,166 @@
+---
+title: Campo numérico
+description: Compón un campo numérico con formato regional, incremento, formularios nativos y depuración.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx';
+
+## Resumen
+
+`NumberField` expone las siete partes del campo numérico de Base UI instalado: `Root`, `Group`, `Input`, `Decrement`, `Increment`, `ScrubArea` y `ScrubAreaCursor`. Impórtalo desde `twenty-ui/primitives/input`. Conserva el estado numérico, el formato, el incremento, los detalles de eventos y la integración con formularios nativos de Base UI con los estilos de Twenty UI para la entrada, el grupo y los controles de ajuste.
+
+Para el ajuste preestablecido compacto con formato fijo y valores predeterminados de pasos modificadores, usa [NumberStepper](/es/ui/components/input/number-stepper) de `twenty-ui/components/input`.
+
+<StoryEmbed storyId="ui-input-numberfield--display" title="Ejemplo de NumberField" height={140} />
+
+## "Uso"
+
+`Root` posee el estado numérico. `Input` es la entrada de texto visible. Usa `Group` para organizar controles opcionales de disminución e incremento a su alrededor. Proporciona contenido y nombres accesibles para los controles; el primitivo no inserta iconos ni etiquetas.
+
+```tsx
+import { IconMinus, IconPlus } from 'twenty-ui/icon';
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberField.Root name="quantity" defaultValue={3} min={0} max={10}>
+      <NumberField.Group>
+        <NumberField.Decrement aria-label="Decrease quantity">
+          <IconMinus size={16} />
+        </NumberField.Decrement>
+        <NumberField.Input />
+        <NumberField.Increment aria-label="Increase quantity">
+          <IconPlus size={16} />
+        </NumberField.Increment>
+      </NumberField.Group>
+    </NumberField.Root>
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+`Field.Label`, `Field.Description` y `Field.Error` se asocian con la entrada visible. Como alternativa, pasa `aria-label` o `aria-labelledby` a `Input`. El valor predeterminado de `aria-roledescription` es `Number field`; no proporciona un nombre accesible.
+
+## Valores y callbacks
+
+Omite `value` para un campo no controlado y proporciona un `defaultValue` numérico cuando se necesite un valor inicial. Al omitir `defaultValue`, se inicia vacío. Para un campo controlado, pasa un número o `null` mediante `value` y actualízalo desde `onValueChange`.
+
+```tsx
+import { useState } from 'react';
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const PriceInput = () => {
+  const [price, setPrice] = useState<number | null>(null);
+  const [savedPrice, setSavedPrice] = useState<number | null>(null);
+
+  return (
+    <Field.Root>
+      <Field.Label>Price</Field.Label>
+      <NumberField.Root
+        value={price}
+        onValueChange={setPrice}
+        onValueCommitted={setSavedPrice}
+      >
+        <NumberField.Input placeholder="Enter a price" />
+      </NumberField.Root>
+      <Field.Description>
+        Last committed price: {savedPrice ?? 'empty'}
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Al borrar se informa `null`, incluso cuando se establece `min`. Los borradores incompletos, como `-`, siguen siendo editables sin informar un número no válido. La escritura analizable actualiza el valor numérico antes de confirmar la edición. El primer paso desde un valor vacío comienza en cero limitado por los límites; los pasos posteriores usan la cantidad de paso activa.
+
+`onValueChange(value, details)` conserva el `event`, `reason`, `cancel`, `allowPropagation`, `isCanceled`, `isPropagationAllowed`, `trigger` nativo y el `direction` opcional. Los motivos distinguen entre escritura (`input-change`), borrado (`input-clear`), normalización al perder el foco (`input-blur`), pegado (`input-paste`), pulsaciones de teclado, incremento o disminución, rueda, arrastre y autocompletado nativo (`none`). Llamar a `cancel()` evita la actualización del estado numérico; los llamadores controlados siguen eligiendo el valor aceptado.
+
+`onValueCommitted(value, details)` se ejecuta al perder el foco después de editar, al soltar el puntero después de incrementar, disminuir o arrastrar, e inmediatamente para los ajustes con teclado y rueda. Al borrar se confirma `null` al perder el foco. Los detalles de confirmación contienen `event` y `reason`; son detalles genéricos sin métodos para cancelar cambios. Enfocar y desenfocar un campo sin modificar no confirma por sí mismo un valor cuando no se necesita normalización numérica. Las opciones explícitas de redondeo pueden normalizar y confirmar un valor sin modificar.
+
+## Configuración regional y formato
+
+Establece `locale` y `format` en `Root`. Mantienen el contrato instalado de Base UI: `locale` acepta `Intl.LocalesArgument` y `format` acepta `Intl.NumberFormatOptions`. El formato de visualización es independiente del valor numérico sin procesar enviado por el formulario. El primitivo no fuerza dígitos latinos, agrupación, precisión ni pasos modificadores.
+
+<StoryEmbed storyId="ui-input-numberfield--locale-currency" title="Formato de configuración regional y divisa" height={140} />
+
+```tsx
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const AmountInput = () => (
+  <Field.Root>
+    <Field.Label>Amount in euros</Field.Label>
+    <NumberField.Root
+      name="amount"
+      defaultValue={1234.5}
+      locale="de-DE"
+      format={{ style: 'currency', currency: 'EUR' }}
+      step={0.5}
+      smallStep={0.01}
+      largeStep={10}
+    >
+      <NumberField.Input />
+    </NumberField.Root>
+  </Field.Root>
+);
+```
+
+La escritura y el pegado usan la configuración regional configurada y los símbolos de formato compatibles. Al perder el foco se normaliza el texto mostrado. Las opciones explícitas de precisión o redondeo también pueden normalizar el número confirmado; sin esas opciones, el formato por sí solo no reemplaza un valor numérico sin modificar por texto de visualización redondeado.
+
+## Pasos y límites
+
+`step` tiene como valor predeterminado `1`, `smallStep` `0.1` mientras se mantiene pulsada Alt y `largeStep` `10` mientras se mantiene pulsada Shift. El paso activo se aplica a los botones, Flecha arriba y Flecha abajo, la rueda y el movimiento del área de arrastre. `snapOnStep` tiene como valor predeterminado `false`; actívalo para ajustar los cambios al paso activo. Inicio y Fin seleccionan el límite explícito correspondiente. Los controladores nativos de teclas pueden llamar a `event.preventBaseUIHandler()` cuando el propietario necesita anular el comportamiento de teclado de Base UI.
+
+`min` y `max` son inclusivos. Las interacciones de paso se mantienen dentro de los límites. De forma predeterminada, los valores escritos y pegados también se limitan numéricamente, y el borrador se normaliza al perder el foco. Establece `allowOutOfRange` para aceptar ediciones directas fuera de esos límites y permitir que la validación nativa de rango o la validación de la aplicación informe del problema.
+
+`step="any"` desactiva la validación nativa de pasos mientras que los pasos interactivos usan `1` y los pasos modificadores configurados. Con un paso numérico, proporciona `min` explícitamente cuando el envío nativo debe validar la alineación de los pasos. El paso numérico no redondea cada valor escrito a un paso.
+
+## Arrastre
+
+`ScrubArea` cambia el valor numérico a medida que se mueve el puntero. Admite movimiento horizontal o vertical, `pixelSensitivity` y `teleportDistance` opcional. El paso activo y los límites también se aplican al arrastre. Usa una etiqueta visible como destino de arrastre mientras mantienes la entrada disponible para la edición con teclado.
+
+<StoryEmbed storyId="ui-input-numberfield--with-scrubbing" title="Arrastra la etiqueta de anchura" height={150} />
+
+Compón `ScrubAreaCursor` dentro de `ScrubArea` para usar un cursor personalizado durante el arrastre con bloqueo de puntero. Se lleva mediante portal al cuerpo del documento mientras está activo. Base UI recurre al cursor normal para la entrada táctil, el bloqueo de puntero denegado y WebKit. Establece `allowWheelScrub` en `Root` para permitir el ajuste con la rueda mientras la entrada está enfocada y bajo el cursor; su valor predeterminado es `false`.
+
+## Formularios y estado deshabilitado
+
+`Root` representa un `input type="number"` nativo oculto para el envío numérico sin procesar y la validación nativa. Establece `name`, `form`, `required`, `min`, `max` y `step` en `Root`. `form` puede asociar el campo con un formulario en otra parte del documento. Los controles de ajuste predeterminados usan `type="button"`, por lo que los pasos no envían el formulario.
+
+`disabled` impide la interacción y excluye el valor del envío. `readOnly` impide los cambios y mantiene la entrada visible enfocables y su valor de formulario disponible. Usa un valor controlado cuando la aplicación deba restablecer el estado numérico; el restablecimiento nativo del formulario no lo restablece.
+
+## Destinos DOM y personalización
+
+| Parte o prop              | Destino DOM y ref predeterminado                                                                                |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `Root` / `Root.ref`       | El `div` exterior                                                                                               |
+| `Root.inputRef`           | La entrada numérica nativa oculta                                                                               |
+| `Root.id`                 | Asocia el ID de la entrada de texto visible                                                                     |
+| `Group` / `Group.ref`     | El `div` del grupo                                                                                              |
+| `Input` / `Input.ref`     | El `input type="text"` visible                                                                                  |
+| `Decrement` / `Increment` | Botones nativos                                                                                                 |
+| `ScrubArea`               | Un `span`                                                                                                       |
+| `ScrubAreaCursor`         | Un `span` llevado mediante portal al cuerpo del documento mientras está activo; de lo contrario, su ref es nula |
+
+Los atributos nativos, `className`, `style` y `render` se dirigen a la parte que los recibe. La personalización de la entrada se aplica al control visible; la personalización del contenedor pertenece a `Root` o `Group`. Para enfocar el control, usa `Input.ref` en lugar de `Root.inputRef`.
+
+Cada parte acepta un elemento o callback mediante `render`, con el tipo de estado público correspondiente. Reenvía las props y la ref proporcionadas al elemento DOM adecuado para que la edición, el enfoque, las etiquetas y la validación sigan funcionando. Cuando un control de pasos representa un elemento que no es un botón, establece `nativeButton={false}`. `className` y `style` también aceptan callbacks de estado. El estado incluye `value` numérico, `inputValue` con formato, `required`, `disabled`, `readOnly`, `scrubbing` y el estado de Field heredado.
+
+Los puntos de entrada públicos exportan las props y el tipo de estado de cada parte, además de `NumberFieldRootChangeEventDetails`, `NumberFieldRootChangeEventReason`, `NumberFieldRootCommitEventDetails` y `NumberFieldRootCommitEventReason`.
+
+## Renderizador del componente Front
+
+Los dispositivos de prueba de sandbox de React y Preact verifican el formato inicial de configuración regional, el pegado localizado, los valores numéricos sin procesar de formularios, las etiquetas accesibles, las refs, la composición de renderizado, las confirmaciones al perder el foco, los detalles de cambio y confirmación mediante teclado, y los detalles de cambio mediante puntero.
+
+La escritura secuencial después de borrar un campo localizado controlado actualmente restablece el cursor en el renderizador: escribir `2` y luego `3` puede producir `32`. Un ajuste de puntero con formato también puede competir con la pérdida de foco y dejar la entrada visible mostrando el valor anterior. Los ajustes mediante puntero informan cambios, pero al soltar el puntero no se entrega el callback de confirmación correspondiente; en su lugar, una pérdida de foco posterior puede confirmar con `input-blur`. Arrastrar el área de arrastre y usar su cursor personalizado tampoco están disponibles en el sandbox. Estas limitaciones no afectan a los hosts habituales de React.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos instalados. Los atributos nativos y los controladores de eventos también se aceptan en las partes que representan elementos.
+
+<NumberFieldReference />
+
+<PageBanner illustration="page-cover-input" />

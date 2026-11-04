@@ -8,6 +8,7 @@ const RECORD_FORM_SUPPORTED_FIELD_TYPES: readonly FieldMetadataType[] = [
   FieldMetadataType.DATE,
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.EMAILS,
+  FieldMetadataType.FILES,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.LINKS,
   FieldMetadataType.MORPH_RELATION,

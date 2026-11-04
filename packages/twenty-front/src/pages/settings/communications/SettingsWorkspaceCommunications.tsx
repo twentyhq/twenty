@@ -9,8 +9,7 @@ import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/compone
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -41,10 +40,6 @@ export const SettingsWorkspaceCommunications = () => {
   const { t } = useLingui();
 
   const navigateSettings = useNavigateSettings();
-
-  const isMessageCampaignFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  );
 
   const tabs = [
     { id: 'emails', title: t`Emails`, Icon: IconMail },
@@ -111,38 +106,34 @@ export const SettingsWorkspaceCommunications = () => {
             />
           </StyledCardsColumn>
         </Section.Root>
-        {isMessageCampaignFeatureEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Tracking`}
-              description={t`Measure engagement on the campaigns this workspace sends`}
+        <Section.Root>
+          <Section.Header
+            title={t`Tracking`}
+            description={t`Measure engagement on the campaigns this workspace sends`}
+          />
+          <Card.Root>
+            <OpenTrackingSwitch divider />
+            <ClickTrackingSwitch />
+          </Card.Root>
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Unsubscribe`}
+            description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
+          />
+          <StyledCardsColumn>
+            <SettingsCard
+              Icon={
+                <IconMailX
+                  size={theme.icon.size.lg}
+                  stroke={theme.icon.stroke.md}
+                />
+              }
+              title={t`Manage unsubscribe`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
             />
-            <Card.Root>
-              <OpenTrackingSwitch divider />
-              <ClickTrackingSwitch />
-            </Card.Root>
-          </Section.Root>
-        )}
-        {isMessageCampaignFeatureEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Unsubscribe`}
-              description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
-            />
-            <StyledCardsColumn>
-              <SettingsCard
-                Icon={
-                  <IconMailX
-                    size={theme.icon.size.lg}
-                    stroke={theme.icon.stroke.md}
-                  />
-                }
-                title={t`Manage unsubscribe`}
-                onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
-              />
-            </StyledCardsColumn>
-          </Section.Root>
-        )}
+          </StyledCardsColumn>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

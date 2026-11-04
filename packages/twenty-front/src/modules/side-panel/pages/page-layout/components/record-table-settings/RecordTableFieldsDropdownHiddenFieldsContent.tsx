@@ -1,3 +1,5 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
@@ -5,23 +7,19 @@ import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpse
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
+import { IconEye } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableFieldsDropdownHiddenFieldsContentProps = {
   objectMetadataId: string;
   recordIndexId: string;
-  onBack: () => void;
   onFieldUpdated?: (
     viewFieldId: string,
     update: Partial<{ isVisible: boolean }>,
@@ -32,10 +30,10 @@ type RecordTableFieldsDropdownHiddenFieldsContentProps = {
 export const RecordTableFieldsDropdownHiddenFieldsContent = ({
   objectMetadataId,
   recordIndexId,
-  onBack,
   onFieldUpdated,
   onFieldCreated,
 }: RecordTableFieldsDropdownHiddenFieldsContentProps) => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
@@ -71,37 +69,29 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
     if (isDefined(existingRecordField)) {
       updateRecordField(fieldMetadataId, { isVisible: true });
       onFieldUpdated?.(existingRecordField.id, { isVisible: true });
-    } else {
-      const lastPosition =
-        currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
-          ?.position ?? 0;
-
-      const newRecordField: RecordField = {
-        id: v4(),
-        fieldMetadataItemId: fieldMetadataId,
-        size: 100,
-        isVisible: true,
-        position: lastPosition + 1,
-      };
-
-      upsertRecordField(newRecordField);
-      onFieldCreated?.(newRecordField);
+      return;
     }
+
+    const lastPosition =
+      currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
+        ?.position ?? 0;
+
+    const newRecordField: RecordField = {
+      id: v4(),
+      fieldMetadataItemId: fieldMetadataId,
+      size: 100,
+      isVisible: true,
+      position: lastPosition + 1,
+    };
+
+    upsertRecordField(newRecordField);
+    onFieldCreated?.(newRecordField);
   };
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={onBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {t`Hidden Fields`}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+    <>
+      <Dropdown.Back>{t`Hidden Fields`}</Dropdown.Back>
+      <ChartSettingsDropdownSection>
         {hiddenFieldMetadataItems.map((fieldMetadataItem) => (
           <ListItem
             key={fieldMetadataItem.id}
@@ -110,7 +100,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
             }
             actions={
               <LightIconButton
-                aria-label={t`Show field`}
+                aria-label={t`Show ${fieldMetadataItem.label}`}
                 onClick={() => handleShowField(fieldMetadataItem.id)}
               >
                 <IconEye />
@@ -120,7 +110,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
             {fieldMetadataItem.label}
           </ListItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </ChartSettingsDropdownSection>
+    </>
   );
 };

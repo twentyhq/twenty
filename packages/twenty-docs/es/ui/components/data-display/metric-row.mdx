@@ -1,0 +1,77 @@
+---
+title: Fila de métricas
+description: Alinea una etiqueta de métrica y un valor con formato con progreso opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## Resumen
+
+`MetricRow` alinea una etiqueta, un icono opcional y un valor con formato previo. Un [ProgressRing](/es/ui/primitives/feedback/progress-ring) opcional usa la etiqueta visible como su nombre accesible.
+
+<StoryEmbed storyId="ui-data-display-metricrow--display" title="Ejemplo de fila de métrica" height={100} />
+
+## Uso
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { IconFiles } from 'twenty-ui/icon';
+
+export const ImportMetric = () => (
+  <MetricRow
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
+  >
+    Imported files
+  </MetricRow>
+);
+```
+
+Pasa una etiqueta de texto no vacía como elementos secundarios obligatorios y el valor formateado mediante `value`. Añade `progress` cuando la métrica tenga un porcentaje conocido.
+
+La aplicación gestiona los cálculos, las unidades, el formato de los números y el significado de la métrica. `progressColor` acepta un color CSS para el arco relleno.
+
+## Valores sin progreso
+
+Omite `progress` para mostrar un valor simple. El cero numérico se muestra como `0`; el contenido nunca se reemplaza por un marcador de posición. Proporciona tu propio marcador de posición cuando los datos no estén disponibles.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## Composición y accesibilidad
+
+El contenido de la etiqueta acepta nodos. Su texto accesible nombra el anillo de progreso mediante `aria-labelledby`, incluido el texto anidado. Proporciona una etiqueta visible significativa. Un valor de cadena no vacío también se expone como su texto de valor accesible. Para el contenido de valores con formato, proporciona `progressValueText` cuando un porcentaje no describa completamente la métrica. Este texto reemplaza el valor alternativo de cadena. Sin él, otro contenido conserva el texto de valor porcentual del anillo. Un `progressValueText` vacío también usa el porcentaje, incluso cuando `value` es una cadena. El nodo opcional `startIcon` es decorativo. Quien realiza la llamada controla sus dimensiones y trazo.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    <Text render={<strong />}>Storage</Text>
+  </MetricRow>
+);
+```
+
+Reemplaza `startIcon={IconDatabase}` por `startIcon={<IconDatabase size={14} />}`. La aplicación mantiene los valores con formato previo.
+
+Los atributos nativos, `className`, `style` y `ref` se aplican a la fila exterior. `render` puede reemplazar ese elemento. El progreso permanece controlado y limitado de 0 a 100, con el mismo comportamiento de movimiento reducido que `ProgressRing`.
+
+## "Props"
+
+<MetricRowReference />
+
+<PageBanner illustration="dashboards" />

@@ -3,13 +3,33 @@ title: Posso prenotare riunioni da Twenty?
 description: Informazioni sulla prenotazione di riunioni direttamente da Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Stato attuale
 
-L'integrazione del calendario di Twenty è progettata per **sincronizzare e visualizzare** gli eventi esistenti del tuo calendario.
+Sì. L'integrazione del calendario di Twenty sincronizza e visualizza i tuoi eventi esistenti e puoi anche creare un nuovo evento direttamente dalla pagina di un record. L'evento viene creato nel calendario connesso, non solo all'interno di Twenty.
+
+## Come creare una riunione da Twenty
+
+Prerequisito: un account Google, Microsoft o CalDAV connesso con la sincronizzazione del calendario abilitata
+
+1. Apri un record di persona, azienda o opportunità
+2. Fai clic sull'azione **Create calendar event**
+3. Scegli l'account del calendario su cui creare l'evento
+4. Aggiungi invitati, un titolo, una posizione e una descrizione
+5. Imposta l'inizio e la fine (oppure attiva/disattiva **All day**) e controlla il fuso orario
+6. Attiva/disattiva **Invitations** per inviare un'email agli invitati e **Video call** per aggiungere un link alla riunione
+7. Fai clic su **Create event**
+
+Il record da cui hai iniziato viene collegato automaticamente all'evento, quindi la riunione viene visualizzata nella relativa sequenza temporale.
+
+<Note>
+L'azione è nascosta se il tuo ruolo non dispone dell'autorizzazione "Create calendar event" ed è disabilitata se il record non contiene un indirizzo email da invitare.
+</Note>
 
 ## Pianificazione di riunioni tramite flussi di lavoro
 
-Anche se non è possibile programmare le riunioni manualmente, è possibile pianificarle in Twenty utilizzando i flussi di lavoro.
+Puoi anche creare eventi automaticamente con i flussi di lavoro:
 
 1. Crea un nuovo flusso di lavoro
 2. Seleziona un trigger in base alle tue esigenze
@@ -19,7 +39,10 @@ Anche se non è possibile programmare le riunioni manualmente, è possibile pian
 
 ## Cosa puoi fare
 
+* **Create events** nel calendario connesso da un record
 * **Visualizzare la cronologia delle riunioni** sui record di Persone, Aziende e Opportunità
 * **Vedere le riunioni in arrivo** con i contatti nel tuo CRM
 * **Tenere traccia del contesto delle riunioni** insieme alle comunicazioni email
 * **Creare automaticamente contatti** dai partecipanti alle riunioni
+
+<PageBanner illustration="calendar-emails" />

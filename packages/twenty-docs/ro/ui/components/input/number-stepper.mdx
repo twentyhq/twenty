@@ -1,0 +1,128 @@
+---
+title: Selector numeric
+description: Editați un număr cu limite opționale și butoane de incrementare sau decrementare.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberStepperReference from '/snippets/ui/generated/components/input/number-stepper.mdx';
+
+## Prezentare generală
+
+`NumberStepper` este presetarea convenabilă compactă creată din [NumberField](/ro/ui/primitives/input/number-field). Combină o intrare de text numeric cu butoane opționale de decrementare și incrementare. Importați-l din `twenty-ui/components/input`. Utilizați `NumberField` atunci când aveți nevoie de opțiuni de localizare sau formatare, pași modificatori diferiți, ajustare prin glisare sau compunerea independentă a părților.
+
+<StoryEmbed storyId="ui-input-numberstepper--display" title="Exemplu NumberStepper" height={130} />
+
+## Utilizare
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+      Quantity
+    </Field.Label>
+    <NumberStepper defaultValue={3} min={0} max={10} />
+    <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+      Choose up to ten items.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Opțiuni vizuale
+
+Comparați stările implicite, cu limite, dezactivate, doar în citire și nevalide, cu sau fără butoane de incrementare.
+
+<StoryEmbed storyId="ui-input-numberstepper--catalog" title="Limitele și stările controlului de incrementare numerică" height={220} />
+
+## Valoare necontrolată
+
+Utilizați `defaultValue` pentru a seta cantitatea inițială. Câmpul de intrare gestionează modificările ulterioare.
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberStepper name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Valoare controlată
+
+Transmiteți un număr sau `null` prin `value` și actualizați-l în `onValueChange` pentru a gestiona aceeași cantitate în starea React. Callbackul primește următoarea valoare numerică și detaliile evenimentului.
+
+```tsx
+import { useState } from 'react';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => {
+  const [quantity, setQuantity] = useState<number | null>(3);
+
+  return (
+    <Field.Root>
+      <Field.Label>Quantity</Field.Label>
+      <NumberStepper
+        name="quantity"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <Field.Description>Choose up to ten items.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Golirea câmpului raportează `null`. Textul incomplet, precum `-` sau `+`, rămâne editabil fără a raporta un număr nevalid până când este înlocuit sau modificat cu un pas. În mod implicit, editările numerice analizabile raportează valoarea încadrată în limite; schița afișată este normalizată la pierderea focalizării. Valorile egale cu valoarea curentă nu apelează din nou `onValueChange`.
+
+`onValueCommitted(value, details)` raportează valoarea după confirmarea unei editări: la pierderea focalizării după tastare sau golire, la eliberarea indicatorului după o ajustare prin buton și imediat pentru ajustările de la tastatură. Detaliile sale conțin `event` nativ și `reason`. `onValueChange` păstrează detaliile modificării, inclusiv metodele de anulare și direcția opțională de ajustare cu pas.
+
+## Validarea aplicației
+
+Setați `allowOutOfRange` atunci când aplicația are nevoie de valoarea analizată înainte de a aplica propriile limite sau propria validare. `onValueChange` primește apoi numere tastate și lipite din afara intervalului. Câmpurile necontrolate sau câmpurile controlate care acceptă acele valori le păstrează la pierderea focalizării. Câmpurile controlate care le resping revin la valoarea lor acceptată la pierderea focalizării. De exemplu, înlocuirea lui `60` cu `45` raportează `4` și apoi `45`, chiar și atunci când `min={30}`. Aplicația poate ignora valoarea intermediară fără a salva accidental valoarea minimă.
+
+Butoanele și ajustările de la tastatură se opresc totuși la `min` și `max`. Validarea nativă a formularului împiedică trimiterea cât timp o valoare acceptată este în afara acelui interval. `allowOutOfRange` este implicit `false`.
+
+## Limite și interacțiune
+
+`min` și `max` sunt incluzive. Butoanele de incrementare și decrementare se opresc la limita corespunzătoare. Săgeată sus și Săgeată jos ajustează câmpul de intrare focalizat cu `step`, care este implicit `1`. Home și End selectează limita corespunzătoare atunci când este furnizată; apelați `event.preventBaseUIHandler()` în `onKeyDown` pentru a păstra în schimb comportamentul de editare a textului al unei taste. Același pas se aplică atunci când Shift sau Alt este apăsată. Valorile afișate acceptă până la 15 cifre fracționare; utilizați un pas pozitiv în cadrul acestei precizii pentru ajustări zecimale.
+
+Valorile folosesc cifre latine și afișează separatori de grupare începând de la cinci cifre întregi, precum `12,500`. Sunt acceptați separatorii de grupare ai localizării browserului, tastați și lipiți.
+
+`step` controlează ajustările; nu rotunjește valorile tastate la un pas. Când `min` este setat, validarea nativă a formularului necesită și `min` plus un multiplu de `step`: cu `step` implicit de `1`, un `2.5` tastat blochează trimiterea. Setați `showButtons={false}` pentru editarea textului cu același comportament de la tastatură.
+
+Fiecare buton are un nume accesibil implicit. Utilizați `decrementLabel` și `incrementLabel` pentru a oferi nume contextuale sau traduse. Oferiți câmpului de intrare un `Field.Label` vizibil, `aria-label` sau `aria-labelledby`.
+
+## Formulare și focalizare
+
+Utilizați `name` pentru a include valoarea numerică într-un formular. `form` îl asociază cu un formular din altă parte a documentului. Butoanele de ajustare utilizează `type="button"`, astfel încât ajustarea unei valori nu trimite formularul. `required` participă la validarea nativă.
+
+Utilizați un `value` controlat atunci când aplicația trebuie să reseteze câmpul. O resetare nativă a formularului nu resetează starea numerică.
+
+`disabled` împiedică modificările și exclude valoarea din trimiterea formularului. `readOnly` împiedică modificările, păstrând în același timp câmpul de intrare focalizabil și valoarea sa disponibilă pentru formular.
+
+Atributele și gestionarii de evenimente ai câmpului de intrare nativ, `className`, `style`, `ref` și `render` se aplică câmpului de intrare de text vizibil. Referința primește un `HTMLInputElement`; apelați `ref.current?.focus()` pentru a-l focaliza. Când compuneți prin `render`, transmiteți props și referința furnizate către un câmp de intrare nativ. Personalizați aspectul înconjurător cu un element separat sau utilizați părțile `NumberField.Root` și `NumberField.Group` atunci când este necesar accesul la înveliș. Combinați câmpul de intrare cu `Field.Description` și `Field.Error` pentru mesaje de orientare și validare.
+
+Presetarea utilizează în mod deliberat stil compact, cifre latine, până la 15 cifre fracționare, grupare de la cinci cifre întregi și același `step` pentru ajustările obișnuite, cu Shift și cu Alt. Aceste opțiuni se aplică numai la `NumberStepper`. Primitiva completă `NumberField` păstrează opțiunile de formatare și ajustare cu pași ale Base UI.
+
+## Renderer de componente Front
+
+Sandboxurile rendererului React și Preact acceptă tastarea, ajustările de la tastatură, limitele, valorile formularului, ajustarea cu indicatorul și lipirea peste textul selectat. Galeria rendererului verifică aceste interacțiuni în ambele runtime-uri. Ca și în cazul `NumberField`, ajustările cu indicatorul raportează modificări, dar sandboxul nu livrează în prezent callbackul de confirmare corespunzător la eliberarea indicatorului. Gazdele React obișnuite păstrează comportamentul complet de confirmare.
+
+## Proprietăți
+
+<NumberStepperReference />
+
+<PageBanner illustration="page-cover-input" />

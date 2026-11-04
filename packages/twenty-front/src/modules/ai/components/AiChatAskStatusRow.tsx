@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { StyledAiChatAskStatusMessage } from '@/ai/components/AiChatAskStyledComponents';
+import { StyledAiChatAskStatusMessage } from '@/ai/components/StyledAiChatAskStatusMessage';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 
 const StyledContainer = styled.div`

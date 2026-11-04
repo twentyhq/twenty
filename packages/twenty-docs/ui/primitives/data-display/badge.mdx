@@ -3,9 +3,13 @@ title: Badge
 description: Display compact inline information with caller-provided content.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+## Overview
 
 `Badge` displays compact inline information, including short labels and counts. Use [Tag](/ui/primitives/data-display/tag) for categories, [Chip](/ui/primitives/data-display/chip) for compact controls, or [Status](/ui/primitives/data-display/status) for a named state with an indicator.
 
@@ -72,7 +76,7 @@ export const BadgeAppearances = () => (
 );
 ```
 
-`size` accepts `xs`, `sm`, or `md`. `color` accepts `tertiary`, `inherit`, `primary`, `secondary`, or `accent`. The `accent` treatment pairs an accent-tertiary fill with accent11 text in both themes. The solid `primary` treatment keeps its blue fill and on-accent text. `shape` accepts `pill` or `circle`. The defaults are `sm`, `tertiary`, and `pill`. The circular treatment has a fixed width equal to its height. Use `pill` for longer content, including abbreviated counts.
+`size` accepts `xs`, `sm`, or `md`. `color` accepts `tertiary`, `inherit`, `primary`, `red`, `secondary`, or `accent`. The `accent` treatment pairs an accent-tertiary fill with accent11 text in both themes. The solid `primary` and `red` treatments use blue and red fills with on-accent text. `shape` accepts `pill` or `circle`. The defaults are `sm`, `tertiary`, and `pill`. The circular treatment has a fixed width equal to its height. Use `pill` for longer content, including abbreviated counts.
 
 <StoryEmbed
   storyId="ui-data-display-badge--colors"
@@ -147,3 +151,5 @@ The rendered Button owns navigation behavior and link semantics. Badge keeps its
 Types and defaults are generated from the public `BadgeProps` type. Native attributes and event handlers are also accepted.
 
 <BadgeReference />
+
+<PageBanner illustration="page-cover-checkbox" />

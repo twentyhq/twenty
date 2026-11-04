@@ -38,6 +38,10 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -50,6 +54,10 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -62,11 +70,19 @@ export class CalendarBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
 
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

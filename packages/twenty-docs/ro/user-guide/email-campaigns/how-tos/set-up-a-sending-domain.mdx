@@ -1,0 +1,162 @@
+---
+title: Configurarea unui domeniu de expediere.
+description: Verificați-vă domeniul pentru a putea trimite campanii de la propria adresă.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Campaniile provin de la o adresă din domeniul dvs., cum ar fi `news@yourcompany.com`. Înainte ca Twenty să poată trimite de pe acesta, Gmail, Outlook și alți furnizori trebuie să aibă dovada că dețineți domeniul. Adăugați această dovadă ca înregistrări DNS acolo unde este gestionat domeniul dvs.
+
+Veți crea adresa în Twenty, veți adăuga înregistrările DNS, apoi le veți verifica.
+
+Răspundeți doar de la o căsuță poștală partajată, nu trimiteți campanii? Puteți sări peste înregistrările de dezabonare. Vezi [Canale de E-mail](/ro/user-guide/calendar-emails/capabilities/email-channels).
+
+<Note>
+  Înregistrările Twenty utilizează propriile nume de gazdă, cum ar fi
+  `twenty-bounce.yourcompany.com` și `links.yourcompany.com`. Acestea nu
+  modifică înregistrările de care depinde e-mailul dvs. de zi cu zi, astfel încât puteți folosi domeniul principal. Singura excepție este DMARC, care se aplică întregului domeniu.
+  Twenty îl sugerează numai dacă nu aveți deja unul.
+</Note>
+
+## Înainte de a începe
+
+Înainte de a începe, asigurați-vă că aveți:
+
+* **Acces la furnizorul dvs. DNS**: compania la care gestionați înregistrările domeniului dvs., cum ar fi Cloudflare, GoDaddy sau Namecheap. Nu este întotdeauna compania de la care ați cumpărat domeniul.
+* **Permisiunea Setări Workspace** în Twenty.
+
+## Partea 1: Creați adresa în Twenty
+
+Domeniul de expediere provine dintr-un canal de e-mail. Dacă ați configurat deja o căsuță de e-mail partajată în Twenty, domeniul este deja acolo. Treceți la Partea 2.
+
+1. Accesați **Setări → Comunicare**.
+2. Faceți clic pe **Adăugați canal de e-mail**.
+
+<img src="/images/user-guide/email-campaigns/channels-list.png" style={{ width: '100%' }} />
+
+3. În **Source Email Address**, introduceți adresa pe care doriți să o utilizați, de exemplu `news@yourcompany.com`. Twenty utilizează partea de după `@` ca domeniu de expediere.
+4. În **Display Name**, introduceți numele pe care îl văd oamenii în căsuța lor de e-mail, de exemplu `Acme Newsletter`.
+5. Faceți clic pe **Salvează**.
+
+<img src="/images/user-guide/email-campaigns/new-channel-form.png" style={{ width: '100%' }} />
+
+Twenty deschide canalul. Derulați la **Domeniu de expediere**. Acolo sunt listate înregistrările DNS de care aveți nevoie, cu un buton de copiere lângă fiecare valoare.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+<Note>
+  Un domeniu poate fi verificat într-un singur spațiu de lucru Twenty. Twenty vă informează dacă
+  este deja utilizat în altă parte.
+</Note>
+
+## Partea 2: Înțelegerea înregistrărilor
+
+| Grup                          | Înregistrări                                                                                                         | Ce face                                                                                                                                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Autentificarea domeniului** | Trei înregistrări `CNAME` care se termină în `._domainkey`, plus o înregistrare `MX` și una `TXT` la `twenty-bounce` | Arată că Twenty poate trimite pentru domeniul dvs. (DKIM și SPF). Înregistrările `twenty-bounce` trimit, de asemenea, rapoarte de respingere înapoi către Twenty.                |
+| **Politica DMARC**            | O înregistrare `TXT` la `_dmarc`                                                                                     | Indică furnizorilor ce să facă cu e-mailurile care nu trec verificările. Twenty o listează numai dacă nu aveți o înregistrare DMARC.                                             |
+| **Link de dezabonare**        | Două înregistrări `CNAME`, pentru `links` și `_acme-challenge.links`                                                 | Găzduiește pagina de dezabonare și linkurile monitorizate pe domeniul dvs., de exemplu `links.yourcompany.com`. Nu puteți trimite campanii până când aceasta nu este verificată. |
+
+Adăugați fiecare înregistrare afișată de Twenty. Gmail, Yahoo și Outlook resping e-mailurile în masă care nu sunt autentificate.
+
+<Warning>
+  Dacă domeniul dvs. are deja o înregistrare DMARC, păstrați-o. Nu adăugați alta:
+  furnizorii tratează două înregistrări DMARC ca și cum nu ați avea niciuna.
+</Warning>
+
+## Partea 3: Adăugați înregistrările la furnizorul dvs. DNS
+
+Pentru fiecare înregistrare, adăugați o intrare nouă la furnizorul dvs. DNS și copiați aceste valori din Twenty:
+
+* **Tip**: `CNAME`, `MX` sau `TXT`.
+* **Nume**: uneori denumit **Gazdă**.
+* **Valoare**: uneori denumită **Țintă**, **Indică spre**, **Conținut** sau **Răspuns**.
+
+Pentru înregistrarea `MX`, Twenty afișează prioritatea înaintea valorii, cum ar fi `10 feedback-smtp.eu-central-1.amazonses.com`. Majoritatea furnizorilor au un câmp separat **Prioritate**. Introduceți `10` acolo și restul în valoare.
+
+<Warning>
+  Mulți furnizori adaugă automat domeniul dvs. la sfârșitul **Numelui**. Dacă al dvs.
+  face acest lucru, introduceți numai partea dinaintea domeniului dvs. Pentru
+  `twenty-bounce.yourcompany.com`, introduceți `twenty-bounce`. În caz contrar, înregistrarea
+  devine `twenty-bounce.yourcompany.com.yourcompany.com` și nu va fi verificată.
+</Warning>
+
+Urmați instrucțiunile furnizorului dvs., utilizând valorile din Twenty:
+
+| Furnizor            | Ghidul acestuia                                                                                                                                                            | Atenție la                                                                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Amazon Route 53     | [Lucrul cu înregistrări](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html)                                                               | Încadrați valorile `TXT` între ghilimele duble.                                                                                                   |
+| Azure DNS           | [Gestionarea înregistrărilor DNS](https://learn.microsoft.com/en-us/azure/dns/dns-getstarted-portal)                                                                       | Funcționează numai dacă domeniul utilizează serverele de nume Azure.                                                                              |
+| Bluehost            | [Adăugați, editați sau ștergeți intrări DNS](https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries)                                          | Introduceți numai partea de gazdă în **Host Record**.                                                                                             |
+| Cloudflare          | [Creați înregistrări DNS](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)                                                             | Setați fiecare `CNAME` la **Numai DNS** (nor gri). O înregistrare cu proxy nu se verifică niciodată.                                              |
+| DigitalOcean        | [Gestionarea înregistrărilor DNS](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/)                                                            | Funcționează numai dacă domeniul utilizează serverele de nume DigitalOcean.                                                                       |
+| Gandi               | [Înregistrări DNS](https://docs.gandi.net/en/domain_names/common_operations/dns_records.html)                                                                              | Încheiați valorile `CNAME` cu un punct, ca în `abc.dkim.amazonses.com.`                                                                           |
+| GoDaddy             | [Adăugați o înregistrare CNAME](https://www.godaddy.com/help/add-a-cname-record-19236)                                                                                     | Introduceți numai partea de gazdă în **Nume**. GoDaddy adaugă singur domeniul dvs.                                                                |
+| Google Cloud DNS    | [Gestionarea înregistrărilor](https://cloud.google.com/dns/docs/records)                                                                                                   | Funcționează numai dacă domeniul utilizează serverele de nume Google Cloud.                                                                       |
+| Hostinger           | [Gestionarea înregistrărilor DNS](https://www.hostinger.com/support/1583249-how-to-manage-dns-records-at-hostinger/)                                                       | Funcționează numai dacă domeniul utilizează serverele de nume Hostinger.                                                                          |
+| Hover               | [Editați înregistrările DNS](https://help.hover.com/hc/en-us/articles/217282457-how-to-edit-dns-records-a-aaaa-cname-mx-txt-srv-)                                          | Introduceți numai partea de gazdă în **Hostname**.                                                                                                |
+| IONOS               | [Gestionarea setărilor DNS](https://www.ionos.com/help/domains/general-information-about-dns-settings/managing-dns-settings-in-control-center/)                            | Introduceți numai partea de gazdă în **Host name**.                                                                                               |
+| Name.com            | [Adăugați o înregistrare CNAME](https://www.name.com/support/articles/115004895548-adding-a-cname-record)                                                                  | Introduceți numai partea de gazdă în **Host**.                                                                                                    |
+| Namecheap           | [Adăugați înregistrări TXT, SPF, DKIM și DMARC](https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/) | Funcționează numai dacă domeniul utilizează Namecheap BasicDNS, FreeDNS sau PremiumDNS. Introduceți numai partea de gazdă.                        |
+| Netlify             | [Înregistrări DNS](https://docs.netlify.com/manage/domains/configure-domains/dns-records/)                                                                                 | Funcționează numai dacă domeniul utilizează serverele de nume Netlify.                                                                            |
+| Network Solutions   | [Gestionarea înregistrărilor DNS avansate](https://www.networksolutions.com/help/article/manage-dns-adns-records)                                                          | Introduceți numai partea de gazdă.                                                                                                                |
+| OVHcloud            | [Creați o înregistrare CNAME](https://docs.ovhcloud.com/en/guides/web-cloud/domains/dns-zone-cname-record-creation)                                                        | Introduceți numai partea de gazdă în **Subdomeniu**.                                                                                              |
+| Porkbun             | [Editați înregistrările DNS](https://kb.porkbun.com/article/68-how-to-edit-dns-records)                                                                                    | Introduceți numai partea de gazdă în **Host**.                                                                                                    |
+| Domenii Squarespace | [Editați înregistrările DNS ale domeniului dvs.](https://support.squarespace.com/hc/en-us/articles/360002101888-Edit-your-domain-s-DNS-records)                            | Squarespace blochează o înregistrare care intră în conflict cu una existentă, în loc să o înlocuiască.                                            |
+| Vercel              | [Gestionarea înregistrărilor DNS](https://vercel.com/docs/domains/managing-dns-records)                                                                                    | Funcționează numai dacă domeniul utilizează serverele de nume Vercel. În caz contrar, adăugați înregistrările acolo unde este găzduit DNS-ul dvs. |
+| Wix                 | [Gestionarea înregistrărilor DNS](https://support.wix.com/en/article/managing-dns-records-in-your-wix-account)                                                             | Funcționează numai dacă domeniul utilizează serverele de nume Wix. În caz contrar, adăugați înregistrările acolo unde este găzduit DNS-ul dvs.    |
+
+Dacă furnizorul dvs. nu este listat, căutați **DNS**, **înregistrări DNS**, **editor de zonă** sau **DNS avansat** în setările domeniului dvs.
+
+## Partea 4: Verificare
+
+Twenty verifică înregistrările dvs. în fiecare oră. Pentru a verifica acum, faceți clic pe **Verificați validarea** în **Domeniu de expediere**.
+
+Modificările DNS funcționează de obicei în decurs de o oră, dar unii furnizori au nevoie de până la 48 de ore. Domeniul trece de la **În așteptare** la **Verificat** când Twenty găsește înregistrările de autentificare. Și **Linkul de dezabonare** trebuie să afișeze **Verificat** înainte de a putea trimite campanii.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-verified.png" style={{ width: '100%' }} />
+
+Rândul **Politică DMARC** afișează întotdeauna **Nesetat**. Acest lucru este de așteptat: Twenty sugerează înregistrarea, dar nu o verifică.
+
+## Depanare
+
+<Accordion title="Domeniul rămâne în așteptare timp de ore">
+  Deschideți furnizorul dvs. DNS și comparați fiecare **Nume** cu valoarea din Twenty.
+  Problema obișnuită este că furnizorul a adăugat domeniul dvs. a doua oară, așa cum
+  este descris în Partea 3. Verificați, de asemenea, că ați adăugat înregistrările acolo unde DNS-ul dvs. este
+  găzduit efectiv. Înregistrările din panoul registratorului dvs. nu au niciun efect dacă serverele dvs. de
+  nume indică în altă parte.
+</Accordion>
+
+<Accordion title="Cloudflare: înregistrările sunt acolo, dar nu se verifică niciodată">
+  Setați fiecare `CNAME` la **Numai DNS**. Cu norul portocaliu activat, Cloudflare
+  returnează propriile servere în locul valorii oferite de Twenty.
+</Accordion>
+
+<Accordion title="Domeniul afișează Eșuat">
+  Twenty oprește verificarea unui domeniu eșuat. Corectați înregistrările, apoi faceți clic pe **Verificați
+  validarea**.
+</Accordion>
+
+<Accordion title="Domeniul afișează Eroare temporară">
+  Furnizorul dvs. DNS nu a răspuns când Twenty a verificat. Twenty continuă să verifice
+  în fiecare oră, astfel încât problema se rezolvă de obicei singură.
+</Accordion>
+
+<Accordion title="Autentificarea este verificată, dar linkul de dezabonare rămâne în așteptare">
+  Cele două înregistrări de dezabonare sunt verificate separat și pot dura mai mult deoarece
+  Twenty creează și un certificat securizat pentru ele. Verificați dacă există ambele înregistrări `CNAME`
+  — pentru `links` și `_acme-challenge.links` — apoi așteptați până
+  la o oră.
+</Accordion>
+
+<Accordion title="Furnizorul meu respinge înregistrarea MX">
+  Introduceți `10` în **Prioritate** și numai numele de gazdă în valoare, cum ar fi
+  `feedback-smtp.eu-central-1.amazonses.com`. Nu introduceți `10` în valoare.
+</Accordion>
+
+În continuare, citiți [cele mai bune practici](/ro/user-guide/email-campaigns/how-tos/email-campaign-best-practices), apoi [trimiteți prima campanie](/ro/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+<PageBanner illustration="card-page-sending-domain" />

@@ -1,8 +1,11 @@
 ---
 title: Targeting System Metadata
 description: Resolve the deterministic universal identifiers of the metadata Twenty provisions automatically on every object, so your app can reference it without hardcoding.
-icon: "gears"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Every object in Twenty comes with **system metadata** you never declare yourself, such as a set of fields and a main list view with its columns. The server creates all of it when the object is provisioned, and the set grows as Twenty does.
 
@@ -212,3 +215,5 @@ Reach for the helpers above when the object is one **your app** defines with [`d
   `getFieldUniversalIdentifier`. On objects you define, reference the
   `name` field by the identifier you gave it in `defineObject()`.
 </Note>
+
+<PageBanner illustration="section-apps-data" />

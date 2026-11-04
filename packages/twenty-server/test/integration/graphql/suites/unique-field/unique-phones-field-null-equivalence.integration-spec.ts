@@ -160,7 +160,7 @@ describe('unique PHONES field with empty values', () => {
       input: {
         id: firstId,
         [FIELD_NAME]: {
-          primaryPhoneNumber: '4155552671',
+          primaryPhoneNumber: '2071838750',
           primaryPhoneCallingCode: '+1',
           primaryPhoneCountryCode: 'US',
         },
@@ -177,9 +177,9 @@ describe('unique PHONES field with empty values', () => {
       input: {
         id: secondId,
         [FIELD_NAME]: {
-          primaryPhoneNumber: '4155552671',
-          primaryPhoneCallingCode: '+32',
-          primaryPhoneCountryCode: 'BE',
+          primaryPhoneNumber: '2071838750',
+          primaryPhoneCallingCode: '+44',
+          primaryPhoneCountryCode: 'GB',
         },
       },
       gqlFields: `id`,

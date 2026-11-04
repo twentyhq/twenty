@@ -78,6 +78,13 @@ describe('searchVariableInOutputSchema - form output schema', () => {
       label: 'Contact Email',
       value: 'contact@acme.com',
     },
+    status: {
+      isLeaf: true,
+      type: FieldMetadataType.SELECT,
+      label: 'Status',
+      value: 'OPEN',
+      fieldMetadataId: 'status-field-metadata-id',
+    },
     contactPerson: {
       isLeaf: false,
       label: 'Contact Person',
@@ -127,6 +134,22 @@ describe('searchVariableInOutputSchema - form output schema', () => {
       variableLabel: 'Contact Email',
       variablePathLabel: 'Company Form > Contact Email',
       variableType: FieldMetadataType.EMAILS,
+    });
+  });
+
+  it('should return the selected field metadata id of a select field', () => {
+    const result = searchVariableThroughFormOutputSchema({
+      stepName: 'Company Form',
+      formOutputSchema: mockFormSchema,
+      rawVariableName: '{{step1.status}}',
+      isFullRecord: false,
+    });
+
+    expect(result).toEqual({
+      variableLabel: 'Status',
+      variablePathLabel: 'Company Form > Status',
+      variableType: FieldMetadataType.SELECT,
+      fieldMetadataId: 'status-field-metadata-id',
     });
   });
 

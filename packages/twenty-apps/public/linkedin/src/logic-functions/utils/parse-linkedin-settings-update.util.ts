@@ -1,0 +1,63 @@
+import { isBoolean } from '@sniptt/guards';
+
+import { LINKEDIN_HISTORY_CONVERSATION_LIMITS } from 'src/constants/linkedin-history-conversation-limits.constant';
+import { type LinkedinContactAutoCreationPolicy } from 'src/types/linkedin-contact-auto-creation-policy.type';
+import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
+import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
+import { type LinkedinVisibility } from 'src/types/linkedin-visibility.type';
+
+const IMPORT_POLICIES: LinkedinImportPolicy[] = ['ALL', 'CONTACTS_ONLY'];
+
+const CONTACT_AUTO_CREATION_POLICIES: LinkedinContactAutoCreationPolicy[] = [
+  'SENT_AND_RECEIVED',
+  'SENT',
+  'NONE',
+];
+
+const VISIBILITIES: LinkedinVisibility[] = ['SHARE_EVERYTHING', 'METADATA'];
+
+const isOneOf = <TValue extends string | number>(
+  values: readonly TValue[],
+  value: unknown,
+): value is TValue => values.some((candidate) => candidate === value);
+
+export const parseLinkedinSettingsUpdate = (
+  body: Record<string, unknown> | null | undefined,
+): Partial<LinkedinSettings> & { visibility?: LinkedinVisibility } => {
+  const update: Partial<LinkedinSettings> & {
+    visibility?: LinkedinVisibility;
+  } = {};
+
+  if (isOneOf(IMPORT_POLICIES, body?.importPolicy)) {
+    update.importPolicy = body.importPolicy;
+  }
+
+  if (
+    isOneOf(CONTACT_AUTO_CREATION_POLICIES, body?.contactAutoCreationPolicy)
+  ) {
+    update.contactAutoCreationPolicy = body.contactAutoCreationPolicy;
+  }
+
+  if (isBoolean(body?.areGroupChatsImported)) {
+    update.areGroupChatsImported = body.areGroupChatsImported;
+  }
+
+  if (
+    isOneOf(
+      LINKEDIN_HISTORY_CONVERSATION_LIMITS,
+      body?.historyConversationLimit,
+    )
+  ) {
+    update.historyConversationLimit = body.historyConversationLimit;
+  }
+
+  if (isBoolean(body?.isNameMatchingEnabled)) {
+    update.isNameMatchingEnabled = body.isNameMatchingEnabled;
+  }
+
+  if (isOneOf(VISIBILITIES, body?.visibility)) {
+    update.visibility = body.visibility;
+  }
+
+  return update;
+};

@@ -43,6 +43,7 @@ export const getMockFieldMetadataEntity = <
     isNullable: null,
     isUIEditable: true,
     writability: MetadataWritability.OPEN,
+    disabledFieldPermissionActions: null,
     isSystem: false,
     isUnique: null,
     object: {} as ObjectMetadataEntity,

@@ -25,6 +25,9 @@ export class UserInfoDTO {
 
   @Field(() => Date)
   createdAt: Date;
+
+  @Field(() => Boolean, { nullable: true })
+  isAdmin?: boolean;
 }
 
 @ObjectType('WorkspaceInfo')

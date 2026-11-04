@@ -1,6 +1,6 @@
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const useOpenCalendarEventInSidePanel = () => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -9,7 +9,7 @@ export const useOpenCalendarEventInSidePanel = () => {
     (calendarEventId: string) => {
       openRecordInSidePanel({
         recordId: calendarEventId,
-        objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+        objectNameSingular: StandardObjectNameSingular.CalendarEvent,
       });
     },
     [openRecordInSidePanel],

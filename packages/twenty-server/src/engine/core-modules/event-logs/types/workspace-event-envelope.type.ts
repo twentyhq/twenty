@@ -1,3 +1,5 @@
+import { type ApplicationLogSource } from 'twenty-shared/types';
+
 export type EventContextFields = {
   workspaceId?: string | null;
   userId?: string | null;
@@ -44,11 +46,31 @@ export type ApplicationLogRow = {
   timestamp: string;
   workspaceId: string;
   applicationId: string;
+  applicationRegistrationId: string;
+  applicationVersion: string;
+  source: ApplicationLogSource;
   logicFunctionId: string;
   logicFunctionName: string;
   executionId: string;
   level: string;
   message: string;
+  errorCode: string;
+  properties: Record<string, unknown>;
+};
+
+export type ApplicationMetricEventRow = {
+  timestamp: string;
+  applicationRegistrationId: string;
+  workspaceId: string;
+  applicationId: string;
+  applicationVersion: string;
+  source: ApplicationLogSource;
+  logicFunctionId: string;
+  logicFunctionName: string;
+  level: string;
+  errorCode: string;
+  durationMs: number;
+  occurrenceCount: number;
 };
 
 // The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).
@@ -57,6 +79,7 @@ export type WorkspaceEventEnvelope =
   | { table: 'pageview'; row: PageviewRow }
   | { table: 'objectEvent'; row: ObjectEventRow }
   | { table: 'usageEvent'; row: UsageEventRow }
-  | { table: 'applicationLog'; row: ApplicationLogRow };
+  | { table: 'applicationLog'; row: ApplicationLogRow }
+  | { table: 'applicationMetricEvent'; row: ApplicationMetricEventRow };
 
 export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];

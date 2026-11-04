@@ -1,0 +1,21 @@
+---
+title: Tokenuri de design
+description: Răsfoiți variabilele CSS generate și valorile deschise și întunecate utilizate de Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import TokenReference from '/snippets/ui/generated/tokens.mdx';
+
+## Prezentare generală
+
+Această referință este generată din aceleași definiții de tokenuri ca foile de stil ale temei Twenty UI. Căile tokenurilor corespund intrărilor din `themeCssVariables` și `useTheme()`; numele variabilelor CSS pot fi utilizate direct în foile de stil.
+
+* Preferați tokenuri semantice precum `background.primary` și `font.color.primary` pentru suprafețele și textul aplicației.
+* Tokenurile numerice nu au unități în CSS. Înmulțiți-le cu o lungime atunci când este necesar, de exemplu `calc(var(--t-icon-size-md) * 1px)`. În cadrul unui `ThemeProvider` montat, cu foaia de stil a temei încărcată, `useTheme()` le rezolvă ca numere JavaScript; fără un furnizor, returnează referințele la variabilele CSS.
+* Valorile care conțin `var(...)` sau `calc(...)` sunt expresii CSS, nu măsurători precalculate.
+* Valorile de mai jos sunt valorile din foaia de stil de bază. Suprascrierile temei și stilizarea squircle acceptată pot modifica valorile calculate. Stilizarea squircle dublează tokenurile de rază selectate; tokenurile explicite round și pill își păstrează razele de bază.
+
+<TokenReference />
+
+<PageBanner illustration="page-cover-palette" />

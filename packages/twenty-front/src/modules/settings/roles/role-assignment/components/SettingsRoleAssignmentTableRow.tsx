@@ -5,16 +5,18 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconKey, useIcons } from 'twenty-ui/icon';
+import { IconKey } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -38,7 +40,7 @@ const StyledNameContainer = styled.div`
 
 export type RoleTarget =
   | { type: 'member'; data: PartialWorkspaceMember }
-  | { type: 'agent'; data: Agent }
+  | { type: 'agent'; data: FlatAgent }
   | { type: 'apiKey'; data: ApiKeyForRole };
 
 type SettingsRoleAssignmentTableRowProps = {
@@ -48,6 +50,7 @@ type SettingsRoleAssignmentTableRowProps = {
 export const SettingsRoleAssignmentTableRow = ({
   roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
+  const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );

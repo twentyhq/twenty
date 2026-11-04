@@ -30,7 +30,7 @@ export class AgentChatTurnPreflightService {
     modelId?: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
   }) {
     this.assertModelAvailable({ modelId, workspace });
 
@@ -52,7 +52,7 @@ export class AgentChatTurnPreflightService {
   }: {
     modelId?: string;
     userWorkspaceId: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
   }): Promise<void> {
     this.assertModelAvailable({ modelId, workspace });
 
@@ -64,7 +64,7 @@ export class AgentChatTurnPreflightService {
     workspace,
   }: {
     modelId?: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
   }): void {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
@@ -83,7 +83,7 @@ export class AgentChatTurnPreflightService {
     workspace,
   }: {
     userWorkspaceId: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatModelTier'>;
   }): Promise<void> {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,

@@ -29,18 +29,28 @@ const STATS: ApplicationRegistrationStats = {
   creditsUsedBreakdown: [
     {
       label: null,
+      icon: null,
       operation: UsageOperationType.CODE_EXECUTION,
       creditsUsed: 1171.704,
     },
-    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 1.262302 },
+    {
+      label: 'HISTORICAL_OPERATION',
+      icon: null,
+      operation: null,
+      creditsUsed: 1.262302,
+    },
   ],
 };
 
-const renderStats = (
+const renderStats = ({
   stats = STATS,
   isAdminView = false,
   isBillingEnabled = true,
-) => {
+}: {
+  stats?: ApplicationRegistrationStats;
+  isAdminView?: boolean;
+  isBillingEnabled?: boolean;
+} = {}) => {
   const store = createStore();
 
   store.set(billingState.atom, { isBillingEnabled } as Billing);
@@ -90,7 +100,7 @@ describe('Application registration statistics', () => {
   it.each([false, true])(
     'shows this month credit consumption for owner/admin view: %s',
     async (isAdminView) => {
-      renderStats(STATS, isAdminView);
+      renderStats({ isAdminView });
 
       expect(await screen.findByText('1,172')).toBeVisible();
       expect(screen.getByText('Credits used this month')).toBeVisible();
@@ -104,13 +114,34 @@ describe('Application registration statistics', () => {
     },
   );
 
+  it('shows the label an app declared for its billing operation', async () => {
+    renderStats({
+      stats: {
+        ...STATS,
+        creditsUsedBreakdown: [
+          {
+            label: 'Person enrichment',
+            icon: 'IconUserSearch',
+            operation: UsageOperationType.APP_OPERATION,
+            creditsUsed: 3,
+          },
+        ],
+      },
+    });
+
+    expect(await screen.findByText('Person enrichment')).toBeVisible();
+    expect(screen.queryByText('App Operation')).not.toBeInTheDocument();
+  });
+
   it.each([null, 0])(
     'distinguishes unavailable usage from zero: %s',
     async (totalCreditsUsed) => {
       renderStats({
-        ...STATS,
-        totalCreditsUsed,
-        creditsUsedBreakdown: totalCreditsUsed === null ? null : [],
+        stats: {
+          ...STATS,
+          totalCreditsUsed,
+          creditsUsedBreakdown: totalCreditsUsed === null ? null : [],
+        },
       });
 
       await screen.findByText('1.2.3');
@@ -121,7 +152,7 @@ describe('Application registration statistics', () => {
   );
 
   it('hides credit consumption when billing is disabled', async () => {
-    renderStats(STATS, false, false);
+    renderStats({ isBillingEnabled: false });
 
     await screen.findByText('1.2.3');
     expect(

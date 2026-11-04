@@ -25,9 +25,12 @@ describe('messagesResolver (e2e)', () => {
 
     expect(edges.length).toEqual(QUERY_MAX_RECORDS);
 
-    const message1 = edges[0].node;
+    const seededMessage = edges.find(
+      (edge: { node: { id: string } }) =>
+        edge.node.id === MESSAGE_DATA_SEED_IDS.ID_1,
+    )?.node;
 
-    expect(message1).toMatchSnapshot({
+    expect(seededMessage).toMatchSnapshot({
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
     });

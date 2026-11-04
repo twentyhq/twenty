@@ -11,6 +11,7 @@ import { FATHOM_LIST_CALLS_BY_PARTICIPANT_UNIVERSAL_IDENTIFIER } from 'src/const
 import { type FathomCallSummary } from 'src/logic-functions/types/fathom-call-summary.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { doesFathomMeetingIncludeInvitee } from 'src/logic-functions/utils/does-fathom-meeting-include-invitee.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
 import { listFathomMeetings } from 'src/logic-functions/utils/list-fathom-meetings.util';
 import { mapFathomMeetingToCallSummary } from 'src/logic-functions/utils/map-fathom-meeting-to-call-summary.util';
@@ -81,7 +82,9 @@ export const fathomListCallsByParticipantHandler = async (
 
   for (const connection of connections) {
     const meetings = await listFathomMeetings({
-      fathomClient: createFathomClient(connection.accessToken),
+      fathomClient: createFathomClient(
+        getConnectionAccessTokenOrThrow(connection),
+      ),
       stopWhen: (listedMeetings) =>
         listedMeetings.filter(hasParticipant).length >= limit,
     });

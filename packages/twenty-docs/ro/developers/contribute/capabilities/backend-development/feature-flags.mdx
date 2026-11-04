@@ -1,8 +1,9 @@
 ---
 title: Steaguri de caracteristici
+description: Ascunde caracteristicile experimentale din spatele steagurilor caracteristice la nivel de loc de muncă.
 ---
 
-Steagurile de caracteristici sunt utilizate pentru a ascunde caracteristici experimentale. Pentru Twenty, acestea sunt setate la nivel de spațiu de lucru și nu la nivel de utilizator.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Adăugarea unui nou steag de caracteristici
 
@@ -44,3 +45,5 @@ Modificați înregistrarea corespunzătoare în tabelul `core.featureFlag`:
 | id        | cheie                    | IdSpațiuDeLucru | valoare    |
 | --------- | ------------------------ | --------------- | ---------- |
 | Aleatoriu | `IS_FEATURENAME_ENABLED` | IdSpațiuDeLucru | `adevărat` |
+
+<PageBanner illustration="page-cover-switch" />

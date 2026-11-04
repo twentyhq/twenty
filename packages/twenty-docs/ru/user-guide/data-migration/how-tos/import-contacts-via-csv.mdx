@@ -3,6 +3,8 @@ title: Импорт контактов через CSV
 description: Полное пошаговое руководство по импорту людей/контактов в Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Обзор
 
 Это руководство проведет вас через процесс импорта ваших контактов (People) в Twenty.
@@ -159,7 +161,7 @@ Twenty автоматически пытается сопоставить ваш
 3. Или при необходимости создайте новые варианты
 
 <Note>
-Для вариантов Select используются **имена API**, а не отображаемые метки. Перейдите в **Настройки → Модель данных** → включите **Расширенный режим**, чтобы увидеть имена API.
+Для вариантов Select используются **имена API**, а не отображаемые метки. Чтобы увидеть их, откройте поле в **Settings → Data Model**, затем выберите **Show API values** в меню **⋮** рядом с **Options**.
 </Note>
 
 ## Шаг 6: Проверьте и исправьте ошибки
@@ -240,3 +242,5 @@ Twenty автоматически пытается сопоставить ваш
 * [Как исправить ошибки импорта](/ru/user-guide/data-migration/how-tos/fix-import-errors)
 * [Как импортировать связи](/ru/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 * [Справочник по сопоставлению полей](/ru/user-guide/data-migration/capabilities/field-mapping)
+
+<PageBanner illustration="data-migration" />

@@ -102,11 +102,14 @@ describe('Event Logs (integration)', () => {
     const applicationLogRecords = Array.from({ length: 8 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       applicationId: 'app-1',
+      applicationRegistrationId: 'registration-1',
+      applicationVersion: '1.2.3',
       logicFunctionId: 'fn-1',
       logicFunctionName: i % 2 === 0 ? 'sendEmail' : 'syncContacts',
       executionId: `exec-${i}`,
       level: i % 2 === 0 ? 'INFO' : 'ERROR',
       message: `log line ${i}`,
+      errorCode: i % 2 === 0 ? '' : 'TypeError',
       timestamp: formatDateTimeForClickHouse(
         new Date(now.getTime() - i * 60000),
       ),
@@ -283,6 +286,29 @@ describe('Event Logs (integration)', () => {
       expect(record.properties.level).toBeDefined();
       expect(record.properties.message).toBeDefined();
       expect(record.properties.executionId).toBeDefined();
+    });
+
+    it('should expose the registration, version, source and error code of application logs', async () => {
+      const response = await makeEventLogsQuery({
+        table: 'APPLICATION_LOG',
+        first: 50,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      // Apps that earlier suites ran log into the same workspace
+      const errorRecord = response.body.data.eventLogs.records.find(
+        (record: { properties: { executionId: string } }) =>
+          record.properties.executionId === 'exec-1',
+      );
+
+      expect(errorRecord.properties).toMatchObject({
+        applicationRegistrationId: 'registration-1',
+        applicationVersion: '1.2.3',
+        source: 'LOGIC_FUNCTION',
+        errorCode: 'TypeError',
+      });
     });
   });
 
@@ -533,6 +559,43 @@ describe('Event Logs (integration)', () => {
             expect(record.userId).toBe(testUserWorkspaceId);
           },
         );
+      });
+    });
+
+    describe('application log specific filters', () => {
+      it('should filter application logs by source', async () => {
+        const logicFunctionResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['LOGIC_FUNCTION'] },
+            ],
+          },
+        });
+
+        expect(logicFunctionResponse.body.errors).toBeUndefined();
+        expect(
+          logicFunctionResponse.body.data.eventLogs.records.length,
+        ).toBeGreaterThan(0);
+
+        const upgradeResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['UPGRADE'] },
+            ],
+          },
+        });
+
+        expect(upgradeResponse.body.errors).toBeUndefined();
+        expect(
+          upgradeResponse.body.data.eventLogs.records.filter(
+            (record: { properties: { source: string } }) =>
+              record.properties.source !== 'UPGRADE',
+          ),
+        ).toEqual([]);
       });
     });
 

@@ -7,6 +7,10 @@ import { type ProposedToolCall } from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
+jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
+  useRefreshFrontComponents: () => ({ refreshFrontComponents: jest.fn() }),
+}));
+
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
@@ -15,6 +19,10 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
 jest.mock(
   '@/ai/components/internal/AiChatToolCallApprovalArgumentsCard',
   () => ({ AiChatToolCallApprovalArgumentsCard: () => null }),
+);
+jest.mock(
+  '@/ai/components/internal/AiChatToolCallApprovalFrontComponentCard',
+  () => ({ AiChatToolCallApprovalFrontComponentCard: () => null }),
 );
 jest.mock(
   '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile',
@@ -27,14 +35,18 @@ jest.mock(
   () => ({
     FormAdvancedTextFieldInput: ({
       defaultValue,
+      value,
       onChange,
     }: {
-      defaultValue: string;
+      defaultValue?: string;
+      value?: string;
       onChange: (value: string) => void;
     }) => (
       <textarea
         aria-label="Email body"
-        defaultValue={JSON.parse(defaultValue).content[0].content[0].text}
+        defaultValue={
+          JSON.parse(value ?? defaultValue ?? '').content[0].content[0].text
+        }
         onChange={(event) =>
           onChange(
             JSON.stringify({

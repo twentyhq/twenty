@@ -25,17 +25,18 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
@@ -43,8 +44,6 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
-import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -308,10 +307,10 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository = this.workspaceOrmManager.getRepository(
-          relatedObjectMetadataNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
+        const relatedObjectRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            relatedObjectMetadataNameSingular,
+          );
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },
@@ -357,10 +356,8 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
 
-    const eventListeners = await this.getDatabaseEventListeners(
-      workspaceId,
-      databaseEventName,
-    );
+    const { eventListeners, flatApplicationMaps } =
+      await this.getDatabaseEventListeners(workspaceId, databaseEventName);
 
     if (eventListeners.length === 0) {
       return;
@@ -403,10 +400,12 @@ export class WorkflowDatabaseEventTriggerListener {
         admittedEventsByApplicationId.set(
           applicationId,
           await this.resolveAdmittedEvents({
-            payload,
-            enrichedPayload,
+            workspaceEventBatch: standardAndCustomApplicationIds.has(
+              applicationId,
+            )
+              ? enrichedPayload
+              : payload,
             applicationId,
-            standardAndCustomApplicationIds,
           }),
         );
       }
@@ -428,9 +427,16 @@ export class WorkflowDatabaseEventTriggerListener {
               workflowId:
                 eventListener.legacyWorkflowId ?? eventListener.workflowId,
               ...buildCoreDispatchIds(eventListener),
-              payload: omitInheritedReadabilityChildRecords(eventPayload),
+              payload: eventPayload,
             },
-            { retryLimit: 3 },
+            {
+              retryLimit: 3,
+              ...buildApplicationQueueJobScope({
+                workspaceId,
+                applicationId,
+                flatApplicationMaps,
+              }),
+            },
           );
         }
       }
@@ -440,14 +446,17 @@ export class WorkflowDatabaseEventTriggerListener {
   private async getDatabaseEventListeners(
     workspaceId: string,
     databaseEventName: string,
-  ): Promise<DatabaseEventTriggerListener[]> {
+  ): Promise<{
+    eventListeners: DatabaseEventTriggerListener[];
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }> {
     const { workflowAutomatedTriggerMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'workflowAutomatedTriggerMaps',
         'flatApplicationMaps',
       ]);
 
-    return Object.values(
+    const eventListeners = Object.values(
       workflowAutomatedTriggerMaps.byWorkflowId,
     ).flatMap<DatabaseEventTriggerListener>((trigger) => {
       if (
@@ -460,6 +469,8 @@ export class WorkflowDatabaseEventTriggerListener {
 
       return [trigger];
     });
+
+    return { eventListeners, flatApplicationMaps };
   }
 
   private async buildEnrichedPayload<TEvent extends ObjectRecordEvent>({
@@ -481,61 +492,37 @@ export class WorkflowDatabaseEventTriggerListener {
   }
 
   private async resolveAdmittedEvents({
-    payload,
-    enrichedPayload,
+    workspaceEventBatch,
     applicationId,
-    standardAndCustomApplicationIds,
   }: {
-    payload: WorkspaceEventBatch<ObjectRecordEvent>;
-    enrichedPayload: WorkspaceEventBatch<ObjectRecordEvent>;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     applicationId: string;
-    standardAndCustomApplicationIds: Set<string>;
   }): Promise<ObjectRecordEvent[]> {
-    if (standardAndCustomApplicationIds.has(applicationId)) {
-      const admittedRecordIds = await resolveAutomationAdmittedRecordIds({
-        payload: enrichedPayload,
-        workspaceCacheService: this.workspaceCacheService,
-        recordAccessPolicyService: this.recordAccessPolicyService,
-      });
-
-      return enrichedPayload.events.filter((event) =>
-        admittedRecordIds.has(event.recordId),
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceEventBatch.workspaceId,
+        ['flatApplicationMaps'],
       );
+
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
+
+    if (!isDefined(application)) {
+      return [];
     }
 
-    const {
-      flatApplicationMaps,
-      rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
-      'flatApplicationMaps',
-      'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
-
-    return resolveEventsReadableByRole({
-      roleId:
-        findActiveFlatApplicationById(flatApplicationMaps, applicationId)
-          ?.defaultRoleId ?? null,
-      owningApplicationId: applicationId,
-      workspaceEventBatch: payload,
-      eventRecordAccessGate:
-        this.recordAccessPolicyService.buildEventRecordAccessGate(payload),
-      rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    });
+    return this.recordAccessPolicyService
+      .buildEventRecordAccessGate(workspaceEventBatch)
+      .resolveReadableEvents({
+        authContext: {
+          type: 'application',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          application,
+        },
+        events: workspaceEventBatch.events,
+      });
   }
 
   private shouldTriggerJob({

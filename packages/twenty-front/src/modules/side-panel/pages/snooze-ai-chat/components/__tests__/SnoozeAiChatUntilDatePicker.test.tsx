@@ -5,6 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import {
   jotaiStore,
@@ -12,11 +13,18 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
+const snoozeAgentChatThreadsInChannel = jest.fn();
 const onSnoozed = jest.fn();
 
 jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
   useUpdateAgentChatThreadInboxState: () => ({
     updateAgentChatThreadInboxState,
+  }),
+}));
+
+jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+  useSnoozeAgentChatThreadsInChannel: () => ({
+    snoozeAgentChatThreadsInChannel,
   }),
 }));
 
@@ -52,7 +60,13 @@ jest.mock(
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>{children}</I18nProvider>
+    <I18nProvider i18n={i18n}>
+      <SidePanelPageComponentInstanceContext.Provider
+        value={{ instanceId: 'snooze-page' }}
+      >
+        {children}
+      </SidePanelPageComponentInstanceContext.Provider>
+    </I18nProvider>
   </JotaiProvider>
 );
 

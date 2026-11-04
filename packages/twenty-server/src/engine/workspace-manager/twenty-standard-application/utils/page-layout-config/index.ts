@@ -30,4 +30,5 @@ export { STANDARD_TASK_PAGE_LAYOUT_CONFIG } from './standard-task-page-layout.co
 export { STANDARD_WORKFLOW_AUTOMATED_TRIGGER_PAGE_LAYOUT_CONFIG } from './standard-workflow-automated-trigger-page-layout.config';
 export { STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG } from './standard-workflow-page-layout.config';
 export { STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG } from './standard-workflow-run-page-layout.config';
+export { STANDARD_WORKSPACE_MEMBER_PAGE_LAYOUT_CONFIG } from './standard-workspace-member-page-layout.config';
 export { STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG } from './standard-workflow-version-page-layout.config';

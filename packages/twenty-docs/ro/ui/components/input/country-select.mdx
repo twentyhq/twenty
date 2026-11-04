@@ -1,0 +1,147 @@
+---
+title: CountrySelect
+description: Un selector complet de țări și părți partajate pentru opțiuni pregătite, identificatori stabili și ștergerea valorii null.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountrySelectReference from '/snippets/ui/generated/components/input/country-select.mdx';
+
+## Prezentare generală
+
+`CountrySelect` oferă un selector complet de țări cu un declanșator etichetat, steaguri decorative, căutare și o opțiune fără țară. `CountrySelect.Root`, `CountrySelect.Trigger` și `CountrySelect.Options` expun aceeași implementare pentru compunere cu [Dropdown](/ro/ui/components/navigation/dropdown). Aplicația dvs. furnizează date despre țări și text tradus și decide cum sunt corelați identificatorii selectați cu valorile stocate.
+
+<StoryEmbed storyId="ui-input-countryselect--display" title="Selectarea țării" height={340} />
+
+## Utilizare
+
+Furnizați opțiuni pregătite cu identificatori unici și stabili de tip șir și etichete de afișare. Selectorul returnează identificatorii nemodificați, independent de limba afișată. Steagurile sunt noduri React decorative opționale. O opțiune poate seta `disabled: true` pentru a rămâne vizibilă fără a permite selectarea.
+
+```tsx
+import { CountrySelect } from 'twenty-ui/components/input';
+
+const COUNTRIES = [
+  { value: 'FR', label: 'France', flag: '🇫🇷' },
+  { value: 'DE', label: 'Germany', flag: '🇩🇪' },
+  { value: 'JP', label: 'Japan', flag: '🇯🇵' },
+];
+
+export const ShippingCountry = () => (
+  <CountrySelect
+    label="Shipping country"
+    countries={COUNTRIES}
+    defaultValue="FR"
+    searchLabel="Search countries"
+    noCountryLabel="No country"
+    noResultsLabel="No countries found"
+  />
+);
+```
+
+`defaultValue` inițializează selecția necontrolată. Utilizați `value` și `onValueChange` pentru selecția controlată. Actualizarea externă a `value` actualizează atât declanșatorul, cât și opțiunea selectată, inclusiv când fereastra pop-up este deschisă.
+
+```tsx
+import { useState } from 'react';
+import { CountrySelect, type CountryChoice } from 'twenty-ui/components/input';
+
+export const ControlledCountry = ({
+  countries,
+}: {
+  countries: readonly CountryChoice[];
+}) => {
+  const [country, setCountry] = useState<string | null>('FR');
+
+  return (
+    <CountrySelect
+      label="Country"
+      countries={countries}
+      value={country}
+      onValueChange={setCountry}
+    />
+  );
+};
+```
+
+## Părți partajate
+
+`Root` gestionează opțiunile pregătite și identificatorul selectat. Nu adaugă niciun element DOM. `Trigger` citește acea selecție și afișează eticheta și steagul acesteia. `Options` citește aceleași date și redă rânduri care pot fi căutate în `Dropdown.SelectionGroup`. Dropdown gestionează deschiderea, poziționarea ferestrei pop-up, paginile, navigarea și focalizarea.
+
+```tsx
+import { CountrySelect, type CountryChoice } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const ShippingCountryParts = ({
+  countries,
+}: {
+  countries: readonly CountryChoice[];
+}) => (
+  <CountrySelect.Root countries={countries} defaultValue="FR">
+    <Dropdown.Root type="picker">
+      <CountrySelect.Trigger label="Shipping country" />
+      <Dropdown.Content>
+        <CountrySelect.Options
+          aria-label="Shipping country"
+          searchLabel="Search countries"
+        />
+      </Dropdown.Content>
+    </Dropdown.Root>
+  </CountrySelect.Root>
+);
+```
+
+Forma prescurtată asamblează intern aceste părți. Ambele forme partajează selecția, golirea, comportamentul dezactivat, potrivirea la căutare și prezentarea opțiunii selectate. `closeOnSelect` are implicit valoarea `true`. Setați-l la `false` în forma prescurtată sau în `Options` când selecția trebuie să mențină fereastra pop-up deschisă.
+
+## Golire și anulare
+
+`null` reprezintă absența unei țări. Selectarea rândului fără țară raportează `null`; transmiterea lui `value={null}` golește un selector controlat. Un șir gol (`''`) este un identificator valid de opțiune furnizat și rămâne distinct de `null`.
+
+`onValueChange` primește următorul identificator sau `null` și detaliile evenimentului de selecție Dropdown: `event`, `reason`, `trigger`, `cancel` și `isCanceled`. Apelați `details.cancel()` înainte de a actualiza starea controlată pentru a păstra selecția curentă și a menține fereastra pop-up deschisă. Selectarea repetată a identificatorului curent nu emite o altă modificare a valorii.
+
+Un identificator absent din `countries` afișează `noCountryLabel` și pictograma pentru lipsa țării. Redarea acestuia nu emite o modificare și nu suprascrie valoarea gazdei. Aplicația decide cum să gestioneze valorile stocate care lipsesc din opțiunile curente.
+
+## Căutare și interacțiune
+
+Căutarea potrivește etichetele de afișare pregătite. Ignoră diferențele dintre majuscule și minuscule, accentele opționale din textul latin, grec, arab și ebraic, precum și semnele de accent din chirilică, tratează `ё` chirilic ca `е` și transformă litere precum `ø`, `æ` și `ß` în `o`, `ae` și `ss`. Ignoră, de asemenea, caracterele de accent independente, precum `^`, `` ` ``, `´`, `¨` și `ˇ`, astfel încât o tastă moartă în așteptare să nu ascundă potrivirile. Semnele care formează litere distincte rămân semnificative, cum ar fi semnele japoneze de sonorizare, semnele vocalice indiene și `й` chirilic. O silabă coreeană tastată parțial, precum ㅎ sau 하, se potrivește cu silabele care încep cu aceasta, precum 한. `noCountryLabel` participă la aceeași căutare. O interogare fără opțiuni corespunzătoare afișează `noResultsLabel`.
+
+Tastele săgeată, Home și End mută focalizarea fără a modifica identificatorul selectat. Enter sau Space pe o opțiune activată confirmă selecția prin grupul său de selecție. Escape și interacțiunea din exterior folosesc închiderea și gestionarea focalizării Dropdown. Fiecare selector are o stare independentă a selecției și a ferestrei pop-up.
+
+Activarea căutării Dropdown și protecția IME necesită încă integrare, la fel ca sesiunile de pagină cu încărcare leneșă și comportamentul paginilor inactive. Ambele forme de selector își resetează propria căutare la redeschidere, inclusiv pentru ferestrele pop-up păstrate montate. Implementarea lor partajată nu finalizează încă ciclul de viață al paginilor și navigării Dropdown.
+
+`disabled` pe `Root` sau pe forma prescurtată împiedică deschiderea și selectarea. Un selector fără țări furnizate este, de asemenea, dezactivat. Dacă oricare dintre condiții apare cât timp fereastra pop-up este deschisă, selectorul solicită închiderea. Închiderea readuce focalizarea la declanșator. Gazdele controlate trebuie să accepte acea solicitare de închidere prin `onOpenChange`; forma prescurtată suprimă și fereastra pop-up când este dezactivată. După acceptarea solicitării de închidere, reactivarea selectorului nu îl redeschide automat. Declanșatorul rămâne focalizabil și expune `aria-disabled`. Declanșatoarele dezactivate omit gestionarii de activare ai consumatorului. Formele de funcție ale `className`, `style` și `render` primesc `disabled: true` în starea declanșatorului.
+
+## Etichete și personalizare
+
+Furnizați un `label` vizibil sau utilizați `aria-label` ori `aria-labelledby` pe declanșator. Etichetele referențiate au prioritate față de un `aria-label` nevid, care are prioritate față de eticheta vizibilă. Cu unul dintre aceste nume, țara selectată descrie declanșatorul. În caz contrar, țara selectată îl denumește. Fereastra pop-up moștenește numele declanșatorului, cu excepția cazului în care etichetele ferestrei pop-up deținute de apelant sau un titlu Dropdown o denumesc. Forma prescurtată denumește, de asemenea, caseta sa de listă de opțiuni folosind acele etichete ale declanșatorului, cu excepția cazului în care `optionsProps` furnizează propriul nume accesibil. În utilizarea compusă, oferiți lui `Options` un `aria-label` sau un `aria-labelledby` pentru un nume explicit al casetei de listă. În caz contrar, face referire la titlul Dropdown înregistrat sau la conținutul declanșatorului. O indicație contextuală dezvăluie întreaga etichetă selectată atunci când aceasta este trunchiată.
+
+`searchLabel` furnizează substituentul și numele accesibil ale câmpului de căutare, `noCountryLabel` textul fără țară, iar `noResultsLabel` textul pentru rezultate goale. Valorile implicite sunt `Search`, `No country` și `No results`. Transmiteți șiruri traduse atunci când aplicația dvs. este localizată. Copiii personalizați ai `Trigger` înlocuiesc afișarea țării selectate; apelantul gestionează acel conținut și prezentarea sa accesibilă.
+
+Atributele native ale declanșatorului, gestionarii de evenimente, `className`, `style`, `ref` și `render` vizează butonul declanșator. `wrapperProps` vizează div-ul înconjurător care conține și eticheta vizibilă. Proprietățile native ale `Options`, `ref` și `render` vizează div-ul grupului său de selecție. Funcția sa `render` primește `{ value, multiple: false }`, unde `value` este identificatorul public al țării sau `null`, nu un identificator intern de opțiune. `searchProps` vizează intrarea de căutare; valoarea căutării și gestionarea modificărilor rămân în responsabilitatea selectorului. Forma prescurtată acceptă direct aceleași proprietăți de căutare și atribute de grup prin `optionsProps`. Transmiteți mai departe proprietățile și referințele furnizate când înlocuiți un element prin `render`.
+
+## Integrarea gazdei și stocare
+
+Forma prescurtată acceptă `open`, `defaultOpen`, `onOpenChange`, `onEscapeKeyDown`, `onInteractOutside` și `defaultPage` ale Dropdown. Utilizarea compusă le setează pe `Dropdown.Root`. `onOpenChange` raportează în prezent doar o valoare booleană, corespunzând contractului public al Dropdown. Detaliile evenimentului de deschidere și anularea generală a deschiderii rămân indisponibile în amonte. Callbackurile pentru închiderea cu Escape și din exterior pot apela `event.preventDefault()` pentru a menține fereastra pop-up deschisă.
+
+`popupProps` acceptă toate proprietățile `Dropdown.Content`, cu excepția `children`, inclusiv atributele native ale ferestrei pop-up, `ref`, `render`, poziționarea, destinația portalului, numele accesibile și `keepMounted`. În utilizarea compusă, transmiteți-le direct la `Dropdown.Content`.
+
+Păstrați ID-urile meniului derulant, stivele de focalizare, metadatele câmpului, persistența și ciclul de viață al editării în adaptorul gazdei. Adaptorul frontend al Twenty utilizează coduri de țară stabile pentru identificatorii selectorului și convertește selecțiile explicite înapoi în valorile existente ale numelor de țări sursă. Șirul gol stocat se mapează la `null` al selectorului; valorile moștenite necorespunzătoare rămân stocate până când o selecție explicită le modifică. Etichetele de afișare traduse nu devin nume de țări stocate. Aplicațiile cu un alt format de stocare trebuie să efectueze conversia și în adaptorul lor.
+
+Trimiterea formularelor native, resetarea, `required`, `readOnly` și integrarea Field pentru acest selector personalizat rămân amânate.
+
+## Rendererul componentei Front
+
+Fixture-urile componentelor frontend React și Preact verifică deschiderea prin indicator, filtrarea și selecția prin API-urile prescurtate și compuse, inclusiv valorile controlate și necontrolate, golirea și reselectarea null, modificările anulate, actualizările externe controlate, interacțiunea dezactivată, etichetele traduse și steagurile decorative. Acestea verifică, de asemenea, proprietățile native și referințele declanșatorului și ale intrării de căutare, precum și țintele și referințele de redare ale declanșatorului și grupului de opțiuni. Activarea de la tastatură a căutării și gestionarea IME, durata de viață a sesiunii de pagină și acceptarea completă pentru portalul rendererului, geometrie, derulare, închiderea din exterior și restaurarea focalizării rămân deschise.
+
+## Migrare
+
+Înlocuiți sentinelul anterior pentru lipsa țării, reprezentat de șirul gol, cu `null` în valorile controlate și starea de selecție. Un șir gol (`''`) este acum un identificator valid de opțiune, astfel încât `value=""` nu mai înseamnă lipsa unei țări. Păstrați stabilă fiecare valoare `CountryChoice.value`; identificatorii șir existenți pot rămâne neschimbați, iar etichetele de afișare pot fi traduse independent.
+
+Actualizați gestionarii `onValueChange` pentru a accepta `string | null`. Callbackul primește acum și `eventDetails` ca al doilea argument, inclusiv `cancel()` pentru a respinge o selecție. Gestionarii care nu au nevoie de detaliile evenimentului pot continua să utilizeze doar primul argument.
+
+Dacă stocarea dvs. utilizează `''` pentru lipsa unei țări, convertiți-l la `null` înainte de a-l transmite selectorului și convertiți `null` raportat înapoi la `''` la persistență. Păstrați această conversie de compatibilitate în adaptorul aplicației și omiteți-o atunci când `''` este un identificator intenționat de opțiune.
+
+## Proprietăți
+
+<CountrySelectReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

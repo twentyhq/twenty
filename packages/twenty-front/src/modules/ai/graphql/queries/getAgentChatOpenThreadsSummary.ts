@@ -4,7 +4,12 @@ export const GET_AGENT_CHAT_OPEN_THREADS_SUMMARY = gql`
   query GetAgentChatOpenThreadsSummary {
     agentChatOpenThreadsSummary {
       openThreadCount
+      unreadOpenThreadCount
       needsInputThreadCount
+      mentionThreadCount
+      assignedToMeThreadCount
+      assignedThreadCount
+      unassignedThreadCount
       hasUnreadOpenThread
       hasUnreadMentionThread
       hasUnreadAssignedThread

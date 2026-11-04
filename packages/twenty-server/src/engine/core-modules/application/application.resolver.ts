@@ -13,6 +13,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -32,24 +33,25 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @MetadataResolver(() => ApplicationDTO)
 @UseFilters(ApplicationExceptionFilter)
@@ -122,6 +124,21 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => Boolean)
+  runOnUserPreferences(
+    @Parent()
+    application: Partial<
+      Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
+        Pick<ApplicationDTO, 'runOnUserPreferences'>
+    >,
+  ): boolean {
+    return (
+      application.runOnUserPreferences ??
+      application.isUserHealthCheckEnabled ??
+      false
+    );
+  }
+
+  @ResolveField(() => Boolean)
   isUninstallBlockedByOtherWorkspaceInstallations(
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
@@ -139,7 +156,8 @@ export class ApplicationResolver {
   @ResolveField(() => [AgentDTO])
   agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -148,13 +166,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.agentsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -162,7 +182,8 @@ export class ApplicationResolver {
   @ResolveField(() => [FrontComponentDTO])
   frontComponents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -171,13 +192,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.frontComponentsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -185,7 +208,8 @@ export class ApplicationResolver {
   @ResolveField(() => [CommandMenuItemDTO])
   commandMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -194,13 +218,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.commandMenuItemsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -208,7 +234,8 @@ export class ApplicationResolver {
   @ResolveField(() => [SettingsMenuItemDTO], { nullable: true })
   settingsMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -217,13 +244,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.settingsMenuItemsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -231,7 +260,8 @@ export class ApplicationResolver {
   @ResolveField(() => [LogicFunctionDTO])
   logicFunctions(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -240,13 +270,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.logicFunctionsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -254,7 +286,8 @@ export class ApplicationResolver {
   @ResolveField(() => [ObjectMetadataDTO])
   objects(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -263,13 +296,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.objectMetadataByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -286,6 +321,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'manage',
       })
     ) {
       throw new ForbiddenError(

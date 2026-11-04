@@ -1,10 +1,10 @@
 ---
 title: Calendar & Email
 description: Sync your email and calendar with Twenty.
-icon: "envelope"
 ---
 
-Twenty connects to your existing tools so your CRM stays up to date without manual data entry.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Email sync
 
@@ -36,11 +36,15 @@ Beyond email and calendar, Twenty connects to external tools through:
 
 Developers can build full-featured apps on top of Twenty — adding custom UI, server-side logic, and deep integrations. Apps can be published for the community or kept private.
 
-<CardGroup cols={2}>
-  <Card title="Calendar & Email guide" icon="envelope" href="/user-guide/calendar-emails/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/user-guide/calendar-emails/overview" img="/images/documentation/banner-icons-v2/calendar-emails.svg">
+    <CardTitle>Calendar & Email guide</CardTitle>
     Set up email sync, calendar sync, and troubleshoot issues.
   </Card>
-  <Card title="API & Extensions" icon="plug" href="/developers/extend/api">
+  <Card href="/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>API & Extensions</CardTitle>
     Build custom integrations with the Twenty API.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-calendar-email" />

@@ -1,9 +1,10 @@
 ---
 title: APIs
-icon: "plug"
+sidebarTitle: Overview
 description: REST and GraphQL APIs generated from your workspace schema.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Schema-per-tenant APIs
@@ -68,3 +69,5 @@ When `fields` is omitted on an object with more than 200 readable fields, each r
 |-------|-------|
 | Requests | 100 per minute |
 | Batch size | 60 records per call |
+
+<PageBanner illustration="dev-api" />

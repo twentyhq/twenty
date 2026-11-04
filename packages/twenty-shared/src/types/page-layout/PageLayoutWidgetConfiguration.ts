@@ -126,8 +126,9 @@ export type FieldRichTextConfiguration = {
 export type StandaloneRichTextConfiguration = {
   configurationType: 'STANDALONE_RICH_TEXT';
   body: {
+    tiptap?: string | null;
+    markdown?: string | null;
     blocknote?: string | null;
-    markdown: string | null;
   };
 };
 

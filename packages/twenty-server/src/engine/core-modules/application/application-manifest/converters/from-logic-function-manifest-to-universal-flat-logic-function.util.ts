@@ -5,7 +5,7 @@ import { type LogicFunctionManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { IDENTIFY_ACCOUNT_TIMEOUT_SECONDS } from 'src/engine/core-modules/application/connection-provider/constants/identify-account-timeout-seconds.constant';
+import { CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/core-modules/application/connection-provider/constants/connection-flow-logic-function-timeout-seconds.constant';
 import { isPackagedApplicationSource } from 'src/engine/core-modules/application/application-registration/utils/is-packaged-application-source.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -56,14 +56,14 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
   applicationUniversalIdentifier,
   applicationSourceType,
   existingFlatLogicFunctionMaps,
-  identifyAccountLogicFunctionUniversalIdentifiers,
+  connectionFlowLogicFunctionUniversalIdentifiers,
   now,
 }: {
   logicFunctionManifest: LogicFunctionManifest;
   applicationUniversalIdentifier: string;
   applicationSourceType: ApplicationRegistrationSourceType;
   existingFlatLogicFunctionMaps: AllFlatEntityMaps['flatLogicFunctionMaps'];
-  identifyAccountLogicFunctionUniversalIdentifiers: Set<string>;
+  connectionFlowLogicFunctionUniversalIdentifiers: Set<string>;
   now: string;
 }): UniversalFlatLogicFunction => {
   const name =
@@ -77,10 +77,10 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     name,
     description: logicFunctionManifest.description ?? null,
     runtime: LogicFunctionRuntime.NODE22,
-    timeoutSeconds: identifyAccountLogicFunctionUniversalIdentifiers.has(
+    timeoutSeconds: connectionFlowLogicFunctionUniversalIdentifiers.has(
       logicFunctionManifest.universalIdentifier,
     )
-      ? Math.min(timeoutSeconds, IDENTIFY_ACCOUNT_TIMEOUT_SECONDS)
+      ? Math.min(timeoutSeconds, CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS)
       : timeoutSeconds,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,

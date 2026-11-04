@@ -29,8 +29,10 @@ type SetLogicFunctionFormValues = Dispatch<
 
 export const useLogicFunctionUpdateFormState = ({
   logicFunctionId,
+  shouldKeepSourceHandlerCode = false,
 }: {
   logicFunctionId: string;
+  shouldKeepSourceHandlerCode?: boolean;
 }): {
   formValues: LogicFunctionFormValues;
   logicFunction: LogicFunction | null;
@@ -78,14 +80,31 @@ export const useLogicFunctionUpdateFormState = ({
     }
   }, [logicFunction]);
 
+  const [handledSourceHandlerCode, setHandledSourceHandlerCode] = useState<
+    string | undefined
+  >(undefined);
+
   useEffect(() => {
-    if (isDefined(sourceHandlerCode)) {
+    if (
+      !isDefined(sourceHandlerCode) ||
+      sourceHandlerCode === handledSourceHandlerCode
+    ) {
+      return;
+    }
+
+    setHandledSourceHandlerCode(sourceHandlerCode);
+
+    if (!shouldKeepSourceHandlerCode) {
       setFormValues((prev) => ({
         ...prev,
         sourceHandlerCode,
       }));
     }
-  }, [sourceHandlerCode]);
+  }, [
+    sourceHandlerCode,
+    handledSourceHandlerCode,
+    shouldKeepSourceHandlerCode,
+  ]);
 
   return {
     formValues,

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DRACO_DECODER_PATH } from './draco-decoder-path';
 import { mergeGeometries } from './merge-geometries';
@@ -17,6 +18,42 @@ const LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET = 2.75;
 
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
+
+function normalizeTextureCoordinates(geometry: THREE.BufferGeometry) {
+  const uv = geometry.getAttribute('uv');
+
+  if (!isDefined(uv)) {
+    return;
+  }
+
+  let minU = Infinity;
+  let minV = Infinity;
+  let maxU = -Infinity;
+  let maxV = -Infinity;
+
+  for (let index = 0; index < uv.count; index += 1) {
+    minU = Math.min(minU, uv.getX(index));
+    maxU = Math.max(maxU, uv.getX(index));
+    minV = Math.min(minV, uv.getY(index));
+    maxV = Math.max(maxV, uv.getY(index));
+  }
+
+  const span = Math.max(maxU - minU, maxV - minV);
+
+  if (!(span > 0)) {
+    return;
+  }
+
+  for (let index = 0; index < uv.count; index += 1) {
+    uv.setXY(
+      index,
+      (uv.getX(index) - minU) / span,
+      (uv.getY(index) - minV) / span,
+    );
+  }
+
+  uv.needsUpdate = true;
+}
 
 function normalizeImportedGeometry(
   geometry: THREE.BufferGeometry,
@@ -69,6 +106,7 @@ function normalizeImportedGeometry(
     geometry.rotateZ(postRotateZ);
   }
 
+  normalizeTextureCoordinates(geometry);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();

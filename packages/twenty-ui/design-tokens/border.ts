@@ -22,6 +22,7 @@ export const BORDER_TOKENS = {
     md: MD_RADIUS,
     smRound: SM_RADIUS,
     mdRound: MD_RADIUS,
+    lgRound: token('12px'),
     lg: token('16px'),
     xl: token('20px'),
     xxl: token('40px'),

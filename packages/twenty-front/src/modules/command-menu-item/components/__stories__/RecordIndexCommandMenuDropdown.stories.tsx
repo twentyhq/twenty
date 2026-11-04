@@ -23,7 +23,6 @@ import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
   EngineComponentKey,
-  FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -63,7 +62,13 @@ const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
+  universalIdentifier: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
 };
 
 const COMMAND_MENU_ITEMS = [
@@ -177,12 +182,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
         ...mockCurrentWorkspace.installedApplications,
         THIRD_PARTY_APPLICATION,
       ],
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-          value: true,
-        },
-      ],
+      featureFlags: [],
     });
   },
 };

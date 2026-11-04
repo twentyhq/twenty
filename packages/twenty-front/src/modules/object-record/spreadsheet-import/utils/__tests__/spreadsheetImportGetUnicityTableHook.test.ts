@@ -31,6 +31,8 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
         name: 'unique_name_idx',
         indexType: IndexType.BTREE,
         isUnique: true,
+        applicationId: 'application-id',
+        isSystemSideEffect: false,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
         indexFieldMetadatas: [
@@ -48,6 +50,8 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
         name: 'unique_domain_name_idx',
         indexType: IndexType.BTREE,
         isUnique: true,
+        applicationId: 'application-id',
+        isSystemSideEffect: false,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
         indexFieldMetadatas: [

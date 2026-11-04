@@ -161,6 +161,13 @@
     "isNumber": false
   },
   {
+    "path": "background.dangerSolid",
+    "cssVariable": "--t-background-danger-solid",
+    "light": "color(display-p3 0.744 0.234 0.222)",
+    "dark": "color(display-p3 0.744 0.234 0.222)",
+    "isNumber": false
+  },
+  {
     "path": "background.invertedPrimary",
     "cssVariable": "--t-background-inverted-primary",
     "light": "color(display-p3 0.2 0.2 0.2)",
@@ -417,6 +424,13 @@
     "cssVariable": "--t-border-radius-lg",
     "light": "16px",
     "dark": "16px",
+    "isNumber": false
+  },
+  {
+    "path": "border.radius.lgRound",
+    "cssVariable": "--t-border-radius-lg-round",
+    "light": "12px",
+    "dark": "12px",
     "isNumber": false
   },
   {

@@ -34,13 +34,7 @@ to the workspace that made the connection, so no per-workspace domain is needed.
    yarn install
    ```
 
-2. Start the local Twenty server:
-
-   ```bash
-   yarn twenty docker:start
-   ```
-
-   Check the server status at any time with `yarn twenty docker:status`.
+2. Start a local Twenty server with Docker or the repository development setup. Install the standalone CLI with `npm install -g twenty`, then run `twenty auth login --url http://localhost:2020`.
 
 3. Set `FATHOM_CLIENT_ID` and `FATHOM_CLIENT_SECRET` as server variables in
    Twenty.
@@ -48,7 +42,7 @@ to the workspace that made the connection, so no per-workspace domain is needed.
 4. Start the development server and sync your app:
 
    ```bash
-   yarn twenty dev
+   twenty app dev --create
    ```
 
 5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings. The connection hook registers the signed webhook and starts a 31-day import.
@@ -63,6 +57,23 @@ to the workspace that made the connection, so no per-workspace domain is needed.
    ```
 
    The import runs through the requesting user's Fathom connection.
+
+## Workspace-shared and personal connections
+
+Connecting Fathom from **Settings > Applications > Fathom** adds a
+workspace-shared connection. Its webhook receives the connected account's own
+recordings and the team recordings it can access.
+
+Members can also add a personal connection from **Settings > App preferences**,
+which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. A
+personal connection's webhook receives only that member's own recordings
+(`my_recordings` and `my_shared_with_team_recordings`), so teammates who each
+connect do not all import the same team recordings. Its history imports, the
+31-day one on connect and manual backfills, include only calls recorded by the
+member's email. Fathom has no endpoint that names the account behind a token,
+so a member whose Fathom email differs from their Twenty email gets new calls
+but no history. Actions run by a member use their personal connection first and
+fall back to the workspace-shared one.
 
 ## Media import behaviour
 

@@ -30,6 +30,11 @@ export const Display: Story = {
   render: (args) => <CardDisplayExample {...args} />,
 };
 
+export const Compact: Story = {
+  args: { variant: 'compact' },
+  parameters: { container: { width: 480 } },
+};
+
 const CardDisplayExample = (props: ComponentProps<typeof Card.Root>) => {
   const titleId = useId();
 

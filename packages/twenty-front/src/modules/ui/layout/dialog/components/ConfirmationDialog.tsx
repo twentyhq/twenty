@@ -27,6 +27,7 @@ export const ConfirmationDialog = ({
   confirmButtonColor = 'danger',
   AdditionalButtons,
   hideCancelButton = false,
+  shouldWaitForConfirmBeforeClosing = false,
 }: ConfirmationDialogProps) => {
   const { i18n, t } = useLingui();
   const translatedConfirmButtonText =
@@ -46,10 +47,27 @@ export const ConfirmationDialog = ({
     closeDialog(dialogId);
   };
 
-  const handleConfirmClick = () => {
-    handleClose();
-    onConfirmClick();
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const handleConfirmClick = async () => {
+    if (!shouldWaitForConfirmBeforeClosing) {
+      handleClose();
+      onConfirmClick();
+
+      return;
+    }
+
+    setIsConfirming(true);
+
+    try {
+      await onConfirmClick();
+    } finally {
+      setIsConfirming(false);
+      handleClose();
+    }
   };
+
+  const isLoading = (loading ?? false) || isConfirming;
 
   const handleCancelClick = () => {
     handleClose();
@@ -57,7 +75,7 @@ export const ConfirmationDialog = ({
   };
 
   const handleEnter = () => {
-    if (isValidValue && !loading) {
+    if (isValidValue && !isLoading) {
       handleConfirmClick();
     }
   };
@@ -111,7 +129,8 @@ export const ConfirmationDialog = ({
 
             <Button
               onClick={handleConfirmClick}
-              disabled={!isValidValue || loading}
+              disabled={!isValidValue || isLoading}
+              loading={shouldWaitForConfirmBeforeClosing && isConfirming}
               fullWidth
               data-testid="confirmation-modal-confirm-button"
               variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}

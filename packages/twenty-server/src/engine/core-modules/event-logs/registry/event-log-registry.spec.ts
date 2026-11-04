@@ -100,5 +100,27 @@ describe('event-log registry', () => {
         message: 'hello',
       });
     });
+
+    it('folds the monitoring columns and stored properties of an application log row', () => {
+      const record = EVENT_LOG_TYPES[EventLogTable.APPLICATION_LOG].normalize({
+        logicFunctionName: 'myFn',
+        timestamp,
+        level: 'ERROR',
+        message: 'TypeError: boom',
+        applicationRegistrationId: 'registration-1',
+        applicationVersion: '1.2.3',
+        source: 'LOGIC_FUNCTION',
+        errorCode: 'TypeError',
+        properties: { stackTrace: ['TypeError: boom'] },
+      });
+
+      expect(record.properties).toMatchObject({
+        applicationRegistrationId: 'registration-1',
+        applicationVersion: '1.2.3',
+        source: 'LOGIC_FUNCTION',
+        errorCode: 'TypeError',
+        stackTrace: ['TypeError: boom'],
+      });
+    });
   });
 });

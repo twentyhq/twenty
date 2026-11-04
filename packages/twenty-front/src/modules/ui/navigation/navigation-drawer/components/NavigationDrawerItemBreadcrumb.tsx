@@ -2,15 +2,22 @@ import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-dr
 import { styled } from '@linaria/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
-export type NavigationDrawerItemBreadcrumbProps = {
+type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
+  isCompact?: boolean;
 };
 
-const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
+const StyledNavigationDrawerItemBreadcrumbContainer = styled.div<{
+  isCompact: boolean;
+}>`
   height: ${themeCssVariables.spacing[7]};
 
-  margin-inline-end: ${themeCssVariables.spacing[2]};
-  margin-inline-start: 7.5px;
+  margin-inline-end: ${({ isCompact }) =>
+    isCompact ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
+  margin-inline-start: ${({ isCompact }) =>
+    isCompact
+      ? themeCssVariables.spacing['1.5']
+      : `calc(${themeCssVariables.spacing[2]} - ${themeCssVariables.spacing['0.5']} / 4)`};
   position: relative;
   width: 9px;
 
@@ -71,6 +78,7 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
 
 export const NavigationDrawerItemBreadcrumb = ({
   state,
+  isCompact = false,
 }: NavigationDrawerItemBreadcrumbProps) => {
   const showVerticalBar =
     state !== 'last-not-selected' && state !== 'last-selected';
@@ -86,7 +94,7 @@ export const NavigationDrawerItemBreadcrumb = ({
     state === 'last-selected';
 
   return (
-    <StyledNavigationDrawerItemBreadcrumbContainer>
+    <StyledNavigationDrawerItemBreadcrumbContainer isCompact={isCompact}>
       <StyledGapVerticalLine darker={gapShouldBeDarker} />
       <StyledRoundedProtrusion darker={protrusionShouldBeDarker} />
       {showVerticalBar && (

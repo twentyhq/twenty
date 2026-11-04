@@ -9,7 +9,6 @@ import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-typ
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { t } from '@lingui/core/macro';
 import {
   type ApplicationVariableOption,
   deserializeApplicationVariableValue,
@@ -17,6 +16,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationVariableInputProps = {
   type?: string | null;
@@ -54,14 +54,15 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
         typeof parsed.blocknote === 'string' ? parsed.blocknote : null;
       const markdown =
         typeof parsed.markdown === 'string' ? parsed.markdown : null;
+      const tiptap = typeof parsed.tiptap === 'string' ? parsed.tiptap : null;
 
-      return { blocknote, markdown };
+      return { blocknote, markdown, tiptap };
     }
   } catch {
-    return { blocknote: null, markdown: value === '' ? null : value };
+    return { markdown: value === '' ? null : value };
   }
 
-  return { blocknote: null, markdown: value === '' ? null : value };
+  return { markdown: value === '' ? null : value };
 };
 
 export const SettingsApplicationVariableInput = ({
@@ -73,6 +74,7 @@ export const SettingsApplicationVariableInput = ({
   disabled,
   isSecret,
 }: SettingsApplicationVariableInputProps) => {
+  const { t } = useLingui();
   const fieldType = (type as FieldMetadataType) ?? FieldMetadataType.TEXT;
 
   switch (fieldType) {

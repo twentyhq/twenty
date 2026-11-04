@@ -3,13 +3,13 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 
 type UseCreateActivityForTargetRecordParams = {
   targetRecord: ActivityTargetableObject;
   activityObjectNameSingular:
-    | CoreObjectNameSingular.Note
-    | CoreObjectNameSingular.Task;
+    | StandardObjectNameSingular.Note
+    | StandardObjectNameSingular.Task;
 };
 
 // Attaching to the target needs update permission on its object, not just create on the activity.

@@ -1,8 +1,11 @@
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
+import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -97,7 +100,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const workspaceDataSourceOptions = {
       pool,
       authContext: buildSystemAuthContext(WORKSPACE_ID),
-      objectPermissionsByRoleId: {},
       internalContext: {
         workspaceId: WORKSPACE_ID,
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
@@ -112,7 +114,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
+        rolesPermissions: {},
         flatRoleTargetByAgentIdMaps: {},
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
         recordStock: {
@@ -147,6 +151,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
+        getRepositoryWithoutPermissionChecks:
+          workspaceDataSource.getRepositoryWithoutPermissionChecks.bind(
+            workspaceDataSource,
+          ),
         runInWorkspaceTransaction:
           workspaceDataSource.transaction.bind(workspaceDataSource),
       };
@@ -203,17 +211,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const chatRecordEvents = {
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
-    const chatThreadService = new AgentChatThreadService(
-      threads as never,
-      chatSharing as never,
-      chatRecordEvents as never,
-      {
-        recordMemberActivity: jest.fn().mockResolvedValue({
-          lastActivityAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      } as never,
-    );
     const conversationWriter = new AgentConversationWriterService(
       turns as never,
       new AgentHistoryTransactionService(orm as never),
@@ -224,6 +221,20 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           },
         }),
       } as never,
+    );
+    const chatThreadService = new AgentChatThreadService(
+      threads,
+      chatSharing as never,
+      chatRecordEvents as never,
+      {
+        recordMemberActivity: jest.fn().mockResolvedValue({
+          lastActivityAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      } as never,
+      {} as never,
+      {} as never,
+      {} as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>
@@ -239,14 +250,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
-      new AgentChatQueueService(
-        turns,
-        messageRepository,
-        messageParts,
-        {} as never,
-        conversationWriter,
-        chatThreadService,
-      );
+      new AgentChatQueueService(turns, messageRepository, conversationWriter);
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(
@@ -259,7 +263,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             workspaceMemberId: MEMBER_ID,
           }),
         } as never,
-        {} as never,
         {} as never,
       );
 
@@ -808,21 +811,40 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
         threadId: thread.id,
       });
-      const message = await chat.addMessage({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
-        threadId: thread.id,
-        uiMessage: {
-          role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: 'Live message after upgrade' }],
-        },
-      });
-      const queued = await queue.queueMessage({
+      const memberMessageWriter = new AgentChatMemberMessageWriterService(
+        chat,
+        chatThreadService,
+        { resolveMentionInTransaction: jest.fn() } as never,
+        {} as never,
+        conversationWriter,
+        {} as never,
+        { publish: jest.fn() } as never,
+      );
+      const memberMessageParts = new AgentChatMemberMessagePartsService(
+        {} as never,
+      );
+      const actor = {
         workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
-        threadId: thread.id,
-        text: 'Queued after upgrade',
+      };
+      const message = await memberMessageWriter.writeMemberMessage({
+        actor,
+        thread,
+        message: await memberMessageParts.prepareMemberMessage({
+          workspaceId: WORKSPACE_ID,
+          message: { text: 'Live message after upgrade' },
+        }),
+        placement: AgentChatMemberMessagePlacement.RUNNING,
+      });
+      const queued = await memberMessageWriter.writeMemberMessage({
+        actor,
+        thread,
+        message: await memberMessageParts.prepareMemberMessage({
+          workspaceId: WORKSPACE_ID,
+          message: { text: 'Queued after upgrade' },
+        }),
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
       await queue.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,

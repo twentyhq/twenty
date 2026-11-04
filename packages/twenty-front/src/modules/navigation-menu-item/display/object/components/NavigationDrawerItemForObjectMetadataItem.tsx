@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, type ReactNode } from 'react';
 
@@ -23,15 +22,17 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useNavigate } from 'react-router-dom';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { IconLock, useIcons } from 'twenty-ui/icon';
+import { IconLock } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -52,6 +53,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   isDragging = false,
   rightOptions,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
+  const { t } = useLingui();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -140,7 +142,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     ? () => (
         <Avatar
           shape={
-            objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
+            objectMetadataItem.nameSingular ===
+            StandardObjectNameSingular.Company
               ? 'square'
               : 'circle'
           }

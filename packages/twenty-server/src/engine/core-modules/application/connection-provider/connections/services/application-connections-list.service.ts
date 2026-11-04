@@ -249,12 +249,7 @@ export class ApplicationConnectionsListService {
     }
 
     try {
-      const encryptedTokens = await this.refreshTokensService.resolveTokens(
-        account,
-        workspaceId,
-      );
-
-      return {
+      const connectionFields = {
         id: account.id,
         providerName: provider.name,
         name: account.name ?? account.handle,
@@ -264,13 +259,25 @@ export class ApplicationConnectionsListService {
         visibility: LEGACY_CONNECTION_VISIBILITY_BY_SCOPE[account.scope],
         userWorkspaceId: account.userWorkspaceId,
         workspaceMemberId,
-        accessToken: this.connectedAccountTokenEncryptionService.decrypt({
-          ciphertext: encryptedTokens.accessToken,
-          workspaceId,
-        }),
         scopes: account.scopes ?? provider.oauthConfig?.scopes ?? [],
         authFailedAt: account.authFailedAt?.toISOString() ?? null,
         authFailedReason: account.authFailedReason,
+      };
+
+      if (provider.type === 'custom') {
+        return {
+          ...connectionFields,
+          providerType: 'custom',
+          accessToken: isDefined(account.accessToken)
+            ? await this.decryptAccessToken({ account, workspaceId })
+            : null,
+        };
+      }
+
+      return {
+        ...connectionFields,
+        providerType: 'oauth',
+        accessToken: await this.decryptAccessToken({ account, workspaceId }),
       };
     } catch (error) {
       this.logger.warn(
@@ -279,5 +286,23 @@ export class ApplicationConnectionsListService {
 
       return null;
     }
+  }
+
+  private async decryptAccessToken({
+    account,
+    workspaceId,
+  }: {
+    account: ConnectedAccountEntity;
+    workspaceId: string;
+  }): Promise<string> {
+    const encryptedTokens = await this.refreshTokensService.resolveTokens(
+      account,
+      workspaceId,
+    );
+
+    return this.connectedAccountTokenEncryptionService.decrypt({
+      ciphertext: encryptedTokens.accessToken,
+      workspaceId,
+    });
   }
 }

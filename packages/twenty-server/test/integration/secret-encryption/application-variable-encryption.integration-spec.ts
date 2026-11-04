@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -76,7 +77,7 @@ describe('ApplicationVariable encryption (integration)', () => {
                 isSecret: true,
               },
             },
-            packageJsonChecksum: null,
+            packageJsonChecksum: TEST_APPLICATION_PACKAGE_JSON_CHECKSUM,
             yarnLockChecksum: null,
           },
         },

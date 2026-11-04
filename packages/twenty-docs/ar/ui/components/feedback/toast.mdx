@@ -1,0 +1,256 @@
+---
+title: إشعار منبثق
+description: اعرض رسائل الحالة مع تفاصيل وإجراءات وتقدم اختيارية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ToastReference from '/snippets/ui/generated/components/feedback/toast.mdx';
+import ToastProviderReference from '/snippets/ui/generated/components/feedback/toast-provider.mdx';
+import ToasterReference from '/snippets/ui/generated/components/feedback/toaster.mdx';
+
+## نظرة عامة
+
+`Toast` يعرض إشعارًا واحدًا. يتحكم تطبيقك في وقت ظهوره وموضعه ووقت إزالته.
+
+<StoryEmbed storyId="ui-feedback-toast--display" title="مثال على الإشعار المنبثق" height={120} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## خيارات مرئية
+
+قارن بين التغذية الراجعة المحايدة والناجحة والخاطئة والإعلامية والتحذيرية باستخدام الرسالة نفسها والتقدم نفسه.
+
+<StoryEmbed storyId="ui-feedback-toast--catalog" title="حالات التغذية الراجعة للإشعار المنبثق" height={530} />
+
+لإشعارات التطبيق، لفّ التطبيق بـ `ToastProvider`، وثبّت `Toaster` بداخله، واستخدم `useToast()` من المكوّنات التابعة. يمتلك كل موفّر مخزن إشعارات مستقلاً، وعدّادات تنازلية، ودورة حياة للإغلاق. يمكن لعدة مكوّنات Toaster أن تعكس الموفّر نفسه.
+
+## إشعارات التطبيق
+
+```tsx
+import { useState } from 'react';
+
+import {
+  ToastProvider,
+  Toaster,
+  useToast,
+} from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+const SaveNotificationButton = () => {
+  const { enqueueToast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        enqueueToast({
+          children: 'Record saved',
+          status: 'success',
+        })
+      }
+    >
+      Add saved notification
+    </Button>
+  );
+};
+
+export const Notifications = () => {
+  const [limit, setLimit] = useState(3);
+
+  return (
+    <ToastProvider limit={limit}>
+      <SaveNotificationButton />
+      <Button onClick={() => setLimit(1)}>Keep one notification</Button>
+      <Button onClick={() => setLimit(3)}>Keep three notifications</Button>
+      <Toaster />
+    </ToastProvider>
+  );
+};
+```
+
+يقبل `enqueueToast` خصائص Toast ومفتاح `dedupeKey` اختياريًا، ويعيد معرّف الإشعار. يعيد المفتاح المرئي المطابق المعرّف الحالي دون إضافة إشعار آخر. يُعدّل `updateToast({ id, ...changes })` ذلك الإشعار النشط. يرفض `closeToast(id)` إشعارًا واحدًا؛ ويرفض `closeToast()` جميع الإشعارات المرئية في الموفّر.
+
+يكون الإعداد الافتراضي للموفّر هو ثلاثة إشعارات مرئية. يجب أن يكون `limit` عدداً صحيحاً موجباً، ويمكن أن يتغير أثناء تثبيت الموفّر. يؤدي خفضه أو الإضافة فوقه إلى إغلاق أقدم الإشعارات المرئية أولاً. تؤدي زيادتها إلى إبقاء الإشعارات الحالية دون تغيير ولا تستعيد الإشعارات المغلقة. تحافظ تغييرات التهيئة على المخزن والمُعرّفات الباقية والترتيب والوقت المتبقي للعد التنازلي.
+
+## دورة حياة الموفّر
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--documentation" title="دورة حياة الإشعارات المشتركة" height={430} />
+
+تعرض عناصر Toaster متعددة داخل موفّر واحد الإشعارات نفسها. تنطبق التحديثات والإغلاق على كل نسخة متطابقة، ولكل إشعار عد تنازلي مشترك واحد. يؤدي التحويم أو التركيز داخل أي نسخة متطابقة إلى إيقافه مؤقتًا؛ ويُستأنف بعد أن تحرر جميع النسخ المتطابقة كليهما. لا تؤدي إضافة Toaster آخر إلى إعادة بدء العد التنازلي أو إنشاء دورة حياة أخرى لرد الاتصال. استخدم موفّرين منفصلين للطوابير المستقلة.
+
+بالنسبة إلى إشعارات الموفّر، يستدعي انتهاء الصلاحية وزر الإغلاق و`closeToast` والإزالة بسبب الحد أحدث `onClose` مرة واحدة. يكون الإشعار مغلقًا بالفعل عند تشغيل رد الاتصال، لذا لا تأثير للتحديثات وطلبات الإغلاق المتكررة لهذا المعرّف. يبقى `onCancel` رد اتصال منفصلًا للإجراء ولا يغلق تلقائيًا.
+
+تكون الإشعارات المغلقة غير نشطة أثناء حركات الخروج. تُزال إدخالاتها بعد أن تنهي جميع النسخ المتطابقة المعروضة إجراءات خروجها أو تُفكّك. يؤدي فكّ تركيب آخر Toaster إلى مسح الإدخالات المغلقة وتجميد الوقت المتبقي للإشعارات المرئية. يستأنف إعادة تركيب Toaster ذلك الوقت. يؤدي فكّ تركيب الموفّر إلى تجاهل إشعاراته وإلغاء العد التنازلي وإجراءات الخروج دون استدعاء `onClose`. لا يكون لعمليات `enqueueToast` و`updateToast` و`closeToast` الملتقطة من ذلك الموفّر أي تأثير بعد فكّ تركيبه.
+
+يكيّف `getToastProps` محتوى كل إشعار وطريقة عرضه. عيّن `duration` و`progress` في `enqueueToast` أو `updateToast` لكي تشترك كل نسخة متطابقة في تهيئة التوقيت نفسها. تظل تجاوزات التوقيت الحالية عبر `getToastProps` مدعومة عندما تعرض جميع النسخ المتطابقة المدة والتقدم نفسيهما لإشعار ما. يحتفظ الموفّر بالمعرّف ومعالج الإغلاق والعد التنازلي المشترك.
+
+يحدد `container` وجهة البوابة الخاصة بـ Toaster. عند حذفه، يستخدم حاوية النسق المحيطة أو `document.body`. يُعرض عنصر صريح هناك؛ ويؤجل `null` العرض. تبقى الإشعارات المرئية في الطابور، مع إيقاف عدّاداتها التنازلية مؤقتًا عندما لا يكون أي Toaster معروضًا. تحتفظ البوابات بالنسق والاتجاه المحيطين. عيّن `aria-label` على كل Toaster لتوطين اسم منطقته الافتراضي، "الإشعارات"، ومنح المناطق المتطابقة أسماء مناسبة.
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--portal-documentation" title="بوابة إشعارات ذات نطاق محدد" height={430} />
+
+## تحديث إشعار مباشر
+
+استخدم المعرّف الذي يعيده `enqueueToast` لتحديث المحتوى أو حالة الملاحظات أو الإجراءات أو دوال الاستدعاء في مكانها. تحافظ التحديثات على معرّف الإشعار وموضعه. لا يكون للمعرّفات غير المعروفة أو المرفوضة أي تأثير، بما في ذلك أثناء تشغيل حركة الرفض. يستهدف كل استدعاء لـ `useToast()` أقرب موفّر له.
+
+<StoryEmbed storyId="ui-feedback-toaster--updates-documentation" title="تحديث إشعار نشط" height={380} />
+
+```tsx
+import { useToast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveButtonProps = {
+  saveRecord: () => Promise<void>;
+  onViewRecord: () => void;
+};
+
+export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
+  const { enqueueToast, updateToast } = useToast();
+
+  const save = async () => {
+    const id = enqueueToast({
+      children: 'Saving record',
+      status: 'info',
+      progress: 0,
+    });
+
+    try {
+      await saveRecord();
+      updateToast({
+        id,
+        children: 'Record saved',
+        status: 'success',
+        progress: undefined,
+        action: <Button onClick={onViewRecord}>View record</Button>,
+      });
+    } catch {
+      updateToast({
+        id,
+        children: 'Record could not be saved',
+        status: 'error',
+        progress: undefined,
+      });
+    }
+  };
+
+  return <Button onClick={save}>Save record</Button>;
+};
+```
+
+يتطلب `ToastUpdate` وجود `id` ويقبل خيارات Toast جزئية. تحتفظ الحقول المحذوفة بقيمها الحالية. يؤدي `undefined` الصريح إلى مسح حقل اختياري أو استعادة القيمة الافتراضية للمكوّن، مثل `progress: undefined` أو `status: undefined`. مرّر `null` لإزالة موضع محتوى، بما في ذلك `description` أو `icon` أو `action`. يؤدي ضبط `cancelLabel: null` إلى إخفاء عنصر التحكم بالإلغاء مع الحفاظ على دالة الاستدعاء الخاصة به. تسري تغييرات دالة الاستدعاء على الإشعار الحالي. ينتمي `dedupeKey` إلى الإدراج في قائمة الانتظار ولا يمكن تحديثه.
+
+## توقيت الإخفاء
+
+يكون العد التنازلي مضبوطًا افتراضيًا على 6,000 مللي ثانية. يتوقف مؤقتًا عندما يكون المؤشر فوق الإشعار المنبثق أو يكون تركيز لوحة المفاتيح داخله، ولا يُستأنف إلا بعد مغادرتهما معًا. مع وجود عناصر Toaster متعددة، تكون حالة الإيقاف المؤقت مشتركة بين نسخها المتطابقة. يتبع العد التنازلي المرئي الوقت المتبقي للإخفاء. يعمل الإخفاء التلقائي أيضًا عندما تؤدي الحركة المخففة إلى تعطيل الرسوم المتحركة.
+
+<StoryEmbed storyId="ui-feedback-toaster-timing--documentation" title="عناصر التحكم في توقيت الإشعار" height={480} />
+
+| العملية                                                | سلوك العد التنازلي                                                                                                 |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| تحديث المحتوى أو الحالة أو الإجراءات أو دوال الاستدعاء | الحفاظ على الوقت المتبقي. لا تؤدي التحديثات المتكررة إلى تمديده.                                                   |
+| وفّر `duration` إلى `updateToast`                      | بدء مدة جديدة، بما في ذلك عندما تبقى القيمة دون تغيير. يعيد `duration: undefined` القيمة الافتراضية ويعيد تشغيلها. |
+| تغيير الخاصية `duration` لـ `Toast` مستقل              | بدء مدة جديدة. تؤدي إعادة عرض القيمة نفسها إلى الاحتفاظ بالوقت المتبقي.                                            |
+| عيّن `duration: 0`                                     | أبقِ الإشعار مفتوحًا حتى يتم رفضه.                                                                                 |
+| وفّر `progress`                                        | أوقف العد التنازلي مؤقتًا ما دامت قيمة التقدم موجودة.                                                              |
+| أزل `progress`                                         | ابدأ مدة جديدة، أو أبقه مفتوحًا عندما تكون مدته صفرًا.                                                             |
+| التحديث أثناء التمرير فوقه أو تركيزه                   | طبّق القواعد نفسها، مع إبقاء العد التنازلي الناتج متوقفًا مؤقتًا إلى أن يغادر كل من المؤشر والتركيز.               |
+
+على سبيل المثال، يحافظ `updateToast({ id, children: 'Still saving' })` على الوقت المتبقي، بينما يمنح `updateToast({ id, duration: 6000 })` القارئ ست ثوانٍ إضافية. تنطبق هذه القواعد على الإشعار الحالي دون تغيير معرّفه أو موضعه.
+
+## إشعار قابل للرفض
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveNotification = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Show saved notification</Button>
+      {visible && (
+        <Toast
+          status="success"
+          description="Your changes are available to your team."
+          duration={6000}
+          onClose={() => setVisible(false)}
+        >
+          Record saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+يتم استدعاء `onClose` مرة واحدة بواسطة زر الإغلاق أو عند اكتمال العد التنازلي. أزل الإشعار المنبثق في دالة الاستدعاء هذه. استخدم `duration={0}` لإشعار يبقى مفتوحًا حتى رفضه.
+
+## التقدم والإلغاء
+
+```tsx
+import { Toast } from 'twenty-ui/components/feedback';
+
+type ImportProgressProps = { progress: number; onCancel: () => void };
+
+export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
+  <Toast
+    status="info"
+    progress={progress}
+    description="You can continue working while the import runs."
+    onCancel={onCancel}
+    cancelLabel="Cancel import"
+  >
+    Importing records: {progress}%
+  </Toast>
+);
+```
+
+يؤدي تمرير `progress` إلى توفير نسبة مئوية وتعطيل العد التنازلي. أزله بعد انتهاء العملية لبدء مدة جديدة. يستدعي الإلغاء `onCancel`؛ ويتولى العنصر الأب الإلغاء والإزالة. يقبل `cancelLabel` عقدة React لمحتوى الزر. تقبل Children و`description` و`icon` و`action` أيضًا عقد React يملكها المستدعي. استخدم عناصر التحكم في واجهة مستخدم Twenty للإجراءات التفاعلية وقدّم أسماءها المتاحة.
+
+## المظهر والإعلانات
+
+يقبل `status` القيم `neutral` أو `info` أو `success` أو `warning` أو `error`، وتكون قيمته الافتراضية `neutral`. يعبّر عن معنى الملاحظات ويختار الأيقونة ولوحة ألوان النسق. لدى Toast مظهر واحد مدعوم، لذا لا يوفّر خيار `variant` للمظهر أو خيار `color` للوحة الألوان. استخدم `icon` لاستبدال الأيقونة، و`icon={null}` لحذفها، و`iconLabel` عندما تحتاج الأيقونة الافتراضية إلى اسم متاح خاص بها.
+
+الدور الافتراضي هو `status` مع إعلانات غير ملحّة. استخدم `role="alert"` للملاحظات العاجلة. عيّن `cancelLabel` و`closeLabel` لترجمة عناصر التحكم، وأتِح وقتًا كافيًا لقراءة المحتوى أو التفاعل مع إجراءاته.
+
+## الإزاحة
+
+يتم إنشاء المرجع من أنواع المكوّنات العامة. تستهدف السمات الأصلية والأنماط وأسماء الفئات ومعالجات الأحداث والمراجع العنصر الجذر. استخدم `render` لتكوين عنصر أو مكوّن آخر مع الاحتفاظ بهذه الخصائص والمرجع. ترث بوابات Toaster النسق المحيط واتجاه النص.
+
+<ToastReference />
+
+### ToastProvider
+
+<ToastProviderReference />
+
+### Toaster
+
+تستهدف سمات div الأصلية والأنماط وأسماء الفئات والمراجع منطقة الإشعارات.
+
+<ToasterReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

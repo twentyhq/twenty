@@ -110,6 +110,7 @@ export class AddDuplicateMessageListCommandMenuItemCommand extends ProvisionedWo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

@@ -1,0 +1,105 @@
+---
+title: Fila de detalles
+description: Alinee las etiquetas de detalles con valores que se ajustan a varias líneas y acciones opcionales.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## Resumen
+
+`DetailsRow` combina una etiqueta con un valor en una lista de descripciones. Agregue un icono decorativo, varios elementos de valor o una acción proporcionada por su aplicación.
+
+<StoryEmbed storyId="ui-data-display-detailsrow--display" title="Ejemplo de fila de detalles" height={220} />
+
+## "Uso"
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Coloque cada fila directamente dentro de un `dl`. Pase la etiqueta mediante `label` y su valor mediante `children`. La aplicación gestiona las etiquetas, la localización, los valores con formato y los marcadores de posición para valores faltantes.
+
+## Alineación y ajuste de línea
+
+Las etiquetas y los valores se ajustan a varias líneas en lugar de truncarse. Varios elementos de valor, como chips o etiquetas, se ajustan a líneas adicionales. Las filas alinean su contenido en la parte superior a medida que este crece.
+
+La columna de etiquetas usa `7rem` de forma predeterminada y está limitada al 40 % del ancho de la fila para dejar espacio para el valor en contenedores estrechos. Establezca el mismo `labelWidth` en las filas adyacentes para ajustar su alineación. Los números usan píxeles; también se admiten longitudes CSS como `'8rem'`.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Acciones
+
+Use `action` para un control junto al valor. La fila no agrega comportamiento de edición, clic ni teclado. Proporcione un control con un nombre accesible y conecte su controlador al comportamiento de la aplicación.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Composición y accesibilidad
+
+Cada fila representa una agrupación `div` con una etiqueta `dt` y un `dd` que contiene el valor y la acción opcional. Quien realiza la llamada proporciona el `dl` contenedor. Proporcione texto significativo en la etiqueta. El `startIcon` opcional está oculto para la tecnología de asistencia, y quien realiza la llamada controla sus dimensiones.
+
+Los atributos nativos, `className`, `style` y `ref` se aplican al `div` exterior. Al usar `render` con un contenedor personalizado, conserve ese `div` directamente dentro del `dl` y reenvíe todas las props proporcionadas y la ref. Mantenga las acciones dentro de su espacio para que el término y la definición sigan siendo los elementos secundarios directos de la fila.
+
+Use [Fila de métricas](/es/ui/components/data-display/metric-row) para una métrica con progreso opcional. `DetailsRow` proporciona únicamente el diseño de etiqueta, valor y acción.
+
+## "Props"
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

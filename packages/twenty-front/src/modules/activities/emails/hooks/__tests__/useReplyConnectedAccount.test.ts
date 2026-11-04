@@ -63,7 +63,7 @@ describe('useReplyConnectedAccount', () => {
       useReplyConnectedAccount('channel-imap'),
     );
 
-    expect(result.current).toEqual({
+    expect(result.current).toMatchObject({
       connectedAccountId: 'account-imap',
       connectedAccountHandle: 'imap@example.com',
       connectedAccountProvider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,

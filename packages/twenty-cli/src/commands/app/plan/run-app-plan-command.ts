@@ -1,6 +1,7 @@
 import { fetchAppPlan } from '@/app/deployment/fetch-app-plan';
 import { formatAppPlan } from '@/app/deployment/format-app-plan';
 import { getAppPlanSummary } from '@/app/deployment/get-app-plan-summary';
+import { readInferDeletionOption } from '@/app/deployment/read-infer-deletion-option';
 import { runAppBuild } from '@/app/run-app-operation';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
@@ -9,13 +10,13 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
   const startedAt = performance.now();
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   const {
     project,
     sdk,
     data: build,
     diagnostics,
   } = await runAppBuild({ context });
-  const inferDeletionFromMissingEntities = context.options.delete !== false;
 
   context.output.progress({
     message: 'Computing metadata plan (read-only, nothing will be applied)…',
@@ -36,7 +37,8 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
       application: build.application,
       contentHash: build.contentHash,
       plan: true,
-      inferDeletionFromMissingEntities,
+      inferDeletionFromMissingEntities:
+        inferDeletionFromMissingEntities ?? null,
       actions,
       summary,
       diagnostics,

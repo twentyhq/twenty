@@ -1,0 +1,119 @@
+---
+title: المفتاح
+description: عنصر تحكم مُسمّى للتشغيل أو الإيقاف بحالة متحكَّم بها أو غير متحكَّم بها.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+## نظرة عامة
+
+استخدم `Switch` لتفضيل التشغيل أو الإيقاف. امنح عنصر التحكم تسمية مرئية أو اسمًا يمكن الوصول إليه.
+
+<StoryEmbed storyId="ui-input-switch-switch--display" title="مثال على المفتاح" height={90} />
+
+## استخدام
+
+### حالة غير متحكَّم بها
+
+استخدم `defaultChecked` لتعيين حالة التحديد الأولية. يمتلك المفتاح التبديل التغييرات اللاحقة.
+
+```tsx
+import { useId } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+## الخيارات المرئية
+
+قارن بين الحجمين في حالات التشغيل والإيقاف والتعطيل والقراءة فقط والتركيز. استخدم الأمثلة المفعّلة لتجربة التبديل.
+
+<StoryEmbed storyId="ui-input-switch-switch--catalog" title="الخيارات المرئية لمفتاح التبديل" height={440} />
+
+## حالة متحكَّم بها
+
+مرّر `checked` وحدّثه باستخدام `onCheckedChange` لامتلاك التفضيل نفسه في حالة React.
+
+```tsx
+import { useId, useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch
+        id={switchId}
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+يتلقى `onCheckedChange` القيمة المنطقية التالية وتفاصيل الحدث. تقبل الخاصية `size` القيمة `sm` أو `md`، وتكون قيمتها الافتراضية `md`.
+
+لصف بعرض كامل ومتسق يتضمن أيقونة ووصفًا ومفتاح تبديل، استخدم [SettingsRow](/ar/ui/components/settings/settings-row).
+
+## لوحة المفاتيح والنماذج
+
+ينقل مفتاح Tab التركيز إلى المفتاح، ويبدّله مفتاح Space. يؤدي النقر على التسمية المرتبطة به أيضًا إلى تبديله. استخدم `disabled` لمنع التفاعل أو `readOnly` للإبقاء على عنصر تحكم قابل للتركيز لا يمكن تغيير قيمته.
+
+يرسل المفتاح المُسمّى قيمته عند تحديده. استخدم `value` لتخصيص تلك القيمة، واستخدم `uncheckedValue` إذا كان يجب أن يرسل النموذج أيضًا قيمة عندما يكون في وضع الإيقاف.
+
+## الأجزاء والمحتوى المخصص
+
+يجمع `Switch` الجذر المصمم ومقبضه الافتراضي. استخدم `Switch.Root` مع `Switch.Thumb` لتملك محتوى المقبض. يدير Root الحالة ومظهر المسار؛ ويعرض Thumb المحتوى الذي توفره.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` و`SwitchThumbProps` نوعان عامان مُصدَّران من `twenty-ui/primitives/input`. يقبل كلا الجزأين السمات الأصلية والمعالجات والمراجع و`render` وعمليات الاستدعاء `className` و`style` المستندة إلى الحالة. يستهدف `ref` الخاص بـ Root عنصر التحكم المرئي؛ ويستهدف `inputRef` حقل الإدخال الأصلي. يستهدف مرجع الجزء العنصر الذي يعرضه. مرر `nativeButton` مع `render={<button />}` عند استبدال Root بزر. تنتمي خصائص المظهر إلى Root؛ وتُدمج الفئات والأنماط الصريحة مع الإعدادات الافتراضية.
+
+يتلقى Thumb حالة checked وdisabled وreadOnly وrequired وField الحالية. يتبع موضعه اتجاه القراءة.
+
+<StoryEmbed storyId="ui-input-switch-parts--composition" title="تركيب جزء Switch" height={90} />
+
+تظل التجميعة القابلة للاستدعاء ونوع `SwitchProps` الخاص بها مدعومين. استبدل التجميعة بـ Root وجزئه عند توفير محتوى مقبض مخصص بدلًا من إلحاق جزء آخر بأبناء التجميعة.
+
+لإعادة تعيين نموذج متحكم به، عالج `onReset` الخاص بالنموذج وأعد `checked` إلى قيمتك الأولية. لا يستعيد Base UI 1.8 حالة المكونات غير المتحكم بها عند إعادة تعيين النموذج الأصلية. تحافظ `required` و`form` و`value` و`uncheckedValue` على سلوك حقل الإدخال الأصلي المصدر.
+
+## الإزاحة
+
+يتضمن المرجع خصائص خاصة بالمكوّن وخصائص Base UI الموروثة. تُقبل أيضًا السمات الأصلية مثل `aria-label` و`data-*`.
+
+<SwitchReference />
+
+<PageBanner illustration="page-cover-switch" />

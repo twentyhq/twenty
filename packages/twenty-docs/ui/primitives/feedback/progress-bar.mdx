@@ -3,8 +3,12 @@ title: ProgressBar
 description: Show measured or indeterminate progress with a horizontal bar.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Overview
 
 `ProgressBar` supplies a horizontal appearance for [Progress](/ui/primitives/feedback/progress). It preserves the complete root contract, including native attributes, refs, render composition, formatting, custom ranges, and indeterminate progress. Give it an `aria-label` that identifies the operation.
 
@@ -65,3 +69,5 @@ Replace `ariaLabel` with native `aria-label`. The `withGrowIn`, `withGlint`, `wi
 ## Props
 
 <ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

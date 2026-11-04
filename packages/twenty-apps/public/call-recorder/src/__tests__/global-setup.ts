@@ -1,21 +1,14 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import { buildResultSchema } from './build-result-schema';
+import { disableAutomaticTriggersOrThrow } from './disable-automatic-triggers-or-throw';
+import { runTwenty } from './run-twenty';
 
-import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
-
-const APP_PATH = process.cwd();
-const CONFIG_DIR = path.join(os.homedir(), '.twenty');
-const CONFIG_PATH = path.join(CONFIG_DIR, 'config.test.json');
-
-function validateEnv(): { apiUrl: string; apiKey: string } {
+function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
   const apiKey = process.env.TWENTY_API_KEY;
 
   if (!apiUrl || !apiKey) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
-        'Start a local server: yarn twenty docker:start\n' +
         'Or set them in vitest env config.',
     );
   }
@@ -23,79 +16,49 @@ function validateEnv(): { apiUrl: string; apiKey: string } {
   return { apiUrl, apiKey };
 }
 
-async function checkServer(apiUrl: string) {
-  let response: Response;
-
-  try {
-    response = await fetch(`${apiUrl}/healthz`);
-  } catch {
+async function checkServerOrThrow(apiUrl: string) {
+  const response = await fetch(`${apiUrl}/healthz`).catch(() => {
     throw new Error(
       `Twenty server is not reachable at ${apiUrl}. ` +
         'Make sure the server is running before executing integration tests.',
     );
-  }
+  });
 
   if (!response.ok) {
     throw new Error(`Server at ${apiUrl} returned ${response.status}`);
   }
 }
 
-function writeConfig(apiUrl: string, apiKey: string) {
-  const payload = JSON.stringify(
-    {
-      version: 1,
-      remotes: {
-        local: { apiUrl, apiKey, twentyCLIAccessToken: apiKey },
-      },
-      defaultRemote: 'local',
-    },
-    null,
-    2,
-  );
-
-  fs.mkdirSync(CONFIG_DIR, { recursive: true });
-  fs.writeFileSync(CONFIG_PATH, payload);
-}
-
-function removeConfig() {
-  fs.rmSync(CONFIG_PATH, { force: true });
-}
-
 export async function setup() {
-  const { apiUrl, apiKey } = validateEnv();
+  const { apiUrl } = validateEnvironmentOrThrow();
 
-  await checkServer(apiUrl);
+  await checkServerOrThrow(apiUrl);
+  await teardown();
 
-  writeConfig(apiUrl, apiKey);
+  const build = await runTwenty(['app', 'build']);
 
-  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+  if (!build.ok) {
+    throw new Error('Could not build the call-recorder manifest');
+  }
 
-  const result = await appDevOnce({
-    appPath: APP_PATH,
-    onProgress: (message: string) => console.log(`[dev] ${message}`),
-  });
+  const { manifest } = buildResultSchema.parse(build.data);
+  const result = await runTwenty(['app', 'apply', '--create']);
 
-  if (!result.success) {
+  if (!result.ok) {
     throw new Error(
-      `Dev sync failed: ${result.error?.message ?? 'Unknown error'}`,
+      `App apply failed: ${result.error.code} ${result.error.message}`,
     );
   }
+
+  await disableAutomaticTriggersOrThrow(manifest);
 }
 
 export async function teardown() {
-  try {
-    const uninstallResult = await appUninstall({ appPath: APP_PATH });
+  const result = await runTwenty(['app', 'uninstall', '--yes']);
 
-    if (!uninstallResult.success) {
-      console.warn(
-        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
-      );
-    }
-  } catch (error) {
-    console.warn(
-      `App uninstall failed: ${error instanceof Error ? error.message : String(error)}`,
+  if (!result.ok && result.error.code !== 'APP_NOT_INSTALLED') {
+    throw new Error(
+      `App uninstall failed: ${result.error.code} ${result.error.message}`,
     );
-  } finally {
-    removeConfig();
   }
 }

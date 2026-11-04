@@ -1,0 +1,77 @@
+---
+title: صف المقاييس
+description: محاذاة تسمية مقياس وقيمة منسقة مع تقدم اختياري.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## نظرة عامة
+
+`MetricRow` يحاذي تسمية وأيقونة اختيارية وقيمة منسقة مسبقًا. تستخدم [ProgressRing](/ar/ui/primitives/feedback/progress-ring) الاختيارية التسمية المرئية بوصفها اسم إمكانية الوصول الخاص بها.
+
+<StoryEmbed storyId="ui-data-display-metricrow--display" title="مثال على صف المقياس" height={100} />
+
+## استخدام
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { IconFiles } from 'twenty-ui/icon';
+
+export const ImportMetric = () => (
+  <MetricRow
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
+  >
+    Imported files
+  </MetricRow>
+);
+```
+
+مرر تسمية نصية غير فارغة كعناصر فرعية مطلوبة، والقيمة المنسقة عبر `value`. أضف `progress` عندما يحتوي المقياس على نسبة مئوية معروفة.
+
+يتولى التطبيق مسؤولية الحسابات والوحدات وتنسيق الأرقام ومعنى المقياس. يقبل `progressColor` لون CSS للقوس المعبأ.
+
+## قيم بدون تقدم
+
+احذف `progress` لعرض قيمة عادية. تُعرض القيمة الرقمية صفر بالشكل `0`؛ ولا يُستبدل المحتوى مطلقًا بعنصر نائب. وفّر عنصرًا نائبًا خاصًا بك عندما لا تكون البيانات متاحة.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## التركيب وإمكانية الوصول
+
+يقبل محتوى التسمية العُقد. يُسمّي النص المتاح الخاص به حلقة التقدّم عبر `aria-labelledby`، بما في ذلك النص المتداخل. وفّر تسمية مرئية ذات معنى. تُعرَض أيضًا قيمة سلسلة نصية غير فارغة كنص قيمة يمكن الوصول إليه. بالنسبة إلى محتوى القيمة المنسقة، وفّر `progressValueText` عندما لا تصف النسبة المئوية المقياس بالكامل. يتجاوز هذا النص القيمة الاحتياطية للسلسلة النصية. من دونه، يحتفظ المحتوى الآخر بنص قيمة النسبة المئوية للحلقة. يستخدم `progressValueText` الفارغ أيضًا النسبة المئوية، بما في ذلك عندما تكون `value` سلسلة نصية. العقدة الاختيارية `startIcon` للزينة. يتحكم المستدعي في أبعادها وحدّها.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    <Text render={<strong />}>Storage</Text>
+  </MetricRow>
+);
+```
+
+استبدل `startIcon={IconDatabase}` بـ `startIcon={<IconDatabase size={14} />}`. تظل القيم منسقة مسبقًا بواسطة التطبيق.
+
+تستهدف السمات الأصلية و`className` و`style` و`ref` الصف الخارجي. يمكن لـ `render` استبدال ذلك العنصر. يبقى التقدم خاضعًا للتحكم ومحصورًا بين 0 و100، مع سلوك الحركة المخفّضة نفسه المتبع في `ProgressRing`.
+
+## الإزاحة
+
+<MetricRowReference />
+
+<PageBanner illustration="dashboards" />

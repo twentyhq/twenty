@@ -1,0 +1,189 @@
+---
+title: SettingsRow
+description: Una riga di interruttore etichettata con proprietà di controllo flat e composizione dell'etichetta nativa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## Panoramica
+
+`SettingsRow` combina l'aspetto di [ListItem](/it/ui/primitives/navigation/list-item) con [Switch](/it/ui/primitives/input/switch). Esegue il rendering di un'etichetta nativa associata al relativo interruttore. La tua applicazione fornisce il contenuto della riga e gestisce eventuali aggiornamenti delle preferenze.
+
+<StoryEmbed storyId="ui-components-settingsrow--display" title="Esempio di riga delle impostazioni" height={110} />
+
+## Utilizzo
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## Opzioni visive
+
+Confronta le dimensioni dell'interruttore e gli stati selezionato, disabilitato e di sola lettura.
+
+<StoryEmbed storyId="ui-components-settingsrow--catalog" title="Dimensioni e stati della riga delle impostazioni" height={520} />
+
+## Configura l'interruttore
+
+Passa le [prop di Switch](/it/ui/primitives/input/switch) direttamente a `SettingsRow`. Lo stato selezionato, i dettagli dell'evento, il comportamento disabilitato e di sola lettura, le dimensioni, la configurazione del modulo nativo, gli handler, i ref e la composizione del rendering configurano l'interruttore. `children` fornisce l'etichetta visibile della riga.
+
+Usa `checked` e `onCheckedChange` quando la tua applicazione gestisce il valore. Il gestore riceve lo stato selezionato successivo e i dettagli dell'evento Base UI. Facendo clic sull'etichetta o sull'interruttore viene richiamato una sola volta. Chiama `eventDetails.cancel()` per rifiutare una modifica e mantieni invariato il valore controllato quando la modifica viene annullata.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startElement={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+Usa `defaultChecked` per un'impostazione non controllata. Gli utenti della tastiera attivano lo stato attivo dell'interruttore e premono Spazio. `disabled` disabilita il controllo e applica l'aspetto disabilitato della riga. `readOnly` impedisce le modifiche mantenendo l'interruttore attivabile.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## Contenuto della riga e testo accessibile
+
+`children`, `startElement` e `description` accettano nodi gestiti dal chiamante. I children forniscono il nome accessibile dell'interruttore, mentre la descrizione fornisce la relativa descrizione accessibile. Mantieni non interattivo il contenuto all'interno dell'etichetta. Usa [ListItemButton](/it/ui/components/navigation/list-item-button) per le righe di azione, oppure componi [ListItem](/it/ui/primitives/navigation/list-item) con un link per la navigazione.
+
+<StoryEmbed storyId="ui-components-settingsrow--with-description" title="Riga delle impostazioni con una descrizione" height={110} />
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+Imposta `aria-label`, `aria-labelledby` o `aria-describedby` per fornire il tuo testo accessibile per l'interruttore. Un valore `aria-label` esplicito sostituisce l'associazione del nome generata; i valori `aria-labelledby` e `aria-describedby` espliciti sostituiscono le associazioni generate corrispondenti.
+
+## Destinazioni native e composizione
+
+Le normali prop native configurano il controllo. La personalizzazione dell'etichetta ha due nomi espliciti:
+
+| Props                                                                         | Destinazione                                         |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Attributi nativi, handler, `className`, `style`, `ref` e `render`             | La radice Switch visibile                            |
+| `inputRef`, `name`, `value`, `uncheckedValue`, `required` e `form`            | La casella di controllo nativa sottostante di Switch |
+| `labelRef` e attributi, handler, classi e stili forniti tramite `labelRender` | L'etichetta nativa esterna                           |
+
+`htmlFor` dell'etichetta viene gestito internamente e segue `id`, oppure un ID di controllo generato quando non viene fornito alcun ID. Con la composizione Switch predefinita, questo ID identifica la casella di controllo sottostante. Con `nativeButton`, identifica il pulsante visibile. `ref` fa riferimento alla radice visibile in entrambi i casi.
+
+Usa `labelRender` per personalizzare l'etichetta nativa della riga. Mantieni un elemento label e inoltra le prop della callback di rendering al tuo elemento. Il relativo `props.children` contiene l'intera riga, incluso l'interruttore. La composizione dell'elemento unisce le relative classi e stili con quelli predefiniti della riga.
+
+```tsx
+import { useRef } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const ComposedNotificationSetting = () => {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const controlRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <SettingsRow
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+`onClick` riceve i clic sul controllo. Gli handler nativi forniti tramite `labelRender` ricevono gli eventi dell'etichetta e gli eventi del controllo propagati. La chiamata a `preventDefault()` su un clic dell'etichetta impedisce l'attivazione nativa del relativo controllo. Usa `onCheckedChange` per gli aggiornamenti delle preferenze, anziché dedurre lo stato da un clic sull'etichetta.
+
+L'interruttore usa per impostazione predefinita `size="sm"`; usa `"md"` per un interruttore più grande. L'altezza della riga rimane invariata. `focused` applica l'aspetto evidenziato della riga senza spostare lo stato attivo della tastiera. `className`, `style` e `render` accettano callback dello stato di Switch e personalizzano il controllo. Fornisci classi e stili dell'etichetta tramite `labelRender` per personalizzare la riga.
+
+## Renderer del componente front-end
+
+All'interno di un componente front-end, usa la composizione del pulsante nativo per un interruttore annidato nell'etichetta della riga:
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const FrontComponentNotificationSetting = () => (
+  <SettingsRow nativeButton render={<button />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+Questa composizione si attiva una sola volta quando si fa clic sull'etichetta o sul controllo. Il bridge asincrono degli eventi del renderer non può annullare in tempo l'attivazione predefinita dell'etichetta host per un controllo basato su span, il che può produrre callback di modifica duplicate quando si fa clic direttamente sul controllo. Gli attributi di convalida del modulo nativo, come `required`, vengono anch'essi filtrati dal renderer corrente. `SettingsRow` autonomo mantiene il contratto completo del modulo Switch.
+
+## Moduli e reimpostazione
+
+`name`, `value` e `required` configurano la casella di controllo sottostante per l'invio e la convalida del modulo. Un interruttore selezionato invia il proprio valore. Un interruttore non selezionato omette il valore, a meno che non venga fornito `uncheckedValue`. Usa `form` per associare l'input a un modulo esterno all'albero padre della riga.
+
+Per la reimpostazione di un modulo controllato, ripristina il valore selezionato gestito dall'applicazione nell'handler `onReset` del modulo. Base UI 1.8 non ripristina lo stato dell'interruttore non controllato alla reimpostazione del modulo nativo. `SettingsRow` mantiene questo comportamento upstream.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const NotificationPreferences = () => {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <form onReset={() => setEnabled(true)}>
+      <SettingsRow
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+      >
+        Notifications
+      </SettingsRow>
+      <Button type="reset">Reset</Button>
+    </form>
+  );
+};
+```
+
+## Props
+
+<SettingsRowReference />
+
+<PageBanner illustration="settings" />

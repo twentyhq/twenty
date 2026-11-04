@@ -1,7 +1,11 @@
 ---
 title: Message Queue
+description: Run background tasks through message queues.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
 Each use case will have its own queue class extended from `MessageQueueServiceBase`.
@@ -40,4 +44,4 @@ class CustomWorker {
 }
 ```
 
-
+<PageBanner illustration="card-page-background-jobs" />

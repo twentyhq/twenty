@@ -10,11 +10,11 @@ import {
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconAddressBook,
+  IconAlertCircle,
   IconAlertTriangle,
   IconApps,
   IconArrowUpRight,
   IconBox,
-  IconBrandTypescript,
   IconClock,
   IconCoins,
   IconEye,
@@ -26,6 +26,7 @@ import {
   IconSum,
   IconTerminal,
   IconUsers,
+  IconVersions,
   IconWebhook,
 } from 'twenty-ui/icon';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
@@ -50,8 +51,11 @@ import { LOG_CONSOLE_USAGE_EVENT_COLUMNS } from '@/log-console/constants/LogCons
 import { LOG_CONSOLE_WEBHOOK_COLUMNS } from '@/log-console/constants/LogConsoleWebhookColumns';
 import { type LogConsoleDetailField } from '@/log-console/types/LogConsoleDetailField';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { getLogConsoleApplicationLogEventIcon } from '@/log-console/utils/getLogConsoleApplicationLogEventIcon';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { getLogConsoleSecurityEvent } from '@/log-console/utils/getLogConsoleSecurityEvent';
+import { getApplicationLogFunctionOrEventLabel } from '@/settings/application-monitoring/utils/getApplicationLogFunctionOrEventLabel';
+import { getApplicationLogSourceLabel } from '@/settings/application-monitoring/utils/getApplicationLogSourceLabel';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import {
@@ -174,7 +178,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     id: 'app-logs',
     label: msg`App logs`,
     Icon: IconTerminal,
-    DetailIcon: IconBrandTypescript,
+    getDetailIcon: (entry) => getLogConsoleApplicationLogEventIcon(entry.event),
     table: EventLogTable.APPLICATION_LOG,
     filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
     requiresAuditLogs: false,
@@ -190,6 +194,33 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
             <Tag color={level.color}>{t(level.label)}</Tag>
           ) : null;
         },
+      },
+      {
+        label: msg`Source`,
+        Icon: IconApps,
+        renderValue: (entry) => {
+          const sourceLabel = getApplicationLogSourceLabel(
+            entry.properties?.source ?? '',
+          );
+
+          return isDefined(sourceLabel) ? t(sourceLabel) : null;
+        },
+      },
+      {
+        label: msg`Error code`,
+        Icon: IconAlertCircle,
+        renderValue: (entry) =>
+          isNonEmptyString(entry.properties?.errorCode)
+            ? entry.properties.errorCode
+            : null,
+      },
+      {
+        label: msg`Version`,
+        Icon: IconVersions,
+        renderValue: (entry) =>
+          isNonEmptyString(entry.properties?.applicationVersion)
+            ? entry.properties.applicationVersion
+            : null,
       },
       TIME_DETAIL_FIELD,
       {
@@ -208,7 +239,11 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     ],
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
-    getDetailTitle: (entry) => entry.event,
+    getDetailTitle: (entry) =>
+      getApplicationLogFunctionOrEventLabel({
+        logicFunctionName: entry.event,
+        source: entry.properties?.source ?? '',
+      }),
   },
   {
     id: 'webhooks',

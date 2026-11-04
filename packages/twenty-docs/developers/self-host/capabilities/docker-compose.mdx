@@ -1,14 +1,15 @@
 ---
 title: Docker Compose
-icon: "docker"
+description: Run Twenty in production with Docker Compose.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 <Warning>
 Docker containers are for production hosting or self-hosting. For contributing, please check the [Local Setup](/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## Overview
 
 This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
 
@@ -133,6 +134,8 @@ SSL (HTTPS) is required for certain browser features to work properly. While the
 For example, the clipboard API might require a secure context - some features like copy buttons throughout the application might not work without HTTPS enabled.
 
 We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+
+<Tip>Before exposing Twenty to the internet, read [Securing your instance](/developers/self-host/capabilities/security). Most teams can keep the app private and open only a few paths.</Tip>
 
 #### Configuring `SERVER_URL`
 
@@ -261,3 +264,4 @@ If you encounter any problem, check [Troubleshooting](/developers/self-host/capa
   Prefer not to run and maintain Twenty yourself? [Find a certified Twenty hosting partner](https://twenty.com/partners/list?categories=HOSTING&ref=docs-docker-compose) to deploy, host, and manage your instance end-to-end. *(Or reach our team: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
 
+<PageBanner illustration="dev-self-host" />

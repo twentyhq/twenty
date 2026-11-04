@@ -4,14 +4,10 @@ import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/ge
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconSettings } from 'twenty-ui/icon';
-
-const BUILT_IN_ACCOUNT_APP_DETAILS_TAB_LIST_ID = 'built-in-account-app-details';
 
 type SettingsBuiltInAccountAppDetailsProps = {
   builtInAccountApp: BuiltInAccountApp;
@@ -47,13 +43,6 @@ export const SettingsBuiltInAccountAppDetails = ({
         },
         { children: appName },
       ]}
-      secondaryBar={
-        <SettingsTabBar
-          aria-label={t`Application details`}
-          tabs={[{ id: 'general', title: t`General`, Icon: IconSettings }]}
-          componentInstanceId={BUILT_IN_ACCOUNT_APP_DETAILS_TAB_LIST_ID}
-        />
-      }
     >
       <SettingsPageContainer overflow="visible">
         <Section.Root>

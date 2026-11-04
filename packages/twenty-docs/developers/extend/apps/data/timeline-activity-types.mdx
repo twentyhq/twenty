@@ -1,22 +1,20 @@
 ---
 title: Timeline Activity Types
 description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/developers/extend/apps/layout/front-components).
 
 <Note>
-  Timeline activity types are in beta, the API can evolve while we learn from app developers' use cases.
+  Timeline activity types are in beta, the API can evolve while we learn from
+  app developers' use cases.
 </Note>
 
-Create one with the scaffolder:
-
-```bash filename="Terminal"
-yarn twenty dev:add timelineActivityType
-```
-
-Or define it directly:
+Define a timeline activity type with `defineTimelineActivityType` from `twenty-sdk/define`:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -168,19 +166,21 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Configuration fields
 
-| Field                                             | Required  | Description                                                      |
-| ------------------------------------------------- | --------- | ---------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades       |
-| `name`                                            | Yes       | App-local programmatic name; must be unique within the app        |
-| `label`                                           | Yes       | User-facing action text used by the native renderer              |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                      |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types     |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                 |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                              |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event        |
+| Field                                             | Required  | Description                                                                                                |
+| ------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades                                                 |
+| `name`                                            | Yes       | App-local programmatic name; must be unique within the app                                                 |
+| `label`                                           | Yes       | User-facing action text used by the native renderer                                                        |
+| `icon`                                            | No        | Twenty icon name displayed beside the event                                                                |
+| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types                                               |
+| `emit.on`                                         | With emit | Audit action that causes this type to be written                                                           |
+| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                                                        |
+| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines                                           |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event                                                  |
 | `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded       |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                     |
+| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded                                                 |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+
+<PageBanner illustration="card-page-timeline" />

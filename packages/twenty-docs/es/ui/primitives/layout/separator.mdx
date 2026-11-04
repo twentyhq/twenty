@@ -1,0 +1,57 @@
+---
+title: Separador
+description: Separa el contenido adyacente con un divisor horizontal o vertical.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## Resumen
+
+`Separator` representa un `div` con `role="separator"` y una orientación accesible. Utiliza el contrato de separador de Base UI, incluidas las props nativas, las referencias y la composición mediante `render`. Importa `SeparatorProps` desde el mismo punto de entrada.
+
+<StoryEmbed storyId="ui-layout-separator--display" title="Separador horizontal" height={130} />
+
+## "Uso"
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </Text>
+);
+```
+
+## Orientación y apariencia
+
+`orientation` tiene como valor predeterminado `horizontal`. Los márgenes tienen como valor predeterminado cero en ambas orientaciones. Los separadores horizontales ocupan todo el ancho disponible. Los separadores verticales se estiran a lo largo de su contenedor flex. Asigna una altura a un separador vertical independiente. Controla el espaciado mediante el diseño principal o usa `style` o `className` nativos para establecer márgenes explícitos y el color de la línea. Base UI también acepta funciones de la orientación para estas props.
+
+<StoryEmbed storyId="ui-layout-separator--vertical-documentation" title="Separador vertical" height={150} />
+
+## Divisores con etiqueta
+
+Use [LabeledSeparator](/es/ui/components/layout/labeled-separator) para una etiqueta de texto entre líneas divisorias o al final de una regla. Proporciona el diseño y un único nombre de separador accesible.
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
+```
+
+## Migración
+
+Reemplaza el antiguo asistente horizontal por `Separator`. Elimina `noMargin`, ya que los márgenes ahora tienen como valor predeterminado cero. Para conservar el espaciado predeterminado anterior, añade `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Reemplaza `color` por `style={{ backgroundColor: color }}`. Use `LabeledSeparator` para divisores con etiqueta, pase la etiqueta como elementos secundarios y cambie el nombre de `textPosition` a `labelPosition`. Reemplaza los separadores que se usan solo para espaciado invisible por espaciado de diseño.
+
+## "Props"
+
+<SeparatorReference />
+
+<PageBanner illustration="layout" />

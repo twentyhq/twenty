@@ -18,5 +18,7 @@ export default defineApplicationRole({
   canDestroyAllObjectRecords: false,
   canAccessAllTools: true,
   canBeAssignedToAgents: true,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });

@@ -524,6 +524,17 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
+            .tiptap,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.RICH_TEXT]
+            .tiptap,
+        isImportable: false,
+        isFilterable: false,
+        isIncludedInUniqueConstraint: false,
+      },
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
             .markdown,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.RICH_TEXT]
@@ -535,15 +546,18 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     ],
     exampleValues: doNotTranslate([
       {
-        blocknote: '[{"type":"heading","content":"Hello"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello"}]}]}',
         markdown: '# Hello',
       },
       {
-        blocknote: '[{"type":"heading","content":"Hello World"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello World"}]}]}',
         markdown: '# Hello World',
       },
       {
-        blocknote: '[{"type":"heading","content":"Hello Again"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello Again"}]}]}',
         markdown: '# Hello Again',
       },
     ]),

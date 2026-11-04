@@ -3,8 +3,12 @@ title: AlertDialog
 description: Ask for confirmation before an action that needs an explicit decision.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## Overview
 
 Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides `alertdialog` semantics, focus management, and explicit confirmation or cancellation.
 
@@ -211,3 +215,5 @@ By default, focus moves to the first tabbable control, or to the popup for a tou
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

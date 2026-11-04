@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'path';
 import {
+  computeDependencyFileChecksum,
+  computePackageJsonChecksum,
   NODE_ESM_CJS_BANNER,
   OUTPUT_DIR,
   type Manifest,
@@ -20,15 +22,10 @@ import { getFrontComponentBuildPlugins } from '@/app/bundles/front-component-bui
 import { createStubTwentySdkDefinePlugin } from '@/app/bundles/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
 import { buildSharedDependenciesBundle } from '@/app/bundles/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
-import { type SharedDependenciesBuildContext } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import { type SharedDependenciesBuildContext } from 'twenty-shared/front-component-build';
 import { type EntityFilePaths } from '@/app/manifest/types/entity-file-paths.type';
 import { loadFrontComponentTranslationCatalogs } from '@/app/translations/load-front-component-translation-catalogs';
-import {
-  emptyDir,
-  ensureDir,
-  pathExists,
-  pathExistsSync,
-} from '@/app/fs-utils';
+import { emptyDir, ensureDir, pathExists } from '@/app/fs-utils';
 import { FRONT_COMPONENT_TRANSLATIONS_KEY } from '@/app/bundles/constants/front-component-translations-key';
 
 export type AppBuildOptions = {
@@ -169,9 +166,7 @@ export const buildApplication = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Dependencies,
-    filePaths: ['package.json', 'yarn.lock'].filter((filePath) =>
-      pathExistsSync(join(options.appPath, filePath)),
-    ),
+    filePaths: ['package.json', 'yarn.lock'],
     collectFileBuilt,
     outputDir: relativeOutputDir,
     dereferenceSymlinks: options.dereferenceSymlinks,
@@ -259,7 +254,11 @@ const copyStaticFiles = async ({
     });
 
     const content = await readFile(absoluteBuiltPath);
-    const checksum = crypto.createHash('md5').update(content).digest('hex');
+    const checksum = computeStaticFileChecksum({
+      fileFolder,
+      sourcePath,
+      content,
+    });
 
     await collectFileBuilt({
       fileFolder,
@@ -268,4 +267,24 @@ const copyStaticFiles = async ({
       checksum,
     });
   }
+};
+
+const computeStaticFileChecksum = ({
+  fileFolder,
+  sourcePath,
+  content,
+}: {
+  fileFolder: FileFolder;
+  sourcePath: string;
+  content: Buffer;
+}): string => {
+  if (fileFolder !== FileFolder.Dependencies) {
+    return crypto.createHash('md5').update(content).digest('hex');
+  }
+
+  const textContent = content.toString('utf-8');
+
+  return sourcePath === 'package.json'
+    ? computePackageJsonChecksum(textContent)
+    : computeDependencyFileChecksum(textContent);
 };

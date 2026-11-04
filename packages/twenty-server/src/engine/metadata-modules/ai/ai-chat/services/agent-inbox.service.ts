@@ -4,7 +4,10 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
@@ -51,6 +54,7 @@ export class AgentInboxService {
     private readonly sharingService: AgentChatSharingService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -322,15 +326,16 @@ export class AgentInboxService {
       return throwAgentChatThreadNotFound();
     }
 
-    const participantWorkspaceMemberIds =
-      await this.threadService.addParticipants({
+    const deliveredWorkspaceMemberIds =
+      await this.inboxDeliveryService.deliverThreadToMemberInboxes({
         workspaceId,
         threadId: thread.id,
         workspaceMemberId: thread.workspaceMemberId,
-        participantWorkspaceMemberIds: newWorkspaceMemberIds,
+        workspaceMemberIds: newWorkspaceMemberIds,
+        reason: AgentChatInboxDeliveryReason.RECIPIENT,
       });
 
-    if (participantWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
+    if (deliveredWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
       throwAgentChatThreadNotFound();
     }
   }
@@ -416,7 +421,12 @@ export class AgentInboxService {
     threadId: string;
     title: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    await this.threadRepository.insert(workspaceId, { id: threadId, title });
+    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `INSERT INTO ${table('agentChatThread')} (id, title, "${IS_PRIVATE_COLUMN_NAME}") VALUES ($1, $2, true)`,
+        [threadId, title],
+      ),
+    );
 
     return this.threadRepository.findOneOrFail(workspaceId, {
       where: { id: threadId },

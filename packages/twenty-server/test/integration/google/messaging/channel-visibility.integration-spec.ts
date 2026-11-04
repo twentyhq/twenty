@@ -18,11 +18,12 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'gmail-channel-visibility@apple.dev';
+const SENDER_HANDLE = 'gmail-channel-visibility-sender@example.com';
 
 const RESTRICTED = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 
 describe('Message channel visibility (integration)', () => {
-  const inbox = [gmailMessage()];
+  const inbox = [gmailMessage({ from: SENDER_HANDLE })];
   const subject = getGmailMessageSubject(inbox[0]);
 
   setupGoogleMock({ handle: HANDLE, inbox });
@@ -48,6 +49,28 @@ describe('Message channel visibility (integration)', () => {
 
     return response.body.data.messages.edges.map(
       (edge: { node: { subject: string; text: string } }) => edge.node,
+    );
+  };
+
+  const readMessageThroughParticipantAs = async (
+    makeRequest:
+      | typeof makeGraphqlApiRequest
+      | typeof makeGraphqlApiRequestWithMemberRole,
+  ) => {
+    const response = await makeRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'messageParticipant',
+        objectMetadataPluralName: 'messageParticipants',
+        gqlFields: 'message { subject text }',
+        filter: { handle: { eq: SENDER_HANDLE } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.messageParticipants.edges.map(
+      (edge: { node: { message: { subject: string; text: string } } }) =>
+        edge.node.message,
     );
   };
 
@@ -102,6 +125,39 @@ describe('Message channel visibility (integration)', () => {
     await setVisibility(MessageChannelVisibility.METADATA);
 
     const [message] = await readMessageAs(makeGraphqlApiRequest);
+
+    expect(message.subject).toBe(subject);
+    expect(message.text).not.toBe(RESTRICTED);
+  }, 60000);
+
+  it('masks a message fetched through a relation for another member under metadata visibility', async () => {
+    await setVisibility(MessageChannelVisibility.METADATA);
+
+    const [message] = await readMessageThroughParticipantAs(
+      makeGraphqlApiRequestWithMemberRole,
+    );
+
+    expect(message.subject).toBe(RESTRICTED);
+    expect(message.text).toBe(RESTRICTED);
+  }, 60000);
+
+  it('masks only the body of a message fetched through a relation under subject visibility', async () => {
+    await setVisibility(MessageChannelVisibility.SUBJECT);
+
+    const [message] = await readMessageThroughParticipantAs(
+      makeGraphqlApiRequestWithMemberRole,
+    );
+
+    expect(message.subject).toBe(subject);
+    expect(message.text).toBe(RESTRICTED);
+  }, 60000);
+
+  it('shows a message fetched through a relation to the owner of the connected account', async () => {
+    await setVisibility(MessageChannelVisibility.METADATA);
+
+    const [message] = await readMessageThroughParticipantAs(
+      makeGraphqlApiRequest,
+    );
 
     expect(message.subject).toBe(subject);
     expect(message.text).not.toBe(RESTRICTED);

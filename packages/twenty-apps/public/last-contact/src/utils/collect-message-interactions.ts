@@ -10,13 +10,6 @@ import { type InteractionDirection } from 'src/utils/update-person-last-contact'
 
 const PAGE_SIZE = 200;
 
-const SENDER_OR_TEAM_MEMBER_FILTER = {
-  or: [
-    { role: { eq: 'FROM' } },
-    { workspaceMemberId: { is: 'NOT_NULL' } },
-  ],
-};
-
 export type MessageInteraction = {
   receivedAt: string;
   workspaceMemberId: string | null;
@@ -45,7 +38,12 @@ const collectSenderAndTeamMemberParticipants = async (
               filter: {
                 and: [
                   { messageId: { in: ids } },
-                  SENDER_OR_TEAM_MEMBER_FILTER,
+                  {
+                    or: [
+                      { role: { eq: 'FROM' } },
+                      { workspaceMemberId: { is: 'NOT_NULL' } },
+                    ],
+                  },
                 ],
               },
               first: PAGE_SIZE,

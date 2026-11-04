@@ -136,10 +136,12 @@ export class InboundEmailImportService {
         }
 
         await this.messagingSaveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-          [message],
-          messageChannel,
-          connectedAccount,
-          workspaceId,
+          {
+            messagesToSave: [message],
+            messageChannel,
+            connectedAccount,
+            workspaceId,
+          },
         );
       },
       buildSystemAuthContext(workspaceId),
@@ -181,9 +183,7 @@ export class InboundEmailImportService {
     );
 
     const referencedMessages = await this.workspaceOrmManager
-      .getRepository<MessageWorkspaceEntity>('message', {
-        shouldBypassPermissionChecks: true,
-      })
+      .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>('message')
       .find({
         where: {
           headerMessageId: In(
@@ -198,9 +198,8 @@ export class InboundEmailImportService {
     }
 
     const channelAssociations = await this.workspaceOrmManager
-      .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
-        { shouldBypassPermissionChecks: true },
       )
       .find({
         where: {

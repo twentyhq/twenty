@@ -1,0 +1,139 @@
+---
+title: OverflowingList
+description: Inserisci una riga di elementi nello spazio disponibile e mostra l'elenco completo in un popup.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import OverflowingListReference from '/snippets/ui/generated/components/layout/overflowing-list.mdx';
+
+## Panoramica
+
+`OverflowingList` misura la larghezza disponibile, mantiene gli elementi che rientrano in una riga compatta e offre un pulsante `+N` che apre l'elenco completo in un popup. Il conteggio si aggiorna quando cambiano il contenitore, il contenuto degli elementi o l'elenco ordinato. Gli elenchi vuoti e gli elenchi che rientrano non hanno un pulsante di overflow né un popup esposto.
+
+<StoryEmbed storyId="ui-components-overflowinglist--display" title="Esempio di elenco con overflow" height={280} />
+
+Fornisci l'elenco ordinato completo come elementi con chiave. La tua applicazione gestisce il contenuto, le azioni e i dati di ciascun elemento. La riga compatta rimane visibile quando si apre il popup. Il popup ripete l'elenco completo, inclusi gli elementi che rientrano nella riga.
+
+## Utilizzo
+
+```tsx
+import { OverflowingList, Section } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
+
+export const CompanyTags = () => (
+  <Section.Root>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
+    <OverflowingList
+      style={{ width: 180 }}
+      showOverflowCount
+      overflowLabel="Show all company tags"
+    >
+      {TAGS.map((label) => (
+        <Tag
+          key={label}
+          color="blue"
+          truncate={false}
+          style={{ width: 80, minWidth: 'fit-content' }}
+        >
+          {label}
+        </Tag>
+      ))}
+    </OverflowingList>
+  </Section.Root>
+);
+```
+
+## Visibilità del conteggio
+
+| `showOverflowCount` | Comportamento quando gli elementi eccedono lo spazio disponibile                                               |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Omisso              | Mostra il conteggio al passaggio del puntatore, quando riceve il focus da tastiera o mentre il popup è aperto. |
+| `true`              | Mantiene visibile il conteggio.                                                                                |
+| `falso`             | Nasconde il conteggio e ritaglia la riga. Un popup aperto rimane aperto finché non viene chiuso.               |
+
+La modalità predefinita mantiene la visibilità corrente del conteggio mentre un elemento inline ha il focus, in modo che la visualizzazione del conteggio non spinga quell'elemento fuori dalla riga. Portare il focus sul pulsante del conteggio rende visibile il conteggio.
+
+Usa `false` quando l'interfaccia circostante offre un altro modo per accedere agli elementi nascosti. Modificandolo in `false`, il conteggio viene nascosto senza chiudere un popup già aperto. `open` e `defaultOpen` possono comunque mostrare l'elenco completo quando gli elementi eccedono lo spazio disponibile. La rimozione degli elementi in eccesso o l'allargamento dell'elenco finché tutto non rientra chiude il popup e rimuove il pulsante del conteggio. Il conteggio descrive sempre gli elementi esterni alla riga compatta.
+
+`maxInlineCount` limita il numero di elementi visibili nella riga. La larghezza disponibile può ridurre ulteriormente quel numero. Il popup contiene comunque l'elenco completo. Non recupera elementi mancanti né virtualizza il popup.
+
+## Stato del popup
+
+L'elenco gestisce lo stato del proprio popup quando `open` è omesso. Usa `defaultOpen` per il suo stato iniziale. Il valore predefinito è `false`; un popup inizialmente aperto richiede comunque elementi in eccesso.
+
+Passa `open` e aggiornalo in `onOpenChange` per gestire lo stato del popup. Il callback riceve il valore booleano richiesto e i dettagli dell'evento [Popover](/it/ui/primitives/surfaces/popover) installato, inclusi `reason`, `event`, `trigger`, `cancel()` e `preventUnmountOnClose()`. La chiamata a `cancel()` impedisce la modifica dello stato richiesta. Nell'uso controllato, aggiorna il tuo stato solo per le modifiche che accetti.
+
+Passa `actionsRef` per ricevere i metodi `close()` e `unmount()` di Popover. `close()` richiede la chiusura tramite `onOpenChange` e rispetta l'annullamento. Se il callback chiama `preventUnmountOnClose()` per eseguire un'uscita gestita dal chiamante, chiama `actionsRef.current?.unmount()` al termine di tale uscita. Questo rilascia il popup mantenuto senza rimuovere l'elenco e ne consente una nuova apertura.
+
+```tsx
+import { useState } from 'react';
+import { OverflowingList } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
+
+export const ControlledTeamList = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <OverflowingList
+      open={open}
+      onOpenChange={setOpen}
+      showOverflowCount
+      overflowLabel="Show all teams"
+      style={{ width: 220 }}
+      triggerProps={{ render: <Button variant="outline" size="sm" /> }}
+    >
+      {TEAMS.map((team) => (
+        <Tag key={team} color="blue">
+          {team}
+        </Tag>
+      ))}
+    </OverflowingList>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-overflowinglist--controlled" title="Stato controllato con un trigger personalizzato" height={280} />
+
+## Destinazioni native e composizione
+
+Gli attributi `div` nativi, i gestori, gli stili, i nomi di classe e i ref su `OverflowingList` hanno come destinazione la radice della riga compatta. Usa `triggerProps` per il pulsante del conteggio e `popupProps` per il div del contenuto del popup. Entrambi mantengono le proprietà native, i gestori, il ref e la composizione `render` di elemento/funzione della rispettiva parte di Popover.
+
+Personalizza il trigger con `triggerProps.render`, come nell'esempio controllato, oppure fornisci `triggerProps.children` per sostituire `+N`. I componenti personalizzati devono [inoltrare le proprietà e il ref forniti](/it/ui/primitives/overview#custom-components). Anche i componenti popup personalizzati devono eseguire il rendering degli elementi figlio forniti; OverflowingList gestisce il contenuto degli elementi. `overflowLabel` usa per impostazione predefinita "Mostra tutti gli elementi". Il nome accessibile del pulsante predefinito combina il relativo conteggio e quell'etichetta, ad esempio "+3 Mostra tutti i team". Sovrascrivi `triggerProps['aria-label']` o `popupProps['aria-label']` quando il relativo contenuto richiede un nome diverso.
+
+Per impostazione predefinita, `OverflowingList` interrompe la propagazione di `click`, `mousedown`, `pointerdown`, `keydown` e `keyup` sul trigger e sul popup. Ciò impedisce che l'apertura del popup e l'interazione con i relativi elementi attivino un campo o un selettore circostante. Un gestore fornito tramite `triggerProps` o `popupProps` sostituisce il valore predefinito per quell'evento. Chiama `event.stopPropagation()` nel tuo gestore per mantenere il blocco, oppure omettilo per consentire la propagazione di quell'evento. Gli altri eventi mantengono i valori predefiniti. I gestori su un elemento `render` personalizzato si compongono come di consueto con le proprietà fornite.
+
+Quando una sostituzione del clic del popup consente la propagazione, il portale Base UI installato può inviare quel clic due volte a un antenato React circostante con lo stesso evento nativo. Ciò si verifica anche con un semplice `Popover`. OverflowingList mantiene tale comportamento upstream; non garantisce un callback dell'antenato per ogni evento popup nativo quando la propagazione è abilitata.
+
+## Tastiera e focus
+
+Invio, Spazio e l'attivazione tramite puntatore aprono un popup non modale. Esc e l'interazione esterna lo chiudono. La chiusura ordinaria ripristina il focus sul pulsante del conteggio. Il focus già presente su un elemento inline visibile o su un controllo esterno viene mantenuto. Il popup supporta contenuti, collegamenti e pulsanti con il loro comportamento nativo da tastiera; non li trasforma in elementi di menu né aggiunge la navigazione con le frecce del menu.
+
+Usa `popupProps.initialFocus` e `popupProps.finalFocus` per personalizzare il focus all'apertura e alla chiusura tramite il contratto Popover installato.
+
+Ogni elenco gestisce indipendentemente le proprie misurazioni responsive. Lo smontaggio di un elenco rilascia i relativi osservatori e lascia funzionanti gli altri elenchi.
+
+## Rendering del server e idratazione
+
+Il markup del server include i primi elementi `maxInlineCount`, oppure tutti gli elementi quando il limite è omesso. La misurazione della larghezza e il contenuto del popup diventano disponibili dopo il montaggio del client.
+
+L'idratazione riutilizza la riga provvisoria e applica la misurazione responsive dopo il montaggio del client. Gli elementi figlio della riga e del popup sono istanze di rendering separate. Mantieni lo stato condiviso tra queste posizioni nel chiamante.
+
+## Migrazione
+
+Il popup continua a mostrare l'elenco completo e usa per impostazione predefinita "Mostra tutti gli elementi". `showOverflowCount={false}` mantiene la riga ritagliata e nasconde il conteggio. Non chiude un popup già aperto. Il trigger e il popup mantengono il blocco predefinito per click, mousedown, pointerdown, keydown e keyup. Sovrascrivi un singolo gestore tramite `triggerProps` o `popupProps` quando l'interfaccia circostante deve ricevere quell'evento.
+
+## Props
+
+<OverflowingListReference />
+
+<PageBanner illustration="section-apps-data" />

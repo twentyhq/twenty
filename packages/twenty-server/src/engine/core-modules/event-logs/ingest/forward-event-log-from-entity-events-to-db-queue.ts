@@ -20,7 +20,11 @@ export class ForwardEventLogFromEntityEventsToDbQueue {
     await this.eventLogQueueService.add<CreateEventLogFromInternalEventData>(
       CreateEventLogFromInternalEvent.name,
       batch,
-      { retryLimit: 1 },
+      {
+        retryLimit: 1,
+        workspaceId: batch.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

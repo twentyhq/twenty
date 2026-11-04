@@ -1,0 +1,77 @@
+---
+title: MainButton
+description: Presenta azioni prominenti con impostazioni predefinite di progettazione condivise.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## Panoramica
+
+Usa il componente condiviso `MainButton` per un'azione prominente. Compone
+[Button](/it/ui/primitives/input/button) con una superficie piena, elevazione, testo in semigrassetto
+e spaziatura orizzontale di 12 px. Il colore predefinito è neutro e la dimensione è `md`.
+
+<StoryEmbed storyId="ui-components-mainbutton--display" title="Esempio di MainButton" height={110} />
+
+## Utilizzo
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveAction = () => <MainButton>Save changes</MainButton>;
+```
+
+## Opzioni visive
+
+Confronta gli aspetti pieni e con contorno nelle dimensioni predefinita e piccola, oltre agli stati disabilitato e di caricamento.
+
+<StoryEmbed storyId="ui-components-mainbutton--catalog" title="Varianti e stati del pulsante principale" height={230} />
+
+## Gestione dello stato
+
+`MainButton` usa il modello di stato di Button e non aggiunge uno stato proprio. L'applicazione fornisce `loading` e `disabled`; non sono disponibili modalità di selezione controllata e non controllata. Consulta l'[esempio di gestione dello stato di Button](/it/ui/primitives/input/button#state-ownership) per gestire un'azione asincrona.
+
+## Forme e larghezza
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveProfile = () => (
+  <MainButton type="submit" fullWidth>
+    Save profile
+  </MainButton>
+);
+```
+
+La larghezza segue il contenuto, a meno che non imposti `fullWidth` o non fornisca uno stile di
+layout dell'applicazione. Sovrascrivi `variant`, `color`, `size` e `elevated` secondo necessità;
+ad esempio, usa `variant="outline"` e `elevated={false}` per un'azione con contorno.
+
+Con `color="inherit"`, scegli esplicitamente una variante non solid oppure ereditane una da ButtonGroup. Il valore predefinito solid autonomo con colore ereditato genera un errore di runtime.
+
+Mantieni il layout della pagina nello stile dell'applicazione.
+
+## Interazione
+
+`MainButton` accetta gli attributi nativi di Button, i gestori di eventi, le refs, gli slot delle icone,
+le props `loading` e `disabled`. Per impostazione predefinita, i pulsanti usano `type="button"`;
+imposta esplicitamente `type="submit"` per l'invio del modulo.
+
+Usa `href` per un link. Fornisci `render` per scegliere una root personalizzata, incluso un
+link del router gestito dall'applicazione. Imposta `nativeButton={false}` e `role="link"` per
+un renderer di navigazione. I pulsanti nativi personalizzati mantengono `nativeButton` impostato su true.
+
+[ButtonGroup](/it/ui/primitives/input/button-group) può impostare dimensione, superficie
+e colore condivisi. L'aspetto esplicito dell'elemento figlio ha la precedenza sul gruppo, seguito dalle
+impostazioni predefinite del componente. Le classi consumer, incluse le funzioni di stato, vengono trasmesse
+alla radice.
+
+## Props
+
+<MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

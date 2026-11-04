@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
+import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -28,6 +28,8 @@ import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/Settings
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -56,12 +58,15 @@ type SettingsSkillFormContentProps = {
 export const SettingsSkillFormContent = ({
   skill,
 }: SettingsSkillFormContentProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
 
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+
   const isCreateMode = !isDefined(skill);
-  const isReadonlyMode = isDefined(skill) && !skill.isCustom;
+  const isReadonlyMode = isDefined(skill) && !getIsMetadataItemCustom(skill);
 
   const [initialFormValues] = useState(() =>
     getSettingsSkillInitialFormValues(skill),

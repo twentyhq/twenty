@@ -3,8 +3,12 @@ title: NumberField
 description: Compose a numeric field with locale formatting, stepping, native forms, and scrubbing.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx';
+
+## Overview
 
 `NumberField` exposes all seven parts of the installed Base UI Number Field: `Root`, `Group`, `Input`, `Decrement`, `Increment`, `ScrubArea`, and `ScrubAreaCursor`. Import it from `twenty-ui/primitives/input`. It retains Base UI's numeric state, formatting, stepping, event details, and native form integration with Twenty UI styling for the input, group, and adjustment controls.
 
@@ -170,3 +174,5 @@ Sequential typing after clearing a controlled localized field currently resets t
 The reference is generated from the installed public component types. Native attributes and event handlers are also accepted on parts that render elements.
 
 <NumberFieldReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -1,0 +1,147 @@
+---
+title: CountrySelect
+description: Un selettore di paesi completo e componenti condivisi per scelte predefinite, identificatori stabili e cancellazione del valore null.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountrySelectReference from '/snippets/ui/generated/components/input/country-select.mdx';
+
+## Panoramica
+
+`CountrySelect` fornisce un selettore di paesi completo con un trigger etichettato, bandiere decorative, ricerca e un'opzione senza paese. `CountrySelect.Root`, `CountrySelect.Trigger` e `CountrySelect.Options` espongono la stessa implementazione per la composizione con [Dropdown](/it/ui/components/navigation/dropdown). La tua applicazione fornisce i dati sui paesi e il testo tradotto e decide come gli identificatori selezionati vengono mappati ai valori memorizzati.
+
+<StoryEmbed storyId="ui-input-countryselect--display" title="Selezione del paese" height={340} />
+
+## Utilizzo
+
+Fornisci scelte predefinite con identificatori stringa univoci e stabili ed etichette di visualizzazione. Il selettore restituisce gli identificatori invariati, indipendentemente dalla lingua visualizzata. Le bandiere sono nodi React decorativi facoltativi. Una scelta può impostare `disabled: true` per rimanere visibile senza consentire la selezione.
+
+```tsx
+import { CountrySelect } from 'twenty-ui/components/input';
+
+const COUNTRIES = [
+  { value: 'FR', label: 'France', flag: '🇫🇷' },
+  { value: 'DE', label: 'Germany', flag: '🇩🇪' },
+  { value: 'JP', label: 'Japan', flag: '🇯🇵' },
+];
+
+export const ShippingCountry = () => (
+  <CountrySelect
+    label="Shipping country"
+    countries={COUNTRIES}
+    defaultValue="FR"
+    searchLabel="Search countries"
+    noCountryLabel="No country"
+    noResultsLabel="No countries found"
+  />
+);
+```
+
+`defaultValue` inizializza la selezione non controllata. Usa `value` e `onValueChange` per la selezione controllata. L'aggiornamento esterno di `value` aggiorna sia il trigger sia l'opzione selezionata, anche quando il popup è aperto.
+
+```tsx
+import { useState } from 'react';
+import { CountrySelect, type CountryChoice } from 'twenty-ui/components/input';
+
+export const ControlledCountry = ({
+  countries,
+}: {
+  countries: readonly CountryChoice[];
+}) => {
+  const [country, setCountry] = useState<string | null>('FR');
+
+  return (
+    <CountrySelect
+      label="Country"
+      countries={countries}
+      value={country}
+      onValueChange={setCountry}
+    />
+  );
+};
+```
+
+## Parti condivise
+
+`Root` gestisce le scelte preparate e l'identificatore selezionato. Non aggiunge alcun elemento DOM. `Trigger` legge quella selezione e ne visualizza l'etichetta e la bandiera. `Options` legge gli stessi dati e rende righe ricercabili all'interno di `Dropdown.SelectionGroup`. Dropdown gestisce l'apertura, il posizionamento del popup, le pagine, la navigazione e il focus.
+
+```tsx
+import { CountrySelect, type CountryChoice } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const ShippingCountryParts = ({
+  countries,
+}: {
+  countries: readonly CountryChoice[];
+}) => (
+  <CountrySelect.Root countries={countries} defaultValue="FR">
+    <Dropdown.Root type="picker">
+      <CountrySelect.Trigger label="Shipping country" />
+      <Dropdown.Content>
+        <CountrySelect.Options
+          aria-label="Shipping country"
+          searchLabel="Search countries"
+        />
+      </Dropdown.Content>
+    </Dropdown.Root>
+  </CountrySelect.Root>
+);
+```
+
+La forma abbreviata assembla internamente queste parti. Entrambe le forme condividono selezione, cancellazione, comportamento disabilitato, corrispondenza della ricerca e presentazione dell'opzione selezionata. `closeOnSelect` è impostato su `true` per impostazione predefinita. Impostalo su `false` nella forma abbreviata o in `Options` quando la selezione deve mantenere aperto il popup.
+
+## Cancellazione e annullamento
+
+`null` rappresenta nessun paese. La selezione della riga senza paese restituisce `null`; il passaggio di `value={null}` cancella un selettore controllato. Una stringa vuota (`''`) è un identificatore di scelta fornito valido e rimane distinta da `null`.
+
+`onValueChange` riceve l'identificatore successivo o `null` e i dettagli dell'evento di selezione Dropdown: `event`, `reason`, `trigger`, `cancel` e `isCanceled`. Chiama `details.cancel()` prima di aggiornare lo stato controllato per mantenere la selezione corrente e lasciare aperto il popup. La selezione ripetuta dell'identificatore corrente non emette un'altra modifica del valore.
+
+Un identificatore assente da `countries` visualizza `noCountryLabel` e l'icona senza paese. Il suo rendering non emette una modifica né sovrascrive il valore dell'host. L'applicazione decide come gestire i valori memorizzati assenti dalle scelte correnti.
+
+## Ricerca e interazione
+
+La ricerca trova corrispondenze nelle etichette di visualizzazione preparate. Ignora la distinzione tra maiuscole e minuscole, gli accenti facoltativi nel testo latino, greco, arabo ed ebraico e i segni di accento cirillici, considera il cirillico `ё` come `е` e converte lettere quali `ø`, `æ` e `ß` in `o`, `ae` e `ss`. Ignora inoltre i caratteri di accento isolati come `^`, `` ` ``, `´`, `¨` e `ˇ`, in modo che un tasto morto in attesa non nasconda le corrispondenze. I segni che formano lettere distinte rimangono significativi, come i segni di sonorizzazione giapponesi, i segni vocalici indiani e il cirillico `й`. Una sillaba coreana digitata parzialmente, come ㅎ o 하, trova le sillabe che iniziano con essa, come 한. `noCountryLabel` partecipa alla stessa ricerca. Una query senza opzioni corrispondenti visualizza `noResultsLabel`.
+
+I tasti freccia, Home e Fine spostano il focus senza modificare l'identificatore selezionato. Invio o Spazio su un'opzione abilitata conferma la selezione tramite il relativo gruppo di selezione. Esc e l'interazione esterna usano la chiusura e la gestione del focus di Dropdown. Ogni selettore ha uno stato di selezione e popup indipendente.
+
+L'attivazione della ricerca Dropdown e la protezione IME richiedono ancora lavoro di integrazione, così come le sessioni di pagina lazy e il comportamento delle pagine inattive. Entrambe le forme di selettore reimpostano la propria ricerca alla riapertura, inclusi i popup mantenuti montati. La loro implementazione condivisa non completa ancora il ciclo di vita di pagine e navigazione di Dropdown.
+
+`disabled` su `Root` o sulla forma abbreviata impedisce l'apertura e la selezione. Anche un selettore senza paesi forniti è disabilitato. Se una delle due condizioni si verifica mentre il relativo popup è aperto, il selettore richiede la chiusura. La chiusura riporta il focus al trigger. Gli host controllati devono accettare tale richiesta di chiusura tramite `onOpenChange`; la forma abbreviata sopprime anche il popup quando è disabilitata. Dopo aver accettato la richiesta di chiusura, riabilitare il selettore non lo riapre automaticamente. Il trigger rimane focalizzabile ed espone `aria-disabled`. I trigger disabilitati ignorano gli handler di attivazione del consumer. Le forme funzione di `className`, `style` e `render` ricevono `disabled: true` nello stato del trigger.
+
+## Etichette e personalizzazione
+
+Fornisci una `label` visibile oppure usa `aria-label` o `aria-labelledby` sul trigger. Le etichette di riferimento hanno precedenza su un `aria-label` non vuoto, che ha precedenza sull'etichetta visibile. Con uno di questi nomi, il paese selezionato descrive il trigger. Altrimenti, il paese selezionato gli assegna un nome. Il popup eredita il nome del trigger, salvo che etichette del popup gestite dal chiamante o un titolo Dropdown gli assegnino un nome. La forma abbreviata assegna inoltre alla propria casella di riepilogo delle opzioni un nome derivato da tali etichette del trigger, salvo che `optionsProps` fornisca un proprio nome accessibile. Nell'utilizzo composto, assegna a `Options` un `aria-label` o `aria-labelledby` per un nome esplicito della casella di riepilogo. Altrimenti fa riferimento al titolo Dropdown registrato o al contenuto del trigger. Una descrizione comando rivela l'etichetta selezionata completa quando è troncata.
+
+`searchLabel` fornisce il segnaposto e il nome accessibile dell'input di ricerca, `noCountryLabel` il testo nessun paese e `noResultsLabel` il testo per risultati vuoti. Per impostazione predefinita sono `Search`, `No country` e `No results`. Passa stringhe tradotte quando l'applicazione è localizzata. I figli `Trigger` personalizzati sostituiscono la visualizzazione del paese selezionato; il chiamante gestisce tale contenuto e la sua presentazione accessibile.
+
+Gli attributi nativi del trigger, gli handler di evento, `className`, `style`, `ref` e `render` sono destinati al pulsante trigger. `wrapperProps` è destinato al div circostante che contiene anche l'etichetta visibile. Le prop native di `Options`, `ref` e `render` sono destinate al relativo div del gruppo di selezione. La relativa funzione `render` riceve `{ value, multiple: false }`, dove `value` è l'identificatore pubblico del paese o `null`, anziché un identificatore interno dell'opzione. `searchProps` è destinato all'input di ricerca; il valore della ricerca e la gestione delle modifiche rimangono gestiti dal selettore. La forma abbreviata accetta direttamente le stesse prop di ricerca e gli attributi del gruppo tramite `optionsProps`. Inoltra le prop e i ref forniti quando sostituisci un elemento tramite `render`.
+
+## Integrazione e archiviazione dell'host
+
+La forma abbreviata accetta `open`, `defaultOpen`, `onOpenChange`, `onEscapeKeyDown`, `onInteractOutside` e `defaultPage` di Dropdown. L'utilizzo composto li imposta su `Dropdown.Root`. `onOpenChange` attualmente restituisce solo un booleano, in linea con il contratto pubblico di Dropdown. I dettagli dell'evento di apertura e l'annullamento generale dell'apertura rimangono indisponibili a monte. I callback di chiusura con Esc e dall'esterno possono chiamare `event.preventDefault()` per mantenere aperto il popup.
+
+`popupProps` accetta tutte le prop di `Dropdown.Content` tranne `children`, inclusi attributi nativi del popup, `ref`, `render`, posizionamento, destinazione del portale, nomi accessibili e `keepMounted`. Nell'utilizzo composto, passali direttamente a `Dropdown.Content`.
+
+Mantieni nell'adattatore host gli ID del menu a discesa, gli stack del focus, i metadati dei campi, la persistenza e il ciclo di vita della modifica. L'adattatore frontend di Twenty usa codici paese stabili per gli identificatori del selettore e riconverte le selezioni esplicite nei valori esistenti del nome del paese di origine. La relativa stringa vuota memorizzata viene mappata a `null` del selettore; i valori legacy senza corrispondenza rimangono memorizzati finché una selezione esplicita non li modifica. Le etichette di visualizzazione tradotte non diventano nomi di paese memorizzati. Anche le applicazioni con un altro formato di archiviazione devono effettuare la conversione nel proprio adattatore.
+
+L'invio e il ripristino di moduli nativi, `required`, `readOnly` e l'integrazione con Field per questo selettore personalizzato rimangono rimandati.
+
+## Renderer del componente front-end
+
+I fixture dei componenti frontend React e Preact verificano l'apertura tramite puntatore, il filtro e la selezione tramite le API abbreviate e compound, inclusi valori controllati e non controllati, cancellazione e nuova selezione di null, modifiche annullate, aggiornamenti controllati esterni, interazione disabilitata, etichette tradotte e bandiere decorative. Verificano inoltre le prop e i ref nativi del trigger e dell'input di ricerca, oltre ai target e ai ref di rendering del trigger e del gruppo di opzioni. Restano aperti l'attivazione da tastiera della ricerca e la gestione IME, la durata della sessione di pagina e la completa accettazione di portale, geometria, scorrimento, chiusura dall'esterno e ripristino del focus del renderer.
+
+## Migrazione
+
+Sostituisci il precedente sentinella senza paese a stringa vuota con `null` nei valori controllati e nello stato di selezione. Una stringa vuota (`''`) è ora un identificatore di scelta valido, quindi `value=""` non significa più nessun paese. Mantieni stabile ogni `CountryChoice.value`; gli identificatori di stringa esistenti possono rimanere invariati e le etichette di visualizzazione possono essere tradotte indipendentemente.
+
+Aggiorna gli handler `onValueChange` affinché accettino `string | null`. Il callback ora riceve anche `eventDetails` come secondo argomento, incluso `cancel()` per rifiutare una selezione. Gli handler che non necessitano dei dettagli dell'evento possono continuare a usare solo il primo argomento.
+
+Se l'archiviazione usa `''` per nessun paese, convertilo in `null` prima di passarlo al selettore e riconverti il `null` restituito in `''` durante la persistenza. Mantieni tale conversione di compatibilità nell'adattatore dell'applicazione e omettila quando `''` è un identificatore di scelta intenzionale.
+
+## Props
+
+<CountrySelectReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

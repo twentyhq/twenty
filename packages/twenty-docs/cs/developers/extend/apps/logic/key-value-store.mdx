@@ -1,7 +1,6 @@
 ---
 title: Úložiště typu klíč–hodnota
 description: Ukládejte průběžné výsledky, kešujte data a sdílejte stav mezi spuštěními logických funkcí pomocí vestavěného aplikačního úložiště typu klíč–hodnota.
-icon: database
 ---
 
 Logické funkce běží v izolovaných, krátce žijících procesech Node.js — jakmile běh skončí, nic, co bylo v paměti, nepřežije. Když potřebujete **něco zapamatovat mezi běhy** (kešovat nákladnou odpověď z API, uložit kurzor pro inkrementální synchronizace, odložit práci nebo předat stav z jedné funkce do druhé), uložte to do vestavěného úložiště typu klíč–hodnota.

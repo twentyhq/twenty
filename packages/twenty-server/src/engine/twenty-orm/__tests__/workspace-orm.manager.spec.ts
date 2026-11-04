@@ -19,7 +19,7 @@ describe('workspace context sharing enforcement', () => {
           { provide: WorkspaceDataSourceService, useValue: {} },
           {
             provide: EnterprisePlanService,
-            useValue: { isValid: jest.fn().mockReturnValue(true) },
+            useValue: { isValid: jest.fn().mockReturnValue(false) },
           },
           {
             provide: TwentyConfigService,
@@ -30,7 +30,10 @@ describe('workspace context sharing enforcement', () => {
             useValue: {
               getOrRecompute: jest.fn().mockResolvedValue({
                 flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
                 featureFlagsMap: {},
+                billingEntitlements: {},
               }),
             },
           },

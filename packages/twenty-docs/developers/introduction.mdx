@@ -1,28 +1,68 @@
 ---
-title: Developers
-description: Build apps, use the API, self-host, or contribute to the codebase.
+title: Build on Twenty
+sidebarTitle: Developers
+description: Build apps in TypeScript, connect your tools through APIs, and host Twenty yourself.
+hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
-  <Card href="/developers/extend/apps/getting-started/quick-start" img="/images/user-guide/halftone/dev-apps.png">
+<LandingActions>
+  <LandingButton href="/developers/extend/apps/getting-started/quick-start">Build your first app</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>View on GitHub</LandingButton>
+</LandingActions>
+
+## Why build on Twenty
+
+Most CRMs give developers an API and a few places to plug in. Twenty gives you the platform itself. Declare objects, server-side functions, React components and AI agents in plain TypeScript with the `twenty-sdk`, see each change sync to a local server as you save, and ship with the CLI.
+
+- **Manage your workspace with code.** Objects, fields, views and page layouts live as TypeScript files in your repository, versioned and reviewed like any other change.
+- **The same SDK as Twenty's own apps.** Slack, Linear and Granola are apps built with the `twenty-sdk`, so you build with exactly what Twenty's team uses.
+- **Plug into the core, not a sidebar.** Your objects get the same tables and permissions as People and Companies. Your apps can bring conversations into Twenty's messages, write to record timelines, and expose functions to workflows and AI agents.
+- **No ceiling.** The core is open source and self-hostable. When an extension point is missing, change Twenty itself or contribute it back.
+- **Safe to experiment.** Apps run sandboxed and only touch the data their role allows, whether your team or an AI agent wrote the code.
+
+## Explore the developer docs
+
+Besides apps, the developer docs cover the API, self-hosting, contributing to Twenty and the UI library.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card href="/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Apps</CardTitle>
-    Extend Twenty with custom objects, server-side logic, UI components, and AI agents — all as TypeScript packages.
+    Build objects, logic, interfaces and AI agents as TypeScript apps, from quick start to publishing.
   </Card>
 
-  <Card href="/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
+  <Card href="/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>API</CardTitle>
-    REST and GraphQL APIs, webhooks, and OAuth.
+    Read and write records over REST and GraphQL, get webhooks when records change, and connect apps with OAuth.
   </Card>
 
-  <Card href="/developers/self-host/capabilities/docker-compose" img="/images/user-guide/halftone/dev-self-host.png">
+  <Card href="/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
     <CardTitle>Self-Host</CardTitle>
-    Run Twenty on your own infrastructure.
+    Run Twenty on your own infrastructure with Docker Compose, then secure and upgrade it.
   </Card>
 
-  <Card href="/developers/contribute/capabilities/local-setup" img="/images/user-guide/halftone/dev-contribute.png">
+  <Card href="/developers/contribute/capabilities/local-setup" img="/images/documentation/banner-icons-v2/dev-contribute.svg">
     <CardTitle>Contribute</CardTitle>
-    Set up the monorepo locally and submit PRs.
+    Set up the monorepo locally and help improve the open-source core.
+  </Card>
+
+  <Card href="/ui/getting-started" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>UI Library</CardTitle>
+    Twenty's open-source React primitives, components, icons and theme tokens.
+  </Card>
+
+  <Card href="https://github.com/twentyhq/twenty" img="/images/user-guide/halftone/community-github.svg">
+    <CardTitle>GitHub</CardTitle>
+    Browse the source code, report issues and follow releases.
+  </Card>
+
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    Ask questions and share what you build with the Twenty community.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

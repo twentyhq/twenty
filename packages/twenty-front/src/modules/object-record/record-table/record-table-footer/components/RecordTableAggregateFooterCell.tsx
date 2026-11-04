@@ -37,7 +37,7 @@ const StyledColumnFooterCell = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  left: ${({ isFirstCell }) =>
+  inset-inline-start: ${({ isFirstCell }) =>
     isFirstCell ? `var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR})` : 'auto'};
 
   @media (hover: hover) {

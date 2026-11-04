@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
+  type ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
   type RestrictedFieldsPermissions,
@@ -175,6 +176,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       selectedFieldsResult: args.selectedFieldsResult,
       groupLimit: args.limit,
     });
+  }
+
+  protected getResultRecords(
+    results: CommonGroupByOutputItem[],
+  ): ObjectRecord[] {
+    return results.flatMap((group) => group.records ?? []);
   }
 
   async processQueryResult(

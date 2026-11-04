@@ -369,6 +369,10 @@
   The default value of the input. Use when uncontrolled.
 </ParamField>
 
+<ParamField body="Search.hasFocusRing" type="boolean" default="false">
+  Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible.
+</ParamField>
+
 <ParamField body="Search.onValueChange" type="((value: string) =&gt; void)">
   Called with the search text on every change. The application filters the results.
 </ParamField>
@@ -383,6 +387,10 @@
 <ParamField body="Search.style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
   Style applied to the element, or a function that
   returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="Search.textAlign" type="&quot;end&quot; | &quot;start&quot;">
+  Aligns text to the logical start or end of the input. Follows the text direction.
 </ParamField>
 
 <ParamField body="Search.value" type="string | number | readonly string[]">

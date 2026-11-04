@@ -33,7 +33,7 @@ export const CLIENT_BRIEF_COPY = {
     seatCountPlaceholder: msg`e.g. ~30`,
     timeline: msg`Timeline`,
     timelinePlaceholder: msg`e.g. Before Q4, Q1 2027…`,
-    budgetRange: msg`Budget range`,
+    budgetRange: msg`Implementation/migration budget range`,
     budgetRangePlaceholder: msg`e.g. $10k–$25k`,
     firstName: msg`First name *`,
     lastName: msg`Last name`,

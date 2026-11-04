@@ -6,6 +6,7 @@ export interface CompositeProperty<
 > {
   name: string;
   description?: string;
+  deprecationReason?: string;
   type: Type;
   hidden: 'input' | 'output' | true | false;
   isRequired: boolean;

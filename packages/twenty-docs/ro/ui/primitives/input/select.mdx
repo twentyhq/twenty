@@ -1,0 +1,477 @@
+---
+title: Selectați
+description: Alegeți una sau mai multe valori dintr-o listă pop-up de opțiuni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+## Prezentare generală
+
+Utilizați `Select` pentru o valoare de formular aleasă dintr-o listă. [Dropdown](/ro/ui/components/navigation/dropdown) rămâne API-ul principal de nivel superior pentru meniuri, selectoare, panouri și pagini care combină aceste fluxuri de lucru.
+
+<StoryEmbed storyId="ui-input-select--display" title="Exemplu Select" height={240} />
+
+## Utilizare
+
+### Stare necontrolată.
+
+Utilizați `defaultValue` pentru a seta prioritatea inițială. Componenta select gestionează modificările ulterioare ale selecției.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Furnizați `items` pentru `Root`, astfel încât `Value` să redea eticheta elementului selectat; fără acestea, declanșatorul afișează valoarea brută. Valoarea selectată poate fi `null` atunci când nu este selectat nimic.
+
+## Anatomie
+
+Compuneți părțile publice în interiorul `Select.Root`. `Trigger` și `Item` redau doar elementele lor copil. Adăugați explicit `Icon`, `ItemText` și `ItemIndicator` atunci când doriți să utilizați simbolul chevron, eticheta și bifa implicite.
+
+```text
+Select.Root
+├── Select.Label
+├── Select.Trigger
+│   ├── Select.Value
+│   └── Select.Icon
+└── Select.Portal
+    ├── Select.Backdrop
+    └── Select.Positioner
+        └── Select.Popup
+            ├── Select.Arrow
+            ├── Select.ScrollUpArrow
+            ├── Select.List
+            │   ├── Select.Group
+            │   │   ├── Select.GroupLabel
+            │   │   └── Select.Item
+            │   │       ├── Select.ItemText
+            │   │       └── Select.ItemIndicator
+            │   └── Select.Separator
+            └── Select.ScrollDownArrow
+```
+
+| Parte                              | Scop                                                                                                        |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `Root`                             | Gestionează selecția, starea de deschidere, valorile generice și integrarea cu formularele native.          |
+| `Label`                            | Asociază o etichetă vizibilă cu declanșatorul.                                                              |
+| `Declanșator`                      | Deschide lista și conține valoarea afișată.                                                                 |
+| `Valoare`                          | Redă eticheta selectată sau un substituent.                                                                 |
+| `Icon`                             | Redă un chevron implicit sau elemente copil personalizate în declanșator.                                   |
+| `Portal`                           | Mută conținutul pop-up-ului în containerul portal al temei sau într-un container explicit.                  |
+| `Backdrop`                         | Furnizează un fundal opțional cât timp pop-up-ul este deschis.                                              |
+| `Positioner`                       | Gestionează geometria ancorei, poziționarea, decalajele și comportamentul la coliziuni.                     |
+| `Popup`                            | Redă suprafața pop-up-ului fără a adăuga un portal sau un poziționator.                                     |
+| `Listă`                            | Furnizează un container de derulare separat pentru opțiuni.                                                 |
+| `Item`                             | Furnizează comportamentul de selecție pentru o opțiune.                                                     |
+| `ItemText`                         | Identifică eticheta opțiunii utilizată pentru căutarea pe măsură ce tastați și alinierea valorii selectate. |
+| `ItemIndicator`                    | Redă bifa implicită a opțiunii selectate sau elemente copil personalizate.                                  |
+| `Arrow`                            | Poziționează o săgeată opțională față de ancora pop-up-ului.                                                |
+| `ScrollUpArrow`, `ScrollDownArrow` | Derulează o listă lungă la trecerea cursorului peste aceasta.                                               |
+| `Group`, `GroupLabel`              | Grupați opțiunile asociate sub o etichetă.                                                                  |
+| `Separator`                        | Separă vizual grupurile.                                                                                    |
+
+`Portal`, `List`, `Backdrop`, săgețile și indicatorii sunt opționale. Utilizați `Positioner` în jurul `Popup` pentru poziționare, inclusiv atunci când redați pop-up-ul inline fără un portal.
+
+## Stare controlată
+
+Transmiteți `value` și actualizați-l cu `onValueChange` pentru a gestiona aceeași prioritate în starea React. Funcția callback primește următoarea valoare și detaliile evenimentului.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Selecție multiplă
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {LANGUAGES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+Cu `multiple`, valoarea este o matrice. Utilizați `defaultValue={['en']}` în loc de `value` și `onValueChange` pentru o selecție multiplă necontrolată. Tipurile generice ale rădăcinii reprezintă valoarea opțiunii și dacă selecția multiplă este activată.
+
+## Stare deschisă
+
+Selecția și vizibilitatea ferestrei pop-up sunt independente. Exemplele de mai sus lasă vizibilitatea ferestrei pop-up necontrolată. Selectarea unei singure valori închide fereastra pop-up; selecția multiplă o menține deschisă. Utilizați `defaultOpen` pentru a seta vizibilitatea inițială; valoarea implicită este `false`.
+
+Transmiteți `open` și actualizați-l cu `onOpenChange` pentru a controla vizibilitatea. Acest exemplu controlează fereastra pop-up, lăsând în același timp prioritatea selectată necontrolată.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Compunere cu un câmp
+
+Încadrați selectul în `Field.Root` pentru a asocia declanșatorul acestuia cu o etichetă vizibilă și text ajutător. Câmpul gestionează etichetarea și validarea; selectul își păstrează propria stare de selecție și de fereastră pop-up.
+
+```tsx
+import { Field, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PriorityField = () => (
+  <Field.Root name="priority">
+    <Field.Label>Priority</Field.Label>
+    <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+    <Field.Description>
+      Choose how soon this record needs attention.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Compoziția elementelor
+
+Compuneți conținut arbitrar în interiorul `Item`. Puneți eticheta care poate fi căutată în `ItemText`; conținutul suplimentar nu devine eticheta sa pentru căutare pe măsură ce tastați. Furnizați elemente copil pentru `Icon` sau `ItemIndicator` pentru a înlocui pictogramele implicite ale acestora sau omiteți complet aceste părți.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+export const PrioritySelect = () => (
+  <Select.Root defaultValue="high" items={{ high: 'High' }}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          <Select.Item value="high">
+            <Select.ItemText>High</Select.ItemText>
+            <span>Needs attention today</span>
+            <Select.ItemIndicator />
+          </Select.Item>
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Toate părțile care redau elemente acceptă atribute native, referințe și API-urile de compunere `render`, `className` și `style` ale Base UI. De exemplu, utilizați `render={<Button />}` pe `Trigger` pentru a-l compune cu un buton Twenty UI. Pentru un element de randare care nu este un buton, setați și `nativeButton={false}`.
+
+## Amplasare
+
+Setați `size="sm"` sau `size="md"` pe `Trigger`. Poziționarea aparține lui `Positioner`; destinația portalului aparține lui `Portal`.
+
+`Positioner` păstrează valorile implicite ale Base UI: `side="bottom"`, `align="center"`, `sideOffset={0}` și `alignItemWithTrigger={true}`. Alinierea elementului selectat se aplică la introducerea cu indicatorul atunci când există suficient spațiu. Setați `alignItemWithTrigger={false}` pentru a utiliza poziționarea ancorată în mod consecvent. Exemplele de mai sus aleg explicit `align="start"` și `sideOffset={8}`.
+
+```tsx
+import { useRef, useState } from 'react';
+import { Button, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PositionedPrioritySelect = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const boundaryRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <div ref={boundaryRef}>
+      <Button ref={anchorRef}>Position anchor</Button>
+      <Select.Root defaultValue="normal" items={PRIORITIES}>
+        <Select.Trigger aria-label="Priority">
+          <Select.Value />
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal container={portalContainer}>
+          <Select.Positioner
+            anchor={anchorRef}
+            positionMethod="fixed"
+            side="inline-end"
+            align="start"
+            alignItemWithTrigger={false}
+            sideOffset={({ anchor }) => anchor.width / 4}
+            alignOffset={4}
+            collisionBoundary={boundaryRef.current ?? undefined}
+            collisionPadding={12}
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            sticky
+          >
+            <Select.Popup>
+              <Select.Arrow />
+              <Select.List>
+                {PRIORITIES.map(({ value, label }) => (
+                  <Select.Item key={value} value={value}>
+                    <Select.ItemText>{label}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+      <div ref={setPortalContainer} />
+    </div>
+  );
+};
+```
+
+`Positioner` acceptă și ancore virtuale, funcții de decalaj, `arrowPadding` și `disableAnchorTracking`. `Portal` utilizează [containerul portal al temei](/ro/ui/theming#scope-an-override), cu excepția cazului în care furnizați `container`. Un `container={null}` explicit așteaptă până când acel container devine disponibil.
+
+<StoryEmbed storyId="ui-input-select-portals--positioning-documentation" title="Selectare cu o ancoră personalizată și o listă derulabilă" height={480} />
+
+## Formulare native și detalii despre callback-uri
+
+Setați `name` pe `Root` pentru a include valoarea selectată în `FormData`. Selecția multiplă trimite o intrare pentru fiecare valoare selectată. `form` asociază intrarea ascunsă cu un formular extern, iar `inputRef` oferă acces la acea intrare. `required`, `disabled` și `autoComplete` păstrează comportamentul formularului nativ al Base UI.
+
+`onValueChange` și `onOpenChange` primesc următoarea stare și detaliile evenimentului din amonte, inclusiv `reason`, `event` nativ, `cancel()` și `allowPropagation()`. Apelarea `cancel()` previne modificarea corespunzătoare a stării interne. Rădăcinile controlate necesită în continuare să actualizați `value` sau `open`.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+type PrioritySelectProps = { canSetHighPriority: boolean };
+
+export const PrioritySelect = ({ canSetHighPriority }: PrioritySelectProps) => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      items={PRIORITIES}
+      value={priority}
+      onValueChange={(nextPriority, details) => {
+        if (nextPriority === 'high' && !canSetHighPriority) {
+          details.cancel();
+          return;
+        }
+        setPriority(nextPriority);
+      }}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+Tipurile generice ale rădăcinii reprezintă valoarea opțiunii și dacă selecția multiplă este activată. Valorile obiectelor acceptă `itemToStringLabel`, `itemToStringValue` și `isItemEqualToValue`. Utilizați `null` pentru o selecție unică goală și un tablou gol pentru o selecție multiplă goală.
+
+## Tastatură
+
+Utilizatorii tastaturii pot deschide lista din declanșator, pot naviga prin opțiuni cu tastele săgeată și pot tasta pentru a găsi o opțiune. Home și End sar la prima și la ultima opțiune. Enter selectează o opțiune; Escape închide pop-up-ul și restabilește focalizarea declanșatorului. Selecția multiplă păstrează pop-up-ul deschis în timp ce opțiunile sunt comutate.
+
+Etichetați declanșatorul cu `Select.Label`, un nume accesibil sau [Field](/ro/ui/primitives/input/field). Un substituent singur nu denumește controlul.
+
+## Proprietăți
+
+Referința este generată din tipurile componentei publice. Atributele native, inclusiv numele accesibile și gestionarii de evenimente, sunt acceptate și pentru părțile care redau elemente.
+
+<SelectReference />
+
+<PageBanner illustration="page-cover-input" />

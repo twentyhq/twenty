@@ -1,7 +1,6 @@
 ---
 title: Installations-Hooks
 description: Führen Sie Logik während des Installations-, Upgrade- oder Deinstallations-Lebenszyklus aus – initialisieren Sie Daten, sichern Sie Datensätze, validieren Sie das Upgrade, bereinigen Sie externe Ressourcen.
-icon: wrench
 ---
 
 Installations-Hooks sind spezielle Logikfunktionen, die während des Installations-, Upgrade- oder Deinstallations-Lebenszyklus ausgeführt werden. Sie verwenden dieselbe Handler-Laufzeit wie reguläre [Logikfunktionen](/de/developers/extend/apps/logic/logic-functions), werden jedoch mit eigenen Define-Funktionen deklariert und sind vom normalen Trigger-Modell (HTTP, Cron, Datenbankereignisse) getrennt. Installations-Hooks erhalten ein `InstallPayload` (`{ previousVersion?: string; newVersion: string }` – `previousVersion` ist bei einer Neuinstallation `undefined`); der Deinstallations-Hook erhält ein `UninstallPayload` (`{ version?: string }` – die entfernte Version).

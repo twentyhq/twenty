@@ -1,0 +1,5 @@
+export const APPLICATION_MONITORING_BUCKET_SIZES_IN_SECONDS = {
+  FIVE_MINUTES: 5 * 60,
+  HOUR: 60 * 60,
+  DAY: 24 * 60 * 60,
+} as const;

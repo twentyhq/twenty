@@ -3,15 +3,23 @@ title: Implementation Services
 description: Whether you need help getting started or creating advanced customizations, we have a solution.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Implementation Partners
 
 Work with certified Twenty partners for advanced customizations, integrations, and dedicated implementation support.
 
-<CardGroup cols={2}>
-  <Card title="Browse certified partners" icon="magnifying-glass" href="https://twenty.com/partners/list?ref=docs-implementation-services">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>Browse certified partners</CardTitle>
     Find a partner and reach out directly — filter by region, language, and expertise.
   </Card>
-  <Card title="Get matched by Twenty" icon="envelope" href="mailto:contact@twenty.com">
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>Get matched by Twenty</CardTitle>
     Tell us what you need and we'll connect you with the right partner.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

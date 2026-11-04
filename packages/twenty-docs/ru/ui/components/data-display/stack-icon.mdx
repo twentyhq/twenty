@@ -1,0 +1,47 @@
+---
+title: Значок стека
+description: Значок размером 16 px с меньшим элементом, расположенным в правом нижнем углу.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## Обзор
+
+Передайте основной значок через слот узла `icon`, а наложенный элемент — через `stackedIcon`. Контейнер имеет ширину и высоту 16 px; наложенный элемент абсолютно позиционируется на расстоянии 8 px слева и 7 px сверху, поэтому он выходит за пределы правого нижнего угла. Квадратный аватар размером 12 px — предполагаемый размер для логотипа приложения. Оба узла являются декоративными, поэтому рядом со значком должна быть видимая подпись.
+
+Оставьте место для переполнения элемента в стопке при размещении соседнего содержимого. В примере используется отступ 12px между контейнером значка и его меткой.
+
+<StoryEmbed storyId="ui-components-data-display-stackicon--display" title="Значок компании с составным логотипом" height={100} />
+
+## Использование
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+Нативные атрибуты, события, `className`, `style` и `ref` применяются к внешнему div. `render` заменяет этот целевой элемент посредством композиции Base UI, сохраняя оба узла значков.
+
+## Свойства
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

@@ -16,11 +16,13 @@ export const prepareWorkflowManifestReferences = ({
   existingAllFlatEntityMaps,
   ownerApplicationId,
   idByUniversalIdentifierByMetadataName,
+  canReferenceOtherApplicationsWorkflowActions = false,
 }: {
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   ownerApplicationId: string;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
+  canReferenceOtherApplicationsWorkflowActions?: boolean;
 }): WorkflowManifestReferences => {
   const logicFunctionOutputSchemaByUniversalIdentifier = new Map<
     string,
@@ -41,6 +43,32 @@ export const prepareWorkflowManifestReferences = ({
     WorkflowManifestFieldReference
   >();
 
+  if (canReferenceOtherApplicationsWorkflowActions) {
+    for (const logicFunction of Object.values(
+      existingAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
+    )) {
+      if (
+        !isDefined(logicFunction) ||
+        logicFunction.applicationId === ownerApplicationId ||
+        isDefined(logicFunction.deletedAt) ||
+        !isDefined(logicFunction.workflowActionTriggerSettings)
+      ) {
+        continue;
+      }
+      const declaredOutputSchema =
+        logicFunction.workflowActionTriggerSettings.outputSchema;
+      if (isDefined(declaredOutputSchema)) {
+        logicFunctionOutputSchemaByUniversalIdentifier.set(
+          logicFunction.universalIdentifier,
+          inputSchemaToOutputSchema(declaredOutputSchema),
+        );
+      }
+      logicFunctionIdByUniversalIdentifier.set(
+        logicFunction.universalIdentifier,
+        logicFunction.id,
+      );
+    }
+  }
   for (const logicFunction of Object.values(
     toAllUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
   )) {

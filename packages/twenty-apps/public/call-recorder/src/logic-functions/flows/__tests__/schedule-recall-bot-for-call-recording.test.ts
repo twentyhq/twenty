@@ -125,7 +125,7 @@ describe('scheduleRecallBotForCallRecording', () => {
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
-    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
     vi.stubEnv(
       'TWENTY_APP_ACCESS_TOKEN',
       buildAccessToken({ workspaceId: WORKSPACE_ID }),

@@ -1,12 +1,12 @@
 ---
 title: AI
 description: How Twenty uses AI to enhance your CRM experience.
-icon: "robot"
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Twenty integrates AI directly into your CRM — not as a gimmick, but as a tool that works within your data model and permission system.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## AI Chatbot
 
@@ -29,6 +29,11 @@ Agents work within your existing workflows, so you can combine AI with manual ap
 
 AI in Twenty respects your permission model. Agents can only access objects and fields that the user (or role) has permission to view. Sensitive data stays protected even when AI is involved.
 
-<Card title="Full AI guide" icon="arrow-right" href="/user-guide/ai/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
+  <CardTitle>Full AI guide</CardTitle>
   Detailed reference on the chatbot, agents, and permission controls.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-ai" />

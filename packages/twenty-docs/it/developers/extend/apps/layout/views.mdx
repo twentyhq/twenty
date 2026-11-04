@@ -1,8 +1,11 @@
 ---
 title: Viste
 description: Distribuisci viste preconfigurate salvate — ordine delle colonne, filtri, gruppi — per gli oggetti nella tua app.
-icon: list
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
 
 Una **vista** è una configurazione salvata per come vengono visualizzati i record di un oggetto: quali campi compaiono, il loro ordine, se sono visibili e gli eventuali filtri o gruppi applicati. Usa `defineView()` per fornire viste preconfigurate con la tua app.
 
@@ -17,7 +20,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -49,6 +52,7 @@ export default defineView({
 | `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`      | Ordinamento predefinito.                                                                                                                                                                                                      |
 | `isCompact`                                                                                                 | `boolean`                                                                               | Visualizzazione compatta delle righe.                                                                                                                                                                                         |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                       | Raggruppa i record (ad es. colonne kanban) per un campo.                                                                                                                                                                      |
+| `groupLoadLimit`                                                                                            | `8` (predefinito), `25`, `50`, `100`                                                    | Record caricati per gruppo prima di "Carica altro", nelle viste tabella ed elenco raggruppate. Le bacheche Kanban eseguono la paginazione in base alle proprie dimensioni e lo ignorano.                                      |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                 | Aggregazioni e dimensionamento delle colonne kanban.                                                                                                                                                                          |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                             | Viste calendario: layout, il campo data che posiziona i record e un campo data di fine opzionale.                                                                                                                             |
 
@@ -71,23 +75,34 @@ filters: [
 ],
 ```
 
+Tre proprietà facoltative perfezionano un filtro:
+
+| Proprietà                                                          | Descrizione                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subFieldName`                                                     | Individua una parte di un campo composito, ad esempio `amountMicros` in un campo `CURRENCY` o `primaryLinkUrl` in un campo `LINKS`.                                                                                                                            |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | In un filtro su un campo `RELATION`, il campo dell'oggetto correlato rispetto al quale viene confrontato il valore, come viene impostato dal filtro avanzato quando selezioni un campo del record correlato. Omettilo per filtrare il record correlato stesso. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Inserisci il filtro in uno dei `filterGroups` della vista (ciascuno con un `logicalOperator` di `AND`, `OR` o `NOT` e un `parentViewFilterGroupUniversalIdentifier` facoltativo) e ordinalo all'interno di quel gruppo.                                        |
+
+`twenty app pull` riscrive tutti e tre esattamente come l'area di lavoro li ha archiviati.
+
 ### Operatori supportati per tipo di campo
 
-| Tipo di campo                                                                                      | Operandi supportati                                                                                                |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
-| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
-| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
-| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
-| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
-| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
-| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
-| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
-| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+| Tipo di campo                                                                              | Operandi supportati                                                                                                |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                         |
+| `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                  | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                   | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                             | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                 | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                   | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                   | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                        | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                    | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                        | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                  | `IS`                                                                                                               |
+| `UUID`                                                                                     | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                | `VECTOR_SEARCH`                                                                                                    |
 
 > I tipi di campo con nomi simili possono usare operandi completamente diversi — `SELECT` e `MULTI_SELECT` sono un caso comune.
 
@@ -95,19 +110,22 @@ filters: [
 
 Il campo `value` è sempre un valore serializzabile in JSON, ma la forma prevista dipende dall'operando:
 
-| Famiglia di operandi                                  | Forma del valore                      | Esempio                  |
-| ----------------------------------------------------- | ------------------------------------- | ------------------------ |
-| `IS`, `IS_NOT` su `SELECT`                            | array di chiavi di opzione (stringhe) | `['ACTIVE', 'PENDING']`  |
-| `CONTAINS`, `DOES_NOT_CONTAIN` su `MULTI_SELECT`      | array di chiavi di opzione (stringhe) | `['TAG_A']`              |
-| `IS`, `IS_NOT` su `RELATION`                          | array di ID di record (uuid)          | `['c5a1...']`            |
-| `CONTAINS`, `DOES_NOT_CONTAIN` su campi testuali      | stringa                               | `'acme'`                 |
-| `IS`, `IS_NOT` su `NUMBER`                            | stringa (il valore)                   | `'5'`                    |
-| `IS` su `RATING` / `UUID`                             | stringa (il valore)                   | `'5'`                    |
-| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | stringa (il limite)                   | `'10'`                   |
-| `IS`, `IS_BEFORE`, `IS_AFTER` su `DATE` / `DATE_TIME` | stringa ISO 8601                      | `'2025-01-01T00:00:00Z'` |
-| `IS_EMPTY`, `IS_NOT_EMPTY`                            | stringa vuota                         | `''`                     |
-| `IS` su `BOOLEAN`                                     | `'true'` o `'false'`                  | `'true'`                 |
+| Famiglia di operandi                                  | Forma del valore                                       | Esempio                  |
+| ----------------------------------------------------- | ------------------------------------------------------ | ------------------------ |
+| `IS`, `IS_NOT` su `SELECT`                            | array di chiavi di opzione (stringhe)                  | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` su `MULTI_SELECT`      | array di chiavi di opzione (stringhe)                  | `['TAG_A']`              |
+| `IS`, `IS_NOT` su `RELATION`                          | array di ID di record (uuid)                           | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` su campi testuali      | stringa                                                | `'acme'`                 |
+| `IS`, `IS_NOT` su `TEXT`                              | stringa (esatta, sensibile alle maiuscole e minuscole) | `'Acme'`                 |
+| `IS`, `IS_NOT` su `NUMBER`                            | stringa (il valore)                                    | `'5'`                    |
+| `IS` su `RATING` / `UUID`                             | stringa (il valore)                                    | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | stringa (il limite)                                    | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` su `DATE` / `DATE_TIME` | stringa ISO 8601                                       | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                            | stringa vuota                                          | `''`                     |
+| `IS` su `BOOLEAN`                                     | `'true'` o `'false'`                                   | `'true'`                 |
 
 ## Come le viste vengono visualizzate nell'interfaccia utente
 
 Una vista da sola non è raggiungibile dalla barra laterale. Per farla apparire lì, collegala a una [voce del menu di navigazione](/it/developers/extend/apps/layout/navigation-menu-items) di tipo `VIEW` che punti all'`universalIdentifier` della vista. Questo è il modello canonico: ogni oggetto personalizzato riceve una vista indice predefinita generata automaticamente al momento della creazione, quindi devi solo distribuire la voce della barra laterale che la apre.
+
+<PageBanner illustration="card-page-views" />

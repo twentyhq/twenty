@@ -3,6 +3,10 @@ title: Auto-Reply to Inbound Emails
 description: Build a workflow that uses AI to triage incoming emails and send threaded replies automatically.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Respond to inbound emails in seconds — not hours. This workflow uses an AI Agent to filter out noise (newsletters, spam, auto-replies) and draft a personalized response to real messages. Then, AI sends it as a threaded reply inside the original conversation.
 
 ## How email threading works
@@ -119,3 +123,5 @@ Activate when you're happy with it.
 - **Only reply to VIPs** — add a branch that checks the sender's domain or whether they exist as a Contact in Twenty
 - **Route by intent** — use separate AI Agent prompts to handle sales inquiries differently from support requests
 - **Enrich before replying** — add a Search Records step to pull the sender's company or deal history into the AI prompt for more personalized replies
+
+<PageBanner illustration="page-cover-email" />

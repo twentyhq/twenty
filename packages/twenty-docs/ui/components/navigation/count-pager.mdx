@@ -1,0 +1,93 @@
+---
+title: CountPager
+description: Navigate a finite collection with previous and next controls and formatted position text.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## Overview
+
+`CountPager` combines previous and next buttons with caller-formatted position text. Use it to move through a small collection such as review items or requests.
+
+<StoryEmbed
+  storyId="ui-components-countpager--display"
+  title="Count pager example"
+  height={100}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## Controlled navigation
+
+Supply a zero-based `index`, the collection's `count`, and `onIndexChange`. Activating an available button requests the neighboring index. Your application updates the index and renders the corresponding content.
+
+Previous is disabled on the first item, and Next is disabled on the last item. Both buttons are disabled for an empty or single-item collection, when `disabled` is set, or when the supplied index or count is invalid. Counts must be nonnegative integers, and the index must be an integer within the collection bounds.
+
+Changing props never calls `onIndexChange`. When items disappear or the collection changes, your application chooses the next active item. Data loading, stable item identities, draft preservation, and executing the displayed item remain with the application.
+
+## Position text and placement
+
+`positionText` is required and stays under application control. Format numbers, units, and translations before passing it to the pager. For an empty collection, supply a meaningful value such as `No items`; the component does not invent an empty-state label.
+
+The default `positionPlacement="between"` shows Previous, position text, and Next. Set `positionPlacement="start"` to place the text before both buttons. The text then fills the available width so the actions align at the end of the row.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## Accessibility and composition
+
+The root defaults to a group. Supply a contextual accessible name with `aria-label` or `aria-labelledby`, plus `previousLabel` and `nextLabel` for the two icon buttons. Position text uses a polite live region so changes can be announced without moving focus.
+
+The controls use native buttons with the shared [LightIconButton](/ui/components/input/light-icon-button) presentation. Tab moves between enabled controls, and Enter or Space activates the focused button. Disabled controls cannot navigate. Pager clicks do not submit a surrounding form.
+
+Native attributes, `className`, `style`, and `ref` target the root. Use `render` to compose a different root element while preserving the supplied props and ref. Keep the buttons and their interaction semantics intact.
+
+## Props
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />

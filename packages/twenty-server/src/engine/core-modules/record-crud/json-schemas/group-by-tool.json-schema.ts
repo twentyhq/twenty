@@ -121,18 +121,20 @@ const buildGroupByEntries = ({
       }
 
       if (isCompositeFieldMetadataType(field.type)) {
-        return (getGroupableSubFieldsForCompositeType(field.type) ?? []).map(
-          (subField) => ({
-            schema: buildSingleKeyObject({
-              key: field.name,
-              value: buildSingleKeyObject({
-                key: subField,
-                value: TRUE_JSON_SCHEMA,
-              }),
+        return (
+          getGroupableSubFieldsForCompositeType(field.type, {
+            excludeDeprecated: true,
+          }) ?? []
+        ).map((subField) => ({
+          schema: buildSingleKeyObject({
+            key: field.name,
+            value: buildSingleKeyObject({
+              key: subField,
+              value: TRUE_JSON_SCHEMA,
             }),
-            label: `${field.name}.${subField}`,
           }),
-        );
+          label: `${field.name}.${subField}`,
+        }));
       }
 
       if (isFieldMetadataArrayKind(field.type)) {

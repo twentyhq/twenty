@@ -1,0 +1,60 @@
+---
+title: Anillo de progreso
+description: Muestra un progreso medido o indeterminado en un indicador circular compacto.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+## Resumen
+
+`ProgressRing` proporciona una apariencia circular para [Progress](/es/ui/primitives/feedback/progress). Comparte el rango personalizado, el valor nulo, el formato, el etiquetado, la propiedad nativa, la referencia y el contrato de renderizado de la raíz. Los elementos secundarios opcionales muestran un valor preformateado junto al anillo.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--display" title="Ejemplo de anillo de progreso" height={90} />
+
+## Uso
+
+Proporciona el valor controlado sin procesar y un nombre accesible. Use `aria-valuetext` cuando un valor con formato explique el progreso con más claridad que un porcentaje.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={600}
+    max={1000}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+Usa `aria-labelledby` para asociar el anillo con una etiqueta visible existente o compón `Progress.Label` como elemento secundario. Los elementos secundarios preformateados no proporcionan automáticamente el nombre accesible del anillo.
+
+## Progreso y rangos controlados
+
+La aplicación calcula `value` y formatea el contenido mostrado. El anillo no obtiene datos, no avanza el progreso ni calcula cuotas. `min` tiene como valor predeterminado `0` y `max` tiene como valor predeterminado `100`. Los valores finitos se limitan al rango para los valores semánticos y la geometría del arco. El arco se rellena según el porcentaje normalizado, incluso cuando el mínimo no es cero.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--custom-range" title="Progreso circular en un rango personalizado" height={90} />
+
+Pasa `value={null}` para el progreso indeterminado. El anillo omite `aria-valuenow` y muestra un arco indeterminado. Los valores no finitos también permanecen indeterminados; no se convierten en cero ni en finalización. El contenido mostrado sigue estando controlado por la aplicación.
+
+Usa `locale`, `format` y `getAriaValueText` como se describe en [Progress](/es/ui/primitives/feedback/progress). Compón `Progress.Value` para mostrar el valor formateado de la raíz.
+
+Usa [ProgressBar](/es/ui/primitives/feedback/progress-bar) para el progreso horizontal o [MetricRow](/es/ui/components/data-display/metric-row) para una etiqueta y un valor alineado.
+
+## Apariencia y composición
+
+`size="md"` representa un anillo de 16 px; `size="sm"` representa un anillo de 14 px. Ambos usan un trazo de 2 px y se rellenan en el sentido de las agujas del reloj desde la parte superior. `barColor` acepta colores CSS, incluidas las variables de tema. El SVG es decorativo y está oculto para las API de accesibilidad.
+
+Los cambios de valor se animan durante 300 ms. Las preferencias de movimiento reducido desactivan la transición y la rotación indeterminada. Los atributos nativos, `className`, `style` y `ref` se aplican al elemento de progreso externo. `className` y `style` pueden recibir el estado del progreso. `render` puede reemplazar la raíz y conservar su semántica.
+
+## "Props"
+
+<ProgressRingReference />
+
+<PageBanner illustration="card-page-usage-limits" />

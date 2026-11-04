@@ -11,9 +11,11 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     folderId
     name
     link
+    nativePageKey
     icon
     color
     pageLayoutId
+    agentChatChannelId
     position
     applicationId
     createdAt

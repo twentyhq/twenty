@@ -6,16 +6,17 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconUserPin, useIcons } from 'twenty-ui/icon';
+import { IconUserPin } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useMutation } from '@apollo/client/react';
 import {
   type UpdateWorkspaceMutation,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRoleDefaultRoleProps = {
   roles: RoleWithPartialMembers[];
@@ -24,6 +25,7 @@ type SettingsRoleDefaultRoleProps = {
 export const SettingsRoleDefaultRole = ({
   roles,
 }: SettingsRoleDefaultRoleProps) => {
+  const { t } = useLingui();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -59,11 +61,13 @@ export const SettingsRoleDefaultRole = ({
     return null;
   }
 
-  const options = roles.map((role) => ({
-    label: role.label,
-    value: role.id,
-    Icon: getIcon(role.icon) ?? IconUserPin,
-  }));
+  const options = roles
+    .filter((role) => role.canBeAssignedToUsers)
+    .map((role) => ({
+      label: role.label,
+      value: role.id,
+      Icon: getIcon(role.icon) ?? IconUserPin,
+    }));
 
   if (options.length === 0) {
     return null;

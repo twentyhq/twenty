@@ -1,9 +1,9 @@
-import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
+import { type Editor } from '@tiptap/core';
 import { useEffect } from 'react';
 
 type StandaloneRichTextWidgetAutoFocusEffectProps = {
   shouldFocus: boolean;
-  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
+  editor: Editor;
   containerElement?: HTMLElement | null;
 };
 
@@ -19,7 +19,7 @@ export const StandaloneRichTextWidgetAutoFocusEffect = ({
 
       if (!alreadyFocused) {
         const rafId = requestAnimationFrame(() => {
-          editor.focus();
+          editor.commands.focus();
         });
 
         return () => {

@@ -3,6 +3,10 @@ title: Permisiuni
 description: Controlați accesul la obiecte, câmpuri și setări cu permisiuni bazate pe roluri.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Sistemul de permisiuni al Twenty vă permite să controlați accesul la trei domenii principale:
 
 * **Obiecte și Câmpuri**: Controlați cine poate vizualiza, edita sau șterge înregistrările și câmpurile individuale
@@ -10,6 +14,10 @@ Sistemul de permisiuni al Twenty vă permite să controlați accesul la trei dom
 * **Acțiuni**: Controlați acțiunile generale ale workspace-ului cum ar fi importarea datelor sau trimiterea e-mailurilor
 
 ## Creează Rol
+
+<Note>
+Pe Twenty Cloud, atribuirea unui rol personalizat membrilor sau cheilor API necesită planul **Organization**. Pe **Pro**, membrii utilizează rolurile **Admin** și **Member**, în timp ce agenții AI pot avea în continuare roluri personalizate. Planurile Pro (Early) și instanțele auto-găzduite nu sunt limitate.
+</Note>
 
 Pentru a crea un rol nou:
 
@@ -211,3 +219,5 @@ Agentul AI va putea accesa date și executa doar acțiunile permise de rolul să
 <Note>
 Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru asigură că agentul nu poate accesa sau modifica date în afara ariei sale intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
 </Note>
+
+<PageBanner illustration="card-page-permissions" />

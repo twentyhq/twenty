@@ -1,0 +1,105 @@
+---
+title: Текст
+description: Настраивайте типографику темы с обрезкой в одну строку или ограниченным числом строк.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## Обзор
+
+`Text` предоставляет типографику и обработку переполнения. По умолчанию он отображает `div`. Не указывайте `size`, `weight` и `color`, чтобы продолжать наследовать типографику от окружения.
+
+<StoryEmbed storyId="ui-typography-text--display" title="Пример текста" height={90} />
+
+## Использование
+
+Задайте тексту ограниченную ширину, затем установите `truncate`, чтобы при переполнении отображалось многоточие:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## Выберите типографику
+
+`size` использует существующую шкалу темы. Он изменяет размер шрифта без значений по умолчанию для высоты, font-family или line-height:
+
+| Размер | Значение темы |
+| ------ | ------------- |
+| `xxs`  | `0.625rem`    |
+| `xs`   | `0.85rem`     |
+| `sm`   | `0.92rem`     |
+| `md`   | `1rem`        |
+| `lg`   | `1.23rem`     |
+| `xl`   | `1.54rem`     |
+| `xxl`  | `1.85rem`     |
+
+`weight` принимает `regular` (400), `medium` (500) или `semibold` (600). `color` принимает `primary`, `secondary`, `tertiary` или `light`. Каждый пропуск свойства наследуется независимо. Визуальный размер не изменяет семантический элемент.
+
+<StoryEmbed storyId="ui-typography-text--typography-catalog" title="Типографическая шкала текста" height={410} />
+
+Для подписей используйте малый размер, насыщенность semibold и светлый цвет:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+Используйте нативный `style` для цветов во время выполнения и ограничений родительского макета. Классы вызывающего кода и композиция рендеринга нацелены на один и тот же текстовый элемент. При отсутствии этих свойств Text не добавляет типографические значения по умолчанию.
+
+## Ограничение числа строк
+
+<StoryEmbed storyId="ui-typography-text--catalog" title="Параметры переполнения текста" height={210} />
+
+Используйте `lineClamp` с положительным целым числом. Выберите `truncate` или `lineClamp`; эти свойства взаимоисключающие.
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## Выберите элемент
+
+Используйте `render`, когда для текста требуется другой семантический элемент:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+Обрезка влияет на визуальное представление; она не сокращает текст в DOM. Предоставьте возможность прочитать полное содержимое, когда видимой части недостаточно.
+
+## Свойства
+
+Нативные атрибуты, дочерние элементы, refs, имена классов и стили применяются к отрисованному текстовому элементу. `TextProps` экспортируется из `twenty-ui/primitives/typography`. Текстовое содержимое отображается без изменений, включая ссылки, предоставленные вызывающей стороной.
+
+<TextReference />
+
+## Миграция
+
+`color` теперь выбирает семантический цвет темы. Перенесите произвольные значения цвета CSS из нативного атрибута `color` в `style={{ color: customColor }}`. Существующие стили, классы и композиция рендеринга по-прежнему нацелены на текстовый элемент.
+
+<PageBanner illustration="section-document-generator" />

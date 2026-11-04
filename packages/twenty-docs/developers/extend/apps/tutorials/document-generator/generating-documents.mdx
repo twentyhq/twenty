@@ -1,8 +1,13 @@
 ---
 title: 2. Generating documents
-icon: "bolt"
 description: One logic function, exposed as an AI tool and a workflow action.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Overview
 
 Now the core: a [logic function](/developers/extend/apps/logic/logic-functions)
 that loads a template and a record, fills the placeholders, and saves a new
@@ -234,6 +239,11 @@ uses for recordings.
 **After this step:** each generated document has a real, downloadable PDF. But
 nothing can *call* the generator from the UI yet — for that we need an HTTP route.
 
-<Card title="Next: HTTP routes →" icon="globe" href="/developers/extend/apps/tutorials/document-generator/http-routes">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
+  <CardTitle>Next: HTTP routes →</CardTitle>
   Serve the function over HTTP and render documents as web pages.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

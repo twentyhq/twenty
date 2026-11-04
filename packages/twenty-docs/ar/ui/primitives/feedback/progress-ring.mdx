@@ -1,0 +1,60 @@
+---
+title: حلقة التقدّم
+description: اعرض تقدماً مقاساً أو غير محدد في مؤشر دائري مدمج.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+## نظرة عامة
+
+يوفر `ProgressRing` مظهراً دائرياً لـ [التقدم](/ar/ui/primitives/feedback/progress). يتشارك النطاق المخصص للجذر، والقيمة الخالية، والتنسيق، ووضع التسميات، والخاصية الأصلية، والمرجع، وعقد العرض. تعرض العناصر الفرعية الاختيارية قيمة منسقة مسبقاً بجانب الحلقة.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--display" title="مثال على حلقة التقدّم" height={90} />
+
+## استخدام
+
+وفّر القيمة الأولية المتحكَّم بها واسماً متاحاً. استخدم `aria-valuetext` عندما تشرح القيمة المنسقة التقدّم بوضوح أكبر من النسبة المئوية.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={600}
+    max={1000}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+استخدم `aria-labelledby` لربط الحلقة بتسمية مرئية موجودة، أو أنشئ `Progress.Label` كعنصر فرعي. لا توفر العناصر الفرعية المنسقة مسبقاً اسم الحلقة المتاح تلقائياً.
+
+## التقدم والنطاقات المتحكَّم بها
+
+يحسب التطبيق `value` وينسّق محتوى العرض. لا تجلب الحلقة البيانات، ولا تتقدم في التقدّم، ولا تحسب الحصص. القيمة الافتراضية لـ `min` هي `0`، والقيمة الافتراضية لـ `max` هي `100`. تُقيَّد القيم المحدودة ضمن النطاق للقيم الدلالية وهندسة القوس. يمتلئ القوس وفقاً للنسبة المئوية المطبّعة، بما في ذلك عندما يكون الحد الأدنى غير صفري.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--custom-range" title="تقدم دائري ضمن نطاق مخصص" height={90} />
+
+مرّر `value={null}` للتقدم غير المحدد. تحذف الحلقة `aria-valuenow` وتعرض قوساً غير محدد. تبقى القيم غير المحدودة غير محددة أيضاً؛ ولا تصبح صفراً أو اكتمالاً. يبقى محتوى العرض متحكَّماً به من التطبيق.
+
+استخدم `locale` و`format` و`getAriaValueText` كما هو موضح في [التقدم](/ar/ui/primitives/feedback/progress). أنشئ `Progress.Value` لعرض القيمة المنسقة للجذر.
+
+استخدم [ProgressBar](/ar/ui/primitives/feedback/progress-bar) للتقدم الأفقي أو [MetricRow](/ar/ui/components/data-display/metric-row) للحصول على تسمية وقيمة محاذاة.
+
+## المظهر والتركيب
+
+يعرض `size="md"` حلقة بحجم 16px؛ ويعرض `size="sm"` حلقة بحجم 14px. يستخدم كلاهما حدًا بعرض 2px ويملآن باتجاه عقارب الساعة بدءًا من الأعلى. يقبل `barColor` ألوان CSS، بما في ذلك متغيرات السمة. إن SVG زخرفي ومخفي عن واجهات برمجة تطبيقات إمكانية الوصول.
+
+تتحرك تغييرات القيمة لمدة 300ms. تؤدي تفضيلات تقليل الحركة إلى تعطيل الانتقال والدوران غير المحدد. تستهدف السمات الأصلية و`className` و`style` و`ref` عنصر التقدّم الخارجي. يمكن لـ `className` و`style` تلقي حالة التقدم. يمكن لـ `render` استبدال الجذر مع الاحتفاظ بدلالاته.
+
+## الإزاحة
+
+<ProgressRingReference />
+
+<PageBanner illustration="card-page-usage-limits" />

@@ -94,6 +94,11 @@ const StyledInput = styled.input`
   outline: none;
   padding: 0;
 
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+
   &::placeholder {
     ${FORM_FIELD_PLACEHOLDER_STYLES}
   }

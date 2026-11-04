@@ -89,10 +89,15 @@ export const ExternalFiltering: Story = {
     await userEvent.clear(input);
     await userEvent.type(input, 'Pa');
     const paris = await body.findByRole('option', { name: 'Paris' });
+    const listbox = body.getByRole('listbox', { name: 'City suggestions' });
     await waitFor(() =>
       expect(input).toHaveAttribute('aria-activedescendant', paris.id),
     );
     await userEvent.keyboard('{Enter}');
     await expect(input).toHaveValue('Paris');
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-expanded', 'false'),
+    );
+    await waitFor(() => expect(listbox).not.toBeInTheDocument());
   },
 };

@@ -108,7 +108,7 @@ const chartRecordFilterSchema = z.object({
   operand: z
     .enum(FILTER_OPERAND_OPTIONS)
     .describe(
-      'Filter operator. Valid operators per field type — TEXT/EMAILS/FULL_NAME/ARRAY/PHONES: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. NUMBER/CURRENCY/RATING: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. DATE/DATE_TIME: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY. SELECT: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. MULTI_SELECT: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. RELATION: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. BOOLEAN: IS.',
+      'Filter operator. Valid operators per field type — TEXT: CONTAINS, DOES_NOT_CONTAIN, IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. EMAILS/FULL_NAME/ARRAY/PHONES: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. NUMBER/CURRENCY/RATING: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. DATE/DATE_TIME: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY. SELECT: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. MULTI_SELECT: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. RELATION: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. BOOLEAN: IS.',
     ),
   value: z
     .string()
@@ -162,7 +162,8 @@ export const chartFilterSchema = z
   })
   .describe(
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
-  );
+  )
+  .meta({ id: 'chartFilter' });
 
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();
@@ -590,13 +591,6 @@ const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
     .object({
-      blocknote: z
-        .string()
-        .nullable()
-        .optional()
-        .describe(
-          'BlockNote JSON string (advanced). Stringified array of BlockNote blocks.',
-        ),
       markdown: z
         .string()
         .nullable()

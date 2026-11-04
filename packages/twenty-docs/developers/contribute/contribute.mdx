@@ -2,9 +2,10 @@
 title: Contribute
 description: Contribute to Twenty's open-source development.
 ---
-<Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="AI" />
-</Frame>
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Overview
 
@@ -20,12 +21,15 @@ Twenty is open-source and welcomes contributions from the community. Whether you
 
 ## Getting Started
 
-<CardGroup cols={2}>
-  <Card title="Bug Reports & Requests" icon="bug" href="/developers/contribute/capabilities/bug-and-requests">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/card-page-bug-requests.svg">
+    <CardTitle>Bug Reports & Requests</CardTitle>
     Report issues or request features
   </Card>
-  <Card title="Frontend Development" icon="browser" href="/developers/contribute/capabilities/frontend-development/folder-architecture-front">
+  <Card href="/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/card-page-frontend-architecture.svg">
+    <CardTitle>Frontend Development</CardTitle>
     Contribute to the UI
   </Card>
 </CardGroup>
 
+<PageBanner illustration="dev-contribute" />

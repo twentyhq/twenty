@@ -30,26 +30,6 @@ describe('hasWorkflowOutputSchema', () => {
     expect(hasWorkflowOutputSchema({ outputSchema: {} })).toBe(false);
   });
 
-  it('should reject a LINK output schema as not being a real schema', () => {
-    expect(
-      hasWorkflowOutputSchema({
-        outputSchema: {
-          _outputSchemaType: 'LINK',
-          href: 'https://example.com',
-        },
-      }),
-    ).toBe(false);
-  });
-
-  it('should prefer expectedOutputSchema over a LINK output schema', () => {
-    expect(
-      hasWorkflowOutputSchema({
-        expectedOutputSchema: { field: 'value' },
-        outputSchema: { _outputSchemaType: 'LINK' },
-      }),
-    ).toBe(true);
-  });
-
   it('should return false for non-object schema values', () => {
     expect(hasWorkflowOutputSchema({ outputSchema: 'not-an-object' })).toBe(
       false,

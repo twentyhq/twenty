@@ -1,0 +1,477 @@
+---
+title: Seleccionar
+description: Elija uno o varios valores de una lista emergente de opciones.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+## Resumen
+
+Use `Select` para un valor de formulario elegido de una lista. [Dropdown](/es/ui/components/navigation/dropdown) sigue siendo la API principal de nivel superior para menús, selectores, paneles y páginas que combinan esos Workflows.
+
+<StoryEmbed storyId="ui-input-select--display" title="Ejemplo de Select" height={240} />
+
+## "Uso"
+
+### Estado no controlado.
+
+Usa `defaultValue` para establecer la prioridad inicial. El selector gestiona los cambios de selección posteriores.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Proporcione `items` en `Root` para que `Value` muestre la etiqueta del elemento seleccionado; sin ellos, el activador muestra el valor sin procesar. El valor seleccionado puede ser `null` cuando no hay nada seleccionado.
+
+## Anatomía
+
+Compón las partes públicas dentro de `Select.Root`. `Trigger` e `Item` procesan únicamente sus elementos secundarios. Añade `Icon`, `ItemText` e `ItemIndicator` explícitamente cuando quieras el chevrón, la etiqueta y la marca de verificación predeterminados.
+
+```text
+Select.Root
+├── Select.Label
+├── Select.Trigger
+│   ├── Select.Value
+│   └── Select.Icon
+└── Select.Portal
+    ├── Select.Backdrop
+    └── Select.Positioner
+        └── Select.Popup
+            ├── Select.Arrow
+            ├── Select.ScrollUpArrow
+            ├── Select.List
+            │   ├── Select.Group
+            │   │   ├── Select.GroupLabel
+            │   │   └── Select.Item
+            │   │       ├── Select.ItemText
+            │   │       └── Select.ItemIndicator
+            │   └── Select.Separator
+            └── Select.ScrollDownArrow
+```
+
+| Parte                              | Propósito                                                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `Root`                             | Gestiona la selección, el estado abierto, los valores genéricos y la integración con formularios nativos.            |
+| `Label`                            | Asocia una etiqueta visible con el disparador.                                                                       |
+| `Disparador`                       | Abre la lista y contiene el valor mostrado.                                                                          |
+| `Valor`                            | Representa la etiqueta seleccionada o un marcador de posición.                                                       |
+| `Icon`                             | Representa un galón predeterminado o elementos secundarios personalizados en el disparador.                          |
+| `Portal`                           | Mueve el contenido emergente al contenedor del portal del tema o a un contenedor explícito.                          |
+| `Backdrop`                         | Proporciona un fondo opcional mientras la ventana emergente está abierta.                                            |
+| `Positioner`                       | Gestiona la geometría del ancla, la ubicación, los desplazamientos y el comportamiento ante colisiones.              |
+| `Popup`                            | Representa la superficie emergente sin añadir un portal ni un posicionador.                                          |
+| `Lista`                            | Proporciona un contenedor de desplazamiento independiente para las opciones.                                         |
+| `Item`                             | Proporciona comportamiento de selección para una opción.                                                             |
+| `ItemText`                         | Identifica la etiqueta de opción utilizada para la búsqueda anticipada y la alineación del valor seleccionado.       |
+| `ItemIndicator`                    | Representa la marca de verificación predeterminada de la opción seleccionada o elementos secundarios personalizados. |
+| `Arrow`                            | Coloca una flecha opcional junto al ancla de la ventana emergente.                                                   |
+| `ScrollUpArrow`, `ScrollDownArrow` | Desplaza una lista larga al pasar el cursor.                                                                         |
+| `Group`, `GroupLabel`              | Agrupa las opciones relacionadas bajo una etiqueta.                                                                  |
+| `Separator`                        | Separa los grupos visualmente.                                                                                       |
+
+`Portal`, `List`, `Backdrop`, las flechas y los indicadores son opcionales. Usa `Positioner` alrededor de `Popup` para el posicionamiento, incluso cuando representes la ventana emergente en línea sin un portal.
+
+## Estado controlado
+
+Pasa `value` y actualízalo con `onValueChange` para gestionar la misma prioridad en el estado de React. La devolución de llamada recibe el siguiente valor y los detalles del evento.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Selección múltiple
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {LANGUAGES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+Con `multiple`, el valor es una matriz. Usa `defaultValue={['en']}` en lugar de `value` y `onValueChange` para una selección múltiple no controlada. Los tipos genéricos de raíz representan el valor de la opción y si la selección múltiple está habilitada.
+
+## Estado abierto
+
+La selección y la visibilidad de la ventana emergente son independientes. Los ejemplos anteriores dejan la visibilidad de la ventana emergente sin controlar. Seleccionar un único valor cierra la ventana emergente; la selección múltiple la mantiene abierta. Usa `defaultOpen` para establecer su visibilidad inicial; su valor predeterminado es `false`.
+
+Pasa `open` y actualízalo con `onOpenChange` para controlar la visibilidad. Este ejemplo controla la ventana emergente y deja la prioridad seleccionada sin controlar.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Combinar con un campo
+
+Envuelve el selector en `Field.Root` para asociar su activador con una etiqueta visible y texto de ayuda. El campo gestiona el etiquetado y la validación; el selector mantiene su propio estado de selección y ventana emergente.
+
+```tsx
+import { Field, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PriorityField = () => (
+  <Field.Root name="priority">
+    <Field.Label>Priority</Field.Label>
+    <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+    <Field.Description>
+      Choose how soon this record needs attention.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Composición de elementos
+
+Compón contenido arbitrario dentro de `Item`. Coloca la etiqueta buscable en `ItemText`; el contenido adicional no se convierte en su etiqueta de búsqueda anticipada. Proporciona elementos secundarios a `Icon` o `ItemIndicator` para reemplazar sus iconos predeterminados, u omite esas partes por completo.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+export const PrioritySelect = () => (
+  <Select.Root defaultValue="high" items={{ high: 'High' }}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          <Select.Item value="high">
+            <Select.ItemText>High</Select.ItemText>
+            <span>Needs attention today</span>
+            <Select.ItemIndicator />
+          </Select.Item>
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Todas las partes que representan elementos aceptan atributos nativos, referencias y las API de composición `render`, `className` y `style` de Base UI. Por ejemplo, usa `render={<Button />}` en `Trigger` para componerlo con un botón de Twenty UI. Para un elemento de representación que no sea un botón, establece también `nativeButton={false}`.
+
+## Ubicación
+
+Establece `size="sm"` o `size="md"` en `Trigger`. La ubicación pertenece a `Positioner`; el destino del portal pertenece a `Portal`.
+
+`Positioner` conserva los valores predeterminados de Base UI: `side="bottom"`, `align="center"`, `sideOffset={0}` y `alignItemWithTrigger={true}`. La alineación del elemento seleccionado se aplica a la entrada mediante puntero cuando hay suficiente espacio. Establece `alignItemWithTrigger={false}` para usar un posicionamiento anclado de forma coherente. Los ejemplos anteriores eligen explícitamente `align="start"` y `sideOffset={8}`.
+
+```tsx
+import { useRef, useState } from 'react';
+import { Button, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PositionedPrioritySelect = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const boundaryRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <div ref={boundaryRef}>
+      <Button ref={anchorRef}>Position anchor</Button>
+      <Select.Root defaultValue="normal" items={PRIORITIES}>
+        <Select.Trigger aria-label="Priority">
+          <Select.Value />
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal container={portalContainer}>
+          <Select.Positioner
+            anchor={anchorRef}
+            positionMethod="fixed"
+            side="inline-end"
+            align="start"
+            alignItemWithTrigger={false}
+            sideOffset={({ anchor }) => anchor.width / 4}
+            alignOffset={4}
+            collisionBoundary={boundaryRef.current ?? undefined}
+            collisionPadding={12}
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            sticky
+          >
+            <Select.Popup>
+              <Select.Arrow />
+              <Select.List>
+                {PRIORITIES.map(({ value, label }) => (
+                  <Select.Item key={value} value={value}>
+                    <Select.ItemText>{label}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+      <div ref={setPortalContainer} />
+    </div>
+  );
+};
+```
+
+`Positioner` también admite anclas virtuales, funciones de desplazamiento, `arrowPadding` y `disableAnchorTracking`. `Portal` usa el [contenedor del portal del tema](/es/ui/theming#scope-an-override), a menos que proporciones `container`. Un `container={null}` explícito espera hasta que ese contenedor esté disponible.
+
+<StoryEmbed storyId="ui-input-select-portals--positioning-documentation" title="Select con un ancla personalizada y una lista desplazable" height={480} />
+
+## Formularios nativos y detalles de las devoluciones de llamada
+
+Establece `name` en `Root` para incluir el valor seleccionado en `FormData`. La selección múltiple envía una entrada por cada valor seleccionado. `form` asocia la entrada oculta con un formulario externo, y `inputRef` proporciona acceso a esa entrada. `required`, `disabled` y `autoComplete` conservan el comportamiento de formulario nativo de Base UI.
+
+`onValueChange` y `onOpenChange` reciben el siguiente estado y los detalles del evento ascendente, incluidos `reason`, el `event` nativo, `cancel()` y `allowPropagation()`. Llamar a `cancel()` impide el cambio de estado interno correspondiente. Las raíces controladas aún requieren que actualices `value` u `open`.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+type PrioritySelectProps = { canSetHighPriority: boolean };
+
+export const PrioritySelect = ({ canSetHighPriority }: PrioritySelectProps) => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      items={PRIORITIES}
+      value={priority}
+      onValueChange={(nextPriority, details) => {
+        if (nextPriority === 'high' && !canSetHighPriority) {
+          details.cancel();
+          return;
+        }
+        setPriority(nextPriority);
+      }}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+Los tipos genéricos de raíz representan el valor de la opción y si la selección múltiple está habilitada. Los valores de objeto admiten `itemToStringLabel`, `itemToStringValue` e `isItemEqualToValue`. Usa `null` para una selección única vacía y un arreglo vacío para una selección múltiple vacía.
+
+## Teclado
+
+Los usuarios de teclado pueden abrir la lista desde el activador, navegar por las opciones con las teclas de flecha y escribir para encontrar una opción. Inicio y Fin saltan a la primera y la última opción. Intro selecciona una opción; Escape descarta la ventana emergente y restaura el foco del disparador. La selección múltiple mantiene abierta la ventana emergente mientras se alternan las opciones.
+
+Etiqueta el disparador con `Select.Label`, un nombre accesible o [Field](/es/ui/primitives/input/field). Un marcador de posición por sí solo no da nombre al control.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que representan elementos.
+
+<SelectReference />
+
+<PageBanner illustration="page-cover-input" />

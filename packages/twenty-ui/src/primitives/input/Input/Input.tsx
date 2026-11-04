@@ -12,6 +12,8 @@ import { type InputProps } from './types/InputProps';
 export const Input = ({
   size,
   variant = 'default',
+  hasFocusRing = true,
+  textAlign,
   className,
   ...props
 }: InputProps) => {
@@ -28,7 +30,9 @@ export const Input = ({
         className,
       )}
       data-variant={resolvedVariant}
+      data-focus-ring={hasFocusRing}
       data-grouped={isGrouped || undefined}
+      data-text-align={textAlign}
     />
   );
 };

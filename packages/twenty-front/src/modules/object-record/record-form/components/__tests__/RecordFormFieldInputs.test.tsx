@@ -38,6 +38,7 @@ const renderInputs = (
       draftRecord={draftRecord}
       onFieldValueChange={onFieldValueChange}
       onFieldValueClear={jest.fn()}
+      formInstanceId="record-form"
     />,
   );
 
@@ -98,6 +99,7 @@ describe('RecordFormFieldInputs', () => {
         draftRecord={{}}
         onFieldValueChange={onFieldValueChange}
         onFieldValueClear={jest.fn()}
+        formInstanceId="record-form"
       />,
     );
 
@@ -110,6 +112,7 @@ describe('RecordFormFieldInputs', () => {
         draftRecord={{}}
         onFieldValueChange={onFieldValueChange}
         onFieldValueClear={jest.fn()}
+        formInstanceId="record-form"
       />,
     );
 

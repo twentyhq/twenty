@@ -3,74 +3,58 @@ import {
   type RichTextMetadata,
   richTextValueSchema,
 } from 'twenty-shared/types';
+import {
+  convertBlockNoteToRichTextDocument,
+  isDefined,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
-import type { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { convertMarkdownToRichTextDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-rich-text-document.util';
+import { ensureTipTapSchemaVersion } from 'src/engine/core-modules/record-transformer/utils/ensure-tiptap-schema-version.util';
 
-import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-blocknote-blocks.util';
-
-// Reuse a single ServerBlockNoteEditor across all calls to avoid
-// the cost of dynamic import resolution + instance creation (~90ms) on every transform.
-let serverBlockNoteEditorPromise: Promise<ServerBlockNoteEditor> | null = null;
-
-// SWC compiles import() to require() in CJS mode, which breaks ESM-only
-// transitive dependencies in @blocknote/core. Native import() resolves
-// the ESM bundle path where the full chain works.
-const nativeImport = new Function('specifier', 'return import(specifier)');
-
-const loadServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
-  const module = await nativeImport('@blocknote/server-util');
-
-  return module.ServerBlockNoteEditor.create();
-};
-
-const getServerBlockNoteEditor = (): Promise<ServerBlockNoteEditor> => {
-  serverBlockNoteEditorPromise ??= loadServerBlockNoteEditor().catch(
-    (error: unknown) => {
-      serverBlockNoteEditorPromise = null;
-      throw error;
-    },
-  );
-
-  return serverBlockNoteEditorPromise;
-};
-
-const convertMarkdownToBlocknote = (markdown: string): string =>
-  JSON.stringify(convertMarkdownToBlocknoteBlocks(markdown));
-
-// Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
-// Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
-const convertBlocknoteToMarkdown = async (
-  blocknote: string,
-): Promise<string> => {
-  const serverBlockNoteEditor = await getServerBlockNoteEditor();
-
-  try {
-    return await serverBlockNoteEditor.blocksToMarkdownLossy(
-      JSON.parse(blocknote),
-    );
-  } catch {
-    return blocknote;
-  }
-};
-
-export const transformRichTextValue = async (
+export const transformRichTextValue = (
   // oxlint-disable-next-line typescript/no-explicit-any
   richTextValue: any,
-): Promise<RichTextMetadata> => {
-  const parsedValue = isNonEmptyString(richTextValue)
+): RichTextMetadata => {
+  const { tiptap, blocknote, markdown }: RichTextMetadata = isNonEmptyString(
+    richTextValue,
+  )
     ? richTextValueSchema.parse(richTextValue)
     : richTextValue;
 
+  if (isNonEmptyString(tiptap)) {
+    const versionedTipTap = ensureTipTapSchemaVersion(tiptap);
+
+    return {
+      tiptap: versionedTipTap,
+      markdown: tipTapDocumentToMarkdown(versionedTipTap),
+      blocknote: null,
+    };
+  }
+
+  const blockNoteDocument = isNonEmptyString(blocknote)
+    ? convertBlockNoteToRichTextDocument(blocknote)
+    : undefined;
+
+  if (isDefined(blockNoteDocument)) {
+    return {
+      tiptap: JSON.stringify(blockNoteDocument),
+      markdown: tipTapDocumentToMarkdown(blockNoteDocument),
+      blocknote,
+    };
+  }
+
+  const markdownDocument = isNonEmptyString(markdown)
+    ? convertMarkdownToRichTextDocument(markdown)
+    : undefined;
+
+  if (!isDefined(markdownDocument)) {
+    return { tiptap: null, markdown: null, blocknote: null };
+  }
+
   return {
-    markdown:
-      parsedValue.markdown ||
-      (isNonEmptyString(parsedValue.blocknote)
-        ? await convertBlocknoteToMarkdown(parsedValue.blocknote)
-        : null),
-    blocknote:
-      parsedValue.blocknote ||
-      (isNonEmptyString(parsedValue.markdown)
-        ? convertMarkdownToBlocknote(parsedValue.markdown)
-        : null),
+    tiptap: JSON.stringify(markdownDocument),
+    markdown,
+    blocknote: null,
   };
 };

@@ -94,8 +94,8 @@ export class TrimMessageCampaignRecordPageCommand extends ProvisionedWorkspaceCo
         flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
     ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
-    const pageLayoutWidgetsToUpdate = SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map(
-      (universalIdentifier) => {
+    const pageLayoutWidgetsToUpdate =
+      SENT_ONLY_WIDGET_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) => {
         const existingWidget =
           flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier];
         const standardWidget =
@@ -116,8 +116,7 @@ export class TrimMessageCampaignRecordPageCommand extends ProvisionedWorkspaceCo
           conditionalAvailabilityExpression:
             standardWidget.conditionalAvailabilityExpression,
         };
-      },
-    ).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
+      }).filter((widget): widget is FlatPageLayoutWidget => isDefined(widget));
 
     const totalOperationCount =
       pageLayoutWidgetsToDelete.length + pageLayoutWidgetsToUpdate.length;
@@ -141,6 +140,7 @@ export class TrimMessageCampaignRecordPageCommand extends ProvisionedWorkspaceCo
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

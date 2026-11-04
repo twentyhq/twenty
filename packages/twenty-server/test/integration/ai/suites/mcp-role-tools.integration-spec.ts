@@ -1,6 +1,6 @@
 import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
@@ -49,7 +49,7 @@ describe('MCP role tools (integration)', () => {
     const result = await callMcpTool({
       toolName: 'learn_tools',
       toolArguments: { toolNames: ROLE_TOOL_NAMES },
-      token: API_KEY_ACCESS_TOKEN,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     expect(result.isError).toBe(false);
@@ -58,6 +58,19 @@ describe('MCP role tools (integration)', () => {
 
     expect(payload.notFound).toEqual([]);
     expect(payload.tools).toMatchSnapshot();
+  });
+
+  // updateWorkspaceMemberRole refuses API keys, and the tool follows its access policy
+  it('should not offer assign_role_to_workspace_member to an API key', async () => {
+    const result = await callMcpTool({
+      toolName: 'learn_tools',
+      toolArguments: { toolNames: ROLE_TOOL_NAMES },
+      token: API_KEY_ACCESS_TOKEN,
+    });
+
+    expect(JSON.parse(result.content[0].text).notFound).toEqual([
+      'assign_role_to_workspace_member',
+    ]);
   });
 
   it('should create, restrict, rename and delete a role', async () => {
@@ -121,6 +134,43 @@ describe('MCP role tools (integration)', () => {
     expect((await listRolesThroughMcp()).map(({ id }) => id)).not.toContain(
       roleId,
     );
+  });
+
+  it('should refuse row-level rules on a non-editable role', async () => {
+    const adminRole = (await listRolesThroughMcp()).find(
+      ({ label }) => label === 'Admin',
+    );
+
+    jestExpectToBeDefined(adminRole);
+
+    const refused = await executeToolThroughMcp({
+      toolName: 'upsert_row_level_permission_rules',
+      toolArguments: {
+        roleId: adminRole.id,
+        objectMetadataId: await findObjectMetadataIdByName('company'),
+        predicates: [],
+        predicateGroups: [{ logicalOperator: 'AND' }],
+      },
+    });
+
+    expect(refused).toMatchObject({
+      success: false,
+      error: expect.stringContaining('Role is not editable'),
+    });
+
+    const rolesWithRules = await executeToolThroughMcp<{
+      roles: (RoleSummary & {
+        rowLevelPermissionPredicateGroups: unknown[];
+      })[];
+    }>({
+      toolName: 'list_roles',
+      toolArguments: { includeRowLevelPermissionRules: true },
+    });
+
+    expect(
+      rolesWithRules.result?.roles.find(({ id }) => id === adminRole.id)
+        ?.rowLevelPermissionPredicateGroups,
+    ).toEqual([]);
   });
 
   // The seeded member role holds no settings flag, so it lacks ROLES

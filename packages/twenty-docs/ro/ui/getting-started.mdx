@@ -1,0 +1,146 @@
+---
+title: Începeți de aici.
+description: Instalați Twenty UI într-o aplicație React și utilizați componentele și temele sale.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Twenty UI este biblioteca UI React open-source a Twenty. Oferă primitive fundamentale, componente partajate, pictograme și tokenuri de temă cu CSS preconfigurat, astfel încât aplicația dvs. nu are nevoie de un compilator CSS-in-JS.
+
+## Instalează
+
+Pentru o aplicație React existentă, instalați biblioteca. React 19 este necesar.
+
+```bash
+yarn add twenty-ui
+```
+
+[Editorul de cod](/ro/ui/components/code-editor/code-editor) are un punct de intrare separat, `twenty-ui/components/code-editor`. Alte componente nu necesită Monaco. Pentru a utiliza editorul de cod, instalați dependențele peer opționale și configurați workerii Monaco pentru bundlerul dvs. înainte de a-l monta:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+Dacă construiți o aplicație Twenty, urmați [Utilizarea componentelor Twenty UI](/ro/developers/extend/apps/layout/front-components#using-twenty-ui-components). Rendererul componentelor frontale furnizează tema spațiului de lucru și are o configurare diferită de cea a unei aplicații de browser independente. Păstrați `twenty-ui`, `twenty-sdk` și `twenty-client-sdk` la aceeași versiune.
+
+## Încărcați stiluri și furnizați o temă
+
+Importați o dată foaia de stiluri a componentelor și o foaie de stiluri pentru temă la punctul de intrare al aplicației. `ThemeProvider` aplică clasa temei active și pune valorile temei la dispoziția componentelor.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+
+export const App = () => (
+  <ThemeProvider colorScheme="light">
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input name="email" type="email" placeholder="you@example.com" />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  </ThemeProvider>
+);
+```
+
+Foaia de stiluri a componentelor include o resetare globală. Analizați efectul acesteia când adăugați Twenty UI la o aplicație existentă.
+
+## Suprascrierea stilurilor
+
+Twenty UI plasează stilurile componentelor și resetarea în stratul de cascadă `twenty-ui`. Stilurile pe care le scrieți în afara unui strat, precum un `className`, un modul CSS sau o regulă CSS-in-JS, suprascriu acele reguli stratificate indiferent de specificitatea selectorului sau de ordinea importurilor. Foile de stil ale temei și regulile globale Monaco ale editorului opțional rămân nestratificate.
+
+Resetările globale ale elementelor din aplicația dvs. sunt și ele nestratificate, deci ar suprascrie componentele Twenty UI. Declarați un strat pentru acestea înainte de încărcarea foii de stil Twenty UI:
+
+```css
+@layer reset, twenty-ui;
+
+@layer reset {
+  button {
+    font: inherit;
+  }
+}
+```
+
+Cu Tailwind CSS v4, plasați Twenty UI între straturile de bază și de utilitare ale Tailwind:
+
+```css
+@layer theme, base, twenty-ui, components, utilities;
+```
+
+## Alegeți un punct de intrare
+
+Importați componente din subcalea lor publică pentru a menține importurile concentrate:
+
+Primitivele sunt controale fundamentale, inclusiv controale compuse precum Select,
+Popover și AlertDialog. Componentele partajate combină primitivele în presetări de design
+recurente și blocuri reutilizabile pentru aplicații. Ambele primesc date și callback-uri
+de la aplicație.
+
+Utilizați [MainButton](/ro/ui/components/input/main-button) pentru acțiuni principale și
+[LightButton](/ro/ui/components/input/light-button) pentru acțiuni ușoare. Ambele
+provin din `twenty-ui/components/input` și partajează contractul de interacțiune fundamental al
+[Button](/ro/ui/primitives/input/button). Rutarea și
+aspectul paginii rămân în aplicație.
+
+Fiecare familie de primitive și de componente partajate are un punct de intrare public corespunzător, precum
+`twenty-ui/primitives/input` și `twenty-ui/components/settings`. Intrările agregate
+`twenty-ui/primitives` și `twenty-ui/components` exportă familiile respective.
+Intrarea rădăcină `twenty-ui` reexportă primitive, componente partajate, pictograme, tokenuri de temă
+și utilitare. Resursele, ajutoarele pentru testare și editorul de cod opțional au puncte de intrare separate.
+
+| Importați                            | Conținut                                                                           |
+| ------------------------------------ | ---------------------------------------------------------------------------------- |
+| `twenty-ui/assets`                   | Logo-uri și resurse statice                                                        |
+| `twenty-ui/components`               | Toate familiile de componente partajate, cu excepția editorului opțional           |
+| `twenty-ui/components/data-display`  | Grupuri de avatare, blocuri de comenzi, arbori JSON, metrici și dale cu pictograme |
+| `twenty-ui/components/feedback`      | Indicatoare, bannere în linie și notificări                                        |
+| `twenty-ui/components/input`         | Presetări de butoane, intrări specializate, selectoare și controale segmentate     |
+| `twenty-ui/components/layout`        | Secțiuni, liste cu depășire și tranziții ale pictogramelor                         |
+| `twenty-ui/components/navigation`    | Meniuri derulante, compoziții de meniuri și acțiuni ale filelor                    |
+| `twenty-ui/components/settings`      | Rânduri de setări cu controale etichetate                                          |
+| `twenty-ui/components/code-editor`   | Editor de cod, antet de editor și utilitare pentru tema editorului                 |
+| `twenty-ui/primitives`               | Toate familiile de primitive                                                       |
+| `twenty-ui/primitives/accessibility` | Elemente ascunse și ajutoare pentru interacțiunea prin tastatură                   |
+| `twenty-ui/primitives/data-display`  | Avatare, insigne, cipuri, etichete, mostre de culori și indicatori de stare        |
+| `twenty-ui/primitives/feedback`      | Bannere, indicatori de progres, încărcătoare și structuri-schelet                  |
+| `twenty-ui/primitives/input`         | Butoane și controale de formular                                                   |
+| `twenty-ui/primitives/layout`        | Extindere, separatoare, direcție și redimensionare                                 |
+| `twenty-ui/primitives/navigation`    | Căi de navigare, elemente de listă și file                                         |
+| `twenty-ui/primitives/surfaces`      | Carduri, dialoguri, popover-uri și indicații contextuale                           |
+| `twenty-ui/primitives/typography`    | Text, titluri, scurtături și text care depășește spațiul disponibil                |
+| `twenty-ui/icon`                     | [Pictograme și căutare dinamică](/ro/ui/icons)                                        |
+| `twenty-ui/testing`                  | [Decoratori și machete Storybook](/ro/ui/testing)                                     |
+| `twenty-ui/theme`                    | Furnizor de temă, hook-uri și referințe la variabile CSS                           |
+| `twenty-ui/utilities`                | Hook-uri și utilitare partajate                                                    |
+
+Importați pictograme individuale, precum `IconCheck`, din `twenty-ui/icon`. Furnizorul dinamic de pictograme include întregul catalog de pictograme, așadar rezervați-l pentru interfețe care trebuie să caute pictograme la runtime.
+
+## Hook-uri responsive
+
+Importați `useIsMobile`, `useIsTouchDevice` și `useMediaQuery` din `twenty-ui/utilities`.
+
+| Hook                   | Interogare                                                        | Folosiți                                                            |
+| ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `useIsMobile()`        | `MOBILE_MEDIA_QUERY`, până la și inclusiv `MOBILE_VIEWPORT`       | Alegeți un aspect compact.                                          |
+| `useIsTouchDevice()`   | `TOUCH_DEVICE_MEDIA_QUERY`, `(hover: none) and (pointer: coarse)` | Alegeți comportamentul interacțiunii tactile independent de lățime. |
+| `useMediaQuery(query)` | Orice interogare media acceptată de `window.matchMedia`           | Abonați-vă la o interogare media personalizată.                     |
+
+Constantele de interogare provin din `twenty-ui/utilities`; `MOBILE_VIEWPORT` provine din `twenty-ui/theme`. Abonamentele partajează un singur `MediaQueryList` pentru fiecare interogare și se actualizează când se modifică potrivirea acesteia. Hook-urile returnează `false` în timpul randării pe server, la prima randare de hidratare și când `window.matchMedia` nu este disponibil.
+
+Într-o [componentă front Twenty](/ro/developers/extend/apps/layout/front-components#current-limitations), interogările de lățime urmează caseta widgetului. Prin urmare, `useIsMobile` urmează lățimea widgetului, în timp ce `useIsTouchDevice` urmează intrarea principală a dispozitivului. Utilizați [suprascrieri de povești](/ro/ui/testing#media-query-overrides) pentru a testa aceste stări în Storybook.
+
+## Continuă
+
+* [Tematizare](/ro/ui/theming): utilizați tokenuri semantice și suprascrieri cu domeniu de aplicare.
+* [Mod întunecat](/ro/ui/dark-mode): comutați între palete deschise și întunecate.
+
+## Răsfoiește biblioteca
+
+* [Primitive](/ro/ui/primitives/overview): controale fundamentale grupate pe familii, cu exemple de utilizare și referințe API.
+* [Componente](/ro/ui/components/overview): presetări de design partajate și elemente constitutive reutilizabile ale aplicației, compuse din primitive.
+
+<PageBanner illustration="card-page-ui-library" />

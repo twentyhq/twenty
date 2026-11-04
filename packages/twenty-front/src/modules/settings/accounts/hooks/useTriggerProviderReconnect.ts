@@ -28,8 +28,8 @@ export const useTriggerProviderReconnect = () => {
       }
 
       await triggerApisOAuth(provider, {
-        ...options,
         redirectLocation: getSettingsPath(SettingsPath.Accounts),
+        ...options,
       });
     },
     [triggerApisOAuth, navigate],

@@ -3,8 +3,12 @@ title: Dialog
 description: Present a focused task above the current page.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## Overview
 
 Use `Dialog` for forms, details, and other tasks that open above the page. It manages focus, keyboard dismissal, outside clicks, and scrolling. Use [AlertDialog](/ui/primitives/surfaces/alert-dialog) when the user must explicitly respond to a decision.
 
@@ -195,3 +199,5 @@ Root, Trigger, Close, Title, Description, Header, Body, Footer and existing hand
 ## Props
 
 <DialogReference />
+
+<PageBanner illustration="layout" />

@@ -85,7 +85,6 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       objectRecord: filteredObjectRecord,
       authContext: executionContext.authContext,
       createdBy,
-      rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 
     if (!toolOutput.success) {

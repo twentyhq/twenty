@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // twenty-ui's Toggle is a base-ui Switch whose click handler constructs a
 // PointerEvent, which the front component sandbox does not provide. This is

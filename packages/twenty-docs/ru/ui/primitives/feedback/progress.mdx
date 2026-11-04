@@ -1,0 +1,119 @@
+---
+title: Прогресс
+description: Создавайте доступный прогресс с общими семантиками диапазона, метки и значения.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
+
+## Обзор
+
+`Progress` предоставляет установленные части Base UI: `Root`, `Track`, `Indicator`, `Label` и `Value`. Импортируйте их из `twenty-ui/primitives/feedback`. Используйте [ProgressBar](/ru/ui/primitives/feedback/progress-bar) или [ProgressRing](/ru/ui/primitives/feedback/progress-ring) для удобного оформления с тем же семантическим контрактом.
+
+<StoryEmbed storyId="ui-feedback-progress--display" title="Пример составного прогресса" height={100} />
+
+## Использование
+
+`Root` управляет контролируемым значением и доступной семантикой индикатора выполнения. `Label` предоставляет его доступное имя. `Value` отображает отформатированное значение. `Track` и `Indicator` описывают визуальное заполнение; ширина индикатора определяется нормализованным диапазоном корневого элемента. Эти части не задают внешний вид.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportProgress = () => (
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
+    <Progress.Track
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
+    >
+      <Progress.Indicator
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
+      />
+    </Progress.Track>
+  </Progress.Root>
+);
+```
+
+Этот диапазон отображает `50%`, при этом `aria-valuenow` имеет значение `70`, `aria-valuemin` — `20`, а `aria-valuemax` — `120`. Приложение управляет запросами, временем и обновлениями прогресса. Нет ни `defaultValue`, ни автоматического продвижения.
+
+## Значения, диапазоны и неопределённый прогресс
+
+Значение `min` по умолчанию равно `0`, а `max` — `100`. Указывайте конечные границы, соблюдая условие `min \< max`. Конечные значения за пределами диапазона ограничиваются для семантического значения, форматированного значения и визуального заполнения. Завершение достигается при максимальном значении. Изменение диапазона пересчитывает процент без изменения исходного значения, переданного приложением.
+
+Передайте `value={null}`, если величина прогресса неизвестна. Тогда корневой элемент имеет неопределённый статус, не включает `aria-valuenow` и использует `indeterminate progress` в качестве текста доступного значения по умолчанию. Неконечные значения также остаются неопределёнными; они не преобразуются в ноль. В этом состоянии исходный `Indicator` не имеет вычисленной процентной ширины, поэтому композиция выбирает его неопределённый внешний вид.
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+
+export const PendingImport = () => (
+  <ProgressBar value={null} aria-label="Preparing the import" />
+);
+```
+
+## Метки и форматирование
+
+Разместите `Progress.Label` внутри `Root` или задайте нативный `aria-label` либо `aria-labelledby`. Используйте `aria-valuetext` для удобочитаемой альтернативы, когда процента недостаточно.
+
+Форматировщик по умолчанию отображает нормализованный процент. `locale` и `format` сохраняют установленный контракт `Intl.NumberFormat`; явный `format` форматирует ограниченное числовое значение. `getAriaValueText(formattedValue, value)` получает этот форматированный текст и исходное значение приложения, включая `null`. Он изменяет текст доступного значения, не изменяя заполнение.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+
+export const RecordCount = () => (
+  <Progress.Root
+    value={600}
+    max={1000}
+    format={{ style: 'decimal' }}
+    getAriaValueText={(formattedValue) => `${formattedValue} of 1,000 records`}
+  >
+    <Progress.Label>Importing records</Progress.Label>
+    <Progress.Value>
+      {(formattedValue) => `${formattedValue} / 1,000`}
+    </Progress.Value>
+  </Progress.Root>
+);
+```
+
+`Progress.Value` получает и форматированное значение, и исходное значение через свой необязательный дочерний обратный вызов. Для неопределённого прогресса обратный вызов получает `indeterminate` в качестве форматированного текста; без обратного вызова часть значения не отображает содержимое. Отображаемое содержимое не становится автоматически доступным именем или текстом доступного значения.
+
+## Нативные свойства, ссылки и композиция
+
+| Часть       | Целевой элемент DOM и ref по умолчанию           |
+| ----------- | ------------------------------------------------ |
+| `Root`      | Внешний `div` с семантикой индикатора выполнения |
+| `Track`     | `div` дорожки                                    |
+| `Indicator` | `div` заполнения                                 |
+| `Label`     | `span` метки                                     |
+| `Значение`  | `span` значения                                  |
+
+Каждая часть сохраняет нативные свойства, refs и установленный контракт композиции `render`. При замене элемента передавайте предоставленные свойства и ref. Обратные вызовы `className`, `style` и `render` получают публичное состояние со `status`: `progressing`, `complete` или `indeterminate`. Атрибуты состояния делают тот же статус доступным для стилей.
+
+Точка входа экспортирует `ProgressStatus`, а также типы `Props` и `State` для каждой части, включая `ProgressRootProps`, `ProgressRootState`, `ProgressIndicatorProps` и `ProgressIndicatorState`. Каждая часть перенаправляет нативные обработчики событий. Приложения управляют последовательностью функций и обратными вызовами завершения.
+
+## Свойства
+
+<ProgressReference />
+
+<PageBanner illustration="card-page-usage-limits" />

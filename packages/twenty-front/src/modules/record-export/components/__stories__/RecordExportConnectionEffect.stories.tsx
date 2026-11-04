@@ -13,12 +13,14 @@ const EXPORT_PROGRESS_BEFORE_COMPLETION = 42;
 
 type ExportExampleProps = {
   shouldShowCompletionButton?: boolean;
+  shouldShowReplacementButton?: boolean;
 };
 
 const ExportExample = ({
   shouldShowCompletionButton = true,
+  shouldShowReplacementButton = false,
 }: ExportExampleProps) => {
-  const [connection] = useState(createRecordExportConnection);
+  const [connection, setConnection] = useState(createRecordExportConnection);
   const [isConnected, setIsConnected] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -60,6 +62,11 @@ const ExportExample = ({
           disabled={progress !== EXPORT_PROGRESS_BEFORE_COMPLETION}
         >
           Finish export
+        </Button>
+      )}
+      {shouldShowReplacementButton && (
+        <Button onClick={() => setConnection(createRecordExportConnection())}>
+          Replace connection
         </Button>
       )}
       <Button onClick={() => setIsConnected(false)}>Unmount connection</Button>
@@ -209,6 +216,37 @@ export const PageHide: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
     await canvas.findByText('42%');
     window.dispatchEvent(new Event('pagehide'));
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),
+    );
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+  },
+};
+
+export const ReplaceConnection: Story = {
+  args: {
+    shouldShowCompletionButton: false,
+    shouldShowReplacementButton: true,
+  },
+  parameters: { msw: { handlers: [exportHandler('wait')] } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
+    await canvas.findByText('42%');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Replace connection' }),
+    );
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),
+    );
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
+    await canvas.findByText('42%');
+    expect(canvas.getByRole('button', { name: 'Export' })).toBeDisabled();
+
+    window.dispatchEvent(new Event('pagehide'));
+
     await waitFor(() =>
       expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),
     );

@@ -48,7 +48,10 @@ export const StatefulEmailRecipientsFieldInput = ({
       >
         {(['to', 'cc'] as const).map((fieldId) => (
           <div key={fieldId} role="group" aria-label={`${fieldId} recipients`}>
-            <ComposerFieldRow label={fieldId === 'to' ? 'To' : 'Cc'}>
+            <ComposerFieldRow
+              label={fieldId === 'to' ? 'To' : 'Cc'}
+              hasDivider={false}
+            >
               <EmailRecipientsFieldInput
                 fieldId={fieldId}
                 label={fieldId === 'to' ? 'To' : 'Cc'}

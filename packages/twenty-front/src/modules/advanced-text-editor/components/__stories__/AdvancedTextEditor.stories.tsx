@@ -59,7 +59,7 @@ const EditorWrapper = ({
       onUpdate(JSON.stringify(jsonContent));
     },
     onImageUpload: async () => ({ url: IMAGE_URL_MOCK }),
-    onImageUploadError: (_error: Error, _file: File) => {},
+    onImageUploadError: () => {},
   });
 
   if (!editor) {

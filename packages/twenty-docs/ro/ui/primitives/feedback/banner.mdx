@@ -1,0 +1,109 @@
+---
+title: Banner
+description: Conținut de feedback cu stare, aspect și paletă independente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+## Prezentare generală
+
+`Banner` aranjează conținutul furnizat de apelant, un nod `icon` opțional și un nod `action` opțional. `status` descrie semnificația feedbackului: `neutral`, `info`, `success`, `warning` sau `error`. `variant` selectează aspectul `solid` sau `soft`. Un `color` explicit suprascrie paleta de stare fără a-i modifica semnificația.
+
+Valorile implicite sunt `status="info"` și `variant="solid"`. Paletele de stare implicite sunt, respectiv, gri, albastru, verde, portocaliu și roșu.
+
+<StoryEmbed storyId="ui-feedback-banner--display" title="Exemplu de banner" height={130} />
+
+## Utilizare
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncBanner = () => (
+  <Banner status="info" variant="solid">
+    Contact sync is temporarily paused. Your saved records remain available.
+  </Banner>
+);
+```
+
+## Acțiuni și aspect
+
+<StoryEmbed storyId="ui-feedback-banner--catalog" title="Palete și variante de feedback pentru bannere" height={560} />
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
+  <Banner
+    status="error"
+    variant="soft"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
+  >
+    Contact sync could not finish.
+  </Banner>
+);
+```
+
+`Banner.Action` oferă un buton mic cu contur, care moștenește culoarea afișată a bannerului, inclusiv suprascrierile explicite ale paletei și aspectele solide. Acceptă interacțiuni Button, linkuri, ref-uri și redare personalizată. Slotul `action` acceptă și controale arbitrare.
+
+Ținta rădăcină este un `div`. Atributele native, gestionarele de evenimente, `className`, `style` și `ref` se aplică acelei rădăcini. `render` acceptă un element Base UI sau un callback; callbackul primește proprietăți native și ref, plus starea rezolvată pentru `status`, `variant` și `color`. Păstrați proprietățile și ref-ul furnizate atunci când compuneți un alt element.
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncResult = () => (
+  <Banner
+    status="success"
+    variant="soft"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    render={<section aria-label="Sync result" />}
+  >
+    Contacts are up to date.
+  </Banner>
+);
+```
+
+Starea nu atribuie automat `role`, `aria-live` sau anunțuri. Alegeți-le la apelant atunci când actualizările trebuie anunțate. Furnizați nume accesibile pentru controale și marcați nodurile icon decorative cu `aria-hidden`. Apelantul controlează vizibilitatea și închiderea.
+
+## Închidere
+
+Transmiteți `onDismiss` pentru a afișa un control fantomă de închidere de 24 px la capătul logic pe linie. Controlul moștenește culoarea bannerului și are `type="button"`. Valoarea implicită pentru `closeLabel` este `Close`; furnizați text localizat în aplicația dvs. Spațierea echilibrată pe linie păstrează conținutul centrat și acțiunile departe de control.
+
+Apelantul controlează vizibilitatea. Activarea controlului de închidere apelează `onDismiss` și păstrează bannerul montat până când apelantul actualizează starea. Alte acțiuni rămân în slotul `action`.
+
+```tsx
+import { useState } from 'react';
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const DismissibleSyncBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return isVisible ? (
+    <Banner
+      onDismiss={() => setIsVisible(false)}
+      closeLabel="Dismiss sync message"
+    >
+      Contacts are syncing in the background.
+    </Banner>
+  ) : null;
+};
+```
+
+<StoryEmbed storyId="ui-feedback-banner--dismissible" title="Banner care poate fi închis" height={160} />
+
+## Migrare
+
+Înlocuiți `variant="primary"` cu `variant="solid"` și `variant="secondary"` cu `variant="soft"`. Înlocuiți `color="danger"` cu `status="error"` sau cu `color="red"` atunci când trebuie modificată doar paleta. Bannerele informative albastre pot utiliza `status="info"`.
+
+## Proprietăți
+
+<BannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

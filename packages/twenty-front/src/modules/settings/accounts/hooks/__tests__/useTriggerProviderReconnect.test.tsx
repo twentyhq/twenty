@@ -126,7 +126,7 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should trigger OAuth for Google provider with options', async () => {
+    it('should let the caller pick where Google OAuth returns', async () => {
       const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const options = {
@@ -146,15 +146,12 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
-        {
-          ...options,
-          redirectLocation: '/settings/accounts',
-        },
+        options,
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should trigger OAuth for Microsoft provider with options', async () => {
+    it('should let the caller pick where Microsoft OAuth returns', async () => {
       const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const options = {
@@ -173,10 +170,7 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.MICROSOFT,
-        {
-          ...options,
-          redirectLocation: '/settings/accounts',
-        },
+        options,
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });

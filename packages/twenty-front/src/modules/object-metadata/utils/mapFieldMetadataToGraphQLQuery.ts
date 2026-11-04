@@ -339,6 +339,7 @@ ${mapObjectMetadataToGraphQLQuery({
 {
   blocknote
   markdown
+  tiptap
 }`);
   }
 

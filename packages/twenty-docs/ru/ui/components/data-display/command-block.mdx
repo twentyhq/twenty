@@ -1,0 +1,57 @@
+---
+title: Командный блок
+description: Отображение командных строк с необязательным действием.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CommandBlockReference from '/snippets/ui/generated/components/data-display/command-block.mdx';
+
+## Обзор
+
+`CommandBlock` отображает каждую переданную команду с маркером приглашения. Он не выполняет команды и не обеспечивает автоматическое копирование. Передайте в `actions` любой узел React, например [кнопку](/ru/ui/primitives/input/button), ссылку или статус. Текст команды использует семантику `pre` и `code`, сохраняет разрывы строк и переносится в пределах доступной ширины. Маркеры приглашения являются декоративными.
+
+<StoryEmbed storyId="ui-components-data-display-commandblock--display" title="Пример CommandBlock" height={130} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InstallCommand = () => {
+  const [copyLabel, setCopyLabel] = useState('Copy command');
+
+  return (
+    <CommandBlock
+      commands={['yarn add twenty-ui']}
+      actions={
+        <Button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText('yarn add twenty-ui');
+              setCopyLabel('Copied');
+            } catch {
+              setCopyLabel('Select and copy the command');
+            }
+          }}
+        >
+          {copyLabel}
+        </Button>
+      }
+    />
+  );
+};
+```
+
+Нативные атрибуты, обработчики событий, классы, стили и refs применяются к внешнему `div`. Используйте `render`, чтобы скомпоновать другой корневой элемент, например `render={<section aria-label="Installation commands" />}`. `CommandBlockProps` экспортируется из `twenty-ui/components/data-display`.
+
+При миграции замените `button` на `actions`.
+
+## Свойства
+
+<CommandBlockReference />
+
+<PageBanner illustration="card-page-cli" />

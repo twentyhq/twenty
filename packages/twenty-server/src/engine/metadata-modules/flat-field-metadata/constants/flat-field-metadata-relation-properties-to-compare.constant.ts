@@ -11,6 +11,6 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'isUIEditable',
   'isAuditLogged',
   'isNullable',
-  'writability',
+  'disabledFieldPermissionActions',
   'isLabelSyncedWithName',
 ] as const satisfies (typeof ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.fieldMetadata.propertiesToCompare)[number][];

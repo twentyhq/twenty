@@ -6,20 +6,16 @@ import { useGeneratedRecoveryCode } from '@/settings/two-factor-authentication/h
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconKey } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminDocument } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  margin-top: ${themeCssVariables.spacing[3]};
+const StyledRecoveryCodeContainer = styled.div`
+  width: 100%;
 `;
 
 type SettingsAdminTwoFactorAuthenticationRecoveryCodeProps = {
@@ -33,6 +29,7 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
   workspaceId,
   memberName,
 }: SettingsAdminTwoFactorAuthenticationRecoveryCodeProps) => {
+  const { t } = useLingui();
   const dialogId = `admin-two-factor-authentication-recovery-code-${userId}-${workspaceId}`;
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
@@ -75,27 +72,27 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
   };
 
   return (
-    <StyledContainer>
+    <>
+      <Button
+        startIcon={<IconKey />}
+        variant="outline"
+        onClick={() => openDialog(dialogId)}
+      >{t`Generate 2FA recovery code`}</Button>
       {isDefined(generatedRecoveryCode) && (
-        <TwoFactorAuthenticationRecoveryCodeDisplay
-          recoveryCode={generatedRecoveryCode.recoveryCode}
-          expiresAt={generatedRecoveryCode.expiresAt}
-          memberName={memberName}
-          onExpire={clearGeneratedRecoveryCode}
-        />
+        <StyledRecoveryCodeContainer>
+          <TwoFactorAuthenticationRecoveryCodeDisplay
+            recoveryCode={generatedRecoveryCode.recoveryCode}
+            expiresAt={generatedRecoveryCode.expiresAt}
+            memberName={memberName}
+            onExpire={clearGeneratedRecoveryCode}
+          />
+        </StyledRecoveryCodeContainer>
       )}
-      <div>
-        <Button
-          startIcon={<IconKey />}
-          variant="outline"
-          onClick={() => openDialog(dialogId)}
-        >{t`Generate 2FA recovery code`}</Button>
-      </div>
       <TwoFactorAuthenticationRecoveryCodeConfirmationDialog
         dialogId={dialogId}
         memberName={memberName}
         onConfirm={handleGenerate}
       />
-    </StyledContainer>
+    </>
   );
 };

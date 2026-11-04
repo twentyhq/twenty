@@ -6,12 +6,12 @@
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.23.0"
+    "twenty": ">=2.56.0"
   },
   "keywords": [
     "twenty-app"
   ],
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "frontComponentSharedDependencies": [
     "react",
     "react-dom/client"
@@ -36,6 +36,6 @@
     "twenty-client-sdk": "2.31.0",
     "twenty-sdk": "2.31.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   }
 }

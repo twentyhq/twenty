@@ -3,6 +3,10 @@ title: MCP Server
 description: Connect AI assistants to your Twenty workspace using the Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Claude Code, Cursor, ChatGPT, and others — can read and write your CRM data through natural language.
 
 Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoint. On Twenty Cloud, your workspace URL might be `https://{mycompany}.twenty.com` or a custom domain. The server is available at:
@@ -97,18 +101,20 @@ Ask your AI assistant to interact with your CRM:
 
 ## Available Tools
 
-Once connected, the MCP server exposes tools that mirror the Twenty API. The recommended workflow is:
+Once connected, the MCP server lists the tools your connection can use, with their input schemas: `find_many_companies`, `create_one_person`, `list_workflows`, and several hundred more. Your assistant calls them by name. Tools for objects or app functions created while you are connected appear after reconnecting.
+
+This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do by default. A client that loads every tool definition up front, including Claude Code with tool search turned off, can run out of context.
+
+### Meta mode
+
+For clients that load every tool up front, connect to `/mcp?mode=meta`. It lists a few meta-tools instead:
 
 1. **`learn_tools`** — get the input schema for specific tools
 2. **`execute_tool`** — run a tool
 
-You don't need to remember tool names. Ask your AI assistant what it can do and it will call `learn_tools` automatically.
-
 Record operation names follow a grammar, so an assistant can build them without a discovery call: `find_many_companies`, `find_one_person`, `update_one_opportunity`. If a name is wrong, `learn_tools` reports it under `notFound` along with the closest matching names.
 
 For anything else, `get_tool_catalog` browses the remaining tools one category at a time. It is a fallback: an unfiltered call returns hundreds of operations and most assistants will truncate the response.
-
-`/mcp?mode=direct` lists every tool directly and needs a client that loads tools on demand.
 
 ## Permissions
 
@@ -138,3 +144,5 @@ The MCP endpoint, OAuth endpoints, and discovery metadata all derive from this v
 
 **Connection timeout**
 - Confirm the MCP endpoint URL is reachable from your machine. For self-hosted instances, check that the server is running and `SERVER_URL` is set correctly.
+
+<PageBanner illustration="card-page-connections" />

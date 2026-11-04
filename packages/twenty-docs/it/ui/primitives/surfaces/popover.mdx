@@ -1,0 +1,268 @@
+---
+title: Popover
+description: Visualizza contenuti contestuali ancorati a un trigger.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+## Panoramica
+
+Usa `Popover` per informazioni contestuali o controlli leggeri. Componi separatamente il relativo portale, wrapper di posizionamento e popup. Usa [Dropdown](/it/ui/components/navigation/dropdown) per menu, selettori e pannelli con navigazione di livello superiore.
+
+<StoryEmbed storyId="ui-surfaces-popover--display" title="Esempio di Popover" height={280} />
+
+## Utilizzo
+
+### Stato non controllato
+
+Usa `defaultOpen` per impostare la visibilità iniziale. Il popover gestisce le modifiche successive provenienti dal relativo trigger, dai controlli di chiusura e dalle interazioni di chiusura.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => (
+  <Popover.Root defaultOpen={false}>
+    <Popover.Trigger render={<Button>Show details</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Title>Contact details</Popover.Title>
+          <Popover.Description>
+            Reach Alex at alex@example.com.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Close</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+`defaultOpen` è impostato su `false` per impostazione predefinita, quindi può essere omesso. Usa `Title` e `Description` per identificare il popup. Per impostazione predefinita, il trigger esegue il rendering di un pulsante; `render` consente di fornire un elemento compatibile.
+
+## Confronto del posizionamento
+
+Confronta i lati supportati con e senza freccia. Questi esempi aperti mantengono ogni popup accanto al relativo trigger per l'ispezione; usa l'esempio Display per provare ad aprire e chiudere un popover.
+
+<StoryEmbed storyId="ui-surfaces-popover--catalog" title="Confronto del posizionamento per il popover" height={640} />
+
+## Anatomia
+
+Mantieni l'attivatore e il popup all'interno di `Popover.Root`. Il popup può contenere testo, controlli del modulo e azioni.
+
+```text
+Popover.Root
+├── Popover.Trigger
+└── Popover.Portal
+    ├── Popover.Backdrop (optional)
+    └── Popover.Positioner
+        └── Popover.Popup
+            ├── Popover.Arrow (optional)
+            └── Popover.Viewport (optional)
+                ├── Popover.Title
+                ├── Popover.Description
+                └── Popover.Close
+```
+
+| Parte         | Scopo e destinazione nativa                                                                                       |
+| ------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `Root`        | Gestisce stato, trigger e interazioni. Non esegue il rendering di alcun elemento DOM.                             |
+| `Trigger`     | Apre il popup e fornisce il relativo ancoraggio predefinito. Ha come destinazione un pulsante.                    |
+| `Portal`      | Sceglie la destinazione. Le props native, gli handler, `render` e il ref hanno come destinazione il relativo div. |
+| `Positioner`  | Gestisce ancoraggi, allineamento, offset e gestione delle collisioni. Ha come target il proprio div.              |
+| `Popup`       | Esegue il rendering del contenuto e gestisce lo stato attivo. Ha come destinazione il relativo div.               |
+| `Arrow`       | Freccia stilizzata facoltativa all'interno di Popup. Ha come destinazione il relativo div.                        |
+| `Backdrop`    | Sfondo facoltativo upstream all'interno di Portal. Ha come destinazione il relativo div.                          |
+| `Viewport`    | Contenitore di transizione facoltativo per il contenuto che cambia. Ha come destinazione il relativo div.         |
+| `Titolo`      | Fornisce un nome accessibile visibile. Ha come destinazione un h2.                                                |
+| `Description` | Associa testo esplicativo. Ha come destinazione un paragrafo.                                                     |
+| `Chiudi`      | Richiede la chiusura. Ha come destinazione un pulsante.                                                           |
+
+Tutte le parti sottoposte a rendering supportano gli attributi nativi, gli handler, i ref e la composizione `render` di elementi/funzioni di Base UI installata. I componenti personalizzati devono inoltrare le props e il ref forniti. Ogni parte ha un tipo pubblico `Popover\<Part>Props` e `Popover\<Part>State`. `PopoverRootProps` e `PopoverTriggerProps` mantengono i generici del payload. Anche `PopoverHandle`, `PopoverRootActions`, `PopoverRootChangeEventDetails` e `PopoverRootChangeEventReason` vengono esportati da `twenty-ui/primitives/surfaces`.
+
+## Stato controllato
+
+Passa `open` e aggiornalo con `onOpenChange` per gestire la visibilità dello stesso popover nello stato di React.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger render={<Button>Show details</Button>} />
+      <Popover.Portal>
+        <Popover.Positioner align="start">
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
+            <Popover.Title>Contact details</Popover.Title>
+            <Popover.Description>
+              Reach Alex at alex@example.com.
+            </Popover.Description>
+            <Popover.Close
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
+```
+
+`onOpenChange` riceve il valore booleano successivo e i dettagli dell'evento, incluse le modifiche richieste dal trigger, dai controlli di chiusura, da Escape e dall'interazione esterna.
+
+## Componi con i pulsanti
+
+Passa un `Button` di Twenty UI tramite `render` per utilizzarlo come attivatore o controllo di chiusura. Il popover mantiene il proprio stato di apertura, il comportamento della tastiera e la gestione del focus.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Arrow />
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Got it</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+`render` compone il comportamento sul pulsante fornito. I componenti wrapper personalizzati devono [inoltrare le props e il ref forniti](/it/ui/primitives/overview#custom-components) per preservare tale comportamento.
+
+## Posizionamento e focus
+
+Per impostazione predefinita, `Positioner` usa `side="bottom"`, `align="center"` e `sideOffset={8}`. Accetta il contratto completo di Base UI installata, inclusi ancoraggi elemento/ref/funzione/virtuali, offset funzionali, `positionMethod`, `collisionBoundary`, `collisionPadding`, `collisionAvoidance`, `arrowPadding`, `sticky` e `disableAnchorTracking`. DirectionProvider controlla il posizionamento logico e fornisce la direzione DOM. Un `dir` esplicito può sovrascrivere l'attributo nativo; usa il provider per modificare il posizionamento logico laterale.
+
+```tsx
+import { useRef } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const AnchoredHelp = () => {
+  const anchor = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={anchor}>
+      <Popover.Root>
+        <Popover.Trigger>Help</Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner
+            anchor={anchor}
+            side="inline-end"
+            align="start"
+            sideOffset={({ anchor }) => anchor.width / 2}
+            collisionBoundary="clipping-ancestors"
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            collisionPadding={8}
+            positionMethod="fixed"
+          >
+            <Popover.Popup aria-label="Help">
+              <Popover.Arrow />
+              Contextual help
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
+  );
+};
+```
+
+Esc chiude il popup e ripristina lo stato attivo sul relativo trigger. Per impostazione predefinita, l'interazione esterna lo chiude. `Popup.initialFocus` e `Popup.finalFocus` accettano le destinazioni dello stato attivo e i callback upstream. `Root.modal` mantiene le modalità predefinita non modale, modale e di intrappolamento dello stato attivo di Base UI per l'uso autonomo.
+
+## Destinazioni del portale e tema
+
+Imposta `container` e `keepMounted` su `Portal`:
+
+| Contenitore                | Risoluzione                                                                                                                                                                 |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ommesso o `undefined`      | Usa il contenitore ThemeProvider con ambito più vicino. In assenza di esso, Base UI usa il portale padre o il body del documento.                                           |
+| `null`                     | Attende senza eseguire il rendering del contenuto del portale finché il contenitore non cambia. Non ricorre al tema o al body.                                              |
+| Elemento, ShadowRoot o ref | Passa la destinazione fornita invariata a Base UI. Un ref non risolto mantiene il fallback portale padre/body di Base UI; usa null esplicito quando è necessario attendere. |
+
+La destinazione con ambito predefinita conserva i relativi token CSS e schema di colori. Una destinazione esplicita eredita il CSS dal relativo ambito DOM effettivo. Inseriscila nell'ambito del tema previsto oppure fornisci lì gli stili del tema. Le destinazioni ShadowRoot richiedono il CSS della libreria e gli stili del tema in tale albero shadow. Il contesto del tema React e la direzione del testo fornita restano disponibili attraverso i portali. Questa API non estende le destinazioni del portale consentite dal renderer.
+
+## Trigger e payload separati
+
+`Popover.createHandle\<TPayload>()` collega trigger separati a una root ed espone `open(triggerId)`, `close()` e `isOpen`. `Popover.Handle` è il costruttore di handle upstream installato. La funzione di rendering della root riceve il payload attivo. Chiama le azioni imperative dagli handler di eventi o dagli effetti.
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const OwnerHelp = () => {
+  const [handle] = useState(() => Popover.createHandle<{ name: string }>());
+
+  return (
+    <>
+      <Popover.Trigger handle={handle} id="owner" payload={{ name: 'Alice' }}>
+        Owner
+      </Popover.Trigger>
+      <Popover.Root handle={handle}>
+        {({ payload }) => (
+          <Popover.Portal>
+            <Popover.Positioner align="start">
+              <Popover.Popup aria-label="Account owner">
+                {payload?.name}
+                <Popover.Close>Close</Popover.Close>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        )}
+      </Popover.Root>
+    </>
+  );
+};
+```
+
+`onOpenChange` mantiene `reason`, `event`, `trigger`, `cancel()` e `preventUnmountOnClose()`. Le root controllate mantengono `triggerId`; le root non controllate mantengono `defaultTriggerId`. `actionsRef` espone le azioni upstream di chiusura/smontaggio.
+
+## Migrazione
+
+Sposta `container` e `keepMounted` da Popup a Portal. Sposta le props di posizionamento, ancoraggio e collisione in Positioner. Sostituisci `Popup.arrow` con un elemento figlio `Popover.Arrow` esplicito. Le props native, gli handler, le props dello stato attivo e il ref di Popup continuano ad avere come destinazione l'elemento contenuto. Dropdown.Content mantiene il relativo pratico assemblaggio esistente.
+
+All'interno dei componenti front, usa una composizione non modale nell'ambito della policy dei portali esistente. I popover/dialog nativi del browser e la modalità gestita direttamente dall'app sono vietati; usa l'API delle finestre di dialogo dell'host SDK per le finestre di dialogo. Il lavoro sulle funzionalità del renderer per portale, geometria, scorrimento e chiusura rimane separato da questa API primitiva.
+
+## Props
+
+Il riferimento viene generato dai tipi di componenti pubblici. Gli attributi nativi, inclusi i nomi accessibili e i gestori di eventi, sono accettati anche nelle parti che eseguono il rendering di elementi.
+
+<PopoverReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

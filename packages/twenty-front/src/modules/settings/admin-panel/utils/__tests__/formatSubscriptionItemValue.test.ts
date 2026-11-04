@@ -83,4 +83,30 @@ describe('formatSubscriptionItemValue', () => {
       }),
     ).toBe('US15.00');
   });
+
+  it.each(['CHF', 'SEK', 'PLN'])(
+    'keeps the nonbreaking separator after %s',
+    (currency) => {
+      expect(
+        formatSubscriptionItemValue({
+          item: { unitAmount: 1500 },
+          currency,
+          formatNumber,
+        }),
+      ).toBe(`${currency}\u00a015.00`);
+    },
+  );
+
+  it.each([
+    { currency: 'CAD', prefix: 'CA$' },
+    { currency: 'AUD', prefix: 'A$' },
+  ])('keeps $currency adjacent to the amount', ({ currency, prefix }) => {
+    expect(
+      formatSubscriptionItemValue({
+        item: { unitAmount: 1500 },
+        currency,
+        formatNumber,
+      }),
+    ).toBe(`${prefix}15.00`);
+  });
 });

@@ -1,8 +1,6 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
@@ -29,25 +27,11 @@ describe('tracking opt-out as a suppression (integration)', () => {
   let messageSuppressionService: MessageSuppressionService;
   const usedEmailAddresses: string[] = [];
 
-  beforeAll(async () => {
+  beforeAll(() => {
     messageSuppressionService =
       getAppProviderByClassName<MessageSuppressionService>(
         'MessageSuppressionService',
       );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
   });
 
   afterEach(async () => {

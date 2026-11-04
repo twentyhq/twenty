@@ -1,7 +1,6 @@
 ---
 title: Armazenamento de chave-valor
 description: Persista resultados intermediários, armazene em cache dados e compartilhe estado entre execuções de funções lógicas com o armazenamento interno de chave-valor do aplicativo.
-icon: database
 ---
 
 Funções de lógica são executadas de forma isolada em processos Node.js de curta duração — assim que uma execução termina, nada que foi mantido na memória sobrevive. Quando você precisa **lembrar de algo entre execuções** (armazenar em cache uma resposta cara de uma API, guardar um cursor para sincronizações incrementais, aplicar debounce ao trabalho ou passar estado de uma função para outra), persista isso no armazenamento interno de chave-valor.

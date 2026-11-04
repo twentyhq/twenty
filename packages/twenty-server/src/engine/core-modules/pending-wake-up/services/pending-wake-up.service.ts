@@ -143,9 +143,12 @@ export class PendingWakeUpService {
         recordReadAttempt,
       },
       {
-        ...this.pendingWakeUpOwnerHandlerRegistryService
+        ...((await this.pendingWakeUpOwnerHandlerRegistryService
           .getHandlerOrThrow(wakeUp.ownerType)
-          .buildResumeJobOptions?.(wakeUp.ownerId),
+          .buildResumeJobOptions?.(wakeUp)) ?? {
+          workspaceId: wakeUp.workspaceId,
+          isWorkspaceJob: true,
+        }),
         delay: Math.max(delayMs, 0),
         ...(isDefined(deduplicationId)
           ? { deduplication: { id: deduplicationId } }
@@ -164,6 +167,24 @@ export class PendingWakeUpService {
     return this.pendingWakeUpRepository.findOne(workspaceId, {
       where: { id: wakeUpId },
     });
+  }
+
+  async updatePayload({
+    workspaceId,
+    wakeUpId,
+    payload,
+  }: {
+    workspaceId: string;
+    wakeUpId: string;
+    payload: object;
+  }): Promise<boolean> {
+    const { affected } = await this.pendingWakeUpRepository.update(
+      workspaceId,
+      { id: wakeUpId },
+      { payload },
+    );
+
+    return (affected ?? 0) > 0;
   }
 
   async findOldest({

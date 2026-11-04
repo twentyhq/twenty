@@ -1,8 +1,11 @@
 ---
 title: Skills & Agents
 description: Define AI skills and agents for your app.
-icon: "robot"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 <Warning>
   Skills and agents are currently in alpha. The feature works but is still evolving.
@@ -66,6 +69,8 @@ Key points:
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
+- `modelConfiguration` (optional) turns on the model's native tools, as the agent settings page does: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Each tool only works on models that support it. Leave it out to keep them off.
+- `isSystem` (optional, defaults to `false`) hides the agent from agent lists, like the agents Twenty creates for workflow AI steps. It only changes what is displayed: an app's agents can only be changed through the app, whatever this flag says.
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
@@ -99,6 +104,39 @@ Schema notes:
 - `additionalProperties: false` (optional) forbids any property not declared in `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI (beta)">
+
+<Warning>
+  MCP servers are in beta and not live yet: you can declare them, but workspaces cannot use their tools until the feature ships.
+</Warning>
+
+Use `defineMcpServer()` to ship a remote MCP server (Streamable HTTP) with your app, so the workspace's AI can use its tools without syncing that data into Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Key points:
+- `name` is snake_case (lowercase letters, digits and underscores, starting with a letter, at most 32 characters) and unique in the workspace. It prefixes the server's tool names.
+- `url` must be an HTTP or HTTPS URL.
+- `connectionProvider` (optional) references a [connection provider](/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server.
+- The URL cannot change in a later version while a connection provider is linked, so tokens are never sent to another host.
+- Workspaces can deactivate the server; a later app version keeps that choice.
+- Requires `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Run an agent from a logic function">
 
 `runAgent()` lets a logic function run one of your app's agents (with its
@@ -108,7 +146,7 @@ to `defineAgent()`, and pass what you want it to work on as `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -291,69 +329,198 @@ name a member at all.
   for.
 </Warning>
 
+### Following a conversation
+
+An app reads the conversations it holds with its agents through the same API
+as the chat: `listConversationMessages()` returns its history, and
+`streamConversation()` yields its live events, token by token. Name the
+conversation by the agent and the `thread` key you pass to `runAgent()`; you
+can start following it before the first run reaches it.
+
+```ts src/logic-functions/follow-conversation.ts
+import {
+  isAgentChatTurnEndEvent,
+  listConversationMessages,
+  streamConversation,
+} from 'twenty-sdk/logic-function';
+
+const conversation = {
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+};
+const abortController = new AbortController();
+let maxCatchupSeq: number | undefined;
+
+// subscribe before reading the history, so nothing streamed in between is lost
+for await (const event of streamConversation({
+  ...conversation,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
+    const { messages, streamCatchup } =
+      await listConversationMessages(conversation);
+
+    showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
+    maxCatchupSeq = streamCatchup.maxSeq;
+  }
+
+  if (
+    event.type === 'stream-chunk' &&
+    (event.seq ?? 0) > (maxCatchupSeq ?? 0)
+  ) {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
+  }
+
+  // the reply's save, or why it stopped, such as credits-exhausted
+  if (isAgentChatTurnEndEvent(event)) {
+    abortController.abort();
+  }
+}
+```
+
+- Events are the chat's own: `stream-chunk` carries an AI SDK
+  `UIMessageChunk` and a `seq`, and notifications such as `message-persisted`
+  (a message was saved: a member's, or the reply, which carries its run's
+  `turnId`), `credits-exhausted` (the reply stopped when the workspace ran
+  out of credits), `queue-updated` or `stream-error` say when
+  to read the history again. A `keepalive` comes once connected, then every
+  few seconds: read the history on the first one, since what happened before
+  it is there.
+- To turn chunks into messages as the chat does, pipe them into
+  `readUIMessageStream()` from the `ai` package.
+- `listConversationMessages()` returns `{ messages, streamCatchup }`: the saved
+  messages as AI SDK `UIMessage`s, as the chat builds them, and the chunks of
+  a reply still streaming. Show those chunks, then skip live chunks whose
+  `seq` is at most `streamCatchup.maxSeq`, since they repeat them.
+- `runAgent()` returns `runId`, the turn the call opens: messages of that run
+  carry it as `metadata.turnId`. A run that waits goes on in later turns of
+  the conversation.
+- The stream stays open until you abort its `signal` or `break`, and throws if
+  the connection drops: stream again to resume.
+- An app reads only its own conversations. Turns a member opened elsewhere,
+  such as in the chat, show only their text, in the history, live and in the
+  agent's next run: live, their other chunks arrive as empty
+  `message-metadata` chunks, so `seq` stays gapless. Turns your app ran as a
+  member (see above) stay whole when it reads on its own.
+- Requires `"engines": { "twenty": ">=2.56.0" }`.
+
 </Accordion>
-<Accordion title="sendInboxMessage" description="Start or continue a conversation in members' chats">
+<Accordion title="ai.generate" description="Call a model from a logic function, without an agent">
 
-`sendInboxMessage()` posts a message from your app in the chats of one or more
-workspace members. It can end on a tool call the member answers from the chat, after which
-the conversation continues with Twenty's assistant.
+`ai.generate()` calls a model from a logic function. Unlike
+`runAgent()`, it needs no `defineAgent()`: the call carries its own
+instructions, and opens no conversation. Use it for one-shot work such as
+classifying, summarizing or extracting.
 
-```ts src/logic-functions/notify-first-recording.ts
-import { sendInboxMessage } from 'twenty-sdk/logic-function';
+```ts
+import { ai } from 'twenty-sdk/logic-function';
 
-const { threadId } = await sendInboxMessage({
-  workspaceMemberIds: [workspaceMemberId],
-  threadKey: 'first-call-recording',
-  idempotencyKey: 'first-call-recording',
-  title: 'Your first call recording is ready',
-  text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+- `input` is a string, or a list of `{ role: 'user' | 'assistant', content }`
+  messages.
+- `instructions` (optional) adds the caller's system instructions.
+- `modelId` (optional) picks the model. Without it, the call uses the
+  workspace's default model.
+- `responseFormat` (optional) works as in `runAgent()`. With
+  `{ type: 'json', schema }`, the schema goes on the model request itself, so
+  a JSON answer takes one request (plus tool steps when a `scope` grants
+  tools).
+- `scope` (optional) lets the call use the database, as described below.
+
+It resolves to `{ success, text, object, error, runId, usage }`:
+
+- `text` is the reply of a text response, and `null` for a JSON one.
+- `object` is the result of a JSON response, and `null` otherwise.
+- `error` explains a failed run, when `success` is `false`. A run that fails
+  resolves this way rather than throwing; a call that cannot start a run, such
+  as one with invalid input, throws.
+- `runId` identifies the recorded run, with its model, usage and credits.
+- `usage` is `{ inputTokens, outputTokens }`: what the run spent, including the
+  steps that finished before a failure.
+
+The call acts as whoever made it: the member a user-scoped token belongs to,
+otherwise your application, otherwise the API key. From a logic function it
+follows the default clients: it acts as the person who triggered the run, or as
+your application when nobody did. It never exceeds your application's role, and
+an application without a default role cannot call it.
+
+Without `scope`, the call reads and writes no records. To let it use the
+database, pass a `scope`, written like a role's permissions:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
     },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
   },
 });
 ```
 
-Key points:
-- `workspaceMemberIds` lists the members who receive the conversation, at least
-  one. The first member of a new conversation owns it, and the others follow it
-  as participants. A later send under the same key that lists new members adds
-  them; members it leaves out keep the conversation.
-- `threadKey` picks the conversation for this app, shared by every member it is
-  sent to. A new key starts a conversation titled `title`; a key you used before
-  adds the message to that conversation.
-- `idempotencyKey` identifies the message within the conversation. Sending
-  again with the same keys writes nothing new, so retries and concurrent runs
-  never duplicate a message.
-- `toolCall` (optional) ends the message on one of:
-  - a call the member answers, which pauses the conversation: `ask_question`
-    (one multiple-choice question), `request_form` (fields to fill in) or
-    `propose_tool_call` (a call to approve). Its `input` takes the `toolName`,
-    the `arguments` you would call the tool with and a one-sentence `summary`.
-    The tool must be one your app's default role could run itself, such as
-    `create_one_person` or `update_one_opportunity` (with the record `id`); an
-    email (`send_email` or `draft_email`, with `recipients`, `subject` and a
-    `body` in HTML) needs no permission of your app. The member reviews the call
-    in the same card as a call the assistant proposes, edits it if they want, and
-    the approved call runs with their own access;
-  - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
-    by its front component with the `input` and `output` you pass. It does not
-    pause the conversation.
-- Only one call the member answers can wait in a conversation at a time:
-  sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
-  messages and app tool calls are still accepted.
-- Only the member who owns a conversation can delete it, and a deleted
-  conversation is gone for every member: it is not recreated, and nothing is
-  added to it. The other members can unsubscribe to take it out of their own
-  inbox.
-- Every member must have the `AI` permission, and the call fails without
-  writing the message when one of them cannot have the conversation. Your app's
-  [default role](/developers/extend/apps/config/roles) must grant
-  `SystemPermissionFlag.AI`.
+A scope only narrows: it grants nothing the caller doesn't already have.
+
+To show the reply while it is written, pass `onChunk`. The call still resolves
+to the same result, once the last chunk was handed to `onChunk`. If the
+stream's end never arrives, it stops waiting once the result is in and 5 s
+pass without a new chunk, and still hands over every chunk received by then:
+
+```ts
+const abortController = new AbortController();
+
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+- The call follows the run through the same subscription as
+  `streamConversation()`: it subscribes first, waits until the subscription is
+  live, then starts the run, so it misses no chunk.
+- Chunks are the chat's own: pipe them into `readUIMessageStream()` from the
+  `ai` package to build the message.
+- `signal` aborts the call: it rejects with the abort error and closes the
+  stream. The run itself goes on, and is recorded as usual.
+- Once the stream is live, a failure of it only stops the chunks: the call
+  still resolves with the run's result, which is billed either way. The call
+  rejects when the subscription fails before it goes live, so the run never
+  starts, or when `onChunk` throws.
+- An app follows only its own runs, so `onChunk` needs an app token.
+- Requires `"engines": { "twenty": ">=2.56.0" }`.
+
+<Note>
+  `ai.generate()` requires the AI permission flag on the app's default role,
+  like `runAgent()`.
+</Note>
+
+</Accordion>
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in members' chats">
+
+`sendInboxMessage()` posts a message from your app in the chats of one or more
+workspace members. It can end on a tool call the member answers from the chat,
+after which the conversation continues with Twenty's assistant. See
+[Inbox](/developers/extend/apps/logic/inbox) for its options, the mention
+helpers, and how to post from a front component.
 
 </Accordion>
 </AccordionGroup>
+
+<PageBanner illustration="card-page-skills-agents" />

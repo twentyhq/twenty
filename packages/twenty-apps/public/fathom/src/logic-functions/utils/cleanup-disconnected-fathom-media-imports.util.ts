@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_MEDIA_FAILURE_REASON } from 'src/constants/fathom-media-failure-reason.constant';
+import { type FathomRecordingImportReference } from 'src/logic-functions/types/fathom-recording-import-reference.type';
 import { buildDisconnectedFathomMediaReconciliationPlan } from 'src/logic-functions/utils/build-disconnected-fathom-media-reconciliation-plan.util';
 import { findDisconnectedFathomMediaImports } from 'src/logic-functions/utils/find-disconnected-fathom-media-imports.util';
 import { listFathomConnections } from 'src/logic-functions/utils/list-fathom-connections.util';
@@ -43,7 +44,11 @@ export const cleanupDisconnectedFathomMediaImports = async ({
     mediaFailureReason:
       FATHOM_MEDIA_FAILURE_REASON.CONNECTED_ACCOUNT_UNAVAILABLE,
   };
-  const updates = [
+  const updates: {
+    callRecordings: FathomRecordingImportReference[];
+    importData: typeof settledData | typeof clearedImportFields;
+    status?: 'COMPLETED' | 'FAILED';
+  }[] = [
     {
       callRecordings: plan.callRecordingsToSettleAndComplete,
       importData: settledData,

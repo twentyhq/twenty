@@ -73,6 +73,14 @@ export const runAppInitCommand: CommandRun = async ({
   });
   const packageNames = [...APP_TEMPLATE_FIRST_PARTY_PACKAGES];
 
+  if (process.platform === 'win32') {
+    output.warn({
+      code: 'PLATFORM_UNSUPPORTED',
+      message:
+        'Building apps is only supported on macOS and Linux. On Windows, work inside WSL 2.',
+    });
+  }
+
   return {
     data: {
       app: {

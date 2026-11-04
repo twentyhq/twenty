@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { useRecordFieldListNonRelationFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordFieldListNonRelationFieldMetadataItems';
@@ -60,6 +61,8 @@ export const RecordFieldList = ({
   const fieldMetadataItems =
     useRecordFieldListNonRelationFieldMetadataItems(objectNameSingular);
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(objectRecordId);
+
   return (
     <FieldDescriptionTooltipProvider>
       <RecordFieldListComponentInstanceContext.Provider
@@ -77,6 +80,10 @@ export const RecordFieldList = ({
               labelWidth: 90,
             });
 
+            const isFieldRestricted = restrictedFieldNames.includes(
+              fieldMetadataItem.name,
+            );
+
             return (
               <FieldContext.Provider
                 key={objectRecordId + fieldMetadataItem.id}
@@ -87,13 +94,16 @@ export const RecordFieldList = ({
                   fieldDefinition,
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly,
-                    objectMetadataId: objectMetadataItem.id,
-                    fieldMetadataItem,
-                    fieldDefinition,
-                    objectPermissionsByObjectMetadataId,
-                  }),
+                  isForbidden: isFieldRestricted,
+                  isRecordFieldReadOnly:
+                    isFieldRestricted ||
+                    isRecordFieldReadOnly({
+                      isRecordReadOnly,
+                      objectMetadataId: objectMetadataItem.id,
+                      fieldMetadataItem,
+                      fieldDefinition,
+                      objectPermissionsByObjectMetadataId,
+                    }),
                   onMouseEnter: () => handleMouseEnter(index),
                   anchorId: `${getRecordFieldInputInstanceId({
                     recordId: objectRecordId,

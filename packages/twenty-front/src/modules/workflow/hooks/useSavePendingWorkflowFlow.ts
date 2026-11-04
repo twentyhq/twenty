@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -6,20 +5,16 @@ import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflow
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
-import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export const useSavePendingWorkflowFlow = (instanceId?: string) => {
   const store = useStore();
-  const apolloCoreClient = useApolloCoreClient();
 
   const flowState = useAtomComponentStateCallbackState(
     flowComponentState,
@@ -49,50 +44,9 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
 
-  const moveFlowToWorkflowVersionOrThrow = useCallback(
-    async ({
-      workflowVersionId,
-      flowKeys,
-    }: {
-      workflowVersionId: string;
-      flowKeys: string[];
-    }) => {
-      const { data } = await apolloCoreClient.query({
-        query: GetCoreWorkflowVersionDocument,
-        variables: { coreWorkflowVersionId: workflowVersionId },
-        fetchPolicy: 'network-only',
-      });
-
-      const workflowVersion = data?.coreWorkflowVersion;
-
-      if (!isDefined(workflowVersion)) {
-        throw new Error(
-          doNotTranslate(`Workflow version ${workflowVersionId} not found`),
-        );
-      }
-
-      store.set(flowState, (localFlow) =>
-        buildFlowWithLocalEdits({
-          serverFlow: {
-            workflowVersionId,
-            trigger: workflowVersion.trigger,
-            steps: workflowVersion.steps,
-          },
-          localFlow,
-          localFlowKeys: [...flowKeys, ...store.get(pendingFlowKeysState)],
-        }),
-      );
-    },
-    [apolloCoreClient, flowState, store, pendingFlowKeysState],
-  );
-
   const saveFlowKeys = useCallback(
     async (flowKeys: string[]): Promise<string[]> => {
       const workflowVersionId = await getUpdatableWorkflowVersion();
-
-      if (store.get(flowState)?.workflowVersionId !== workflowVersionId) {
-        await moveFlowToWorkflowVersionOrThrow({ workflowVersionId, flowKeys });
-      }
 
       const failedFlowKeys: string[] = [];
 
@@ -130,7 +84,6 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
     [
       flowState,
       getUpdatableWorkflowVersion,
-      moveFlowToWorkflowVersionOrThrow,
       store,
       updateWorkflowVersionStep,
       updateWorkflowVersionTrigger,

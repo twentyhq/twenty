@@ -54,7 +54,7 @@ export class EventLogRetentionService {
     }
   }
 
-  private async hasAuditLogsEntitlement(workspaceId: string) {
+  async hasAuditLogsEntitlement(workspaceId: string): Promise<boolean> {
     return this.billingSubscriptionService.getWorkspaceEntitlementValue(
       workspaceId,
       BillingEntitlementKey.AUDIT_LOGS,

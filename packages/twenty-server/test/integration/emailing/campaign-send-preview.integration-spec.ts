@@ -1,13 +1,9 @@
 import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { EmailingDomainExceptionCode } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -45,7 +41,6 @@ describe('previewMessageCampaignSend (integration)', () => {
   const personId = v4();
   const memberId = v4();
   const seededCampaignIds: string[] = [];
-  let wasMessageCampaignEnabled: boolean;
 
   const seedCampaign = async ({
     subject,
@@ -87,20 +82,6 @@ describe('previewMessageCampaignSend (integration)', () => {
   };
 
   beforeAll(async () => {
-    wasMessageCampaignEnabled =
-      await getAppProviderByClassName<FeatureFlagService>(
-        'FeatureFlagService',
-      ).isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-        SEED_APPLE_WORKSPACE_ID,
-      );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await testDataSource.query(
       `INSERT INTO "core"."emailingDomain"
          ("workspaceId", "domain", "status", "verifiedAt", "unsubscribeHostname", "unsubscribeHostnameStatus")
@@ -150,12 +131,6 @@ describe('previewMessageCampaignSend (integration)', () => {
       `DELETE FROM "core"."emailingDomain" WHERE "domain" = $1`,
       [domain],
     );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: wasMessageCampaignEnabled,
-      expectToFail: false,
-    });
   });
 
   it('asks for the list first when a draft has neither a list nor a subject', async () => {

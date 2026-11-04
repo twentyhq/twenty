@@ -4,7 +4,6 @@ import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fi
 import { indexMetadataItemSchema } from '@/object-metadata/validation-schemas/indexMetadataItemSchema';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { searchFieldMetadataItemSchema } from '@/object-metadata/validation-schemas/searchFieldMetadataItemSchema';
-import { MetadataWritability } from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
@@ -25,9 +24,9 @@ export const objectMetadataItemSchema = z.object({
   isActive: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
+  isAuditLogged: z.boolean(),
   isUIEditable: z.boolean(),
   isUICreatable: z.boolean(),
-  writability: z.enum(MetadataWritability),
   isSearchable: z.boolean(),
   labelIdentifierFieldMetadataId: z.uuid(),
   labelPlural: metadataLabelSchema(),

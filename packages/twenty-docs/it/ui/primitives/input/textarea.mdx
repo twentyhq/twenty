@@ -1,0 +1,129 @@
+---
+title: Textarea
+description: Inserisci più righe di testo con ridimensionamento automatico facoltativo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## Panoramica
+
+Usa `Textarea` per note, descrizioni e altri valori su più righe. Si integra con [Campo](/it/ui/primitives/input/field) per etichette e convalida.
+
+<StoryEmbed storyId="ui-input-textarea--display" title="Esempio di Textarea" height={190} />
+
+## Utilizzo
+
+### Stato non controllato
+
+Usa `defaultValue` per impostare le note iniziali. L'area di testo gestisce le modifiche successive.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Sono disponibili attributi textarea nativi quali `rows`, `maxLength`, `required` e `readOnly`. `size` accetta `sm` o `md` e il valore predefinito è `md`.
+
+## Opzioni visive
+
+Confronta le due dimensioni negli stati predefinito, attivo, non valido e disabilitato. Il ridimensionamento automatico è illustrato separatamente di seguito.
+
+<StoryEmbed storyId="ui-input-textarea--catalog" title="Opzioni visive per l'area di testo" height={440} />
+
+## Aspetto semplice
+
+Usa `variant="plain"` per il testo su più righe all'interno di una superficie esistente. Rimuove il riempimento, il bordo, gli angoli arrotondati e tutta la spaziatura interna, mantenendo gli stili condivisi per testo, segnaposto e stato disabilitato. Il contorno blu segue il comportamento nativo `:focus-visible` del browser. Per i controlli di testo, ciò può includere lo stato attivo tramite puntatore e autofocus, oltre allo stato attivo tramite tastiera. Lo stato non valido usa un contorno di pericolo senza modificare il layout.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+L'elemento padre fornisce la spaziatura. `rows`, `maxRows` e il dimensionamento automatico controllano ancora l'altezza del contenuto. Il limite di righe esclude la spaziatura interna e i bordi nell'aspetto semplice. La modifica di `variant` mentre il dimensionamento automatico è abilitato misura il nuovo layout.
+
+## Stato controllato
+
+Passa `value` e aggiornalo con `onValueChange` per gestire le stesse note nello stato di React. Il callback riceve il valore della stringa successiva e i dettagli dell'evento; è disponibile anche `onChange` nativo.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Ridimensionamento automatico
+
+Il ridimensionamento automatico funziona in entrambe le modalità di stato. Questo esempio usa anche il valore controllato per un conteggio dei caratteri.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` misura il valore confermato dopo gli aggiornamenti controllati e misura direttamente le modifiche non controllate. Le modifiche controllate rifiutate non cambiano l'altezza. Si aggiorna anche dopo i ripristini nativi del modulo e le modifiche a `rows`, `size`, `variant`, `maxRows` e alla larghezza disponibile. Usa `maxRows` per limitare la crescita e scorrere i contenuti più lunghi.
+
+Il ridimensionamento automatico gestisce `blockSize` inline quando è abilitato. Disabilitandolo viene ripristinato il valore corrente di `style.blockSize` oppure viene cancellata la dimensione automatica se non ne viene fornita una. Con il ridimensionamento automatico disattivato, `rows` e gli stili nativi controllano l'altezza. Il ridimensionamento manuale è disabilitato per impostazione predefinita; imposta `style={{ resize: 'vertical' }}` quando i chiamanti devono ridimensionare autonomamente il controllo.
+
+## Composizione del controllo nativo e del rendering
+
+Gli attributi e i gestori nativi della textarea, `className`, `style` e `ref` si applicano alla textarea. Il ref riceve un `HTMLTextAreaElement`. `render` accetta un elemento textarea o una callback che riceve le props della textarea nativa e lo stato di Field. Inoltra le props e il ref forniti alla textarea nativa affinché etichette, convalida, eventi e misurazione automatica continuino a funzionare. Aggiungi un elemento di layout separato quando è necessaria la personalizzazione del wrapper.
+
+`onChange` riceve un evento di modifica React per la textarea nativa. `onValueChange(value, details)` mantiene la firma di Base UI, inclusi `event`, `reason`, `cancel` e `allowPropagation` nativi. L'evento nativo ha come destinazione la textarea. L'annullamento dei dettagli preserva la politica di convalida di Base UI; non annulla il valore nativo. I chiamanti controllati scelgono il valore confermato.
+
+I comportamenti nativi di `name`, `form`, `required`, `readOnly`, `disabled`, invio e ripristino restano disponibili. Field fornisce l'associazione con etichetta, descrizione, nome e convalida. Invio inserisce un'interruzione di riga nella textarea.
+
+## Props
+
+Il riferimento è generato dai tipi pubblici del componente. Gli attributi nativi, inclusi nomi accessibili e gestori di eventi, sono accettati anche nelle parti che eseguono il rendering di elementi.
+
+<TextareaReference />
+
+<PageBanner illustration="page-cover-input" />

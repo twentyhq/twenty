@@ -1,0 +1,167 @@
+---
+title: Indiciu
+description: Afișează informații suplimentare atunci când un declanșator este trecut cu cursorul peste el sau primește focalizarea.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+## Prezentare generală
+
+Folosiți `Tooltip` pentru o explicație scurtă a unui element de control sau a textului trunchiat. Păstrați informațiile esențiale vizibile, oferiți elementelor de control un nume accesibil și folosiți [Fereastră contextuală](/ro/ui/primitives/surfaces/popover) atunci când conținutul conține linkuri, butoane sau alte elemente de control.
+
+<StoryEmbed storyId="ui-surfaces-tooltip--display" title="Exemplu de tooltip" height={180} />
+
+## Utilizare
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ExportHelp = () => (
+  <Tooltip content="Download the visible records as a CSV file" side="top">
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
+```
+
+Componenta de conveniență acceptă un element declanșator ca `children`. Elementele native primesc direct atributele declanșatorului, gestionarele de evenimente și referința. Componentele declanșatoare personalizate trebuie să le redirecționeze pe toate. Un element învăluitor funcționează și cu o componentă care nu redirecționează fiecare proprietate a declanșatorului.
+
+Trecerea cursorului deschide tooltipul după `delay` milisecunde, care are implicit valoarea `600`. Focalizarea de la tastatură îl deschide imediat. `closeDelay` are implicit valoarea `0`; trecerea cursorului peste fereastra pop-up o menține deschisă, cu excepția cazului în care este setat `disableHoverablePopup`. Tasta Escape îl închide.
+
+## Stare controlată
+
+Utilizați împreună `open` și `onOpenChange` când aplicația controlează vizibilitatea. Utilizați `defaultOpen` numai pentru a seta vizibilitatea inițială a unui tooltip necontrolat.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ControlledExportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      content="Download the visible records as a CSV file"
+      open={open}
+      onOpenChange={setOpen}
+      delay={300}
+    >
+      <span>
+        <Button>Export records</Button>
+      </span>
+    </Tooltip>
+  );
+};
+```
+
+## Conținut îmbogățit și compoziție
+
+Forma prescurtată acceptă `description` și `startIcon` pe lângă `content`. Conținutul nodului personalizat este redat așa cum este furnizat, cu excepția cazului în care o descriere sau o pictogramă solicită aspectul titlului.
+
+```tsx
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportDetails = () => (
+  <Tooltip
+    content="Export visible records"
+    description="Only records matching your current filters are included."
+    startIcon={<IconInfoCircle />}
+    arrow
+  >
+    <Button>Export records</Button>
+  </Tooltip>
+);
+```
+
+Utilizarea compusă expune fiecare parte Base UI instalată și structura opțională `Tooltip.Body`. Asamblați explicit portalul, poziționarea, fereastra pop-up și săgeata opțională. Popup redă elementele sale copil așa cum sunt furnizate; Body oferă aceeași structură de titlu, descriere și pictogramă decorativă ca forma prescurtată.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ComposedExportDetails = () => (
+  <Tooltip.Provider delay={300} closeDelay={100} timeout={400}>
+    <Tooltip.Root>
+      <Tooltip.Trigger render={<Button>Export records</Button>} />
+      <Tooltip.Portal>
+        <Tooltip.Positioner side="inline-end" sideOffset={10} arrowPadding={8}>
+          <Tooltip.Popup>
+            <Tooltip.Arrow />
+            <Tooltip.Viewport>
+              <Tooltip.Body description="Only records matching your current filters are included.">
+                Export visible records
+              </Tooltip.Body>
+            </Tooltip.Viewport>
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+);
+```
+
+| Parte         | Țintă nativă, de proprietăți și de referință                                                                                                              |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Root`        | Coordonarea stării și a încărcăturii utile. Fără nod DOM, proprietăți native sau referință DOM. `actionsRef` expune `close` și `unmount`.                 |
+| `Furnizor`    | `delay`, `closeDelay` și `timeout` partajate. Fără nod DOM sau referință DOM.                                                                             |
+| `Declanșator` | Implicit, un buton. Proprietățile native, gestionarele, `render` și referința vizează elementul declanșator.                                              |
+| `Portal`      | Elementul div al portalului. Implicit, containerul temei, apoi corpul documentului.                                                                       |
+| `Positioner`  | Elementul div de poziționare. Gestionează ancora, latura fizică/logica, decalajele, gestionarea coliziunilor, poziționarea aderentă și spațierea săgeții. |
+| `Popup`       | Elementul div al ferestrei pop-up. Gestionează conținutul, proprietățile native, stilurile, `render` și referința.                                        |
+| `Body`        | Elementul div body opțional din Popup sau Viewport. Proprietățile native, stilurile, `render` și ref vizează elementul său rădăcină.                      |
+| `Arrow`       | Elementul div al săgeții din Popup.                                                                                                                       |
+| `Viewport`    | Elementul div opțional pentru tranzițiile dintre încărcăturile utile ale declanșatorului.                                                                 |
+
+`Tooltip.Body` acceptă elemente copil title opționale, noduri `description` și `startIcon`. Titlurile folosesc grosime medie; descrierile folosesc culoarea secundară a tooltipului, păstrează întreruperile de linie și încadrează textul lung. Omiteți elementele copil title pentru un tooltip care conține doar o descriere. Pictograma este decorativă și apare doar împreună cu un titlu. Body nu adaugă niciun rol de tooltip, stilizare de popup, dimensionare sau poziționare. Conținutul Popup arbitrar rămâne acceptat. Importați `TooltipBodyProps` din `twenty-ui/primitives/surfaces` când tipizați un wrapper.
+
+Fiecare parte DOM acceptă proprietăți native, referințe și compoziție `render` cu element sau funcție de apel invers. Proprietățile native de nivel superior ale formei prescurtate, `render` și referința vizează Popup. Utilizați `triggerProps`, `positionerProps` și `portalProps` pentru a personaliza celelalte ținte; acestea suprascriu valorile implicite ale formei prescurtate. Elementele copil furnizează elementul implicit de redare a declanșatorului. Ambele forme păstrează starea Root controlată/necontrolată și detaliile evenimentelor de apel invers Base UI, inclusiv anularea, motivul, evenimentul original și declanșatorul activ.
+
+`Tooltip.createHandle\<TPayload>()` conectează declanșatoarele detașate la oricare dintre forme prin `handle`. Elementele copil ale Root compus sau `content` al formei prescurtate pot fi o funcție care primește încărcătura utilă activă tipizată. `Tooltip.Handle` și tipul public `TooltipHandle` expun contractul handle instalat. Handle-urile acceptă apelurile imperative `open(triggerId)` și `close()` cât timp Root-ul lor este montat.
+
+## Migrare
+
+Înlocuiți `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` cu `content={title} description={description} startIcon={icon}`. În utilizarea compusă, folosiți `Tooltip.Body` pentru aspectul comun al titlului și al descrierii sau compuneți propriul conținut. `Tooltip.Content` și `TooltipContentProps` sunt eliminate.
+
+Proprietățile existente de poziționare Popup compus se mută la Positioner. Înfășurați-l în Portal, mutați `container` și `keepMounted` în Portal, păstrați `maxWidth` în Popup și înlocuiți `arrow` cu un copil Arrow. Păstrați explicit spațierea anterioară cu `sideOffset={10}` atunci când este necesar. Compound Positioner păstrează `sideOffset={0}` din Base UI. Ambele forme limitează implicit Popup la 300 de pixeli.
+
+## Comenzi dezactivate
+
+Butoanele native dezactivate nu pot primi focalizare de la tastatură. Înfășurați unul într-un declanșator focalizabil, astfel încât utilizatorii să poată afla de ce acțiunea nu este disponibilă.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const UnavailableExport = () => (
+  <Tooltip content="Select at least one record to export">
+    <span tabIndex={0} aria-label="Export records unavailable">
+      <Button disabled>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+Setarea `disabled` pe forma prescurtată sau pe Root suprimă tooltipul propriu-zis. `disabled` al declanșatorului suprimă interacțiunea cu tooltipul acelui declanșator. Dezactivați controlul nativ prin propriile sale proprietăți sau prin elementul de redare al Trigger.
+
+## Plasare și text care depășește spațiul disponibil
+
+Forma prescurtată are implicit `side="top"`, `align="center"` și `sideOffset={10}`. Atât descrierile scurte, cât și cele complexe au o lățime maximă de 300 de pixeli, limitată de spațiul disponibil de lângă ancoră. Transmiteți `maxWidth` către descrierea scurtă sau către `Tooltip.Popup` pentru a alege o altă valoare maximă, inclusiv previzualizări mai late. Stilurile native de ferestre pop-up rămân disponibile pentru dimensionare personalizată. Plasarea se ajustează la spațiul disponibil. Un tooltip deschis se ascunde când ancora sa este derulată în afara vizualizării, inclusiv în afara unui container de derulare. Utilizați `arrow` pentru o săgeată și `container` pentru a suprascrie destinația portalului temei; consultați [tematizarea](/ro/ui/theming).
+
+Utilizați [OverflowingTextWithTooltip](/ro/ui/primitives/typography/overflowing-text-with-tooltip) când o etichetă text trebuie să-și afișeze valoarea completă numai atunci când este trunchiată. Proprietățile sale existente `text`, `tooltipContent` și `tooltipPlace` rămân disponibile.
+
+## Proprietăți
+
+Referința este generată din tipurile de componente publice. Sunt acceptate și atributele native ale ferestrei pop-up, precum și gestionarele de evenimente.
+
+<TooltipReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useActivities } from '@/activities/hooks/useActivities';
 import { type Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 jest.mock('@/activities/hooks/useActivityTargetsForTargetableObjects', () => ({
   useActivityTargetsForTargetableObjects: jest.fn(),
@@ -30,8 +30,8 @@ const mockActivity = {
   assigneeId: '1',
   id: '234',
   bodyV2: {
-    blocknote: 'My Body',
     markdown: 'My Body',
+    tiptap: null,
   },
   assignee: null,
 } satisfies Task;
@@ -55,7 +55,7 @@ describe('useActivities', () => {
 
     const { result } = renderHook(() => {
       const activities = useActivities({
-        objectNameSingular: CoreObjectNameSingular.Task,
+        objectNameSingular: StandardObjectNameSingular.Task,
         targetableObjects: [{ targetObjectNameSingular: 'company', id: '123' }],
         skip: false,
         limit: 10,

@@ -7,8 +7,6 @@
  *                              |___/
  */
 
-export type { IconProps } from './components/Icon';
-export { Icon } from './components/Icon';
 export { IconAddressBook } from './components/IconAddressBook';
 export { IconBrandAnthropic } from './components/IconBrandAnthropic';
 export { IconBrandGemini } from './components/IconBrandGemini';
@@ -143,6 +141,7 @@ export {
   IconChevronsRight,
   IconChevronUp,
   IconCircle,
+  IconCircleCheck,
   IconCircleDashed,
   IconCircleDot,
   IconCircleOff,
@@ -157,6 +156,7 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumnInsertLeft,
   IconColumnInsertRight,
   IconColumns,
   IconCommand,
@@ -165,6 +165,7 @@ export {
   IconComment,
   IconCopy,
   IconCopyPlus,
+  IconCornerDownRight,
   IconCpu,
   IconCreativeCommonsSa,
   IconCreditCard,
@@ -259,6 +260,7 @@ export {
   IconFolder,
   IconFolderOpen,
   IconFolderPlus,
+  IconForms,
   IconFolderRoot,
   IconFolderSymlink,
   IconForbid,
@@ -270,6 +272,7 @@ export {
   IconGitCommit,
   IconGizmo,
   IconGraph,
+  IconGripHorizontal,
   IconGripVertical,
   IconH1,
   IconH2,
@@ -279,6 +282,7 @@ export {
   IconH6,
   IconHandClick,
   IconHandMove,
+  IconHash,
   IconHeadphones,
   IconHeart,
   IconHeartOff,
@@ -351,6 +355,7 @@ export {
   IconMinimize,
   IconMinus,
   IconMoneybag,
+  IconMoodPlus,
   IconMoodSmile,
   IconMoon,
   IconMouse2,
@@ -520,6 +525,4 @@ export {
   TWENTY_ICON_DICTIONARY_CATEGORIES,
   TWENTY_ICON_DICTIONARY,
 } from './constants/TwentyIconDictionary';
-export { useIcons } from './hooks/useIcons';
-export { IconsProvider } from './providers/IconsProvider';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';

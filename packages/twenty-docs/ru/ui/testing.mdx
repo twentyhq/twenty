@@ -1,0 +1,157 @@
+---
+title: Помощники Storybook.
+description: Представляйте предварительный просмотр компонентов и каталоги вариантов с помощью twenty-ui/testing.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## Обзор
+
+`twenty-ui/testing` предоставляет декораторы Storybook, вспомогательные функции макета предпросмотра и переопределения медиазапросов. Настройте стили и [ThemeProvider](/ru/ui/theming) в предварительном просмотре Storybook перед рендерингом тематизированных компонентов.
+
+## Роли историй
+
+Начинайте руководство по каждому компоненту с истории `Display`, демонстрирующей один показательный, пригодный к использованию пример. После неё добавляйте код Usage, который воспроизводит предварительный просмотр с использованием публичных импортов. Составные компоненты демонстрируют свои части вместе. Провайдеры и вспомогательные средства доступности демонстрируют свой эффект в контексте.
+
+Добавляйте `Catalog`, когда сравнение с метками помогает читателям выбирать между визуальными вариантами. Группируйте варианты, размеры, цвета и состояния отдельно; используйте матрицу, только когда полезно сравнивать вместе два измерения. Для простого компонента можно использовать один альтернативный пример. Диалоговые окна, меню и другие интерактивные компоненты обычно нуждаются в целевых примерах для каждого рабочего процесса.
+
+Сохраняйте полный охват скриншотами в отдельных историях `VisualRegression`, включая тёмные темы и матрицы вариантов. Помечайте эти истории тегом `!autodocs` и не включайте их в руководства по компонентам.
+
+Называйте другие истории по тому, что они демонстрируют, например `Controlled`, `WithValidation` или `MultipleSelection`. Проверки взаимодействия размещайте в отдельных историях с функциями `play`. Предварительный просмотр Display и другие предварительные просмотры документации остаются пригодными для использования читателем без автоматизированных действий.
+
+## ComponentDecorator
+
+`ComponentDecorator` оборачивает историю в `ComponentStorybookLayout`. Задайте `parameters.container.width` и `parameters.container.height` в пикселях. Он также считывает аргументы истории `inverted` и `accent`, чтобы выбрать необязательный фон.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Display = { args: { children: 'Save changes' } };
+```
+
+## Сгруппированный каталог
+
+`GroupedCatalog` предоставляет отобранным каталогам общий макет для заголовков, строк с переносом и интервалов. У каждой группы есть `label` и массив `examples`. Каждому примеру нужна уникальная `label` в пределах его группы; он может содержать любые другие данные, используемые `renderExample`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { GroupedCatalog } from 'twenty-ui/testing';
+
+const groups = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', variant: 'solid' as const },
+      { label: 'Outline', variant: 'outline' as const },
+    ],
+  },
+];
+
+export const ButtonCatalog = () => (
+  <GroupedCatalog
+    groups={groups}
+    renderExample={({ label, variant }) => (
+      <>
+        <Text>{label}</Text>
+        <Button variant={variant}>Save changes</Button>
+      </>
+    )}
+  />
+);
+```
+
+<GroupedCatalogReference />
+
+## CatalogDecorator
+
+`CatalogDecorator` отображает комбинации до четырёх измерений из `parameters.catalog.dimensions`. Каждое измерение имеет `name`, `values`, преобразователь `props(value)` и необязательный форматировщик `labels(value)`. Преобразователь возвращает свойства для этой ячейки. `parameters.catalog.options.elementContainer` принимает `width`, `style` и `className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const VisualRegression = {
+  tags: ['!autodocs'],
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+Используйте макет напрямую при компоновке предварительного просмотра вне декоратора. Он принимает один дочерний элемент.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## Переопределения медиазапросов
+
+Используйте `overrideMediaQueryMatches` в `beforeEach` истории, чтобы принудительно задать результаты адаптивных хуков. Верните его функцию очистки, чтобы восстановить `window.matchMedia` после истории:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+Запросы, не указанные в переопределении, сохраняют своё исходное поведение. Переопределяйте `TOUCH_DEVICE_MEDIA_QUERY` отдельно, если пример зависит от сенсорного ввода. Эти переопределения управляют результатами `matchMedia`; используйте область просмотра Storybook, чтобы изменить CSS-медиазапросы и ширину предпросмотра.
+
+## Предварительные просмотры документации
+
+Истории, встроенные в документацию, должны быть презентационными и не иметь функции `play`. Храните тесты взаимодействия в отдельных историях. При необходимости используйте общие явные `args`, `render`, `decorators` и `parameters`, а не включайте историю взаимодействия в предварительный просмотр с помощью spread-оператора. Проверка встраивания документации отклоняет истории, помеченные тегом Storybook `play-fn`, включая унаследованные функции play.
+
+Первое встраивание в руководстве по каждому компоненту должно ссылаться на историю, экспортированную как `Display`. Добавляйте каждому встраиванию описательный заголовок для его iframe и достаточную высоту для отображения примера. Общий предварительный просмотр предоставляет светлую и тёмную вкладки, а также ссылку на Storybook, где читатели могут использовать элементы управления для изучения props.
+
+Выполните `npx nx check:ui-stories twenty-docs`, чтобы проверить требуемый display, заголовки предварительного просмотра, ссылки и правила представления. Выполните `npx nx check:ui twenty-docs`, чтобы проверить созданные ссылки API и типы в копируемых примерах.
+
+<PageBanner illustration="card-page-testing" />

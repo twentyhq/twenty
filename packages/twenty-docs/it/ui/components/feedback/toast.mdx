@@ -1,0 +1,256 @@
+---
+title: Notifica
+description: Visualizza messaggi di stato con dettagli, azioni e avanzamento facoltativi.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ToastReference from '/snippets/ui/generated/components/feedback/toast.mdx';
+import ToastProviderReference from '/snippets/ui/generated/components/feedback/toast-provider.mdx';
+import ToasterReference from '/snippets/ui/generated/components/feedback/toaster.mdx';
+
+## Panoramica
+
+`Toast` esegue il rendering di una notifica. L'applicazione controlla quando appare, la sua posizione e quando viene rimossa.
+
+<StoryEmbed storyId="ui-feedback-toast--display" title="Esempio di Toast" height={120} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## Opzioni visive
+
+Confronta i feedback neutro, di successo, di errore, informativo e di avviso con lo stesso messaggio e avanzamento.
+
+<StoryEmbed storyId="ui-feedback-toast--catalog" title="Stati del feedback toast" height={530} />
+
+Per le notifiche dell'applicazione, racchiudi l'applicazione in `ToastProvider`, monta un `Toaster` al suo interno e usa `useToast()` dai componenti discendenti. Ogni provider dispone di un archivio di notifiche indipendente, di countdown e di un ciclo di vita per la chiusura. Più Toaster possono rispecchiare lo stesso provider.
+
+## Notifiche dell'applicazione
+
+```tsx
+import { useState } from 'react';
+
+import {
+  ToastProvider,
+  Toaster,
+  useToast,
+} from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+const SaveNotificationButton = () => {
+  const { enqueueToast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        enqueueToast({
+          children: 'Record saved',
+          status: 'success',
+        })
+      }
+    >
+      Add saved notification
+    </Button>
+  );
+};
+
+export const Notifications = () => {
+  const [limit, setLimit] = useState(3);
+
+  return (
+    <ToastProvider limit={limit}>
+      <SaveNotificationButton />
+      <Button onClick={() => setLimit(1)}>Keep one notification</Button>
+      <Button onClick={() => setLimit(3)}>Keep three notifications</Button>
+      <Toaster />
+    </ToastProvider>
+  );
+};
+```
+
+`enqueueToast` accetta le props di Toast e un `dedupeKey` facoltativo e restituisce l'ID della notifica. Una chiave visibile corrispondente restituisce l'ID esistente senza aggiungere un'altra notifica. `updateToast({ id, ...changes })` aggiorna quella notifica in tempo reale. `closeToast(id)` chiude una notifica; `closeToast()` chiude tutte le notifiche visibili nel provider.
+
+Per impostazione predefinita, il provider mostra tre notifiche visibili. `limit` deve essere un numero intero positivo e può cambiare mentre il provider è montato. Ridurre il limite o aggiungere elementi oltre tale limite chiude prima le notifiche visibili meno recenti. Aumentarlo lascia invariate le notifiche esistenti e non ripristina le notifiche chiuse. Le modifiche alla configurazione mantengono lo store, gli ID ancora esistenti, l'ordine e il tempo residuo del conto alla rovescia.
+
+## Ciclo di vita del provider
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--documentation" title="Ciclo di vita condiviso delle notifiche" height={430} />
+
+Più Toaster all'interno di un provider visualizzano le stesse notifiche. Gli aggiornamenti e la chiusura si applicano a ogni mirror e ogni notifica ha un unico conto alla rovescia condiviso. Il passaggio del mouse o lo stato attivo all'interno di qualsiasi mirror la mette in pausa; riprende dopo che tutti i mirror rilasciano entrambi. Il montaggio di un altro Toaster non riavvia il conto alla rovescia né crea un altro ciclo di vita della callback. Usa provider separati per code indipendenti.
+
+Per le notifiche del provider, la scadenza, il pulsante di chiusura, `closeToast` e l'espulsione per limite chiamano l'ultimo `onClose` una sola volta. La notifica è già chiusa quando viene eseguita la callback, quindi gli aggiornamenti e le richieste di chiusura ripetute per quell'ID non hanno effetto. `onCancel` rimane una callback di azione separata e non chiude automaticamente.
+
+Le notifiche chiuse sono inattive durante le animazioni di uscita. Le relative voci vengono rimosse dopo che tutti i mirror visualizzati completano le operazioni di uscita o vengono smontati. Lo smontaggio dell'ultimo Toaster cancella le voci chiuse e blocca il tempo residuo per le notifiche visibili. Il rimontaggio di un Toaster riprende quel tempo. Lo smontaggio del provider elimina le relative notifiche e annulla il conto alla rovescia e le operazioni di uscita senza chiamare `onClose`. Le operazioni `enqueueToast`, `updateToast` e `closeToast` acquisite da quel provider non hanno effetto dopo il suo smontaggio.
+
+`getToastProps` adatta il contenuto e la presentazione di ogni notifica. Imposta `duration` e `progress` in `enqueueToast` o `updateToast` affinché ogni mirror condivida la stessa configurazione temporale. Le sostituzioni temporali esistenti tramite `getToastProps` rimangono supportate quando tutti i mirror restituiscono la stessa durata e lo stesso avanzamento per una notifica. Il provider conserva l'ID, il gestore di chiusura e il conto alla rovescia condiviso.
+
+`container` seleziona la destinazione del portale di un Toaster. Se omesso, usa il contenitore del tema circostante o `document.body`. Un elemento esplicito esegue il rendering lì; `null` rimanda il rendering. Le notifiche visibili rimangono in coda, con i relativi conti alla rovescia in pausa mentre non viene visualizzato alcun Toaster. I portali mantengono il tema e la direzione circostanti. Imposta `aria-label` su ogni Toaster per localizzare il nome predefinito della relativa regione, "Notifications", e assegnare nomi appropriati alle regioni mirror.
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--portal-documentation" title="Portale delle notifiche con ambito" height={430} />
+
+## Aggiorna una notifica in tempo reale
+
+Usa l'ID restituito da `enqueueToast` per aggiornare in loco il contenuto, lo stato del feedback, le azioni o i callback. Gli aggiornamenti preservano l'ID e la posizione della notifica. Gli ID sconosciuti o rimossi non producono alcun effetto, nemmeno durante l'esecuzione dell'animazione di chiusura. Ogni chiamata a `useToast()` è destinata al provider più vicino.
+
+<StoryEmbed storyId="ui-feedback-toaster--updates-documentation" title="Aggiornare una notifica in tempo reale" height={380} />
+
+```tsx
+import { useToast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveButtonProps = {
+  saveRecord: () => Promise<void>;
+  onViewRecord: () => void;
+};
+
+export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
+  const { enqueueToast, updateToast } = useToast();
+
+  const save = async () => {
+    const id = enqueueToast({
+      children: 'Saving record',
+      status: 'info',
+      progress: 0,
+    });
+
+    try {
+      await saveRecord();
+      updateToast({
+        id,
+        children: 'Record saved',
+        status: 'success',
+        progress: undefined,
+        action: <Button onClick={onViewRecord}>View record</Button>,
+      });
+    } catch {
+      updateToast({
+        id,
+        children: 'Record could not be saved',
+        status: 'error',
+        progress: undefined,
+      });
+    }
+  };
+
+  return <Button onClick={save}>Save record</Button>;
+};
+```
+
+`ToastUpdate` richiede `id` e accetta opzioni Toast parziali. I campi omessi mantengono i valori correnti. Un valore `undefined` esplicito cancella un campo facoltativo o ripristina il valore predefinito del componente, ad esempio `progress: undefined` o `status: undefined`. Passa `null` per rimuovere uno slot di contenuto, inclusi `description`, `icon` o `action`. L'impostazione di `cancelLabel: null` nasconde il controllo di annullamento mantenendone il callback. Le modifiche al callback hanno effetto sulla notifica esistente. `dedupeKey` è relativo all'inserimento in coda e non può essere aggiornato.
+
+## Tempi di chiusura
+
+Il conto alla rovescia è impostato per impostazione predefinita su 6.000 millisecondi. Si interrompe mentre il puntatore si trova sul toast o lo stato attivo della tastiera è al suo interno, e riprende solo dopo che entrambi non sono più presenti. Con più Toaster, lo stato di pausa è condiviso tra i relativi mirror. Il conto alla rovescia visivo segue il tempo rimanente prima della chiusura. La chiusura automatica funziona anche quando la riduzione del movimento disabilita l'animazione.
+
+<StoryEmbed storyId="ui-feedback-toaster-timing--documentation" title="Controlli di temporizzazione delle notifiche" height={480} />
+
+| Operazione                                                  | Comportamento del conto alla rovescia                                                                                                     |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Aggiornare contenuto, stato, azioni o callback              | Mantiene il tempo rimanente. Gli aggiornamenti ripetuti non lo prolungano.                                                                |
+| Fornire `duration` a `updateToast`                          | Avvia una nuova durata, anche quando il valore non cambia. `duration: undefined` ripristina il valore predefinito e lo riavvia.           |
+| Modificare la prop `duration` di un `Toast` indipendente    | Avvia una nuova durata. Il rendering dello stesso valore mantiene il tempo rimanente.                                                     |
+| Impostare `duration: 0`                                     | Mantiene aperta la notifica finché non viene chiusa.                                                                                      |
+| Fornire `progress`                                          | Interrompe il conto alla rovescia mentre è presente il progresso.                                                                         |
+| Rimuovere `progress`                                        | Avvia una nuova durata oppure la mantiene aperta quando la sua durata è zero.                                                             |
+| Aggiornare durante il passaggio del mouse o lo stato attivo | Applica le stesse regole, mantenendo il conto alla rovescia risultante in pausa finché sia il puntatore sia il focus non vengono rimossi. |
+
+Ad esempio, `updateToast({ id, children: 'Still saving' })` mantiene il tempo rimanente, mentre `updateToast({ id, duration: 6000 })` concede al lettore altri sei secondi. Queste regole si applicano alla notifica esistente senza modificarne l'ID o la posizione.
+
+## Notifica chiudibile
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveNotification = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Show saved notification</Button>
+      {visible && (
+        <Toast
+          status="success"
+          description="Your changes are available to your team."
+          duration={6000}
+          onClose={() => setVisible(false)}
+        >
+          Record saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+`onClose` viene chiamato una volta dal pulsante di chiusura o quando il conto alla rovescia termina. Rimuovi il toast in quel callback. Usare `duration={0}` per una notifica che rimane aperta finché non viene chiusa.
+
+## Avanzamento e annullamento
+
+```tsx
+import { Toast } from 'twenty-ui/components/feedback';
+
+type ImportProgressProps = { progress: number; onCancel: () => void };
+
+export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
+  <Toast
+    status="info"
+    progress={progress}
+    description="You can continue working while the import runs."
+    onCancel={onCancel}
+    cancelLabel="Cancel import"
+  >
+    Importing records: {progress}%
+  </Toast>
+);
+```
+
+Il passaggio di `progress` fornisce una percentuale e disabilita il conto alla rovescia. Rimuoverlo al termine dell'operazione per avviare una nuova durata. L'annullamento richiama `onCancel`; il componente padre gestisce l'annullamento e la rimozione. `cancelLabel` accetta un nodo React per il contenuto del pulsante. Anche i children, `description`, `icon` e `action` accettano nodi React di proprietà del chiamante. Usa i controlli Twenty per le azioni interattive e fornisci i relativi nomi accessibili.
+
+## Aspetto e annunci
+
+`status` accetta `neutral`, `info`, `success`, `warning` o `error` e il valore predefinito è `neutral`. Esprime il significato del feedback e seleziona l'icona e la tavolozza del tema. Toast dispone di un solo aspetto supportato, quindi non espone alcuna opzione `variant` per l'aspetto né `color` per la tavolozza. Usa `icon` per sostituire l'icona, `icon={null}` per ometterla e `iconLabel` quando l'icona predefinita necessita di un proprio nome accessibile.
+
+Il ruolo predefinito è `status` con annunci non intrusivi. Usa `role="alert"` per un feedback urgente. Imposta `cancelLabel` e `closeLabel` per localizzare i controlli e concedi tempo sufficiente per leggere il contenuto o interagire con le relative azioni.
+
+## Props
+
+Il riferimento è generato dai tipi pubblici del componente. Gli attributi nativi, gli stili, i nomi delle classi, i gestori di eventi e i ref sono destinati all'elemento radice. Usa `render` per comporre un altro elemento o componente mantenendo tali proprietà e il ref. I portali Toaster ereditano il tema e la direzione del testo circostanti.
+
+<ToastReference />
+
+### ToastProvider
+
+<ToastProviderReference />
+
+### Toaster
+
+Gli attributi div nativi, gli stili, i nomi delle classi e i ref si applicano alla regione delle notifiche.
+
+<ToasterReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

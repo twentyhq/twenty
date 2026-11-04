@@ -1,4 +1,6 @@
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
+import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
@@ -16,7 +18,9 @@ type UseAdvancedTextEditorProps = {
   onFocus?: (editor: Editor) => void;
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
+  onFileUpload?: (file: File) => Promise<UploadedFile>;
+  onFileUploadError?: UploadErrorHandler;
   content?: Content;
   editorProps?: EditorOptions['editorProps'];
 };
@@ -32,6 +36,8 @@ export const useAdvancedTextEditor = (
     onBlur,
     onImageUpload,
     onImageUploadError,
+    onFileUpload,
+    onFileUploadError,
     content,
     editorProps,
   }: UseAdvancedTextEditorProps,
@@ -44,11 +50,21 @@ export const useAdvancedTextEditor = (
         context: {
           onImageUpload,
           onImageUploadError,
+          onFileUpload,
+          onFileUploadError,
         },
         placeholder,
         readonly,
       }),
-    [profile, placeholder, onImageUpload, onImageUploadError, readonly],
+    [
+      profile,
+      placeholder,
+      onImageUpload,
+      onImageUploadError,
+      onFileUpload,
+      onFileUploadError,
+      readonly,
+    ],
   );
 
   const getEditorContent = (): Content | undefined => {

@@ -17,8 +17,8 @@ import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import {
-  type Agent,
   type ApiKeyForRole,
   FindManyAgentsDocument,
   GetApiKeysDocument,
@@ -163,7 +163,13 @@ export const SettingsRoleAssignment = ({
           }
 
           updateApiKeyRoleDraftState({
-            apiKey: apiKeyData as ApiKeyForRole,
+            apiKey: {
+              __typename: 'ApiKeyForRole',
+              id: apiKeyData.id,
+              name: apiKeyData.name,
+              expiresAt: apiKeyData.expiresAt,
+              revokedAt: apiKeyData.revokedAt,
+            },
           });
           break;
         }
@@ -174,7 +180,7 @@ export const SettingsRoleAssignment = ({
   };
 
   const handleSelectEntity = (
-    entity: PartialWorkspaceMember | Agent | ApiKeyForRole,
+    entity: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,
     entityType: keyof typeof ROLE_TARGET_CONFIG,
   ) => {
     const config = ROLE_TARGET_CONFIG[entityType];

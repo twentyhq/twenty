@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { isMonacoCancellationError } from '@/error-handler/utils/isMonacoCancellationError';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -35,6 +36,11 @@ export const PromiseRejectionEffect = () => {
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
+
+      if (error instanceof Error && isMonacoCancellationError(error)) {
+        return;
+      }
+
       if (isApolloError(error)) {
         enqueueToast(getToastOptionsFromError({ error }));
         return; // already handled by apolloLink

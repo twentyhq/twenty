@@ -19,17 +19,31 @@ export type UpdateMessageChannelInput = {
   visibility?: MessageChannelVisibility;
   // False pauses ingestion (further ingests are rejected) without deleting the history
   isSyncEnabled?: boolean;
+  messagingProvider?: { universalIdentifier: string } | null;
 };
 
-export const updateMessageChannel = async (
-  input: UpdateMessageChannelInput,
-): Promise<AppMessageChannel> => {
+export const updateMessageChannel = async ({
+  messagingProvider,
+  ...input
+}: UpdateMessageChannelInput): Promise<AppMessageChannel> => {
   const { updateAppMessageChannel } = await postGraphqlRequest<
-    { input: UpdateMessageChannelInput },
+    {
+      input: Omit<UpdateMessageChannelInput, 'messagingProvider'> & {
+        messagingProviderUniversalIdentifier?: string | null;
+      };
+    },
     { updateAppMessageChannel: AppMessageChannel }
   >({
     query: UPDATE_APP_MESSAGE_CHANNEL_MUTATION,
-    variables: { input },
+    variables: {
+      input: {
+        ...input,
+        messagingProviderUniversalIdentifier:
+          messagingProvider === undefined
+            ? undefined
+            : (messagingProvider?.universalIdentifier ?? null),
+      },
+    },
     caller: 'updateMessageChannel',
   });
 

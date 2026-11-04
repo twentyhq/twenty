@@ -3,8 +3,12 @@ title: Card
 description: Group related information inside a bordered surface.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+## Overview
 
 `Card` groups related information and actions under one named export. Compose `Card.Root`, `Card.Header`, `Card.Content`, and `Card.Footer` to separate a title, body, and supporting actions. The parts do not manage selection, focus, or application state. The application owns the behavior of any controls placed inside them.
 
@@ -221,3 +225,5 @@ Apply the same member names to JSX tags, styled wrappers, and prop types. Standa
 ## Props
 
 <CardReference />
+
+<PageBanner illustration="section-ui-primitives" />

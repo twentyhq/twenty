@@ -3,8 +3,12 @@ title: Dropdown
 description: Action menus, searchable pickers, and form panels with shared presentation and interaction.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## Overview
 
 `Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching and pagination. `SelectionGroup` owns independent selection values inside the popup. Import it from `twenty-ui/components`.
 
@@ -463,6 +467,8 @@ export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
 
 Right-clicking elsewhere while the menu is open moves it to the new point.
 
+Call `useDropdownPlacementOrThrow` inside `Dropdown.Content` to read its resolved `side` and `align`, including collision flips. Use the resolved side to place a picker's search and create controls beside its trigger. Keep the controls in their visual DOM order so keyboard navigation follows the layout. A search below the results receives focus from `ArrowDown` on the last result; `ArrowUp` from that search returns to the last result.
+
 ## Labels
 
 Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `shortcutJoinLabel` to replace the default `then` between sequential shortcut steps. Native `aria-labelledby` takes precedence over `aria-label`.
@@ -470,3 +476,5 @@ Each part owns its text: supply `Search.placeholder` and native accessible names
 ## Props
 
 <DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

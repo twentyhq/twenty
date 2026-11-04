@@ -1,0 +1,63 @@
+---
+title: DirectionProvider
+description: Согласуйте взаимодействия с клавиатурой и указателем, зависящие от направления, с направлением документа.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+## Обзор
+
+`DirectionProvider` передаёт направление `ltr` или `rtl` элементам управления Twenty UI. Он не отображает элемент DOM и не задаёт HTML-атрибут `dir`. Задайте как направление провайдера, так и соответствующее направление документа.
+
+<StoryEmbed storyId="ui-layout-directionprovider--display" title="Пример DirectionProvider" height={160} />
+
+## Использование
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <Text dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </Text>
+  </DirectionProvider>
+);
+```
+
+Основное приложение предоставляет переведённые метки и выбирает направление. Контекст направления влияет на взаимодействия, зависящие от направления; HTML-атрибут управляет текстом и компоновкой. Например, [SegmentedControl](/ru/ui/components/input/segmented-control) меняет направление горизонтальной навигации с помощью стрелок, а [ResizeHandle](/ru/ui/primitives/layout/resize-handle) меняет направление горизонтального изменения размера.
+
+## Область действия и состояние
+
+Разместите один провайдер вокруг элементов управления, использующих общее направление. Вложенные провайдеры могут переопределять направление для поддерева; сопоставьте каждое переопределение с соответствующим атрибутом `dir`. `direction` управляется приложением и по умолчанию имеет значение `ltr`, как и в Base UI. Дочерние элементы необязательны. Импортируйте `DirectionProviderProps` из той же точки входа. У провайдера нет цели DOM, нативных свойств или ref. Провайдер не переводит содержимое и не выбирает направление автоматически на основе локали.
+
+## Порталы и компоновка
+
+Порталы Dropdown, Popover, Tooltip, Select, Dialog и Toast наследуют направление от провайдера, даже если их контейнер находится вне элемента с `dir`. Без провайдера они наследуют направление своего контейнера. Сохраняйте согласованность между направлением провайдера и HTML-направлением триггера. `ThemeProvider` с ограниченной областью действия продолжает управлять контейнером портала по умолчанию.
+
+Подменю открываются в сторону `inline-end`. ArrowRight открывает подменю в LTR; ArrowLeft открывает его в RTL. Противоположная клавиша возвращает к родительскому элементу. Явное размещение всплывающего окна `left` и `right` по-прежнему обозначает физические стороны. Обработка коллизий может переместить всплывающее окно при ограниченном пространстве.
+
+Текст, отступы, углы присоединённых кнопок и направленные значки раскрытия следуют направлению чтения. Предоставленные значки сохраняют свою ориентацию. `AvatarGroup.overlap` по-прежнему обозначает физический край; внешний аватар не выходит за этот край ни в одном из направлений.
+
+<StoryEmbed storyId="ui-layout-directionprovider--reading-directions" title="Макеты слева направо и справа налево" height={1260} />
+
+## Свойства
+
+<DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

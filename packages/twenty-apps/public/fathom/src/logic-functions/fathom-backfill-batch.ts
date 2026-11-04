@@ -16,6 +16,7 @@ import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retry
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { enqueueFathomBackfillBatch } from 'src/logic-functions/utils/enqueue-fathom-backfill-batch.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
@@ -25,7 +26,9 @@ export const fathomBackfillBatchHandler = async (
   payload: FathomBackfillBatchPayload,
 ) => {
   const connection = await getConnection(payload.connectedAccountId);
-  const fathomClient = createFathomClient(connection.accessToken);
+  const fathomClient = createFathomClient(
+    getConnectionAccessTokenOrThrow(connection),
+  );
   const coreApiClient = createFathomCoreApiClient();
   const requeueAttempt = payload.requeueAttempt ?? 0;
   const results: Awaited<

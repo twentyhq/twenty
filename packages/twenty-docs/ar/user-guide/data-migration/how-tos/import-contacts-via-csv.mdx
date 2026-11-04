@@ -3,6 +3,8 @@ title: استيراد جهات الاتصال عبر CSV
 description: دليل كامل خطوة بخطوة لاستيراد الأشخاص/جهات الاتصال إلى Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## نظرة عامة
 
 يرشدك هذا الدليل خلال عملية استيراد جهات الاتصال (الأشخاص) إلى Twenty.
@@ -159,7 +161,7 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 3. أو أنشئ خيارات جديدة عند الحاجة
 
 <Note>
-تستخدم خيارات الاختيار **أسماء API**، وليس تسميات العرض. تحقّق من **الإعدادات → نموذج البيانات** → فعِّل **الوضع المتقدم** لمشاهدة أسماء API.
+تستخدم خيارات الاختيار **أسماء API**، وليس تسميات العرض. لرؤيتها، افتح الحقل في **Settings → Data Model**، ثم اختر **Show API values** من قائمة **⋮** بجوار **Options**.
 </Note>
 
 ## الخطوة 6: مراجعة الأخطاء وإصلاحها
@@ -240,3 +242,5 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 * [كيفية إصلاح أخطاء الاستيراد](/ar/user-guide/data-migration/how-tos/fix-import-errors)
 * [كيفية استيراد العلاقات](/ar/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 * [مرجع تعيين الحقول](/ar/user-guide/data-migration/capabilities/field-mapping)
+
+<PageBanner illustration="data-migration" />

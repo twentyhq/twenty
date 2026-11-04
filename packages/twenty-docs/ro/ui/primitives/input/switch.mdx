@@ -1,0 +1,119 @@
+---
+title: Schimbă
+description: Un control etichetat de activare sau dezactivare, cu stare controlată sau necontrolată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+## Prezentare generală
+
+Folosește `Switch` pentru o preferință activată sau dezactivată. Oferă controlului o etichetă vizibilă sau un nume accesibil.
+
+<StoryEmbed storyId="ui-input-switch-switch--display" title="Exemplu de comutator" height={90} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizează `defaultChecked` pentru a seta starea inițială de bifare. Comutatorul gestionează modificările ulterioare.
+
+```tsx
+import { useId } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+## Opțiuni vizuale
+
+Comparați cele două dimensiuni în stările pornit, oprit, dezactivat, doar în citire și focalizare. Folosiți exemplele active pentru a încerca comutarea.
+
+<StoryEmbed storyId="ui-input-switch-switch--catalog" title="Opțiuni vizuale pentru comutator" height={440} />
+
+## Stare controlată
+
+Transmite `checked` și actualizează-l cu `onCheckedChange` pentru a gestiona aceeași preferință în starea React.
+
+```tsx
+import { useId, useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch
+        id={switchId}
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+`onCheckedChange` primește următoarea valoare booleană și detaliile evenimentului. Proprietatea `size` acceptă `sm` sau `md` și are implicit valoarea `md`.
+
+Pentru un rând consecvent pe toată lățimea, cu o pictogramă, o descriere și un comutator, utilizați [SettingsRow](/ro/ui/components/settings/settings-row).
+
+## Tastatură și formulare
+
+Tasta Tab mută focalizarea pe comutator; tasta Spațiu îl comută. Făcând clic pe eticheta asociată, acesta este de asemenea comutat. Folosește `disabled` pentru a preveni interacțiunea sau `readOnly` pentru a păstra un control focalizabil a cărui valoare nu poate fi modificată.
+
+Un comutator cu nume trimite valoarea sa când este activat. Folosește `value` pentru a particulariza acea valoare și `uncheckedValue` dacă formularul trebuie să trimită o valoare și când acesta este dezactivat.
+
+## Părți și conținut personalizat
+
+`Switch` asamblează rădăcina stilizată și elementul Thumb implicit. Utilizați `Switch.Root` cu `Switch.Thumb` pentru a deține conținutul elementului Thumb. Root gestionează starea și aspectul pistei; Thumb redă conținutul pe care îl furnizați.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` și `SwitchThumbProps` sunt tipuri publice exportate din `twenty-ui/primitives/input`. Ambele părți acceptă atribute native, handleri, ref-uri, `render` și callbackuri `className` și `style` bazate pe stare. `ref` al lui Root vizează controlul vizibil; `inputRef` vizează inputul nativ. Ref-ul părții vizează elementul său redat. Transmiteți `nativeButton` cu `render={<button />}` atunci când înlocuiți Root cu un buton. Proprietățile de aspect aparțin Root; clasele și stilurile explicite sunt îmbinate cu valorile implicite.
+
+Thumb primește starea curentă checked, disabled, readOnly, required și Field. Poziția sa urmează direcția de citire.
+
+<StoryEmbed storyId="ui-input-switch-parts--composition" title="Compoziția părților Switch" height={90} />
+
+Ansamblul apelabil și tipul său `SwitchProps` rămân acceptate. Înlocuiți ansamblul cu Root și partea sa atunci când furnizați conținut Thumb personalizat, în loc să adăugați o altă parte la elementele copil ale ansamblului.
+
+Pentru resetarea controlată a formularului, gestionați `onReset` al formularului și restaurați `checked` la valoarea inițială. Base UI 1.8 nu restaurează starea componentelor necontrolate la resetarea nativă a formularului. `required`, `form`, `value` și `uncheckedValue` păstrează comportamentul upstream al inputului nativ.
+
+## Proprietăți
+
+Documentația de referință include proprietăți specifice componentei și proprietăți Base UI moștenite. Sunt acceptate și atribute native precum `aria-label` și `data-*`.
+
+<SwitchReference />
+
+<PageBanner illustration="page-cover-switch" />

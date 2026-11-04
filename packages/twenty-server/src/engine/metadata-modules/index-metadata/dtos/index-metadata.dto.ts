@@ -38,14 +38,17 @@ export class IndexMetadataDTO {
   name: string;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isCustom?: boolean;
-
-  @IsBoolean()
   @IsNotEmpty()
   @Field()
   isUnique: boolean;
+
+  @IsUUID()
+  @Field(() => UUIDScalarType)
+  applicationId: string;
+
+  @IsBoolean()
+  @Field()
+  isSystemSideEffect: boolean;
 
   @IsString()
   @IsOptional()

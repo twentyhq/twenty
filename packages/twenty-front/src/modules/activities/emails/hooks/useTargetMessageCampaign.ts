@@ -1,5 +1,5 @@
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ export const useTargetMessageCampaign = () => {
   const targetRecord = useTargetRecord();
 
   const { record: campaign } = useFindOneRecord<MessageCampaign>({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
     objectRecordId: targetRecord.id,
   });
 

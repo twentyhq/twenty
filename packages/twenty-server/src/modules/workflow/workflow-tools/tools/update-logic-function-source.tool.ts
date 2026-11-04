@@ -43,7 +43,9 @@ export const main = async (params: { url: string }) => {
 };
 \`\`\`
 
-To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
+To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.
+
+Only code steps of a DRAFT workflow version can be edited. For an active or past version, call create_draft_from_workflow_version first, then use the logicFunctionId of the same step in the new draft: the draft copies each code step onto a new logic function.`,
   inputSchema: updateLogicFunctionSourceSchema,
   execute: async (parameters: { logicFunctionId: string; code: string }) => {
     try {

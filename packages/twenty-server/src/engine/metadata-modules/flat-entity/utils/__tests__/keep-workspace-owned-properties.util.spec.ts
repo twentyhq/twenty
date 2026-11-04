@@ -69,33 +69,6 @@ describe('keepWorkspaceOwnedProperties', () => {
     ).toEqual(standardPageLayout);
   });
 
-  it('should keep a skill deactivated by the workspace', () => {
-    const shippedSkill = {
-      universalIdentifier: 'skill-universal-identifier',
-      name: 'summarize',
-      isActive: true,
-    };
-
-    const result = keepWorkspaceOwnedProperties({
-      metadataName: 'skill',
-      fromFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'skill-universal-identifier': { ...shippedSkill, isActive: false },
-        },
-      },
-      toFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'skill-universal-identifier': shippedSkill,
-        },
-      },
-    });
-
-    expect(result.byUniversalIdentifier['skill-universal-identifier']).toEqual({
-      ...shippedSkill,
-      isActive: false,
-    });
-  });
-
   it('should keep the creator of a view the workspace already has', () => {
     const shippedView = {
       universalIdentifier: 'view-universal-identifier',
@@ -129,15 +102,17 @@ describe('keepWorkspaceOwnedProperties', () => {
   it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
     const toFlatEntityMaps = {
       byUniversalIdentifier: {
-        'role-universal-identifier': { label: 'Manager' },
+        'webhook-universal-identifier': { targetUrl: 'https://example.com' },
       },
     };
 
     const result = keepWorkspaceOwnedProperties({
-      metadataName: 'role',
+      metadataName: 'webhook',
       fromFlatEntityMaps: {
         byUniversalIdentifier: {
-          'role-universal-identifier': { label: 'Renamed by the workspace' },
+          'webhook-universal-identifier': {
+            targetUrl: 'https://workspace.example.com',
+          },
         },
       },
       toFlatEntityMaps,

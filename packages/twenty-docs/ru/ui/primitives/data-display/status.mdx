@@ -1,0 +1,91 @@
+---
+title: Статус
+description: Отображает именованное состояние с цветовым индикатором и необязательной индикацией загрузки.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+## Обзор
+
+`Status` объединяет цветную точку, текстовую метку и необязательный индикатор загрузки. Используйте его для состояний рабочих процессов или записей. Используйте [Tag](/ru/ui/primitives/data-display/tag) для категории без индикатора состояния.
+
+<StoryEmbed storyId="ui-data-display-status--display" title="Пример статуса" height={90} />
+
+## Использование
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
+```
+
+`color` является обязательным и использует палитру темы. Метка передает значение независимо от цвета. Элемент по умолчанию всегда является `span`, в том числе при наличии собственного обработчика клика; `weight="medium"` выделяет его текст.
+
+## Загрузка и объявления
+
+<StoryEmbed storyId="ui-data-display-status--loading" title="Статус при сохранении" height={90} />
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type SaveStatusProps = { isSaving: boolean };
+
+export const SaveStatus = ({ isSaving }: SaveStatusProps) => (
+  <div role="status">
+    <Status color={isSaving ? 'blue' : 'green'} loading={isSaving}>
+      {isSaving ? 'Saving' : 'Saved'}
+    </Status>
+  </div>
+);
+```
+
+`loading` отображает декоративный индикатор загрузки после метки и по умолчанию устанавливает для `aria-busy` значение `true`. Явно укажите `aria-busy`, когда этим состоянием управляет окружающий рабочий процесс. Компонент не добавляет динамическую область и не изменяет свой текст автоматически. Оставляйте контейнер `role="status"` смонтированным, когда обновления должны объявляться вспомогательным технологиям, и укажите метку, описывающую текущее состояние.
+
+## Изменить состояние
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type ChangeStatusActionProps = {
+  isUpdating: boolean;
+  onChangeStatus: () => void;
+};
+
+export const ChangeStatusAction = ({
+  isUpdating,
+  onChangeStatus,
+}: ChangeStatusActionProps) => (
+  <Status
+    color="blue"
+    loading={isUpdating}
+    render={
+      <button
+        type="button"
+        disabled={isUpdating}
+        onClick={onChangeStatus}
+        aria-label="Change record status"
+      />
+    }
+  >
+    {isUpdating ? 'Updating' : 'In progress'}
+  </Status>
+);
+```
+
+Создайте интерактивный элемент-владелец с помощью `render`. Разместите его обработчик клика, нативные атрибуты, ref и состояние disabled на этом элементе-владельце. Настоящая кнопка поддерживает активацию с помощью фокуса, указателя, Enter и Space. `Status.loading` отображает ход выполнения; передайте `disabled` кнопке, когда действие должно ждать. Для навигации отрисуйте ссылку с её назначением, например `<a href="/records" />`. Нативные элементы-владельцы сохраняют внешний вид Status. Дочерние элементы Node сохраняют текст, переводы и намеренно добавленные ссылки, принадлежащие вызывающему коду.
+
+## Свойства
+
+Типы и значения по умолчанию генерируются из публичных типов компонента. Также принимаются нативные атрибуты и обработчики событий.
+
+<StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />

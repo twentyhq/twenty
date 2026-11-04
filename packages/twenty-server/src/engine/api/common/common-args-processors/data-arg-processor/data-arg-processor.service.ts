@@ -330,7 +330,7 @@ export class DataArgProcessorService {
       case FieldMetadataType.RICH_TEXT: {
         const validatedValue = validateRichTextFieldOrThrow(value, key);
 
-        return await transformRichTextValue(validatedValue);
+        return transformRichTextValue(validatedValue);
       }
       case FieldMetadataType.LINKS: {
         const settings = isFieldMetadataSettingsOfType(

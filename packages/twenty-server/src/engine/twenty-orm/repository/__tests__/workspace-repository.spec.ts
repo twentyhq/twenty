@@ -109,10 +109,26 @@ const buildRepository = ({
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
       roleIdsWithAllRecordsAccess: [ROLE_ID],
+      rolesPermissions: {
+        [ROLE_ID]: {
+          [OBJECT_METADATA_ID]: {
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: true,
+            restrictedFields: {},
+          },
+        },
+      },
+      flatApplicationMaps: { byId: {} },
       flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
       flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
-    authContext: { type: 'apiKey', apiKey: { id: API_KEY_ID } },
+    authContext: {
+      type: 'apiKey',
+      apiKey: { id: API_KEY_ID },
+      workspace: { id: 'workspace-id' },
+    },
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
@@ -120,16 +136,15 @@ const buildRepository = ({
         return [];
       },
     },
-    objectRecordsPermissions: {
-      [OBJECT_METADATA_ID]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: {},
+    permissionsPrincipals: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'apiKey',
+        apiKeyId: 'api-key-id',
+        roleId: ROLE_ID,
       },
+      applicationPrincipal: { type: 'customApplication' },
     },
-    rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,

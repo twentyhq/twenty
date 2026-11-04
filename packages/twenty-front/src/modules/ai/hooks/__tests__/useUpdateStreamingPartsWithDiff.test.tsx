@@ -80,15 +80,6 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     );
   });
 
-  it('does not process again a refetched message whose content did not change', () => {
-    const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
-
-    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
-    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
-
-    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(1);
-  });
-
   it('leaves messages written before this session alone', () => {
     const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
 

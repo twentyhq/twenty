@@ -208,7 +208,12 @@ export const PastesAndSelectsChipsWithTheKeyboard: Story = {
     const input = await canvas.findByRole('combobox', { name: 'To' });
     const ccInput = canvas.getByRole('combobox', { name: 'Cc' });
 
-    await userEvent.click(input);
+    await userEvent.tab();
+    expect(input).toHaveFocus();
+    expect(getComputedStyle(input).outlineStyle).not.toBe('none');
+    expect(
+      Number.parseFloat(getComputedStyle(input).outlineWidth),
+    ).toBeGreaterThan(0);
     await userEvent.paste('Ada <ada@example.net>; Grace <grace@example.net>');
 
     expect(canvas.getByText('Ada')).toBeVisible();

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -7,7 +7,13 @@ import assert from 'assert';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
+import chunk from 'lodash.chunk';
+import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import {
+  FeatureFlagKey,
+  type IframeMediaPermission,
+} from 'twenty-shared/types';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
@@ -16,7 +22,7 @@ import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
   isDefined,
-  normalizeAllowedIframeOrigin,
+  normalizeIframeOrigin,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -52,10 +58,13 @@ import {
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { isIframeMediaPermissionsPolicyWithinSizeLimit } from 'src/engine/core-modules/frontend/utils/is-iframe-media-permissions-policy-within-size-limit.util';
 import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -68,7 +77,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
+import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
@@ -76,6 +85,7 @@ import {
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { upsertIframeMediaPermission } from 'src/engine/core-modules/workspace/utils/upsert-iframe-media-permission.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
@@ -97,9 +107,9 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -149,6 +159,8 @@ export class WorkspaceService {
     isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
+    aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -195,6 +207,8 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
     private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
   ) {}
@@ -286,9 +300,9 @@ export class WorkspaceService {
     }
   }
 
-  async updateWorkspaceAllowedIframeOrigins(
+  async updateWorkspaceAllowedEmbeddingOrigins(
     workspaceId: string,
-    input: UpdateWorkspaceAllowedIframeOriginsInput,
+    input: UpdateWorkspaceAllowedEmbeddingOriginsInput,
   ): Promise<WorkspaceEntity> {
     const updatedWorkspace = await this.workspaceRepository.manager.transaction(
       async (manager) => {
@@ -298,23 +312,23 @@ export class WorkspaceService {
           lock: { mode: 'pessimistic_write' },
         });
         assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-        const origin = normalizeAllowedIframeOrigin(input.origin);
+        const origin = normalizeIframeOrigin(input.origin);
         assertIsDefinedOrThrow(origin);
-        const origins = workspace.allowedIframeOrigins ?? [];
-        const allowedIframeOrigins =
+        const origins = workspace.allowedEmbeddingOrigins ?? [];
+        const allowedEmbeddingOrigins =
           input.operation === 'add'
             ? [...new Set([...origins, origin])]
             : origins.filter((existingOrigin) => existingOrigin !== origin);
 
-        if (allowedIframeOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+        if (allowedEmbeddingOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
           throw new WorkspaceException(
             'Too many embedding origins',
             WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
           );
         }
 
-        await repository.update(workspaceId, { allowedIframeOrigins });
-        return { ...workspace, allowedIframeOrigins };
+        await repository.update(workspaceId, { allowedEmbeddingOrigins });
+        return { ...workspace, allowedEmbeddingOrigins };
       },
     );
 
@@ -322,6 +336,71 @@ export class WorkspaceService {
       'workspaceEntity',
       workspaceId,
     );
+    return updatedWorkspace;
+  }
+
+  async updateWorkspaceIframeMediaPermissions({
+    workspaceId,
+    input,
+  }: {
+    workspaceId: string;
+    input: IframeMediaPermission;
+  }): Promise<WorkspaceEntity> {
+    const origin = normalizeIframeOrigin(input.origin, { isHttpsOnly: true });
+
+    if (!isDefined(origin)) {
+      throw new WorkspaceException(
+        'Invalid iframe media permission origin',
+        WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID,
+      );
+    }
+
+    const updatedWorkspace = await this.workspaceRepository.manager.transaction(
+      async (manager) => {
+        const repository = manager.getRepository(WorkspaceEntity);
+        const workspace = await repository.findOne({
+          where: { id: workspaceId },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+        const iframeMediaPermissions = upsertIframeMediaPermission({
+          permissions: workspace.iframeMediaPermissions ?? [],
+          permission: {
+            origin,
+            microphone: input.microphone,
+            camera: input.camera,
+          },
+        });
+
+        if (iframeMediaPermissions.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+          throw new WorkspaceException(
+            'Too many iframe media origins',
+            WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
+          );
+        }
+
+        if (
+          !isIframeMediaPermissionsPolicyWithinSizeLimit(iframeMediaPermissions)
+        ) {
+          throw new WorkspaceException(
+            'Iframe media origins exceed the Permissions-Policy size limit',
+            WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE,
+          );
+        }
+
+        await repository.update(workspaceId, { iframeMediaPermissions });
+
+        return { ...workspace, iframeMediaPermissions };
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+
     return updatedWorkspace;
   }
 
@@ -353,6 +432,26 @@ export class WorkspaceService {
       agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
+
+    const isUpdatingAssistantModes =
+      isDefined(payload.aiChatDirectMessageAssistantMode) ||
+      isDefined(payload.aiChatInboxAssistantMode);
+    const isInboxRequiredButDisabled =
+      isUpdatingAssistantModes &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspace.id,
+      ));
+
+    if (isInboxRequiredButDisabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+        },
+      );
+    }
 
     if (
       isDefined(payload.subdomain) &&
@@ -790,6 +889,10 @@ export class WorkspaceService {
             workspace,
           );
 
+          await this.deleteApplicationRuntimeResourcesBeforeHardDelete(
+            workspace.id,
+          );
+
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
           await this.workspaceSchemaService.deleteWorkspaceDBSchema(
@@ -804,6 +907,10 @@ export class WorkspaceService {
           await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
             FileWorkspaceFolderDeletionJob.name,
             { workspaceId: workspace.id },
+            {
+              workspaceId: workspace.id,
+              isWorkspaceJob: true,
+            },
           );
 
           const emailingDomains = await this.coreDataSource
@@ -817,6 +924,10 @@ export class WorkspaceService {
               domains: emailingDomains.map(
                 (emailingDomain) => emailingDomain.domain,
               ),
+            },
+            {
+              workspaceId: workspace.id,
+              isWorkspaceJob: true,
             },
           );
 
@@ -859,6 +970,8 @@ export class WorkspaceService {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -876,6 +989,65 @@ export class WorkspaceService {
         workspaceDeletedAt: workspace.deletedAt,
       },
     );
+  }
+
+  private async deleteApplicationRuntimeResourcesBeforeHardDelete(
+    workspaceId: string,
+  ): Promise<void> {
+    // Leaves most of Lambda's 15 req/s control plane quota to live function builds
+    const LOGIC_FUNCTION_DELETIONS_PER_SECOND = 5;
+
+    const logicFunctionDriver =
+      this.logicFunctionDriverFactory.getCurrentDriver();
+
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const flatLogicFunctions = Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    for (const flatLogicFunctionBatch of chunk(
+      flatLogicFunctions,
+      LOGIC_FUNCTION_DELETIONS_PER_SECOND,
+    )) {
+      const batchStartedAt = Date.now();
+
+      await Promise.all(
+        flatLogicFunctionBatch.map(async (flatLogicFunction) => {
+          try {
+            await logicFunctionDriver.delete(flatLogicFunction);
+          } catch (error) {
+            this.logger.warn(
+              `Failed to delete logic function ${flatLogicFunction.id} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
+          }
+        }),
+      );
+
+      await setTimeout(Math.max(0, 1_000 - (Date.now() - batchStartedAt)));
+    }
+
+    const applications =
+      await this.applicationService.findManyApplications(workspaceId);
+
+    for (const application of applications) {
+      try {
+        await logicFunctionDriver.deleteApplicationResources({
+          workspaceId,
+          applicationUniversalIdentifier: application.universalIdentifier,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to delete runtime resources of application ${application.universalIdentifier} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(

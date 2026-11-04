@@ -1,0 +1,165 @@
+---
+title: ListItemButton
+description: Нативные кнопки действий с общим оформлением строки списка.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+## Обзор
+
+Используйте `ListItemButton` для строк действий и отдельных кнопок выбора. Он сочетает компоновку [ListItem](/ru/ui/primitives/navigation/list-item) с нативной кнопкой, включая активацию клавишами Enter и Space, фокус и поведение в отключенном состоянии. По умолчанию используется `type="button"`.
+
+<StoryEmbed storyId="ui-components-listitembutton--display" title="Пример ListItemButton" height={110} />
+
+## Использование
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+## Действия и отключенное состояние
+
+Передавайте `onClick` и `disabled` напрямую. Отключенные кнопки используют соответствующее оформление строки, предотвращают активацию и исключаются из порядка обхода по Tab.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    onClick={onDuplicate}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--disabled" title="Отключенная строка действия" height={110} />
+
+Установите `focusableWhenDisabled`, чтобы отключенная кнопка могла получать фокус. Она использует `aria-disabled` и продолжает блокировать активацию. Нативные атрибуты кнопки, события, стили, имена классов и ref `HTMLButtonElement` передаются кнопке. События всплывают обычным образом; вызывающая сторона задает необходимую политику `stopPropagation()` или `preventDefault()`.
+
+## Выбор и визуальные слоты
+
+Ваше приложение управляет независимыми состояниями `active`, `selected` и `focused`. Используйте `active` для открытой или текущей строки. Используйте `selected` вместе с соответствующим доступным состоянием, например `aria-pressed` для кнопки-переключателя. `focused` выделяет строку, не перемещая DOM-фокус. Индикаторы и подсказки сочетаний клавиш носят декоративный характер; ваше приложение регистрирует сочетания клавиш и обрабатывает навигацию.
+
+```tsx
+import { useState } from 'react';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItemButton
+      aria-pressed={selected}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItemButton>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--selected" title="Выбранная строка действия" height={110} />
+
+Используйте `startIcon`, `endIcon`, `description` и `descriptionPlacement` для вспомогательного содержимого. `color="danger"` обозначает разрушительное действие. `shortcutJoinLabel` управляет текстом между последовательными сочетаниями клавиш, а `hasSubmenu` отображает индикатор подменю.
+
+## Многострочное вспомогательное содержимое
+
+Установите `descriptionPlacement="below"`, чтобы разместить вспомогательный текст под меткой. Метка сохраняет свое поведение при усечении. Передайте [Text](/ru/ui/primitives/typography/text) с `truncate` или `lineClamp` в качестве `description`, когда требуется более короткий предварительный просмотр. Размещения `inline` и `end` сохраняют существующий внешний вид.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type PlanningActionProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const PlanningAction = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: PlanningActionProps) => (
+  <ListItemButton
+    active={active}
+    disabled={disabled}
+    descriptionPlacement="below"
+    description="Review the proposed timeline and confirm the next steps with the team."
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    onClick={onOpen}
+  >
+    Quarterly planning
+  </ListItemButton>
+);
+```
+
+`active` применяет фон текущей строки. Установите `selectionAppearance="accent"` для акцентной заливки выбранных строк при любом размещении описания; значение по умолчанию сохраняет существующее оформление выбора на основе индикатора. `focused` применяет общий фон выделения; контур видимого фокуса соответствует фактическому фокусу клавиатуры. Эти свойства не добавляют доступное состояние и не перемещают фокус. Нативная активация кнопки и поведение отключенного состояния остаются без изменений.
+
+## Независимые элементы управления
+
+Размещайте независимые кнопки и флажки рядом с `ListItemButton`, чтобы каждый из них сохранял собственные фокус и активацию. Не вкладывайте их в слоты содержимого или значка. У компонента нет слота `actions`. Используйте `ListItem` с корневым элементом `div` по умолчанию для [строки с независимыми элементами управления](/ru/ui/primitives/navigation/list-item#independent-controls), а также задайте поведение отключенного состояния и распространение событий для каждого элемента управления.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ContactActionsProps = {
+  onOpen: () => void;
+  onDetails: () => void;
+};
+
+export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ListItemButton onClick={onOpen} description="Account owner">
+      Alex Morgan
+    </ListItemButton>
+    <Button onClick={onDetails} aria-label="Open Alex Morgan's details">
+      Details
+    </Button>
+  </div>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--independent-action" title="Соседние элементы управления действиями" height={110} />
+
+Используйте `ListItem` для пассивного содержимого, ссылок или пользовательских семантических контейнеров. Используйте существующие части элементов [Dropdown](/ru/ui/components/navigation/dropdown) и [Select](/ru/ui/primitives/input/select) в их всплывающих контейнерах, которые предоставляют роли и навигацию с помощью клавиатуры.
+
+## Свойства
+
+<ListItemButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

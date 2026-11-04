@@ -1,41 +1,33 @@
+import { type JSONContent } from '@tiptap/core';
+
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
 
-describe('getActivityAttachmentPathsAndName', () => {
-  it('should return the file paths and names from the activity blocknote', () => {
-    const activityBlocknote = JSON.stringify([
-      { type: 'paragraph', props: { text: 'test' } },
-      {
-        type: 'image',
-        props: {
-          url: 'https://example.com/files/image/image.jpg?queryParam=value',
-          name: 'image',
-        },
-      },
-      {
-        type: 'file',
-        props: {
-          url: 'https://example.com/files/file/file.pdf?queryParam=value',
-          name: 'file',
-        },
-      },
-      {
-        type: 'video',
-        props: {
-          url: 'https://example.com/files/video/video.mp4?queryParam=value',
-          name: 'video',
-        },
-      },
-      {
-        type: 'audio',
-        props: {
-          url: 'https://example.com/files/audio/audio.mp3?queryParam=value',
-          name: 'audio',
-        },
-      },
-    ]);
-    const res = getActivityAttachmentPathsAndName(activityBlocknote);
+const buildDocument = (content: JSONContent[]) =>
+  JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
 
-    expect(res).toEqual([
+describe('getActivityAttachmentPathsAndName', () => {
+  it('should return the file paths and names from the activity document', () => {
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
+      buildDocument([
+        { type: 'paragraph', content: [{ type: 'text', text: 'test' }] },
+        {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/files/image/image.jpg?queryParam=value',
+            alt: 'image',
+          },
+        },
+        {
+          type: 'file',
+          attrs: {
+            url: 'https://example.com/files/file/file.pdf?queryParam=value',
+            name: 'file',
+          },
+        },
+      ]),
+    );
+
+    expect(attachmentPathsAndNames).toEqual([
       {
         path: 'https://example.com/files/image/image.jpg?queryParam=value',
         name: 'image',
@@ -44,14 +36,47 @@ describe('getActivityAttachmentPathsAndName', () => {
         path: 'https://example.com/files/file/file.pdf?queryParam=value',
         name: 'file',
       },
-      {
-        path: 'https://example.com/files/video/video.mp4?queryParam=value',
-        name: 'video',
-      },
-      {
-        path: 'https://example.com/files/audio/audio.mp3?queryParam=value',
-        name: 'audio',
-      },
     ]);
+  });
+
+  it('should find attachments nested in other nodes', () => {
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
+      buildDocument([
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'file',
+                  attrs: { url: 'https://example.com/a.pdf', name: 'a' },
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(attachmentPathsAndNames).toEqual([
+      { path: 'https://example.com/a.pdf', name: 'a' },
+    ]);
+  });
+
+  it('should ignore attachments without a url', () => {
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
+      buildDocument([
+        { type: 'image', attrs: { src: '', alt: 'empty' } },
+        { type: 'file', attrs: { name: 'missing' } },
+      ]),
+    );
+
+    expect(attachmentPathsAndNames).toEqual([]);
+  });
+
+  it('should return no attachments for a body that is not a TipTap document', () => {
+    expect(getActivityAttachmentPathsAndName('')).toEqual([]);
+    expect(getActivityAttachmentPathsAndName('[{"type":"image"}]')).toEqual([]);
   });
 });

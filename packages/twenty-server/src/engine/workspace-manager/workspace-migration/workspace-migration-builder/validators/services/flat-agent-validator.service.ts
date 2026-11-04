@@ -5,6 +5,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { WORKSPACE_LOCAL_STATE_PROPERTIES } from 'src/engine/metadata-modules/overrides/constants/workspace-local-state-properties.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -154,8 +156,13 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
+    const isWorkspaceLocalStateUpdate = Object.keys(flatEntityUpdate).every(
+      (key) => WORKSPACE_LOCAL_STATE_PROPERTIES.has(key),
+    );
+
     if (
       !isCallerTwentyStandardApp(buildOptions) &&
+      !isWorkspaceLocalStateUpdate &&
       belongsToTwentyStandardApp({
         universalIdentifier: fromFlatAgent.universalIdentifier,
         applicationUniversalIdentifier:
@@ -173,6 +180,9 @@ export class FlatAgentValidatorService {
       ...fromFlatAgent,
       ...flatEntityUpdate,
     };
+    const effectiveOptimisticFlatAgent = isDefined(flatEntityUpdate.overrides)
+      ? resolveEffectiveAgent(optimisticFlatAgent)
+      : undefined;
 
     const existingAgents = Object.values(
       optimisticFlatAgentMaps.byUniversalIdentifier,
@@ -185,6 +195,11 @@ export class FlatAgentValidatorService {
         flatAgent: optimisticFlatAgent,
         updatedProperties: flatEntityUpdate,
       }),
+      ...(isDefined(effectiveOptimisticFlatAgent)
+        ? validateAgentRequiredProperties({
+            flatAgent: effectiveOptimisticFlatAgent,
+          })
+        : []),
     );
 
     if (isDefined(flatEntityUpdate.name)) {
@@ -196,11 +211,14 @@ export class FlatAgentValidatorService {
       );
     }
 
-    if (isDefined(flatEntityUpdate.responseFormat)) {
+    const responseFormatsToValidate = [
+      flatEntityUpdate.responseFormat,
+      effectiveOptimisticFlatAgent?.responseFormat,
+    ].filter(isDefined);
+
+    for (const responseFormat of responseFormatsToValidate) {
       validationResult.errors.push(
-        ...validateAgentResponseFormat({
-          responseFormat: flatEntityUpdate.responseFormat,
-        }),
+        ...validateAgentResponseFormat({ responseFormat }),
       );
     }
 

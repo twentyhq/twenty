@@ -1,7 +1,7 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -113,8 +113,37 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
+  AgentChatChannelThreadsLoadEffect: () => null,
+}));
+
+jest.mock('@/ai/components/AgentChatChannelThreadsFetchMoreTrigger', () => ({
+  AgentChatChannelThreadsFetchMoreTrigger: () => null,
+}));
+
+jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
+  useLoadAgentChatChannelThreads: () => ({
+    loadAgentChatChannelThreads: jest.fn(),
+  }),
+}));
+
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
+}));
+
+jest.mock('@/ai/hooks/useAgentChatOpenThreadsSummary', () => ({
+  useAgentChatOpenThreadsSummary: () => ({
+    openThreadCount: 0,
+    unreadOpenThreadCount: 0,
+    needsInputThreadCount: 0,
+    mentionThreadCount: 0,
+    assignedToMeThreadCount: 0,
+    assignedThreadCount: 0,
+    unassignedThreadCount: 0,
+    hasUnreadOpenThread: false,
+    hasUnreadMentionThread: false,
+    hasUnreadAssignedThread: false,
+  }),
 }));
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
@@ -264,6 +293,7 @@ describe('AiChatInboxPage', () => {
         THREADS.map(({ id, updatedAt }) => [
           id,
           {
+            __typename: 'AgentChatThreadParticipant' as const,
             id: `participant-${id}`,
             threadId: id,
             lastReadAt: updatedAt,
@@ -271,6 +301,7 @@ describe('AiChatInboxPage', () => {
             snoozedUntil: null,
             isSubscribed: true,
             lastMentionedAt: null,
+            mentionsResolvedAt: null,
             updatedAt,
           },
         ]),
@@ -288,10 +319,13 @@ describe('AiChatInboxPage', () => {
     expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
   });
 
-  it('opens the first chat beside the list', () => {
+  it('shows the list without selecting a chat on the base inbox route', () => {
     renderInbox('/inbox');
 
-    expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Conversation list' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/^Chat page /)).not.toBeInTheDocument();
     expect(
       screen.queryByText('No conversation selected'),
     ).not.toBeInTheDocument();
@@ -329,6 +363,7 @@ describe('AiChatInboxPage', () => {
         THREADS.map(({ id }) => [
           id,
           {
+            __typename: 'AgentChatThreadParticipant' as const,
             id: `participant-${id}`,
             threadId: id,
             lastReadAt: '2026-09-07T00:00:00.000Z',
@@ -336,6 +371,7 @@ describe('AiChatInboxPage', () => {
             snoozedUntil: null,
             isSubscribed: true,
             lastMentionedAt: null,
+            mentionsResolvedAt: null,
             updatedAt: '2026-09-08T00:00:00.000Z',
           },
         ]),
@@ -576,7 +612,7 @@ describe('AiChatInboxPage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('moves between chats and back to the list from the chat', () => {
+    it('moves between chats and back to the list from the chat', async () => {
       renderInbox(`/inbox/${secondThread.id}`);
 
       fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
@@ -588,7 +624,9 @@ describe('AiChatInboxPage', () => {
 
       fireEvent.click(screen.getByRole('link', { name: /Open/ }));
 
-      expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument(),
+      );
       expect(
         screen.getByRole('button', { name: 'Third chat' }),
       ).toBeInTheDocument();

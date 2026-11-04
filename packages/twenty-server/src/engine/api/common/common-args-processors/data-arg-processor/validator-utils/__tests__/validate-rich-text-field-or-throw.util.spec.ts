@@ -86,5 +86,98 @@ describe('validateRichTextFieldOrThrow', () => {
         /must be a JSON array of blocks/,
       );
     });
+
+    it('should return the value when tiptap is a rich text document', () => {
+      const value = {
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Hello' }],
+            },
+          ],
+        }),
+      };
+
+      expect(validateRichTextFieldOrThrow(value, 'testField')).toEqual(value);
+    });
+
+    it('should accept a toggle only when it starts with a paragraph or a heading', () => {
+      const toToggleValue = (summary: object) => ({
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'toggle',
+              attrs: { id: 'toggle-id', indent: 1 },
+              content: [summary, { type: 'paragraph' }],
+            },
+          ],
+        }),
+      });
+      const headingToggleValue = toToggleValue({
+        type: 'heading',
+        attrs: { level: 6 },
+      });
+
+      expect(
+        validateRichTextFieldOrThrow(headingToggleValue, 'testField'),
+      ).toEqual(headingToggleValue);
+      expect(() =>
+        validateRichTextFieldOrThrow(
+          toToggleValue({ type: 'divider' }),
+          'testField',
+        ),
+      ).toThrow(/Invalid tiptap value/);
+    });
+
+    it('should throw when tiptap holds nodes a rich text field cannot store', () => {
+      const value = {
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [{ type: 'button', attrs: { href: 'https://twenty.com' } }],
+        }),
+      };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /Invalid tiptap value/,
+      );
+    });
+
+    it('should throw when a tiptap image points to a dangerous protocol', () => {
+      const value = {
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [{ type: 'image', attrs: { src: 'javascript:alert(1)' } }],
+        }),
+      };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /Dangerous URL protocol/,
+      );
+    });
+
+    it('should throw when a tiptap link hides its href key behind a JSON escape', () => {
+      const value = {
+        tiptap:
+          '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Click","marks":[{"type":"link","attrs":{"\\u0068ref":"javascript:alert(1)"}}]}]}]}',
+      };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /Dangerous URL protocol/,
+      );
+    });
+
+    it('should throw when a blocknote link hides its href key behind a JSON escape', () => {
+      const value = {
+        blocknote:
+          '[{"type":"paragraph","content":[{"type":"link","\\u0068ref":"javascript:alert(1)","content":[]}]}]',
+      };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /Dangerous URL protocol in blocknote content/,
+      );
+    });
   });
 });

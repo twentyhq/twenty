@@ -5,6 +5,7 @@ import {
   type AskQuestionItem,
 } from 'twenty-shared/ai';
 import { FieldActorSource } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
 
@@ -183,21 +184,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
+    const agent = await this.agentService.createOneAgent(
+      {
+        label: 'Workflow Assistant',
+        icon: 'IconLego',
+        description: 'Runs the seeded workflows that wait for a person.',
+        prompt:
+          'You are a helpful AI assistant. Complete the task based on the workflow context.',
+        modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+        responseFormat: { type: 'text' },
+      },
+      workspaceId,
+    );
+
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
       const stepId = seedId(agentWorkflow.stepKey, workspaceId);
-      const agent = await this.agentService.createOneAgent(
-        {
-          label: 'Workflow Agent ' + stepId.substring(0, 4),
-          icon: 'IconLego',
-          description: '',
-          prompt:
-            'You are a helpful AI assistant. Complete the task based on the workflow context.',
-          modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-          responseFormat: { type: 'text' },
-          isSystem: true,
-        },
-        workspaceId,
-      );
       const step: WorkflowAiAgentAction = {
         id: stepId,
         name: agentWorkflow.stepName,
@@ -282,7 +283,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const { turnId } = await this.agentRunConversationService.openTurn({
+          const openedTurn = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
             agentId: agent.id,
@@ -296,6 +297,10 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
           });
 
+          assertIsDefinedOrThrow(openedTurn);
+
+          const { turnId } = openedTurn;
+
           await this.agentRunSuspensionService.suspend({
             workspaceId,
             threadId,
@@ -307,7 +312,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
               runSpec: buildWorkflowAgentRunSpec({
                 step,
-                isApplicationBound: false,
+                applicationId,
               }),
               summary: null,
               continuationCount: 0,

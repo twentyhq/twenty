@@ -1,0 +1,109 @@
+---
+title: Banner
+description: Contenuto di feedback con stato, aspetto e palette indipendenti.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+## Panoramica
+
+`Banner` dispone il contenuto fornito dal chiamante, un nodo `icon` facoltativo e un nodo `action` facoltativo. `status` descrive il significato del feedback: `neutral`, `info`, `success`, `warning` o `error`. `variant` seleziona l'aspetto `solid` o `soft`. Un valore `color` esplicito sostituisce la palette dello stato senza modificarne il significato.
+
+I valori predefiniti sono `status="info"` e `variant="solid"`. Le palette di stato predefinite sono rispettivamente grigia, blu, verde, arancione e rossa.
+
+<StoryEmbed storyId="ui-feedback-banner--display" title="Esempio di banner" height={130} />
+
+## Utilizzo
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncBanner = () => (
+  <Banner status="info" variant="solid">
+    Contact sync is temporarily paused. Your saved records remain available.
+  </Banner>
+);
+```
+
+## Azioni e aspetto
+
+<StoryEmbed storyId="ui-feedback-banner--catalog" title="Palette e varianti del banner di feedback" height={560} />
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
+  <Banner
+    status="error"
+    variant="soft"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={<Banner.Action onClick={onRetry}>Retry sync</Banner.Action>}
+  >
+    Contact sync could not finish.
+  </Banner>
+);
+```
+
+`Banner.Action` fornisce un piccolo pulsante con contorno che eredita il colore visualizzato del banner, incluse le sostituzioni esplicite della palette e gli aspetti solidi. Supporta interazioni Button, collegamenti, ref e rendering personalizzato. Lo slot `action` accetta anche controlli arbitrari.
+
+L'elemento radice è un `div`. Gli attributi nativi, i gestori di eventi, `className`, `style` e `ref` si applicano a tale radice. `render` accetta un elemento Base UI o una callback; la callback riceve props nativi e ref, oltre allo stato risolto di `status`, `variant` e `color`. Mantieni i props e ref forniti quando componi un altro elemento.
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncResult = () => (
+  <Banner
+    status="success"
+    variant="soft"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    render={<section aria-label="Sync result" />}
+  >
+    Contacts are up to date.
+  </Banner>
+);
+```
+
+Lo stato non assegna automaticamente `role`, `aria-live` o annunci. Sceglili nel chiamante quando gli aggiornamenti devono essere annunciati. Fornisci nomi accessibili per i controlli e contrassegna i nodi delle icone decorative con `aria-hidden`. Il chiamante gestisce la visibilità e la chiusura.
+
+## Chiusura
+
+Passa `onDismiss` per visualizzare un controllo di chiusura ghost da 24 px all'estremità logica in linea. Il controllo eredita il colore del banner e ha `type="button"`. Per impostazione predefinita, `closeLabel` è `Close`; fornisci testo localizzato nella tua applicazione. Una spaziatura in linea equilibrata mantiene il contenuto centrato e le azioni ben distanti dal controllo.
+
+Il chiamante gestisce la visibilità. L'attivazione del controllo di chiusura chiama `onDismiss` e lascia il banner montato finché il chiamante non aggiorna lo stato. Le altre azioni rimangono nello slot `action`.
+
+```tsx
+import { useState } from 'react';
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const DismissibleSyncBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return isVisible ? (
+    <Banner
+      onDismiss={() => setIsVisible(false)}
+      closeLabel="Dismiss sync message"
+    >
+      Contacts are syncing in the background.
+    </Banner>
+  ) : null;
+};
+```
+
+<StoryEmbed storyId="ui-feedback-banner--dismissible" title="Banner chiudibile" height={160} />
+
+## Migrazione
+
+Sostituisci `variant="primary"` con `variant="solid"` e `variant="secondary"` con `variant="soft"`. Sostituisci `color="danger"` con `status="error"`, oppure con `color="red"` quando deve cambiare solo la palette. I banner informativi blu possono usare `status="info"`.
+
+## Props
+
+<BannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

@@ -3,8 +3,12 @@ title: Tabs
 description: Switch between related panels with accessible tab navigation.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Overview
 
 `Tabs` connects each tab to a related content panel using a shared `value`. Keep values unique within a root. Use [TabButton](/ui/components/navigation/tab-button) for route links and adjacent actions.
 
@@ -230,3 +234,5 @@ The generated reference includes the public props for every part. Public part st
 ## Migration
 
 Add an explicit `Tabs.Indicator` to lists that should retain the active underline. Remove duplicate indicators from compositions that previously relied on `List` inserting one. Keep route links, create controls, and overflow controls outside `Tabs.List`, whose children select related panels.
+
+<PageBanner illustration="layout" />

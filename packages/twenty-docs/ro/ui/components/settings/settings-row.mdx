@@ -1,0 +1,189 @@
+---
+title: Rând de setări
+description: Un rând de comutator etichetat, cu proprietăți plate pentru control și compunere nativă a etichetei.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## Prezentare generală
+
+`SettingsRow` combină aspectul [ListItem](/ro/ui/primitives/navigation/list-item) cu [Switch](/ro/ui/primitives/input/switch). Afișează o etichetă nativă asociată cu comutatorul său. Aplicația dvs. furnizează conținutul rândului și gestionează toate actualizările preferințelor.
+
+<StoryEmbed storyId="ui-components-settingsrow--display" title="Exemplu de rând de setări" height={110} />
+
+## Utilizare
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## Opțiuni vizuale
+
+Comparați dimensiunile comutatoarelor și stările selectată, dezactivată și doar în citire.
+
+<StoryEmbed storyId="ui-components-settingsrow--catalog" title="Dimensiunile și stările rândului de setări" height={520} />
+
+## Configurați comutatorul
+
+Transmiteți [proprietățile Switch](/ro/ui/primitives/input/switch) direct către `SettingsRow`. Starea bifată, detaliile evenimentului, comportamentul pentru dezactivare și numai citire, dimensiunea, configurarea formularului nativ, handler-ele, referințele și compoziția de randare configurează comutatorul. `children` furnizează eticheta vizibilă a rândului.
+
+Utilizați `checked` și `onCheckedChange` atunci când aplicația dvs. gestionează valoarea. Handlerul primește următoarea stare bifată și detaliile evenimentului Base UI. Clicul pe etichetă sau pe comutator îl invocă o singură dată. Apelați `eventDetails.cancel()` pentru a respinge o modificare și păstrați neschimbată valoarea controlată atunci când modificarea este anulată.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startElement={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+Utilizați `defaultChecked` pentru o setare necontrolată. Utilizatorii de tastatură focalizează comutatorul și apasă pe Spațiu. `disabled` dezactivează controlul și aplică aspectul dezactivat al rândului. `readOnly` împiedică modificările, păstrând în același timp comutatorul focalizabil.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## Conținutul rândului și textul accesibil
+
+`children`, `startElement` și `description` acceptă noduri deținute de apelant. Elementele children furnizează numele accesibil al comutatorului, iar descrierea furnizează descrierea sa accesibilă. Păstrați conținutul din interiorul etichetei neinteractiv. Utilizați [ListItemButton](/ro/ui/components/navigation/list-item-button) pentru rânduri de acțiune sau compuneți [ListItem](/ro/ui/primitives/navigation/list-item) cu un link pentru navigare.
+
+<StoryEmbed storyId="ui-components-settingsrow--with-description" title="Rând de setări cu o descriere" height={110} />
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+Setați `aria-label`, `aria-labelledby` sau `aria-describedby` pentru a furniza propriul text accesibil pentru comutator. Un `aria-label` explicit înlocuiește asocierea de nume generată; valorile explicite `aria-labelledby` și `aria-describedby` înlocuiesc asocierile generate corespunzătoare.
+
+## Ținte native și compoziție
+
+Proprietățile native obișnuite configurează controlul. Personalizarea etichetei are două nume explicite:
+
+| Proprietăți                                                                      | Țintă                                          |
+| -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Atribute native, handler-e, `className`, `style`, `ref` și `render`              | Rădăcina Switch vizibilă                       |
+| `inputRef`, `name`, `value`, `uncheckedValue`, `required` și `form`              | Caseta de selectare nativă subiacentă a Switch |
+| `labelRef` și atribute, handler-e, clase și stiluri furnizate prin `labelRender` | Eticheta nativă exterioară                     |
+
+`htmlFor` al etichetei este gestionat intern și urmează `id` sau un ID de control generat atunci când nu este furnizat niciun ID. Cu compoziția Switch implicită, acest ID identifică caseta de selectare subiacentă. Cu `nativeButton`, acesta identifică butonul vizibil. `ref` vizează rădăcina vizibilă în ambele cazuri.
+
+Utilizați `labelRender` pentru a personaliza eticheta nativă a rândului. Păstrați un element label și transmiteți proprietățile callbackului de randare către elementul dvs. `props.children` al acestuia conține rândul complet, inclusiv comutatorul. Compoziția elementului îi îmbină clasele și stilurile cu valorile implicite ale rândului.
+
+```tsx
+import { useRef } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const ComposedNotificationSetting = () => {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const controlRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <SettingsRow
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+`onClick` primește clicurile pe control. Handler-ele native furnizate prin `labelRender` primesc evenimentele etichetei și evenimentele propagate ale controlului. Apelarea `preventDefault()` la un clic pe etichetă împiedică activarea controlului său nativ. Utilizați `onCheckedChange` pentru actualizările preferințelor, în loc să deduceți starea dintr-un clic pe etichetă.
+
+Comutatorul are implicit `size="sm"`; utilizați `"md"` pentru un comutator mai mare. Înălțimea rândului rămâne aceeași. `focused` aplică aspectul evidențiat al rândului fără a muta focalizarea tastaturii. `className`, `style` și `render` acceptă callbackuri de stare Switch și personalizează controlul. Furnizați clase și stiluri pentru etichetă prin `labelRender` pentru a personaliza rândul.
+
+## Rendererul componentei Front
+
+În interiorul unei componente Front, utilizați compoziția de buton nativ pentru un comutator imbricat în eticheta rândului:
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const FrontComponentNotificationSetting = () => (
+  <SettingsRow nativeButton render={<button />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+Această compoziție se activează o singură dată la clicul pe etichetă sau pe control. Puntea asincronă de evenimente a rendererului nu poate anula la timp activarea implicită a etichetei gazdă pentru un control bazat pe span, ceea ce poate produce callbackuri de modificare duplicate la un clic direct pe control. Atributele native de validare a formularelor, cum ar fi `required`, sunt filtrate și de rendererul curent. `SettingsRow` autonom păstrează contractul complet de formular al Switch.
+
+## Formulare și resetare
+
+`name`, `value` și `required` configurează caseta de selectare subiacentă pentru trimiterea și validarea formularului. Un comutator bifat trimite valoarea sa. Un comutator nebifat omite valoarea, cu excepția cazului în care este furnizat `uncheckedValue`. Utilizați `form` pentru a asocia intrarea cu un formular din afara arborelui părinte al rândului.
+
+Pentru resetarea controlată a formularului, restaurați valoarea bifată gestionată de aplicație în handlerul `onReset` al formularului. Base UI 1.8 nu restaurează starea necontrolată a comutatorului la resetarea nativă a formularului. `SettingsRow` păstrează acest comportament din amonte.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const NotificationPreferences = () => {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <form onReset={() => setEnabled(true)}>
+      <SettingsRow
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+      >
+        Notifications
+      </SettingsRow>
+      <Button type="reset">Reset</Button>
+    </form>
+  );
+};
+```
+
+## Proprietăți
+
+<SettingsRowReference />
+
+<PageBanner illustration="settings" />

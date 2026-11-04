@@ -1,0 +1,87 @@
+---
+title: فاصل مُسمّى
+description: افصل المحتوى بتسمية نصية في الوسط أو بمحاذاة النهاية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## نظرة عامة
+
+يجمع `LabeledSeparator` بين [Separator](/ar/ui/primitives/layout/separator) و[Text](/ar/ui/primitives/typography/text) في فاصل أفقي مُسمّى. يوفر تطبيقك التسمية والتباعد المحيط بها.
+
+<StoryEmbed storyId="ui-layout-labeledseparator--display" title="فاصل مُسمّى بين خيارات الاستيراد" height={180} />
+
+## استخدام
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## موضع التسمية وطابعها
+
+تكون القيمة الافتراضية لـ `labelPosition` هي `center`، مع خط على كل جانب من التسمية. استخدم `end` لوضع التسمية بعد الخط البادئ. تقبل التسمية سلسلة نصية يوفرها تطبيقك ويترجمها محليًا.
+
+تكون القيمة الافتراضية لـ `tone` هي `neutral`. استخدم `danger` لمؤشر أحمر بتسمية ذات وزن متوسط وخط أكثر سُمكًا. اضبط `hasStartMarker` لإضافة غطاء زخرفي صغير في بداية الخط.
+
+يتبع الغطاء الاختياري [تصميم خط التقويم والدردشة المشترك](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed storyId="ui-layout-labeledseparator--unread-marker" title="مؤشر غير المقروء بمحاذاة تسمية إلى النهاية" height={100} />
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## التباعد وحالة التطبيق
+
+يملأ المكوّن حاويته ولا يضيف هامشًا خارجيًا. استخدم تباعد التخطيط الأب أو `style` و`className` الأصليين للهوامش والمحاذاة. احتفظ بالإزاحات للصور الرمزية المجاورة أو مواضع التقويم في تطبيقك.
+
+يعرض المكوّن التسمية المقدمة. يحدد تطبيقك موضع حد غير المقروء أو مؤشر التقويم ووقت ظهوره.
+
+## إمكانية الوصول والتركيب
+
+يعرض الجذر فاصلًا أفقيًا واحدًا مُسمّى استنادًا إلى تسميته. تكون مقاطع الخط ومؤشر البداية الاختياري زخرفية، لذلك لا تعلن التقنية المساعدة عن فواصل إضافية. يمكن للسمات الأصلية المتاحة الوصول توفير اسم أو وصف مختلف عند الحاجة.
+
+تستهدف السمات الأصلية والأنماط وأسماء الفئات و`ref` عنصر `div` الخارجي. استخدم `render` لتركيب عنصر آخر غير تفاعلي مع تمرير الخصائص وref المقدمين. يتم تصدير `LabeledSeparatorProps` من `twenty-ui/components/layout`.
+
+## الترحيل
+
+استبدل `LabeledDivider` في الواجهة الأمامية بـ `LabeledSeparator`. أعد تسمية `textPosition` إلى `labelPosition`، واستخدم `tone="danger"` للمظهر الأحمر لمؤشر غير المقروء. أزل `noMargin`، لأن الهوامش الخارجية تكون صفرًا افتراضيًا. حافظ على التباعد الافتراضي السابق باستخدام `style={{ marginBlock: 'var(--t-spacing-3)' }}` عند الحاجة.
+
+## الإزاحة
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

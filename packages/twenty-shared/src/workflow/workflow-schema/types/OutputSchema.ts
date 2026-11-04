@@ -69,20 +69,22 @@ export type FormFieldLeaf = {
   value: unknown;
 };
 
+export type FormSelectFieldLeaf = FormFieldLeaf & {
+  fieldMetadataId: string;
+};
+
 export type FormFieldNode = {
   isLeaf: false;
   label: string;
   value: RecordOutputSchemaV2;
 };
 
-export type FormOutputSchema = Record<string, FormFieldLeaf | FormFieldNode>;
+export type FormOutputSchema = Record<
+  string,
+  FormFieldLeaf | FormSelectFieldLeaf | FormFieldNode
+>;
 
-export type LinkOutputSchema = {
-  link: { isLeaf: true; tab?: string; label?: string };
-  _outputSchemaType: 'LINK';
-};
-
-export type CodeOutputSchema = LinkOutputSchema | BaseOutputSchemaV2;
+export type CodeOutputSchema = BaseOutputSchemaV2;
 
 export type ManualTriggerOutputSchema = {
   payload?: RecordNode | Node;

@@ -1,0 +1,1 @@
+export const MAX_TRIAL_WORKSPACES_PER_USER = 2;

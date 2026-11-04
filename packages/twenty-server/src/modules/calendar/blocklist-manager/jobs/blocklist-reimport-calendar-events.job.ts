@@ -101,9 +101,8 @@ export class BlocklistReimportCalendarEventsJob {
     workspaceId: string;
   }): Promise<string | null> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({
@@ -130,9 +129,7 @@ export class BlocklistReimportCalendarEventsJob {
     userWorkspaceId: string | null;
   }): Promise<string[]> {
     const where: FindOptionsWhere<CalendarChannelEntity> = {
-      syncStage: Not(
-        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-      ),
+      syncStage: Not(CalendarChannelSyncStage.PENDING_CONFIGURATION),
       workspaceId,
     };
 

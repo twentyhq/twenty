@@ -1,0 +1,119 @@
+---
+title: InputGroup
+description: Aggiungi prefissi, suffissi e azioni attorno a un input di testo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## Panoramica
+
+`InputGroup` assegna a un [Input](/it/ui/primitives/input/input) un bordo condiviso e contenuti iniziali o finali facoltativi. Imposta `size` sul gruppo per dimensionare il contenitore e fornire un valore predefinito per il relativo input. La dimensione esplicita dell'elemento figlio ha la precedenza su quel valore predefinito; il gruppo controlla comunque l'altezza del layout condiviso.
+
+<StoryEmbed storyId="ui-input-inputgroup--display" title="Esempio di InputGroup" height={140} />
+
+## Utilizzo
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` e `endElement` accettano nodi React. I prefissi e i suffissi sono contenuti visivi; il valore inviato dell'input contiene solo ciò che l'utente inserisce.
+
+## Opzioni visive
+
+Confronta prefisso, suffisso e ornamenti combinati in entrambe le dimensioni dell'input. Il gruppo ha le stesse dimensioni dell'input.
+
+<StoryEmbed storyId="ui-input-inputgroup--catalog" title="Opzioni visive per il gruppo di input" height={300} />
+
+## Anatomia
+
+Inserisci l'input all'interno di `InputGroup` e mantieni le etichette e i messaggi dei campi all'esterno del bordo condiviso.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Parte o slot                                  | Requisito              | Scopo                                                                               |
+| --------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
+| `InputGroup`                                  | Obbligatorio           | Fornisce il bordo condiviso, il layout e le dimensioni.                             |
+| `Input` come `children`                       | Obbligatorio           | Gestisce il valore dell'input, gli attributi nativi e il comportamento di modifica. |
+| `startElement`                                | Prop opzionale         | Aggiunge un prefisso, un'icona o altro contenuto prima dell'input.                  |
+| `endElement`                                  | Prop opzionale         | Aggiunge un suffisso o un'azione dopo l'input.                                      |
+| `Field.Root`, `Label`, `Description`, `Error` | Composizione opzionale | Associa all'input un'etichetta, un testo di supporto e un feedback di convalida.    |
+
+`startElement` e `endElement` sono prop di nodi React, non componenti separati. `InputGroup` non fornisce un'etichetta né gestisce la convalida. Assegna all'input un nome accessibile, tramite `Field.Label` o i relativi attributi di etichettatura.
+
+## Azione finale
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Inserisci etichette, convalida e gestione dei valori nel campo o nell'input. Assegna ai pulsanti decorativi nomi accessibili propri e usa `type="button"` quando non devono inviare il modulo. Il gruppo supporta le dimensioni `sm` e `md` e usa `md` per impostazione predefinita.
+
+## Personalizza layout
+
+Le props native, `className`, `style`, `render` e `ref` si applicano al div del layout. Un elemento `render` personalizzato riceve le props del layout e i children. Mantieni il ref fornito su quell'elemento di layout.
+
+Inserisci `value`, `defaultValue`, `onValueChange`, `name`, `required`, `readOnly`, `disabled` e il ref del controllo nativo in `Input`. Il gruppo non gestisce lo stato dell'input né sostituisce l'associazione con l'etichetta di Field.
+
+## Props
+
+Il riferimento viene generato dai tipi di componenti pubblici. Gli attributi nativi, inclusi i nomi accessibili e i gestori di eventi, sono accettati anche nelle parti che eseguono il rendering di elementi.
+
+<InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

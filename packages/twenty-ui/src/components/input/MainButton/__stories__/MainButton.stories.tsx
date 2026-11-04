@@ -89,7 +89,37 @@ export const Loading: Story = {
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toHaveClass('unavailable-action');
     await expect(getComputedStyle(button).fontWeight).toBe('600');
+    await expect(button.querySelector('div')).toHaveStyle({
+      borderColor: getComputedStyle(button).color,
+    });
   },
+};
+
+export const Outline: Story = {
+  ...Display,
+  args: { variant: 'outline' },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button');
+    const buttonStyle = getComputedStyle(button);
+    const primaryColor = buttonStyle
+      .getPropertyValue('--t-font-color-primary')
+      .trim();
+
+    await expect(button).toBeEnabled();
+    await expect(buttonStyle.color).toBe(primaryColor);
+    await userEvent.hover(button);
+    await expect(getComputedStyle(button).color).toBe(primaryColor);
+  },
+};
+
+export const OutlineDark: Story = {
+  ...Outline,
+  globals: { colorScheme: 'dark' },
+};
+
+export const LoadingOutline: Story = {
+  ...Loading,
+  args: { ...Loading.args, variant: 'outline' },
 };
 
 export const DisabledOutline: Story = {

@@ -28,12 +28,12 @@ describe('splitFullName', () => {
 
   it('should handle names with more than two parts', () => {
     const result = splitFullName('John Michael Doe');
-    expect(result).toEqual(['John', 'Michael']);
+    expect(result).toEqual(['John', 'Michael Doe']);
   });
 
   it('should handle names with multiple middle names', () => {
     const result = splitFullName('John Michael Christopher Doe');
-    expect(result).toEqual(['John', 'Michael']);
+    expect(result).toEqual(['John', 'Michael Christopher Doe']);
   });
 
   it('should handle names with hyphenated parts', () => {
@@ -65,7 +65,10 @@ describe('splitFullName', () => {
     const result = splitFullName(
       'John Michael Christopher Alexander Doe Smith Johnson',
     );
-    expect(result).toEqual(['John', 'Michael']);
+    expect(result).toEqual([
+      'John',
+      'Michael Christopher Alexander Doe Smith Johnson',
+    ]);
   });
 
   it('should handle single character names', () => {
@@ -75,6 +78,6 @@ describe('splitFullName', () => {
 
   it('should handle names with numbers', () => {
     const result = splitFullName('John Doe II');
-    expect(result).toEqual(['John', 'Doe']);
+    expect(result).toEqual(['John', 'Doe II']);
   });
 });

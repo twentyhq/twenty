@@ -3,6 +3,10 @@ title: Răspuns automat la e-mailurile primite
 description: Creează un flux de lucru care folosește IA pentru a tria e-mailurile primite și pentru a trimite automat răspunsuri în același fir.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Răspunde la e-mailurile primite în câteva secunde — nu în ore. Acest flux de lucru folosește un AI Agent pentru a filtra zgomotul (buletine de știri, spam, răspunsuri automate) și pentru a crea un răspuns personalizat la mesajele reale. Apoi, AI îl trimite ca un răspuns filetat în conversația originală.
 
 ## Cum funcționează firele de e-mail
@@ -31,12 +35,12 @@ Adăugați o acțiune **Search Records**.
 
 Adresa expeditorului nu este în mesajul propriu-zis — se găsește în înregistrarea asociată Message Participant.
 
-| Câmp       | Valoare                           |
-| ---------- | --------------------------------- |
-| **Obiect** | Participanți la mesaj             |
-| **Filtru** | Mesajul **este** `{{trigger.id}}` |
-| **Filtru** | Rolul **este** From               |
-| **Limită** | 1                                 |
+| Câmp       | Valoare                                            |
+| ---------- | -------------------------------------------------- |
+| **Obiect** | Participanți la mesaj                              |
+| **Filtru** | Mesajul **este** `{{trigger.properties.after.id}}` |
+| **Filtru** | Rolul **este** From                                |
+| **Limită** | 1                                                  |
 
 Aceasta vă oferă e-mailul expeditorului în `handle` și numele acestuia în `displayName`.
 
@@ -52,8 +56,8 @@ Folosiți un prompt de tipul:
 You are an email triage assistant for a sales team. Read the following
 inbound email and decide if it deserves a reply.
 
-Subject: {{trigger.subject}}
-Body: {{trigger.text}}
+Subject: {{trigger.properties.after.subject}}
+Body: {{trigger.properties.after.text}}
 From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
 
 If this email is spam, a newsletter, an automated notification, or
@@ -89,12 +93,12 @@ Spam-ul, buletinele informative și mesajele generate automat sunt ignorate. Tot
 
 Adăugați o acțiune **Send Email** pe ramura "if true". Faceți clic pe **Advanced options**, apoi pe **Add In-Reply-To**.
 
-| Câmp            | Valoare                                |
-| --------------- | -------------------------------------- |
-| **Către**       | `{{Find Sender.first.handle}}`         |
-| **Subiect**     | `Re: {{trigger.subject}}`              |
-| **Body**        | `{{AI Triage & Draft Reply.response}}` |
-| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+| Câmp            | Valoare                                        |
+| --------------- | ---------------------------------------------- |
+| **Către**       | `{{Find Sender.first.handle}}`                 |
+| **Subiect**     | `Re: {{trigger.properties.after.subject}}`     |
+| **Body**        | `{{AI Triage & Draft Reply.response}}`         |
+| **In-Reply-To** | `{{trigger.properties.after.headerMessageId}}` |
 
 Câmpul In-Reply-To este cel care face ca acesta să fie un răspuns, nu o conversație nouă. Destinatarul îl vede afișat în fir sub e-mailul original în Gmail, Outlook sau orice alt client.
 
@@ -119,3 +123,5 @@ Activați când sunteți mulțumit(ă) de rezultat.
 * **Răspundeți doar VIP-urilor** — adăugați o ramură care verifică domeniul expeditorului sau dacă acesta există ca Contact în Twenty
 * **Dirijați în funcție de intenție** — folosiți prompturi AI Agent separate pentru a trata diferit solicitările de vânzări față de cererile de asistență
 * **Îmbogățiți înainte de a răspunde** — adăugați un pas Search Records pentru a include compania expeditorului sau istoricul tranzacțiilor în promptul AI, pentru răspunsuri mai personalizate
+
+<PageBanner illustration="page-cover-email" />

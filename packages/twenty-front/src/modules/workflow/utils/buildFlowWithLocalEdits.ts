@@ -2,6 +2,7 @@ import {
   type WorkflowAction,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
+import { keepServerStepResourceIds } from '@/workflow/utils/keepServerStepResourceIds';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
@@ -35,10 +36,13 @@ export const buildFlowWithLocalEdits = ({
         return serverStep;
       }
 
-      return (
-        localFlow.steps?.find((localStep) => localStep.id === serverStep.id) ??
-        serverStep
+      const localStep = localFlow.steps?.find(
+        (candidateStep) => candidateStep.id === serverStep.id,
       );
+
+      return isDefined(localStep)
+        ? keepServerStepResourceIds({ localStep, serverStep })
+        : serverStep;
     }) ?? null;
 
   return { workflowVersionId: serverFlow.workflowVersionId, trigger, steps };

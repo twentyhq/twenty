@@ -152,9 +152,8 @@ export class MessagingMessagesImportService {
           });
 
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
               'workspaceMember',
-              { shouldBypassPermissionChecks: true },
             );
 
           const workspaceMember = userWorkspace
@@ -203,10 +202,12 @@ export class MessagingMessagesImportService {
 
           if (messagesToSave.length > 0) {
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-              messagesToSave,
-              messageChannel,
-              connectedAccount,
-              workspaceId,
+              {
+                messagesToSave,
+                messageChannel,
+                connectedAccount,
+                workspaceId,
+              },
             );
           }
 
