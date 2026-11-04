@@ -16,6 +16,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { addFieldMetadataOptionFromToFlatEntityMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/add-field-metadata-option-from-to-flat-entity-maps.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-modules/flat-entity/utils/transpile-flat-entity-operation-array-to-record.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
@@ -66,6 +67,16 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs =
     skipSideEffectExpandEngine: boolean;
   };
 
+type ValidateBuildAndRunWorkspaceMigrationFromToArgs = Omit<
+  WorkspaceMigrationOrchestratorBuildArgs,
+  'buildOptions'
+> & {
+  buildOptions: WorkspaceMigrationBuilderOptions;
+  idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+  dryRun?: boolean;
+  shouldDeferActions?: boolean;
+};
+
 type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   workspaceId: string;
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
@@ -98,13 +109,37 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     this.isDebugEnabled = logLevels.includes('debug');
   }
 
+  // Without the side-effect engine, option rows follow the options of the synced fields.
   public async validateBuildAndRunWorkspaceMigrationFromTo(
-    args: Omit<WorkspaceMigrationOrchestratorBuildArgs, 'buildOptions'> & {
-      buildOptions: WorkspaceMigrationBuilderOptions;
-      idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
-      dryRun?: boolean;
-      shouldDeferActions?: boolean;
-    },
+    args: ValidateBuildAndRunWorkspaceMigrationFromToArgs,
+  ): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    if (!isDefined(args.fromToAllFlatEntityMaps.flatFieldMetadataMaps)) {
+      return await this.validateBuildAndRunFromToAllFlatEntityMaps(args);
+    }
+
+    const { flatFieldMetadataOptionMaps } =
+      await this.workspaceCacheService.getOrRecompute(args.workspaceId, [
+        'flatFieldMetadataOptionMaps',
+      ]);
+
+    return await this.validateBuildAndRunFromToAllFlatEntityMaps({
+      ...args,
+      fromToAllFlatEntityMaps: addFieldMetadataOptionFromToFlatEntityMaps({
+        fromToAllFlatEntityMaps: args.fromToAllFlatEntityMaps,
+        existingFlatFieldMetadataOptionMaps: flatFieldMetadataOptionMaps,
+        applicationUniversalIdentifier:
+          args.buildOptions.applicationUniversalIdentifier,
+      }),
+    });
+  }
+
+  private async validateBuildAndRunFromToAllFlatEntityMaps(
+    args: ValidateBuildAndRunWorkspaceMigrationFromToArgs,
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
@@ -439,7 +474,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       }
     }
 
-    return await this.validateBuildAndRunWorkspaceMigrationFromTo({
+    return await this.validateBuildAndRunFromToAllFlatEntityMaps({
       buildOptions: {
         isSystemBuild,
         inferDeletionFromMissingEntities,

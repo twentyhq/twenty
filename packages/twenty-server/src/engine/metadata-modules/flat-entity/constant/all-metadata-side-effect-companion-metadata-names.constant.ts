@@ -4,6 +4,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
   workflow: ['workflowVersion', 'commandMenuItem', 'logicFunction'],
   workflowVersion: ['workflow', 'commandMenuItem', 'logicFunction'],
   fieldMetadata: [
+    'fieldMetadataOption',
     'index',
     'relatedRecordPath',
     'searchFieldMetadata',
@@ -16,6 +17,7 @@ export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
   ],
   objectMetadata: [
     'fieldMetadata',
+    'fieldMetadataOption',
     'index',
     'relatedRecordPath',
     'searchFieldMetadata',

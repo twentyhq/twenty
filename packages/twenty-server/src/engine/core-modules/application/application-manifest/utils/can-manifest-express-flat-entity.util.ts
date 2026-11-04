@@ -1,7 +1,9 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+// Field options are expressed inside their field's manifest, so a sync never infers their deletion.
 const METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION: AllMetadataName[] = [
+  'fieldMetadataOption',
   'webhook',
   'workflowVersion',
 ];
