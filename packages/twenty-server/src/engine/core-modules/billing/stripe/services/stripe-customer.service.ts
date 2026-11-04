@@ -39,16 +39,38 @@ export class StripeCustomerService {
     });
   }
 
-  async getCustomerPartner(stripeCustomerId: string): Promise<string | null> {
+  async getCustomerPartnerAndEmail(
+    stripeCustomerId: string,
+  ): Promise<{ partner: string | null; email: string | null }> {
     const customer = await this.stripe.customers.retrieve(stripeCustomerId);
 
     if ('deleted' in customer && customer.deleted === true) {
-      return null;
+      return { partner: null, email: null };
     }
 
     const partner = customer.metadata.partner;
 
-    return isNonEmptyString(partner) ? partner : null;
+    return {
+      partner: isNonEmptyString(partner) ? partner : null,
+      email: customer.email,
+    };
+  }
+
+  // Each workspace gets its own Stripe customer, so a person's payment history
+  // spans every customer created with their email.
+  async isPreviousPayingCustomer(email: string): Promise<boolean> {
+    for await (const customer of this.stripe.customers.list({ email })) {
+      for await (const invoice of this.stripe.invoices.list({
+        customer: customer.id,
+        status: 'paid',
+      })) {
+        if (invoice.amount_paid > 0) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   async updateCustomerPartner(stripeCustomerId: string, partner: string) {

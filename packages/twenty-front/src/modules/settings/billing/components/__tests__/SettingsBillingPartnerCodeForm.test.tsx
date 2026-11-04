@@ -7,12 +7,15 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingPartnerCodeForm } from '@/settings/billing/components/SettingsBillingPartnerCodeForm';
 import {
   BillingPartnerCodeDocument,
   SetBillingPartnerCodeDocument,
+  SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -41,15 +44,33 @@ const buildPartnerCodeMock = ({
   },
 });
 
+const buildStoreWithSubscriptionStatus = (
+  subscriptionStatus: SubscriptionStatus,
+) => {
+  const store = createStore();
+
+  store.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    currentBillingSubscription: {
+      ...mockCurrentWorkspace.currentBillingSubscription,
+      status: subscriptionStatus,
+    },
+  });
+
+  return store;
+};
+
 const renderForm = ({
   mocks,
   variant = 'settings',
+  subscriptionStatus = SubscriptionStatus.Trialing,
 }: {
   mocks: MockedResponse[];
   variant?: 'onboarding' | 'settings';
+  subscriptionStatus?: SubscriptionStatus;
 }) =>
   render(
-    <JotaiProvider store={createStore()}>
+    <JotaiProvider store={buildStoreWithSubscriptionStatus(subscriptionStatus)}>
       <MockedProvider mocks={mocks}>
         <I18nProvider i18n={i18n}>
           <SettingsBillingPartnerCodeForm
@@ -215,5 +236,28 @@ describe('SettingsBillingPartnerCodeForm', () => {
     expect(
       screen.queryByRole('button', { name: 'Apply' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('should hide the field in billing once the subscription is no longer trialing', async () => {
+    const partnerCodeResult = jest.fn(
+      () =>
+        buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })
+          .result,
+    );
+
+    const { container } = renderForm({
+      mocks: [
+        {
+          request: { query: BillingPartnerCodeDocument },
+          result: partnerCodeResult,
+        },
+      ],
+      subscriptionStatus: SubscriptionStatus.Active,
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 100)));
+
+    expect(container).toBeEmptyDOMElement();
+    expect(partnerCodeResult).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { isDefined, normalizePartner } from 'twenty-shared/utils';
 
 import {
@@ -11,7 +13,6 @@ import {
 import { type BillingPartnerCodeDTO } from 'src/engine/core-modules/billing/dtos/billing-partner-code.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -19,7 +20,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class BillingPartnerCodeService {
   constructor(
     private readonly stripeCustomerService: StripeCustomerService,
-    private readonly stripeInvoiceService: StripeInvoiceService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
@@ -27,10 +27,15 @@ export class BillingPartnerCodeService {
   async getPartnerCode(workspaceId: string): Promise<BillingPartnerCodeDTO> {
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
 
-    return this.getPartnerCodeOfStripeCustomer(stripeCustomerId);
+    const { partner } =
+      await this.stripeCustomerService.getCustomerPartnerAndEmail(
+        stripeCustomerId,
+      );
+
+    return { partnerCode: partner, isEditable: !isDefined(partner) };
   }
 
-  // Once a code is set or the workspace has paid, only the Twenty team changes it, in Stripe.
+  // Once a code is set, only the Twenty team changes it, in Stripe.
   async setPartnerCode({
     workspaceId,
     partnerCode,
@@ -50,13 +55,25 @@ export class BillingPartnerCodeService {
 
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
 
-    const { isEditable } =
-      await this.getPartnerCodeOfStripeCustomer(stripeCustomerId);
+    const { partner: existingPartnerCode, email } =
+      await this.stripeCustomerService.getCustomerPartnerAndEmail(
+        stripeCustomerId,
+      );
 
-    if (!isEditable) {
+    if (isDefined(existingPartnerCode)) {
       throw new BillingException(
         `Partner code of workspace ${workspaceId} is locked`,
         BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
+      );
+    }
+
+    if (
+      isNonEmptyString(email) &&
+      (await this.stripeCustomerService.isPreviousPayingCustomer(email))
+    ) {
+      throw new BillingException(
+        `Partner code refused for workspace ${workspaceId}: previous paying customer`,
+        BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE,
       );
     }
 
@@ -66,20 +83,6 @@ export class BillingPartnerCodeService {
     );
 
     return { partnerCode: normalizedPartnerCode, isEditable: false };
-  }
-
-  private async getPartnerCodeOfStripeCustomer(
-    stripeCustomerId: string,
-  ): Promise<BillingPartnerCodeDTO> {
-    const [partnerCode, hasPaidInvoice] = await Promise.all([
-      this.stripeCustomerService.getCustomerPartner(stripeCustomerId),
-      this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
-    ]);
-
-    return {
-      partnerCode,
-      isEditable: !isDefined(partnerCode) && !hasPaidInvoice,
-    };
   }
 
   private async getStripeCustomerIdOrThrow(workspaceId: string) {

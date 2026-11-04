@@ -872,7 +872,7 @@ export interface BillingMeteredProduct {
 }
 
 export interface BillingPartnerCode {
-    /** True while no code is set and the workspace has not paid yet */
+    /** True while no partner code is set */
     isEditable: Scalars['Boolean']
     partnerCode?: Scalars['String']
     __typename: 'BillingPartnerCode'
@@ -5257,7 +5257,7 @@ export interface BillingMeteredProductGenqlSelection{
 }
 
 export interface BillingPartnerCodeGenqlSelection{
-    /** True while no code is set and the workspace has not paid yet */
+    /** True while no partner code is set */
     isEditable?: boolean | number
     partnerCode?: boolean | number
     __typename?: boolean | number

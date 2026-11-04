@@ -12,10 +12,12 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import {
   BillingPartnerCodeDocument,
   SetBillingPartnerCodeDocument,
+  SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -45,7 +47,7 @@ type SettingsBillingPartnerCodeFormProps = {
 };
 
 // The code only benefits the partner, so the field never asks for attention:
-// onboarding hides it behind a link, and nothing shows once there is nothing to do.
+// onboarding hides it behind a link, and Billing shows it only during the trial.
 export const SettingsBillingPartnerCodeForm = ({
   instanceId,
   variant,
@@ -53,7 +55,14 @@ export const SettingsBillingPartnerCodeForm = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
-  const { data } = useQuery(BillingPartnerCodeDocument);
+  const subscriptionStatus = useSubscriptionStatus();
+  const isHiddenOutsideTrial =
+    variant === 'settings' &&
+    subscriptionStatus !== SubscriptionStatus.Trialing;
+
+  const { data } = useQuery(BillingPartnerCodeDocument, {
+    skip: isHiddenOutsideTrial,
+  });
   const [setBillingPartnerCode, { loading }] = useMutation(
     SetBillingPartnerCodeDocument,
     { refetchQueries: [BillingPartnerCodeDocument], awaitRefetchQueries: true },
@@ -64,7 +73,7 @@ export const SettingsBillingPartnerCodeForm = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasAppliedCode, setHasAppliedCode] = useState(false);
 
-  if (!isDefined(data)) {
+  if (isHiddenOutsideTrial || !isDefined(data)) {
     return null;
   }
 

@@ -94,8 +94,8 @@ export function AffiliateProgramTermsDocument() {
         A referral covers that customer&rsquo;s first paid workspace and
         everything that follows for 12 months: plan and seat changes, cancelling
         and coming back, or moving to Enterprise. It never restarts. If the
-        customer moves to a new workspace, your code must be added again on it
-        to keep the months left.
+        customer moves to a new workspace, ask us to add your code on it to keep
+        the months left.
       </p>
       <p>How a customer gets attributed to you:</p>
       <ul>
@@ -105,8 +105,9 @@ export function AffiliateProgramTermsDocument() {
         </li>
         <li>
           <strong>Code added after sign-up:</strong> if no partner is attributed
-          yet, the customer can enter your code in Settings &rarr; Billing until
-          their first payment. Within 30 days of their first payment, the
+          yet, the customer can enter your code in Settings &rarr; Billing
+          during their free trial. Twenty refuses the code if the customer has
+          already paid Twenty. Within 30 days of their first payment, the
           customer (or you, on their behalf) can also ask us to add it. Either
           way, you earn from the first invoice. After 30 days, only Twenty can
           attach a code, at its discretion; you then earn from the next invoice

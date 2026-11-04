@@ -3,28 +3,39 @@ import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/servi
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const STRIPE_CUSTOMER_ID = 'cus_123';
+const CUSTOMER_EMAIL = 'tim@apple.dev';
 
 const buildService = ({
-  hasPaidInvoice = false,
   existingPartnerCode = null,
+  isPreviousPayingCustomer = false,
 }: {
-  hasPaidInvoice?: boolean;
   existingPartnerCode?: string | null;
+  isPreviousPayingCustomer?: boolean;
 } = {}) => {
   const updateCustomerPartner = jest.fn();
+  const isPreviousPayingCustomerMock = jest.fn(
+    async () => isPreviousPayingCustomer,
+  );
 
   const service = new BillingPartnerCodeService(
     {
-      getCustomerPartner: async () => existingPartnerCode,
+      getCustomerPartnerAndEmail: async () => ({
+        partner: existingPartnerCode,
+        email: CUSTOMER_EMAIL,
+      }),
+      isPreviousPayingCustomer: isPreviousPayingCustomerMock,
       updateCustomerPartner,
     } as never,
-    { hasPaidInvoice: async () => hasPaidInvoice } as never,
     {
       findOne: async () => ({ stripeCustomerId: STRIPE_CUSTOMER_ID }),
     } as never,
   );
 
-  return { service, updateCustomerPartner };
+  return {
+    service,
+    updateCustomerPartner,
+    isPreviousPayingCustomer: isPreviousPayingCustomerMock,
+  };
 };
 
 describe('BillingPartnerCodeService', () => {
@@ -37,26 +48,19 @@ describe('BillingPartnerCodeService', () => {
     });
   });
 
-  it('should let a code be added while none is set and nothing is paid', async () => {
-    const { service } = buildService();
+  it('should let a code be added while none is set, without checking past payments', async () => {
+    const { service, isPreviousPayingCustomer } = buildService();
 
     await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
       partnerCode: null,
       isEditable: true,
     });
-  });
-
-  it('should lock adding a code once the workspace has paid', async () => {
-    const { service } = buildService({ hasPaidInvoice: true });
-
-    await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
-      partnerCode: null,
-      isEditable: false,
-    });
+    expect(isPreviousPayingCustomer).not.toHaveBeenCalled();
   });
 
   it('should store the normalized code on the Stripe customer', async () => {
-    const { service, updateCustomerPartner } = buildService();
+    const { service, updateCustomerPartner, isPreviousPayingCustomer } =
+      buildService();
 
     await expect(
       service.setPartnerCode({
@@ -64,6 +68,8 @@ describe('BillingPartnerCodeService', () => {
         partnerCode: ' Acme ',
       }),
     ).resolves.toEqual({ partnerCode: 'acme', isEditable: false });
+    expect(isPreviousPayingCustomer).toHaveBeenCalledTimes(1);
+    expect(isPreviousPayingCustomer).toHaveBeenCalledWith(CUSTOMER_EMAIL);
     expect(updateCustomerPartner).toHaveBeenCalledTimes(1);
     expect(updateCustomerPartner).toHaveBeenCalledWith(
       STRIPE_CUSTOMER_ID,
@@ -87,9 +93,9 @@ describe('BillingPartnerCodeService', () => {
     expect(updateCustomerPartner).not.toHaveBeenCalled();
   });
 
-  it('should refuse a new code after the first payment', async () => {
+  it('should refuse a code for a previous paying customer', async () => {
     const { service, updateCustomerPartner } = buildService({
-      hasPaidInvoice: true,
+      isPreviousPayingCustomer: true,
     });
 
     await expect(
@@ -98,7 +104,7 @@ describe('BillingPartnerCodeService', () => {
         partnerCode: 'acme',
       }),
     ).rejects.toMatchObject({
-      code: BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
+      code: BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE,
     });
     expect(updateCustomerPartner).not.toHaveBeenCalled();
   });

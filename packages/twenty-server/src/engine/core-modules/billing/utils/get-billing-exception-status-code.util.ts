@@ -27,6 +27,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED:
     case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
     case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
+    case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
