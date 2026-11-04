@@ -32,7 +32,7 @@ type GraphqlResponse = {
   };
 };
 
-// apiKeys sits behind SettingsPermissionGuard(API_KEYS_AND_WEBHOOKS) and
+// apiKeys requires API_KEYS_AND_WEBHOOKS through its access policy and
 // accepts user, API key and application callers, so it probes every branch
 const queryApiKeys = (token: string): Promise<GraphqlResponse> =>
   makeMetadataApiRequest(

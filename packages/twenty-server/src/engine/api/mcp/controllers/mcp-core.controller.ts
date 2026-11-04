@@ -106,7 +106,7 @@ export class McpCoreController {
       apiKey,
       application,
       agentId: request.agentId,
-      isDirectMode: mode === 'direct',
+      isDirectMode: mode !== 'meta',
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

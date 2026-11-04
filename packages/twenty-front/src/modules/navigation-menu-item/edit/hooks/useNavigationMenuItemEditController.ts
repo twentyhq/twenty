@@ -1,6 +1,9 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type NavigationMenuItemType,
+  type NativePageKey,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -25,6 +28,7 @@ export type NewNavigationMenuItemInput = {
   targetRecordIdentifier?: NavigationMenuItem['targetRecordIdentifier'];
   name?: string | null;
   link?: string | null;
+  nativePageKey?: NativePageKey | null;
   color?: string | null;
 };
 
@@ -91,6 +95,7 @@ export const useNavigationMenuItemEditController = (
       icon: input.icon ?? undefined,
       name: input.name ?? undefined,
       link: input.link ?? undefined,
+      nativePageKey: input.nativePageKey ?? undefined,
       color: input.color ?? undefined,
       applicationId: undefined,
       createdAt: new Date().toISOString(),

@@ -69,11 +69,17 @@ export const NavigationMenuItemFolderContent = ({
             group={folderDroppableId}
           >
             <NavigationDrawerItem
-              secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
-                isView: navigationMenuItem.type === NavigationMenuItemType.VIEW,
-                objectMetadataItems,
-                navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-              })}
+              secondaryLabel={
+                navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE
+                  ? undefined
+                  : getObjectNavigationMenuItemSecondaryLabel({
+                      isView:
+                        navigationMenuItem.type === NavigationMenuItemType.VIEW,
+                      objectMetadataItems,
+                      navigationMenuItemObjectNameSingular:
+                        objectNameSingular ?? '',
+                    })
+              }
               label={label}
               Icon={() => (
                 <NavigationMenuItemIcon
