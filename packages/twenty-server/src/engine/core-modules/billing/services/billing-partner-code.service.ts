@@ -38,7 +38,7 @@ export class BillingPartnerCodeService {
     };
   }
 
-  // A code can only be added while none is set and before the first payment; any later change is made by the Twenty team, in Stripe.
+  // Once a code is set or the workspace has paid, only the Twenty team changes it, in Stripe.
   async setPartnerCode({
     workspaceId,
     partnerCode,

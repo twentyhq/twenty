@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -137,19 +137,51 @@ describe('SettingsBillingPartnerCodeForm', () => {
   });
 
   it('should show nothing in onboarding when a referral link set the code', async () => {
-    renderForm(
+    const { container } = renderForm(
       [buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })],
       'onboarding',
     );
 
-    await waitFor(() =>
-      expect(
-        screen.queryByRole('button', {
-          name: 'Referred by a Twenty partner? Add their code',
-        }),
-      ).not.toBeInTheDocument(),
+    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should keep a code applied during onboarding visible', async () => {
+    renderForm(
+      [
+        buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
+        {
+          request: {
+            query: SetBillingPartnerCodeDocument,
+            variables: { partnerCode: 'ACME' },
+          },
+          result: {
+            data: {
+              setBillingPartnerCode: {
+                __typename: 'BillingPartnerCode',
+                partnerCode: 'acme',
+                isEditable: false,
+              },
+            },
+          },
+        },
+        buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
+      ],
+      'onboarding',
     );
-    expect(screen.queryByLabelText('Partner code')).not.toBeInTheDocument();
+
+    await userEvent.click(
+      await screen.findByRole('button', {
+        name: 'Referred by a Twenty partner? Add their code',
+      }),
+    );
+    await userEvent.type(await screen.findByLabelText('Partner code'), 'ACME');
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+
+    await waitFor(() =>
+      expect(screen.getByDisplayValue('ACME')).toBeDisabled(),
+    );
   });
 
   it('should lock a code that is already set', async () => {

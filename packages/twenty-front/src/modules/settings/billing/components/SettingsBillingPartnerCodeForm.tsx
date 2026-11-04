@@ -61,6 +61,7 @@ export const SettingsBillingPartnerCodeForm = ({
   const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [hasAppliedCode, setHasAppliedCode] = useState(false);
 
   if (!isDefined(data)) {
     return null;
@@ -68,7 +69,9 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const { partnerCode, isEditable } = data.billingPartnerCode;
 
-  if (!isEditable && (variant === 'onboarding' || !isDefined(partnerCode))) {
+  const isCodeSetBeforeOnboarding = variant === 'onboarding' && !hasAppliedCode;
+
+  if (!isEditable && (isCodeSetBeforeOnboarding || !isDefined(partnerCode))) {
     return null;
   }
 
@@ -101,6 +104,7 @@ export const SettingsBillingPartnerCodeForm = ({
         variables: { partnerCode: trimmedPartnerCode },
       });
       setDraftPartnerCode(null);
+      setHasAppliedCode(true);
       enqueueToast({ status: 'success', children: t`Partner code applied` });
     } catch (error) {
       if (isErrorLike(error)) {

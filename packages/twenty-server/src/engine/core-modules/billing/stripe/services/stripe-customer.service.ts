@@ -46,7 +46,9 @@ export class StripeCustomerService {
       return null;
     }
 
-    return customer.metadata.partner ?? null;
+    const partner = customer.metadata.partner;
+
+    return isNonEmptyString(partner) ? partner : null;
   }
 
   async updateCustomerPartner(stripeCustomerId: string, partner: string) {
