@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
@@ -20,7 +21,7 @@ import { mockGettingStartedStepDefinitions } from '~/testing/mock-data/gettingSt
 const CHAT_THREAD_ID = '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90';
 
 const StyledFrame = styled.div`
-  padding: 24px;
+  padding: ${themeCssVariables.spacing[6]};
   width: 660px;
 `;
 

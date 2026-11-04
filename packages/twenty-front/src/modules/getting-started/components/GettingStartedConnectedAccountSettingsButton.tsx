@@ -8,7 +8,10 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type GettingStartedConnectedAccountSettingsButtonProps = {
-  account: ConnectedAccount;
+  account: Pick<
+    ConnectedAccount,
+    'id' | 'handle' | 'messageChannels' | 'calendarChannels'
+  >;
 };
 
 export const GettingStartedConnectedAccountSettingsButton = ({

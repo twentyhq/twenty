@@ -2,13 +2,14 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { GettingStartedConnectedAccountsTable } from '@/getting-started/components/GettingStartedConnectedAccountsTable';
 import { mockedDropdownConnectedAccount } from '@/settings/accounts/components/__stories__/mockedDropdownConnectedAccount';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const StyledFrame = styled.div`
-  padding: 24px;
+  padding: ${themeCssVariables.spacing[6]};
   width: 660px;
 `;
 
