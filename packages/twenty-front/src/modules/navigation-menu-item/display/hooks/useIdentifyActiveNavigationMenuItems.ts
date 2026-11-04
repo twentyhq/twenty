@@ -103,19 +103,33 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
+      const matchingNativePageNavigationMenuItemIds = navigationMenuItems
+        .filter(
+          (item) =>
+            item.type === NavigationMenuItemType.NATIVE_PAGE &&
+            isNativePageNavigationMenuItemActive({
+              item,
+              pathname: currentPath,
+            }),
+        )
+        .map((item) => item.id);
+
+      // Native pages don't reset the context store's view id, so a view match would win on them.
+      if (matchingNativePageNavigationMenuItemIds.length > 0) {
+        return {
+          activeNavigationMenuItemIds: matchingNativePageNavigationMenuItemIds,
+          objectMetadataIdForOpenedSection: null,
+        };
+      }
+
       const matchingPathNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
-            (item.type === NavigationMenuItemType.LINK &&
-              isLinkNavigationMenuItemActive({
-                computedLink: getLinkNavigationMenuItemComputedLink(item),
-                location: { pathname: currentPath, search: currentSearch },
-              })) ||
-            (item.type === NavigationMenuItemType.NATIVE_PAGE &&
-              isNativePageNavigationMenuItemActive({
-                item,
-                pathname: currentPath,
-              })),
+            item.type === NavigationMenuItemType.LINK &&
+            isLinkNavigationMenuItemActive({
+              computedLink: getLinkNavigationMenuItemComputedLink(item),
+              location: { pathname: currentPath, search: currentSearch },
+            }),
         )
         .map((item) => item.id);
 
