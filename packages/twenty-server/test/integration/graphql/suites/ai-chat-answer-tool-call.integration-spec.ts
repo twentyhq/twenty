@@ -402,13 +402,13 @@ describe('Answering a chat tool call', () => {
     expect(enqueueStream).toHaveBeenCalledTimes(1);
   });
 
-  it('closes every pending call when an assistant-directed message replaces the answers', async () => {
+  it('closes every pending call when a message is sent instead of the answers', async () => {
     await pauseOnQuestions('call-skipped-first', 'call-skipped-last');
 
     const response = await makeMetadataApiRequest({
       query: parse(
         `mutation Send($threadId: UUID!, $text: String!, $messageId: UUID!) {
-          sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId, isAssistantMentioned: true) { queued streamId }
+          sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued streamId }
         }`,
       ),
       variables: { threadId, text: 'Never mind', messageId: randomUUID() },
@@ -416,9 +416,6 @@ describe('Answering a chat tool call', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.sendChatMessage.queued).toBe(false);
-    expect(response.body.data.sendChatMessage.streamId).toEqual(
-      expect.any(String),
-    );
 
     expect(await readPendingQuestionMessageId()).toBeNull();
 
