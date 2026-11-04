@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
-import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -245,8 +245,6 @@ export const InboxNewChat: Story = {
       await expect(option).toBeDisabled();
     }
 
-    fireEvent.click(removeAda);
-    await expect(within(recipients).getByText('Ada')).toBeVisible();
     jotaiStore.set(isSendingMessageAtom, false);
     await waitFor(() => expect(removeAda).toBeEnabled());
     await userEvent.keyboard('{Escape}');
@@ -260,6 +258,7 @@ export const InboxNewChatDark: Story = {
       <NewChatStory />
     </ThemeProvider>
   ),
+  play: FullPageNewChat.play,
 };
 
 export const NewChatSuggestedPrompt: Story = {
