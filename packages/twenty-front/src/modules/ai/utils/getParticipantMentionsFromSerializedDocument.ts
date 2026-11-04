@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   isDefined,
   parseCanonicalTipTapJsonDocument,
@@ -17,7 +17,8 @@ const getParticipantMentionsFromNode = (
 
   const isParticipantMention =
     node.type === TIPTAP_NODE_TYPES.MENTION_TAG &&
-    node.attrs?.objectNameSingular === CoreObjectNameSingular.WorkspaceMember &&
+    node.attrs?.objectNameSingular ===
+      StandardObjectNameSingular.WorkspaceMember &&
     node.attrs?.shouldAddAsParticipant === true &&
     isNonEmptyString(workspaceMemberId);
 

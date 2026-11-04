@@ -7,7 +7,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowSSESubscribeEffect = ({
@@ -24,7 +24,7 @@ export const WorkflowSSESubscribeEffect = ({
 
   const { objectMetadataItem: workflowVersionMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+      objectNameSingular: StandardObjectNameSingular.WorkflowVersion,
     });
 
   const requestWorkflowRefetch = useCallback(() => {
@@ -37,7 +37,7 @@ export const WorkflowSSESubscribeEffect = ({
     id: string;
     versions: Array<{ id: string }>;
   }>({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
+    objectNameSingular: StandardObjectNameSingular.Workflow,
     objectRecordId: workflowId,
     recordGqlFields: {
       id: true,
@@ -50,7 +50,7 @@ export const WorkflowSSESubscribeEffect = ({
   useListenToEventsForQuery({
     queryId,
     operationSignature: {
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+      objectNameSingular: StandardObjectNameSingular.WorkflowVersion,
       variables: {
         filter: {
           workflowId: { eq: workflowId },

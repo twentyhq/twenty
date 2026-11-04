@@ -124,15 +124,15 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
+      const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
         workspaceId,
-        mainPrincipal: { type: 'deprecatedRoleOnly', roleId },
+        mainPrincipal: { type: 'role', roleId },
         applicationPrincipal: { type: 'customApplication' },
       };
 
       if (
         !isRolePermittingOperation({
-          principal: rolePrincipal,
+          principals: rolePrincipals,
           metadataMaps,
           flatObjectMetadata,
           operationType: 'select',

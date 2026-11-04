@@ -7,7 +7,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
-import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
+import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -274,8 +274,8 @@ describe('resolveAiRunPermissionScope', () => {
       const isInsertDenied = (
         aiRunScope?: PermissionsPrincipalsWithRolesContext['aiRunScope'],
       ) =>
-        isObjectOperationDeniedToPrincipal({
-          principal: {
+        isObjectOperationDeniedToPrincipals({
+          principals: {
             workspaceId: 'workspace-id',
             mainPrincipal: {
               type: 'workspaceMember',

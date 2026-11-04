@@ -182,6 +182,7 @@ export const Default: Story = {
     const generalAccess = await page.findByRole('button', {
       name: 'Restricted',
     });
+    await expect(page.getByRole('button', { name: 'Copy link' })).toBeVisible();
     const addPeople = page.getByPlaceholderText('Add people or everyone');
     const role = page.getByRole('button', { name: 'Sales Viewer' });
     const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });

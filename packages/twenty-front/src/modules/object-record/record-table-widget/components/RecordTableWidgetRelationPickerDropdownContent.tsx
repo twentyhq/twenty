@@ -1,11 +1,11 @@
 import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { RecordTableWidgetRelationPickerMenuItem } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerMenuItem';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableWidgetRelationPickerDropdownContentProps = {
   objectNameSingular: string;
@@ -18,6 +18,7 @@ export const RecordTableWidgetRelationPickerDropdownContent = ({
   recordsFilter,
   onRelationRecordSelected,
 }: RecordTableWidgetRelationPickerDropdownContentProps) => {
+  const { t } = useLingui();
   const [searchFilter, setSearchFilter] = useState('');
 
   const { recordsToSelect, loading } = useRecordsForSelect({

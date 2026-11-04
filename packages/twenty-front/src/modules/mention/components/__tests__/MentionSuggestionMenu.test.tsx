@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/core';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
@@ -40,18 +40,22 @@ describe('MentionSuggestionMenu', () => {
             items={[
               buildResult(
                 'Grace Hopper',
-                CoreObjectNameSingular.WorkspaceMember,
+                StandardObjectNameSingular.WorkspaceMember,
                 'Teammates',
               ),
-              buildResult('Acme', CoreObjectNameSingular.Company, 'Companies'),
+              buildResult(
+                'Acme',
+                StandardObjectNameSingular.Company,
+                'Companies',
+              ),
               buildResult(
                 'Ada Lovelace',
-                CoreObjectNameSingular.Person,
+                StandardObjectNameSingular.Person,
                 'People',
               ),
               buildResult(
                 'Globex',
-                CoreObjectNameSingular.Company,
+                StandardObjectNameSingular.Company,
                 'Companies',
               ),
             ]}
@@ -88,7 +92,11 @@ describe('MentionSuggestionMenu', () => {
         <I18nProvider i18n={i18n}>
           <MentionSuggestionMenu
             items={[
-              buildResult('Acme', CoreObjectNameSingular.Company, 'Accounts'),
+              buildResult(
+                'Acme',
+                StandardObjectNameSingular.Company,
+                'Accounts',
+              ),
               buildResult('Globex', 'account', 'Accounts'),
             ]}
             onSelect={jest.fn()}
@@ -112,7 +120,7 @@ describe('MentionSuggestionMenu', () => {
             items={[
               buildResult(
                 'Grace Hopper',
-                CoreObjectNameSingular.WorkspaceMember,
+                StandardObjectNameSingular.WorkspaceMember,
                 'Teammates',
               ),
               buildResult(

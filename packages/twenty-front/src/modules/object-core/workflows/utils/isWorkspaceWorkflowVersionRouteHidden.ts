@@ -1,7 +1,7 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const isWorkspaceWorkflowVersionRouteHidden = ({
   objectNameSingular,
 }: {
   objectNameSingular?: string | null;
-}) => objectNameSingular === CoreObjectNameSingular.WorkflowVersion;
+}) => objectNameSingular === StandardObjectNameSingular.WorkflowVersion;

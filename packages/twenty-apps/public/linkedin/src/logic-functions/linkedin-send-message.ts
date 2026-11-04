@@ -23,7 +23,6 @@ export const linkedinSendMessageHandler = async ({
     );
   }
 
-  // Threads are ingested under their Unipile chat id, so a reply goes to that chat.
   const externalId = await sendUnipileChatMessage({
     accountId: unipileAccountId,
     chatId: threadExternalId,

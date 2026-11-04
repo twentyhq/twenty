@@ -1,7 +1,7 @@
 import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +38,7 @@ export const useAiChatThreadRecordTargets = ({
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMorphJunctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   });
   const junctionConfig = isUsableJunctionConfig(objectMorphJunctionConfig)
     ? objectMorphJunctionConfig
@@ -64,7 +64,7 @@ export const useAiChatThreadRecordTargets = ({
     !isAiChatInboxEnabled || !isDefined(junctionConfig);
 
   const { record: thread, refetch } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
     objectRecordId: threadId,
     recordGqlFields,
     skip: isThreadQuerySkipped,
@@ -73,7 +73,7 @@ export const useAiChatThreadRecordTargets = ({
   // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       variables: { filter: { threadId: { eq: threadId } } },
     }),
     [threadId],

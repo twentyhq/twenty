@@ -1,6 +1,6 @@
 import { usePrepareFindManyActivitiesQuery } from '@/activities/hooks/usePrepareFindManyActivitiesQuery';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectState';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { type StandardObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useRefreshShowPageFindManyActivitiesQueries = ({
   activityObjectNameSingular,
 }: {
-  activityObjectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular: StandardObjectNameSingular;
 }) => {
   const objectShowPageTargetableObject = useAtomStateValue(
     objectShowPageTargetableObjectState,

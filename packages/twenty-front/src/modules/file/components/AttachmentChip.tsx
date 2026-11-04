@@ -1,5 +1,4 @@
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
-import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -7,6 +6,7 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
+import { useLingui } from '@lingui/react/macro';
 
 const ATTACHMENT_CHIP_MAX_WIDTH = 140;
 
@@ -21,6 +21,7 @@ export const AttachmentChip = ({
   onRemove,
   readonly = false,
 }: AttachmentChipProps) => {
+  const { t } = useLingui();
   const iconColors = useFileCategoryColors();
   const fileType = getFileType(file.name);
 

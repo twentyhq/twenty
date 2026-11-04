@@ -4,7 +4,6 @@ import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/
 import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import {
   Background,
   type Edge,
@@ -35,6 +34,7 @@ import {
 } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,
@@ -73,6 +73,7 @@ const StyledCloseButton = styled.div`
 `;
 
 export const SettingsDataModelOverview = () => {
+  const { t } = useLingui();
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
   const [nodes, setNodes] = useNodesState<Node>([]);

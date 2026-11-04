@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
@@ -9,7 +9,7 @@ type FetchAllThreadMessagesOperationSignatureFactory = {
 export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
   FetchAllThreadMessagesOperationSignatureFactory
 > = ({ messageThreadId }: FetchAllThreadMessagesOperationSignatureFactory) => ({
-  objectNameSingular: CoreObjectNameSingular.Message,
+  objectNameSingular: StandardObjectNameSingular.Message,
   variables: {
     filter: {
       messageThreadId: {

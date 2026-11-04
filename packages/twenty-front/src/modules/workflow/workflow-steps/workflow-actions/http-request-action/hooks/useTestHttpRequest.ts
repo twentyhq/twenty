@@ -8,7 +8,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, parseJson, resolveInput } from 'twenty-shared/utils';
@@ -17,6 +16,7 @@ import {
   type TestHttpRequestMutation,
   type TestHttpRequestMutationVariables,
 } from '~/generated/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -42,6 +42,7 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 };
 
 export const useTestHttpRequest = (actionId: string) => {
+  const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
   const httpRequestTestData = useAtomFamilyStateValue(

@@ -62,6 +62,7 @@ const THIRD_PARTY_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   universalIdentifier: null,
   coreWorkflowVersionId: null,

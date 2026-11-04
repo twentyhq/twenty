@@ -41,6 +41,7 @@ const buildPinnedCommandMenuItem = ({
   conditionalAvailabilityExpression: null,
   conditionalPinnedExpression: null,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   navigationTargetObjectMetadataId: null,
   pageLayoutId: null,
   frontComponent: null,

@@ -8,7 +8,6 @@ import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreW
 import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   IconListDetails,
@@ -17,6 +16,7 @@ import {
   IconPlus,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -55,6 +55,7 @@ type RecordPageAddWidgetSectionProps = {
 export const RecordPageAddWidgetSection = ({
   insertionContext = null,
 }: RecordPageAddWidgetSectionProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { tabId } = usePageLayoutContentContext();
 
