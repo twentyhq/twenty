@@ -5,6 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { EMPTY_APPLICATION_CONTENT } from 'src/engine/core-modules/application/application-content/constants/empty-application-content.constant';
+import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
+import {
+  APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS,
+  buildApplicationContentFromFlatEntityMaps,
+} from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-flat-entity-maps.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -306,6 +312,36 @@ export class ApplicationResolver {
     return context.loaders.objectMetadataByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
+    });
+  }
+
+  @ResolveField(() => ApplicationContentDTO, { nullable: true })
+  async content(
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
+  ): Promise<ApplicationContentDTO> {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return EMPTY_APPLICATION_CONTENT;
+    }
+
+    const flatEntityMaps = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      [...APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS],
+    );
+
+    return buildApplicationContentFromFlatEntityMaps({
+      applicationId: application.id,
+      flatEntityMaps,
     });
   }
 

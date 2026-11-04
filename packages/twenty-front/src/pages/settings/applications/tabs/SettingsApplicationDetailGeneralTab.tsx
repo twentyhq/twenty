@@ -1,11 +1,17 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
+import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
+import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { SettingsApplicationIframeMediaPermissionsSection } from '@/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { IconArrowUp, IconInfoCircle, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -71,6 +77,10 @@ export const SettingsApplicationDetailGeneralTab = ({
   const canManageApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
   );
+
+  const { content } = useInstalledApplicationContent({
+    applicationId: application.id,
+  });
 
   const isUpgradable = isUpgradableApplicationSourceType(
     application.applicationRegistration?.sourceType,
@@ -152,6 +162,21 @@ export const SettingsApplicationDetailGeneralTab = ({
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section.Root>
+      {isDefined(content) && (
+        <SettingsApplicationContentSummarySection
+          applicationName={displayName}
+          content={content}
+          contentPath={getSettingsPath(SettingsPath.ApplicationContent, {
+            applicationId: application.id,
+          })}
+          getContentTypePath={(contentType) =>
+            getSettingsPath(SettingsPath.ApplicationContentTypeDetail, {
+              applicationId: application.id,
+              contentType,
+            })
+          }
+        />
+      )}
       {isUpgradable && (
         <SettingsApplicationAutoUpdateSection
           applicationId={application.id}

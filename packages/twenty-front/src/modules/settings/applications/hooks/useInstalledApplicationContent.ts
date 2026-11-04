@@ -1,0 +1,28 @@
+import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { FindOneApplicationContentDocument } from '~/generated-metadata/graphql';
+
+export const useInstalledApplicationContent = ({
+  applicationId,
+  universalIdentifier,
+  skip = false,
+}: {
+  applicationId?: string;
+  universalIdentifier?: string;
+  skip?: boolean;
+}) => {
+  const { data, loading } = useQuery(FindOneApplicationContentDocument, {
+    variables: { id: applicationId, universalIdentifier },
+    skip:
+      skip ||
+      (!isNonEmptyString(applicationId) &&
+        !isNonEmptyString(universalIdentifier)),
+  });
+
+  return {
+    application: data?.findOneApplication,
+    content: data?.findOneApplication?.content,
+    isLoading: loading,
+  };
+};

@@ -2,6 +2,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
 import { styled } from '@linaria/react';
+import { Link } from 'react-router-dom';
 import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { emailSchema, isDefined, isSafeUrl } from 'twenty-shared/utils';
@@ -13,6 +14,7 @@ import {
   IconCurrencyDollar,
   IconDownload,
   IconLink,
+  IconListDetails,
   IconMail,
   IconShare2,
   IconTag,
@@ -45,6 +47,7 @@ type SettingsApplicationAboutSidebarProps = {
   pricingDescription?: string;
   billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
+  contentPath?: string;
 };
 
 type AboutRow = {
@@ -146,6 +149,18 @@ const StyledResourceLink = styled.a`
   }
 `;
 
+const StyledContentLink = styled(Link)`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  line-height: 1.4;
+  min-height: ${themeCssVariables.spacing[6]};
+  text-decoration: underline;
+`;
+
 const StyledRowIcon = styled.div`
   display: flex;
   flex-shrink: 0;
@@ -164,6 +179,7 @@ export const SettingsApplicationAboutSidebar = ({
   pricingDescription,
   billsCredits = false,
   developerLinks,
+  contentPath,
 }: SettingsApplicationAboutSidebarProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -288,7 +304,7 @@ export const SettingsApplicationAboutSidebar = ({
         )}
       </StyledHeader>
 
-      {aboutRows.length > 0 && (
+      {(aboutRows.length > 0 || isDefined(contentPath)) && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
           {aboutRows.map(({ Icon, label, tooltip }) => (
@@ -303,6 +319,14 @@ export const SettingsApplicationAboutSidebar = ({
               />
             </StyledRow>
           ))}
+          {isDefined(contentPath) && (
+            <StyledContentLink to={contentPath}>
+              <StyledRowIcon>
+                <IconListDetails size={theme.icon.size.sm} />
+              </StyledRowIcon>
+              {t`See content`}
+            </StyledContentLink>
+          )}
         </StyledSection>
       )}
 

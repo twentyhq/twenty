@@ -25,6 +25,7 @@ type SettingsApplicationDetailAboutProps = {
   installCount?: number;
   category?: string;
   developerLinks?: DeveloperLinks;
+  contentPath?: string;
   onShare?: () => void;
 };
 
@@ -140,6 +141,7 @@ export const SettingsApplicationDetailAbout = ({
   installCount,
   category,
   developerLinks,
+  contentPath,
   onShare,
 }: SettingsApplicationDetailAboutProps) => {
   const { t } = useLingui();
@@ -183,6 +185,7 @@ export const SettingsApplicationDetailAbout = ({
           pricingDescription={pricingDescription}
           billsCredits={billsCredits}
           developerLinks={developerLinks}
+          contentPath={contentPath}
         />
       </StyledSidebarColumn>
 

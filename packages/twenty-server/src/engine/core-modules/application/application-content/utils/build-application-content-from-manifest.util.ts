@@ -1,0 +1,297 @@
+import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ApplicationContentItemDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content-item.dto';
+import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
+import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
+import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
+import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
+
+export const buildApplicationContentFromManifest = (
+  manifest: Manifest,
+): ApplicationContentDTO => {
+  const objects = manifest.objects ?? [];
+
+  const fields = [
+    ...objects.flatMap((object) =>
+      (object.fields ?? []).map((field) => ({
+        ...field,
+        objectUniversalIdentifier: object.universalIdentifier,
+      })),
+    ),
+    ...(manifest.fields ?? []),
+  ];
+
+  const views = manifest.views ?? [];
+
+  const viewFields = [
+    ...views.flatMap((view) =>
+      (view.fields ?? []).map((viewField) => ({
+        ...viewField,
+        viewUniversalIdentifier: view.universalIdentifier,
+      })),
+    ),
+    ...(manifest.viewFields ?? []),
+  ];
+
+  const pageLayouts = manifest.pageLayouts ?? [];
+
+  const pageLayoutTabs = [
+    ...pageLayouts.flatMap((pageLayout) =>
+      (pageLayout.tabs ?? []).map((tab) => ({
+        ...tab,
+        pageLayoutUniversalIdentifier: pageLayout.universalIdentifier,
+      })),
+    ),
+    ...(manifest.pageLayoutTabs ?? []),
+  ];
+
+  const pageLayoutWidgets = [
+    ...pageLayoutTabs.flatMap((tab) =>
+      (tab.widgets ?? []).map((widget) => ({
+        ...widget,
+        pageLayoutTabUniversalIdentifier: tab.universalIdentifier,
+      })),
+    ),
+    ...(manifest.pageLayoutWidgets ?? []),
+  ];
+
+  const navigationMenuItems = manifest.navigationMenuItems ?? [];
+  const commandMenuItems = manifest.commandMenuItems ?? [];
+
+  const fieldCountByObject = countByKey(
+    fields,
+    (field) => field.objectUniversalIdentifier,
+  );
+  const viewFieldCountByView = countByKey(
+    viewFields,
+    (viewField) => viewField.viewUniversalIdentifier,
+  );
+  const viewCountByField = countByKey(
+    viewFields,
+    (viewField) => viewField.fieldMetadataUniversalIdentifier,
+  );
+  const tabCountByPageLayout = countByKey(
+    pageLayoutTabs,
+    (tab) => tab.pageLayoutUniversalIdentifier,
+  );
+  const widgetCountByTab = countByKey(
+    pageLayoutWidgets,
+    (widget) => widget.pageLayoutTabUniversalIdentifier,
+  );
+  const placementCountByFrontComponent = countByKey(
+    [
+      ...commandMenuItems.map(
+        (commandMenuItem) => commandMenuItem.frontComponentUniversalIdentifier,
+      ),
+      ...pageLayoutWidgets.map((widget) =>
+        'frontComponentUniversalIdentifier' in widget.configuration
+          ? widget.configuration.frontComponentUniversalIdentifier
+          : undefined,
+      ),
+    ],
+    (frontComponentUniversalIdentifier) => frontComponentUniversalIdentifier,
+  );
+
+  const viewNameByUniversalIdentifier = new Map(
+    views.map((view) => [view.universalIdentifier, view.name]),
+  );
+  const pageLayoutNameByUniversalIdentifier = new Map(
+    pageLayouts.map((pageLayout) => [
+      pageLayout.universalIdentifier,
+      pageLayout.name,
+    ]),
+  );
+  const navigationMenuItemNameByUniversalIdentifier = new Map(
+    navigationMenuItems.map((navigationMenuItem) => [
+      navigationMenuItem.universalIdentifier,
+      navigationMenuItem.name,
+    ]),
+  );
+  const objectLabelByUniversalIdentifier = new Map(
+    objects.map((object) => [object.universalIdentifier, object.labelPlural]),
+  );
+  const fieldLabelByUniversalIdentifier = new Map(
+    fields.map((field) => [field.universalIdentifier, field.label]),
+  );
+
+  const roles = manifest.roles ?? [];
+  const roleCountByPermissionFlag = countByKey(
+    roles.flatMap((role) => role.permissionFlagUniversalIdentifiers ?? []),
+    (permissionFlag) => permissionFlag,
+  );
+
+  return {
+    objects: objects.map((object) => ({
+      universalIdentifier: object.universalIdentifier,
+      label: object.labelPlural,
+      icon: object.icon,
+      description: object.description,
+      count: fieldCountByObject.get(object.universalIdentifier) ?? 0,
+    })),
+    fields: fields.map((field) => ({
+      universalIdentifier: field.universalIdentifier,
+      label: field.label,
+      icon: field.icon,
+      description: field.description,
+      objectUniversalIdentifier: field.objectUniversalIdentifier,
+      tag: field.type,
+      count: viewCountByField.get(field.universalIdentifier) ?? 0,
+    })),
+    indexes: (manifest.indexes ?? []).map((index) => ({
+      universalIdentifier: index.universalIdentifier,
+      label: index.fields
+        .map(
+          (indexField) =>
+            fieldLabelByUniversalIdentifier.get(
+              indexField.fieldUniversalIdentifier,
+            ) ?? indexField.fieldUniversalIdentifier,
+        )
+        .join(', '),
+      objectUniversalIdentifier: index.objectUniversalIdentifier,
+      tag: index.isUnique === true ? 'UNIQUE' : null,
+      count: index.fields.length,
+    })),
+    views: views.map((view) => ({
+      universalIdentifier: view.universalIdentifier,
+      label: view.name,
+      icon: view.icon,
+      objectUniversalIdentifier: view.objectUniversalIdentifier,
+      tag: view.type,
+      count: viewFieldCountByView.get(view.universalIdentifier) ?? 0,
+    })),
+    viewFields: viewFields.map((viewField) => ({
+      universalIdentifier: viewField.universalIdentifier,
+      label:
+        fieldLabelByUniversalIdentifier.get(
+          viewField.fieldMetadataUniversalIdentifier,
+        ) ?? viewField.fieldMetadataUniversalIdentifier,
+      parentLabel: viewNameByUniversalIdentifier.get(
+        viewField.viewUniversalIdentifier,
+      ),
+      count: viewField.position,
+    })),
+    pageLayouts: pageLayouts.map((pageLayout) => ({
+      universalIdentifier: pageLayout.universalIdentifier,
+      label: pageLayout.name,
+      objectUniversalIdentifier: pageLayout.objectUniversalIdentifier,
+      tag: pageLayout.type,
+      count: tabCountByPageLayout.get(pageLayout.universalIdentifier) ?? 0,
+    })),
+    pageLayoutTabs: pageLayoutTabs.map((tab) => ({
+      universalIdentifier: tab.universalIdentifier,
+      label: tab.title,
+      icon: tab.icon,
+      parentLabel: isDefined(tab.pageLayoutUniversalIdentifier)
+        ? pageLayoutNameByUniversalIdentifier.get(
+            tab.pageLayoutUniversalIdentifier,
+          )
+        : null,
+      count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
+    })),
+    navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
+      universalIdentifier: navigationMenuItem.universalIdentifier,
+      label:
+        navigationMenuItem.name ??
+        (isDefined(navigationMenuItem.viewUniversalIdentifier)
+          ? viewNameByUniversalIdentifier.get(
+              navigationMenuItem.viewUniversalIdentifier,
+            )
+          : undefined) ??
+        (isDefined(navigationMenuItem.targetObjectUniversalIdentifier)
+          ? objectLabelByUniversalIdentifier.get(
+              navigationMenuItem.targetObjectUniversalIdentifier,
+            )
+          : undefined) ??
+        navigationMenuItem.link ??
+        navigationMenuItem.type,
+      icon: navigationMenuItem.icon,
+      objectUniversalIdentifier:
+        navigationMenuItem.targetObjectUniversalIdentifier,
+      parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)
+        ? navigationMenuItemNameByUniversalIdentifier.get(
+            navigationMenuItem.folderUniversalIdentifier,
+          )
+        : null,
+      tag: navigationMenuItem.type,
+      count: navigationMenuItem.position,
+    })),
+    commandMenuItems: commandMenuItems.map((commandMenuItem) => ({
+      universalIdentifier: commandMenuItem.universalIdentifier,
+      label: commandMenuItem.label,
+      icon: commandMenuItem.icon,
+      objectUniversalIdentifier:
+        commandMenuItem.availabilityObjectUniversalIdentifier,
+      tag: commandMenuItem.availabilityType,
+    })),
+    frontComponents: (manifest.frontComponents ?? []).map((frontComponent) => ({
+      universalIdentifier: frontComponent.universalIdentifier,
+      label: frontComponent.name ?? frontComponent.componentName,
+      description: frontComponent.description,
+      tag: isDefined(frontComponent.widgetAvailability)
+        ? 'WIDGET'
+        : 'FRONT_COMPONENT',
+      count:
+        placementCountByFrontComponent.get(
+          frontComponent.universalIdentifier,
+        ) ?? 0,
+    })),
+    workflows: (manifest.workflows ?? []).map((workflow) => ({
+      universalIdentifier: workflow.universalIdentifier,
+      label: workflow.name,
+      tag: 'ACTIVE',
+    })),
+    logicFunctions: (manifest.logicFunctions ?? []).map((logicFunction) => ({
+      universalIdentifier: logicFunction.universalIdentifier,
+      label: logicFunction.name ?? logicFunction.handlerName,
+      description: logicFunction.description,
+      tag: getLogicFunctionTriggerTag(logicFunction),
+    })),
+    agents: (manifest.agents ?? []).map((agent) => ({
+      universalIdentifier: agent.universalIdentifier,
+      label: agent.label,
+      icon: agent.icon,
+      description: agent.description,
+    })),
+    skills: (manifest.skills ?? []).map((skill) => ({
+      universalIdentifier: skill.universalIdentifier,
+      label: skill.label,
+      icon: skill.icon,
+      description: skill.description,
+    })),
+    roles: roles.map((role) => ({
+      universalIdentifier: role.universalIdentifier,
+      label: role.label,
+      icon: role.icon,
+      description: role.description,
+    })),
+    permissionFlags: (manifest.permissionFlags ?? []).map((permissionFlag) => ({
+      universalIdentifier: permissionFlag.universalIdentifier,
+      label: permissionFlag.label,
+      icon: permissionFlag.icon,
+      description: permissionFlag.description,
+      tag: permissionFlag.permissionType ?? 'settings',
+      count:
+        roleCountByPermissionFlag.get(permissionFlag.universalIdentifier) ?? 0,
+    })),
+    connectionProviders: (manifest.connectionProviders ?? []).map(
+      (connectionProvider) => ({
+        universalIdentifier: connectionProvider.universalIdentifier,
+        label: connectionProvider.displayName,
+        tag: connectionProvider.type,
+      }),
+    ),
+    publicAssets: (manifest.publicAssets ?? []).map((publicAsset) => ({
+      universalIdentifier: publicAsset.filePath,
+      label: publicAsset.fileName,
+      tag: getPublicAssetTag(publicAsset.fileType),
+    })),
+    translations: Object.entries(manifest.translations ?? {}).map(
+      ([locale, messages]): ApplicationContentItemDTO => ({
+        universalIdentifier: locale,
+        label: locale,
+        count: Object.keys(messages ?? {}).length,
+      }),
+    ),
+  };
+};
