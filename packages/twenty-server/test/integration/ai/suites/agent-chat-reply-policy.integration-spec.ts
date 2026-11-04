@@ -1,3 +1,4 @@
+import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
@@ -500,12 +501,22 @@ describe('Assistant reply selection with stored conversation participants', () =
   });
 
   it('does not exempt a canonical DM with one remaining human at execution time', async () => {
-    const threadId = await context.createThread();
+    const identityService =
+      getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
+        'AgentChatDirectMessageIdentityService',
+      );
+    const threadId = context.registerThread(
+      await identityService.open({
+        workspaceId: context.workspaceId,
+        firstWorkspaceMemberId: context.workspaceMemberId,
+        secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    );
 
-    await context.setConversationType({
-      threadId,
-      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-    });
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentChatThread" SET "isAssistantParticipant" = true WHERE id = $1`,
+      [threadId],
+    );
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
       assistantReplyContext: {
@@ -514,6 +525,8 @@ describe('Assistant reply selection with stored conversation participants', () =
         isStructuredRequestContinuation: false,
       },
     });
+
+    await expect(shouldExecute({ threadId, messageId })).resolves.toBe(true);
 
     await context.setAssistantModes({
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
