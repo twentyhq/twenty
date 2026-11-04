@@ -1,3 +1,5 @@
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
@@ -33,6 +35,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
@@ -465,10 +468,14 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
-        const queued = await queue.queueMessage({
-          ...sender,
-          threadId,
-          text: 'Use my permissions',
+        const queued = await writeChatMemberMessage({
+          actor: sender,
+          thread: await getAgentChatThreadService().getWritableThread({
+            ...sender,
+            threadId,
+          }),
+          message: { text: 'Use my permissions' },
+          placement: AgentChatMemberMessagePlacement.QUEUED,
         });
         const turnId = await queue.promoteQueuedMessage({
           workspaceId,
@@ -496,10 +503,9 @@ describe('Conversation sharing through the authenticated API', () => {
           },
         });
 
-        expect(senderAuthorization?.rolePermissionConfig).toEqual({
-          intersectionOf: {
-            userWorkspaceRoleId: userWorkspaceRoleMap[sender.userWorkspaceId],
-          },
+        expect(senderAuthorization?.authContext).toMatchObject({
+          type: 'user',
+          userWorkspaceId: sender.userWorkspaceId,
         });
         await expect(
           actors.authorizeJob({
@@ -994,11 +1000,12 @@ describe('Conversations through the record API', () => {
         'RecordAccessPolicyService',
       )
         .buildEventRecordAccessGate(batch)
-        .resolveAdmittedRecordIds({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          mainPrincipal: { workspaceMemberId },
-          applicationPrincipal: { isCustomApp: true },
-        });
+        .resolveAdmittedRecordIds(
+          await resolveWorkspaceMemberAuthContext({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspaceMemberId,
+          }),
+        );
 
     return admittedRecordIds.has(threadId);
   };

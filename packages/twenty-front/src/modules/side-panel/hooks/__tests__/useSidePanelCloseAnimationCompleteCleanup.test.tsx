@@ -11,7 +11,10 @@ import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingS
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/icon';
 
 const mockCloseDropdown = jest.fn();
@@ -128,11 +131,11 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
 
   it.each([
     {
-      targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
+      targetObjectNameSingular: StandardObjectNameSingular.Dashboard,
       expectedEditingWidgetId: null,
     },
     {
-      targetObjectNameSingular: CoreObjectNameSingular.Company,
+      targetObjectNameSingular: StandardObjectNameSingular.Company,
       expectedEditingWidgetId: 'widget-id',
     },
   ])(

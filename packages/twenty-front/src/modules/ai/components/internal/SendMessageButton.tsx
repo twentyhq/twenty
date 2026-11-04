@@ -7,10 +7,10 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 type SendMessageButtonProps = {
   isDisabled?: boolean;
@@ -19,6 +19,7 @@ type SendMessageButtonProps = {
 export const SendMessageButton = ({
   isDisabled = false,
 }: SendMessageButtonProps) => {
+  const { t } = useLingui();
   const agentChatInputIsEmpty = useAtomStateValue(
     agentChatInputIsEmptySelector,
   );

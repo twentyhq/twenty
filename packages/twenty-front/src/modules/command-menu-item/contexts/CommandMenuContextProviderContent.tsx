@@ -23,7 +23,7 @@ import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
@@ -64,7 +64,7 @@ export const CommandMenuContextProviderContent = ({
 }: CommandMenuContextProviderContentProps) => {
   const isCoreWorkflow =
     commandMenuContextApi.objectMetadataItem.nameSingular ===
-    CoreObjectNameSingular.Workflow;
+    StandardObjectNameSingular.Workflow;
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
@@ -107,7 +107,7 @@ export const CommandMenuContextProviderContent = ({
     const isAiChatInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
-        CoreObjectNameSingular.AgentChatThread &&
+        StandardObjectNameSingular.AgentChatThread &&
       (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
 
     const contextCommandMenuItems = commandMenuItemsToDisplay

@@ -4,7 +4,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -40,10 +40,10 @@ const LoadingSkeleton = () => {
 const isActivityObject = (
   objectNameSingular: string,
 ): objectNameSingular is
-  | CoreObjectNameSingular.Note
-  | CoreObjectNameSingular.Task =>
-  objectNameSingular === CoreObjectNameSingular.Note ||
-  objectNameSingular === CoreObjectNameSingular.Task;
+  | StandardObjectNameSingular.Note
+  | StandardObjectNameSingular.Task =>
+  objectNameSingular === StandardObjectNameSingular.Note ||
+  objectNameSingular === StandardObjectNameSingular.Task;
 
 export const SidePanelEditRichTextPage = () => {
   const { recordId, objectNameSingular, fieldName } = useAtomStateValue(

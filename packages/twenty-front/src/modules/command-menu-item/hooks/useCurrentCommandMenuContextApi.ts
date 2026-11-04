@@ -34,7 +34,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -105,7 +105,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   );
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
-      CoreObjectNameSingular.AgentChatThread &&
+      StandardObjectNameSingular.AgentChatThread &&
     isDefined(agentChatThreadParticipants)
       ? (recordIds ?? [])
       : [];

@@ -11,12 +11,12 @@ import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph
 import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation';
 import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel';
 import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAvailableAggregateOperationsForAggregateChart';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartAggregateOperationSelectionDropdownContentProps = {
   currentFieldMetadataId: string;
@@ -25,6 +25,7 @@ type ChartAggregateOperationSelectionDropdownContentProps = {
 export const ChartAggregateOperationSelectionDropdownContent = ({
   currentFieldMetadataId,
 }: ChartAggregateOperationSelectionDropdownContentProps) => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();

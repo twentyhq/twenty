@@ -6,8 +6,8 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Field } from 'twenty-ui/primitives/input';
-import { t } from '@lingui/core/macro';
 import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
+import { useLingui } from '@lingui/react/macro';
 
 type FormAddressFieldInputProps = {
   label?: string;
@@ -26,6 +26,7 @@ export const FormAddressFieldInput = ({
   VariablePicker,
   subFieldPlaceholders,
 }: FormAddressFieldInputProps) => {
+  const { t } = useLingui();
   const handleChange =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
       const updatedAddress = {

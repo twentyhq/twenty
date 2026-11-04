@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -25,13 +25,14 @@ export const recordIdentifierToObjectRecordIdentifier = ({
   });
 
   const isWorkspaceMemberObjectMetadata =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
+    objectMetadataItem.nameSingular ===
+    StandardObjectNameSingular.WorkspaceMember;
 
   let linkToShowPage = '';
 
   if (
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.NoteTarget ||
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.TaskTarget
+    objectMetadataItem.nameSingular === StandardObjectNameSingular.NoteTarget ||
+    objectMetadataItem.nameSingular === StandardObjectNameSingular.TaskTarget
   ) {
     linkToShowPage = '';
   } else if (

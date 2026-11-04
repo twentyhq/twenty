@@ -40,7 +40,7 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const buildPrincipal = (
+const buildPrincipals = (
   roleId: string,
 ): PermissionsPrincipalsWithRolesContext => {
   const applicationId = APPLICATION_ID_BY_ROLE_ID[roleId];
@@ -48,15 +48,19 @@ const buildPrincipal = (
   if (!isDefined(applicationId)) {
     return {
       workspaceId: 'workspace-id',
-      mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
-      applicationPrincipal: { isCustomApp: true },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId,
+        workspaceMemberId: 'member-1',
+      },
+      applicationPrincipal: { type: 'customApplication' },
     };
   }
 
   return {
     workspaceId: 'workspace-id',
-    mainPrincipal: { roleId, applicationId },
-    applicationPrincipal: { roleId, applicationId },
+    mainPrincipal: { type: 'application', roleId, applicationId },
+    applicationPrincipal: { type: 'application', roleId, applicationId },
   };
 };
 
@@ -70,7 +74,7 @@ const hasAccess = ({
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
 }) => {
   const request: PermissionsObjectAccessRequest = {
-    principal: buildPrincipal(roleId),
+    principals: buildPrincipals(roleId),
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),

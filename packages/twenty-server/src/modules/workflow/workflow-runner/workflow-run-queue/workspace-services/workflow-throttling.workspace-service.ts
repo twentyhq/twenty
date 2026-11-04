@@ -68,10 +68,10 @@ export class WorkflowThrottlingWorkspaceService {
 
     const currentlyNotStartedWorkflowRunCount =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowRunRepository = this.workspaceOrmManager.getRepository(
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+        const workflowRunRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            WorkflowRunWorkspaceEntity,
+          );
 
         return workflowRunRepository.count({
           where: NOT_STARTED_RUNS_FIND_OPTIONS,
@@ -94,10 +94,10 @@ export class WorkflowThrottlingWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository = this.workspaceOrmManager.getRepository(
-        WorkflowRunWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workflowRunRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkflowRunWorkspaceEntity,
+        );
 
       return workflowRunRepository.count({
         where: NOT_STARTED_RUNS_FIND_OPTIONS,

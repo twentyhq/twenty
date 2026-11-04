@@ -5,7 +5,7 @@ import { createOneActivityOperationSignatureFactory } from '@/activities/graphql
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -51,7 +51,7 @@ if (!isDefined(activityTargetFieldName)) {
 }
 
 const operationSignature = createOneActivityOperationSignatureFactory({
-  objectNameSingular: CoreObjectNameSingular.Task,
+  objectNameSingular: StandardObjectNameSingular.Task,
 });
 
 const createOneTaskMutation = generateCreateOneRecordMutation({
@@ -98,7 +98,7 @@ describe('useCreateActivityInDB', () => {
     const { result } = renderHook(
       () =>
         useCreateActivityInDB({
-          activityObjectNameSingular: CoreObjectNameSingular.Task,
+          activityObjectNameSingular: StandardObjectNameSingular.Task,
         }),
       {
         wrapper: Wrapper,

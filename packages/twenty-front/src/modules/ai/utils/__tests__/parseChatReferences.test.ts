@@ -20,6 +20,19 @@ describe('parseChatReferences', () => {
       },
     },
     {
+      name: 'a record whose name holds brackets',
+      text: 'See [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[24]7.ai]] now',
+      reference: {
+        kind: 'record',
+        fullMatch:
+          '[[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[24]7.ai]]',
+        index: 4,
+        objectNameSingular: 'company',
+        recordId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        displayName: '[24]7.ai',
+      },
+    },
+    {
       name: 'a record written without the record prefix',
       text: 'Merge [[person:11111111-1111-1111-1111-111111111111:Alice]] first',
       reference: {
@@ -257,10 +270,6 @@ describe('parseChatReferences', () => {
     {
       name: 'a reference closed across a line break',
       text: 'Open [[object:partner:Partners\nand others]]',
-    },
-    {
-      name: 'a reference whose display name contains brackets',
-      text: 'Open [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:[test] name]]',
     },
     {
       name: 'references closed by a retired closing tag',

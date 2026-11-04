@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconSettingsAutomation } from 'twenty-ui/icon';
@@ -32,11 +31,13 @@ import { CoreWorkflowsPermissionGate } from '@/object-core/workflows/components/
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useLingui } from '@lingui/react/macro';
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 const WorkflowCoreIndexContent = () => {
+  const { t } = useLingui();
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );

@@ -116,9 +116,9 @@ export class AgentActorContextService {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          });
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            'workspaceMember',
+          );
 
         return workspaceMemberRepository.findOne({
           where: {
@@ -165,11 +165,9 @@ export class AgentActorContextService {
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,
-    viaApplication,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
-    viaApplication?: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceMemberId,
@@ -215,7 +213,7 @@ export class AgentActorContextService {
         user: fromUserEntityToFlat(userWorkspace.user),
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
-        viaApplication,
+        userSessionVariant: 'standard',
       }),
       roleId,
     };

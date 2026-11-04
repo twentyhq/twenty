@@ -5,14 +5,15 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { t } from '@lingui/core/macro';
 import { Children, useRef, type MouseEvent } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const SidePanelBackButton = () => {
+  const { t } = useLingui();
   const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { contextChips } = useSidePanelContextChips();

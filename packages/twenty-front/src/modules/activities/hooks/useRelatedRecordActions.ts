@@ -4,7 +4,7 @@ import { useAttachFileRelatedRecordAction } from '@/activities/files/hooks/useAt
 import { useCreateActivityRelatedRecordAction } from '@/activities/hooks/useCreateActivityRelatedRecordAction';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 type UseRelatedRecordActionsParams = {
   targetRecord: ActivityTargetableObject;
@@ -17,11 +17,11 @@ export const useRelatedRecordActions = ({
 }: UseRelatedRecordActionsParams): RelatedRecordActionBinding[] => {
   const taskAction = useCreateActivityRelatedRecordAction({
     targetRecord,
-    activityObjectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: StandardObjectNameSingular.Task,
   });
   const noteAction = useCreateActivityRelatedRecordAction({
     targetRecord,
-    activityObjectNameSingular: CoreObjectNameSingular.Note,
+    activityObjectNameSingular: StandardObjectNameSingular.Note,
   });
   const fileAction = useAttachFileRelatedRecordAction({
     targetRecord,

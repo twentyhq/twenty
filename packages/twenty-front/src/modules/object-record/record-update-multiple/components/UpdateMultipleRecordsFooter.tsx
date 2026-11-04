@@ -1,30 +1,13 @@
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-
-const StyledFooterContainer = styled.div`
-  align-items: flex-end;
-  background: ${themeCssVariables.background.primary};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledFooterActions = styled.div`
-  align-items: flex-end;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 type UpdateMultipleRecordsFooterProps = {
   isUpdating: boolean;
@@ -56,14 +39,16 @@ export const UpdateMultipleRecordsFooter = ({
   });
 
   return (
-    <StyledFooterContainer>
-      <StyledFooterActions>
+    <SidePanelFooter
+      actions={[
         <Button
+          key="cancel"
           size="sm"
           onClick={onCancel}
           variant="outline"
-        >{t`Cancel`}</Button>
+        >{t`Cancel`}</Button>,
         <Button
+          key="apply"
           size="sm"
           startIcon={<IconBoxMultiple />}
           loading={isUpdating && !progressText}
@@ -74,8 +59,8 @@ export const UpdateMultipleRecordsFooter = ({
           color="accent"
         >
           {isUpdating ? t`Apply${progressText}` : t`Apply`}
-        </Button>
-      </StyledFooterActions>
-    </StyledFooterContainer>
+        </Button>,
+      ]}
+    />
   );
 };

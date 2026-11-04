@@ -3,7 +3,7 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -12,9 +12,11 @@ import {
   TIMELINE_THREADS_SEARCH_INPUT_MAX_LENGTH,
 } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/messaging/dtos/dismiss-reconnect-account-banner.input';
+import { TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { TimelineThreadSearchResultDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-search-result.dto';
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
+import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -40,6 +42,12 @@ class GetTimelineThreadsFromObjectRecordArgs {
   @Field(() => Int)
   @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
   pageSize: number;
+}
+
+@ArgsType()
+class GetMessageThreadChannelArgs {
+  @Field(() => UUIDScalarType)
+  messageThreadId: string;
 }
 
 @ArgsType()
@@ -113,6 +121,7 @@ class GetTimelineThreadsFromOpportunityIdArgs {
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,
+    private readonly timelineMessagingService: TimelineMessagingService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
@@ -135,6 +144,19 @@ export class TimelineMessagingResolver {
       workspaceId: workspace.id,
       page,
       pageSize,
+    });
+  }
+
+  @Query(() => TimelineThreadChannelDTO, { nullable: true })
+  async getMessageThreadChannel(
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { messageThreadId }: GetMessageThreadChannelArgs,
+  ): Promise<TimelineThreadChannelDTO | null> {
+    return this.timelineMessagingService.getMessageThreadChannel({
+      messageThreadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
     });
   }
 
@@ -164,7 +186,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       recordId: personId,
       workspaceId: workspace.id,
       page,
@@ -182,7 +204,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: companyId,
       workspaceId: workspace.id,
       page,
@@ -201,7 +223,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNameSingular: StandardObjectNameSingular.Opportunity,
       recordId: opportunityId,
       workspaceId: workspace.id,
       page,

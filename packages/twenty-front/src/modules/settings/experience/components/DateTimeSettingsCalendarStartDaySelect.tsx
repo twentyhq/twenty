@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { Select } from '@/ui/input/components/Select';
-import { t } from '@lingui/core/macro';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type DateTimeSettingsCalendarStartDaySelectProps = {
   value: CalendarStartDay;
@@ -15,6 +15,7 @@ export const DateTimeSettingsCalendarStartDaySelect = ({
   value,
   onChange,
 }: DateTimeSettingsCalendarStartDaySelectProps) => {
+  const { t } = useLingui();
   const systemCalendarStartDay = CalendarStartDay[detectCalendarStartDay()];
 
   const systemDayContextualText =
@@ -30,7 +31,7 @@ export const DateTimeSettingsCalendarStartDaySelect = ({
       { label: t`Monday`, value: CalendarStartDay.MONDAY },
       { label: t`Saturday`, value: CalendarStartDay.SATURDAY },
     ],
-    [],
+    [t],
   );
 
   return (

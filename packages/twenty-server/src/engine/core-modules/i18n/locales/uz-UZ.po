@@ -203,6 +203,11 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Boshqaruv paneli (dashboard)"
 
+#. js-lingui-id: Fypv4q
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "A deal is won"
+msgstr "Bitim yutildi"
+
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
 msgid "A DNS manager error occurred."
@@ -781,6 +786,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
 msgstr "Ro‘yxatga qo‘shish"
 
+#. js-lingui-id: BBzZ81
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Add tools to your workspace."
+msgstr "Ish maydoningizga vositalarni qo‘shing."
+
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -815,8 +825,13 @@ msgstr "Administrator paneli"
 msgid "Admin role not found."
 msgstr "Administrator roli topilmadi."
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr "\"{label}\" agenti arxivlangan yoki boshqa ish jarayoni bosqichiga tegishli, shuning uchun yangi bosqich uni ishga tushira olmaydi."
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "\"{label}\" agenti arxivlangan."
 
@@ -1074,10 +1089,20 @@ msgstr "Summa"
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "Agent {maxTriggers} tadan ortiq tetiklagichga ega bo‘la olmaydi"
 
+#. js-lingui-id: KfRVdE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent drafts a follow-up for every deal about to close."
+msgstr "Agent yakunlanish arafasidagi har bir bitim uchun keyingi xat qoralamasini tayyorlaydi."
+
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
 msgstr "Ilova tomonidan o‘rnatilgan agent nomini o‘zgartirib bo‘lmaydi."
+
+#. js-lingui-id: 3tWubk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent shapes your objects and fields around how you work."
+msgstr "Agent obyektlaringiz va maydonlaringizni ishlash uslubingizga moslashtiradi."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1098,6 +1123,11 @@ msgstr "Bu nomga ega agent allaqachon mavjud."
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
 msgstr "Ilova faqat o‘zining ish oqimlarini ishga tushira oladi."
+
+#. js-lingui-id: T/ZKXs
+#: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
+msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
+msgstr "Ilova {MAX_ALLOWED_IFRAME_ORIGINS} tagacha manba uchun iframe media ruxsatini so‘rashi mumkin"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1274,12 +1304,23 @@ msgstr "Boshqa sozlamalar menyusi elementi {0} o‘rnidan allaqachon foydalanmoq
 msgid "Another settings menu item already uses position {nextPosition}"
 msgstr "Boshqa sozlamalar menyusi elementi {nextPosition} o‘rnidan allaqachon foydalanmoqda"
 
+#. js-lingui-id: b2UKvQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item already uses slug \"{slug}\""
+msgstr "Boshqa sozlamalar menyusi bandi allaqachon \"{slug}\" slugidan foydalanmoqda"
+
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
 msgstr "Ushbu ilovaning boshqa sozlamalar menyusi elementi bu o‘rindan allaqachon foydalanmoqda."
+
+#. js-lingui-id: Dswht3
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item of this application already uses this slug."
+msgstr "Ushbu ilovaning boshqa sozlamalar menyusi bandi allaqachon ushbu slugdan foydalanmoqda."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1312,11 +1353,32 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof va nuqta"
 
+#. js-lingui-id: oABUXG
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "App installed"
+msgstr "Ilova o‘rnatildi"
+
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Ilova"
+
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr "\"{applicationName}\" ilovasiga rol biriktirib bo‘lmaydi"
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr "\"{applicationName}\" ilovasiga rol biriktirib bo‘lmaydi: faqat o‘rnatilgan ilovalarga rol biriktirish mumkin"
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr "Ilovaga allaqachon rol biriktirilgan"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1953,6 +2015,16 @@ msgstr "Qaytarilgan vaqt"
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
 msgstr "Qaytarilgan vaqt"
+
+#. js-lingui-id: 7piJZ+
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your companies, contacts and deals from any CRM export."
+msgstr "Istalgan CRM eksportidan kompaniyalaringizni, kontaktlaringizni va bitimlaringizni olib keling."
+
+#. js-lingui-id: YYQkoU
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your team into Twenty."
+msgstr "Jamoangizni Twenty’ga olib keling."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3025,6 +3097,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Companies"
 msgstr "Kompaniyalar"
 
+#. js-lingui-id: UcnBjr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Companies and people fill in from your emails and meetings."
+msgstr "Kompaniyalar va odamlar elektron pochta xabarlaringiz hamda uchrashuvlaringizdan avtomatik to‘ldiriladi."
+
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -3244,10 +3321,20 @@ msgstr "Telefon qo‘ng‘iroq kodi qarama-qarshi."
 msgid "Conflicting phone country code."
 msgstr "Telefon mamlakat kodi qarama-qarshi."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Avval ushbu MCP serveri uchun hisobni ulang."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "{objectMetadataNameSingular} obyektida {connectFieldName} uchun \"connect\" amali ruxsat etilmagan"
+
+#. js-lingui-id: eTJ1jL
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Connect your mailbox"
+msgstr "Pochta qutingizni ulang"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3612,6 +3699,11 @@ msgstr "Yaratish"
 msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
 msgstr "{objectLabelSingular} yaratish"
+
+#. js-lingui-id: Y8ye8i
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Create a kickoff task"
+msgstr "Boshlang‘ich vazifa yarating"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -4812,6 +4904,11 @@ msgctxt "fieldMetadata.description"
 msgid "Email subject line"
 msgstr "Elektron pochta xabari sarlavhasi"
 
+#. js-lingui-id: 4VrNsb
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Email the account owner"
+msgstr "Hisob egasiga email yuboring"
+
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
@@ -4844,14 +4941,12 @@ msgstr "Email xabarlari"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "Email xabarlari"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "Email xabarlari"
@@ -5146,6 +5241,11 @@ msgstr "Shaxs bilan bog‘langan hodisalar"
 msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Ish maydoni a’zosi bilan bog‘langan hodisalar"
+
+#. js-lingui-id: idSfue
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
+msgstr "Har dushanba kuni kelgusi 30 kun ichida yakunlanadigan har bir bitim uchun keyingi email qoralamasini tayyorlang."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5825,6 +5925,12 @@ msgstr "Topish"
 msgid "Find Connected Accounts"
 msgstr "Ulangan akkauntlarni topish"
 
+#. js-lingui-id: HEpRJM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "First direct message member ID"
+msgstr "Birinchi to‘g‘ridan-to‘g‘ri xabar a’zosi IDsi"
+
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "First friendly message"
@@ -5851,6 +5957,21 @@ msgstr "Oqim"
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
 msgstr "Jild yo‘lida fayl kengaytmasi bo‘lmasligi kerak — fayl yo‘llari uchun deleteFile dan foydalaning"
+
+#. js-lingui-id: 9J7Yxo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow up on closing deals"
+msgstr "Yakunlanayotgan bitimlarni kuzatib boring"
+
+#. js-lingui-id: Y2RyNo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up instructions"
+msgstr "Keyingi xat bo‘yicha ko‘rsatmalar"
+
+#. js-lingui-id: xRdoZk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up request sent"
+msgstr "Keyingi xat so‘rovi yuborildi"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6236,6 +6357,11 @@ msgctxt "fieldMetadata.label"
 msgid "Group hash"
 msgstr "Guruh xeshi"
 
+#. js-lingui-id: cGqZJs
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Hand over won deals"
+msgstr "Yutilgan bitimlarni topshiring"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6454,11 +6580,21 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "{objectLabelPlural}ni import qilish"
 
+#. js-lingui-id: gQ9//i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your data"
+msgstr "Ma’lumotlaringizni import qiling"
+
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "In progress"
 msgstr "Jarayonda"
+
+#. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Inbox is not enabled for this workspace."
+msgstr "Ushbu ish maydoni uchun Inbox yoqilmagan."
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -6541,6 +6677,11 @@ msgstr "Kirish tokenlari"
 msgctxt "fieldMetadata.label"
 msgid "Input Tokens"
 msgstr "Kirish tokenlari"
+
+#. js-lingui-id: 5u6qKW
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Install an app"
+msgstr "Ilovani o‘rnating"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -7531,6 +7672,16 @@ msgstr "Noto‘g‘ri ish jarayoni versiyasi."
 msgid "Invitation not found"
 msgstr "Taklifnoma topilmadi"
 
+#. js-lingui-id: ZMCmkn
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invitations sent"
+msgstr "Taklifnomalar yuborildi"
+
+#. js-lingui-id: d+Y+rP
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invite your team"
+msgstr "Jamoangizni taklif qiling"
+
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8145,6 +8296,16 @@ msgstr "Mantiqiy funksiya topilmadi."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Xuddi shu universal identifikatorli mantiqiy funksiya allaqachon mavjud"
 
+#. js-lingui-id: y5Ysbs
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
+msgstr "Import qilgan ma’lumotlarimni ko‘rib chiqing va biznesimni yuritish uchun kerak bo‘ladigan obyektlar, maydonlar va ko‘rinishlarni taklif qiling. Biror narsa yaratishdan oldin mendan nimani kuzatmoqchi ekanimni so‘rang."
+
+#. js-lingui-id: AgKpIa
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Mailbox connected"
+msgstr "Pochta qutisi ulandi"
+
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8731,6 +8892,20 @@ msgstr "Xabarlar"
 #. js-lingui-id: I+2uUa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
+msgid "Messages"
+msgstr "Xabarlar"
+
+#. js-lingui-id: x+60lt
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
+msgid "Messages"
+msgstr "Xabarlar"
+
+#. js-lingui-id: JJTyHZ
+#: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
 msgid "Messages"
 msgstr "Xabarlar"
 
@@ -9668,6 +9843,11 @@ msgstr "So‘ralgan vakolat doiralaridan biri yoki bir nechtasi yaroqsiz."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Faqat qoralama yoki rejalashtirilgan kampaniyani yuborish mumkin."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Faqat ildiz qator darajasidagi ruxsat predikatlari guruhi amallarni berishi mumkin"
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9724,10 +9904,25 @@ msgstr "Faqat ushbu agentga egalik qiluvchi ilova uning tetiklagichlarini o‘zg
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bu ish jarayonini kim ko‘rishini faqat uni yaratgan shaxs o‘zgartira oladi"
 
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Faqat yozuv darajasidagi qoidadagi yuqori darajadagi guruh amallarni berishi mumkin"
+
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Faqat ushbu shakldagi qiymatlarni o‘zgartirish mumkin."
+
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr "Ilovalarga rollarni faqat ish maydoni biriktirishi mumkin"
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr "Ilovalarga rollarni faqat ish maydonining maxsus ilovasi biriktirishi mumkin"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10689,11 +10884,6 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Subyekt turi"
 
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Shaxsiy yozuvlar ushbu ish maydonida hali mavjud emas."
-
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11501,6 +11691,13 @@ msgstr "\"{roleLabel}\" roli agentlarga biriktirilishi mumkin emas"
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr "\"{roleLabel}\" roli API kalitlariga biriktirilishi mumkin emas"
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr "\"{roleLabel}\" rolini ilovalarga biriktirib bo‘lmaydi"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11517,6 +11714,11 @@ msgstr "\"{roleLabel}\" roli webhooklarga biriktirilishi mumkin emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "\"{roleLabel}\" roli tayinlanmaydi: maxsus rollar uchun Tashkilot tarifi talab qilinadi"
+
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr "\"{roleLabel}\" roli ilovaga biriktirilishi uchun ish maydonining maxsus ilovasiga tegishli bo‘lishi kerak"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11615,11 +11817,11 @@ msgstr "Rol nishoni allaqachon mavjud"
 msgid "Role target is missing identifier."
 msgstr "Rol nishonida identifikator yetishmaydi."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr "Rol nishoni quyidagilardan aynan bittasiga ega bo‘lishi kerak: apiKeyId, userWorkspaceId, agentUniversalIdentifier yoki webhookUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr "Rol maqsadi quyidagilardan aynan bittasiga ega bo‘lishi kerak: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier yoki targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11797,6 +11999,11 @@ msgstr "Ishga tushirishlar"
 msgid "Sample records exceed 100 KB."
 msgstr "Namuna yozuvlar 100 KB dan oshadi."
 
+#. js-lingui-id: P79LWT
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must include every selected field."
+msgstr "Namuna yozuvlar tanlangan har bir maydonni o‘z ichiga olishi kerak."
+
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
@@ -11967,6 +12174,12 @@ msgstr "Qidiruv vektori maydoni xuddi shu obyektga tegishli bo‘lishi kerak"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 msgid "Search vector field not found"
 msgstr "Qidiruv vektori maydoni topilmadi"
+
+#. js-lingui-id: pMB33L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Second direct message member ID"
+msgstr "Ikkinchi to‘g‘ridan-to‘g‘ri xabar a’zosi IDsi"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -12250,6 +12463,16 @@ msgstr "Sozlamalar menyusi elementi ko‘lami \"{0}\" yaroqsiz"
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
 msgstr "Sozlamalar menyusi elementi ko‘lami \"{nextScope}\" yaroqsiz"
 
+#. js-lingui-id: nI9Ltr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" is reserved"
+msgstr "\"{slug}\" sozlamalar menyusi bandi slugi zaxiralangan"
+
+#. js-lingui-id: x515yK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
+msgstr "\"{slug}\" sozlamalar menyusi bandi slugi kichik harflardagi kebab-case formatida va ko‘pi bilan {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} ta belgidan iborat bo‘lishi kerak"
+
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -12268,6 +12491,16 @@ msgstr "Sozlamalar menyusi elementi sarlavhasi \"{updatedTitle}\" band qilingan"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Sozlamalar menyusi elementi sarlavhasi talab qilinadi"
+
+#. js-lingui-id: x4ZiTl
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup instructions"
+msgstr "Sozlash ko‘rsatmalari"
+
+#. js-lingui-id: gIoyTf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup request sent"
+msgstr "Sozlash so‘rovi yuborildi"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12619,6 +12852,11 @@ msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "Elektron jadval"
 
+#. js-lingui-id: 73/iLE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Spreadsheet uploaded"
+msgstr "Elektron jadval yuklandi"
+
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO configuration error."
@@ -12683,6 +12921,11 @@ msgstr "Boshlanish sanasi"
 msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "Haftaning boshlanishi"
+
+#. js-lingui-id: wcXsug
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Start the handover when a deal is won."
+msgstr "Bitim yutilganda topshirishni boshlang."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -12955,10 +13198,21 @@ msgstr "1-yorliq"
 msgid "Tab not found for widget duplication."
 msgstr "Vidjetni nusxalash uchun ichki oyna (tab) topilmadi."
 
+#. js-lingui-id: xRgQRi
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Tailor your workspace"
+msgstr "Ish maydoningizni moslashtiring"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Tarball yuklamasi topilmadi."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr "Maqsadli ilova topilmadi"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -13259,6 +13513,11 @@ msgstr "{reservedViewKey} ko‘rinish kaliti standart ko‘rinish uchun ajratilg
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "{reservedViewKey} ko‘rinish kaliti tizimga tegishli standart ko‘rinish uchun ajratilgan; kalitni ko‘rinish ta’rifidan olib tashlang"
 
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr "Bu bosqich ishga tushirishi kerak bo‘lgan agent topilmadi."
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -13301,6 +13560,11 @@ msgstr "Ilova ish oqimi ta’rifi yaroqsiz."
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Ilovaning ishlab chiqarish (production) bogʻliqliklari o‘rnatish uchun juda katta. Uning mantiqiy funksiyalari tomonidan import qilinmaydigan paketlarni (UI kutubxonalari, dev tooling) \"dependencies\" bo‘limidan tashqariga ko‘chiring."
+
+#. js-lingui-id: 2a7bjg
+#: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
+msgid "The application's requested permissions have changed. Review them again before approving."
+msgstr "Ilova so‘ragan ruxsatlar o‘zgardi. Tasdiqlashdan oldin ularni yana bir bor ko‘rib chiqing."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -13546,6 +13810,12 @@ msgstr "Fayl bo‘sh yoki ruxsat etilgan maksimal hajmdan oshib ketgan."
 msgid "The file upload has not been completed. Please retry the upload."
 msgstr "Faylni yuklash yakunlanmadi. Iltimos, qayta yuklab ko‘ring."
 
+#. js-lingui-id: 2T6q1O
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The first member in the fixed direct message pair"
+msgstr "Belgilangan to‘g‘ridan-to‘g‘ri xabar juftligidagi birinchi a’zo"
+
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -13631,6 +13901,11 @@ msgstr "Uzilish vaqtida ishga tushirilishi kerak bo‘lgan mantiqiy funksiya top
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "MCP so‘rov parametrlari noto‘g‘ri."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "MCP serveri sinxronlash uchun juda ko‘p vositalarni taqdim etadi."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
@@ -13800,6 +14075,12 @@ msgstr "Bir xil ustun indeksda ikki marta paydo bo‘la olmaydi."
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
 msgstr "Saqlangan komponent ushbu qoralamadan farq qiladi."
+
+#. js-lingui-id: i+FcdU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The second member in the fixed direct message pair"
+msgstr "Belgilangan to‘g‘ridan-to‘g‘ri xabar juftligidagi ikkinchi a’zo"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14718,12 +14999,24 @@ msgstr "Bu server kaliti allaqachon boshqa ish maydoni tomonidan biriktirilgan."
 msgid "This settings menu item scope is not supported."
 msgstr "Bu sozlamalar menyusi elementi ko‘lami qo‘llab-quvvatlanmaydi."
 
+#. js-lingui-id: jzBAe4
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "This settings menu item slug is invalid or reserved."
+msgstr "Ushbu sozlamalar menyusi elementi slug’i noto‘g‘ri yoki band qilingan."
+
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
 msgstr "Bu sozlamalar menyusi elementi sarlavhasi band qilingan."
+
+#. js-lingui-id: ukriVV
+#: src/engine/core-modules/getting-started/getting-started.exception.ts
+msgid "This step has no workflow."
+msgstr "Bu qadamda ish jarayoni yo‘q."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -16583,6 +16876,11 @@ msgstr "Elektron pochta hisobingizga tizimga kira olmadik. Iltimos, elektron poc
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Elektron pochta hisobingizga ulanishda muammo yuz berdi. Iltimos, sozlamalaringizni tekshirib, qayta urinib ko‘ring."
 
+#. js-lingui-id: b6WVV+
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
+msgstr "Biz {companyName}, {industry} sohasidagi kompaniyamiz. Import qilgan ma’lumotlarimni ko‘rib chiqing va biznesimizni yuritish uchun kerak bo‘ladigan obyektlar, maydonlar va ko‘rinishlarni taklif qiling. Biror narsa yaratishdan oldin mendan so‘rang."
+
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -16876,6 +17174,11 @@ msgstr "Ish jarayonini nusxalash amalga oshmadi, qayta urinib ko‘ring"
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Workflow edge not found."
 msgstr "Ish jarayonining qirrasi topilmadi."
+
+#. js-lingui-id: 5ENQ3i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workflow enabled"
+msgstr "Ish jarayoni yoqildi"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
@@ -17624,9 +17927,8 @@ msgid "You do not have access to this message folder."
 msgstr "Sizda ushbu xabar jildiga kirish huquqi yo‘q."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Sizda ushbu funksiyaga kirish ruxsati yo‘q. Iltimos, ish maydoni administratoriga murojaat qiling."
 

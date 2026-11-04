@@ -2,7 +2,7 @@ import { UseGuards, UseFilters } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Query } from '@nestjs/graphql';
 
 import { Max, MaxLength } from 'class-validator';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
@@ -164,7 +164,7 @@ export class TimelineCalendarEventResolver {
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       recordId: personId,
       workspaceId: workspace.id,
       page,
@@ -183,7 +183,7 @@ export class TimelineCalendarEventResolver {
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: companyId,
       workspaceId: workspace.id,
       page,
@@ -206,7 +206,7 @@ export class TimelineCalendarEventResolver {
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNameSingular: StandardObjectNameSingular.Opportunity,
       recordId: opportunityId,
       workspaceId: workspace.id,
       page,
