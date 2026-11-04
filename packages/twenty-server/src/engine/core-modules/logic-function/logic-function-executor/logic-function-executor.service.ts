@@ -98,6 +98,20 @@ export enum LogicFunctionExecutionExceptionCode {
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 
+type ExecutionArgs = {
+  workspaceId: string;
+  flatApplication: FlatApplication;
+  flatLogicFunction: FlatLogicFunction;
+  flatApplicationVariableMaps: FlatApplicationVariableMaps;
+  spenders: UsageSpenders;
+  payload: object;
+  userId?: string;
+  userWorkspaceId?: string;
+  executionMode?: LogicFunctionExecutionMode;
+  workspaceDeletionRequestTimestamp?: string;
+  retry?: LogicFunctionRetryContext;
+};
+
 @Injectable()
 export class LogicFunctionExecutorService {
   private readonly logger = new Logger(LogicFunctionExecutorService.name);
@@ -183,10 +197,11 @@ export class LogicFunctionExecutorService {
     });
   }
 
+  // The build runs after admission so a rejected run never spends a compilation
   async executeBuiltCode({
     workspaceId,
     flatApplication,
-    builtHandlerPath,
+    getBuiltHandlerPath,
     payload,
     userId,
     userWorkspaceId,
@@ -194,18 +209,28 @@ export class LogicFunctionExecutorService {
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    builtHandlerPath: string;
+    getBuiltHandlerPath: () => Promise<string>;
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
     workflowId?: string;
   }): Promise<LogicFunctionExecuteResult> {
+    const spenders: UsageSpenders = {
+      logicFunctionId: null,
+      applicationId: flatApplication.id,
+      workflowId,
+    };
+
+    await this.admitExecution({ workspaceId, flatApplication, spenders });
+
+    const builtHandlerPath = await getBuiltHandlerPath();
+
     const { flatApplicationVariableMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationVariableMaps',
       ]);
 
-    return this.executeResolved({
+    return this.executeAdmitted({
       workspaceId,
       payload,
       userId,
@@ -216,41 +241,37 @@ export class LogicFunctionExecutorService {
         builtHandlerPath,
       }),
       flatApplicationVariableMaps,
-      spenders: {
-        logicFunctionId: null,
-        applicationId: flatApplication.id,
-        workflowId,
-      },
+      spenders,
     });
   }
 
   private async executeResolved({
+    shouldEnforceUsageLimits = true,
+    ...executionArgs
+  }: ExecutionArgs & {
+    shouldEnforceUsageLimits?: boolean;
+  }): Promise<LogicFunctionExecuteResult> {
+    await this.admitExecution({
+      workspaceId: executionArgs.workspaceId,
+      flatApplication: executionArgs.flatApplication,
+      spenders: executionArgs.spenders,
+      shouldEnforceUsageLimits,
+    });
+
+    return this.executeAdmitted(executionArgs);
+  }
+
+  private async admitExecution({
     workspaceId,
     flatApplication,
-    flatLogicFunction,
-    flatApplicationVariableMaps,
     spenders,
-    payload,
-    userId,
-    userWorkspaceId,
-    executionMode,
-    workspaceDeletionRequestTimestamp,
-    retry = { retryCount: 0, maxRetries: 0 },
     shouldEnforceUsageLimits = true,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    flatLogicFunction: FlatLogicFunction;
-    flatApplicationVariableMaps: FlatApplicationVariableMaps;
     spenders: UsageSpenders;
-    payload: object;
-    userId?: string;
-    userWorkspaceId?: string;
-    executionMode?: LogicFunctionExecutionMode;
-    workspaceDeletionRequestTimestamp?: string;
-    retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
-  }): Promise<LogicFunctionExecuteResult> {
+  }): Promise<void> {
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
@@ -263,7 +284,21 @@ export class LogicFunctionExecutorService {
         spenders,
       });
     }
+  }
 
+  private async executeAdmitted({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+    flatApplicationVariableMaps,
+    spenders,
+    payload,
+    userId,
+    userWorkspaceId,
+    executionMode,
+    workspaceDeletionRequestTimestamp,
+    retry = { retryCount: 0, maxRetries: 0 },
+  }: ExecutionArgs): Promise<LogicFunctionExecuteResult> {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,

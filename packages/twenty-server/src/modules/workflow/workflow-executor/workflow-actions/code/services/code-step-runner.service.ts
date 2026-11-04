@@ -9,6 +9,10 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 const CODE_STEP_RUNTIME = LogicFunctionRuntime.NODE22;
 
@@ -41,11 +45,25 @@ export class CodeStepRunnerService {
     userWorkspaceId?: string;
     workflowId?: string;
   }): Promise<LogicFunctionExecuteResult> {
-    let builtHandlerPath: string;
-
     try {
-      builtHandlerPath = await this.getOrBuild({ flatApplication, code });
+      return await this.logicFunctionExecutorService.executeBuiltCode({
+        workspaceId: flatApplication.workspaceId,
+        flatApplication,
+        getBuiltHandlerPath: () => this.getOrBuild({ flatApplication, code }),
+        payload,
+        userId,
+        userWorkspaceId,
+        workflowId,
+      });
     } catch (error) {
+      if (
+        !(error instanceof LogicFunctionException) ||
+        error.code !==
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED
+      ) {
+        throw error;
+      }
+
       return {
         data: null,
         logs: '',
@@ -54,21 +72,11 @@ export class CodeStepRunnerService {
         status: LogicFunctionExecutionStatus.ERROR,
         error: {
           errorType: 'BuildError',
-          errorMessage: error instanceof Error ? error.message : String(error),
+          errorMessage: error.message,
           stackTrace: [],
         },
       };
     }
-
-    return this.logicFunctionExecutorService.executeBuiltCode({
-      workspaceId: flatApplication.workspaceId,
-      flatApplication,
-      builtHandlerPath,
-      payload,
-      userId,
-      userWorkspaceId,
-      workflowId,
-    });
   }
 
   async getOrBuild({
