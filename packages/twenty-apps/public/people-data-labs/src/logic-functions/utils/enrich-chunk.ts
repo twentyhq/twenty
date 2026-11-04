@@ -182,6 +182,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   recordIds,
   input,
   minLikelihoods,
+  required,
   adapter,
   resultById,
   companyIdByMatchKeyCache,
@@ -190,6 +191,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   recordIds: string[];
   input: BulkEnrichInput;
   minLikelihoods: MinLikelihoods;
+  required?: string;
   adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
   resultById: Map<string, EnrichResult>;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
@@ -214,7 +216,10 @@ export const enrichChunk = async <TNode, TData, TParams>({
   }
 
   const nodeByRecordId = new Map(
-    recordNodes.map((recordNode) => [adapter.getNodeId(recordNode), recordNode]),
+    recordNodes.map((recordNode) => [
+      adapter.getNodeId(recordNode),
+      recordNode,
+    ]),
   );
 
   const recordsToEnrich: { recordId: string; node: TNode; params: TParams }[] =
@@ -260,7 +265,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   let pdlEnrichmentOutcomes: PdlEnrichResult<TData>[];
   try {
     pdlEnrichmentOutcomes = await adapter.enrichBatch(
-      recordsToEnrich.map((recordToEnrich) => recordToEnrich.params),
+      recordsToEnrich.map(({ params }) => ({ ...params, required })),
     );
   } catch (enrichBatchError) {
     const isPdlConfigError = enrichBatchError instanceof PdlConfigError;
@@ -307,7 +312,10 @@ export const enrichChunk = async <TNode, TData, TParams>({
     const { recordId, node: recordNode } = recordsToEnrich[index];
     const enrichmentOutcome = pdlEnrichmentOutcomes[index];
 
-    if (!isDefined(enrichmentOutcome) || enrichmentOutcome.outcome === 'error') {
+    if (
+      !isDefined(enrichmentOutcome) ||
+      enrichmentOutcome.outcome === 'error'
+    ) {
       resultById.set(
         recordId,
         buildErrorResult({

@@ -8,6 +8,8 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
   objectNameSingular: string;
   noIdentifierMessage: string;
   pricePerMatchDollars: number;
+  requiredFieldsEnvVarName: string;
+  requiredFieldOptions: { value: string }[];
   minLikelihoodEnvVarName: string;
   weakIdentifierMinLikelihoodEnvVarName: string;
   readRecords: (args: {

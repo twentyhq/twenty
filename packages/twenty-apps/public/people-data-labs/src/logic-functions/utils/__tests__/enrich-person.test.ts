@@ -42,6 +42,20 @@ describe('enrichPerson', () => {
     });
   });
 
+  it('forwards required output fields when provided', async () => {
+    await enrichPerson([
+      { profile: 'linkedin.com/in/jane', required: 'work_email AND job_title' },
+    ]);
+
+    expect(postPdlSingleEnrichMock).toHaveBeenCalledWith({
+      path: '/person/enrich',
+      params: {
+        profile: 'linkedin.com/in/jane',
+        required: 'work_email AND job_title',
+      },
+    });
+  });
+
   it('returns one outcome per request, preserving order', async () => {
     postPdlSingleEnrichMock
       .mockResolvedValueOnce({
@@ -52,7 +66,10 @@ describe('enrichPerson', () => {
       })
       .mockResolvedValueOnce({ outcome: 'not_found', httpStatus: 404 });
 
-    const results = await enrichPerson([{ email: 'a@b.com' }, { email: 'b@b.com' }]);
+    const results = await enrichPerson([
+      { email: 'a@b.com' },
+      { email: 'b@b.com' },
+    ]);
 
     expect(results).toEqual([
       { outcome: 'matched', httpStatus: 200, likelihood: 9, data: { id: '1' } },

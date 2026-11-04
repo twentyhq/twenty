@@ -57,6 +57,34 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
     ]);
   });
 
+  it('should leave enum arrays unset so optional inputs can use application defaults', () => {
+    const inputSchema: InputSchema = [
+      {
+        type: 'object',
+        properties: {
+          requiredFields: {
+            type: 'array',
+            items: { type: 'string', enum: ['work_email', 'phone_numbers'] },
+          },
+          tags: { type: 'array', items: { type: 'string' } },
+          emptyEnum: { type: 'array', items: { type: 'string', enum: [] } },
+        },
+      },
+    ];
+
+    const [functionInput] = getFunctionInputFromInputSchema(inputSchema);
+
+    expect(functionInput).toStrictEqual({
+      requiredFields: undefined,
+      tags: [],
+      emptyEnum: [],
+    });
+    expect(JSON.parse(JSON.stringify(functionInput))).toEqual({
+      tags: [],
+      emptyEnum: [],
+    });
+  });
+
   it('should init record-typed inputs with null and record arrays with empty arrays', () => {
     const inputSchema = [
       {

@@ -4,6 +4,8 @@ import { chargeCredits } from 'twenty-sdk/billing';
 
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-company-required-field-options';
+import { PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-company-required-fields-env-var-name';
 import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
@@ -107,7 +109,10 @@ const buildHarness = (configs: RecordConfig[]) => {
         throw new Error('build failed');
       }
 
-      return { mappedData: { mapped: node.id }, persistData: { value: node.id } };
+      return {
+        mappedData: { mapped: node.id },
+        persistData: { value: node.id },
+      };
     },
   );
 
@@ -115,6 +120,8 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     pricePerMatchDollars: FAKE_PRICE_PER_MATCH_DOLLARS,
+    requiredFieldsEnvVarName: PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME,
+    requiredFieldOptions: PDL_COMPANY_REQUIRED_FIELD_OPTIONS,
     minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
     weakIdentifierMinLikelihoodEnvVarName:
       PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
@@ -159,6 +166,46 @@ describe('runBatchEnrichment', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+  });
+
+  it('passes app requirements to every PDL request across chunks', async () => {
+    vi.stubEnv(
+      PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME,
+      '["industry","employee_count"]',
+    );
+    const ids = buildRecordIds(101);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
+    expect(
+      harness.enrichBatch.mock.calls.flatMap(([params]) => params),
+    ).toEqual(
+      ids.map((id) => ({ id, required: 'industry AND employee_count' })),
+    );
+  });
+
+  it('rejects invalid required fields before reading or billing records', async () => {
+    const harness = buildHarness([{ id: 'a' }]);
+
+    await expect(
+      runBatchEnrichment({
+        client: CLIENT,
+        input: { records: ['a'], requiredFields: ['work_email'] },
+        adapter: harness.adapter,
+      }),
+    ).rejects.toThrow(
+      'Required fields must be a selection of supported output fields.',
+    );
+
+    expect(harness.readRecords).not.toHaveBeenCalled();
+    expect(harness.enrichBatch).not.toHaveBeenCalled();
+    expect(chargeCredits).not.toHaveBeenCalled();
   });
 
   it('resolves the likelihoods once and passes them to every chunk', async () => {
@@ -227,7 +274,10 @@ describe('runBatchEnrichment', () => {
       recordIds: ['a', 'b'],
     });
     expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
-    expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }, { id: 'b' }]);
+    expect(harness.enrichBatch).toHaveBeenCalledWith([
+      { id: 'a' },
+      { id: 'b' },
+    ]);
     expect(harness.updateOne).toHaveBeenCalledTimes(2);
     expect(result).toMatchObject({
       total: 2,
@@ -241,7 +291,10 @@ describe('runBatchEnrichment', () => {
     const harness = buildHarness([
       { id: 'a', outcome: { outcome: 'not_found', httpStatus: 404 } },
       { id: 'b', outcome: { outcome: 'not_found', httpStatus: 404 } },
-      { id: 'c', outcome: { outcome: 'error', httpStatus: 500, message: 'boom' } },
+      {
+        id: 'c',
+        outcome: { outcome: 'error', httpStatus: 500, message: 'boom' },
+      },
     ]);
 
     const result = await runBatchEnrichment({
@@ -274,7 +327,10 @@ describe('runBatchEnrichment', () => {
   });
 
   it('skips no-identifier records before the PDL call', async () => {
-    const harness = buildHarness([{ id: 'a', hasIdentifier: false }, { id: 'b' }]);
+    const harness = buildHarness([
+      { id: 'a', hasIdentifier: false },
+      { id: 'b' },
+    ]);
 
     const result = await runBatchEnrichment({
       client: CLIENT,
@@ -291,12 +347,18 @@ describe('runBatchEnrichment', () => {
 
     await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a'), updateFields: UPDATE_FIELDS_OPTIONS.overwrite },
+      input: {
+        records: records('a'),
+        updateFields: UPDATE_FIELDS_OPTIONS.overwrite,
+      },
       adapter: harness.adapter,
     });
 
     expect(harness.buildMatchedData).toHaveBeenCalledWith(
-      expect.objectContaining({ overrideExistingValues: true, shouldPersist: true }),
+      expect.objectContaining({
+        overrideExistingValues: true,
+        shouldPersist: true,
+      }),
     );
   });
 
@@ -325,7 +387,10 @@ describe('runBatchEnrichment', () => {
 
     const result = await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a', 'b'), updateFields: UPDATE_FIELDS_OPTIONS.no },
+      input: {
+        records: records('a', 'b'),
+        updateFields: UPDATE_FIELDS_OPTIONS.no,
+      },
       adapter: harness.adapter,
     });
 
@@ -352,7 +417,9 @@ describe('runBatchEnrichment', () => {
     });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+    expect(
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'Test b not found',
     });
@@ -368,10 +435,12 @@ describe('runBatchEnrichment', () => {
       adapter: harness.adapter,
     });
 
+    expect(result.results.find((entry) => entry.recordId === 'a')?.status).toBe(
+      'MATCHED',
+    );
     expect(
-      result.results.find((entry) => entry.recordId === 'a')?.status,
-    ).toBe('MATCHED');
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'update failed',
     });
@@ -417,10 +486,12 @@ describe('runBatchEnrichment', () => {
       adapter: harness.adapter,
     });
 
+    expect(result.results.find((entry) => entry.recordId === 'a')?.status).toBe(
+      'MATCHED',
+    );
     expect(
-      result.results.find((entry) => entry.recordId === 'a')?.status,
-    ).toBe('MATCHED');
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'build failed',
     });
@@ -439,7 +510,10 @@ describe('runBatchEnrichment', () => {
     const harness = buildHarness([
       { id: 'matched' },
       { id: 'notfound', outcome: { outcome: 'not_found', httpStatus: 404 } },
-      { id: 'errored', outcome: { outcome: 'error', httpStatus: 500, message: 'x' } },
+      {
+        id: 'errored',
+        outcome: { outcome: 'error', httpStatus: 500, message: 'x' },
+      },
       { id: 'skipped', hasIdentifier: false },
       { id: 'missing', exists: false },
     ]);
@@ -447,7 +521,13 @@ describe('runBatchEnrichment', () => {
     const result = await runBatchEnrichment({
       client: CLIENT,
       input: {
-        records: records('matched', 'notfound', 'errored', 'skipped', 'missing'),
+        records: records(
+          'matched',
+          'notfound',
+          'errored',
+          'skipped',
+          'missing',
+        ),
       },
       adapter: harness.adapter,
     });

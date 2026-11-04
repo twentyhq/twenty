@@ -14,3 +14,11 @@ Pay only for matches, in Twenty credits — **not found and skipped records are 
 
 - **Person match:** $0.15
 - **Company match:** $0.075
+
+## Match requirements
+
+In the app settings, use **Required fields for people matches** and **Required fields for company matches** to select the output fields a match must contain. Both selections are empty by default. Every selected field must be present, following PDL's [`required` parameter](https://docs.peopledatalabs.com/docs/input-parameters-person-enrichment-api#required).
+
+All four enrichment workflow actions also have a **Required fields for a match** multiselect. An untouched selection uses the app setting. A workflow selection overrides it, and clearing a selection requires no fields for that action.
+
+The selectors offer output fields supported by the app. Fields sent as matching inputs, such as company name and website, are excluded because PDL does not support requiring them in the same request.
