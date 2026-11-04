@@ -12,12 +12,12 @@ export const lockAgentChatChannelForThreadWriteOrThrow = async ({
   workspaceId: string;
   channelId: string;
 }): Promise<void> => {
-  const [lockResult] = await transactionScope.executeRawQuery(
+  const [{ isLocked }] = await transactionScope.executeRawQuery(
     'SELECT pg_try_advisory_xact_lock_shared(hashtextextended($1, 0)) AS "isLocked"',
     [buildAgentChatChannelDeletionLockKey({ workspaceId, channelId })],
   );
 
-  if (lockResult?.isLocked !== true) {
+  if (isLocked !== true) {
     throwAgentChatChannelBusy();
   }
 
