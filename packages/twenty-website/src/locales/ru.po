@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -6730,7 +6730,7 @@ msgstr "Введите корректный адрес электронной п
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "Введите ссылку на ваш основной канал, например youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7960,7 +7960,7 @@ msgstr "Сьерра-Леоне 🇸🇱"
 #. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
 msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
-msgstr ""
+msgstr "Зарегистрируйтесь в Cloud менее чем за минуту и начните 30-дневный пробный период. Для более масштабных развёртываний наша команда может поддержать вас на каждом этапе. Свяжитесь с нами, чтобы обсудить ваши потребности."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10306,7 +10306,7 @@ msgstr "YouTube, рассылки, LinkedIn, TikTok: для всех, кто р�
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
