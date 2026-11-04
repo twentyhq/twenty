@@ -13,6 +13,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -32,24 +33,25 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @MetadataResolver(() => ApplicationDTO)
 @UseFilters(ApplicationExceptionFilter)
@@ -119,6 +121,21 @@ export class ApplicationResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+  }
+
+  @ResolveField(() => Boolean)
+  runOnUserPreferences(
+    @Parent()
+    application: Partial<
+      Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
+        Pick<ApplicationDTO, 'runOnUserPreferences'>
+    >,
+  ): boolean {
+    return (
+      application.runOnUserPreferences ??
+      application.isUserHealthCheckEnabled ??
+      false
+    );
   }
 
   @ResolveField(() => Boolean)

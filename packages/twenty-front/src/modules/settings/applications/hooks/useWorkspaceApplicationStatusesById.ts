@@ -1,5 +1,6 @@
 import { getWorkspaceApplicationStatusesById } from '@/settings/applications/utils/getWorkspaceApplicationStatusesById';
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import { FindManyApplicationsForStatusDocument } from '~/generated-metadata/graphql';
 
 type UseWorkspaceApplicationStatusesByIdArgs = {
@@ -13,7 +14,7 @@ export const useWorkspaceApplicationStatusesById = ({
   applications,
   shouldSkip,
 }: UseWorkspaceApplicationStatusesByIdArgs) => {
-  const { data, error, refetch } = useQuery(
+  const { data, loading, error, refetch } = useQuery(
     FindManyApplicationsForStatusDocument,
     {
       skip: shouldSkip,
@@ -26,6 +27,7 @@ export const useWorkspaceApplicationStatusesById = ({
       applications,
       applicationsWithVariables: data?.findManyApplications,
     }),
+    isLoading: loading && !isDefined(data),
     error,
     refetch,
   };

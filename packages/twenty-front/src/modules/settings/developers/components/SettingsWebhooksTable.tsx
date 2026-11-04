@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
 import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -12,6 +10,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import { GetWebhooksDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -20,6 +19,7 @@ const StyledTableBodyContainer = styled.div`
 `;
 
 export const SettingsWebhooksTable = () => {
+  const { t } = useLingui();
   const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
   const webhooks = webhooksData?.webhooks;

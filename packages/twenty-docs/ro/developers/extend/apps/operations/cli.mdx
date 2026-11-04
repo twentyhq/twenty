@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Rularea CLI-ului
 
-CLI-ul `twenty` se conectează la spațiile de lucru Twenty din terminalul dvs. Folosiți-l pentru a inspecta metadatele, a citi înregistrări, a trimite solicitări API și a crea, sincroniza și depana aplicații. Necesită **Node.js 24.5+ sau 26.5+**.
+CLI-ul `twenty` se conectează la spațiile de lucru Twenty din terminalul dvs. Folosiți-l pentru a inspecta metadatele, a citi înregistrări, a trimite solicitări API și a crea, sincroniza și depana aplicații. CLI-ul însuși necesită **Node.js 24.5+**. Dezvoltarea aplicațiilor necesită, de asemenea, o versiune Node acceptată de SDK-ul instalat; consultați [Pornire rapidă](/ro/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Rulați orice comandă prin `npx`, fără a instala nimic:
+Rulați orice comandă prin `npx`, fără o instalare globală:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-Exemplele de mai jos folosesc `twenty`. Prefixați-le cu `npx twenty@latest` dacă nu l-ați instalat la nivel global. Rulați `twenty commands` pentru lista completă de comenzi și `twenty \<command> --help` pentru opțiunile unei comenzi.
+Exemplele de mai jos folosesc `twenty`. Înlocuiți `twenty` cu `npx twenty@latest` dacă nu l-ați instalat global. Rulați `twenty commands` pentru lista completă de comenzi și `twenty \<command> --help` pentru opțiunile unei comenzi.
 
 | Comandă         | Ce face                                                                                |
 | --------------- | -------------------------------------------------------------------------------------- |
@@ -33,6 +33,7 @@ Exemplele de mai jos folosesc `twenty`. Prefixați-le cu `npx twenty@latest` dac
 | `api`           | Trimiteți cereri REST sau GraphQL brute                                                |
 | `open`          | Deschideți spațiul de lucru în browser                                                 |
 | `aplicație`     | Creați, compilați, sincronizați, depanați și dezinstalați aplicații                    |
+| `local`         | Începeți, inspectați, opriți, actualizați și resetați mediul de dezvoltare locală      |
 | `doctor`        | Diagnosticați CLI-ul, SDK-ul aplicației și conexiunea la spațiul de lucru              |
 
 Fiecare comandă care comunică cu un spațiu de lucru acceptă `--remote \<name>` pentru a viza o conexiune salvată alta decât cea implicită și `--json` pentru ieșire structurată.
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Utilizați adresa spațiului de lucru sau adresa serverului pentru o configurare locală: `http://localhost:2020` pentru [serverul Docker local](/ro/developers/extend/apps/getting-started/local-server), `http://localhost:3000` pentru o copie locală a sursei. Puteți copia comanda exactă din **Settings > Developers > CLI**. Autentificarea prin browser necesită Twenty 2.42 sau o versiune ulterioară.
+Utilizați adresa spațiului dvs. de lucru sau adresa serverului pentru o configurare locală: `http://localhost:2020` pentru [mediul de dezvoltare local](/ro/developers/extend/apps/getting-started/local-server), `http://localhost:3000` pentru o copie locală a codului sursă. Puteți copia comanda exactă din **Settings > Developers > CLI**. Autentificarea prin browser necesită Twenty 2.42 sau o versiune ulterioară.
 
 Păstrați mai multe conexiuni denumindu-le:
 
@@ -63,6 +64,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 ```
 
 De asemenea, puteți seta `TWENTY_API_URL` și `TWENTY_API_KEY` pentru o singură rulare fără a salva nimic. Conexiunile salvate se află în `~/.twenty/config.json`.
+
+Comenzile selectează un spațiu de lucru în această ordine:
+
+1. Un `--remote \<name>` explicit, care suprascrie variabilele de mediu țintă.
+2. `TWENTY_REMOTE` sau perechea `TWENTY_API_URL` și `TWENTY_API_KEY`. Nu combinați aceste două metode.
+3. Remote-ul implicit salvat.
+
+`auth login --name \<name>` salvează o conexiune, dar păstrează un remote implicit existent. Adăugați `--use` sau rulați `twenty remote use \<name>` pentru a schimba remote-ul implicit.
 
 ## Explorarea datelor
 

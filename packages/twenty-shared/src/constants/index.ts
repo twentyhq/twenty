@@ -52,7 +52,6 @@ export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperator
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
-export { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from './FrontComponentHostFetchHeaderName';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
@@ -73,6 +72,8 @@ export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from './ObjectsWithChannelVisibilityConstraints';
 export { PARTNER_PATTERN } from './PartnerPattern';
 export { PermissionFlagType } from './PermissionFlagType';
+export { PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER } from './PermissionFlagTypeByUniversalIdentifier';
+export { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from './PermissionFlagUniversalIdentifierByType';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { POLLED_MESSAGE_CHANNEL_TYPES } from './PolledMessageChannelTypes';
 export { QUERY_DEFAULT_LIMIT_RECORDS } from './QueryDefaultLimitRecords';

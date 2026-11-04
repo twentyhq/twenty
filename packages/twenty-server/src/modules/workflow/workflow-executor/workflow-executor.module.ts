@@ -6,7 +6,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { ApplicationWorkflowStepPermissionService } from 'src/modules/workflow/workflow-executor/services/application-workflow-step-permission.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent-action.module';
 import { ClassifyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify-action.module';

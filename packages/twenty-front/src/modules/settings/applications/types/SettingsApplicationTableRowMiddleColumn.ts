@@ -1,1 +1,4 @@
-export type SettingsApplicationTableRowMiddleColumn = 'type' | 'status';
+export type SettingsApplicationTableRowMiddleColumn =
+  | 'type'
+  | 'status'
+  | 'typeOrStatus';

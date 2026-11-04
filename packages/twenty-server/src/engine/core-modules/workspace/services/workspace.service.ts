@@ -10,7 +10,10 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
-import { type IframeMediaPermission } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type IframeMediaPermission,
+} from 'twenty-shared/types';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
@@ -104,9 +107,9 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -156,6 +159,8 @@ export class WorkspaceService {
     isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
+    aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -427,6 +432,26 @@ export class WorkspaceService {
       agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
+
+    const isUpdatingAssistantModes =
+      isDefined(payload.aiChatDirectMessageAssistantMode) ||
+      isDefined(payload.aiChatInboxAssistantMode);
+    const isInboxRequiredButDisabled =
+      isUpdatingAssistantModes &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspace.id,
+      ));
+
+    if (isInboxRequiredButDisabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+        },
+      );
+    }
 
     if (
       isDefined(payload.subdomain) &&

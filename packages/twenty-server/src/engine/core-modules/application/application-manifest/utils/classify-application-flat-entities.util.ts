@@ -93,10 +93,12 @@ const classifyFlatEntity = ({
       return ('userWorkspaceId' in flatEntity &&
         isDefined(flatEntity.userWorkspaceId)) ||
         ('apiKeyId' in flatEntity && isDefined(flatEntity.apiKeyId)) ||
-        ('webhookId' in flatEntity && isDefined(flatEntity.webhookId))
+        ('webhookId' in flatEntity && isDefined(flatEntity.webhookId)) ||
+        ('targetApplicationId' in flatEntity &&
+          isDefined(flatEntity.targetApplicationId))
         ? {
             status: ApplicationExportCoverageStatus.EXCLUDED,
-            reason: 'member, API key or webhook role assignment',
+            reason: 'member, API key, webhook or application role assignment',
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
@@ -200,6 +202,13 @@ const buildContainedFlatEntityScan =
   };
 
 const CONTAINED_FLAT_ENTITY_SCANS: ContainedFlatEntityScan[] = [
+  buildContainedFlatEntityScan({
+    metadataName: 'validationRule',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatValidationRuleMaps,
+    containerMetadataName: 'objectMetadata',
+    containerUniversalForeignKey: 'objectMetadataUniversalIdentifier',
+  }),
   buildContainedFlatEntityScan({
     metadataName: 'fieldMetadata',
     selectFlatEntityMaps: (allFlatEntityMaps) =>

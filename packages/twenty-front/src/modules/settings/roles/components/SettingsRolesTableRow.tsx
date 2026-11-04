@@ -3,14 +3,15 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronRight, IconLock, useIcons } from 'twenty-ui/icon';
+import { IconChevronRight, IconLock } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledNameCell = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -45,6 +46,7 @@ type SettingsRolesTableRowProps = {
 const MAX_VISIBLE_ROLE_MEMBER_AVATARS = 5;
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');

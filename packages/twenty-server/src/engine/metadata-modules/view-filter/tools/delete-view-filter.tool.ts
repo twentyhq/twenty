@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -7,6 +6,8 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 
 const deleteViewFilterInputSchema = z.object({
   id: z.string().uuid().describe('ID of the view filter to delete'),
@@ -15,7 +16,7 @@ const deleteViewFilterInputSchema = z.object({
 @DefineTool({
   name: 'delete_view_filter',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
   description:
     'Remove a filter from a view. Use get_view_filters to find the filter ID.',
 })
@@ -24,14 +25,24 @@ export class DeleteViewFilterTool extends BaseTool<
 > {
   readonly inputSchema = deleteViewFilterInputSchema;
 
-  constructor(private readonly viewFilterService: ViewFilterService) {
+  constructor(
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof deleteViewFilterInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+      kind: 'viewFilter',
+      entityId: input.id,
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const filter = await this.viewFilterService.deleteOne({
       deleteViewFilterInput: { id: input.id },
       workspaceId,

@@ -11,15 +11,15 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
   }
 > = {
   [BillingArrangementType.COMMITTED_SEATS]: {
-    required: ['seats', 'seatCapMode'],
-    optional: ['stripePriceId', 'endsAt'],
+    required: ['seats', 'seatCapMode', 'endsAt'],
+    optional: ['stripePriceId'],
   },
   [BillingArrangementType.FREE_SEATS]: {
     required: ['seats'],
     optional: ['endsAt'],
   },
-  [BillingArrangementType.COUPON]: {
-    required: ['stripeCouponId'],
+  [BillingArrangementType.DISCOUNT]: {
+    required: ['stripeDiscountId'],
     optional: ['endsAt'],
   },
   [BillingArrangementType.TRIAL_EXTENSION]: {

@@ -10,6 +10,7 @@ import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/
 
 const LAMBDA_REGION = 'us-east-1';
 const LAMBDA_ROLE = 'arn:aws:iam::000000000000:role/twenty-integration-test';
+const LAMBDA_LAYER_BUCKET = 'twenty-integration-test-layers';
 const FLOCI_CREDENTIALS = { accessKeyId: 'test', secretAccessKey: 'test' };
 
 export const switchToFlociLambdaDriver =
@@ -20,6 +21,7 @@ export const switchToFlociLambdaDriver =
       LOGIC_FUNCTION_LAMBDA_REGION: LAMBDA_REGION,
       LOGIC_FUNCTION_LAMBDA_ENDPOINT: floci.endpoint,
       LOGIC_FUNCTION_LAMBDA_ROLE: LAMBDA_ROLE,
+      LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: LAMBDA_LAYER_BUCKET,
       LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: FLOCI_CREDENTIALS.accessKeyId,
       LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY:
         FLOCI_CREDENTIALS.secretAccessKey,

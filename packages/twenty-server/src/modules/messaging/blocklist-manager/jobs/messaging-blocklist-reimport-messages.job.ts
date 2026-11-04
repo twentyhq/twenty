@@ -103,9 +103,8 @@ export class BlocklistReimportMessagesJob {
     workspaceId: string;
   }): Promise<string[]> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({

@@ -9,6 +9,14 @@ const MCP_SERVER_FIELDS = `
   url
   connectionProviderId
   isActive
+  tools {
+    name
+    description
+    inputSchema
+    annotations
+  }
+  toolsSyncedAt
+  toolsSyncError
   applicationId
 `;
 
@@ -23,6 +31,14 @@ const CREATE_MCP_SERVER_MUTATION = gql`
 const UPDATE_MCP_SERVER_MUTATION = gql`
   mutation UpdateMcpServer($input: UpdateMcpServerInput!) {
     updateMcpServer(input: $input) {
+      ${MCP_SERVER_FIELDS}
+    }
+  }
+`;
+
+const SYNC_MCP_SERVER_TOOLS_MUTATION = gql`
+  mutation SyncMcpServerTools($id: UUID!) {
+    syncMcpServerTools(id: $id) {
       ${MCP_SERVER_FIELDS}
     }
   }
@@ -68,6 +84,12 @@ export const updateMcpServer = ({
   makeMetadataApiRequest({
     query: UPDATE_MCP_SERVER_MUTATION,
     variables: { input: { id, update } },
+  });
+
+export const syncMcpServerTools = (id: string) =>
+  makeMetadataApiRequest({
+    query: SYNC_MCP_SERVER_TOOLS_MUTATION,
+    variables: { id },
   });
 
 export const deleteMcpServer = (id: string) =>

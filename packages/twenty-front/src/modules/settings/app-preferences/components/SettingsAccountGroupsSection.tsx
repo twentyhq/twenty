@@ -1,15 +1,17 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
 import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
+import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { getAccountGroupApplicationsWithSettings } from '@/settings/app-preferences/utils/getAccountGroupApplicationsWithSettings';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -37,6 +39,7 @@ export const SettingsAccountGroupsSection = ({
   const { t } = useLingui();
   const { addBuiltInAccount } = useAddBuiltInAccount();
   const { groups: allGroups, loading } = useMyAccountGroups();
+  const { applicationsWithPreferences } = useApplicationsWithPreferences();
 
   const groups = isDefined(builtInAccountApp)
     ? allGroups.filter((group) =>
@@ -75,6 +78,12 @@ export const SettingsAccountGroupsSection = ({
                 <SettingsAccountGroupTableRow
                   key={group.id}
                   group={group}
+                  hasApplicationSettings={isNonEmptyArray(
+                    getAccountGroupApplicationsWithSettings({
+                      group,
+                      applicationsWithPreferences,
+                    }),
+                  )}
                   builtInAccountApp={builtInAccountApp}
                 />
               ))}

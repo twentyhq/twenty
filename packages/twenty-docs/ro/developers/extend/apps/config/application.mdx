@@ -49,10 +49,10 @@ Notițe:
 * `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete. O variabilă cu `scope: 'USER'` păstrează valoarea membrului pentru care rulează codul: consultați [Variabilele spațiului de lucru și ale utilizatorului](#workspace-and-user-variables).
 * Aplicația ta poate, de asemenea, să citească și să actualizeze propriile valori ale variabilelor în timpul rulării, astfel salvează o componentă personalizată de setări ceea ce a introdus utilizatorul: consultă [Citirea și actualizarea variabilelor în timpul rulării](/ro/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). O aplicație accesează doar propriile variabile, în propriul spațiu de lucru.
 * Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
-* Funcțiile de pre-instalare, post-instalare și dezinstalare, precum și verificarea stării de sănătate, sunt detectate automat în timpul construirii manifestului — nu este nevoie să faceți referire la ele în `defineApplication()`.
+* Funcțiile de pre-instalare, post-instalare și dezinstalare, precum și verificările de stare, sunt detectate automat în timpul construirii manifestului — nu este nevoie să faceți referire la ele în `defineApplication()`.
 * Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 * `serverVariables` sunt configurări și secrete la nivel de instanță (de ex. chei API). Spre deosebire de `applicationVariables`, ele nu declară nicio valoare în manifest — operatorul spațiului de lucru le completează din setările aplicației și sunt injectate în funcțiile de logică doar după ce au fost setate.
-* O aplicație își poate raporta propria stare de configurare cu [`defineHealthCheck()`](/ro/developers/extend/apps/logic/logic-functions#health-check), pentru aspecte pe care numai aplicația le poate cunoaște — o cheie prezentă, dar revocată, un cont terț cu planul greșit. `isRequired` acoperă ceea ce Twenty poate vedea singur; verificarea stării de sănătate acoperă restul.
+* O aplicație își poate raporta propria stare de configurare cu [`defineHealthCheck()`](/ro/developers/extend/apps/logic/logic-functions#health-check), pentru aspecte pe care numai aplicația le poate cunoaște — o cheie prezentă, dar revocată, un cont terț cu planul greșit. `isRequired` acoperă ceea ce Twenty poate vedea singur; verificarea stării de sănătate acoperă restul. Setați `runOnUserPreferences: true` pentru a verifica configurația proprie a fiecărui membru în pagina sa de preferințe pentru aplicații, în locul setărilor aplicației pentru spațiul de lucru. Omiterea opțiunii sau setarea acesteia la `false` păstrează verificarea existentă pentru spațiul de lucru.
 * Ambele tipuri de variabile acceptă `isRequired: true`. O variabilă obligatorie pe care spațiul de lucru nu a completat-o încă lasă aplicația neconfigurată: pagina sa de setări afișează un banner care indică variabilele lipsă, cu un buton care duce la fila în care acestea sunt configurate. Marcați ca obligatoriu doar ceea ce aplicația chiar nu poate rula fără — o variabilă opțională cu o valoare implicită rezonabilă ar trebui să rămână opțională.
 * Ambele tipuri de variabile acceptă `isDeprecated: true`. Folosește-l pentru a retrage o variabilă în loc să o ștergi: păstrarea cheii declarate conservă valoarea stocată (ștergerea ei distruge valoarea introdusă de operator), iar variabila este în continuare injectată, astfel încât codul tău poate reveni la ea — `process.env.NEW_API_KEY ?? process.env.API_KEY`. O variabilă învechită dispare din setările aplicației odată ce nu mai are nicio valoare și nu este niciodată luată în calcul la verificarea configurației aplicației, astfel încât `isDeprecated` are prioritate față de `isRequired`.
 * Twenty setează aceste nume pentru fiecare rulare a funcției logice, așadar sunt rezervate: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` și `APPLICATION_ID`. Toate celelalte nume care încep cu `TWENTY_` sunt, de asemenea, rezervate, pentru variabilele pe care Twenty le adaugă ulterior. Un manifest care declară un nume rezervat ca variabilă de aplicație sau de server este respins atunci când aplicația este sincronizată sau publicată.
@@ -78,6 +78,29 @@ Capabilitățile declarate apar în timpul instalării. Aprobarea necesită un m
 O aplicație instalată fără acordarea necesară întrerupe captura și afișează un dialog de aprobare la prima utilizare, inclusiv aplicațiile mai vechi fără declarații de capabilități. Refuzul menține captura blocată înainte de solicitarea permisiunilor browserului. Actualizările pachetului nu acordă automat acces suplimentar. Aplicațiile de dezvoltare sincronizate local primesc capabilitățile declarate în manifestul lor.
 
 Consultați [Captură media](/ro/developers/extend/apps/layout/front-components#media-capture) pentru comportamentul capturii și indicatorii de înregistrare.
+
+## Acces la conținut media pentru site-uri web încorporate
+
+Setați `requestedIframeMediaPermissions` atunci când o componentă frontală sau un widget de dispunere a paginii `IFRAME` încorporează un site web care necesită microfonul sau camera, cum ar fi un instrument de telefonie sau video. Listați până la 20 de site-uri web, fiecare ca origine HTTPS exactă, cu accesul la microfon și cameră setat separat. Originile trebuie să fie unice, să nu conțină nicio cale sau caracter wildcard și să solicite acces la cel puțin unul dintre microfon sau cameră.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Phone',
+  description: 'Call your contacts from Twenty',
+  requestedIframeMediaPermissions: [
+    { origin: 'https://workspace.aircall.io', microphone: true, camera: false },
+  ],
+});
+```
+
+Site-urile web declarate apar în timpul instalării. Aprobarea necesită un membru al spațiului de lucru care poate gestiona aplicații și se aplică întregului spațiu de lucru, pentru propriile componente frontale și widgeturi iframe ale aplicației. Aprobările de securitate ale spațiului de lucru se aplică numai widgeturilor create în spațiul de lucru. Aplicațiile de dezvoltare sincronizate local primesc site-urile web declarate în manifestul lor. Aceste permisiuni acordate nu înlocuiesc permisiunile browserului sau ale sistemului de operare. Antetele browserului au o limită de dimensiune, astfel încât, dacă site-urile web ale unui spațiu de lucru o depășesc, site-urile web aprobate pentru spațiul de lucru au prioritate, iar site-urile web rămase nu primesc acces la conținut media.
+
+Actualizările aplicațiilor publicate păstrează permisiunile existente și nu acordă automat acces suplimentar la conținut media. Pentru a aproba solicitări noi, un membru care poate gestiona aplicații deschide fila **Generale** a aplicației instalate și selectează **Revizuiește accesul la conținut media** sub **Acces la conținut media pentru site-uri web încorporate**. Această aprobare utilizează o confirmare nativă a browserului care afișează aplicația, originile site-urilor web și accesul solicitat la microfon sau cameră. După aprobare, reîncărcați filele Twenty deschise pentru a aplica permisiunile actualizate.
+
+Consultați [Site-uri web încorporate cu acces la conținut media](/ro/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) pentru cerințele iframe.
 
 ## Tipuri de variabile
 

@@ -15,6 +15,7 @@ export type {
   AgentTrigger,
   AgentTriggerManifest,
 } from './agentTriggerType';
+export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -95,9 +96,15 @@ export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/Fron
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
+export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { RESERVED_SETTINGS_MENU_ITEM_SLUGS } from './constants/ReservedSettingsMenuItemSlugs';
+export { SETTINGS_GENERAL_TAB_ID } from './constants/SettingsGeneralTabId';
+export { SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH } from './constants/SettingsMenuItemSlugMaxLength';
+export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
+export { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from './constants/TwentyPublicAppUniversalIdentifiers';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export type {
@@ -184,6 +191,8 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
+export { generateJsonFieldsSchema } from './generateJsonFieldsSchema';
+export type { GenerateResult } from './generateType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type {
   IdentifyAccountPayload,
@@ -226,6 +235,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
@@ -234,6 +244,16 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
+export type {
+  ObjectPermissionGrant,
+  FieldPermissionGrant,
+  RolePermissionGrants,
+} from './rolePermissionGrantsSchema';
+export {
+  objectPermissionGrantSchema,
+  fieldPermissionGrantSchema,
+  rolePermissionGrantsSchema,
+} from './rolePermissionGrantsSchema';
 export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 export type {
   RunAgentMessageRole,
@@ -286,20 +306,28 @@ export {
 } from './utils/applicationVariableValueSerialization';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
-export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export type {
+  EffectiveObjectPermissions,
+  ObjectRecordsPermissionGrants,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
+export { isReservedSettingsMenuItemSlug } from './utils/isReservedSettingsMenuItemSlug';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
+export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

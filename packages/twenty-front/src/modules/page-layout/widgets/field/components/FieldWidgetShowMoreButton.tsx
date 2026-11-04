@@ -1,6 +1,6 @@
-import { t } from '@lingui/core/macro';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronDown } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type FieldWidgetShowMoreButtonProps = {
   remainingCount: number;
@@ -10,14 +10,17 @@ type FieldWidgetShowMoreButtonProps = {
 export const FieldWidgetShowMoreButton = ({
   remainingCount,
   onClick,
-}: FieldWidgetShowMoreButtonProps) => (
-  <LightButton
-    emphasis="subtle"
-    size="sm"
-    startIcon={<IconChevronDown />}
-    data-testid="field-widget-show-more-button"
-    onClick={onClick}
-  >
-    {t`More (${remainingCount})`}
-  </LightButton>
-);
+}: FieldWidgetShowMoreButtonProps) => {
+  const { t } = useLingui();
+  return (
+    <LightButton
+      emphasis="subtle"
+      size="sm"
+      startIcon={<IconChevronDown />}
+      data-testid="field-widget-show-more-button"
+      onClick={onClick}
+    >
+      {t`More (${remainingCount})`}
+    </LightButton>
+  );
+};

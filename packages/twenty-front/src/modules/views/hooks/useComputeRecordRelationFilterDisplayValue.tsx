@@ -7,8 +7,6 @@ import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hoo
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
-
-import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
@@ -17,6 +15,7 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
@@ -26,6 +25,7 @@ type UseComputeRecordRelationFilterDisplayValueParams = {
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {

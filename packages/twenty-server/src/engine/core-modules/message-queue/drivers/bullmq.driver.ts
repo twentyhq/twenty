@@ -91,7 +91,6 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
-      twentyConfigService,
     });
   }
 

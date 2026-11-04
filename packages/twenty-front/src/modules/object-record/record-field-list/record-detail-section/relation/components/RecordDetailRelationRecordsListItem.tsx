@@ -21,12 +21,11 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   CustomError,
   computeMorphRelationGqlFieldName,
@@ -77,6 +76,7 @@ export const RecordDetailRelationRecordsListItem = ({
   relationObjectMetadataNameSingular,
   relationFieldMetadataId,
 }: RecordDetailRelationRecordsListItemProps) => {
+  const { t } = useLingui();
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const {
     fieldDefinition,
@@ -123,7 +123,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isAccountOwnerRelation =
     relationObjectMetadataNameSingular ===
-    CoreObjectNameSingular.WorkspaceMember;
+    StandardObjectNameSingular.WorkspaceMember;
 
   const dropdownInstanceId = `record-field-card-menu:${scopeInstanceId}:${relationFieldMetadataId}:${relationRecord.id}`;
 

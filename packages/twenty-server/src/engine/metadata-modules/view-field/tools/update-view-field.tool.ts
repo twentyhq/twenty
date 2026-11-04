@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
@@ -7,11 +6,13 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { updateViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/update-view-field-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 
 @DefineTool({
   name: 'update_view_field',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
   description:
     "Update properties of a column in a view. You can change its visibility, width (size in pixels), display position, or aggregate operation. Use get_view_fields to find the view field ID. Constraints: position must not be -1, must not precede the label identifier field, and must not conflict with another field's position.",
 })
@@ -20,14 +21,24 @@ export class UpdateViewFieldTool extends BaseTool<
 > {
   readonly inputSchema = updateViewFieldInputSchema;
 
-  constructor(private readonly viewFieldService: ViewFieldService) {
+  constructor(
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof updateViewFieldInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+      kind: 'viewField',
+      entityId: input.id,
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const viewField = await this.viewFieldService.updateOne({
       updateViewFieldInput: {
         id: input.id,

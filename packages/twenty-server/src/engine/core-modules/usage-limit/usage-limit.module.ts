@@ -27,7 +27,7 @@ import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-li
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 

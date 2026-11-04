@@ -5,7 +5,8 @@ import { LOCAL_IMAGE_REPOSITORY } from '@/local/get-local-environment';
 import { CliError } from '@/output/cli-error';
 
 export const getLocalImage = (version: string) => {
-  const normalized = valid(version);
+  const normalized =
+    valid(version) ?? (/^\d+\.\d+$/.test(version) ? version : undefined);
   const tag = isDefined(normalized) ? `v${normalized}` : version;
 
   if (!/^[a-zA-Z0-9_][a-zA-Z0-9_.-]{0,127}$/.test(tag)) {

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -252,7 +252,9 @@ export const AiChatThreadDetailsDropdown = ({
             >
               {isDefined(assignee) ? (
                 <RecordChip
-                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+                  objectNameSingular={
+                    StandardObjectNameSingular.WorkspaceMember
+                  }
                   record={{ ...assignee, __typename: 'WorkspaceMember' }}
                 />
               ) : (

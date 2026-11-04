@@ -14,6 +14,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -217,6 +218,16 @@ const STEP_INPUTS = {
     connectedAccountId: '{{trigger.properties.after.assigneeId}}',
     recipients: { to: 'jane@example.com', cc: '', bcc: '' },
     files: [],
+  },
+  SEND_CHAT_MESSAGE: {
+    workspaceMemberId: WORKSPACE_MEMBER_ID,
+    title: 'Approve the ticket',
+    text: '{{trigger.properties.after.summary}}',
+    toolCall: {
+      toolName: 'update_one_ticket',
+      arguments: { id: '{{trigger.recordId}}', status: 'APPROVED' },
+    },
+    conversation: { key: 'ticket:{{trigger.recordId}}', scope: 'KEY' },
   },
   CREATE_CALENDAR_EVENT: {
     connectedAccountHandle: SALES_HANDLE,
@@ -467,6 +478,45 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       );
     });
 
+    it.each([
+      {
+        type: 'DRAFT_EMAIL' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          recipients: { to: 'jane@example.com' },
+        },
+      },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          title: 'Kick-off',
+          startsAt: '2026-11-02T09:00:00.000Z',
+          endsAt: '2026-11-02T09:30:00.000Z',
+          isFullDay: false,
+          sendInvitations: true,
+          addConferencing: false,
+        },
+      },
+    ])(
+      'stores a $type step with only the values it declares',
+      ({ type, input }) => {
+        const manifest = buildWorkflow({
+          steps: [
+            buildStep({
+              type,
+              overrides: { input } as Partial<WorkflowStepManifest>,
+            }),
+          ],
+        });
+
+        expect(
+          syncWorkflow(manifest).flatWorkflowVersion.steps?.[0]?.settings.input,
+        ).toEqual(input);
+        expectRoundTrip(manifest);
+      },
+    );
+
     it('omits values the sync derives', () => {
       const result = exportWorkflow(
         syncWorkflow(
@@ -589,19 +639,16 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it.each([WorkflowActionType.CODE, WorkflowActionType.SEND_CHAT_MESSAGE])(
-      'reports a %s step',
-      (type) => {
-        const synced = syncWorkflow(buildWorkflow({}));
-        const [step] = synced.flatWorkflowVersion.steps ?? [];
+    it('reports a CODE step', () => {
+      const synced = syncWorkflow(buildWorkflow({}));
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-        Object.assign(step, { type });
+      Object.assign(step, { type: WorkflowActionType.CODE });
 
-        expect(exportWorkflow(synced)).toEqual({
-          reason: `${type} steps are not supported in application workflows`,
-        });
-      },
-    );
+      expect(exportWorkflow(synced)).toEqual({
+        reason: 'CODE steps are not supported in application workflows',
+      });
+    });
 
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
@@ -619,6 +666,49 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
       expect(exportWorkflow(synced)).toEqual({
         reason: 'workflow filtering on a field of a related record',
+      });
+    });
+
+    it.each([
+      { humanInputInstructions: 'Ask when the company is unclear' },
+      { conversation: { scope: 'RUN' } },
+    ])('reports a step without an agent that stores %o', (agentOnlyInput) => {
+      const synced = syncWorkflow(
+        buildWorkflow({
+          steps: [
+            buildStep({
+              type: 'AI_AGENT',
+              overrides: {
+                input: {
+                  instructions: 'Qualify the lead.',
+                  prompt: 'Summarize {{trigger.text}}',
+                },
+              },
+            }),
+          ],
+        }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, agentOnlyInput);
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
+      });
+    });
+
+    it('reports a step on an agent that still stores its own config', () => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'AI_AGENT' })] }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, { instructions: 'Qualify the lead.' });
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
       });
     });
 
@@ -693,13 +783,62 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           'workflow step on a logic function that is not a workflow action of this application',
       },
       {
-        description: 'an agent of another application',
+        description: 'an agent scope naming an object that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                objectPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    canReadObjectRecords: true,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          objectByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing an object that is not exported',
+      },
+      {
+        description: 'an agent scope naming a field that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                fieldPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    fieldUniversalIdentifier: STATUS_FIELD_ID,
+                    canReadFieldValue: false,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          fieldByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing a field that is not exported',
+      },
+      {
+        description: 'an agent the application does not export',
         step: buildStep({ type: 'AI_AGENT' }),
         exportReferences: {
           ...references,
           agentIdByUniversalIdentifier: new Map(),
         },
-        reason: 'workflow step on an agent of another application',
+        reason: 'workflow step on an agent the application does not export',
       },
     ])(
       'reports a step on $description',
@@ -1027,6 +1166,157 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step.outputSchema).toEqual({});
+  });
+
+  it('exports an agent step with the conversation and member the builder stores', () => {
+    const input = {
+      prompt: '{{trigger.properties.after.summary}}',
+      responseFormat: { type: 'text' },
+      humanInputInstructions: 'Ask when the company is unclear',
+      conversation: {
+        key: 'mail:{{trigger.properties.after.id}}',
+        scope: 'KEY',
+      },
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Analyse the thread',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: { ...input, agentId: 'agent-id' },
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({
+      type: 'AI_AGENT',
+      input: { ...input, agentUniversalIdentifier: AGENT_ID },
+    });
+  });
+
+  it('exports an agent step that carries its own config, with no agent to reference', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      modelId: 'auto-select-workspace-default-model',
+      modelConfiguration: { webSearch: { enabled: true } },
+      scope: {
+        canReadAllObjectRecords: true,
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: OBJECT_ID,
+            canUpdateObjectRecords: true,
+          },
+        ],
+        permissionFlagUniversalIdentifiers: ['send-email-tool'],
+      },
+      prompt: '{{trigger.properties.after.summary}}',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
+    expect(step.input).not.toHaveProperty('agentUniversalIdentifier');
+  });
+
+  it('exports a step without an agent with the blank human input instructions the builder stores', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      prompt: '{{trigger.properties.after.summary}}',
+      humanInputInstructions: '',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
+  });
+
+  it('exports an email step written without files', () => {
+    const input = {
+      connectedAccountId: '{{trigger.properties.after.accountId}}',
+      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+      subject: 'Hello',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Draft Email',
+          type: 'DRAFT_EMAIL',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'DRAFT_EMAIL', input });
+  });
+
+  it('exports a chat message step that waits for an approval', () => {
+    const input = {
+      text: '{{trigger.properties.after.summary}}',
+      title: 'Approve the ticket',
+      toolCall: {
+        toolName: 'update_one_ticket',
+        arguments: { id: '{{trigger.properties.after.id}}' },
+      },
+      conversation: {
+        key: 'ticket:{{trigger.properties.after.id}}',
+        scope: 'KEY',
+      },
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Send to Inbox',
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: true },
+            },
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
   });
 
   it('exports a step without a position as null', () => {

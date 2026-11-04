@@ -38,19 +38,16 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
-                { shouldBypassPermissionChecks: true },
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
               );
             const messageThreadRepository =
-              transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
-                { shouldBypassPermissionChecks: true },
               );
 
             for (const messageExternalIdsChunk of chunk(
@@ -151,9 +148,8 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             for (;;) {
@@ -192,19 +188,16 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageThreadRepository =
-              transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
-                { shouldBypassPermissionChecks: true },
               );
             const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
-                { shouldBypassPermissionChecks: true },
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             await this.deleteOrphansByKeyset(

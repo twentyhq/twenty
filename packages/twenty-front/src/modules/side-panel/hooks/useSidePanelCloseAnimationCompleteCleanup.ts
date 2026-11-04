@@ -21,7 +21,7 @@ import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workfl
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 
@@ -52,7 +52,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       if (
         isDefined(pageLayoutSidePanelTarget) &&
         pageLayoutSidePanelTarget.targetRecordIdentifier
-          .targetObjectNameSingular === CoreObjectNameSingular.Dashboard
+          .targetObjectNameSingular === StandardObjectNameSingular.Dashboard
       ) {
         const { pageLayoutId } = pageLayoutSidePanelTarget;
 

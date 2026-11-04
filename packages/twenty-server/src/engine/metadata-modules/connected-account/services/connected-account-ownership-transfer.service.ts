@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 
 @Injectable()
 export class ConnectedAccountOwnershipTransferService {

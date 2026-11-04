@@ -284,6 +284,25 @@ const buildDirectFieldGqlOperationFilter = ({
               } as StringFilter,
             },
           };
+        case RecordFilterOperand.IS:
+          return {
+            [fieldMetadataItem.name]: {
+              eq: recordFilter.value,
+            } as StringFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            or: [
+              {
+                [fieldMetadataItem.name]: {
+                  neq: recordFilter.value,
+                } as StringFilter,
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as StringFilter,
+              },
+            ],
+          };
         default:
           throw new CustomError(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,

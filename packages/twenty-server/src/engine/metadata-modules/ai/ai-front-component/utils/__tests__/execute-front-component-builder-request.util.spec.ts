@@ -21,7 +21,6 @@ const REQUEST: FrontComponentBuilderRequest = {
     componentId: 'component-id',
     name: 'Preview',
     source: 'export const Component = () => <div />;',
-    query: { objectName: 'company', select: ['name'], limit: 20 },
     pageLayoutType: PageLayoutType.DASHBOARD,
   },
   manifest: { checksum: 'a'.repeat(64), exports: {} },

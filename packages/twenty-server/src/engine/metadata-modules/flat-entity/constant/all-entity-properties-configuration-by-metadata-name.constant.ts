@@ -7,6 +7,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
+import { type UnusedFieldMetadataColumnName } from 'src/engine/metadata-modules/field-metadata/types/unused-field-metadata-column-name.type';
+import { type UnusedObjectMetadataColumnName } from 'src/engine/metadata-modules/object-metadata/types/unused-object-metadata-column-name.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
@@ -18,13 +20,27 @@ type HasObjectInUnion<T> = T extends unknown
     : false
   : never;
 
+type UnusedMetadataColumnNameByMetadataName = {
+  objectMetadata: UnusedObjectMetadataColumnName;
+  fieldMetadata: UnusedFieldMetadataColumnName;
+};
+
+type UnusedMetadataColumnName<TMetadataName extends AllMetadataName> =
+  TMetadataName extends keyof UnusedMetadataColumnNameByMetadataName
+    ? UnusedMetadataColumnNameByMetadataName[TMetadataName]
+    : never;
+
 type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,
 > = {
   [
     K in keyof Omit<
       ScalarFlatEntity<MetadataEntity<TMetadataName>>,
-      'id' | 'workspaceId' | 'applicationId' | 'universalIdentifier'
+      | 'id'
+      | 'workspaceId'
+      | 'applicationId'
+      | 'universalIdentifier'
+      | UnusedMetadataColumnName<TMetadataName>
     >
   ]: {
     universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
@@ -139,11 +155,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isUIEditable: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    writability: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -273,29 +284,9 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    writability: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    readability: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     disabledObjectPermissionActions: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
-    },
-    readabilityParentFieldUniversalIdentifiers: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
-    sharingReach: {
-      toCompare: true,
-      toStringify: false,
       universalProperty: undefined,
     },
     isUICreatable: {
@@ -905,6 +896,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    canBeAssignedToApplications: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isEditable: {
       toCompare: false,
       toStringify: false,
@@ -941,6 +937,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'webhookUniversalIdentifier',
+    },
+    targetApplicationId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
     },
     agentId: {
       toCompare: true,
@@ -1330,6 +1331,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    availabilityCoreObjectName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     navigationTargetObjectMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1417,6 +1424,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     link: { toCompare: true, toStringify: false, universalProperty: undefined },
+    nativePageKey: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
     color: {
       toCompare: true,
@@ -1634,6 +1646,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    relationFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationFieldMetadataUniversalIdentifier',
+    },
     workspaceMemberFieldMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1677,6 +1694,26 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     positionInRowLevelPermissionPredicateGroup: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canReadRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canUpdateRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canSoftDeleteRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canDestroyRecords: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1900,6 +1937,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     isActive: {
       toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    tools: {
+      toCompare: false,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolsSyncedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    toolsSyncError: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -2189,6 +2241,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     scope: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    slug: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

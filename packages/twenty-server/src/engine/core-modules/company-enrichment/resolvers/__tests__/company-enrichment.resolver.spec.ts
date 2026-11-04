@@ -6,6 +6,7 @@ import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrich
 import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 describe('CompanyEnrichmentResolver', () => {
   let resolver: CompanyEnrichmentResolver;
@@ -50,6 +51,7 @@ describe('CompanyEnrichmentResolver', () => {
           provide: OnboardingService,
           useValue: onboardingService,
         },
+        { provide: AccessPolicyService, useValue: {} },
       ],
     }).compile();
 

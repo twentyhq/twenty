@@ -8,6 +8,16 @@ const LOCAL_TEST_ENVIRONMENT_VARIABLES = [
   'API_RATE_LIMITING_LONG_LIMIT=100000',
 ];
 
+const LOCAL_VOLUME_DEFINITIONS = [
+  { destination: '/data/postgres', suffix: 'data', isRequired: true },
+  { destination: '/data/clickhouse', suffix: 'clickhouse', isRequired: false },
+  {
+    destination: '/app/packages/twenty-server/.local-storage',
+    suffix: 'storage',
+    isRequired: true,
+  },
+];
+
 export const getLocalEnvironment = (isTest: boolean): LocalEnvironment => {
   const name = isTest ? 'twenty-app-dev-test' : 'twenty-app-dev';
 
@@ -15,10 +25,14 @@ export const getLocalEnvironment = (isTest: boolean): LocalEnvironment => {
     name,
     port: isTest ? 2021 : 2020,
     environmentVariables: isTest ? [...LOCAL_TEST_ENVIRONMENT_VARIABLES] : [],
-    volumes: {
-      '/data/postgres': `${name}-data`,
-      '/data/clickhouse': `${name}-clickhouse`,
-      '/app/packages/twenty-server/.local-storage': `${name}-storage`,
-    },
+    volumes: Object.fromEntries(
+      LOCAL_VOLUME_DEFINITIONS.map(({ destination, suffix }) => [
+        destination,
+        `${name}-${suffix}`,
+      ]),
+    ),
+    requiredVolumeDestinations: LOCAL_VOLUME_DEFINITIONS.filter(
+      ({ isRequired }) => isRequired,
+    ).map(({ destination }) => destination),
   };
 };

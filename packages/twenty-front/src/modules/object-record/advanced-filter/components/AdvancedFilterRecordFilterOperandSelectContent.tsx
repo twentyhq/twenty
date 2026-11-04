@@ -12,11 +12,11 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ViewFilterOperand } from 'twenty-shared/types';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;
@@ -29,6 +29,7 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
   filter,
   operandsForFilterType,
 }: AdvancedFilterRecordFilterOperandSelectContentProps) => {
+  const { t } = useLingui();
   const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
   const { isWorkflowFindRecords } = useContext(AdvancedFilterContext);

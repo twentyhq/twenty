@@ -115,7 +115,7 @@ export enum AgentChatChannelThreadStatus {
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
   event: Scalars['JSON']['output'];
-  threadId: Scalars['String']['output'];
+  threadId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum AgentChatInboxAction {
@@ -149,6 +149,7 @@ export type AgentChatThread = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
+  isAssistantParticipant: Scalars['Boolean']['output'];
   title?: Maybe<Scalars['String']['output']>;
   totalCacheReadTokens: Scalars['Int']['output'];
   totalInputCredits: Scalars['Float']['output'];
@@ -246,7 +247,7 @@ export type AgentRun = {
   reply?: Maybe<Scalars['String']['output']>;
   startedAt?: Maybe<Scalars['DateTime']['output']>;
   status: AgentTurnStatus;
-  threadId: Scalars['UUID']['output'];
+  threadId?: Maybe<Scalars['UUID']['output']>;
   threadTitle?: Maybe<Scalars['String']['output']>;
   toolNames: Array<Scalars['String']['output']>;
 };
@@ -291,6 +292,12 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export enum AiChatAssistantMode {
+  AUTOMATIC = 'AUTOMATIC',
+  MENTION_ONLY = 'MENTION_ONLY',
+  NEVER = 'NEVER'
+}
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
@@ -313,6 +320,12 @@ export enum AiModelTier {
   fast = 'fast',
   smart = 'smart'
 }
+
+export type AiRunUsage = {
+  __typename?: 'AiRunUsage';
+  inputTokens: Scalars['Int']['output'];
+  outputTokens: Scalars['Int']['output'];
+};
 
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
@@ -482,6 +495,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
   isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']['output'];
@@ -492,6 +506,8 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
+  runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
   universalIdentifier: Scalars['String']['output'];
@@ -730,6 +746,7 @@ export type ApplicationPreferences = {
   __typename?: 'ApplicationPreferences';
   applicationId: Scalars['UUID']['output'];
   connectionProviders: Array<ApplicationConnectionProvider>;
+  hasUserHealthCheck: Scalars['Boolean']['output'];
   settingsMenuItems: Array<SettingsMenuItem>;
   variables: Array<UserApplicationVariableValue>;
 };
@@ -1466,6 +1483,7 @@ export type CollectionHash = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  availabilityCoreObjectName?: Maybe<Scalars['String']['output']>;
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
@@ -1641,6 +1659,7 @@ export type CreateCalendarEventOutput = {
 };
 
 export type CreateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
@@ -1757,6 +1776,7 @@ export type CreateNavigationMenuItemInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  nativePageKey?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2444,15 +2464,18 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
+  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
-  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 }
 
 export type Field = {
@@ -2470,6 +2493,7 @@ export type Field = {
   isNullable?: Maybe<Scalars['Boolean']['output']>;
   isSearchable?: Maybe<Scalars['Boolean']['output']>;
   isSystem?: Maybe<Scalars['Boolean']['output']>;
+  isSystemSideEffect?: Maybe<Scalars['Boolean']['output']>;
   isUIEditable?: Maybe<Scalars['Boolean']['output']>;
   /** @deprecated Use isUIEditable */
   isUIReadOnly?: Maybe<Scalars['Boolean']['output']>;
@@ -2486,7 +2510,6 @@ export type Field = {
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability?: Maybe<MetadataWritability>;
 };
 
 export type FieldConfiguration = {
@@ -2675,6 +2698,7 @@ export type FormFieldConfiguration = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use generateFrontComponentApplicationTokenPair */
@@ -2715,6 +2739,25 @@ export type FullName = {
   lastName: Scalars['String']['output'];
 };
 
+export type GenerateInput = {
+  input: Array<RunAgentMessageInput>;
+  instructions?: InputMaybe<Scalars['String']['input']>;
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  scope?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type GenerateResult = {
+  __typename?: 'GenerateResult';
+  error?: Maybe<Scalars['String']['output']>;
+  object?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
+  success: Scalars['Boolean']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  usage: AiRunUsage;
+};
+
 export type GetApiKeyInput = {
   id: Scalars['UUID']['input'];
 };
@@ -2729,6 +2772,70 @@ export type GetAuthorizationUrlForSso = {
 export type GetAuthorizationUrlForSsoInput = {
   identityProviderId: Scalars['UUID']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type GettingStartedProgress = {
+  __typename?: 'GettingStartedProgress';
+  completedStepActionKeys: Array<GettingStartedStepActionKey>;
+  isHidden: Scalars['Boolean']['output'];
+  selectedStepActionKey?: Maybe<GettingStartedStepActionKey>;
+  snoozedUntil?: Maybe<Scalars['String']['output']>;
+  steps: Array<GettingStartedStepDefinition>;
+};
+
+export enum GettingStartedStepActionKey {
+  CONNECT_MAILBOX = 'CONNECT_MAILBOX',
+  CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
+  FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
+  HANDOVER_DEALS = 'HANDOVER_DEALS',
+  IMPORT_DATA = 'IMPORT_DATA',
+  INSTALL_APP = 'INSTALL_APP',
+  INVITE_TEAM = 'INVITE_TEAM'
+}
+
+export type GettingStartedStepDefinition = {
+  __typename?: 'GettingStartedStepDefinition';
+  actionKey: GettingStartedStepActionKey;
+  description: Scalars['String']['output'];
+  doneTitle: Scalars['String']['output'];
+  icon: Scalars['String']['output'];
+  iconColor: Scalars['String']['output'];
+  kind: GettingStartedStepKind;
+  prompt?: Maybe<Scalars['String']['output']>;
+  promptLabel?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export enum GettingStartedStepKind {
+  CUSTOM = 'CUSTOM',
+  PROMPT = 'PROMPT',
+  WORKFLOW = 'WORKFLOW'
+}
+
+export type GettingStartedWorkflow = {
+  __typename?: 'GettingStartedWorkflow';
+  versionId: Scalars['String']['output'];
+  workflowId: Scalars['String']['output'];
+};
+
+export type GettingStartedWorkflowPreview = {
+  __typename?: 'GettingStartedWorkflowPreview';
+  actions: Array<GettingStartedWorkflowPreviewAction>;
+  stepActionKey: GettingStartedStepActionKey;
+  trigger: GettingStartedWorkflowPreviewTrigger;
+};
+
+export type GettingStartedWorkflowPreviewAction = {
+  __typename?: 'GettingStartedWorkflowPreviewAction';
+  title: Scalars['String']['output'];
+  type: WorkflowActionType;
+};
+
+export type GettingStartedWorkflowPreviewTrigger = {
+  __typename?: 'GettingStartedWorkflowPreviewTrigger';
+  databaseEventAction?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
 };
 
 export type GrantApplicationCapabilitiesInput = {
@@ -2771,6 +2878,12 @@ export type IframeMediaPermission = {
   camera: Scalars['Boolean']['output'];
   microphone: Scalars['Boolean']['output'];
   origin: Scalars['String']['output'];
+};
+
+export type IframeMediaPermissionInput = {
+  camera: Scalars['Boolean']['input'];
+  microphone: Scalars['Boolean']['input'];
+  origin: Scalars['String']['input'];
 };
 
 export type ImapSmtpCaldavConnectionSuccess = {
@@ -3099,6 +3212,7 @@ export type MarketplaceAppDetail = {
   objects?: Maybe<Array<MarketplaceAppObject>>;
   pricingDescription?: Maybe<Scalars['String']['output']>;
   requestedCapabilities: Array<Scalars['String']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   roles?: Maybe<Array<MarketplaceAppRole>>;
   /** @deprecated Use galleryImages instead */
   screenshots: Array<Scalars['String']['output']>;
@@ -3161,8 +3275,19 @@ export type McpServer = {
   isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  tools: Array<McpServerTool>;
+  toolsSyncError?: Maybe<Scalars['String']['output']>;
+  toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   url: Scalars['String']['output'];
+};
+
+export type McpServerTool = {
+  __typename?: 'McpServerTool';
+  annotations?: Maybe<Scalars['JSON']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  inputSchema: Scalars['JSON']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type MessageCampaignBodyConfiguration = {
@@ -3331,14 +3456,6 @@ export enum MetadataEventAction {
   UPDATED = 'UPDATED'
 }
 
-export enum MetadataReadability {
-  APPLICATION = 'APPLICATION',
-  INHERITED = 'INHERITED',
-  OPEN = 'OPEN',
-  PRIVATE = 'PRIVATE',
-  SYSTEM = 'SYSTEM'
-}
-
 export type MetadataTranslation = {
   __typename?: 'MetadataTranslation';
   canonicalValue: Scalars['String']['output'];
@@ -3370,12 +3487,6 @@ export type MetadataTranslationsInput = {
   locale?: InputMaybe<Scalars['String']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };
-
-export enum MetadataWritability {
-  APPLICATION = 'APPLICATION',
-  OPEN = 'OPEN',
-  SYSTEM = 'SYSTEM'
-}
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
@@ -3420,6 +3531,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
+  approveApplicationIframeMediaPermissions: Application;
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3554,6 +3666,7 @@ export type Mutation = {
   enqueueJobs: EnqueueJobsResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
+  generate: GenerateResult;
   generateApiKeyToken: ApiKeyToken;
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
@@ -3576,6 +3689,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
+  prepareGettingStartedWorkflow: GettingStartedWorkflow;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
@@ -3602,6 +3716,7 @@ export type Mutation = {
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
+  runMyApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendAppChannelMessage: SendAppChannelMessageOutput;
   sendChatMessage: SendChatMessageResult;
@@ -3612,7 +3727,7 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
-  setRecordGeneralAccess: RecordSharingDto;
+  setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -3631,6 +3746,7 @@ export type Mutation = {
   syncAppMessageFolders: Array<MessageFolder>;
   syncApplication: WorkspaceMigration;
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
+  syncMcpServerTools: McpServer;
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult;
@@ -3653,6 +3769,7 @@ export type Mutation = {
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
   updateFrontComponent: FrontComponent;
+  updateGettingStarted: GettingStartedProgress;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -3739,6 +3856,12 @@ export type MutationAddAgentChatMessageReactionArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
+};
+
+
+export type MutationApproveApplicationIframeMediaPermissionsArgs = {
+  applicationId: Scalars['UUID']['input'];
+  approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
 };
 
 
@@ -4396,6 +4519,11 @@ export type MutationExecuteOneLogicFunctionArgs = {
 };
 
 
+export type MutationGenerateArgs = {
+  input: GenerateInput;
+};
+
+
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['UUID']['input'];
   expiresAt: Scalars['String']['input'];
@@ -4497,6 +4625,11 @@ export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
 export type MutationMoveAgentChatThreadToChannelArgs = {
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationPrepareGettingStartedWorkflowArgs = {
+  stepActionKey: GettingStartedStepActionKey;
 };
 
 
@@ -4619,6 +4752,11 @@ export type MutationRunApplicationHealthCheckArgs = {
 };
 
 
+export type MutationRunMyApplicationHealthCheckArgs = {
+  applicationId: Scalars['UUID']['input'];
+};
+
+
 export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String']['input'];
@@ -4635,9 +4773,12 @@ export type MutationSendChatMessageArgs = {
   browsingContext?: InputMaybe<Scalars['JSON']['input']>;
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
+  isAssistantMentioned?: InputMaybe<Scalars['Boolean']['input']>;
+  isAssistantParticipant?: InputMaybe<Scalars['Boolean']['input']>;
   mentionedWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   messageId: Scalars['UUID']['input'];
   modelId?: InputMaybe<Scalars['String']['input']>;
+  recipientWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   shouldAssistantReply?: InputMaybe<Scalars['Boolean']['input']>;
   text: Scalars['String']['input'];
   threadId: Scalars['UUID']['input'];
@@ -4680,8 +4821,8 @@ export type MutationSetEnterpriseKeyArgs = {
 };
 
 
-export type MutationSetRecordGeneralAccessArgs = {
-  accessLevel: RecordShareAccessLevel;
+export type MutationSetRecordPrivateArgs = {
+  isPrivate: Scalars['Boolean']['input'];
   target: RecordTargetInput;
 };
 
@@ -4779,6 +4920,11 @@ export type MutationSyncApplicationArgs = {
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   inferDeletionFromMissingEntities?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
+};
+
+
+export type MutationSyncMcpServerToolsArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -4887,6 +5033,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
+};
+
+
+export type MutationUpdateGettingStartedArgs = {
+  input: UpdateGettingStartedInput;
 };
 
 
@@ -5225,6 +5376,7 @@ export type NavigationMenuItem = {
   id: Scalars['UUID']['output'];
   link?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  nativePageKey?: Maybe<Scalars['String']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -5240,6 +5392,7 @@ export enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
+  NATIVE_PAGE = 'NATIVE_PAGE',
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
@@ -5282,14 +5435,10 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
-  readability: MetadataReadability;
-  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
-  sharingReach: ObjectSharingReach;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability: MetadataWritability;
 };
 
 
@@ -5425,11 +5574,6 @@ export enum ObjectRecordGroupByDateGranularity {
   YEAR = 'YEAR'
 }
 
-export enum ObjectSharingReach {
-  ROLE_ACCESS = 'ROLE_ACCESS',
-  WORKSPACE = 'WORKSPACE'
-}
-
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_CALL = 'BOOK_CALL',
@@ -5526,7 +5670,9 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
+  applicationName?: Maybe<Scalars['String']['output']>;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
@@ -5870,6 +6016,8 @@ export type Query = {
   getViewSorts: Array<ViewSort>;
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
+  gettingStartedProgress: GettingStartedProgress;
+  gettingStartedWorkflowPreviews: Array<GettingStartedWorkflowPreview>;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
@@ -5911,6 +6059,7 @@ export type Query = {
   usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   validationRules: Array<ValidationRule>;
+  validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
 };
@@ -6005,12 +6154,16 @@ export type QueryCallRecordingIdForCalendarEventArgs = {
 
 
 export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryChatStreamCatchupChunksArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6448,6 +6601,11 @@ export type QueryValidationRulesArgs = {
 };
 
 
+export type QueryValidationRulesReadingFieldArgs = {
+  fieldMetadataId: Scalars['UUID']['input'];
+};
+
+
 export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -6517,13 +6675,12 @@ export enum RecordShareRowCause {
 export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
   canManageSharing: Scalars['Boolean']['output'];
-  defaultGeneralAccessLevel?: Maybe<RecordShareAccessLevel>;
-  generalAccessLevel?: Maybe<RecordShareAccessLevel>;
   hasManagedGeneralAccess: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
+  isShareable: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;
-  sharingMode: RecordSharingMode;
 };
 
 export type RecordSharingGrantDto = {
@@ -6535,14 +6692,6 @@ export type RecordSharingGrantDto = {
   principalType: RecordSharePrincipalType;
   rowCause: RecordShareRowCause;
 };
-
-/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
-export enum RecordSharingMode {
-  INHERITED = 'INHERITED',
-  OPEN_BY_DEFAULT = 'OPEN_BY_DEFAULT',
-  PRIVATE = 'PRIVATE',
-  ROLE_ONLY = 'ROLE_ONLY'
-}
 
 export type RecordSharingRoleDto = {
   __typename?: 'RecordSharingRoleDTO';
@@ -6665,6 +6814,7 @@ export type RowLevelPermissionPredicate = {
   objectMetadataId: Scalars['String']['output'];
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
+  relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
@@ -6675,6 +6825,10 @@ export type RowLevelPermissionPredicate = {
 
 export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['String']['output'];
@@ -6684,6 +6838,10 @@ export type RowLevelPermissionPredicateGroup = {
 };
 
 export type RowLevelPermissionPredicateGroupInput = {
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['UUID']['input'];
@@ -6701,6 +6859,7 @@ export type RowLevelPermissionPredicateInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
@@ -6757,6 +6916,7 @@ export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
   status: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   threadId: Scalars['UUID']['output'];
@@ -6825,6 +6985,7 @@ export type SendChatMessageResult = {
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];
+  recipientParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   streamId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -6929,6 +7090,7 @@ export type SettingsMenuItem = {
   id: Scalars['UUID']['output'];
   position: Scalars['Float']['output'];
   scope: SettingsMenuItemScope;
+  slug?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -7046,7 +7208,10 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 
 export type SubscriptionOnAgentChatEventArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -7346,6 +7511,7 @@ export type UpdateCalendarChannelInputUpdates = {
 };
 
 export type UpdateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   engineComponentKey?: InputMaybe<EngineComponentKey>;
@@ -7397,6 +7563,13 @@ export type UpdateFrontComponentInput = {
 export type UpdateFrontComponentInputUpdates = {
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateGettingStartedInput = {
+  completedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
+  isHidden?: InputMaybe<Scalars['Boolean']['input']>;
+  selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
+  snoozedUntil?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -7491,8 +7664,6 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
-  readability?: InputMaybe<MetadataReadability>;
-  sharingReach?: InputMaybe<ObjectSharingReach>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };
@@ -7769,6 +7940,8 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
+  aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
+  aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
   aiEvaluationModelId?: InputMaybe<Scalars['String']['input']>;
   aiModelIdByTier?: InputMaybe<Scalars['JSON']['input']>;
@@ -8503,6 +8676,31 @@ export enum WidgetType {
   WORKFLOW_VERSION = 'WORKFLOW_VERSION'
 }
 
+export enum WorkflowActionType {
+  AI_AGENT = 'AI_AGENT',
+  CLASSIFY = 'CLASSIFY',
+  CODE = 'CODE',
+  CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
+  CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
+  DELETE_RECORD = 'DELETE_RECORD',
+  DRAFT_EMAIL = 'DRAFT_EMAIL',
+  EMPTY = 'EMPTY',
+  FILTER = 'FILTER',
+  FIND_RECORDS = 'FIND_RECORDS',
+  FORM = 'FORM',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  IF_ELSE = 'IF_ELSE',
+  ITERATOR = 'ITERATOR',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  PICK_RECORD = 'PICK_RECORD',
+  SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
+  SEND_EMAIL = 'SEND_EMAIL',
+  UPDATE_RECORD = 'UPDATE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD',
+  WAIT_FOR_EVENT = 'WAIT_FOR_EVENT'
+}
+
 export type WorkflowConfiguration = {
   __typename?: 'WorkflowConfiguration';
   configurationType: WidgetConfigurationType;
@@ -8523,6 +8721,8 @@ export type Workspace = {
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode;
+  aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;
   aiEvaluationModelId?: Maybe<Scalars['String']['output']>;
   aiModelIdByTier: Scalars['JSON']['output'];

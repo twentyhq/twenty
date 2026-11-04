@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Ejecutar la CLI
 
-La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. Necesita **Node.js 24.5+ o 26.5+**.
+La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. La propia CLI requiere **Node.js 24.5+**. El desarrollo de aplicaciones también necesita una versión de Node compatible con el SDK instalado; consulta [Inicio rápido](/es/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Ejecuta cualquier comando mediante `npx`, sin instalar nada:
+Ejecuta cualquier comando mediante `npx`, sin una instalación global:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-Los ejemplos siguientes usan `twenty`. Anteponles `npx twenty@latest` si no la instalaste globalmente. Ejecuta `twenty commands` para ver la lista completa de comandos y `twenty \<command> --help` para ver las opciones de un comando.
+Los ejemplos siguientes usan `twenty`. Sustituye `twenty` por `npx twenty@latest` si no lo instalaste globalmente. Ejecuta `twenty commands` para ver la lista completa de comandos y `twenty \<command> --help` para ver las opciones de un comando.
 
 | Comando         | Qué hace                                                                                        |
 | --------------- | ----------------------------------------------------------------------------------------------- |
@@ -33,6 +33,7 @@ Los ejemplos siguientes usan `twenty`. Anteponles `npx twenty@latest` si no la i
 | `api`           | Envía solicitudes REST o GraphQL sin procesar                                                   |
 | `open`          | Abre el espacio de trabajo en tu navegador                                                      |
 | `aplicación`    | Crea, compila, sincroniza, depura y desinstala aplicaciones                                     |
+| `local`         | Comienza, inspecciona, para, actualiza y reinicia un entorno de desarrollo local                |
 | `doctor`        | Diagnostica la CLI, el SDK de aplicaciones y la conexión del espacio de trabajo                 |
 
 Cada comando que se comunica con un espacio de trabajo acepta `--remote \<name>` para dirigirse a una conexión guardada distinta de la predeterminada y `--json` para obtener una salida estructurada.
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Usa la dirección de tu espacio de trabajo o la dirección del servidor para una configuración local: `http://localhost:2020` para el [servidor Docker local](/es/developers/extend/apps/getting-started/local-server), `http://localhost:3000` para una extracción del código fuente. Puedes copiar el comando exacto desde **Configuración > Desarrolladores > CLI**. El inicio de sesión en el navegador requiere Twenty 2.42 o una versión posterior.
+Usa la dirección de tu espacio de trabajo o la dirección del servidor para una configuración local: `http://localhost:2020` para el [entorno de desarrollo local](/es/developers/extend/apps/getting-started/local-server), `http://localhost:3000` para una copia del código fuente. Puedes copiar el comando exacto desde **Configuración > Desarrolladores > CLI**. El inicio de sesión en el navegador requiere Twenty 2.42 o una versión posterior.
 
 Mantén varias conexiones asignándoles nombres:
 
@@ -63,6 +64,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 ```
 
 También puedes configurar `TWENTY_API_URL` y `TWENTY_API_KEY` para una sola ejecución sin guardar nada. Las conexiones guardadas se almacenan en `~/.twenty/config.json`.
+
+Los comandos seleccionan un espacio de trabajo en este orden:
+
+1. Un `--remote \<name>` explícito, que anula las variables de entorno de destino.
+2. `TWENTY_REMOTE`, o el par `TWENTY_API_URL` y `TWENTY_API_KEY`. No combines estos dos métodos.
+3. El remoto predeterminado guardado.
+
+`auth login --name \<name>` guarda una conexión, pero mantiene un valor predeterminado existente. Añade `--use`, o ejecuta `twenty remote use \<name>`, para cambiar el valor predeterminado.
 
 ## Explorar tus datos
 

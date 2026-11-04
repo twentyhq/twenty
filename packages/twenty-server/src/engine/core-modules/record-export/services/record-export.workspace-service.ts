@@ -61,7 +61,7 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -494,7 +494,7 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportAuthContext> {
     if (
       !isApiKeyAuthContext(authContext) &&
-      (!isUserAuthContext(authContext) || isDefined(authContext.viaApplication))
+      (!isUserAuthContext(authContext) || isDefined(authContext.agentId))
     ) {
       throw new ForbiddenException(t`Sign in to export records.`);
     }
@@ -517,9 +517,7 @@ export class RecordExportWorkspaceService {
         applicationId: isUserAuthContext(authContext)
           ? authContext.application?.id
           : undefined,
-        agentId: isUserAuthContext(authContext)
-          ? authContext.agentId
-          : undefined,
+        agentId: undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
@@ -608,6 +606,7 @@ export class RecordExportWorkspaceService {
         userWorkspaceId: userWorkspace.id,
         workspaceMember,
         workspaceMemberId: workspaceMember.id,
+        userSessionVariant: 'standard',
         application,
       }),
     );

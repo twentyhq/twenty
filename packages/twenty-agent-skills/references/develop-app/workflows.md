@@ -20,11 +20,25 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
 - `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
 
+## AI Agent Steps
+
+- `AI_AGENT` is one of two kinds. Never mix them: an agent brings its own instructions, model and permissions.
+  - Generate step: no agent. It carries its own `instructions`, `modelId`, `modelConfiguration` and `scope` and runs once, with no conversation, no human input and no waiting.
+  - Agent step: runs one of the app's agents, named with `agentUniversalIdentifier`. Only this kind takes `humanInputInstructions` and `conversation`; a Generate step with either fails validation.
+- Both kinds take the step's `prompt`, `responseFormat` and `workspaceMemberId` (the member the agent's conversation is with).
+- `scope` is what the step's AI may reach on top of the permissions of whoever runs the workflow: a role's permissions (`canReadAllObjectRecords`, `objectPermissions`, `fieldPermissions`, `permissionFlagUniversalIdentifiers`, ...) without its identity or row-level predicates. It resolves like a role whose all-records flags default to off: object actions and permission flags it doesn't grant are denied, system objects stay readable unless it grants more, and unlisted fields follow their object. A Generate step without a `scope` gets no data tools; an Agent step runs with its agent's role.
+- A step can only name an agent the app exports. `twenty app pull` reports as unsupported a workflow on any other agent, or with a stored step that has human input instructions or a conversation but no agent.
+
 ## Email and Calendar Steps
 
 - `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
 - Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
 - `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
+
+## Send to Inbox Steps
+
+- `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
+- Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
 
 ## Manual Record Trigger
 

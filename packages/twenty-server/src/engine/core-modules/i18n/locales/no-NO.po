@@ -203,6 +203,11 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Et dashbord"
 
+#. js-lingui-id: Fypv4q
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "A deal is won"
+msgstr "En avtale er vunnet"
+
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
 msgid "A DNS manager error occurred."
@@ -394,7 +399,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Et obligatorisk felt mangler. Oppgi alle påkrevde verdier og prøv igjen."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "En rolle med denne etiketten finnes allerede."
@@ -403,6 +408,11 @@ msgstr "En rolle med denne etiketten finnes allerede."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "En hemmelig variabel kan ikke ha en standardverdi."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "En innlogget chat kreves."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -609,6 +619,24 @@ msgstr "Godtatt"
 msgid "Access denied."
 msgstr ""
 
+#. js-lingui-id: RpHJlx
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Access group"
+msgstr "Tilgangsgruppe"
+
+#. js-lingui-id: EObiot
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Access group position"
+msgstr "Posisjon for tilgangsgruppe"
+
+#. js-lingui-id: YTZTZr
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Access groups"
+msgstr "Tilgangsgrupper"
+
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -702,6 +730,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Faktisk opptaksstart"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "Legg til {missingPackageNames} i Workspace-appens package.json og yarn.lock før du oppretter en komponent."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -753,11 +786,21 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
 msgstr "Legg til i liste"
 
+#. js-lingui-id: BBzZ81
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Add tools to your workspace."
+msgstr "Legg til verktøy i arbeidsområdet ditt."
+
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "Legg til visning i liste"
+
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "Legg til yarn.lock i Workspace-appen før du oppretter en komponent."
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -778,12 +821,17 @@ msgid "Admin Panel"
 msgstr "Adminpanel"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Administratorrolle ikke funnet."
 
+#. js-lingui-id: /KrRC2
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "Agent \"{label}\" is archived or belongs to another workflow step, so a new step cannot run it."
+msgstr "Agenten \"{label}\" er arkivert eller tilhører et annet workflow-trinn, så et nytt trinn kan ikke kjøre den."
+
 #. js-lingui-id: eHJEyS
-#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+#: src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service.ts
 msgid "Agent \"{label}\" is archived."
 msgstr "Agenten \"{label}\" er arkivert."
 
@@ -998,6 +1046,11 @@ msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "AI-chat-tråder eid av arbeidsområdemedlemmet"
 
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "AI-komponentbyggeren er deaktivert."
+
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1036,10 +1089,20 @@ msgstr "Beløp"
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "En agent kan ikke ha mer enn {maxTriggers} utløsere"
 
+#. js-lingui-id: KfRVdE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent drafts a follow-up for every deal about to close."
+msgstr "En agent utarbeider en oppfølging for hver avtale som snart avsluttes."
+
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
 msgstr "En agent installert av en applikasjon kan ikke få nytt navn."
+
+#. js-lingui-id: 3tWubk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "An agent shapes your objects and fields around how you work."
+msgstr "En agent tilpasser objektene og feltene dine etter hvordan du jobber."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1060,6 +1123,11 @@ msgstr "En agent med dette navnet finnes allerede."
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
 msgstr "En applikasjon kan bare starte sine egne arbeidsflyter."
+
+#. js-lingui-id: T/ZKXs
+#: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
+msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
+msgstr "En applikasjon kan be om medietilgang i iframe for opptil {MAX_ALLOWED_IFRAME_ORIGINS} opprinnelser"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1236,12 +1304,23 @@ msgstr "Et annet innstillingselement bruker allerede posisjon {0}"
 msgid "Another settings menu item already uses position {nextPosition}"
 msgstr "Et annet innstillingselement bruker allerede posisjon {nextPosition}"
 
+#. js-lingui-id: b2UKvQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item already uses slug \"{slug}\""
+msgstr "Et annet menyelement for innstillinger bruker allerede slugen \"{slug}\""
+
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
 msgstr "Et annet innstillingselement i denne applikasjonen bruker allerede denne posisjonen."
+
+#. js-lingui-id: Dswht3
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Another settings menu item of this application already uses this slug."
+msgstr "Et annet menyelement for innstillinger i denne applikasjonen bruker allerede denne slugen."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1264,7 +1343,7 @@ msgid "API key role configuration not found."
 msgstr "Rollekonfigurasjon for API-nøkkel ikke funnet."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API-nøkkelrolle ikke funnet."
 
@@ -1274,11 +1353,32 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof og punktum"
 
+#. js-lingui-id: oABUXG
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "App installed"
+msgstr "App installert"
+
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Application"
 msgstr "Applikasjon"
+
+#. js-lingui-id: DI3ExZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role"
+msgstr "Applikasjonen \"{applicationName}\" kan ikke tildeles en rolle"
+
+#. js-lingui-id: UtDk/w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
+msgstr "Applikasjonen \"{applicationName}\" kan ikke tildeles en rolle: bare installerte applikasjoner kan"
+
+#. js-lingui-id: zmQlIf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Application already has a role assigned"
+msgstr "Applikasjonen har allerede en tildelt rolle"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1397,6 +1497,11 @@ msgstr "Omfanget for applikasjonsvariabel kan ikke endres etter opprettelse"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Applikasjoner kan ikke oppdatere disse feltene: {fieldsList}."
+
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "Godkjenn dette utkastet i den opprinnelige chatten."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1699,7 +1804,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Autentisering er ikke aktivert med denne leverandøren."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Autentisering er nødvendig for å få tilgang til denne funksjonen. Vennligst logg inn og prøv igjen."
 
@@ -1710,7 +1815,7 @@ msgstr "Autentisering kreves for å utføre denne handlingen"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Autentisering er påkrevd."
 
@@ -1910,6 +2015,16 @@ msgstr "Returnert klokken"
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
 msgstr "Returnert klokken"
+
+#. js-lingui-id: 7piJZ+
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your companies, contacts and deals from any CRM export."
+msgstr "Importer selskapene, kontaktene og avtalene dine fra en hvilken som helst CRM-eksport."
+
+#. js-lingui-id: YYQkoU
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Bring your team into Twenty."
+msgstr "Ta med teamet ditt til Twenty."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2445,12 +2560,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Kan ikke aktivere ikke-kladd eller ikke-sist-publisert versjon"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Kan ikke legge til felttillatelser på systemobjekter."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Kan ikke legge til tillatelser på systemobjekter."
 
@@ -2483,7 +2598,7 @@ msgid "Cannot delete standard skill"
 msgstr "Kan ikke slette standardferdighet"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Kan ikke slette den siste administratorbrukeren."
 
@@ -2499,12 +2614,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan ikke slette, vennligst oppdater etikettfeltet først"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Kan ikke gi skrivetillatelse på objekter som ikke kan leses."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Kan ikke gi skrivetillatelse uten lesetillatelse."
 
@@ -2579,7 +2694,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Kan ikke endre predikat for å endre dets rolle fra {existingRoleIdentifier} til {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Kan ikke fjerne den siste administratoren fra arbeidsområdet."
 
@@ -2596,7 +2711,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Kan ikke velge en rolle som tilhører en annen applikasjon"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr ""
@@ -2832,7 +2947,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Velg en eksisterende tidslinjeaktivitetstype som skal overstyres."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Velg én person eller én rolle å dele med."
 
@@ -2982,6 +3097,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Companies"
 msgstr "Selskaper"
 
+#. js-lingui-id: UcnBjr
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Companies and people fill in from your emails and meetings."
+msgstr "Selskaper og personer fylles inn fra e-postene og møtene dine."
+
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -3050,6 +3170,11 @@ msgstr "Komponentbyggingen overskred tidsgrensen på {timeoutSeconds} sekunder."
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Komponentbyggingen overskrider utgrensen på {maximumOutputMegabytes} MB."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Komponentutkastet ble ikke funnet eller har utløpt."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3069,9 +3194,15 @@ msgid "Compose Email"
 msgstr "Skriv e-post"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Sammensatt type ikke funnet."
+
+#. js-lingui-id: d+5s6E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conditional grant the group evaluates, empty for whole-object grants"
+msgstr "Betinget tilgang gruppen evaluerer, tom for tilganger for hele objektet"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3190,10 +3321,20 @@ msgstr "Motstridende telefonanropskode."
 msgid "Conflicting phone country code."
 msgstr "Motstridende telefonlandskode."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Koble først til en konto for denne MCP-serveren."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 msgstr "Kobling er ikke tillatt for {connectFieldName} på {objectMetadataNameSingular}"
+
+#. js-lingui-id: eTJ1jL
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Connect your mailbox"
+msgstr "Koble til postkassen din"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3559,6 +3700,11 @@ msgctxt "commandMenuItem.label"
 msgid "Create {objectLabelSingular}"
 msgstr "Opprett {objectLabelSingular}"
 
+#. js-lingui-id: Y8ye8i
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Create a kickoff task"
+msgstr "Opprett en oppstartsoppgave"
+
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Create Calendar Event"
@@ -3623,6 +3769,7 @@ msgstr "Opprettet av"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -3663,12 +3810,13 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Opprettet feltmetadata, metadata for overordnet objekt ble ikke funnet"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Oppretting av en oppføring for et privat objekt krever argumentet shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3706,6 +3854,7 @@ msgstr "Opprettelsesdato"
 
 #. js-lingui-id: MZxGED
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3827,8 +3976,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Egendefinert objekt mangler et etikettidentifikatorfelt."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Egendefinerte roller er en del av Organisasjonsplanen."
@@ -3937,6 +4086,7 @@ msgstr "Datoformat"
 
 #. js-lingui-id: bCL+CN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4150,7 +4300,7 @@ msgid "Default Person Layout"
 msgstr "Standard personlayout"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Standardrolle ikke funnet."
 
@@ -4255,6 +4405,7 @@ msgstr "Slettet kl."
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4571,7 +4722,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Hvert felt i stien for relaterte oppføringer må tilhøre objektet som nås gjennom den forrige relasjonen"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Hver shareWith-oppføring må målrette nøyaktig én av workspaceMemberId, roleId eller everyone"
 
@@ -4753,6 +4904,11 @@ msgctxt "fieldMetadata.description"
 msgid "Email subject line"
 msgstr "Emnelinje for e-post"
 
+#. js-lingui-id: 4VrNsb
+#: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
+msgid "Email the account owner"
+msgstr "Send e-post til kontoeieren"
+
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email update is restricted to single workspace users."
@@ -4785,14 +4941,12 @@ msgstr "E-poster"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "E-poster"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "E-poster"
@@ -4828,7 +4982,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji medlemmet reagerte med"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Tomme felttillatelser er ikke tillatt."
 
@@ -4898,6 +5052,11 @@ msgstr "Satt i kø"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Berik"
+
+#. js-lingui-id: +RIetY
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter an HTTPS origin without a path or wildcard"
+msgstr "Angi en HTTPS-opprinnelse uten en sti eller jokertegn"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -5083,6 +5242,11 @@ msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Hendelser knyttet til arbeidsområdemedlemmet"
 
+#. js-lingui-id: idSfue
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
+msgstr "Hver mandag utarbeider du en oppfølgings-e-post for hver avtale som avsluttes i løpet av de neste 30 dagene."
+
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -5257,7 +5421,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Kunne ikke prøve på nytt med jobber. Vennligst prøv igjen senere."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Kunne ikke oppdatere felttillatelse."
 
@@ -5293,15 +5457,31 @@ msgstr "Funksjonskonfigurasjon ikke funnet."
 msgid "February"
 msgstr "Februar"
 
+#. js-lingui-id: V1MVzr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
+msgstr "Feltet \"{fieldName}\" tilhører ikke objektet som nås via relasjonen \"{relationFieldName}\""
+
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Feltet \"{fieldName}\" er ikke en mange-til-én-relasjon og har ingen sammenføyningskolonne å sammenligne med"
 
+#. js-lingui-id: XZvE/9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{relationFieldName}\" is not a relation"
+msgstr "Feltet \"{relationFieldName}\" er ikke en relasjon"
+
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Feltet \"{workspaceMemberFieldName}\" er ikke et felt i workspaceMember-objektet, så predikatet vil aldri gjelde"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "Feltet {0}.{fieldName} er utilgjengelig. Velg tilgjengelige felt på toppnivå."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5366,8 +5546,8 @@ msgid "Field metadata not found"
 msgstr "Feltmetadata ikke funnet"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5417,7 +5597,7 @@ msgid "Field permission not found"
 msgstr "Felttillatelse ikke funnet"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Felttillatelse ikke funnet."
 
@@ -5448,7 +5628,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Felt referert i indeksen eksisterer ikke"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Feltbegrensninger gjelder bare for objekter som kan leses."
 
@@ -5504,6 +5684,7 @@ msgstr "Felt brukt for fulltekstsøk"
 
 #. js-lingui-id: pcBMew
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5744,6 +5925,12 @@ msgstr "Finn"
 msgid "Find Connected Accounts"
 msgstr "Finn tilknyttede kontoer"
 
+#. js-lingui-id: HEpRJM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "First direct message member ID"
+msgstr "Medlems-ID for første direktemelding"
+
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "First friendly message"
@@ -5770,6 +5957,21 @@ msgstr "Flyt"
 #: src/engine/core-modules/file-storage/utils/validate-folder-path.util.ts
 msgid "Folder path must not contain a file extension — use deleteFile for file paths"
 msgstr "Mappesti må ikke inneholde en filendelse — bruk deleteFile for filstier"
+
+#. js-lingui-id: 9J7Yxo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow up on closing deals"
+msgstr "Følg opp avtaler som snart avsluttes"
+
+#. js-lingui-id: Y2RyNo
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up instructions"
+msgstr "Instruksjoner for oppfølging"
+
+#. js-lingui-id: xRdoZk
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Follow-up request sent"
+msgstr "Forespørsel om oppfølging sendt"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6149,6 +6351,17 @@ msgstr "Grupperingsfelt er påkrevd for sektordiagram"
 msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
 msgstr "Grupperingsfelt er påkrevd for sektordiagram-widgeten \"{widgetTitle}\""
 
+#. js-lingui-id: tZ4I1x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Group hash"
+msgstr "Gruppehash"
+
+#. js-lingui-id: cGqZJs
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Hand over won deals"
+msgstr "Overfør vunne avtaler"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6187,6 +6400,12 @@ msgstr "handlerName må være en gyldig JavaScript-identifikator eller punktsepa
 msgctxt "fieldMetadata.description"
 msgid "Hash of the authored template and resolved destination URLs"
 msgstr "Hash av den opprettede malen og de løste destinasjons-URL-ene"
+
+#. js-lingui-id: XL/9cp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the role, grant and member field values, unique per group"
+msgstr "Hash av rolle-, tillatelses- og medlemsfeltverdier, unik per gruppe"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6232,6 +6451,7 @@ msgstr "iCal-UID"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6277,6 +6497,7 @@ msgstr "ID"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6359,11 +6580,21 @@ msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
 msgstr "Importer {objectLabelPlural}"
 
+#. js-lingui-id: gQ9//i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Import your data"
+msgstr "Importer dine data"
+
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "In progress"
 msgstr "Pågår"
+
+#. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Inbox is not enabled for this workspace."
+msgstr "Innboks er ikke aktivert for dette arbeidsområdet."
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -6447,6 +6678,11 @@ msgctxt "fieldMetadata.label"
 msgid "Input Tokens"
 msgstr "Inndata-tokens"
 
+#. js-lingui-id: 5u6qKW
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Install an app"
+msgstr "Installer en app"
+
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6481,8 +6717,8 @@ msgid "Internal name of the campaign"
 msgstr "Internt navn på kampanjen"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Ugyldig tilgangsnivå."
 
@@ -6518,7 +6754,7 @@ msgid "Invalid application workflow definition."
 msgstr "Ugyldig definisjon av applikasjonsarbeidsflyt."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Ugyldig argument oppgitt."
 
@@ -6561,6 +6797,11 @@ msgstr "Ugyldig klassifiseringsforespørsel."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "Ugyldig inndata for kommandomenyelement."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Ugyldig inndata for komponentutkast."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7021,7 +7262,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Ugyldig tillatelsestype for tillatelsesflagg."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Ugyldig tillatelsesinnstilling."
 
@@ -7045,6 +7286,11 @@ msgstr "Ugyldig telefonlandskode."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Ugyldig telefonnummer."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Ugyldig feilmelding for forhåndsvisning."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7185,8 +7431,8 @@ msgstr "Ugyldig URL-format."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Ugyldig UUID-format."
 
@@ -7426,6 +7672,16 @@ msgstr "Ugyldig arbeidsflytversjon."
 msgid "Invitation not found"
 msgstr "Invitasjon ikke funnet"
 
+#. js-lingui-id: ZMCmkn
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invitations sent"
+msgstr "Invitasjoner sendt"
+
+#. js-lingui-id: d+Y+rP
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Invite your team"
+msgstr "Inviter teamet ditt"
+
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7486,7 +7742,7 @@ msgid "Job Title"
 msgstr "Stillingstittel"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Navn på join-kolonne er påkrevd."
 
@@ -7736,6 +7992,7 @@ msgstr "Siste gang lenken ble endret"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -7771,6 +8028,7 @@ msgstr "Siste gang posten ble endret"
 
 #. js-lingui-id: hzBM8U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8038,6 +8296,16 @@ msgstr "Logikkfunksjon ikke funnet."
 msgid "Logic function with same universal identifier already exists"
 msgstr "Logikkfunksjon med samme universelle identifikator eksisterer allerede"
 
+#. js-lingui-id: y5Ysbs
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
+msgstr "Se på dataene jeg importerte, og foreslå objektene, feltene og visningene jeg trenger for å drive virksomheten min. Spør meg hva jeg vil spore før du oppretter noe."
+
+#. js-lingui-id: AgKpIa
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Mailbox connected"
+msgstr "Postkasse tilkoblet"
+
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8049,6 +8317,11 @@ msgstr "Gjør privat"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Gjør arbeidsflyt privat"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Administrering av applikasjoner kreves."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8185,6 +8458,12 @@ msgctxt "fieldMetadata.description"
 msgid "Meeting title from the calendar event"
 msgstr "Møtetittel fra kalenderhendelsen"
 
+#. js-lingui-id: I+r+Lx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Member field values"
+msgstr "Medlemsfeltverdier"
+
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8209,6 +8488,12 @@ msgstr "Medlemmer"
 msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Medlemmer"
+
+#. js-lingui-id: sK9eyT
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Members of a role who receive the same evaluated grant"
+msgstr "Medlemmer av en rolle som mottar den samme evaluerte tillatelsen"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8607,6 +8892,20 @@ msgstr "Meldinger"
 #. js-lingui-id: I+2uUa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
+msgid "Messages"
+msgstr "Meldinger"
+
+#. js-lingui-id: x+60lt
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutTab.title"
+msgid "Messages"
+msgstr "Meldinger"
+
+#. js-lingui-id: JJTyHZ
+#: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+msgctxt "pageLayoutWidget.title"
 msgid "Messages"
 msgstr "Meldinger"
 
@@ -9024,7 +9323,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Ingen tillatelser er satt for denne rollen på det valgte objektet. Vennligst sett objekttillatelser først."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Ingen tillatelser funnet i datakilden."
 
@@ -9044,12 +9343,12 @@ msgid "No records were affected."
 msgstr "Ingen oppføringer ble berørt."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Ingen rolle er tildelt applikasjonen."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Ingen rolle funnet for denne brukeren i arbeidsområdet."
 
@@ -9079,7 +9378,7 @@ msgid "No trigger type provided"
 msgstr "Ingen utløsningstype oppgitt"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Ingen gyldig autentiseringskontekst funnet."
 
@@ -9393,9 +9692,9 @@ msgid "Object metadata not found"
 msgstr "Objektmetadata ikke funnet"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9435,7 +9734,7 @@ msgid "Object permission not found"
 msgstr "Objekttillatelse ikke funnet"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Objekttillatelse ikke funnet."
 
@@ -9544,6 +9843,11 @@ msgstr "Ett eller flere forespurte omfang er ugyldige."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Bare en kampanje som er et utkast eller planlagt, kan sendes."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Bare en rotgruppe for tillatelsespredikater på radnivå kan tillate operasjoner"
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9580,7 +9884,7 @@ msgid "Only error"
 msgstr "Eneste feil"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Kun feltbegrensninger er tillatt."
 
@@ -9600,10 +9904,25 @@ msgstr "Bare applikasjonen som eier denne agenten, kan endre utløserne dens"
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bare personen som opprettet denne arbeidsflyten, kan endre hvem som kan se den"
 
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Bare gruppen på øverste nivå i en regel på postnivå kan tillate operasjoner"
+
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
 msgid "Only the values of this form can be changed."
 msgstr "Bare verdiene i dette skjemaet kan endres."
+
+#. js-lingui-id: soFgCh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace can assign roles to applications"
+msgstr "Bare arbeidsområdet kan tildele roller til applikasjoner"
+
+#. js-lingui-id: IPv2FN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Only the workspace custom application can assign roles to applications"
+msgstr "Bare arbeidsområdets egendefinerte applikasjon kan tildele roller til applikasjoner"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10272,7 +10591,7 @@ msgid "Permission flag to update not found"
 msgstr ""
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Tillatelse ikke funnet."
 
@@ -10428,6 +10747,7 @@ msgstr "Kontaktpunkt"
 
 #. js-lingui-id: rLOFsu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -10496,6 +10816,11 @@ msgstr "Predikatet mangler en verdi"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
 msgstr "Predikatverdien er ikke gyldig for denne operanden"
+
+#. js-lingui-id: nSv3rP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reaching a field through a relation are not enabled for this workspace"
+msgstr "Predikater som når et felt via en relasjon, er ikke aktivert for dette arbeidsområdet"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10726,7 +11051,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Grense for forespørsler er nådd. Vennligst prøv igjen senere."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Rå SQL-spørringer er ikke tillatt."
 
@@ -11033,6 +11358,11 @@ msgstr "Sti for relaterte oppføringer ble ikke funnet."
 msgid "Related record path object not found"
 msgstr "Objekt i stien for relaterte oppføringer ble ikke funnet"
 
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "Relaterte oppføringsstier krever Organization-abonnementet."
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11055,6 +11385,22 @@ msgstr "Relasjonskonfigurasjon er ugyldig."
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "Opprettingspayload for relasjon er påkrevet"
+
+#. js-lingui-id: yRw5Ff
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
+msgstr "Relasjonsfeltet \"{relationFieldName}\" tilhører ikke objektet som predikatet begrenser"
+
+#. js-lingui-id: lEwqUQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" is not active"
+msgstr "Relasjonsfeltet \"{relationFieldName}\" er ikke aktivt"
+
+#. js-lingui-id: k5Rbos
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field metadata not found"
+msgstr "Relasjonsfeltmetadata ble ikke funnet"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11345,6 +11691,13 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
 msgstr ""
 
+#. js-lingui-id: f41NTp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to applications"
+msgstr "Rollen \"{roleLabel}\" kan ikke tildeles applikasjoner"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11355,17 +11708,28 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" kan ikke tilordnes webhooker"
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Rollen \"{roleLabel}\" kan ikke tilordnes: Egendefinerte roller krever Organisasjonsplanen"
 
+#. js-lingui-id: Xl64Bj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
+msgstr "Rollen \"{roleLabel}\" må eies av arbeidsområdets egendefinerte applikasjon for å kunne tildeles en applikasjon"
+
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
 msgstr "Rollen kan ikke tildeles denne entiteten."
+
+#. js-lingui-id: IJxetQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Role ID"
+msgstr "Rolle-ID"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11381,7 +11745,7 @@ msgid "Role is not editable"
 msgstr ""
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rollen må ha minst ett mål."
 
@@ -11425,10 +11789,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rolle ikke funnet."
 
@@ -11453,11 +11817,11 @@ msgstr "Rollemål eksisterer allerede"
 msgid "Role target is missing identifier."
 msgstr "Rollemål mangler identifikator."
 
-#. js-lingui-id: iqcAvV
+#. js-lingui-id: 3km96z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
+msgstr "Rollemålet må ha nøyaktig én av følgende: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier eller targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11476,6 +11840,12 @@ msgstr "Rollemål ikke funnet."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
 msgstr "Rollemål med denne universelle identifikatoren eksisterer allerede"
+
+#. js-lingui-id: YDA5ex
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Role whose members can belong to the group"
+msgstr "Rolle hvis medlemmer kan tilhøre gruppen"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11536,6 +11906,12 @@ msgstr "Funksjonen for tillatelsespredikat på radnivå er deaktivert."
 msgid "Row level permission predicate group already exists"
 msgstr "Gruppe for tillatelsespredikater på radnivå eksisterer allerede"
 
+#. js-lingui-id: A9bb6S
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row level permission predicate group ID"
+msgstr "Gruppe-ID for tillatelsespredikater på radnivå"
+
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11594,6 +11970,11 @@ msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "Regel"
 
+#. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Rules through a relation are not enabled for this workspace"
+msgstr "Regler via en relasjon er ikke aktivert for dette arbeidsområdet"
+
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11612,6 +11993,21 @@ msgstr "Kjøringer"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "Kjøringer"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Eksempeloppføringene overstiger 100 KB."
+
+#. js-lingui-id: P79LWT
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must include every selected field."
+msgstr "Eksempeloppføringer må inkludere hvert valgte felt."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Eksempeloppføringene må bare inneholde valgte felt og id."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -11634,6 +12030,11 @@ msgstr "Lagre kampanje"
 msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Lagre dashbord"
+
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "Lagring av en komponent krever menneskelig godkjenning."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -11724,6 +12125,7 @@ msgstr "Søkevektor"
 
 #. js-lingui-id: Zuw7oP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11772,6 +12174,12 @@ msgstr "Søkevektorfelt må tilhøre samme objekt"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 msgid "Search vector field not found"
 msgstr "Søkevektorfelt ikke funnet"
+
+#. js-lingui-id: pMB33L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Second direct message member ID"
+msgstr "Medlems-ID for andre direktemelding"
 
 #. js-lingui-id: xvgOFj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
@@ -11835,7 +12243,7 @@ msgstr "Se arbeidsflyt"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "Velg en rolle for denne webhooken."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12055,6 +12463,16 @@ msgstr "Omfanget \"{0}\" for innstillingselementet er ugyldig"
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
 msgstr "Omfanget \"{nextScope}\" for innstillingselementet er ugyldig"
 
+#. js-lingui-id: nI9Ltr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" is reserved"
+msgstr "Slugen \"{slug}\" for menyelementet for innstillinger er reservert"
+
+#. js-lingui-id: x515yK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
+msgstr "Slugen \"{slug}\" for menyelementet for innstillinger må være i kebab-case med små bokstaver og ha maksimalt {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} tegn"
+
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -12073,6 +12491,16 @@ msgstr "Tittelen \"{updatedTitle}\" på innstillingselementet er reservert"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Tittel for innstillingselement kreves"
+
+#. js-lingui-id: x4ZiTl
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup instructions"
+msgstr "Oppsettinstruksjoner"
+
+#. js-lingui-id: gIoyTf
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Setup request sent"
+msgstr "Oppsettsforespørsel sendt"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12129,17 +12557,17 @@ msgid "Shared record"
 msgstr "Delt post"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith angir en rolle som ikke tilhører dette arbeidsområdet"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith angir et arbeidsområdemedlem som ikke tilhører dette arbeidsområdet"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith angir samme hovedenhet mer enn én gang"
 
@@ -12262,7 +12690,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Noen av rettighetene du valgte er ikke gyldige. Vennligst prøv igjen med gyldige tillatelsesinnstillinger."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -12424,6 +12852,11 @@ msgctxt "fieldMetadata.label"
 msgid "Spreadsheet"
 msgstr "Regneark"
 
+#. js-lingui-id: 73/iLE
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Spreadsheet uploaded"
+msgstr "Regneark lastet opp"
+
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "SSO configuration error."
@@ -12488,6 +12921,11 @@ msgstr "Startdato"
 msgctxt "fieldMetadata.label"
 msgid "Start of the week"
 msgstr "Ukestart"
+
+#. js-lingui-id: wcXsug
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Start the handover when a deal is won."
+msgstr "Start overleveringen når en avtale er vunnet."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -12760,10 +13198,21 @@ msgstr "Fane 1"
 msgid "Tab not found for widget duplication."
 msgstr "Fane ikke funnet for duplisering av widget."
 
+#. js-lingui-id: xRgQRi
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Tailor your workspace"
+msgstr "Tilpass arbeidsområdet ditt"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
 msgstr "Tarball-opplasting ikke funnet."
+
+#. js-lingui-id: rFU/ca
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
+msgid "Target application not found"
+msgstr "Målapplikasjon ikke funnet"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -13064,13 +13513,18 @@ msgstr "{reservedViewKey}-visningsnøkkelen er reservert for standardvisningen"
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr "{reservedViewKey}-visningsnøkkelen er reservert for standardvisningen som eies av motoren; fjern nøkkelen fra visningsdefinisjonen"
 
+#. js-lingui-id: xAbdAA
+#: src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service.ts
+msgid "The agent this step should run was not found."
+msgstr "Agenten som dette trinnet skal kjøre, ble ikke funnet."
+
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Agenten du leter etter, ble ikke funnet. Den kan ha blitt slettet eller du har kanskje ikke tilgang til den."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API-nøkkelen har ikke en gyldig rolle registrert. Vennligst sjekk API-nøkkelkonfigurasjonen din."
 
@@ -13086,7 +13540,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Appens kildekanal stemmer ikke overens med forventet type."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Applikasjonen har ikke blitt tildelt en gyldig rolle. Vennligst sjekk applikasjonskonfigurasjonen din."
 
@@ -13106,6 +13560,11 @@ msgstr "Definisjonen av applikasjonsarbeidsflyten er ugyldig."
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Applikasjonens produksjonsavhengigheter er for store til å installeres. Flytt pakker som ikke importeres av logikkfunksjonene (UI-biblioteker, utviklerverktøy) ut av \"dependencies\"."
+
+#. js-lingui-id: 2a7bjg
+#: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
+msgid "The application's requested permissions have changed. Review them again before approving."
+msgstr "Applikasjonens forespurte tillatelser er endret. Gå gjennom dem på nytt før du godkjenner."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -13148,6 +13607,16 @@ msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "Selskapets totale årlige omsetning"
 
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "Komponentavhengighetene er for store. Reduser avhengighetene i Workspace-appen og prøv på nytt."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "Komponentavhengighetene kunne ikke bekreftes. Prøv å opprette komponenten på nytt."
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -13187,6 +13656,7 @@ msgstr "Oppretteren av lenken"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13237,7 +13707,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Standardrollen kan ikke slettes da den er nødvendig for at arbeidsområdet skal fungere riktig."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Standardrollen kan ikke slettes."
 
@@ -13340,6 +13810,12 @@ msgstr "Filen er tom eller overskrider maksimal tillatt størrelse."
 msgid "The file upload has not been completed. Please retry the upload."
 msgstr "Filopplastingen er ikke fullført. Prøv å laste opp på nytt."
 
+#. js-lingui-id: 2T6q1O
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The first member in the fixed direct message pair"
+msgstr "Det første medlemmet i det faste direktemeldingsparet"
+
 #. js-lingui-id: DjTUPP
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -13426,8 +13902,13 @@ msgstr "Logikkfunksjonen som skal kjøres ved frakobling ble ikke funnet."
 msgid "The MCP request parameters are invalid."
 msgstr "Forespørselsparametrene for MCP er ugyldige."
 
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "MCP-serveren eksponerer for mange verktøy til å kunne synkroniseres."
+
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Rollen Medlem kan ikke slettes."
@@ -13518,6 +13999,16 @@ msgctxt "fieldMetadata.description"
 msgid "The person in the list"
 msgstr "Personen i listen"
 
+#. js-lingui-id: vuwSBG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through a relation field"
+msgstr "Predikatet kan bare gå via et relasjonsfelt"
+
+#. js-lingui-id: 1pKvRu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through an active relation field"
+msgstr "Predikatet kan bare gå via et aktivt relasjonsfelt"
+
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
@@ -13580,6 +14071,17 @@ msgstr ""
 msgid "The same column cannot appear twice in an index."
 msgstr "Den samme kolonnen kan ikke vises to ganger i en indeks."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "Den lagrede komponenten er forskjellig fra dette utkastet."
+
+#. js-lingui-id: i+FcdU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "The second member in the fixed direct message pair"
+msgstr "Det andre medlemmet i det faste direktemeldingsparet"
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -13588,7 +14090,7 @@ msgstr "Den valgte modellen er deaktivert av administratoren."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "Den valgte rollen finnes ikke."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13749,8 +14251,14 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "Status for arbeidsflytversjon"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "Avhengighetene for Workspace-appen ble endret under byggingen. Prøv å opprette komponenten på nytt."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13785,12 +14293,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Medlemmet i arbeidsområdet som sist oppdaterte oppføringen"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rollen deres har ikke tilgang til disse postene, og dette objektet deles bare med roller som har det."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rollen deres kan ikke se denne posten, og dette objektet deles bare med personer som kan det."
 
@@ -13818,6 +14326,11 @@ msgstr "Det finnes ingen tidligere onboarding-steg å gå tilbake til."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Disse feltene kan ikke oppdateres før arbeidsområdet er aktivert: {fieldsList}."
+
+#. js-lingui-id: 029tdK
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "These origins are too long to allow together. Remove one and try again."
+msgstr "Disse opprinnelsene er for lange til å kunne tillates sammen. Fjern én og prøv igjen."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -14068,6 +14581,16 @@ msgstr "Dette domenet er allerede registrert."
 msgid "This domain is already taken."
 msgstr "Dette domenet er allerede tatt."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "Dette utkastet oppdateres. Prøv igjen."
+
+#. js-lingui-id: EM4fuz
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "Dette utkastet ble erstattet, lagret eller tilhører en annen chat. Start et nytt utkast."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14107,6 +14630,11 @@ msgstr "Denne funksjonen er ikke aktivert."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "Dette feltet kan ikke endres."
+
+#. js-lingui-id: Bp6UAi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field does not belong to the object reached by the relation"
+msgstr "Dette feltet tilhører ikke objektet som nås via relasjonen"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14241,7 +14769,7 @@ msgid "This message channel cannot send messages."
 msgstr "Denne meldingskanalen kan ikke sende meldinger."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Denne metoden er ikke tillatt."
 
@@ -14345,6 +14873,11 @@ msgstr "Denne tillatelsen er deaktivert på objektet og kan ikke gis"
 msgid "This plan is not available."
 msgstr "Denne planen er ikke tilgjengelig."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "Denne forhåndsvisningen ble endret. Godkjenn den nyeste revisjonen."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14386,6 +14919,11 @@ msgstr "Denne stien for relaterte oppføringer finnes allerede"
 msgid "This relation field cannot be used in a record rule"
 msgstr "Dette relasjonsfeltet kan ikke brukes i en oppføringsregel"
 
+#. js-lingui-id: K7NTYK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This relation field does not belong to the restricted object"
+msgstr "Dette relasjonsfeltet tilhører ikke det begrensede objektet"
+
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This request for input could not be found."
@@ -14422,12 +14960,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Denne rollen kan ikke tildeles API-nøkler."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Denne rollen kan ikke tildeles brukere."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Denne rollen kan ikke redigeres."
 
@@ -14445,6 +14983,11 @@ msgstr "Denne rollen kan ikke redigeres."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Denne rollen kan ikke endres fordi det er en systemrolle. Kun tilpassede roller kan redigeres."
 
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "Denne lagrede komponenten ble slettet. Opprett et nytt utkast."
+
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."
@@ -14456,12 +14999,24 @@ msgstr "Denne servernøkkelen er allerede tatt i bruk av et annet arbeidsområde
 msgid "This settings menu item scope is not supported."
 msgstr "Dette omfanget for innstillingselementet støttes ikke."
 
+#. js-lingui-id: jzBAe4
+#: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
+msgid "This settings menu item slug is invalid or reserved."
+msgstr "Denne sluggen for innstillingsmenyelementet er ugyldig eller reservert."
+
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
 msgstr "Denne tittelen på innstillingselementet er reservert."
+
+#. js-lingui-id: ukriVV
+#: src/engine/core-modules/getting-started/getting-started.exception.ts
+msgid "This step has no workflow."
+msgstr "Dette trinnet har ingen arbeidsflyt."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -14893,7 +15448,7 @@ msgid "To do"
 msgstr "Å gjøre"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "For mange administratorkandidater funnet."
 
@@ -15230,12 +15785,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Ukjent navigasjonsmenyelementtype {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Ukjent operasjon."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Ukjent tillatelse kreves."
 
@@ -15372,7 +15927,7 @@ msgid "Update DateTime"
 msgstr "Oppdateringsdato og -tid"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Feltbegrensninger for oppdatering gjelder bare for objekter som kan oppdateres."
 
@@ -15424,6 +15979,7 @@ msgstr "Oppdatert"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -15614,7 +16170,7 @@ msgid "User already exists"
 msgstr "Bruker eksisterer allerede"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Bruker har allerede en tildelt rolle."
 
@@ -15629,7 +16185,7 @@ msgid "User does not have access to this workspace"
 msgstr "Brukeren har ikke tilgang til dette arbeidsområdet"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Brukeren har ikke tillatelse."
 
@@ -15686,7 +16242,7 @@ msgstr "Brukeren ble ikke opprettet med e-post/passord"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Brukerarbeidsområde ikke funnet."
 
@@ -15805,6 +16361,12 @@ msgstr "Verdien \"{stringifiedValue}\" tilsvarer ingen oppføring for operanden 
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Verdien må være i UPPER_CASE og følge snake_case \"{sanitizedValue}\""
+
+#. js-lingui-id: OG7PgU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Values of the member fields the grant reads, shared by every member of the group"
+msgstr "Verdier for medlemsfeltene som tillatelsen leser, delt av alle medlemmene i gruppen"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -16314,6 +16876,11 @@ msgstr "Vi kunne ikke logge inn på e-postkontoen din. Vennligst sjekk e-postadr
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Vi opplevde et problem med å koble til e-postkontoen din. Vennligst sjekk innstillingene dine og prøv igjen."
 
+#. js-lingui-id: b6WVV+
+#: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
+msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
+msgstr "Vi er {companyName}, et selskap i {industry}. Se på dataene jeg importerte, og foreslå objektene, feltene og visningene vi trenger for å drive virksomheten vår. Spør meg før du oppretter noe."
+
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -16607,6 +17174,11 @@ msgstr "Duplisering av arbeidsflyt mislyktes. Prøv igjen."
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
 msgid "Workflow edge not found."
 msgstr "Arbeidsflyt-tilkobling ikke funnet."
+
+#. js-lingui-id: 5ENQ3i
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Workflow enabled"
+msgstr "Arbeidsflyt aktivert"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
@@ -16945,7 +17517,7 @@ msgid "Workspace does not exist."
 msgstr "Arbeidsområdet finnes ikke."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Arbeidsområde-ID og rolle samsvarer ikke."
 
@@ -17037,7 +17609,7 @@ msgstr "Arbeidsområdemedlems navn"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Arbeidsområdemedlem ikke funnet."
 
@@ -17284,12 +17856,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Du kan ikke generere en gjenopprettingskode for deg selv. Tilbakestill tofaktorautentisering fra profilen din i stedet."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Du kan ikke endre din egen rolle. Vennligst spør en annen administrator om å oppdatere din rolle."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Du kan ikke slette en rolle du er tildelt. Be en annen administrator om å slette den."
 
@@ -17300,12 +17872,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Du kan ikke gi redigeringstillatelser uten også å gi lesetillatelser. Vennligst aktiver lesetilgang først."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Du kan ikke fjerne tilgang til innstillinger fra din egen rolle. Be en annen administrator om å gjøre denne endringen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Du kan ikke fjerne administratorrollen fra den siste administratoren. Vennligst tilordne en annen administrator først."
 
@@ -17330,7 +17902,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Du kan ikke sette feltrettigheter på systemobjekter da de styres av plattformen."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Du kan ikke oppdatere din egen rolle."
 
@@ -17355,9 +17927,8 @@ msgid "You do not have access to this message folder."
 msgstr "Du har ikke tilgang til denne meldingsmappen."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Du har ikke tillatelse til å få tilgang til denne funksjonen. Kontakt arbeidsplassadministratoren din for tilgang."
 
@@ -17419,7 +17990,7 @@ msgstr "Du har ikke tillatelse til å administrere blokkeringslisten for arbeids
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Du har ikke tillatelse til å utføre denne handlingen."
 
@@ -17547,8 +18118,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Rollen din kan ikke slette noen av disse postene, så de kan ikke slås sammen."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din rolle i denne arbeidsplassen kunne ikke bli funnet. Vennligst kontakt arbeidsplassadministratoren din."
 

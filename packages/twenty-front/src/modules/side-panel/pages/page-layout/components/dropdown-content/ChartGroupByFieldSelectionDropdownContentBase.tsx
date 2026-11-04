@@ -10,7 +10,6 @@ import { ChartGroupByFieldSelectionContext } from '@/side-panel/pages/page-layou
 import { useChartGroupByFieldSelection } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelection';
 import { type ChartGroupByFieldSelectionAxis } from '@/side-panel/pages/page-layout/types/ChartGroupByFieldSelectionAxis';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import {
   isDefined,
@@ -18,10 +17,11 @@ import {
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps = {
   axis: ChartGroupByFieldSelectionAxis;
@@ -30,6 +30,7 @@ type ChartGroupByFieldSelectionDropdownContentBaseProps = {
 export const ChartGroupByFieldSelectionDropdownContentBase = ({
   axis,
 }: ChartGroupByFieldSelectionDropdownContentBaseProps) => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const selection = useChartGroupByFieldSelection({ axis });
   const { getIcon } = useIcons();

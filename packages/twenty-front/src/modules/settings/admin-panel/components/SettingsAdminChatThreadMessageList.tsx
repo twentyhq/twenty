@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -11,6 +10,7 @@ import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferen
 import { SettingsAdminChatMessage } from '@/settings/admin-panel/components/SettingsAdminChatMessage';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
 import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatThreadMessageListProps = {
   messages: AdminChatThreadMessage[];
@@ -25,6 +25,7 @@ const StyledMessagesContainer = styled.div`
 export const SettingsAdminChatThreadMessageList = ({
   messages,
 }: SettingsAdminChatThreadMessageListProps) => {
+  const { t } = useLingui();
   const visibleMessages = messages.filter((message) =>
     message.parts.some(isRenderableAdminChatMessagePart),
   );

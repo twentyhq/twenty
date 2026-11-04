@@ -1,3 +1,4 @@
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -39,7 +40,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
@@ -305,7 +306,17 @@ export class ToolCallAnswerService {
             : AgentTurnStatus.RUNNING,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: answerText }],
+          parts: [
+            {
+              type: 'text',
+              text: answerText,
+              providerMetadata: buildAgentChatAssistantReplyProviderMetadata({
+                isAssistantMentioned: false,
+                isDirectAssistantChat: false,
+                isStructuredRequestContinuation: true,
+              }),
+            },
+          ],
         },
         workspaceId,
       });
@@ -485,11 +496,10 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(
-          toolName,
-          args,
-          await toolContext,
-        );
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          ...(await toolContext),
+          approvedToolName: toolName,
+        });
       },
     };
   }
@@ -512,12 +522,7 @@ export class ToolCallAnswerService {
       );
     }
 
-    const rolePermissions = await this.actorService.resolveRolePermissions({
-      workspaceId,
-      authContext,
-    });
-
-    if (!isDefined(rolePermissions)) {
+    if (!(await this.actorService.hasRole(authContext))) {
       throw new AiException(
         'Answering requires a role in the workspace',
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
@@ -532,7 +537,6 @@ export class ToolCallAnswerService {
 
     return {
       workspaceId,
-      ...rolePermissions,
       authContext,
       actorContext,
       userId,

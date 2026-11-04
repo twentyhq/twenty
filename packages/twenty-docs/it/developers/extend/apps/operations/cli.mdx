@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Esecuzione della CLI
 
-La CLI `twenty` si connette agli spazi di lavoro Twenty dal tuo terminale. Usala per ispezionare i metadati, leggere i record, inviare richieste API e creare, sincronizzare ed eseguire il debug delle app. Richiede **Node.js 24.5+ o 26.5+**.
+La CLI `twenty` si connette agli spazi di lavoro Twenty dal tuo terminale. Usala per ispezionare i metadati, leggere i record, inviare richieste API e creare, sincronizzare ed eseguire il debug delle app. La CLI stessa richiede **Node.js 24.5+**. Lo sviluppo di app richiede anche una versione di Node supportata dall'SDK installato; consulta [Avvio rapido](/it/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Esegui qualsiasi comando tramite `npx`, senza installare nulla:
+Esegui qualsiasi comando tramite `npx`, senza un'installazione globale:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,18 +22,19 @@ npm install -g twenty
 twenty --version
 ```
 
-Gli esempi seguenti usano `twenty`. Aggiungi il prefisso `npx twenty@latest` se non l'hai installata globalmente. Esegui `twenty commands` per l'elenco completo dei comandi e `twenty \<command> --help` per le opzioni di un comando.
+Gli esempi seguenti usano `twenty`. Sostituisci `twenty` con `npx twenty@latest` se non lo hai installato globalmente. Esegui `twenty commands` per l'elenco completo dei comandi e `twenty \<command> --help` per le opzioni di un comando.
 
-| Comando          | Cosa fa                                                                            |
-| ---------------- | ---------------------------------------------------------------------------------- |
-| `autenticazione` | Accedi, verifica e rimuovi le credenziali                                          |
-| `remote`         | Elenca, seleziona, rinomina e rimuovi le connessioni salvate allo spazio di lavoro |
-| `metadati`       | Ispeziona oggetti e campi                                                          |
-| `data`           | Elenca e leggi i record                                                            |
-| `api`            | Invia richieste REST o GraphQL non elaborate                                       |
-| `apri`           | Apri lo spazio di lavoro nel browser                                               |
-| `app`            | Crea, compila, sincronizza, esegui il debug e disinstalla app                      |
-| `doctor`         | Diagnostica la CLI, l'SDK dell'app e la connessione allo spazio di lavoro          |
+| Comando          | Cosa fa                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| `autenticazione` | Accedi, verifica e rimuovi le credenziali                                               |
+| `remote`         | Elenca, seleziona, rinomina e rimuovi le connessioni salvate allo spazio di lavoro      |
+| `metadati`       | Ispeziona oggetti e campi                                                               |
+| `data`           | Elenca e leggi i record                                                                 |
+| `api`            | Invia richieste REST o GraphQL non elaborate                                            |
+| `apri`           | Apri lo spazio di lavoro nel browser                                                    |
+| `app`            | Crea, compila, sincronizza, esegui il debug e disinstalla app                           |
+| `locale`         | Avviare, ispezionare, fermare, aggiornare e ripristinare un ambiente di sviluppo locale |
+| `doctor`         | Diagnostica la CLI, l'SDK dell'app e la connessione allo spazio di lavoro               |
 
 Ogni comando che comunica con uno spazio di lavoro accetta `--remote \<name>` per indirizzare una connessione salvata diversa da quella predefinita e `--json` per un output strutturato.
 
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Usa l'indirizzo del tuo spazio di lavoro o l'indirizzo del server per una configurazione locale: `http://localhost:2020` per il [server Docker locale](/it/developers/extend/apps/getting-started/local-server), `http://localhost:3000` per un checkout del codice sorgente. Puoi copiare il comando esatto da **Settings > Developers > CLI**. L'accesso tramite browser richiede Twenty 2.42 o versioni successive.
+Usa l'indirizzo del tuo spazio di lavoro, oppure l'indirizzo del server per una configurazione locale: `http://localhost:2020` per l'[ambiente di sviluppo locale](/it/developers/extend/apps/getting-started/local-server), `http://localhost:3000` per un checkout del codice sorgente. Puoi copiare il comando esatto da **Settings > Developers > CLI**. L'accesso tramite browser richiede Twenty 2.42 o versioni successive.
 
 Mantieni diverse connessioni assegnando loro un nome:
 
@@ -63,6 +64,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 ```
 
 Puoi anche impostare `TWENTY_API_URL` e `TWENTY_API_KEY` per una singola esecuzione senza salvare nulla. Le connessioni salvate si trovano in `~/.twenty/config.json`.
+
+I comandi selezionano un workspace in questo ordine:
+
+1. Un elemento esplicito `--remote \<name>`, che sovrascrive le variabili di ambiente di destinazione.
+2. `TWENTY_REMOTE`, oppure la coppia `TWENTY_API_URL` e `TWENTY_API_KEY`. Non combinare questi due metodi.
+3. Il remote predefinito salvato.
+
+`auth login --name \<name>` salva una connessione ma mantiene un valore predefinito esistente. Aggiungi `--use` oppure esegui `twenty remote use \<name>` per modificare il valore predefinito.
 
 ## Esplorazione dei dati
 

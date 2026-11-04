@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
 import { BillingSubscriptionItemResolver } from 'src/engine/core-modules/billing/billing-subscription-item.resolver';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
@@ -45,13 +46,14 @@ import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
+    BillingArrangementModule,
     CacheLockModule,
     ClickHouseModule,
     CoreEntityCacheModule,
