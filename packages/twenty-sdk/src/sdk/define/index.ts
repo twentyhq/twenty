@@ -43,6 +43,15 @@ export type {
   TimelineActivityTypeManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 
+export { defineValidationRule } from '@/sdk/define/validation-rules/define-validation-rule';
+export type { ValidationRuleConfig } from '@/sdk/define/validation-rules/define-validation-rule';
+export { ruleExpression } from '@/sdk/define/validation-rules/rule-expression';
+export type {
+  RuleExpression,
+  RuleExpressionOperand,
+} from '@/sdk/define/validation-rules/rule-expression';
+export type { ValidationRuleManifest } from 'twenty-shared/application';
+
 export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
 export type {
   SettingsMenuItemConfig,

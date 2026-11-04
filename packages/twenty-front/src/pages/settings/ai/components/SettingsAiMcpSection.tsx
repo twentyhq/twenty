@@ -1,13 +1,14 @@
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSparkles } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAiMcpSection = () => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (

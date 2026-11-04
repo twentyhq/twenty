@@ -10,7 +10,6 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,6 +19,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { LightButton } from 'twenty-ui/components/input';
+import { useLingui } from '@lingui/react/macro';
 
 type EmailThreadComposerProps = {
   replyContext: ReplyContextReady;
@@ -36,6 +36,7 @@ export const EmailThreadComposer = ({
   setIsComposerOpen,
   draftPrefill,
 }: EmailThreadComposerProps) => {
+  const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const handleReplySent = useCallback(
@@ -114,6 +115,7 @@ export const EmailThreadComposer = ({
       canSendReply,
       setIsComposerOpen,
       openAttachmentPicker,
+      t,
     ]);
 
   const handleSendHotkey = useCallback(() => {

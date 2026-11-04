@@ -11,6 +11,7 @@ import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import { type TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
@@ -29,6 +30,7 @@ type TimelineMessageThread = Omit<
   | 'participantCount'
   | 'read'
   | 'visibility'
+  | 'channel'
 >;
 
 @Injectable()
@@ -414,7 +416,40 @@ export class TimelineMessagingService {
     }, authContext);
   }
 
-  public async getThreadVisibilityByThreadId({
+  public async getMessageThreadChannel({
+    messageThreadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    messageThreadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<TimelineThreadChannelDTO | null> {
+    const allowedRecordIds =
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+        this.workspaceOrmManager
+          .getRepository('messageThread')
+          .findRecordIdsAllowedForOperations({
+            recordIds: [messageThreadId],
+            operationTypes: ['select'],
+          }),
+      );
+
+    if (!allowedRecordIds.select.has(messageThreadId)) {
+      return null;
+    }
+
+    const { threadChannelByThreadId } =
+      await this.getThreadVisibilityAndChannelByThreadId({
+        messageThreadIds: [messageThreadId],
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return threadChannelByThreadId[messageThreadId] ?? null;
+  }
+
+  public async getThreadVisibilityAndChannelByThreadId({
     messageThreadIds,
     userWorkspaceId,
     workspaceId,
@@ -423,7 +458,8 @@ export class TimelineMessagingService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<{
-    [key: string]: MessageChannelVisibility;
+    threadVisibilityByThreadId: Record<string, MessageChannelVisibility>;
+    threadChannelByThreadId: Record<string, TimelineThreadChannelDTO>;
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
@@ -446,6 +482,7 @@ export class TimelineMessagingService {
         .where('messageThread.id = ANY(:messageThreadIds)', {
           messageThreadIds,
         })
+        .orderBy('messageChannelMessageAssociation.messageChannelId')
         .getRawMany<{ id: string; messageChannelId: string | null }>();
 
       const allMessageChannelIds = [
@@ -457,12 +494,17 @@ export class TimelineMessagingService {
       ];
 
       if (allMessageChannelIds.length === 0) {
-        return {};
+        return { threadVisibilityByThreadId: {}, threadChannelByThreadId: {} };
       }
 
       const messageChannels = await this.messageChannelRepository.find({
         where: { id: In(allMessageChannelIds), workspaceId },
-        select: { id: true, visibility: true, connectedAccountId: true },
+        select: {
+          id: true,
+          visibility: true,
+          connectedAccountId: true,
+          type: true,
+        },
       });
 
       const allConnectedAccountIds = [
@@ -471,16 +513,47 @@ export class TimelineMessagingService {
         ),
       ];
 
+      const connectedAccounts = await this.connectedAccountRepository.find({
+        where: { id: In(allConnectedAccountIds), workspaceId },
+        select: {
+          id: true,
+          userWorkspaceId: true,
+          provider: true,
+          applicationId: true,
+        },
+      });
+
       const ownedAccountIds = new Set(
-        (
-          await this.connectedAccountRepository.find({
-            where: {
-              id: In(allConnectedAccountIds),
-              userWorkspaceId,
-            },
-            select: { id: true },
-          })
-        ).map((account) => account.id),
+        connectedAccounts
+          .filter((account) => account.userWorkspaceId === userWorkspaceId)
+          .map((account) => account.id),
+      );
+
+      const connectedAccountById = new Map(
+        connectedAccounts.map((account) => [account.id, account]),
+      );
+
+      const channelById = new Map<string, TimelineThreadChannelDTO>(
+        messageChannels.flatMap((channel) => {
+          const connectedAccount = connectedAccountById.get(
+            channel.connectedAccountId,
+          );
+
+          if (!isDefined(connectedAccount)) {
+            return [];
+          }
+
+          return [
+            [
+              channel.id,
+              {
+                type: channel.type,
+                provider: connectedAccount.provider,
+                applicationId: connectedAccount.applicationId ?? null,
+              },
+            ],
+          ];
+        }),
       );
 
       const channelVisibilityMap = new Map(
@@ -497,12 +570,24 @@ export class TimelineMessagingService {
 
       const visibilityValues = Object.values(MessageChannelVisibility);
 
-      const threadVisibilityByThreadId: {
-        [key: string]: MessageChannelVisibility;
-      } = {};
+      const threadVisibilityByThreadId: Record<
+        string,
+        MessageChannelVisibility
+      > = {};
+      const threadChannelByThreadId: Record<string, TimelineThreadChannelDTO> =
+        {};
 
       for (const { id: threadId, messageChannelId } of threadChannelRows) {
         if (!messageChannelId) continue;
+
+        const channel = channelById.get(messageChannelId);
+
+        if (
+          isDefined(channel) &&
+          !isDefined(threadChannelByThreadId[threadId])
+        ) {
+          threadChannelByThreadId[threadId] = channel;
+        }
 
         const channelVisibility = channelVisibilityMap.get(messageChannelId);
 
@@ -520,7 +605,7 @@ export class TimelineMessagingService {
           ];
       }
 
-      return threadVisibilityByThreadId;
+      return { threadVisibilityByThreadId, threadChannelByThreadId };
     }, buildSystemAuthContext(workspaceId));
   }
 }

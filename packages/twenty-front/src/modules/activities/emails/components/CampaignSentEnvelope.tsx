@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   CoreObjectNameSingular,
@@ -18,6 +17,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -40,6 +40,7 @@ type CampaignSentEnvelopeProps = {
 export const CampaignSentEnvelope = ({
   campaign,
 }: CampaignSentEnvelopeProps) => {
+  const { t } = useLingui();
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
   const { timeFormat, timeZone } = useDateTimeFormat();

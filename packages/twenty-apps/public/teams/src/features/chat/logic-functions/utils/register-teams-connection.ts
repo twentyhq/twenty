@@ -18,7 +18,7 @@ export const registerTeamsConnection = async ({
     ? await getConnection(connectedAccountId)
     : undefined;
 
-  if (connection?.visibility !== 'workspace') {
+  if (connection?.scope !== 'WORKSPACE') {
     await releaseTeamsConnectionTenant({ connectedAccountId });
 
     return { claimedTenantId: null };

@@ -228,6 +228,8 @@ exports[`getStepFilterOperands returns the expected operands for filterType=TEXT
 [
   "CONTAINS",
   "DOES_NOT_CONTAIN",
+  "IS",
+  "IS_NOT",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

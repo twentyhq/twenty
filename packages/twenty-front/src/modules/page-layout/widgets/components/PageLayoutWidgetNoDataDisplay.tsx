@@ -1,9 +1,10 @@
 import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { t } from '@lingui/core/macro';
 import { WidgetType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const PageLayoutWidgetNoDataDisplay = () => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
 
   const text = widget.type === WidgetType.IFRAME ? t`Invalid URL` : t`No Data`;

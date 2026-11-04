@@ -1,23 +1,10 @@
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client';
-import { useMutation } from '@apollo/client/react';
+import { useSettingsAiWorkspaceInstructions } from '@/settings/ai/hooks/useSettingsAiWorkspaceInstructions';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useDebouncedCallback } from 'use-debounce';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  PermissionFlagType,
-  UpdateWorkspaceDocument,
-} from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledInstructionsContainer = styled.div`
   display: flex;
@@ -26,55 +13,12 @@ const StyledInstructionsContainer = styled.div`
 `;
 
 export const SettingsAiWorkspaceInstructionsSection = () => {
-  const { enqueueToast } = useToast();
-  const canEditInstructions = useHasPermissionFlag(
-    PermissionFlagType.WORKSPACE,
-  );
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
-  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
-
-  const initialInstructions = currentWorkspace?.aiAdditionalInstructions ?? '';
-  const [workspaceInstructions, setWorkspaceInstructions] =
-    useState(initialInstructions);
-  const [originalInstructions, setOriginalInstructions] =
-    useState(initialInstructions);
-
-  const autoSave = useDebouncedCallback(async (newValue: string) => {
-    if (
-      !canEditInstructions ||
-      !isDefined(currentWorkspace) ||
-      newValue === originalInstructions
-    ) {
-      return;
-    }
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        aiAdditionalInstructions: newValue || null,
-      });
-      await updateWorkspace({
-        variables: {
-          input: { aiAdditionalInstructions: newValue || null },
-        },
-      });
-      setOriginalInstructions(newValue);
-    } catch (error) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        aiAdditionalInstructions: originalInstructions || null,
-      });
-      if (CombinedGraphQLErrors.is(error)) {
-        enqueueToast(getToastOptionsFromError({ error }));
-      } else {
-        enqueueToast({
-          status: 'error',
-          children: t`Failed to save workspace instructions`,
-        });
-      }
-    }
-  }, 1000);
+  const { t } = useLingui();
+  const {
+    canEditInstructions,
+    workspaceInstructions,
+    handleInstructionsChange,
+  } = useSettingsAiWorkspaceInstructions();
 
   return (
     <Section.Root>
@@ -84,19 +28,11 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
       />
       <StyledInstructionsContainer>
         <FormAdvancedTextFieldInput
-          key={originalInstructions}
           readonly={!canEditInstructions}
           aria-label={t`Workspace Instructions`}
           defaultValue={workspaceInstructions}
           profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
-          onChange={(value) => {
-            if (!canEditInstructions) {
-              return;
-            }
-
-            setWorkspaceInstructions(value);
-            autoSave(value);
-          }}
+          onChange={handleInstructionsChange}
           enableFullScreen={true}
           fullScreenBreadcrumbs={[
             { children: t`System Prompt`, href: '#' },

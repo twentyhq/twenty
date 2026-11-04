@@ -17,16 +17,16 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import {
-  type PermissionsPrincipalRoleMaps,
+  type PermissionsPrincipalsRoleMaps,
   resolvePermissionsPrincipalsWithRoles,
 } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
-type PrincipalWithRoles = Pick<
+type PrincipalsWithRoles = Pick<
   PermissionsPrincipalsWithRolesContext,
   'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
 >;
@@ -39,16 +39,15 @@ const EMPTY_FLAT_FIELD_METADATA_MAPS: FlatEntityMaps<OrmFlatFieldMetadata> =
   createEmptyFlatEntityMaps();
 
 const buildRoleMaps = (
-  flatApplicationMaps: PermissionsPrincipalRoleMaps['flatApplicationMaps'] = {
+  flatApplicationMaps: PermissionsPrincipalsRoleMaps['flatApplicationMaps'] = {
     byId: {},
   },
-): PermissionsPrincipalRoleMaps =>
-  buildPermissionsPrincipalRoleMaps({
-    userWorkspaceRoleMap: {},
-    apiKeyRoleMap: {},
-    flatRoleTargetByAgentIdMaps: {},
-    flatApplicationMaps,
-  });
+): PermissionsPrincipalsRoleMaps => ({
+  userWorkspaceRoleMap: {},
+  apiKeyRoleMap: {},
+  flatRoleTargetByAgentIdMaps: {},
+  flatApplicationMaps,
+});
 
 const agentRolePermissions = {
   [OBJECT_ID]: {
@@ -79,30 +78,62 @@ const rolesPermissions: ObjectsPermissionsByRoleId = {
   'default-role-id': defaultRolePermissions,
 };
 
-const computeForPrincipal = (principal: PrincipalWithRoles) =>
+const computeForPrincipals = (principals: PrincipalsWithRoles) =>
   computeObjectsPermissionsForRoles({
-    principal,
+    principals,
     rolesPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
     flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
     flatApplicationMaps: { byId: {} },
   });
 
-const computeForPrincipalsContext = ({
-  principalsContext,
+const buildMemberAuthContext = ({
+  workspaceMemberId,
+  applicationId,
+  agentId,
+}: {
+  workspaceMemberId: string;
+  applicationId?: string;
+  agentId?: string;
+}): PermissionsAuthContext => ({
+  type: 'user',
+  workspace: { id: 'workspace-id' },
+  workspaceMemberId,
+  ...(isDefined(applicationId) ? { application: { id: applicationId } } : {}),
+  ...(isDefined(agentId) ? { agentId } : {}),
+});
+
+const buildApiKeyAuthContext = ({
+  apiKeyId,
+  agentId,
+  aiRunScope,
+}: {
+  apiKeyId: string;
+  agentId?: string;
+  aiRunScope?: AiRunPermissionScope;
+}): PermissionsAuthContext => ({
+  type: 'apiKey',
+  workspace: { id: 'workspace-id' },
+  apiKey: { id: apiKeyId },
+  ...(isDefined(agentId) ? { agentId } : {}),
+  ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
+});
+
+const computeForAuthContext = ({
+  authContext,
   roleMaps,
 }: {
-  principalsContext: PermissionsPrincipalsContext;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  authContext: PermissionsAuthContext;
+  roleMaps: PermissionsPrincipalsRoleMaps;
 }): ObjectsPermissions => {
-  const principal = resolvePermissionsPrincipalsWithRoles({
-    principalsContext,
+  const principals = resolvePermissionsPrincipalsWithRoles({
+    authContext,
     roleMaps,
   });
 
-  return isDefined(principal)
+  return isDefined(principals)
     ? computeObjectsPermissionsForRoles({
-        principal,
+        principals,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -114,8 +145,8 @@ const computeForPrincipalsContext = ({
 describe('computeObjectsPermissionsForRoles', () => {
   it('should resolve a single role unchanged', () => {
     expect(
-      computeForPrincipal({
-        mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'agent-role-id' },
+      computeForPrincipals({
+        mainPrincipal: { type: 'role', roleId: 'agent-role-id' },
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(agentRolePermissions);
@@ -123,13 +154,14 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should resolve a role held by several principals as that role alone', () => {
     expect(
-      computeForPrincipal({
+      computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         applicationPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'application',
+          applicationId: 'default-application-id',
           roleId: 'default-role-id',
         },
       }),
@@ -138,9 +170,9 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should intersect every role when several are provided', () => {
     expect(
-      computeForPrincipal({
+      computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         limitingPrincipal: {
@@ -155,9 +187,9 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should not grant a permission that only one of the roles allows', () => {
     expect(
-      computeForPrincipal({
+      computeForPrincipals({
         mainPrincipal: {
-          type: 'deprecatedRoleOnly',
+          type: 'role',
           roleId: 'default-role-id',
         },
         applicationPrincipal: {
@@ -171,8 +203,8 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should deny when one of the intersected roles is missing from the cache', () => {
     expect(
-      computeForPrincipal({
-        mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'agent-role-id' },
+      computeForPrincipals({
+        mainPrincipal: { type: 'role', roleId: 'agent-role-id' },
         limitingPrincipal: {
           type: 'agent',
           agentId: 'agent-id',
@@ -189,7 +221,7 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should return empty permissions when the role is missing from the cache', () => {
     expect(
-      computeForPrincipal({
+      computeForPrincipals({
         mainPrincipal: {
           type: 'apiKey',
           apiKeyId: 'api-key-id',
@@ -202,20 +234,17 @@ describe('computeObjectsPermissionsForRoles', () => {
 
   it('should deny when the main principal has no role', () => {
     expect(
-      computeForPrincipalsContext({
-        principalsContext: {
-          workspaceId: 'workspace-id',
-          mainPrincipal: {
-            type: 'workspaceMember',
-            workspaceMemberId: 'member-id',
+      computeForAuthContext({
+        authContext: buildMemberAuthContext({
+          workspaceMemberId: 'member-id',
+          agentId: 'agent-id',
+        }),
+        roleMaps: {
+          ...buildRoleMaps(),
+          flatRoleTargetByAgentIdMaps: {
+            'agent-id': { roleId: 'agent-role-id' },
           },
-          limitingPrincipal: {
-            type: 'deprecatedRoleOnly',
-            roleId: 'agent-role-id',
-          },
-          applicationPrincipal: { type: 'customApplication' },
         },
-        roleMaps: buildRoleMaps(),
       }),
     ).toEqual({});
   });
@@ -225,22 +254,60 @@ describe('computeObjectsPermissionsForRoles', () => {
       ...buildRoleMaps(),
       apiKeyRoleMap: { 'api-key-id': 'default-role-id' },
     };
-    const principalsContext: PermissionsPrincipalsContext = {
-      workspaceId: 'workspace-id',
-      mainPrincipal: { type: 'apiKey', apiKeyId: 'api-key-id' },
-      applicationPrincipal: { type: 'customApplication' },
+    expect(
+      computeForAuthContext({
+        authContext: buildApiKeyAuthContext({ apiKeyId: 'api-key-id' }),
+        roleMaps,
+      }),
+    ).toEqual(defaultRolePermissions);
+    expect(
+      computeForAuthContext({
+        authContext: buildApiKeyAuthContext({
+          apiKeyId: 'api-key-id',
+          agentId: 'deleted-agent-id',
+        }),
+        roleMaps,
+      }),
+    ).toEqual({});
+  });
+
+  it('should run an application agent within both its role and its application role', () => {
+    const roleMaps = {
+      ...buildRoleMaps({
+        byId: {
+          'application-id': {
+            id: 'application-id',
+            defaultRoleId: 'default-role-id',
+            sourceType: ApplicationRegistrationSourceType.LOCAL,
+            deletedAt: null,
+          },
+        },
+      }),
+      flatRoleTargetByAgentIdMaps: { 'agent-id': { roleId: 'agent-role-id' } },
     };
 
     expect(
-      computeForPrincipalsContext({ principalsContext, roleMaps }),
-    ).toEqual(defaultRolePermissions);
-    expect(
-      computeForPrincipalsContext({
-        principalsContext: {
-          ...principalsContext,
-          limitingPrincipal: { type: 'agent', agentId: 'deleted-agent-id' },
+      computeForAuthContext({
+        authContext: {
+          type: 'application',
+          workspace: { id: 'workspace-id' },
+          application: { id: 'application-id' },
+          agentId: 'agent-id',
         },
         roleMaps,
+      }),
+    ).toEqual(defaultRolePermissions);
+  });
+
+  it('should deny a webhook whose role cannot be found', () => {
+    expect(
+      computeForAuthContext({
+        authContext: {
+          type: 'webhook',
+          workspace: { id: 'workspace-id' },
+          webhook: { id: 'webhook-id' },
+        },
+        roleMaps: buildRoleMaps(),
       }),
     ).toEqual({});
   });
@@ -255,18 +322,11 @@ describe('computeObjectsPermissionsForRoles', () => {
       applicationRoleId?: string | null;
       memberRoleId?: string | null;
     }) =>
-      computeForPrincipalsContext({
-        principalsContext: {
-          workspaceId: 'workspace-id',
-          mainPrincipal: {
-            type: 'workspaceMember',
-            workspaceMemberId: 'workspace-member-id',
-          },
-          applicationPrincipal: {
-            type: 'application',
-            applicationId: 'application-id',
-          },
-        },
+      computeForAuthContext({
+        authContext: buildMemberAuthContext({
+          workspaceMemberId: 'workspace-member-id',
+          applicationId: 'application-id',
+        }),
         roleMaps: {
           ...buildRoleMaps({
             byId: {
@@ -360,7 +420,7 @@ flatFieldMetadataMaps.byUniversalIdentifier.amount = getFlatFieldMetadataMock({
 });
 flatFieldMetadataMaps.universalIdentifierById[AMOUNT_FIELD_ID] = 'amount';
 
-const flatApplicationMaps: PermissionsPrincipalRoleMaps['flatApplicationMaps'] =
+const flatApplicationMaps: PermissionsPrincipalsRoleMaps['flatApplicationMaps'] =
   {
     byId: {
       'owning-application-id': {
@@ -389,12 +449,12 @@ const disabledActionRolesPermissions = Object.fromEntries(
 describe('computeObjectsPermissionsForRoles disabled actions', () => {
   it.each<{
     actor: string;
-    principal: PrincipalWithRoles;
+    principals: PrincipalsWithRoles;
     canDestroy: boolean;
   }>([
     {
       actor: 'the owning application',
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'application',
           applicationId: 'owning-application-id',
@@ -410,7 +470,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: 'another application',
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'application',
           applicationId: 'other-application-id',
@@ -426,7 +486,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: 'a user',
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'workspaceMember',
           workspaceMemberId: 'member-id',
@@ -438,7 +498,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: 'a user through the owning application',
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'workspaceMember',
           workspaceMemberId: 'member-id',
@@ -454,7 +514,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: "a user holding the owning application's default role",
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'workspaceMember',
           workspaceMemberId: 'member-id',
@@ -466,7 +526,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: "an API key holding the owning application's default role",
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'apiKey',
           apiKeyId: 'api-key-id',
@@ -478,7 +538,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: "an agent holding the owning application's default role",
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'agent',
           agentId: 'agent-id',
@@ -490,7 +550,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
     {
       actor: 'the owning application with a user holding its default role',
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'workspaceMember',
           workspaceMemberId: 'member-id',
@@ -506,9 +566,9 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     },
   ])(
     'disabled actions allowed for $actor: $canDestroy',
-    ({ principal, canDestroy }) => {
+    ({ principals, canDestroy }) => {
       const invoicePermissions = computeObjectsPermissionsForRoles({
-        principal,
+        principals,
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -585,7 +645,7 @@ describe('computeObjectsPermissionsForRoles disabled actions', () => {
     }
 
     const objectsPermissions = computeObjectsPermissionsForRoles({
-      principal: {
+      principals: {
         mainPrincipal: {
           type: 'workspaceMember',
           workspaceMemberId: 'member-id',
@@ -646,36 +706,35 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
   };
 
   const compute = ({
-    mainPrincipal = { type: 'deprecatedRoleOnly', roleId: 'user-role-id' },
+    apiKeyId = 'api-key-id',
     scopeObjectPermissions,
     hasScope = true,
   }: {
-    mainPrincipal?: PermissionsPrincipalsContext['mainPrincipal'];
+    apiKeyId?: string;
     scopeObjectPermissions?: ObjectPermissions;
     hasScope?: boolean;
   }) => {
-    const principal = resolvePermissionsPrincipalsWithRoles({
-      principalsContext: {
-        workspaceId: 'workspace-id',
-        mainPrincipal,
-        applicationPrincipal: { type: 'customApplication' },
-        ...(hasScope
+    const principals = resolvePermissionsPrincipalsWithRoles({
+      authContext: buildApiKeyAuthContext({
+        apiKeyId,
+        aiRunScope: hasScope
           ? {
-              scope: {
-                objectsPermissions: isDefined(scopeObjectPermissions)
-                  ? { [INVOICE_ID]: scopeObjectPermissions }
-                  : {},
-                permissionFlags: {},
-              },
+              objectsPermissions: isDefined(scopeObjectPermissions)
+                ? { [INVOICE_ID]: scopeObjectPermissions }
+                : {},
+              permissionFlags: {},
             }
-          : {}),
+          : undefined,
+      }),
+      roleMaps: {
+        ...buildRoleMaps(flatApplicationMaps),
+        apiKeyRoleMap: { 'api-key-id': 'user-role-id' },
       },
-      roleMaps: buildRoleMaps(flatApplicationMaps),
     });
 
-    return isDefined(principal)
+    return isDefined(principals)
       ? computeObjectsPermissionsForRoles({
-          principal,
+          principals,
           rolesPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
@@ -786,7 +845,7 @@ describe('computeObjectsPermissionsForRoles with a scope', () => {
   it('grants nothing without a role', () => {
     expect(
       compute({
-        mainPrincipal: { type: 'apiKey', apiKeyId: 'api-key-without-role' },
+        apiKeyId: 'api-key-without-role',
         scopeObjectPermissions: FULL_ACCESS,
       }),
     ).toBeUndefined();

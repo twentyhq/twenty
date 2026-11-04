@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { assertPrivateRecordEnabledOrThrow } from 'src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
@@ -76,15 +75,6 @@ export class ShareWithService {
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
-
-    if (isPrivate && !objectSharing.isPrivateByDefault) {
-      const { featureFlagsMap } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'featureFlagsMap',
-        ]);
-
-      assertPrivateRecordEnabledOrThrow(featureFlagsMap);
-    }
 
     // A hard-destroyed record leaves its rows behind, and a client may reuse its id
     await this.recordShareStorageService.deleteByRecordIds({

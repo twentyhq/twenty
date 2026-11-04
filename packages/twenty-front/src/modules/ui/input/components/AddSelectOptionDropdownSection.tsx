@@ -1,9 +1,9 @@
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type AddSelectOptionDropdownSectionProps = {
   searchFilter: string;
@@ -16,6 +16,7 @@ export const AddSelectOptionDropdownSection = ({
   filteredOptions,
   onAddSelectOption,
 }: AddSelectOptionDropdownSectionProps) => {
+  const { t } = useLingui();
   const optionName = searchFilter.trim();
 
   if (
