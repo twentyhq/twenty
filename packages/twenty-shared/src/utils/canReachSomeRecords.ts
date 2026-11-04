@@ -5,15 +5,12 @@ import { canReachAllRecords } from '@/utils/canReachAllRecords';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const canReachRowLevelRecords = ({
-  objectRecordsPermissions,
+  rowLevelRecordsPermissions,
   operationType,
 }: {
-  objectRecordsPermissions: ObjectRecordsPermissions;
+  rowLevelRecordsPermissions: ObjectRecordsPermissions['rowLevelRecordsPermissions'];
   operationType: ObjectRecordsOperationType;
 }): boolean => {
-  const rowLevelRecordsPermissions =
-    objectRecordsPermissions.rowLevelRecordsPermissions;
-
   if (!isDefined(rowLevelRecordsPermissions)) {
     return false;
   }
@@ -43,4 +40,8 @@ export const canReachSomeRecords = ({
 }): boolean =>
   isDefined(objectRecordsPermissions) &&
   (canReachAllRecords({ objectRecordsPermissions, operationType }) ||
-    canReachRowLevelRecords({ objectRecordsPermissions, operationType }));
+    canReachRowLevelRecords({
+      rowLevelRecordsPermissions:
+        objectRecordsPermissions.rowLevelRecordsPermissions,
+      operationType,
+    }));
