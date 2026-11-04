@@ -1,3 +1,4 @@
+import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -49,6 +50,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
   ) {}
 
   async sendMemberMessage({
@@ -94,10 +96,20 @@ export class AgentChatMemberMessageSenderService {
         workspaceMemberId: actor.workspaceMemberId,
         thread,
         ...assistantParticipationInput,
+        isReplyRequested: assistant.isReplyRequested,
       });
 
+    const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      assistant.isReplyRequested || !isInboxEnabled;
+      !isInboxEnabled ||
+      (await this.replyPolicyService.shouldReply({
+        decision: replyDecision,
+        threadId: thread.id,
+        pendingQuestionMessageId: thread.pendingQuestionMessageId,
+        workspaceId: actor.workspaceId,
+        userWorkspaceId: actor.userWorkspaceId,
+        text: message.text,
+      }));
 
     if (shouldGenerateAssistantReply) {
       const workspace = await this.coreEntityCacheService.get(
@@ -189,7 +201,10 @@ export class AgentChatMemberMessageSenderService {
     message: AgentChatPreparedMemberMessage;
     addressing?: AgentChatMemberMessageSendArguments['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
-    participation?: AgentChatAssistantParticipation;
+    participation?: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant' | 'isInitialMessage'
+    >;
   }): Promise<AgentChatMemberMessageResult> {
     const threadAccess = {
       workspaceId: actor.workspaceId,

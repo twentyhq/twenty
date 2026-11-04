@@ -15,20 +15,22 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [],
   }),
 )
 @UsePipes(ResolverValidationPipe)
@@ -42,7 +44,6 @@ export class OnboardingResolver {
   ) {}
 
   @Query(() => [InviteSuggestionDTO])
-  @UseGuards(NoPermissionGuard)
   async getInviteSuggestions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -56,7 +57,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
   async skipSyncEmailOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -73,7 +73,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
   async completeBookCallOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -93,7 +92,6 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => OnboardingStepNavigationDTO)
-  @UseGuards(NoPermissionGuard)
   async goBackToPreviousOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,

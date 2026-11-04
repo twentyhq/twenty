@@ -91,7 +91,6 @@ const rescopeOverrides = ({
     : null;
 };
 
-// Returns null when the row does not reference the workflow object.
 export const rescopeWorkflowCommandMenuItem = ({
   row,
   workflowObjectMetadataId,
