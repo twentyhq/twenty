@@ -17,7 +17,6 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
 import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
-import { FEATURE_FLAG_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/feature-flag-guard-config-key.constant';
 import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
@@ -257,16 +256,11 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
             ({ requiredPermissionFlags }) => requiredPermissionFlags,
           ),
         ]),
-        requiredFeatureFlags: toSortedUniqueValues([
-          ...readGuardConfigs<FeatureFlagKey>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: FEATURE_FLAG_GUARD_CONFIG_KEY,
-          }),
-          ...accessPolicies.flatMap(
+        requiredFeatureFlags: toSortedUniqueValues(
+          accessPolicies.flatMap(
             ({ requiredFeatureFlags = [] }) => requiredFeatureFlags,
           ),
-        ]),
+        ),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(
             APPLICATION_TARGET_METADATA_KEY,
