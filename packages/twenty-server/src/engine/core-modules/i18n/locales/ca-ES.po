@@ -3324,7 +3324,7 @@ msgstr "Conflicte en el codi de país del telèfon."
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "Connecteu primer un compte per a aquest servidor MCP."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "Els paràmetres de la sol·licitud MCP no són vàlids."
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "El servidor MCP exposa massa eines per sincronitzar-les."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

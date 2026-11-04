@@ -3324,7 +3324,7 @@ msgstr "电话国家代码冲突。"
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "请先为此 MCP 服务器连接一个账户。"
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "MCP 请求参数无效。"
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "该 MCP 服务器公开的工具过多，无法同步。"
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

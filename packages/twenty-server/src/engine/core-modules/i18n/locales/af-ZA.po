@@ -3324,7 +3324,7 @@ msgstr "Botsende telefoon-landkode."
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "Koppel eers 'n rekening vir hierdie MCP-bediener."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "Die MCP-versoekparameters is ongeldig."
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "Die MCP-bediener stel te veel nutsgoed bloot om gesinchroniseer te word."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

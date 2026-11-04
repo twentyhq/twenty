@@ -3324,7 +3324,7 @@ msgstr "קוד מדינה סותר."
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "תחילה חבר חשבון עבור שרת MCP זה."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "פרמטרי הבקשה של MCP אינם תקינים."
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "שרת MCP חושף יותר מדי כלים לסנכרון."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

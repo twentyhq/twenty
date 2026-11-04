@@ -3324,7 +3324,7 @@ msgstr "Сукоб кода државе."
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "Прво повежите налог за овај MCP сервер."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "Параметри MCP захтева су неважећи."
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "MCP сервер излаже превише алата за синхронизацију."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

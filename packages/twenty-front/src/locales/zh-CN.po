@@ -18555,7 +18555,7 @@ msgstr "新建限额"
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "New message"
-msgstr ""
+msgstr "新消息"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25247,7 +25247,7 @@ msgstr "通过连接的账户发送电子邮件"
 #. js-lingui-id: l/ipRX
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Send from"
-msgstr ""
+msgstr "发送自"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

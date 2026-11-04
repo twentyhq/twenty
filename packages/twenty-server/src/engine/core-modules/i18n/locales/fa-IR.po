@@ -3324,7 +3324,7 @@ msgstr "کد کشور تلفن با تعارض مواجه است."
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "ابتدا یک حساب برای این سرور MCP متصل کنید."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "پارامترهای درخواست MCP نامعتبر هستند."
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "سرور MCP ابزارهای بسیار زیادی را برای همگام‌سازی ارائه می‌دهد."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

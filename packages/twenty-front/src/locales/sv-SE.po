@@ -18557,7 +18557,7 @@ msgstr "Ny gräns"
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "New message"
-msgstr ""
+msgstr "Nytt meddelande"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25251,7 +25251,7 @@ msgstr "Tillåt att skicka e-post via anslutna konton"
 #. js-lingui-id: l/ipRX
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Send from"
-msgstr ""
+msgstr "Skicka från"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

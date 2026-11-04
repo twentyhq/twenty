@@ -18555,7 +18555,7 @@ msgstr "새 제한"
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "New message"
-msgstr ""
+msgstr "새 메시지"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25247,7 +25247,7 @@ msgstr "연결된 계정을 사용하여 이메일 전송 허용"
 #. js-lingui-id: l/ipRX
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Send from"
-msgstr ""
+msgstr "보내는 사람"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

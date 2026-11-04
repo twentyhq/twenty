@@ -3324,7 +3324,7 @@ msgstr "電話國碼衝突。"
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "請先為此 MCP 伺服器連結帳戶。"
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "MCP 請求參數無效。"
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "此 MCP 伺服器公開的工具過多，無法同步。"
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

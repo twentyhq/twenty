@@ -18555,7 +18555,7 @@ msgstr "Límit nou"
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "New message"
-msgstr ""
+msgstr "Missatge nou"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25247,7 +25247,7 @@ msgstr "Envia correus electrònics a través de comptes connectats"
 #. js-lingui-id: l/ipRX
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Send from"
-msgstr ""
+msgstr "Envia des de"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

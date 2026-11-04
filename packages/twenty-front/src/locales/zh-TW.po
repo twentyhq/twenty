@@ -18555,7 +18555,7 @@ msgstr "新增上限"
 #. js-lingui-id: mTBAsF
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "New message"
-msgstr ""
+msgstr "新訊息"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25247,7 +25247,7 @@ msgstr "允許通過已連接的帳戶發送電子郵件"
 #. js-lingui-id: l/ipRX
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Send from"
-msgstr ""
+msgstr "傳送者"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

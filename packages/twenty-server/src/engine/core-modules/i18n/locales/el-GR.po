@@ -3324,7 +3324,7 @@ msgstr "Αντικρουόμενος κωδικός χώρας τηλεφώνο�
 #. js-lingui-id: Pfaq60
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "Connect an account for this MCP server first."
-msgstr ""
+msgstr "Συνδέστε πρώτα έναν λογαριασμό για αυτόν τον διακομιστή MCP."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -13905,7 +13905,7 @@ msgstr "Οι παράμετροι αιτήματος MCP δεν είναι έγ�
 #. js-lingui-id: gSAxal
 #: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
 msgid "The MCP server exposes too many tools to be synced."
-msgstr ""
+msgstr "Ο διακομιστής MCP εκθέτει πάρα πολλά εργαλεία για συγχρονισμό."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
