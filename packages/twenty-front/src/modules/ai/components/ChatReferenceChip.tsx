@@ -30,22 +30,26 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
     return <span>{reference.displayName}</span>;
   }
 
-  return (
-    <StyledChipContainer>
-      {!isDefined(target.to) || !isNavigationEnabled ? (
+  if (!isDefined(target.to) || !isNavigationEnabled) {
+    return (
+      <StyledChipContainer>
         <Chip variant="soft" startElement={target.leftComponent}>
           {getChipLabel(reference.displayName).content}
         </Chip>
-      ) : (
-        <LinkChip
-          to={target.to}
-          onClick={target.onClick}
-          variant="soft"
-          startElement={target.leftComponent}
-        >
-          {getChipLabel(reference.displayName).content}
-        </LinkChip>
-      )}
+      </StyledChipContainer>
+    );
+  }
+
+  return (
+    <StyledChipContainer>
+      <LinkChip
+        to={target.to}
+        onClick={target.onClick}
+        variant="soft"
+        startElement={target.leftComponent}
+      >
+        {getChipLabel(reference.displayName).content}
+      </LinkChip>
     </StyledChipContainer>
   );
 };
