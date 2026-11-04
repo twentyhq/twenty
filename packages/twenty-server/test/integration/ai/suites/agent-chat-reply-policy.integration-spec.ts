@@ -513,10 +513,10 @@ describe('Assistant reply selection with stored conversation participants', () =
       }),
     );
 
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "isAssistantParticipant" = true WHERE id = $1`,
-      [threadId],
-    );
+    await context.setStoredAssistantParticipation({
+      threadId,
+      isAssistantParticipant: true,
+    });
     const { messageId } = await saveMessageWithReplyContext({
       threadId,
       assistantReplyContext: {
