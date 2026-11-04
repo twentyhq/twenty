@@ -12,6 +12,8 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingPartnerCodeDTO } from 'src/engine/core-modules/billing/dtos/billing-partner-code.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -20,6 +22,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class BillingPartnerCodeService {
   constructor(
     private readonly stripeCustomerService: StripeCustomerService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
@@ -32,7 +35,12 @@ export class BillingPartnerCodeService {
         stripeCustomerId,
       );
 
-    return { partnerCode: partner, isEditable: !isDefined(partner) };
+    return {
+      partnerCode: partner,
+      isEditable:
+        !isDefined(partner) &&
+        (await this.isTrialingOrWithoutSubscription(workspaceId)),
+    };
   }
 
   async setPartnerCode({
@@ -52,6 +60,13 @@ export class BillingPartnerCodeService {
     }
 
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
+
+    if (!(await this.isTrialingOrWithoutSubscription(workspaceId))) {
+      throw new BillingException(
+        `Partner code of workspace ${workspaceId} is locked: subscription is past trial`,
+        BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
+      );
+    }
 
     const { partner: existingPartnerCode, email } =
       await this.stripeCustomerService.getCustomerPartnerAndEmail(
@@ -84,6 +99,18 @@ export class BillingPartnerCodeService {
     );
 
     return { partnerCode: normalizedPartnerCode, isEditable: false };
+  }
+
+  private async isTrialingOrWithoutSubscription(workspaceId: string) {
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId,
+      });
+
+    return (
+      !isDefined(subscription) ||
+      subscription.status === SubscriptionStatus.Trialing
+    );
   }
 
   private async getStripeCustomerIdOrThrow(workspaceId: string) {

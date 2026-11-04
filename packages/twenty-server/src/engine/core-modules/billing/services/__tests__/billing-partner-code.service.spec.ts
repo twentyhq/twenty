@@ -1,4 +1,5 @@
 import { BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/services/billing-partner-code.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -8,9 +9,11 @@ const CUSTOMER_EMAIL = 'tim@apple.dev';
 const buildService = ({
   existingPartnerCode = null,
   isPreviousCustomer = false,
+  subscriptionStatus = SubscriptionStatus.Trialing,
 }: {
   existingPartnerCode?: string | null;
   isPreviousCustomer?: boolean;
+  subscriptionStatus?: SubscriptionStatus | null;
 } = {}) => {
   const updateCustomerPartner = jest.fn();
   const isPreviousCustomerMock = jest.fn(async () => isPreviousCustomer);
@@ -23,6 +26,12 @@ const buildService = ({
       }),
       isPreviousCustomer: isPreviousCustomerMock,
       updateCustomerPartner,
+    } as never,
+    {
+      getCurrentBillingSubscription: async () =>
+        subscriptionStatus === null
+          ? undefined
+          : { status: subscriptionStatus },
     } as never,
     {
       findOne: async () => ({ stripeCustomerId: STRIPE_CUSTOMER_ID }),
@@ -54,6 +63,26 @@ describe('BillingPartnerCodeService', () => {
       isEditable: true,
     });
     expect(isPreviousCustomer).not.toHaveBeenCalled();
+  });
+
+  it('should not let a code be added once the subscription is past trial', async () => {
+    const { service } = buildService({
+      subscriptionStatus: SubscriptionStatus.Active,
+    });
+
+    await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
+      partnerCode: null,
+      isEditable: false,
+    });
+  });
+
+  it('should let a code be added without a subscription', async () => {
+    const { service } = buildService({ subscriptionStatus: null });
+
+    await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
+      partnerCode: null,
+      isEditable: true,
+    });
   });
 
   it('should store the normalized code on the Stripe customer', async () => {
@@ -92,6 +121,39 @@ describe('BillingPartnerCodeService', () => {
       code: BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
     });
     expect(updateCustomerPartner).not.toHaveBeenCalled();
+  });
+
+  it('should refuse a code once the subscription is past trial', async () => {
+    const { service, updateCustomerPartner } = buildService({
+      subscriptionStatus: SubscriptionStatus.Active,
+    });
+
+    await expect(
+      service.setPartnerCode({
+        workspaceId: WORKSPACE_ID,
+        partnerCode: 'acme',
+      }),
+    ).rejects.toMatchObject({
+      code: BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
+    });
+    expect(updateCustomerPartner).not.toHaveBeenCalled();
+  });
+
+  it('should store a code without a subscription', async () => {
+    const { service, updateCustomerPartner } = buildService({
+      subscriptionStatus: null,
+    });
+
+    await expect(
+      service.setPartnerCode({
+        workspaceId: WORKSPACE_ID,
+        partnerCode: 'acme',
+      }),
+    ).resolves.toEqual({ partnerCode: 'acme', isEditable: false });
+    expect(updateCustomerPartner).toHaveBeenCalledWith(
+      STRIPE_CUSTOMER_ID,
+      'acme',
+    );
   });
 
   it('should refuse a code for a previous customer', async () => {
