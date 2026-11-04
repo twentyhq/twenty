@@ -9,39 +9,42 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
-  const objectPermissions = Object.entries(recordsPermissions.objects).flatMap(
-    ([objectMetadataId, objectRecordsPermissions]) =>
-      isDefined(objectRecordsPermissions)
-        ? [
-            {
-              objectMetadataId,
-              canReadObjectRecords: canReachSomeRecords({
-                objectRecordsPermissions,
-                operationType: 'select',
-              }),
-              canUpdateObjectRecords: canReachSomeRecords({
-                objectRecordsPermissions,
-                operationType: 'update',
-              }),
-              canSoftDeleteObjectRecords: canReachSomeRecords({
-                objectRecordsPermissions,
-                operationType: 'soft-delete',
-              }),
-              canDestroyObjectRecords: canReachSomeRecords({
-                objectRecordsPermissions,
-                operationType: 'delete',
-              }),
-              restrictedFields: objectRecordsPermissions.restrictedFields,
-              rowLevelPermissionPredicates:
-                objectRecordsPermissions.rowLevelRecordsPermissions
-                  ?.predicates ?? [],
-              rowLevelPermissionPredicateGroups:
-                objectRecordsPermissions.rowLevelRecordsPermissions
-                  ?.predicateGroups ?? [],
-            },
-          ]
-        : [],
-  );
+  const objectPermissions: UserWorkspacePermissionsDto['objectPermissions'] =
+    [];
+
+  for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
+    recordsPermissions.objects,
+  )) {
+    if (!isDefined(objectRecordsPermissions)) {
+      continue;
+    }
+
+    objectPermissions.push({
+      objectMetadataId,
+      canReadObjectRecords: canReachSomeRecords({
+        objectRecordsPermissions,
+        operationType: 'select',
+      }),
+      canUpdateObjectRecords: canReachSomeRecords({
+        objectRecordsPermissions,
+        operationType: 'update',
+      }),
+      canSoftDeleteObjectRecords: canReachSomeRecords({
+        objectRecordsPermissions,
+        operationType: 'soft-delete',
+      }),
+      canDestroyObjectRecords: canReachSomeRecords({
+        objectRecordsPermissions,
+        operationType: 'delete',
+      }),
+      restrictedFields: objectRecordsPermissions.restrictedFields,
+      rowLevelPermissionPredicates:
+        objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
+      rowLevelPermissionPredicateGroups:
+        objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ??
+        [],
+    });
+  }
 
   const permissionFlags = (
     Object.keys(rawSettingsPermissions) as PermissionFlagType[]
