@@ -1060,7 +1060,7 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    it('should let the user authorize again after revoking', async () => {
+    it('should let the user authorize again after revoking, without reviving the revoked refresh token', async () => {
       const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
 
       await revokeRefreshToken(revokedRefreshToken);
@@ -1069,9 +1069,47 @@ describe('OAuth (integration)', () => {
 
       expect((await findAuthorization()).revokedAt).toBeNull();
 
+      const { iat: revokedRefreshTokenIssuedAt } = JSON.parse(
+        Buffer.from(revokedRefreshToken.split('.')[1], 'base64url').toString(),
+      );
+
+      await ds.query(
+        `UPDATE core."applicationAuthorization" SET "lastAuthorizedAt" = to_timestamp($1)
+         WHERE "userId" = $2 AND "applicationId" = $3`,
+        [revokedRefreshTokenIssuedAt, TEST_USER_ID, testApplication.id],
+      );
+
       await postToken({
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+
+      const revokedRefresh = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: revokedRefreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(revokedRefresh.body.error).toBe('invalid_grant');
+    });
+
+    it('should not let a refresh token from an earlier consent revoke the current one', async () => {
+      const { refreshToken: earlierRefreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(earlierRefreshToken);
+
+      const { refreshToken: currentRefreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(earlierRefreshToken);
+
+      expect((await findAuthorization()).revokedAt).toBeNull();
+
+      await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: currentRefreshToken,
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);

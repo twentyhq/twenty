@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 
@@ -25,8 +26,9 @@ export class ApplicationAuthorizationService {
     userWorkspaceId: string;
     applicationId: string;
     scopes: string[];
-  }): Promise<void> {
+  }): Promise<string> {
     const now = new Date();
+    const consentId = v4();
 
     await this.applicationAuthorizationRepository.upsert(
       {
@@ -36,6 +38,7 @@ export class ApplicationAuthorizationService {
         applicationId,
         scopes,
         lastAuthorizedAt: now,
+        consentId,
         lastUsedAt: now,
         revokedAt: null,
       },
@@ -44,6 +47,8 @@ export class ApplicationAuthorizationService {
         skipUpdateIfNoValuesChanged: false,
       },
     );
+
+    return consentId;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
@@ -134,21 +139,29 @@ export class ApplicationAuthorizationService {
     });
   }
 
+  // With a consentId, a re-consent between the caller's check and this update is left untouched
   async revokeAuthorizationForApplication({
     userId,
     applicationId,
+    consentId,
   }: {
     userId: string;
     applicationId: string;
+    consentId?: string;
   }): Promise<boolean> {
-    return await this.revokeMatching({ userId, applicationId });
+    return await this.revokeMatching(
+      isDefined(consentId)
+        ? { userId, applicationId, consentId }
+        : { userId, applicationId },
+    );
   }
 
   // The union rules out empty criteria, which would revoke every row
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }
-      | { userId: string; applicationId: string },
+      | { userId: string; applicationId: string }
+      | { userId: string; applicationId: string; consentId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(
       { ...criteria, revokedAt: IsNull() },
