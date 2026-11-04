@@ -126,7 +126,8 @@ const insertChannelRuleGrants = async ({
       .clone()
       .orderBy('thread.id')
       .addOrderBy('role.id')
-      .limit(CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE);
+      .limit(CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE)
+      .setLock('for_key_share', undefined, ['thread']);
 
     if (isDefined(lastInsertedGrant)) {
       batchQuery.andWhere(

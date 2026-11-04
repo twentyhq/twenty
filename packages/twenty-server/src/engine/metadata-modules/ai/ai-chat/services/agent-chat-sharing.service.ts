@@ -381,7 +381,6 @@ export class AgentChatSharingService {
           manager,
           workspaceId: args.workspaceId,
           channelIds: [args.channelId],
-          shouldProtectThreadIdentity: isDefined(args.id),
         });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}"${isDefined(args.channelId) ? ', "channelId"' : ''})

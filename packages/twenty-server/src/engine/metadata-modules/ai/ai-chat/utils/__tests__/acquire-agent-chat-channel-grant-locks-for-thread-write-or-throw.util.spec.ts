@@ -9,93 +9,61 @@ const SECOND_CHANNEL_ID = '20202020-0000-4000-8000-00000000000b';
 
 const SHARED_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))';
-const EXCLUSIVE_LOCK_QUERY =
-  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
 const buildQueryFailedError = (code: string) =>
   Object.assign(new QueryFailedError('SELECT', [], new Error(code)), { code });
 
 describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
-  it.each([false, true])(
-    'bounds the wait and orders identity protection before channel locks when protection is %s',
-    async (shouldProtectThreadIdentity) => {
-      const query = jest.fn().mockResolvedValue([]);
+  it('bounds the wait before taking the shared locks', async () => {
+    const query = jest.fn().mockResolvedValue([]);
 
-      await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+    await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+      manager: { query },
+      workspaceId: WORKSPACE_ID,
+      channelIds: [SECOND_CHANNEL_ID, null, FIRST_CHANNEL_ID],
+    });
+
+    expect(query.mock.calls).toEqual([
+      [`SELECT set_config('lock_timeout', $1, true)`, ['5000ms']],
+      [
+        SHARED_LOCK_QUERY,
+        [`agent-chat-channel-grants:${WORKSPACE_ID}:${FIRST_CHANNEL_ID}`],
+      ],
+      [
+        SHARED_LOCK_QUERY,
+        [`agent-chat-channel-grants:${WORKSPACE_ID}:${SECOND_CHANNEL_ID}`],
+      ],
+    ]);
+  });
+
+  it('leaves the wait of a chat outside any channel unbounded', async () => {
+    const query = jest.fn().mockResolvedValue([]);
+
+    await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+      manager: { query },
+      workspaceId: WORKSPACE_ID,
+      channelIds: [null, undefined],
+    });
+
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it('refuses with CHAT_CHANNEL_BUSY when the wait times out', async () => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce([])
+      .mockRejectedValueOnce(buildQueryFailedError('55P03'));
+
+    await expect(
+      acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
         manager: { query },
         workspaceId: WORKSPACE_ID,
-        channelIds: [SECOND_CHANNEL_ID, null, FIRST_CHANNEL_ID],
-        shouldProtectThreadIdentity,
-      });
-
-      expect(query.mock.calls).toEqual([
-        [`SELECT set_config('lock_timeout', $1, true)`, ['5000ms']],
-        ...(shouldProtectThreadIdentity
-          ? [
-              [
-                EXCLUSIVE_LOCK_QUERY,
-                [`agent-chat-thread-identity:${WORKSPACE_ID}`],
-              ],
-            ]
-          : []),
-        [
-          SHARED_LOCK_QUERY,
-          [`agent-chat-channel-grants:${WORKSPACE_ID}:${FIRST_CHANNEL_ID}`],
-        ],
-        [
-          SHARED_LOCK_QUERY,
-          [`agent-chat-channel-grants:${WORKSPACE_ID}:${SECOND_CHANNEL_ID}`],
-        ],
-      ]);
-    },
-  );
-
-  it.each([false, true])(
-    'protects a private chat only when its identity is explicit (%s)',
-    async (shouldProtectThreadIdentity) => {
-      const query = jest.fn().mockResolvedValue([]);
-
-      await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-        manager: { query },
-        workspaceId: WORKSPACE_ID,
-        channelIds: [null, undefined],
-        shouldProtectThreadIdentity,
-      });
-
-      expect(query.mock.calls).toEqual(
-        shouldProtectThreadIdentity
-          ? [
-              [`SELECT set_config('lock_timeout', $1, true)`, ['5000ms']],
-              [
-                EXCLUSIVE_LOCK_QUERY,
-                [`agent-chat-thread-identity:${WORKSPACE_ID}`],
-              ],
-            ]
-          : [],
-      );
-    },
-  );
-
-  it.each([false, true])(
-    'refuses with CHAT_CHANNEL_BUSY when identity protection is %s and the wait times out',
-    async (shouldProtectThreadIdentity) => {
-      const query = jest
-        .fn()
-        .mockResolvedValueOnce([])
-        .mockRejectedValueOnce(buildQueryFailedError('55P03'));
-
-      await expect(
-        acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-          manager: { query },
-          workspaceId: WORKSPACE_ID,
-          channelIds: [FIRST_CHANNEL_ID],
-          shouldProtectThreadIdentity,
-        }),
-      ).rejects.toEqual(
-        expect.objectContaining({ code: AiExceptionCode.CHAT_CHANNEL_BUSY }),
-      );
-    },
-  );
+        channelIds: [FIRST_CHANNEL_ID],
+      }),
+    ).rejects.toEqual(
+      expect.objectContaining({ code: AiExceptionCode.CHAT_CHANNEL_BUSY }),
+    );
+  });
 
   it('rethrows other failures', async () => {
     const connectionError = buildQueryFailedError('57P01');

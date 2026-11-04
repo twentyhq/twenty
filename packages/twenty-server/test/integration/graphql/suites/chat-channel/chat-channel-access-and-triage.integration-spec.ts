@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { isDefined } from 'twenty-shared/utils';
 import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -54,6 +53,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
     createThreadInChannel,
     roleIdsToReopenToAllChannels,
     markChannelCacheStale,
+    startHeldTransaction,
     holdChannelGrantLock,
     closeMemberAllChannelsAccess,
   } = setUpChatChannelTests();
@@ -522,71 +522,73 @@ describe('Chat channel access and triage through the authenticated API', () => {
     ]);
   });
 
-  it.each(['other', 'private'] as const)(
-    'recreates a destroyed chat in the %s channel scope while its old grants are rewritten',
-    async (destination) => {
-      const channelId = await createChannel();
-      const recreatedChannelId =
-        destination === 'other' ? await createChannel() : undefined;
-      const threadId = await createThreadInChannel(channelId);
+  it("creates a chat under a destroyed chat's id while its channel is rewritten", async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
 
-      await global.testDataSource.query(
-        `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
-        [threadId],
-      );
+    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
+    await destroyAgentChatThread({ threadId });
 
-      const queryRunner = await holdChannelGrantLock({
-        channelId,
-        mode: 'exclusive',
-      });
-      const [prefetchedGrant]: { roleId: string; channelId: string }[] =
-        await queryRunner.query(
-          `SELECT role.id AS "roleId", thread."channelId"
-         FROM ${SCHEMA}."agentChatThread" thread
-         JOIN core."role" role ON role."workspaceId" = $2
-           AND role."canAccessAllAgentChatChannels" = true
-         WHERE thread.id = $1 LIMIT 1`,
-          [threadId, SEED_APPLE_WORKSPACE_ID],
-        );
-      const [{ processId }]: { processId: number }[] = await queryRunner.query(
-        'SELECT pg_backend_pid() AS "processId"',
-      );
+    const queryRunner = await holdChannelGrantLock({
+      channelId,
+      mode: 'exclusive',
+    });
 
-      expect(prefetchedGrant).toBeDefined();
-      createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
-      await destroyAgentChatThread({ threadId });
-      expect(await readChannelGrants(threadId)).toEqual([]);
+    const pendingCreate = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).createThreadIfMissing({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: JANE,
+      threadId,
+      channelId,
+    });
 
-      const pendingCreate = getAppProviderByClassName<AgentChatThreadService>(
-        'AgentChatThreadService',
-      ).createThreadIfMissing({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workspaceMemberId: JANE,
-        threadId,
-        channelId: recreatedChannelId,
-      });
+    await waitForBlockedChannelGrantLock(channelId);
+    await queryRunner.query(
+      `DELETE FROM ${SCHEMA}."recordShare" WHERE "rowCause" = 'RULE' AND "sourceId" = $1`,
+      [channelId],
+    );
+    await queryRunner.commitTransaction();
+    await pendingCreate;
+    createdThreadIds.push(threadId);
 
-      await waitForBlockedDatabaseQueryOrThrow(processId);
-      await insertChannelGrant({
-        queryRunner,
-        threadId,
-        roleId: prefetchedGrant.roleId,
-        channelId: prefetchedGrant.channelId,
-      });
-      await queryRunner.commitTransaction();
-      await pendingCreate;
-      createdThreadIds.push(threadId);
+    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
+  });
 
-      expect((await readChannelState(threadId)).channelId).toBe(
-        recreatedChannelId ?? null,
-      );
-      expect(await readChannelGrants(threadId)).toEqual(
-        isDefined(recreatedChannelId)
-          ? [{ principalType: 'ROLE', sourceId: recreatedChannelId }]
-          : [],
-      );
-    },
-  );
+  it('grants nothing to a chat destroyed while its channel is rewritten', async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+
+    await global.testDataSource.query(
+      `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
+      [threadId],
+    );
+
+    const queryRunner = await startHeldTransaction();
+    const [{ processId }]: { processId: number }[] = await queryRunner.query(
+      'SELECT pg_backend_pid() AS "processId"',
+    );
+
+    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
+    await queryRunner.query(
+      `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+
+    const pendingRewrite = getChannelGrantService().rewriteChannelGrants({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelId,
+    });
+
+    await waitForBlockedDatabaseQueryOrThrow(processId);
+    await queryRunner.commitTransaction();
+    await pendingRewrite;
+
+    expect(await readChannelGrants(threadId)).toEqual([]);
+  });
 
   it('refuses a role from outside the workspace', async () => {
     const response = await makeMetadataApiRequest({
