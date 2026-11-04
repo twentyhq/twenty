@@ -8,6 +8,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -225,7 +226,7 @@ export class RecordSharingService {
                 transactionScope,
               })
             ) {
-              throw new NotFoundError('Record not found');
+              throw new NotFoundError(doNotTranslate('Record not found'));
             }
 
             await write({
