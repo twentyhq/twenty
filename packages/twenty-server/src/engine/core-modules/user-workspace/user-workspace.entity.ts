@@ -23,7 +23,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
@@ -97,18 +96,6 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
 
   @Field(() => [ObjectRecordsPermissionsDTO], { nullable: true })
   objectRecordsPermissions?: ObjectRecordsPermissionsDTO[];
-
-  @Field(() => [ObjectPermissionDTO], {
-    nullable: true,
-    deprecationReason: 'Use objectRecordsPermissions',
-  })
-  objectPermissions?: ObjectPermissionDTO[];
-
-  @Field(() => [ObjectPermissionDTO], {
-    nullable: true,
-    deprecationReason: 'Use objectRecordsPermissions',
-  })
-  objectsPermissions?: ObjectPermissionDTO[];
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
