@@ -304,7 +304,7 @@ export class RouteTriggerService {
         );
       }
 
-      // Routes authenticate the caller themselves, behind no AuthPrincipalGuard
+      // Routes authenticate the caller themselves, behind no AccessPolicyGuard
       if (isDefined(routeAuthenticationContext.agentId)) {
         throw new RouteTriggerException(
           'This token is only accepted by MCP',
