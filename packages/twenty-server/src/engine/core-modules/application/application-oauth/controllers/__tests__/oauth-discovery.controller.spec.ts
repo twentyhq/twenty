@@ -9,6 +9,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('OAuthDiscoveryController', () => {
   let controller: OAuthDiscoveryController;
+  let configValues: Record<string, unknown>;
 
   const findOrCreateCliRegistrationMock = jest
     .fn()
@@ -22,13 +23,18 @@ describe('OAuthDiscoveryController', () => {
     }) as unknown as Request;
 
   beforeEach(async () => {
+    configValues = {
+      SERVER_URL: 'https://api.example.com',
+      IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED: true,
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OAuthDiscoveryController],
       providers: [
         {
           provide: TwentyConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue('https://api.example.com'),
+            get: jest.fn((key: string) => configValues[key]),
           },
         },
         {
@@ -140,6 +146,26 @@ describe('OAuthDiscoveryController', () => {
           'https://app.example.com/authorize?iss=https%3A%2F%2Fapi.example.com',
         authorization_response_iss_parameter_supported: true,
       });
+    });
+
+    it('advertises the registration endpoint while dynamic client registration is on', async () => {
+      const request = buildMockRequest('workspace.twenty.com');
+
+      expect(
+        await controller.getAuthorizationServerMetadata(request),
+      ).toMatchObject({
+        registration_endpoint: 'https://workspace.twenty.com/oauth/register',
+      });
+    });
+
+    it('stops advertising the registration endpoint once dynamic client registration is off', async () => {
+      configValues.IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED = false;
+
+      const metadata = await controller.getAuthorizationServerMetadata(
+        buildMockRequest('workspace.twenty.com'),
+      );
+
+      expect(metadata).not.toHaveProperty('registration_endpoint');
     });
 
     it('exposes the CLI client id, provisioning the registration if missing', async () => {
