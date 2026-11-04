@@ -64,6 +64,12 @@ export class BillingService {
       isNonEmptyString(partner) &&
       !(await this.stripeCustomerService.isPreviousPayingCustomer(userEmail));
 
+    if (isNonEmptyString(partner) && !isPartnerEligible) {
+      this.logger.log(
+        `Partner code ${partner} dropped for workspace ${workspaceId}: previous paying customer`,
+      );
+    }
+
     await this.stripeCustomerService.createStripeCustomer({
       userEmail,
       workspaceId,

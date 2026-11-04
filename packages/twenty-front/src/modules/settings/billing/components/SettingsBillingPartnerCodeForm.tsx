@@ -12,12 +12,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import {
   BillingPartnerCodeDocument,
   SetBillingPartnerCodeDocument,
-  SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -54,14 +52,7 @@ export const SettingsBillingPartnerCodeForm = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
-  const subscriptionStatus = useSubscriptionStatus();
-  const isHiddenOutsideTrial =
-    variant === 'settings' &&
-    subscriptionStatus !== SubscriptionStatus.Trialing;
-
-  const { data } = useQuery(BillingPartnerCodeDocument, {
-    skip: isHiddenOutsideTrial,
-  });
+  const { data } = useQuery(BillingPartnerCodeDocument);
   const [setBillingPartnerCode, { loading }] = useMutation(
     SetBillingPartnerCodeDocument,
     { refetchQueries: [BillingPartnerCodeDocument], awaitRefetchQueries: true },
@@ -72,7 +63,7 @@ export const SettingsBillingPartnerCodeForm = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasAppliedCode, setHasAppliedCode] = useState(false);
 
-  if (isHiddenOutsideTrial || !isDefined(data)) {
+  if (!isDefined(data)) {
     return null;
   }
 

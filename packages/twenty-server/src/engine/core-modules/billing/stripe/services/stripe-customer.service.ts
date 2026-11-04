@@ -58,14 +58,20 @@ export class StripeCustomerService {
 
   // Each workspace has its own Stripe customer, so history spans all customers with this email.
   async isPreviousPayingCustomer(email: string): Promise<boolean> {
-    for await (const customer of this.stripe.customers.list({ email })) {
-      for await (const invoice of this.stripe.invoices.list({
+    const { data: customers } = await this.stripe.customers.list({
+      email,
+      limit: 100,
+    });
+
+    for (const customer of customers) {
+      const { data: paidInvoices } = await this.stripe.invoices.list({
         customer: customer.id,
         status: 'paid',
-      })) {
-        if (invoice.amount_paid > 0) {
-          return true;
-        }
+        limit: 100,
+      });
+
+      if (paidInvoices.some((invoice) => invoice.amount_paid > 0)) {
+        return true;
       }
     }
 
