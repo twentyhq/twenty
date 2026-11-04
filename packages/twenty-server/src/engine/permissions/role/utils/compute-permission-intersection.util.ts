@@ -29,7 +29,7 @@ const intersectRowLevelPermissionPredicates = (
   );
 };
 
-const denyIfAnyDenies = (...values: (boolean | null | undefined)[]) =>
+const denyIfAnyDenies = (values: (boolean | null | undefined)[]) =>
   values.some((value) => value === false) ? false : null;
 
 const intersectRestrictedFields = (
@@ -47,11 +47,11 @@ const intersectRestrictedFields = (
       };
 
       restrictedFields[fieldMetadataId] = {
-        canRead: denyIfAnyDenies(current.canRead, fieldPermissions.canRead),
-        canUpdate: denyIfAnyDenies(
+        canRead: denyIfAnyDenies([current.canRead, fieldPermissions.canRead]),
+        canUpdate: denyIfAnyDenies([
           current.canUpdate,
           fieldPermissions.canUpdate,
-        ),
+        ]),
       };
     }
   }
