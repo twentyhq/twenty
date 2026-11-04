@@ -451,6 +451,16 @@ Twenty supports logic functions for workflows and the code interpreter for AI da
 | Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
 | Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
 
+### Logic Functions - Calling Twenty Privately
+
+Logic functions call the API through `SERVER_URL` by default. When an authenticating proxy (Cloudflare Access, Google IAP, oauth2-proxy) sits in front of `SERVER_URL`, it rejects those calls. Set `SERVER_INTERNAL_URL` to a private address of the server so functions skip the proxy:
+
+```bash
+SERVER_INTERNAL_URL=http://twenty-server:3000
+```
+
+It must be reachable from where functions run: from the server and worker containers with the local driver, from the Lambda subnets with the Lambda driver. Keep it private: anything that can reach it skips the proxy. URLs handed to browsers or other services, such as webhook URLs, keep using `SERVER_URL`.
+
 ### Logic Functions - Recommended Configuration
 
 **For development:**

@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 
 import { transform } from 'esbuild';
 
+import { buildDefaultApiUrlExpression } from '../build-default-api-url-expression';
 import { buildClientWrapperSource } from '../client-wrapper';
 
 const twentyClientTemplateSource = readFileSync(
@@ -90,7 +91,7 @@ export const loadGeneratedClientClass = async (): Promise<{
 
   const wrapperSource = buildClientWrapperSource(twentyClientTemplateSource, {
     apiClientName: 'MetadataApiClient',
-    defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
+    defaultUrl: buildDefaultApiUrlExpression('/metadata'),
     includeUploadFile: true,
   });
 

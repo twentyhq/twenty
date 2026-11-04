@@ -1198,6 +1198,7 @@ Key points:
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
 - `TWENTY_API_URL` — Base URL of the Twenty API
+- `TWENTY_INTERNAL_API_URL`: URL a logic function uses to call Twenty. Same as `TWENTY_API_URL` unless the server sets a private address, for example when Twenty runs behind an authenticating proxy. The clients use it automatically. If you call the API yourself, use it for requests and keep `TWENTY_API_URL` for links you hand to browsers or other services, such as webhook URLs.
 - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key for the default access: a person's role intersected with your application's when someone is behind the run, your application's own role when nobody is. The person is whoever triggered the run in a logic function, whoever is looking at the page in a front component.
 - `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Short-lived key scoped to your application's own role alone. Logic functions only, always injected there, and what `runAs: 'application'` uses.
 
