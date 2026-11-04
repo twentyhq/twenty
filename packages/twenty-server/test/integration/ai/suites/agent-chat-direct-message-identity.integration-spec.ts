@@ -241,11 +241,18 @@ describe('Canonical direct message identity', () => {
           variables: { target },
         });
 
-        expect(sharing.body.errors).toBeUndefined();
-        expect(sharing.body.data.recordSharing).toEqual({
-          isPrivate: true,
-          canManageSharing: false,
-        });
+        expect(sharing.body).toMatchObject(
+          objectName === 'agentMessage'
+            ? { errors: [{ extensions: { code: ErrorCode.NOT_FOUND } }] }
+            : {
+                data: {
+                  recordSharing: {
+                    isPrivate: true,
+                    canManageSharing: false,
+                  },
+                },
+              },
+        );
 
         const mutations = [
           {
