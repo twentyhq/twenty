@@ -46,7 +46,7 @@ export const getFirstNavigationMenuItemLink = ({
         !getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords
+        ).canReadSomeRecords
       ) {
         continue;
       }

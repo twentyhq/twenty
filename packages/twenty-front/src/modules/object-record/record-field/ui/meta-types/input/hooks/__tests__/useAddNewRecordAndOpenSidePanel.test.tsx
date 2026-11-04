@@ -33,7 +33,7 @@ jest.mock('@/object-record/hooks/useBuildRecordInputFromRLSPredicates', () => ({
   }),
 }));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
-  useObjectPermissionsForObject: () => ({ canUpdateObjectRecords: true }),
+  useObjectPermissionsForObject: () => ({ canUpdateSomeRecords: true }),
 }));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ refetchQueries: jest.fn() }),

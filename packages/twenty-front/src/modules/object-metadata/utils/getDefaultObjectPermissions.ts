@@ -1,15 +1,18 @@
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 
 // Anything the role does not specify is allowed; the server still enforces the real permissions
 export const getDefaultObjectPermissions = (
   objectMetadataId: string,
-): ObjectPermissionsWithObjectMetadataId => ({
+): ObjectRecordsPermissionsWithObjectMetadataId => ({
   objectMetadataId,
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
+  canReadSomeRecords: true,
+  canUpdateSomeRecords: true,
+  canSoftDeleteSomeRecords: true,
+  canDestroySomeRecords: true,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+  rowLevelRecordsPermissions: null,
 });

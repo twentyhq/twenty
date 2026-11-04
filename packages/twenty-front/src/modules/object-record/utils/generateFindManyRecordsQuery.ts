@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import {
-  type ObjectPermissions,
   type QueryCursorDirection,
   type RecordGqlFields,
 } from 'twenty-shared/types';
@@ -24,7 +24,7 @@ export const generateFindManyRecordsQuery = ({
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 }) => gql`
 query FindMany${capitalize(

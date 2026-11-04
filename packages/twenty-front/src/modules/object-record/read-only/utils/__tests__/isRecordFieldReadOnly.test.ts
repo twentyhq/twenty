@@ -1,4 +1,4 @@
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -10,16 +10,19 @@ const FIELD_METADATA_ID = 'field-metadata-id';
 const INVERSE_FIELD_METADATA_ID = 'inverse-field-metadata-id';
 
 const buildObjectPermissions = (
-  overrides: Partial<ObjectPermissionsWithObjectMetadataId> = {},
-): ObjectPermissionsWithObjectMetadataId => ({
+  overrides: Partial<ObjectRecordsPermissionsWithObjectMetadataId> = {},
+): ObjectRecordsPermissionsWithObjectMetadataId => ({
   objectMetadataId: OBJECT_METADATA_ID,
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
+  canReadSomeRecords: true,
+  canUpdateSomeRecords: true,
+  canSoftDeleteSomeRecords: true,
+  canDestroySomeRecords: true,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+  rowLevelRecordsPermissions: null,
   ...overrides,
 });
 
@@ -65,7 +68,7 @@ describe('isRecordFieldReadOnly', () => {
         ...baseParams,
         objectPermissionsByObjectMetadataId: {
           [OBJECT_METADATA_ID]: buildObjectPermissions({
-            canUpdateObjectRecords: false,
+            canUpdateSomeRecords: false,
           }),
         },
       }),
@@ -119,7 +122,7 @@ describe('isRecordFieldReadOnly', () => {
           ...baseParams.objectPermissionsByObjectMetadataId,
           [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
             objectMetadataId: TARGET_OBJECT_METADATA_ID,
-            canUpdateObjectRecords: false,
+            canUpdateSomeRecords: false,
           }),
         },
       }),

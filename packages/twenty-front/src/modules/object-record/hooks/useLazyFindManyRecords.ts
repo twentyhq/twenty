@@ -61,7 +61,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = objectPermissions.canReadSomeRecords;
 
   const defaultVariables = useMemo(
     () => ({

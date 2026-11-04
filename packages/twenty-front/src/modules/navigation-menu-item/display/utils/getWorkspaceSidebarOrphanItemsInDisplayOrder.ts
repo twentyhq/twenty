@@ -77,7 +77,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords
+        ).canReadSomeRecords
       ) {
         acc.push(rowSource);
       }

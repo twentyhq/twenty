@@ -32,7 +32,7 @@ export const isRecordFieldReadOnly = ({
   );
 
   if (
-    !objectPermissions.canUpdateObjectRecords ||
+    !objectPermissions.canUpdateSomeRecords ||
     !getFieldPermissions({
       objectPermissions,
       fieldMetadataId: fieldMetadataItem.id,

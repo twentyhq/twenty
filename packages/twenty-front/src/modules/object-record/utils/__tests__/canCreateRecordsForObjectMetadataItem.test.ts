@@ -7,7 +7,7 @@ const creatableObjectMetadataItem = {
 };
 
 const objectPermissionsAllowingUpdate = {
-  canUpdateObjectRecords: true,
+  canUpdateSomeRecords: true,
   objectMetadataId: '123',
   restrictedFields: {},
 };
@@ -62,7 +62,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: {
         ...objectPermissionsAllowingUpdate,
-        canUpdateObjectRecords: false,
+        canUpdateSomeRecords: false,
       },
       objectMetadataItem: creatableObjectMetadataItem,
     });

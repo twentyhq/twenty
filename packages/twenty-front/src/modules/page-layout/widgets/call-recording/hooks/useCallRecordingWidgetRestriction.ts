@@ -40,7 +40,7 @@ export const useCallRecordingWidgetRestriction = ({
     );
   };
 
-  if (!callRecordingObjectPermissions.canReadObjectRecords) {
+  if (!callRecordingObjectPermissions.canReadSomeRecords) {
     return {
       restriction: {
         type: 'object',

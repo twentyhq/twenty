@@ -52,7 +52,7 @@ export const RecordTableCellFieldContextGeneric = ({
     return null;
   }
 
-  let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  let hasObjectReadPermissions = objectPermissions.canReadSomeRecords;
   let isInvalidJunctionRelation = false;
 
   // todo @guillim : adjust this to handle morph relations permissions display
@@ -68,7 +68,7 @@ export const RecordTableCellFieldContextGeneric = ({
       relationObjectMetadataId,
     );
 
-    hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
+    hasObjectReadPermissions = relationObjectPermissions.canReadSomeRecords;
 
     if (hasObjectReadPermissions) {
       const junctionConfig = resolveJunctionConfig({
@@ -97,7 +97,7 @@ export const RecordTableCellFieldContextGeneric = ({
               getObjectPermissionsForObject(
                 objectPermissionsByObjectMetadataId,
                 targetId,
-              ).canReadObjectRecords,
+              ).canReadSomeRecords,
           );
         }
       }

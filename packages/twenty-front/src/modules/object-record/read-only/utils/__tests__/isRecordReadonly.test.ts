@@ -4,7 +4,7 @@ describe('isRecordReadOnly', () => {
   it('should return false if record is not deleted, has update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: true,
+        canUpdateSomeRecords: true,
       },
       isRecordDeleted: false,
       objectMetadataItem: {
@@ -19,7 +19,7 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is not deleted but lacks update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: false,
+        canUpdateSomeRecords: false,
       },
       isRecordDeleted: false,
       objectMetadataItem: {
@@ -34,7 +34,7 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is deleted even with update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: true,
+        canUpdateSomeRecords: true,
       },
       isRecordDeleted: true,
       objectMetadataItem: {
@@ -49,7 +49,7 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is not deleted and has update permissions but object metadata is UI read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: false,
+        canUpdateSomeRecords: false,
       },
       isRecordDeleted: true,
       objectMetadataItem: {
@@ -64,7 +64,7 @@ describe('isRecordReadOnly', () => {
   it('should return true if record is not deleted and has update permissions but object metadata is remote', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: true,
+        canUpdateSomeRecords: true,
       },
       isRecordDeleted: false,
       objectMetadataItem: {

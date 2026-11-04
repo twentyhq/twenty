@@ -1,11 +1,8 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -34,7 +31,7 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
@@ -129,7 +126,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {
@@ -285,7 +282,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {

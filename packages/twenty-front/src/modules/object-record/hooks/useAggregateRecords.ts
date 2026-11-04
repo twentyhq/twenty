@@ -43,7 +43,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = objectPermissions.canReadSomeRecords;
 
   const { data, loading, error, refetch } =
     useQuery<RecordGqlOperationFindManyResult>(aggregateQuery, {

@@ -77,7 +77,7 @@ export const RecordTable = () => {
 
   return (
     <>
-      {objectPermissions.canReadObjectRecords && (
+      {objectPermissions.canReadSomeRecords && (
         <>
           <RecordTableBodyEffectsWrapper
             hasRecordGroups={hasRecordGroups}

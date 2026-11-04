@@ -35,7 +35,7 @@ export const useActivityLinkConfig = ({
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: activityObjectNameSingular,
   });
-  const { canUpdateObjectRecords: canLinkActivities } =
+  const { canUpdateSomeRecords: canLinkActivities } =
     useObjectPermissionsForObject(
       junctionConfig?.junctionObjectMetadata.id ?? '',
     );

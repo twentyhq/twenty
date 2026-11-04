@@ -131,7 +131,7 @@ export const RecordTableWidgetProvider = ({
     ],
   );
 
-  if (!objectPermissions.canReadObjectRecords) {
+  if (!objectPermissions.canReadSomeRecords) {
     return null;
   }
 

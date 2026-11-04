@@ -1,12 +1,10 @@
 import { type ApolloCache } from '@apollo/client';
 
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateRecordCacheFragment } from '@/object-record/cache/utils/generateRecordCacheFragment';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import {
-  type RecordGqlFields,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize, isDefined, isEmptyObject } from 'twenty-shared/utils';
@@ -22,7 +20,7 @@ export type GetRecordFromCacheArgs = {
   recordGqlFields?: RecordGqlFields;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 };
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({

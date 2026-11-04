@@ -1,12 +1,10 @@
 import gql from 'graphql-tag';
 
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import {
-  type ObjectPermissions,
-  type RecordGqlFields,
-} from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 export const generateGroupsRecordsGroupByQuery = ({
@@ -22,7 +20,7 @@ export const generateGroupsRecordsGroupByQuery = ({
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);

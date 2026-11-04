@@ -56,7 +56,7 @@ export const useSingleRecordPickerPerformSearch = ({
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords === true
+        ).canReadSomeRecords === true
       );
     },
   );

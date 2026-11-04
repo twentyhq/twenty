@@ -1,12 +1,10 @@
 import { type ApolloCache } from '@apollo/client/cache';
 
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateRecordCacheFragment } from '@/object-record/cache/utils/generateRecordCacheFragment';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import {
-  type RecordGqlFields,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -26,7 +24,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   record: T;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 }) => {
   if (!isDefined(objectMetadataItem)) {

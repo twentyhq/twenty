@@ -75,7 +75,7 @@ export const FormMorphRelationToOneFieldInput = ({
           (morphRelation) =>
             objectPermissionsByObjectMetadataId[
               morphRelation.targetObjectMetadata.id
-            ]?.canReadObjectRecords === true,
+            ]?.canReadSomeRecords === true,
         )
         .map(
           (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
@@ -98,7 +98,7 @@ export const FormMorphRelationToOneFieldInput = ({
     !isDefined(selectedMorphValue) ||
     objectPermissionsByObjectMetadataId[
       selectedMorphValue.targetObjectMetadataId
-    ]?.canReadObjectRecords === true;
+    ]?.canReadSomeRecords === true;
 
   const hasForbiddenSelectedRecord =
     isDefined(selectedMorphValue) && !selectedTargetIsReadable;

@@ -119,7 +119,7 @@ export const useChatThreadsForRecord = ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
-  const { canReadObjectRecords } = useObjectPermissionsForObject(
+  const { canReadSomeRecords } = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
 
@@ -184,7 +184,7 @@ export const useChatThreadsForRecord = ({
   const getAllLinkIdsToThread = async (threadId: string) => {
     if (
       !isRecordLinkable ||
-      !canReadObjectRecords ||
+      !canReadSomeRecords ||
       !isDefined(junctionConfig) ||
       !isDefined(filter)
     ) {

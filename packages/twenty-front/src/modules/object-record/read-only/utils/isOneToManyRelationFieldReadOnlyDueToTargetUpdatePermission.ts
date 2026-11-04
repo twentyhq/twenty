@@ -29,7 +29,7 @@ const isTargetRecordUpdateBlocked = ({
     targetObjectMetadataId,
   );
 
-  if (targetObjectPermissions.canUpdateObjectRecords === false) {
+  if (targetObjectPermissions.canUpdateSomeRecords === false) {
     return true;
   }
 

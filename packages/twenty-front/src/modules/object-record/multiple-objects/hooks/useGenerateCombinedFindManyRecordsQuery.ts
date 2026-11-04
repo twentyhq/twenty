@@ -51,7 +51,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
             getObjectPermissionsForObject(
               objectPermissionsByObjectMetadataId,
               objectMetadataItem.id,
-            )?.canReadObjectRecords,
+            )?.canReadSomeRecords,
         );
 
     const filterPerMetadataItemArray =

@@ -1,6 +1,6 @@
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 
 export type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectPermissionsWithObjectMetadataId
+  ObjectRecordsPermissionsWithObjectMetadataId
 >;

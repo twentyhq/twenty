@@ -1,14 +1,14 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectPermissions & { objectMetadataId: string }
+  ObjectRecordsPermissionsWithObjectMetadataId
 >;
 
 type CategorizeRelationFieldsArgs = {
@@ -32,7 +32,7 @@ const canReadRelationTarget = (
     getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       fieldMetadataItem.relation?.targetObjectMetadata.id,
-    ).canReadObjectRecords;
+    ).canReadSomeRecords;
 
   const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
     (morphRelation) =>
@@ -40,7 +40,7 @@ const canReadRelationTarget = (
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         morphRelation.targetObjectMetadata.id,
-      ).canReadObjectRecords,
+      ).canReadSomeRecords,
   );
 
   return canReadRelation || (canReadMorphRelation ?? false);

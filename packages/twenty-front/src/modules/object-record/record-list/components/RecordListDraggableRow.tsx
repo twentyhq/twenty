@@ -59,7 +59,7 @@ export const RecordListDraggableRow = ({
     type: RECORD_LIST_ROW_DND_TYPE,
     accept: RECORD_LIST_ROW_DND_TYPE,
     data: rowDragData,
-    disabled: !objectPermissions.canUpdateObjectRecords,
+    disabled: !objectPermissions.canUpdateSomeRecords,
     transition: null,
     plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
     feedback: 'clone',

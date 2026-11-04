@@ -18,7 +18,7 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   );
 
   return (
-    objectPermissions.canReadObjectRecords ||
+    objectPermissions.canReadSomeRecords ||
     (isRecordLevelSharingEnabled &&
       isShareableObjectMetadataItem(objectMetadataItem))
   );

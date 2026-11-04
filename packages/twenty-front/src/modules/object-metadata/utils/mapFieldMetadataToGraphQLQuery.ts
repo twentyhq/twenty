@@ -1,3 +1,4 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -6,7 +7,6 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import {
   type RecordGqlFields,
   FieldMetadataType,
-  type ObjectPermissions,
   RelationType,
 } from 'twenty-shared/types';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
@@ -28,7 +28,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
@@ -91,7 +91,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
           morphRelation.targetObjectMetadata.id,
         );
 
-        if (!objectPermission.canReadObjectRecords) {
+        if (!objectPermission.canReadSomeRecords) {
           continue;
         }
       }
@@ -172,7 +172,7 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
       );
 
-      if (!objectPermission.canReadObjectRecords) {
+      if (!objectPermission.canReadSomeRecords) {
         return '';
       }
     }
@@ -226,7 +226,7 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
       );
 
-      if (!objectPermission.canReadObjectRecords) {
+      if (!objectPermission.canReadSomeRecords) {
         return '';
       }
     }

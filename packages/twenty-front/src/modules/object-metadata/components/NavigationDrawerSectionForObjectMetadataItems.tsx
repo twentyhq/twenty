@@ -106,7 +106,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords,
+        ).canReadSomeRecords,
     );
 
   return (

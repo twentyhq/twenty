@@ -102,7 +102,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords;
+        ).canReadSomeRecords;
 
       const filteredSearchableObjectMetadataItems =
         searchableObjectMetadataItems.filter(isReadable);

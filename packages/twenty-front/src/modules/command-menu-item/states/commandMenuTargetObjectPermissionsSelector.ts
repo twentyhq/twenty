@@ -28,9 +28,9 @@ export const commandMenuTargetObjectPermissionsSelector = createAtomSelector<
       );
 
       targetObjectReadPermissions[objectMetadataItem.nameSingular] =
-        objectPermissions.canReadObjectRecords;
+        objectPermissions.canReadSomeRecords;
       targetObjectWritePermissions[objectMetadataItem.nameSingular] =
-        objectPermissions.canUpdateObjectRecords;
+        objectPermissions.canUpdateSomeRecords;
     }
 
     return { targetObjectReadPermissions, targetObjectWritePermissions };

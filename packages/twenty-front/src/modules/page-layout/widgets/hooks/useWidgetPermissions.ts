@@ -38,7 +38,7 @@ export const useWidgetPermissions = (
     widget.objectMetadataId,
   );
 
-  const hasObjectAccess = objectPermissions.canReadObjectRecords;
+  const hasObjectAccess = objectPermissions.canReadSomeRecords;
 
   if (!hasObjectAccess) {
     return {

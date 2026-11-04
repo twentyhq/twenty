@@ -103,7 +103,7 @@ const useFindManyRecordsQuery = jest.fn((_params: unknown) => ({
   findManyRecordsQuery: FIND_THREAD_LINKS_QUERY,
 }));
 const useObjectPermissionsForObject = jest.fn(() => ({
-  canReadObjectRecords: true,
+  canReadSomeRecords: true,
 }));
 const QUERY_IDENTIFIER = 'chat-threads-for-record-query';
 const findManyRecordsResult = {
@@ -196,7 +196,7 @@ describe('useChatThreadsForRecord', () => {
     jest.clearAllMocks();
     useFindManyRecords.mockReturnValue(findManyRecordsResult);
     useObjectPermissionsForObject.mockReturnValue({
-      canReadObjectRecords: true,
+      canReadSomeRecords: true,
     });
     query.mockResolvedValue(
       buildLinksPage({ linkIds: ['link-1', 'link-3', 'link-4'] }),
@@ -307,7 +307,7 @@ describe('useChatThreadsForRecord', () => {
 
   it('does not read conversation links without object read permission', async () => {
     useObjectPermissionsForObject.mockReturnValue({
-      canReadObjectRecords: false,
+      canReadSomeRecords: false,
     });
     const result = renderChatThreadsForRecord();
 

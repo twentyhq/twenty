@@ -56,7 +56,7 @@ export const isNavigationMenuItemReadable = ({
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         objectMetadataItem.id,
-      ).canReadObjectRecords
+      ).canReadSomeRecords
     );
   }
 

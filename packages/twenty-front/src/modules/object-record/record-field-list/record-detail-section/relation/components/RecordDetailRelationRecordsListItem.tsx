@@ -242,7 +242,7 @@ export const RecordDetailRelationRecordsListItem = ({
                   onClick={handleDetach}
                 >{t`Detach`}</Dropdown.ActionItem>
                 {!isAccountOwnerRelation &&
-                  relationObjectPermissions.canSoftDeleteObjectRecords && (
+                  relationObjectPermissions.canSoftDeleteSomeRecords && (
                     <Dropdown.ActionItem
                       startIcon={<IconTrash />}
                       color="danger"

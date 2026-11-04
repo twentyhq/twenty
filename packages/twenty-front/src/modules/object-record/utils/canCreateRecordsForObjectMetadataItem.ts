@@ -1,16 +1,19 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { type ObjectPermissions } from 'twenty-shared/types';
 
 type CanCreateRecordsForObjectMetadataItemParams = {
-  objectPermissions?: Pick<ObjectPermissions, 'canUpdateObjectRecords'>;
+  objectPermissions?: Pick<
+    ObjectRecordsPermissionsWithObjectMetadataId,
+    'canUpdateSomeRecords'
+  >;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'isUICreatable' | 'isUIEditable' | 'isRemote'
   >;
 };
 
-// No CREATE permission exists yet, so canUpdateObjectRecords is the proxy (inline creation edits a blank record).
+// No CREATE permission exists yet, so canUpdateSomeRecords is the proxy (inline creation edits a blank record).
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
   objectMetadataItem,

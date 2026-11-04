@@ -42,7 +42,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectMetadataItem.id,
   );
 
-  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  const hasObjectReadPermissions = objectPermissions.canReadSomeRecords;
 
   const updateRecord = useContext(RecordTableUpdateContext);
 

@@ -135,13 +135,16 @@ const meta: Meta<typeof RecordCalendarGrid> = {
                       objectMetadataItem: companyObjectMetadataItem,
                       objectPermissions: {
                         objectMetadataId: companyObjectMetadataItem.id,
-                        canReadObjectRecords: true,
-                        canUpdateObjectRecords: true,
-                        canSoftDeleteObjectRecords: true,
-                        canDestroyObjectRecords: true,
+                        canReadAllRecords: true,
+                        canUpdateAllRecords: true,
+                        canSoftDeleteAllRecords: true,
+                        canDestroyAllRecords: true,
+                        canReadSomeRecords: true,
+                        canUpdateSomeRecords: true,
+                        canSoftDeleteSomeRecords: true,
+                        canDestroySomeRecords: true,
                         restrictedFields: {},
-                        rowLevelPermissionPredicates: [],
-                        rowLevelPermissionPredicateGroups: [],
+                        rowLevelRecordsPermissions: null,
                       },
                     }}
                   >

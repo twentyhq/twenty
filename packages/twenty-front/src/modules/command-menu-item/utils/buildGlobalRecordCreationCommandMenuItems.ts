@@ -1,8 +1,8 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
@@ -18,7 +18,7 @@ type BuildGlobalRecordCreationCommandMenuItemsParams = {
   >[];
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
   createRecordCommand: CommandMenuItemDefinition;
   getLabel: (objectLabelSingular: string) => string;
@@ -38,7 +38,7 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
       );
 
       return (
-        permissions.canReadObjectRecords &&
+        permissions.canReadSomeRecords &&
         canCreateRecordsForObjectMetadataItem({
           objectMetadataItem,
           objectPermissions: permissions,

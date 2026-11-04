@@ -1,3 +1,4 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
@@ -7,7 +8,6 @@ import {
   type RecordGqlFields,
   FieldMetadataType,
   RelationType,
-  type ObjectPermissions,
 } from 'twenty-shared/types';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
@@ -27,7 +27,7 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   isRootLevel?: boolean;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 };
 
@@ -48,7 +48,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     );
-    if (!objectPermission.canReadObjectRecords) {
+    if (!objectPermission.canReadSomeRecords) {
       return '';
     }
   }

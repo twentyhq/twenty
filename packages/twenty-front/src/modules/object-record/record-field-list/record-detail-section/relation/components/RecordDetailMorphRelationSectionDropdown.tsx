@@ -48,7 +48,7 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   const isRecordReadOnlyFromRelatedRecordPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
       return isRecordReadOnly({
-        objectPermissions: { canUpdateObjectRecords: true },
+        objectPermissions: { canUpdateSomeRecords: true },
         isRecordDeleted: isDeleted,
         objectMetadataItem: relatedObjectMetadataItem,
       });

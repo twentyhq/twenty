@@ -1,15 +1,15 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectPermissionsByObjectMetadataId = Record<
   string,
-  ObjectPermissions & { objectMetadataId: string }
+  ObjectRecordsPermissionsWithObjectMetadataId
 >;
 
 export const isJunctionRelationForbidden = ({
@@ -52,7 +52,7 @@ export const isJunctionRelationForbidden = ({
     junctionObjectMetadataId,
   );
 
-  if (!junctionPermissions.canReadObjectRecords) {
+  if (!junctionPermissions.canReadSomeRecords) {
     return true;
   }
 
@@ -69,6 +69,6 @@ export const isJunctionRelationForbidden = ({
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         targetId,
-      ).canReadObjectRecords,
+      ).canReadSomeRecords,
   );
 };

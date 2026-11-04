@@ -201,7 +201,6 @@ export type {
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export { ObjectSharingReach } from './ObjectSharingReach';
-export type { ObjectsPermissions } from './ObjectsPermissions';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {

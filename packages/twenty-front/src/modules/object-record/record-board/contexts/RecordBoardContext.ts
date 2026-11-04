@@ -3,7 +3,7 @@ import { createContext } from 'react';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 
 type RecordBoardContextProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -18,7 +18,7 @@ type RecordBoardContextProps = {
   }) => void;
   deleteOneRecord: (idToDelete: string) => Promise<unknown>;
   recordBoardId: string;
-  objectPermissions: ObjectPermissionsWithObjectMetadataId;
+  objectPermissions: ObjectRecordsPermissionsWithObjectMetadataId;
 };
 
 export const RecordBoardContext = createContext<RecordBoardContextProps>(

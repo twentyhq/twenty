@@ -10,5 +10,5 @@ export const useCanUpdateObjectRecords = (objectNameSingular: string) => {
     objectMetadataItem.id,
   );
 
-  return { canUpdateObjectRecords: objectPermissions.canUpdateObjectRecords };
+  return { canUpdateSomeRecords: objectPermissions.canUpdateSomeRecords };
 };

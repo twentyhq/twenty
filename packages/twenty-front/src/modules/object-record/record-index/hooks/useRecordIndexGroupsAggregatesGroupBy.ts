@@ -96,7 +96,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = objectPermissions.canReadSomeRecords;
 
   const groupByGqlInput = buildGroupByFieldObject({
     field: groupByFieldMetadataItem,

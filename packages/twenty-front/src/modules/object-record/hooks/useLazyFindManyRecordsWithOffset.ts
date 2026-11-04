@@ -46,7 +46,7 @@ export const useLazyFindManyRecordsWithOffset = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = objectPermissions.canReadSomeRecords;
 
   const findManyRecordsLazyWithOffset = useCallback(
     async (limit: number, offset: number) => {

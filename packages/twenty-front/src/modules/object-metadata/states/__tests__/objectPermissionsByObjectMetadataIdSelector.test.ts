@@ -107,18 +107,21 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
       {
         'company-object-metadata-id': {
           objectMetadataId: 'company-object-metadata-id',
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          canReadSomeRecords: true,
+          canUpdateSomeRecords: false,
+          canSoftDeleteSomeRecords: false,
+          canDestroySomeRecords: false,
           restrictedFields: {
             'company-name-field-metadata-id': {
               canRead: true,
               canUpdate: false,
             },
           },
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          rowLevelRecordsPermissions: null,
         },
       },
     );
@@ -140,15 +143,17 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
       ],
     ).toEqual({
       objectMetadataId: 'person-object-metadata-id',
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      canReadSomeRecords: true,
+      canUpdateSomeRecords: true,
+      canSoftDeleteSomeRecords: false,
+      canDestroySomeRecords: false,
       restrictedFields: {},
-      rowLevelPermissionPredicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
-      rowLevelPermissionPredicateGroups: [
-        PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP,
-      ],
+      rowLevelRecordsPermissions:
+        PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS.rowLevelRecordsPermissions,
     });
   });
 

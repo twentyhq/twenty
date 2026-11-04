@@ -1,7 +1,7 @@
+import { type ObjectRecordsPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectRecordsPermissionsWithObjectMetadataId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -18,7 +18,7 @@ export const getNonReadableFieldInfoForViewField = ({
   readableFieldIds: Set<string>;
   objectPermissionsByObjectMetadataId: Record<
     string,
-    ObjectPermissions & { objectMetadataId: string }
+    ObjectRecordsPermissionsWithObjectMetadataId
   >;
 }): { fieldLabel?: string; objectLabel: string } | undefined => {
   const { fieldMetadataItem } = getFieldMetadataItemById({
@@ -56,7 +56,7 @@ export const getNonReadableFieldInfoForViewField = ({
     targetObjectMetadataItem.id,
   );
 
-  if (!targetObjectPermissions.canReadObjectRecords) {
+  if (!targetObjectPermissions.canReadSomeRecords) {
     return {
       objectLabel: targetObjectMetadataItem.labelSingular,
     };

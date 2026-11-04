@@ -65,10 +65,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
-  const canReadObjectRecords = getObjectPermissionsForObject(
+  const canReadSomeRecords = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
     objectMetadataItem.id,
-  ).canReadObjectRecords;
+  ).canReadSomeRecords;
 
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
@@ -125,7 +125,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const needsInaccessibleRecordPlaceholder =
     isLayoutCustomizationModeEnabled &&
     isRecord &&
-    !canReadObjectRecords &&
+    !canReadSomeRecords &&
     !isNonEmptyString(primaryLabel.trim());
 
   const label = needsInaccessibleRecordPlaceholder ? t`Record` : primaryLabel;
@@ -178,7 +178,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     : objectSecondaryLabel;
 
   const showInaccessibleLock =
-    isLayoutCustomizationModeEnabled && !canReadObjectRecords;
+    isLayoutCustomizationModeEnabled && !canReadSomeRecords;
 
   return (
     <NavigationDrawerItem
