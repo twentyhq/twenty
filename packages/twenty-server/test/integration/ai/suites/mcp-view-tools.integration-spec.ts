@@ -570,14 +570,13 @@ describe('MCP view tools (integration)', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
       API_KEY_ACCESS_TOKEN,
     ]) {
-      for (const { toolName, toolArguments, operation } of [
+      for (const { toolName, toolArguments } of [
         {
           toolName: 'update_view',
           toolArguments: {
             id: unlistedView.id,
             name: `${VIEW_NAME_PREFIX} renamed private companies`,
           },
-          operation: 'update',
         },
         {
           toolName: 'upsert_complete_view',
@@ -585,12 +584,10 @@ describe('MCP view tools (integration)', () => {
             id: unlistedView.id,
             name: `${VIEW_NAME_PREFIX} renamed private companies`,
           },
-          operation: 'update',
         },
         {
           toolName: 'delete_view',
           toolArguments: { id: unlistedView.id },
-          operation: 'delete',
         },
       ]) {
         expect(
@@ -598,7 +595,7 @@ describe('MCP view tools (integration)', () => {
         ).toEqual({
           success: false,
           message: `Failed to execute ${toolName}`,
-          error: `You can only ${operation} your own unlisted views`,
+          error: 'You do not have permission to modify this view',
         });
       }
     }
@@ -664,23 +661,21 @@ describe('MCP view tools (integration)', () => {
       ).toEqual({
         success: false,
         message: 'Failed to execute create_view',
-        error: 'You need the Views permission to create a workspace view',
+        error: 'You do not have permission to create workspace-level views',
       });
     });
 
     it('should refuse to change a workspace view or its sorts', async () => {
       const workspaceViewId = await findWorkspaceViewId();
 
-      for (const { toolName, toolArguments, operation } of [
+      for (const { toolName, toolArguments } of [
         {
           toolName: 'update_view',
           toolArguments: { id: workspaceViewId, name: 'Renamed' },
-          operation: 'update',
         },
         {
           toolName: 'delete_view',
           toolArguments: { id: workspaceViewId },
-          operation: 'delete',
         },
         {
           toolName: 'create_view_sort',
@@ -689,7 +684,6 @@ describe('MCP view tools (integration)', () => {
             fieldMetadataId: (await listViewFields(workspaceViewId))[0]
               .fieldMetadataId,
           },
-          operation: 'update',
         },
       ]) {
         expect(
@@ -701,7 +695,7 @@ describe('MCP view tools (integration)', () => {
         ).toEqual({
           success: false,
           message: `Failed to execute ${toolName}`,
-          error: `You need the Views permission to ${operation} a workspace view`,
+          error: 'You do not have permission to modify this view',
         });
       }
     });
@@ -738,7 +732,7 @@ describe('MCP view tools (integration)', () => {
       ).toEqual({
         success: false,
         message: 'Failed to execute upsert_complete_view',
-        error: 'You need the Views permission to update a workspace view',
+        error: 'You do not have permission to modify this view',
       });
 
       expect(

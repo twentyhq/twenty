@@ -32,6 +32,7 @@ import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tool
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
 
 describe('View tools', () => {
@@ -143,6 +144,7 @@ describe('View tools', () => {
         CreateManyViewSortsTool,
         UpdateViewSortTool,
         ViewToolAccessService,
+        ViewAccessService,
         ViewEntityLookupService,
         ViewToolIdentifierService,
         {
@@ -640,7 +642,7 @@ describe('View tools', () => {
             objectNameSingular: mockObjectNameSingular,
           }),
         ).rejects.toThrow(
-          'You need the Views permission to create a workspace view',
+          'You do not have permission to create workspace-level views',
         );
         expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
           authContext: expect.objectContaining({ type: 'user' }),
@@ -687,7 +689,9 @@ describe('View tools', () => {
             objectNameSingular: mockObjectNameSingular,
             visibility: ViewVisibility.UNLISTED,
           }),
-        ).rejects.toThrow('Only a workspace member can own an unlisted view');
+        ).rejects.toThrow(
+          'You do not have permission to create workspace-level views',
+        );
         expect(viewService.createOne).not.toHaveBeenCalled();
       });
     });
@@ -761,9 +765,7 @@ describe('View tools', () => {
             id: mockViewId,
             name: 'Updated Name',
           }),
-        ).rejects.toThrow(
-          'You need the Views permission to update a workspace view',
-        );
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(viewService.updateOne).not.toHaveBeenCalled();
       });
 
@@ -814,7 +816,7 @@ describe('View tools', () => {
             id: mockViewId,
             name: 'Updated Name',
           }),
-        ).rejects.toThrow('You can only update your own unlisted views');
+        ).rejects.toThrow('You do not have permission to modify this view');
       });
 
       it('should throw error when view not found', async () => {
@@ -1082,7 +1084,7 @@ describe('View tools', () => {
             name: 'Pipeline',
           }),
         ).rejects.toThrow(
-          'You need the Views permission to create a workspace view',
+          'You do not have permission to create workspace-level views',
         );
         expect(
           completeViewUpsertService.upsertCompleteView,
@@ -1107,9 +1109,7 @@ describe('View tools', () => {
             id: mockViewId,
             visibility: ViewVisibility.WORKSPACE,
           }),
-        ).rejects.toThrow(
-          'You need the Views permission to update a workspace view',
-        );
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(
           completeViewUpsertService.upsertCompleteView,
         ).not.toHaveBeenCalled();
@@ -1134,7 +1134,7 @@ describe('View tools', () => {
             id: mockViewId,
             name: 'Updated',
           }),
-        ).rejects.toThrow('You can only update your own unlisted views');
+        ).rejects.toThrow('You do not have permission to modify this view');
       });
     });
 
@@ -1185,9 +1185,7 @@ describe('View tools', () => {
           tools.delete_view.execute({
             id: mockViewId,
           }),
-        ).rejects.toThrow(
-          'You need the Views permission to delete a workspace view',
-        );
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(viewService.deleteOne).not.toHaveBeenCalled();
       });
 
@@ -1209,7 +1207,7 @@ describe('View tools', () => {
           tools.delete_view.execute({
             id: mockViewId,
           }),
-        ).rejects.toThrow('You can only delete your own unlisted views');
+        ).rejects.toThrow('You do not have permission to modify this view');
       });
     });
 
@@ -1269,7 +1267,7 @@ describe('View tools', () => {
             id: mockViewSortId,
             direction: ViewSortDirection.DESC,
           }),
-        ).rejects.toThrow('You can only update your own unlisted views');
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(viewSortService.updateOne).not.toHaveBeenCalled();
       });
 
@@ -1287,9 +1285,7 @@ describe('View tools', () => {
             id: mockViewSortId,
             direction: ViewSortDirection.DESC,
           }),
-        ).rejects.toThrow(
-          'You need the Views permission to update a workspace view',
-        );
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(viewSortService.updateOne).not.toHaveBeenCalled();
       });
 
@@ -1320,7 +1316,7 @@ describe('View tools', () => {
               },
             ],
           }),
-        ).rejects.toThrow('You can only update your own unlisted views');
+        ).rejects.toThrow('You do not have permission to modify this view');
         expect(viewSortService.createOne).not.toHaveBeenCalled();
       });
     });

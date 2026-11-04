@@ -37,7 +37,6 @@ export class CreateViewFilterTool extends BaseTool<
       workspaceId,
       userWorkspaceId,
       authContext,
-      operation: 'update',
     });
 
     const filter = await this.viewFilterService.createOne({

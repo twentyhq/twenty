@@ -206,7 +206,6 @@ export class UpsertCompleteViewTool extends BaseTool<
           workspaceId,
           userWorkspaceId,
           authContext,
-          operation: 'update',
           nextVisibility: input.visibility,
         })
       : undefined;
@@ -214,6 +213,7 @@ export class UpsertCompleteViewTool extends BaseTool<
     if (!isDefined(existingView)) {
       await this.viewToolAccessService.assertCanCreateViewOrThrow({
         visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+        workspaceId,
         userWorkspaceId,
         authContext,
       });

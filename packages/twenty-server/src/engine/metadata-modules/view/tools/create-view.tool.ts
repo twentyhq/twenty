@@ -121,6 +121,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.assertCanCreateViewOrThrow({
       visibility: input.visibility,
+      workspaceId,
       userWorkspaceId,
       authContext,
     });

@@ -50,7 +50,6 @@ export class CreateManyViewFieldsTool extends BaseTool<
           workspaceId,
           userWorkspaceId,
           authContext,
-          operation: 'update',
         }),
       ),
     );

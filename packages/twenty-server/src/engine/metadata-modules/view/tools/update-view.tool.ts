@@ -40,7 +40,6 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
       workspaceId,
       userWorkspaceId,
       authContext,
-      operation: 'update',
     });
 
     const view = await this.viewService.updateOne({

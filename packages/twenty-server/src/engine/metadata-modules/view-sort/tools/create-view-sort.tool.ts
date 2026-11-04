@@ -37,7 +37,6 @@ export class CreateViewSortTool extends BaseTool<
       workspaceId,
       userWorkspaceId,
       authContext,
-      operation: 'update',
     });
 
     const sort = await this.viewSortService.createOne({

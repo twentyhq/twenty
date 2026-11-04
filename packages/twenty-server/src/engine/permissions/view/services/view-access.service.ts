@@ -6,7 +6,7 @@ import { ViewVisibility } from 'twenty-shared/types';
 
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type ViewAccessContext } from 'src/engine/permissions/view/types/view-permissions.type';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import {
   ViewException,
   ViewExceptionCode,
@@ -16,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
+// The view endpoints' guards and the view tools both check access here
 @Injectable()
 export class ViewAccessService {
   constructor(
@@ -42,7 +43,9 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, accessContext);
+    await this.assertCanModifyView({ view, accessContext });
+
+    return true;
   }
 
   async canUserCreateView(
@@ -68,27 +71,37 @@ export class ViewAccessService {
     return true;
   }
 
-  private async checkViewAccess(
-    view: ViewEntity,
-    accessContext: ViewAccessContext,
-  ): Promise<boolean> {
-    const hasPermission = await this.hasViewsPermission(accessContext);
-
-    if (hasPermission) {
-      return true;
-    }
-
-    // Users without VIEWS permission can only manipulate their own unlisted views
-    const isOwnUnlistedView =
-      view.visibility === ViewVisibility.UNLISTED &&
+  async assertCanModifyView({
+    view,
+    accessContext,
+    nextVisibility,
+    unlistedViewsOwnerOnly = false,
+  }: {
+    view: Pick<ViewDTO, 'visibility' | 'createdByUserWorkspaceId'>;
+    accessContext: ViewAccessContext;
+    nextVisibility?: ViewVisibility;
+    unlistedViewsOwnerOnly?: boolean;
+  }): Promise<void> {
+    const isUnlistedView = view.visibility === ViewVisibility.UNLISTED;
+    const isOwnView =
       isDefined(accessContext.userWorkspaceId) &&
       view.createdByUserWorkspaceId === accessContext.userWorkspaceId;
 
-    if (isOwnUnlistedView) {
-      return true;
+    if (isUnlistedView && !isOwnView && unlistedViewsOwnerOnly) {
+      this.throwModifyPermissionDenied();
     }
 
-    this.throwModifyPermissionDenied();
+    // Publishing an unlisted view creates a workspace view, so it needs VIEWS
+    const staysUnlisted =
+      !isDefined(nextVisibility) || nextVisibility === ViewVisibility.UNLISTED;
+
+    if (isUnlistedView && isOwnView && staysUnlisted) {
+      return;
+    }
+
+    if (!(await this.hasViewsPermission(accessContext))) {
+      this.throwModifyPermissionDenied();
+    }
   }
 
   private async hasViewsPermission({
@@ -97,7 +110,16 @@ export class ViewAccessService {
     apiKeyId,
     applicationId,
     agentId,
+    authContext,
   }: ViewAccessContext): Promise<boolean> {
+    // A tool call's auth context also carries the AI run scope, which can narrow VIEWS
+    if (isDefined(authContext)) {
+      return this.permissionsService.hasPermissionFlag({
+        authContext,
+        setting: PermissionFlagType.VIEWS,
+      });
+    }
+
     // An unauthenticated request must surface the view-specific denial below
     // rather than the generic one userHasWorkspaceSettingPermission throws
     if (![userWorkspaceId, apiKeyId, applicationId].some(isDefined)) {

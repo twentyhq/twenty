@@ -38,7 +38,6 @@ export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
       workspaceId,
       userWorkspaceId,
       authContext,
-      operation: 'delete',
     });
 
     const view = await this.viewService.deleteOne({

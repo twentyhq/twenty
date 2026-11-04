@@ -50,7 +50,6 @@ export class CreateManyViewSortsTool extends BaseTool<
           workspaceId,
           userWorkspaceId,
           authContext,
-          operation: 'update',
         }),
       ),
     );

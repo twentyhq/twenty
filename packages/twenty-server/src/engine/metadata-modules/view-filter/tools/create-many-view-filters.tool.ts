@@ -50,7 +50,6 @@ export class CreateManyViewFiltersTool extends BaseTool<
           workspaceId,
           userWorkspaceId,
           authContext,
-          operation: 'update',
         }),
       ),
     );

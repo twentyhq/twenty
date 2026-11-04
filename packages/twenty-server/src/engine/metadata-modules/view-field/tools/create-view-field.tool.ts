@@ -37,7 +37,6 @@ export class CreateViewFieldTool extends BaseTool<
       workspaceId,
       userWorkspaceId,
       authContext,
-      operation: 'update',
     });
 
     const viewField = await this.viewFieldService.createOne({
