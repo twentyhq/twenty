@@ -6314,11 +6314,6 @@ msgstr "Onboarding"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · Documentação · Gestão de mudança · Suporte L1/L2 · Serviços gerenciados"
 
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Pacotes de onboarding"
-
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -7962,10 +7957,10 @@ msgstr "Itens da barra lateral"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Serra Leoa 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Cadastre-se no Cloud em menos de um minuto e comece seu teste de 30 dias. Para rollouts maiores, nossos Pacotes de Onboarding de 4 horas ou parceiros certificados colocam você em produção em 1–2 semanas."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr ""
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10064,9 +10059,6 @@ msgid "Yemen 🇾🇪"
 msgstr "Iêmen 🇾🇪"
 
 #. js-lingui-id: l75CjT
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
