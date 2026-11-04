@@ -50,7 +50,7 @@
   }
 
   &[data-badge-color='red'] {
-    background: var(--t-color-red);
+    background: color-mix(in srgb, var(--t-color-red) 90%, black);
     color: var(--t-font-color-on-accent);
   }
 
