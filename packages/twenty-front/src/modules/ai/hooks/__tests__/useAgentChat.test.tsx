@@ -6,7 +6,7 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -239,7 +239,7 @@ describe('useAgentChat', () => {
         getMockObjectMetadataItemOrThrow('company'),
         {
           ...getMockObjectMetadataItemOrThrow('note'),
-          nameSingular: CoreObjectNameSingular.AgentChatThread,
+          nameSingular: StandardObjectNameSingular.AgentChatThread,
           namePlural: 'agentChatThreads',
         },
       ],
@@ -525,7 +525,7 @@ describe('useAgentChat', () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializeMentionTagAsAdvancedTextEditorDocument({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
           recordId: RECIPIENT_ID,
           label: 'Jane',
           shouldAddAsParticipant: true,
