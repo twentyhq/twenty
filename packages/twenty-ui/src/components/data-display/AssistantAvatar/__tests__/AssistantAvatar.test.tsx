@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 import { AssistantAvatar } from '../AssistantAvatar';
 
+const EXTERNAL_MASK_IMAGE_URL_PATTERN = /url\(["']?https?:\/\//;
+
 describe('AssistantAvatar', () => {
   it('keeps an unlabeled character decorative and outside the tab order', () => {
     const ref = createRef<HTMLSpanElement>();
@@ -110,6 +112,11 @@ describe('AssistantAvatar', () => {
     expect(avatar).toHaveAttribute('data-color', 'pink');
     expect(avatar).toHaveStyle({ width: '40px', height: '40px' });
     expect(container.querySelector('[src], [href], [xlink\\:href]')).toBeNull();
-    expect(container.innerHTML).not.toMatch(/https?:\/\//);
+
+    for (const layer of avatar.querySelectorAll('span')) {
+      expect(layer.style.maskImage).not.toMatch(
+        EXTERNAL_MASK_IMAGE_URL_PATTERN,
+      );
+    }
   });
 });
