@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddMessageAttachmentsFieldCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793799043430-add-message-attachments-field.command';
+import { type AddMessageAttachmentsFieldCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793820013982-add-message-attachments-field.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
