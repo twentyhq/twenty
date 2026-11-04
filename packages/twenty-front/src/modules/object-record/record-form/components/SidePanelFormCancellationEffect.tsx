@@ -3,29 +3,29 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
-type RecordCreationFormCancellationEffectProps = {
+type SidePanelFormCancellationEffectProps = {
   requestId: string;
   onCancel: (params: { requestId: string }) => void;
 };
 
-export const RecordCreationFormCancellationEffect = ({
+export const SidePanelFormCancellationEffect = ({
   requestId,
   onCancel,
-}: RecordCreationFormCancellationEffectProps) => {
+}: SidePanelFormCancellationEffectProps) => {
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
-  const isRecordCreationFormOpen =
+  const isFormOpen =
     isSidePanelOpened &&
     sidePanelNavigationStack.some(({ pageId }) => pageId === requestId);
 
   useEffect(() => {
-    if (!isRecordCreationFormOpen) {
+    if (!isFormOpen) {
       onCancel({ requestId });
     }
-  }, [isRecordCreationFormOpen, onCancel, requestId]);
+  }, [isFormOpen, onCancel, requestId]);
 
   return null;
 };

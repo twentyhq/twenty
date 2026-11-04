@@ -2,9 +2,12 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordUpdateFormContextOrThrow } from '@/object-record/record-form/contexts/RecordUpdateFormContext';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
+import { computeRecordUpdateFieldsToComplete } from '@/object-record/record-form/utils/computeRecordUpdateFieldsToComplete';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import {
@@ -21,7 +24,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
-import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -85,35 +87,53 @@ const SidePanelRecordUpdateForm = ({
   const { settleRecordUpdateForm } = useRecordUpdateFormContextOrThrow();
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
+  const objectPermissions = useObjectPermissionsForObject(objectMetadataId);
+
   const [completedDraftRecord, setCompletedDraftRecord] =
     useState<Partial<ObjectRecord>>(draftRecord);
+  const [displayedFieldMetadataIds, setDisplayedFieldMetadataIds] =
+    useState<string[]>(fieldMetadataIds);
   const [validationRuleViolations, setValidationRuleViolations] =
     useState<ValidationRuleViolation[]>(violations);
 
-  const fieldMetadataItemsToComplete = objectMetadataItem.fields.filter(
-    (fieldMetadataItem) => fieldMetadataIds.includes(fieldMetadataItem.id),
+  const displayedFieldMetadataItems = objectMetadataItem.fields.filter(
+    (fieldMetadataItem) =>
+      displayedFieldMetadataIds.includes(fieldMetadataItem.id),
   );
 
   const { violationsByFieldMetadataId } = groupValidationRuleViolationsByField({
     violations: validationRuleViolations,
-    displayedFieldMetadataIds: fieldMetadataIds,
+    displayedFieldMetadataIds,
   });
 
-  const computeFieldViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
-    computeDraftValidationRuleViolations({
-      validationRules,
-      draftRecord: draftRecordToCheck,
-      fields: buildValidationRuleFieldDescriptors({
-        objectMetadataItem,
-        objectMetadataItems,
-      }),
-      fieldMetadataItems: objectMetadataItem.fields,
-      now: new Date().toISOString(),
-    }).filter(
-      (violation) =>
-        isDefined(violation.fieldMetadataId) &&
-        fieldMetadataIds.includes(violation.fieldMetadataId),
-    );
+  // A value picked here can make another rule ask for one more field, which then joins the form
+  const checkDraftRecord = (draftRecordToCheck: Partial<ObjectRecord>) => {
+    const { fieldMetadataIds: violatedFieldMetadataIds, violations } =
+      computeRecordUpdateFieldsToComplete({
+        validationRules,
+        currentRecord: draftRecordToCheck,
+        updateInput: {},
+        fields: buildValidationRuleFieldDescriptors({
+          objectMetadataItem,
+          objectMetadataItems,
+        }),
+        fieldMetadataItems: objectMetadataItem.fields,
+        canUpdateField: (fieldMetadataId) =>
+          getFieldPermissions({ objectPermissions, fieldMetadataId })
+            .canUpdateField,
+        now: new Date().toISOString(),
+      });
+
+    setDisplayedFieldMetadataIds((previousDisplayedFieldMetadataIds) => [
+      ...new Set([
+        ...previousDisplayedFieldMetadataIds,
+        ...violatedFieldMetadataIds,
+      ]),
+    ]);
+    setValidationRuleViolations(violations);
+
+    return violations;
+  };
 
   const updateCompletedDraftRecord = (
     gqlFieldName: string,
@@ -122,31 +142,29 @@ const SidePanelRecordUpdateForm = ({
     const nextDraftRecord = { ...completedDraftRecord, [gqlFieldName]: value };
 
     setCompletedDraftRecord(nextDraftRecord);
-    setValidationRuleViolations(computeFieldViolations(nextDraftRecord));
+    checkDraftRecord(nextDraftRecord);
   };
 
   const handleSaveClick = () => {
-    const remainingViolations = computeFieldViolations(completedDraftRecord);
-
-    if (remainingViolations.length > 0) {
-      setValidationRuleViolations(remainingViolations);
+    if (checkDraftRecord(completedDraftRecord).length > 0) {
       return;
     }
 
     const completedFields = Object.fromEntries(
-      fieldMetadataItemsToComplete.map((fieldMetadataItem) => {
-        const gqlFieldName =
-          getFieldMetadataItemGqlFieldName(fieldMetadataItem);
-
-        return [gqlFieldName, completedDraftRecord[gqlFieldName] ?? null];
-      }),
+      displayedFieldMetadataItems
+        .map(getFieldMetadataItemGqlFieldName)
+        .filter((gqlFieldName) => gqlFieldName in completedDraftRecord)
+        .map((gqlFieldName) => [
+          gqlFieldName,
+          completedDraftRecord[gqlFieldName],
+        ]),
     );
 
     settleRecordUpdateForm({
       requestId,
       completedFields: computeRecordFormCreateRecordInput({
         draftRecord: completedFields,
-        fieldMetadataItems: fieldMetadataItemsToComplete,
+        fieldMetadataItems: displayedFieldMetadataItems,
         objectMetadataItems,
       }),
     });
@@ -178,7 +196,7 @@ const SidePanelRecordUpdateForm = ({
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
-          fieldMetadataItems={fieldMetadataItemsToComplete}
+          fieldMetadataItems={displayedFieldMetadataItems}
           draftRecord={completedDraftRecord}
           validationRuleViolationsByFieldMetadataId={
             violationsByFieldMetadataId

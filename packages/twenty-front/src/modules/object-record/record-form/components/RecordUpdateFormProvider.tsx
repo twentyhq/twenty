@@ -1,4 +1,4 @@
-import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
+import { SidePanelFormCancellationEffect } from '@/object-record/record-form/components/SidePanelFormCancellationEffect';
 import {
   RecordUpdateFormContextProvider,
   type RecordUpdateFormContextValue,
@@ -122,7 +122,7 @@ export const RecordUpdateFormProvider = ({
     <RecordUpdateFormContextProvider value={contextValue}>
       {children}
       {isDefined(pendingRecordUpdateForm) && (
-        <RecordCreationFormCancellationEffect
+        <SidePanelFormCancellationEffect
           key={pendingRecordUpdateForm.requestId}
           requestId={pendingRecordUpdateForm.requestId}
           onCancel={cancelPendingRecordUpdateForm}

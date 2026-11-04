@@ -292,12 +292,20 @@ export const usePersistField = ({
           return;
         }
 
+        const recordFieldSelector = recordStoreFamilySelector.selectorFamily({
+          recordId,
+          fieldName,
+        });
+
+        store.set(recordFieldSelector, valueToPersist);
+
         const completedUpdateInput = await completeRecordUpdate({
           recordId,
           updateInput: { [fieldName]: valueToPersist },
         });
 
         if (!isDefined(completedUpdateInput)) {
+          store.set(recordFieldSelector, currentValue);
           return;
         }
 
@@ -306,11 +314,6 @@ export const usePersistField = ({
           idToUpdate: recordId,
           updateOneRecordInput: completedUpdateInput,
         });
-
-        store.set(
-          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
-          valueToPersist,
-        );
       } else {
         throw new Error(
           doNotTranslate(

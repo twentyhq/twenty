@@ -23,7 +23,6 @@ import {
 } from 'twenty-shared/utils';
 import { FindManyValidationRulesDocument } from '~/generated-metadata/graphql';
 
-// Resolves the input to send, with the fields a validation rule asked for, or null when the person cancels
 export const useCompleteRecordUpdate = ({
   objectMetadataItem,
 }: {
@@ -42,11 +41,30 @@ export const useCompleteRecordUpdate = ({
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: objectMetadataItem.nameSingular,
     depth: 1,
+    shouldOnlyLoadRelationIdentifiers: false,
   });
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFields,
   });
+
+  const fetchRecordWithRelations = useCallback(
+    async (recordId: string): Promise<Partial<ObjectRecord> | null> => {
+      const { data } = await apolloCoreClient.query<
+        Record<string, RecordGqlNode>
+      >({
+        query: findOneRecordQuery,
+        variables: { objectRecordId: recordId },
+      });
+
+      const recordNode = data?.[objectMetadataItem.nameSingular];
+
+      return isDefined(recordNode)
+        ? getRecordFromRecordNode({ recordNode })
+        : null;
+    },
+    [apolloCoreClient, findOneRecordQuery, objectMetadataItem.nameSingular],
+  );
 
   const completeRecordUpdate = useCallback(
     async ({
@@ -95,29 +113,22 @@ export const useCompleteRecordUpdate = ({
           },
         );
 
+        const isEveryBindingPathLoadedIn = (record: Partial<ObjectRecord>) =>
+          bindingPathsReadByRules.every((path) =>
+            isRecordPathLoaded({ record: { ...record, ...updateInput }, path }),
+          );
+
         // Views load only the fields they show, so a rule may read one the store does not have yet
-        const isEveryBindingPathLoaded = bindingPathsReadByRules.every((path) =>
-          isRecordPathLoaded({
-            record: { ...storedRecord, ...updateInput },
-            path,
-          }),
-        );
+        const currentRecord = isEveryBindingPathLoadedIn(storedRecord)
+          ? storedRecord
+          : await fetchRecordWithRelations(recordId);
 
-        let currentRecord: Partial<ObjectRecord> = storedRecord;
-
-        if (!isEveryBindingPathLoaded) {
-          const { data: recordData } = await apolloCoreClient.query<
-            Record<string, RecordGqlNode>
-          >({
-            query: findOneRecordQuery,
-            variables: { objectRecordId: recordId },
-          });
-
-          const recordNode = recordData?.[objectMetadataItem.nameSingular];
-
-          if (isDefined(recordNode)) {
-            currentRecord = getRecordFromRecordNode({ recordNode });
-          }
+        // A value missing even from the fetched record cannot be checked here, so the server decides
+        if (
+          !isDefined(currentRecord) ||
+          !isEveryBindingPathLoadedIn(currentRecord)
+        ) {
+          return updateInput;
         }
 
         const { draftRecord, fieldMetadataIds, violations } =
@@ -154,8 +165,7 @@ export const useCompleteRecordUpdate = ({
     },
     [
       apolloClient,
-      apolloCoreClient,
-      findOneRecordQuery,
+      fetchRecordWithRelations,
       hasValidationRulesEntitlement,
       objectMetadataItem,
       objectMetadataItems,

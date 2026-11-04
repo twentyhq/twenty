@@ -14,7 +14,6 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useUpdateDroppedRecordOnBoard = () => {
@@ -55,8 +54,8 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      const initialRecordGroup = recordGroupDefinitions.find(
-        (recordGroupDefinition) =>
+      const findRecordGroupIdContainingRecord = () =>
+        recordGroupDefinitions.find((recordGroupDefinition) =>
           store
             .get(
               recordIndexRecordIdsByGroupCallbackFamilyState(
@@ -64,13 +63,13 @@ export const useUpdateDroppedRecordOnBoard = () => {
               ),
             )
             .includes(recordId),
-      );
+        )?.id;
 
-      if (!isDefined(initialRecordGroup)) {
+      const droppedFromRecordGroupId = findRecordGroupIdContainingRecord();
+
+      if (!isDefined(droppedFromRecordGroupId)) {
         return;
       }
-
-      const initialRecordGroupId = initialRecordGroup.id;
 
       const targetRecordGroup = recordGroupDefinitions.find(
         findByProperty('value', targetRecordGroupValue),
@@ -86,13 +85,10 @@ export const useUpdateDroppedRecordOnBoard = () => {
         selectFieldMetadataItem,
       );
 
-      const movingInsideSameRecordGroup =
-        initialRecordGroupId === targetRecordGroupId;
-
       const isSamePosition = initialRecord.position === newPosition;
 
       if (
-        movingInsideSameRecordGroup &&
+        droppedFromRecordGroupId === targetRecordGroupId &&
         (!isDefined(newPosition) || isSamePosition)
       ) {
         return;
@@ -110,7 +106,16 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      // Read the columns after the check, which can wait for the person to fill a side panel
+      // The card can move while a side panel is open, so look up its column again
+      const initialRecordGroupId = findRecordGroupIdContainingRecord();
+
+      if (!isDefined(initialRecordGroupId)) {
+        return;
+      }
+
+      const movingInsideSameRecordGroup =
+        initialRecordGroupId === targetRecordGroupId;
+
       const currentRecordIdsInInitialRecordGroup = store.get(
         recordIndexRecordIdsByGroupCallbackFamilyState(initialRecordGroupId),
       );
@@ -121,14 +126,6 @@ export const useUpdateDroppedRecordOnBoard = () => {
       let currentRecordIdsInTargetRecordGroup = store.get(
         recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
       ) as string[];
-
-      if (indexOfDroppedRecordInInitialRecordGroup === -1) {
-        throw new Error(
-          doNotTranslate(
-            `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
-          ),
-        );
-      }
 
       const newInitialGroupRecordIds =
         currentRecordIdsInInitialRecordGroup.toSpliced(

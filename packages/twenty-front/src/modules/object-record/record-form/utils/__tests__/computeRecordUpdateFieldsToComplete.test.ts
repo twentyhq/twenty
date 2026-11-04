@@ -71,18 +71,20 @@ const compute = ({
   updateInput,
   canUpdateField = () => true,
   validationRules = [LOST_REASON_RULE],
+  fieldMetadataItems = FIELD_METADATA_ITEMS,
 }: {
   currentRecord: Record<string, unknown>;
   updateInput: Record<string, unknown>;
   canUpdateField?: (fieldMetadataId: string) => boolean;
   validationRules?: ValidationRule[];
+  fieldMetadataItems?: typeof FIELD_METADATA_ITEMS;
 }) =>
   computeRecordUpdateFieldsToComplete({
     validationRules,
     currentRecord,
     updateInput,
     fields: FIELDS,
-    fieldMetadataItems: FIELD_METADATA_ITEMS,
+    fieldMetadataItems,
     canUpdateField,
     now: '2026-11-04T10:00:00.000Z',
   });
@@ -148,5 +150,39 @@ describe('computeRecordUpdateFieldsToComplete', () => {
 
     expect(result.draftRecord).not.toHaveProperty('company');
     expect(result.fieldMetadataIds).toEqual([]);
+  });
+
+  it('does not ask for a field that cannot be edited in a form', () => {
+    expect(
+      compute({
+        currentRecord: { stage: 'PROPOSAL', lostReason: null },
+        updateInput: { stage: 'LOST' },
+        fieldMetadataItems: FIELD_METADATA_ITEMS.map((fieldMetadataItem) =>
+          fieldMetadataItem.id === LOST_REASON_FIELD_ID
+            ? { ...fieldMetadataItem, isUIEditable: false }
+            : fieldMetadataItem,
+        ),
+      }).fieldMetadataIds,
+    ).toEqual([]);
+  });
+
+  it('asks for nothing when the broken rule names no field', () => {
+    expect(
+      compute({
+        currentRecord: { stage: 'PROPOSAL', lostReason: null },
+        updateInput: { stage: 'LOST' },
+        validationRules: [{ ...LOST_REASON_RULE, errorFieldMetadataId: null }],
+      }).fieldMetadataIds,
+    ).toEqual([]);
+  });
+
+  it('ignores an inactive rule', () => {
+    expect(
+      compute({
+        currentRecord: { stage: 'PROPOSAL', lostReason: null },
+        updateInput: { stage: 'LOST' },
+        validationRules: [{ ...LOST_REASON_RULE, isActive: false }],
+      }).fieldMetadataIds,
+    ).toEqual([]);
   });
 });
