@@ -66,7 +66,6 @@ export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';
 export { MEDIA_CAPABILITIES } from './MediaCapabilities';
 export { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from './MemberRoleUniversalIdentifier';
-export { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from './MessageAttachmentsMaxNumberOfValues';
 export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxValues';
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
