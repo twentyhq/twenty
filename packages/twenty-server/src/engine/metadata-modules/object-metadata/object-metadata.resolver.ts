@@ -7,6 +7,7 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -74,6 +75,21 @@ const OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
     application: true,
   },
   requiredPermissionFlags: [],
+};
+
+const OBJECT_RECORD_STATISTICS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
 };
 
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -224,7 +240,7 @@ export class ObjectMetadataResolver {
     return !objectMetadata.isUIEditable;
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -232,7 +248,7 @@ export class ObjectMetadataResolver {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [UUIDScalarType])
   async mostlyEmptyFieldMetadataIds(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
