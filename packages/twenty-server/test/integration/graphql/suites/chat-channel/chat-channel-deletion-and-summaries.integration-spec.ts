@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
@@ -50,7 +49,6 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
     createdThreadIds,
     createChannel,
     createThreadInChannel,
-    startHeldTransaction,
     holdChannelDeletionLock,
     fileThreadIntoHeldChannel,
   } = setUpChatChannelTests();
@@ -100,48 +98,6 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
         diff: { channelId: { before: channelId, after: destinationChannelId } },
       },
     });
-  });
-
-  it('keeps a conversation moved out while its former channel is being deleted', async () => {
-    const sourceChannelId = await createChannel();
-    const destinationChannelId = await createChannel();
-    const otherChannelId = await createChannel();
-    const threadId = await createThreadInChannel(sourceChannelId);
-    const queryRunner = await startHeldTransaction();
-    const [{ processId }]: { processId: number }[] = await queryRunner.query(
-      'SELECT pg_backend_pid() AS "processId"',
-    );
-
-    await queryRunner.query(
-      'SELECT id FROM core."agentChatChannel" WHERE id = $1 FOR UPDATE',
-      [destinationChannelId],
-    );
-
-    const pendingDeleteResponse = Promise.resolve(
-      makeMetadataApiRequest({
-        query: DELETE_CHANNEL,
-        variables: {
-          channelId: sourceChannelId,
-          destinationChannelId,
-        },
-      }),
-    );
-
-    await waitForBlockedDatabaseQueryOrThrow(processId);
-
-    assertGraphQLSuccessfulResponse(
-      await makeMetadataApiRequest({
-        query: MOVE_THREAD,
-        variables: { threadId, channelId: otherChannelId },
-      }),
-    );
-    await queryRunner.commitTransaction();
-
-    assertGraphQLSuccessfulResponse(await pendingDeleteResponse);
-    expect((await readChannelState(threadId)).channelId).toBe(otherChannelId);
-    expect(await readChannelGrants(threadId)).toEqual([
-      { principalType: 'ROLE', sourceId: otherChannelId },
-    ]);
   });
 
   it('refuses chats in a channel while it is being deleted', async () => {

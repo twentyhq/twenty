@@ -34,8 +34,8 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
 
   it('refuses once the channel row is gone', async () => {
     const query = jest.fn().mockResolvedValueOnce([{ isLocked: true }]);
-    const findOne = jest.fn().mockResolvedValueOnce(null);
-    const getRepository = jest.fn().mockReturnValue({ findOne });
+    const existsBy = jest.fn().mockResolvedValueOnce(false);
+    const getRepository = jest.fn().mockReturnValue({ existsBy });
 
     await expect(
       lockAgentChatChannelForThreadWriteOrThrow({
@@ -46,14 +46,12 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
     ).rejects.toEqual(
       expect.objectContaining({ code: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND }),
     );
-
-    expect(findOne).toHaveBeenCalledTimes(1);
   });
 
   it('reads the channel row in a statement after the lock', async () => {
     const query = jest.fn().mockResolvedValueOnce([{ isLocked: true }]);
-    const findOne = jest.fn().mockResolvedValueOnce({ id: CHANNEL_ID });
-    const getRepository = jest.fn().mockReturnValue({ findOne });
+    const existsBy = jest.fn().mockResolvedValueOnce(true);
+    const getRepository = jest.fn().mockReturnValue({ existsBy });
 
     await lockAgentChatChannelForThreadWriteOrThrow({
       manager: { query, getRepository },
@@ -68,13 +66,12 @@ describe('lockAgentChatChannelForThreadWriteOrThrow', () => {
       ],
     ]);
     expect(getRepository).toHaveBeenCalledWith(AgentChatChannelEntity);
-    expect(findOne).toHaveBeenCalledWith({
-      select: { id: true },
-      where: { id: CHANNEL_ID, workspaceId: WORKSPACE_ID },
-      lock: { mode: 'for_key_share' },
+    expect(existsBy).toHaveBeenCalledWith({
+      id: CHANNEL_ID,
+      workspaceId: WORKSPACE_ID,
     });
     expect(query.mock.invocationCallOrder[0]).toBeLessThan(
-      findOne.mock.invocationCallOrder[0],
+      existsBy.mock.invocationCallOrder[0],
     );
   });
 });

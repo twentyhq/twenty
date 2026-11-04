@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -14,13 +13,12 @@ export const assertAgentChatChannelExists = async ({
   channelId: string;
 }): Promise<void> => {
   const channelRepository = manager.getRepository(AgentChatChannelEntity);
-  const channel = await channelRepository.findOne({
-    select: { id: true },
-    where: { id: channelId, workspaceId },
-    lock: { mode: 'for_key_share' },
+  const doesChannelExist = await channelRepository.existsBy({
+    id: channelId,
+    workspaceId,
   });
 
-  if (!isDefined(channel)) {
+  if (!doesChannelExist) {
     throwAgentChatChannelNotFound();
   }
 };
