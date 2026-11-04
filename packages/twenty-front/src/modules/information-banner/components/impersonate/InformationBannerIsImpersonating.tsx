@@ -2,12 +2,13 @@ import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogout } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const InformationBannerIsImpersonating = () => {
+  const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const isImpersonating = useAtomStateValue(isImpersonatingState);
 

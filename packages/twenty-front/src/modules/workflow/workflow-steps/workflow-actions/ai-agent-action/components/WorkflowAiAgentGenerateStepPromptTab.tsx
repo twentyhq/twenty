@@ -4,10 +4,10 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { WorkflowAiAgentOutputFormatField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentOutputFormatField';
 import { WorkflowAiAgentPromptField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField';
 import { type WorkflowAiAgentStepPanelProps } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentStepPanelProps';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentGenerateStepPromptTabProps = WorkflowAiAgentStepPanelProps;
 
@@ -16,6 +16,7 @@ export const WorkflowAiAgentGenerateStepPromptTab = ({
   readonly,
   onInputChange,
 }: WorkflowAiAgentGenerateStepPromptTabProps) => {
+  const { t } = useLingui();
   const selectedModelId =
     input.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
   // decided once, so clearing the instructions does not remove the field being edited

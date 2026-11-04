@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
@@ -24,6 +24,7 @@ export const CoreAgentsDeleteButton = ({
   tableId,
   selectedAgentIds,
 }: CoreAgentsDeleteButtonProps) => {
+  const { t } = useLingui();
   const [agentsToDelete, setAgentsToDelete] = useState<
     Pick<CoreAgent, 'id' | 'label'>[]
   >([]);

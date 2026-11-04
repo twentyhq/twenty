@@ -8,11 +8,11 @@ import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
-import { t } from '@lingui/core/macro';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
@@ -21,6 +21,7 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
 export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
+  const { t } = useLingui();
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const { lastChildPosition } = useChildStepFiltersAndChildStepFilterGroups({

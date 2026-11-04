@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLego, IconPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -35,6 +35,7 @@ const getCoreAgentItemLink = (agent: Pick<CoreAgent, 'id'>) =>
   getCoreAgentLink(agent.id);
 
 export const CoreAgentsIndex = () => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const tableId =

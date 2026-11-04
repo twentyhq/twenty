@@ -1119,11 +1119,6 @@ msgstr "Agent o tej nazwie już istnieje"
 msgid "An agent with this name already exists."
 msgstr "Agent o tej nazwie już istnieje."
 
-#. js-lingui-id: pk6kfE
-#: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
-msgid "An AI step cannot change its agent. Create a new step instead."
-msgstr "Krok AI nie może zmienić swojego agenta. Zamiast tego utwórz nowy krok."
-
 #. js-lingui-id: uU52TI
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "An application can only start its own workflows."
@@ -1132,7 +1127,7 @@ msgstr "Aplikacja może uruchamiać tylko własne przepływy pracy."
 #. js-lingui-id: T/ZKXs
 #: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
 msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
-msgstr ""
+msgstr "Aplikacja może żądać dostępu do multimediów iframe dla maksymalnie {MAX_ALLOWED_IFRAME_ORIGINS} źródeł"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3325,6 +3320,11 @@ msgstr "Sprzeczny kod kierunkowy telefonu."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Conflicting phone country code."
 msgstr "Sprzeczny kod kraju telefonu."
+
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Najpierw połącz konto z tym serwerem MCP."
 
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -8900,14 +8900,14 @@ msgstr "Wiadomości"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Messages"
-msgstr ""
+msgstr "Wiadomości"
 
 #. js-lingui-id: JJTyHZ
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Messages"
-msgstr ""
+msgstr "Wiadomości"
 
 #. js-lingui-id: PLP882
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9843,6 +9843,11 @@ msgstr "Co najmniej jeden z żądanych zakresów uprawnień jest nieprawidłowy.
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Można wysłać tylko kampanię w wersji roboczej lub zaplanowaną."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Tylko główna grupa predykatów uprawnień na poziomie wiersza może przyznawać operacje"
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9898,6 +9903,11 @@ msgstr "Tylko aplikacja będąca właścicielem tego agenta może zmieniać jego
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Tylko osoba, która utworzyła ten przepływ pracy, może zmienić, kto go widzi"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Tylko grupa najwyższego poziomu reguły na poziomie rekordu może przyznawać operacje"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
@@ -10873,11 +10883,6 @@ msgstr "Identyfikator podmiotu"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Typ podmiotu"
-
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Prywatne rekordy nie są jeszcze dostępne w tej przestrzeni roboczej."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13559,7 +13564,7 @@ msgstr "Zależności produkcyjne aplikacji są zbyt duże, aby je zainstalować.
 #. js-lingui-id: 2a7bjg
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
-msgstr ""
+msgstr "Uprawnienia żądane przez aplikację uległy zmianie. Sprawdź je ponownie przed zatwierdzeniem."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -13896,6 +13901,11 @@ msgstr "Nie znaleziono funkcji logiki uruchamianej podczas rozłączania."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Parametry żądania MCP są nieprawidłowe."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Serwer MCP udostępnia zbyt wiele narzędzi, aby można było je zsynchronizować."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
@@ -17917,9 +17927,8 @@ msgid "You do not have access to this message folder."
 msgstr "Nie masz dostępu do tego folderu wiadomości."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts
-#: src/engine/guards/settings-permission.guard.ts
+#: src/engine/guards/utils/build-permission-flag-denied-exception.util.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Nie masz uprawnień do dostępu do tej funkcji. Skontaktuj się z administratorem obszaru roboczego, aby uzyskać dostęp."
 

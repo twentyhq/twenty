@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
@@ -12,6 +11,7 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledText = styled.div`
   align-items: center;
@@ -39,6 +39,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
     index,
     recordFilterGroup,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCellProps) => {
+    const { t } = useLingui();
     const { readonly } = useContext(AdvancedFilterContext);
 
     const logicalOperatorOptions = ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS.map(

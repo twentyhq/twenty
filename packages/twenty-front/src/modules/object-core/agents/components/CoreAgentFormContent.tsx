@@ -1,5 +1,6 @@
 import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -51,6 +52,7 @@ type CoreAgentFormContentProps = {
 };
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);

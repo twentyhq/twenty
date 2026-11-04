@@ -6,7 +6,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,6 +17,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useLingui } from '@lingui/react/macro';
 
 const CONFIRM_ROLE_CHANGE_MODAL_ID = 'confirm-role-change-modal';
 
@@ -51,6 +51,7 @@ export const MemberPermissionsTab = ({
   roles,
   allRoles,
 }: MemberPermissionsTabProps) => {
+  const { t } = useLingui();
   const primaryRole = roles?.[0];
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();

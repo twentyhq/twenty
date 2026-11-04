@@ -2,11 +2,11 @@ import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-va
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
+import { useLingui } from '@lingui/react/macro';
 
 type ConfigVariableFilterDropdownProps = {
   sourceFilter: ConfigVariableSourceFilter;
@@ -27,6 +27,7 @@ export const ConfigVariableFilterDropdown = ({
   onGroupFilterChange,
   onShowHiddenChange,
 }: ConfigVariableFilterDropdownProps) => {
+  const { t } = useLingui();
   return (
     <DropdownRoot dropdownId="env-var-options-dropdown" type="picker">
       <Dropdown.Trigger

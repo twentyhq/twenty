@@ -17,7 +17,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -34,6 +33,7 @@ import {
   AdminPanelTopWorkspacesDocument,
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -48,6 +48,7 @@ const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
 export const SettingsAdminGeneral = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const apolloAdminClient = useApolloAdminClient();
