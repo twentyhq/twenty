@@ -32,40 +32,35 @@ const narrowRecordsPermissionsToExplicitDenies = ({
   > & {
     objectMetadataId: string;
   })[];
-}): RoleRecordsPermissions =>
-  objectPermissions.reduce(
-    (narrowedRecordsPermissions, { objectMetadataId, ...objectPermission }) => {
-      const grantedObjectRecordsPermissions =
-        narrowedRecordsPermissions.objects[objectMetadataId];
+}): RoleRecordsPermissions => {
+  const objects = { ...recordsPermissions.objects };
 
-      if (!isDefined(grantedObjectRecordsPermissions)) {
-        return narrowedRecordsPermissions;
-      }
+  for (const { objectMetadataId, ...objectPermission } of objectPermissions) {
+    const grantedObjectRecordsPermissions = objects[objectMetadataId];
 
-      return {
-        ...narrowedRecordsPermissions,
-        objects: {
-          ...narrowedRecordsPermissions.objects,
-          [objectMetadataId]: {
-            ...grantedObjectRecordsPermissions,
-            canReadAllRecords:
-              grantedObjectRecordsPermissions.canReadAllRecords &&
-              objectPermission.canReadObjectRecords !== false,
-            canUpdateAllRecords:
-              grantedObjectRecordsPermissions.canUpdateAllRecords &&
-              objectPermission.canUpdateObjectRecords !== false,
-            canSoftDeleteAllRecords:
-              grantedObjectRecordsPermissions.canSoftDeleteAllRecords &&
-              objectPermission.canSoftDeleteObjectRecords !== false,
-            canDestroyAllRecords:
-              grantedObjectRecordsPermissions.canDestroyAllRecords &&
-              objectPermission.canDestroyObjectRecords !== false,
-          },
-        },
-      };
-    },
-    recordsPermissions,
-  );
+    if (!isDefined(grantedObjectRecordsPermissions)) {
+      continue;
+    }
+
+    objects[objectMetadataId] = {
+      ...grantedObjectRecordsPermissions,
+      canReadAllRecords:
+        grantedObjectRecordsPermissions.canReadAllRecords &&
+        objectPermission.canReadObjectRecords !== false,
+      canUpdateAllRecords:
+        grantedObjectRecordsPermissions.canUpdateAllRecords &&
+        objectPermission.canUpdateObjectRecords !== false,
+      canSoftDeleteAllRecords:
+        grantedObjectRecordsPermissions.canSoftDeleteAllRecords &&
+        objectPermission.canSoftDeleteObjectRecords !== false,
+      canDestroyAllRecords:
+        grantedObjectRecordsPermissions.canDestroyAllRecords &&
+        objectPermission.canDestroyObjectRecords !== false,
+    };
+  }
+
+  return { ...recordsPermissions, objects };
+};
 
 export const resolveAiRunPermissionScope = ({
   scope,

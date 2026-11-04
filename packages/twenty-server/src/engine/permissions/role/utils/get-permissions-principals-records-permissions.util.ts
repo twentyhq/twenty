@@ -7,17 +7,9 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-type RecordsPermissionsMetadataMaps = Pick<
-  PermissionsMetadataMaps,
-  | 'rolesPermissions'
-  | 'flatObjectMetadataMaps'
-  | 'flatFieldMetadataMaps'
-  | 'flatApplicationMaps'
->;
-
 const recordsPermissionsByMetadataMapsByPrincipals = new WeakMap<
   PermissionsPrincipalsWithRolesContext,
-  WeakMap<RecordsPermissionsMetadataMaps, RoleRecordsPermissions>
+  WeakMap<PermissionsMetadataMaps, RoleRecordsPermissions>
 >();
 
 export const getPermissionsPrincipalsRecordsPermissions = ({
@@ -25,11 +17,11 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
   metadataMaps,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: RecordsPermissionsMetadataMaps;
+  metadataMaps: PermissionsMetadataMaps;
 }): RoleRecordsPermissions => {
   const recordsPermissionsByMetadataMaps =
     recordsPermissionsByMetadataMapsByPrincipals.get(principals) ??
-    new WeakMap<RecordsPermissionsMetadataMaps, RoleRecordsPermissions>();
+    new WeakMap<PermissionsMetadataMaps, RoleRecordsPermissions>();
 
   recordsPermissionsByMetadataMapsByPrincipals.set(
     principals,
