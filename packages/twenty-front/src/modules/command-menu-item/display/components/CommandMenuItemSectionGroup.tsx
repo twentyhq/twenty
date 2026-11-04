@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import React, { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -7,6 +6,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledSection = styled.div`
   display: flex;
@@ -70,6 +70,7 @@ export const CommandMenuItemSectionGroup = ({
   context,
   children,
 }: CommandMenuItemSectionGroupProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   if (!isDefined(children) || !React.Children.count(children)) {

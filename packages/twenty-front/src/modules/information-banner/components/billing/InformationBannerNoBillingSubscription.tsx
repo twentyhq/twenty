@@ -4,13 +4,13 @@ import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { getCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getCheckoutPlanKeyOrThrow';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   type BillingPlanKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type InformationBannerNoBillingSubscriptionContentProps = {
   planKey: BillingPlanKey;
@@ -19,6 +19,7 @@ type InformationBannerNoBillingSubscriptionContentProps = {
 const InformationBannerNoBillingSubscriptionContent = ({
   planKey,
 }: InformationBannerNoBillingSubscriptionContentProps) => {
+  const { t } = useLingui();
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
     plan: planKey,

@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -20,6 +19,7 @@ import {
   type FindOneSkillQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDangerButtonsContainer = styled.div`
   display: flex;
@@ -38,6 +38,7 @@ type SettingsSkillDangerZoneProps = {
 export const SettingsSkillDangerZone = ({
   skill,
 }: SettingsSkillDangerZoneProps) => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const { openDialog, closeDialog } = useDialog();

@@ -7,11 +7,11 @@ import {
   IMPORT_CONTACTS_PREVIEW_EMAILS,
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const EVENT_CARD_WIDTH = 160;
 
@@ -172,23 +172,26 @@ const EVENT_CARD_POSITIONS: Record<
   },
 };
 
-const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
-  <StyledEmailRow>
-    <StyledEmailCheckbox data-selected={email.isSelected} />
-    <StyledEmailStar data-selected={email.isSelected} />
-    <StyledEmailSender
-      data-medium={email.isSenderMedium}
-      style={{ color: SENDER_COLORS[email.senderColor] }}
-    >
-      {email.sender}
-    </StyledEmailSender>
-    {isDefined(email.subject) && (
-      <StyledEmailSubject>
-        {isString(email.subject) ? email.subject : t(email.subject)}
-      </StyledEmailSubject>
-    )}
-  </StyledEmailRow>
-);
+const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => {
+  const { t } = useLingui();
+  return (
+    <StyledEmailRow>
+      <StyledEmailCheckbox data-selected={email.isSelected} />
+      <StyledEmailStar data-selected={email.isSelected} />
+      <StyledEmailSender
+        data-medium={email.isSenderMedium}
+        style={{ color: SENDER_COLORS[email.senderColor] }}
+      >
+        {email.sender}
+      </StyledEmailSender>
+      {isDefined(email.subject) && (
+        <StyledEmailSubject>
+          {isString(email.subject) ? email.subject : t(email.subject)}
+        </StyledEmailSubject>
+      )}
+    </StyledEmailRow>
+  );
+};
 
 const EventCard = ({
   event,

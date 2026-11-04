@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Equal, IsNull } from 'typeorm';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Equal, IsNull, Or } from 'typeorm';
 
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
@@ -181,9 +181,11 @@ export class AgentChatInboxDeliveryService {
         {
           id: threadId,
           workspaceMemberId: thread.workspaceMemberId ?? IsNull(),
-          writerWorkspaceMemberIds: isDefined(thread.writerWorkspaceMemberIds)
+          writerWorkspaceMemberIds: isNonEmptyArray(
+            thread.writerWorkspaceMemberIds,
+          )
             ? Equal(thread.writerWorkspaceMemberIds)
-            : IsNull(),
+            : Or(IsNull(), Equal([])),
         },
         {
           writerWorkspaceMemberIds: [

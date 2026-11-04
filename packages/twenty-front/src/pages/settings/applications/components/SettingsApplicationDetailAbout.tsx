@@ -5,11 +5,11 @@ import {
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationDetailAboutProps = {
   applicationId?: string | null;
@@ -142,6 +142,7 @@ export const SettingsApplicationDetailAbout = ({
   developerLinks,
   onShare,
 }: SettingsApplicationDetailAboutProps) => {
+  const { t } = useLingui();
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
   const descriptionSummary = getApplicationDescriptionSummary(description);

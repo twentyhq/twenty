@@ -1,12 +1,12 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconDownload, IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { useLingui } from '@lingui/react/macro';
 
 const DocumentViewer = lazy(() =>
   import('@/activities/files/components/DocumentViewer').then((module) => ({
@@ -75,52 +75,55 @@ export const FilePreviewDialog = ({
   onDownload,
   downloadLabel,
   loadingFallback,
-}: FilePreviewDialogProps) => (
-  <DialogInstance
-    dialogId={dialogId}
-    dismissible
-    onClose={onClose}
-    renderInDocumentBody
-  >
-    {({ onKeyDown }) => (
-      <Dialog.Popup onKeyDown={onKeyDown} size="lg">
-        <StyledPreviewLayout>
-          <StyledHeader>
-            <Dialog.Title size="md" render={<StyledTitle />}>
-              {title}
-            </Dialog.Title>
-            <StyledActions>
-              {isDefined(onDownload) && (
+}: FilePreviewDialogProps) => {
+  const { t } = useLingui();
+  return (
+    <DialogInstance
+      dialogId={dialogId}
+      dismissible
+      onClose={onClose}
+      renderInDocumentBody
+    >
+      {({ onKeyDown }) => (
+        <Dialog.Popup onKeyDown={onKeyDown} size="lg">
+          <StyledPreviewLayout>
+            <StyledHeader>
+              <Dialog.Title size="md" render={<StyledTitle />}>
+                {title}
+              </Dialog.Title>
+              <StyledActions>
+                {isDefined(onDownload) && (
+                  <IconButton
+                    aria-label={downloadLabel}
+                    onClick={onDownload}
+                    size="sm"
+                  >
+                    <IconDownload />
+                  </IconButton>
+                )}
                 <IconButton
-                  aria-label={downloadLabel}
-                  onClick={onDownload}
+                  aria-label={t`Close preview`}
+                  onClick={onClose}
                   size="sm"
                 >
-                  <IconDownload />
+                  <IconX />
                 </IconButton>
-              )}
-              <IconButton
-                aria-label={t`Close preview`}
-                onClick={onClose}
-                size="sm"
-              >
-                <IconX />
-              </IconButton>
-            </StyledActions>
-          </StyledHeader>
-          <ScrollWrapper componentInstanceId={scrollWrapperId}>
-            <StyledPreviewContent>
-              <Suspense fallback={loadingFallback}>
-                <DocumentViewer
-                  documentName={documentName}
-                  documentUrl={documentUrl}
-                  documentExtension={documentExtension}
-                />
-              </Suspense>
-            </StyledPreviewContent>
-          </ScrollWrapper>
-        </StyledPreviewLayout>
-      </Dialog.Popup>
-    )}
-  </DialogInstance>
-);
+              </StyledActions>
+            </StyledHeader>
+            <ScrollWrapper componentInstanceId={scrollWrapperId}>
+              <StyledPreviewContent>
+                <Suspense fallback={loadingFallback}>
+                  <DocumentViewer
+                    documentName={documentName}
+                    documentUrl={documentUrl}
+                    documentExtension={documentExtension}
+                  />
+                </Suspense>
+              </StyledPreviewContent>
+            </ScrollWrapper>
+          </StyledPreviewLayout>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
+  );
+};

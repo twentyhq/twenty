@@ -24,7 +24,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
-import { type AgentChatMemberMessageSendArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-args.type';
+import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -62,7 +62,7 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     assistant,
     execution,
-  }: AgentChatMemberMessageSendArgs): Promise<AgentChatMemberMessageResult> {
+  }: AgentChatMemberMessageSendArguments): Promise<AgentChatMemberMessageResult> {
     const preparedMessage =
       await this.memberMessagePartsService.prepareMemberMessage({
         workspaceId: actor.workspaceId,
@@ -206,9 +206,9 @@ export class AgentChatMemberMessageSenderService {
     participation,
     execution,
     assistantReplyContext,
-  }: Pick<AgentChatMemberMessageSendArgs, 'actor' | 'execution'> & {
+  }: Pick<AgentChatMemberMessageSendArguments, 'actor' | 'execution'> & {
     message: AgentChatPreparedMemberMessage;
-    addressing?: AgentChatMemberMessageSendArgs['addressing'];
+    addressing?: AgentChatMemberMessageSendArguments['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
     assistantReplyContext?: AgentChatAssistantReplyContext;
     participation?: Pick<

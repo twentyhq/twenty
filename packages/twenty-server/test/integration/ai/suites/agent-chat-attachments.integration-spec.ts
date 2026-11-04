@@ -21,6 +21,7 @@ import { type AgentConversationWriterService } from 'src/engine/metadata-modules
 
 describe('Chat message attachments with real storage', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
+  let models: ReturnType<typeof configureChatParticipationModels>;
   const fileIds: string[] = [];
   const filename = 'attachment.txt';
 
@@ -42,16 +43,23 @@ describe('Chat message attachments with real storage', () => {
 
   beforeEach(async () => {
     context = await createChatParticipationTestContext();
+    models = configureChatParticipationModels();
   });
 
   afterEach(async () => {
-    if (isDefined(context)) {
-      await context.cleanup();
-    }
+    try {
+      if (isDefined(context)) {
+        await context.cleanup();
+      }
 
-    await getCoreRepository<FileEntity>(FileEntity).delete({
-      id: In(fileIds.splice(0)),
-    });
+      await getCoreRepository<FileEntity>(FileEntity).delete({
+        id: In(fileIds.splice(0)),
+      });
+    } finally {
+      if (isDefined(models)) {
+        models.restore();
+      }
+    }
   });
 
   it('stores an uploaded attachment with the accepted message', async () => {
@@ -194,36 +202,28 @@ describe('Chat message attachments with real storage', () => {
       [threadId, assistantMessageId],
     );
 
-    const models = configureChatParticipationModels();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      shouldAssistantReply: true,
+      attachments: [{ id: randomUUID(), filename }],
+    });
 
-    try {
-      const response = await sendChatParticipationMessage({
-        threadId,
-        shouldAssistantReply: true,
-        attachments: [{ id: randomUUID(), filename }],
-      });
-
-      expect(response.body.errors?.[0]?.extensions?.code).toBe(
-        'BAD_USER_INPUT',
-      );
-      expect(
-        await global.testDataSource.query(
-          `SELECT thread."pendingQuestionMessageId", turn.status, part."toolOutput"
-           FROM "${context.schema}"."agentChatThread" thread
-           JOIN "${context.schema}"."agentTurn" turn ON turn.id = $2
-           JOIN "${context.schema}"."agentMessagePart" part ON part."messageId" = $3
-           WHERE thread.id = $1`,
-          [threadId, userMessage.turnId, assistantMessageId],
-        ),
-      ).toEqual([
-        {
-          pendingQuestionMessageId: assistantMessageId,
-          status: AgentTurnStatus.WAITING_FOR_INPUT,
-          toolOutput: pendingOutput,
-        },
-      ]);
-    } finally {
-      models.restore();
-    }
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+    expect(
+      await global.testDataSource.query(
+        `SELECT thread."pendingQuestionMessageId", turn.status, part."toolOutput"
+         FROM "${context.schema}"."agentChatThread" thread
+         JOIN "${context.schema}"."agentTurn" turn ON turn.id = $2
+         JOIN "${context.schema}"."agentMessagePart" part ON part."messageId" = $3
+         WHERE thread.id = $1`,
+        [threadId, userMessage.turnId, assistantMessageId],
+      ),
+    ).toEqual([
+      {
+        pendingQuestionMessageId: assistantMessageId,
+        status: AgentTurnStatus.WAITING_FOR_INPUT,
+        toolOutput: pendingOutput,
+      },
+    ]);
   });
 });

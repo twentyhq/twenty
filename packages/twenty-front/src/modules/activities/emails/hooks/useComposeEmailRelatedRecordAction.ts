@@ -2,9 +2,9 @@ import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useCom
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { IconMail } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type UseComposeEmailRelatedRecordActionParams = {
   targetRecord: ActivityTargetableObject;
@@ -15,6 +15,7 @@ export const useComposeEmailRelatedRecordAction = ({
   targetRecord,
   isPermissionGated = true,
 }: UseComposeEmailRelatedRecordActionParams): RelatedRecordActionBinding => {
+  const { t } = useLingui();
   const { openComposer, loading } =
     useComposeEmailForTargetRecord(targetRecord);
   const canComposeEmail = useHasPermissionFlag(
