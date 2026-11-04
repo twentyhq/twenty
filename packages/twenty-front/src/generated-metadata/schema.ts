@@ -1482,6 +1482,7 @@ export type CollectionHash = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  availabilityCoreObjectName?: Maybe<Scalars['String']['output']>;
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
@@ -1657,6 +1658,7 @@ export type CreateCalendarEventOutput = {
 };
 
 export type CreateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
@@ -7504,6 +7506,7 @@ export type UpdateCalendarChannelInputUpdates = {
 };
 
 export type UpdateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   engineComponentKey?: InputMaybe<EngineComponentKey>;

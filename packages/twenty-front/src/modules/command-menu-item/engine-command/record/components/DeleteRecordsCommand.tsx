@@ -1,8 +1,5 @@
 import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
-import {
-  CoreObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -85,9 +82,8 @@ const DeleteWorkspaceRecordsCommand = () => {
 };
 
 export const DeleteRecordsCommand = () => {
-  const { objectMetadataItem } = useHeadlessCommandContextApi();
-  return objectMetadataItem?.nameSingular ===
-    CoreObjectNameSingular.Workflow ? (
+  const { coreObjectName } = useHeadlessCommandContextApi();
+  return coreObjectName === 'workflow' ? (
     <DeleteCoreWorkflowsCommand />
   ) : (
     <DeleteWorkspaceRecordsCommand />

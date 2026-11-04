@@ -2956,6 +2956,9 @@ export default {
             "applicationId": [
                 539
             ],
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 539
             ],
@@ -3358,6 +3361,9 @@ export default {
             ]
         },
         "CreateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 539
             ],
@@ -13778,6 +13784,9 @@ export default {
             ]
         },
         "UpdateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 539
             ],

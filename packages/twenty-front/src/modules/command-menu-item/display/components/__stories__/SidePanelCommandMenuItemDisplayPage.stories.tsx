@@ -78,6 +78,7 @@ const createCommandMenuItem = (
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   ...overrides,
 });

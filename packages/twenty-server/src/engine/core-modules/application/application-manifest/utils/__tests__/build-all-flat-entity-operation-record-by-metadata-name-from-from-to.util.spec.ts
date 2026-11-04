@@ -96,6 +96,7 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   conditionalPinnedExpression: null,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,

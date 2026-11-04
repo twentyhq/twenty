@@ -1364,6 +1364,7 @@ type CollectionHash {
 
 type CommandMenuItem {
   applicationId: UUID
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType!
   conditionalAvailabilityExpression: String
@@ -1535,6 +1536,7 @@ type CreateCalendarEventOutput {
 }
 
 input CreateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   conditionalAvailabilityExpression: String
@@ -5137,6 +5139,7 @@ input UpdateCalendarChannelInputUpdates {
 }
 
 input UpdateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   engineComponentKey: EngineComponentKey

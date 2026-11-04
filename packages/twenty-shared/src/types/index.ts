@@ -31,6 +31,8 @@ export type {
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
+export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';

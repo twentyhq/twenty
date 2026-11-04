@@ -284,6 +284,7 @@ import { AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand } from '
 import { AddRlsGrantOperationsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793726601132-add-rls-grant-operations';
 import { AddToolsToMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793760000000-add-tools-to-mcp-server';
 import { AddNativePageNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100801-add-native-page-navigation-menu-item';
+import { AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100803-add-command-menu-item-availability-core-object-name';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -570,4 +571,5 @@ export const INSTANCE_COMMANDS = [
   AddRlsGrantOperationsFastInstanceCommand,
   AddToolsToMcpServerFastInstanceCommand,
   AddNativePageNavigationMenuItemFastInstanceCommand,
+  AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand,
 ];

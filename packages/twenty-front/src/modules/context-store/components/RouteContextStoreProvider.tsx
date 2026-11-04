@@ -148,6 +148,9 @@ export const RouteContextStoreProvider = () => {
     <RouteContextStoreProviderEffect
       viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
+      coreObjectName={
+        isCoreWorkflowIndexPage || isCoreWorkflowShowPage ? 'workflow' : null
+      }
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}
       isStandalonePage={isStandalonePage}
