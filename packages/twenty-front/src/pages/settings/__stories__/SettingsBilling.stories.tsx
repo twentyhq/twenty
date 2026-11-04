@@ -15,6 +15,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { SettingsBilling } from '~/pages/settings/billing/SettingsBilling';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsBilling',
@@ -41,6 +42,9 @@ export const Default: Story = {
 };
 
 export const WithLockedPartnerCode: Story = {
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+  },
   parameters: {
     msw: {
       handlers: [
