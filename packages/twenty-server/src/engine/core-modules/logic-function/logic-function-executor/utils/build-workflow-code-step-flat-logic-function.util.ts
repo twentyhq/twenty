@@ -17,7 +17,10 @@ export const buildWorkflowCodeStepFlatLogicFunction = ({
   >;
   builtHandlerPath: string;
 }): FlatLogicFunction => {
-  const id = getWorkflowCodeStepLogicFunctionId(flatApplication.id);
+  const id = getWorkflowCodeStepLogicFunctionId({
+    workspaceId: flatApplication.workspaceId,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+  });
   const now = new Date().toISOString();
 
   return {
