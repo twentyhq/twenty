@@ -617,7 +617,6 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    // Without billing the step is set at workspace creation, so it always shows.
     if (!this.billingService.isBillingEnabled()) {
       return;
     }
