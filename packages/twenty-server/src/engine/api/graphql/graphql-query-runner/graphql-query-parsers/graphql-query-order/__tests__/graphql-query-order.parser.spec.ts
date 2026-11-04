@@ -227,10 +227,15 @@ describe('GraphqlQueryOrderFieldParser', () => {
         'opportunity',
         true,
         {
-          [objectMetadataId]: {
-            restrictedFields: { 'stage-id': { canRead: false } },
-            // oxlint-disable-next-line typescript/no-explicit-any
-          } as any,
+          objects: {
+            [objectMetadataId]: {
+              canReadAllRecords: true,
+              canUpdateAllRecords: true,
+              canSoftDeleteAllRecords: true,
+              canDestroyAllRecords: true,
+              restrictedFields: { 'stage-id': { canRead: false } },
+            },
+          },
         },
       ),
     ).toThrow('does not have permission');
