@@ -1,6 +1,6 @@
 import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
-import { PDL_COMPANY_REQUIRED_FIELD_LABELS } from 'src/constants/pdl-company-required-field-labels';
+import { PDL_COMPANY_REQUIRED_FIELD_VALUES } from 'src/constants/pdl-company-required-field-values';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichCompaniesCore } from 'src/logic-functions/handlers/enrich-companies';
@@ -44,7 +44,7 @@ export default defineLogicFunction({
             label: 'Required fields for a match',
             items: {
               type: 'string',
-              enum: [...PDL_COMPANY_REQUIRED_FIELD_LABELS],
+              enum: [...PDL_COMPANY_REQUIRED_FIELD_VALUES],
             },
           },
           minLikelihood: {

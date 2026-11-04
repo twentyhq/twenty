@@ -73,33 +73,6 @@ describe('getWorkflowCodeFieldsLeafKind', () => {
     ).toBe('array');
   });
 
-  it('should map arrays of string enums to the enum-array kind', () => {
-    expect(
-      getWorkflowCodeFieldsLeafKind({
-        type: 'array',
-        items: { type: 'string', enum: ['work_email', 'phone_numbers'] },
-      }),
-    ).toBe('enum-array');
-    expect(
-      getWorkflowCodeFieldsLeafKind({
-        type: FieldMetadataType.ARRAY,
-        items: { type: FieldMetadataType.TEXT, enum: ['work_email'] },
-      }),
-    ).toBe('enum-array');
-    expect(
-      getWorkflowCodeFieldsLeafKind({
-        type: 'array',
-        items: { type: 'string', enum: [] },
-      }),
-    ).toBe('array');
-    expect(
-      getWorkflowCodeFieldsLeafKind({
-        type: 'array',
-        items: { type: 'number', enum: ['1', '2'] },
-      }),
-    ).toBe('array');
-  });
-
   it('should map the legacy object/array+marker form to record kinds', () => {
     expect(
       getWorkflowCodeFieldsLeafKind({
