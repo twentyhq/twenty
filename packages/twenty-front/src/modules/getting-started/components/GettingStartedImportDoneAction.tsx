@@ -1,6 +1,6 @@
 import { GettingStartedOpenChatThreadButton } from '@/getting-started/components/GettingStartedOpenChatThreadButton';
 import { type GettingStartedStepDoneActionProps } from '@/getting-started/types/GettingStartedStepDoneActionProps';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const GettingStartedImportDoneAction = ({
     <Button
       onClick={() =>
         navigateApp(AppPath.RecordIndexPage, {
-          objectNamePlural: CoreObjectNamePlural.Person,
+          objectNamePlural: StandardObjectNamePlural.Person,
         })
       }
     >{t`Open People`}</Button>
