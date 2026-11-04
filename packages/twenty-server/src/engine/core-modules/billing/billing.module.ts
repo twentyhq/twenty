@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { BillingArrangementModule } from 'src/engine/core-modules/billing/billing-arrangement.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
 import { BillingSubscriptionItemResolver } from 'src/engine/core-modules/billing/billing-subscription-item.resolver';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
@@ -52,6 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    BillingArrangementModule,
     CacheLockModule,
     ClickHouseModule,
     CoreEntityCacheModule,
