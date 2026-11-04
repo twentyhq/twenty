@@ -10,11 +10,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  OpenDirectMessageDocument,
-} from '~/generated-metadata/graphql';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
+import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const OpenDirectMessageButton = () => {
@@ -28,17 +25,12 @@ export const OpenDirectMessageButton = () => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const isDirectMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
-  );
   const [searchValue, setSearchValue] = useState('');
   const [isOpening, setIsOpening] = useState(false);
   const humanMembers = filterBySearchQuery({
     items: currentWorkspaceMembers.map((member) => ({
       workspaceMemberId: member.id,
-      name:
-        `${member.name.firstName} ${member.name.lastName}`.trim() ||
-        member.userEmail,
+      name: getWorkspaceMemberNameOrEmail(member),
       email: member.userEmail,
       avatarUrl: member.avatarUrl,
     })),
@@ -70,7 +62,7 @@ export const OpenDirectMessageButton = () => {
     }
   };
 
-  if (!isDirectMessageEnabled || !isDefined(currentWorkspaceMember)) {
+  if (!isDefined(currentWorkspaceMember)) {
     return null;
   }
 
