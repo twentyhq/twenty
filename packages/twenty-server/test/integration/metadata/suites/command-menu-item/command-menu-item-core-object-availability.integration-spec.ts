@@ -1,5 +1,6 @@
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { type CommandMenuCoreObjectName } from 'twenty-shared/types';
@@ -51,6 +52,40 @@ describe('CommandMenuItem core object availability', () => {
     await deleteCommandMenuItem({
       expectToFail: false,
       input: { id: data.createCommandMenuItem.id },
+    });
+  });
+
+  it('should clear the core object scope when re-scoping to an object', async () => {
+    const { data: createData } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        engineComponentKey: EngineComponentKey.GO_TO_WORKFLOWS,
+        label: 'Re-scoped command',
+        availabilityCoreObjectName: 'workflow',
+      },
+    });
+
+    const { data } = await updateCommandMenuItem({
+      expectToFail: false,
+      input: {
+        id: createData.createCommandMenuItem.id,
+        availabilityObjectMetadataId: companyObjectMetadataId,
+      },
+      gqlFields: `
+        id
+        availabilityObjectMetadataId
+        availabilityCoreObjectName
+      `,
+    });
+
+    expect(data.updateCommandMenuItem.availabilityObjectMetadataId).toBe(
+      companyObjectMetadataId,
+    );
+    expect(data.updateCommandMenuItem.availabilityCoreObjectName).toBeNull();
+
+    await deleteCommandMenuItem({
+      expectToFail: false,
+      input: { id: createData.createCommandMenuItem.id },
     });
   });
 
