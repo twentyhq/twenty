@@ -39,9 +39,10 @@ export const CoreAgentsIndex = () => {
   const tableId =
     useWorkspaceSurfaceScopedComponentInstanceId(CORE_AGENTS_TABLE_ID);
 
-  const { coreAgents, isInitialLoading, error } = useCoreAgents({
-    tableId,
-  });
+  const { coreAgents, hasLoadedAgents, isInitialLoading, error } =
+    useCoreAgents({
+      tableId,
+    });
 
   const coreAgentsFilterSettings = useAtomStateValue(
     coreAgentsFilterSettingsState,
@@ -56,7 +57,7 @@ export const CoreAgentsIndex = () => {
   });
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
-  const hasError = isDefined(error) && !isNonEmptyArray(coreAgents);
+  const hasError = isDefined(error) && !hasLoadedAgents;
 
   const isEmpty =
     !isInitialLoading && !hasError && !isNonEmptyArray(coreAgents);
@@ -68,7 +69,7 @@ export const CoreAgentsIndex = () => {
   });
 
   const getTableSelection = () => {
-    if (!canCreateCoreAgent) {
+    if (!canCreateCoreAgent || !coreAgents.some(getIsMetadataItemCustom)) {
       return undefined;
     }
 
@@ -79,6 +80,8 @@ export const CoreAgentsIndex = () => {
       isItemSelectable: getIsMetadataItemCustom,
     };
   };
+
+  const tableSelection = getTableSelection();
 
   return (
     <>
@@ -135,14 +138,14 @@ export const CoreAgentsIndex = () => {
           getItemKey={(agent) => agent.id}
           getItemLink={getCoreAgentItemLink}
           initialSort={CORE_AGENTS_INITIAL_SORT}
-          selection={getTableSelection()}
+          selection={tableSelection}
         />
         {canCreateCoreAgent && (
           <CoreObjectTableAddNewRow
             label={t`New Agent`}
             onClick={createCoreAgent}
             disabled={isCreatingCoreAgent}
-            hasCheckboxColumn
+            hasCheckboxColumn={isDefined(tableSelection)}
           />
         )}
       </CoreObjectIndexPageLayout>

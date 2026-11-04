@@ -239,6 +239,9 @@ export const SelectionAndPartialDeletion: Story = {
       canvas.queryByText('Something went wrong'),
     ).not.toBeInTheDocument();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('checkbox', { name: 'Select all loaded rows' }),
+    ).not.toBeInTheDocument();
 
     shouldFailAgentListRefresh = false;
     availableAgents = availableAgents.map((agent) => ({

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import { CORE_AGENTS_INITIAL_SORT } from '@/object-core/agents/constants/CoreAgentsInitialSort';
@@ -56,6 +56,7 @@ export const useCoreAgents = ({
 
   return {
     coreAgents,
+    hasLoadedAgents: isNonEmptyArray(data?.findManyAgents),
     isInitialLoading: loading && !isDefined(data),
     error,
   };
