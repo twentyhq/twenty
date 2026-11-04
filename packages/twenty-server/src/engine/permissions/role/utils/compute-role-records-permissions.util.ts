@@ -2,6 +2,7 @@ import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  type ObjectRecordsPermissions,
   type RestrictedFieldsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -13,7 +14,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [

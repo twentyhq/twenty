@@ -4,8 +4,9 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
   type RecordShareAccessLevel,
+  type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -27,10 +28,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
-import {
-  type OperationType,
-  validateOperationIsPermittedOrThrow,
-} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import {
   type RowAccessEvaluationContext,
@@ -43,7 +41,6 @@ import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principals.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -239,7 +236,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     withDeleted = false,
   }: {
     recordIds: string[];
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
     updatedColumns?: string[];
     withDeleted?: boolean;
   }): Promise<string[]> {
@@ -1467,7 +1464,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
   }: {
     ids: string[];
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): Promise<Set<string>> {
     if (this.options.shouldBypassPermissionChecks) {
       return new Set(ids);
@@ -1969,7 +1966,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private applyRowLevelPermissionPredicates(
     queryBuilder: WorkspaceSelectQueryBuilder,
-    operationType: OperationType = 'select',
+    operationType: ObjectRecordsOperationType = 'select',
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -2009,7 +2006,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): void {
     if (!queryBuilder.markRowLevelPermissionApplied(alias)) {
       return;
@@ -2049,7 +2046,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     alias: string;
     isMainAlias: boolean;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): SqlCondition | boolean {
     if (isMainAlias) {
       this.assertObjectOperationIsAccessibleOrThrow({
@@ -2072,7 +2069,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   // operations in one query, with a boolean column per gated operation;
   // deleted records are included
   async findRecordIdsAllowedForOperations<
-    TOperationType extends OperationType,
+    TOperationType extends ObjectRecordsOperationType,
   >({
     recordIds,
     operationTypes,
@@ -2138,7 +2135,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
     tableAlias,
   }: {
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
     tableAlias: string;
   }): boolean | SqlCondition {
     if (this.options.shouldBypassPermissionChecks) {
@@ -2183,7 +2180,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
     recordIds: string[];
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): Promise<Set<string>> {
     const condition = buildPermissionsCondition({
@@ -2219,7 +2216,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   // Whether the role alone permits the operation, regardless of any record
   // grant that may reach beyond it
-  isObjectOperationPermittedByRole(operationType: OperationType): boolean {
+  isObjectOperationPermittedByRole(
+    operationType: ObjectRecordsOperationType,
+  ): boolean {
     return (
       this.options.shouldBypassPermissionChecks ||
       this.isObjectOperationPermitted({
@@ -2234,7 +2233,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): boolean {
     return canReachSomeRecords({
       objectRecordsPermissions:
@@ -2248,7 +2247,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): void {
     if (
       !this.isOperationDisabled({ operationType, flatObjectMetadata }) &&
@@ -2274,7 +2273,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
     flatObjectMetadata = this.options.flatObjectMetadata,
   }: {
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
     flatObjectMetadata?: FlatObjectMetadata;
   }): boolean {
     if (this.options.shouldBypassPermissionChecks) {
@@ -2326,7 +2325,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
+    operationType: ObjectRecordsOperationType;
   }): void {
     if (alias === queryBuilder.alias) {
       throw new PermissionsException(

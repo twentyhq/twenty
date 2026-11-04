@@ -1,11 +1,10 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 describe('isObjectMetadataReadOnly', () => {
   it('should return false if object can be updated and is not UI read only and is not remote', () => {
     const result = isObjectMetadataReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
@@ -18,7 +17,8 @@ describe('isObjectMetadataReadOnly', () => {
   it('should return true if object cannot be updated and is not UI read only and is not remote', () => {
     const result = isObjectMetadataReadOnly({
       objectPermissions: {
-        canUpdateObjectRecords: false,
+        ...getDefaultObjectPermissions(),
+        canUpdateAllRecords: false,
       },
       objectMetadataItem: {
         isUIEditable: true,
@@ -31,9 +31,7 @@ describe('isObjectMetadataReadOnly', () => {
 
   it('should return true if object metadata is UI read only', () => {
     const result = isObjectMetadataReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       objectMetadataItem: {
         isUIEditable: false,
         isRemote: false,
@@ -45,9 +43,7 @@ describe('isObjectMetadataReadOnly', () => {
 
   it('should return true if object metadata is remote', () => {
     const result = isObjectMetadataReadOnly({
-      objectPermissions: {
-        canUpdateObjectRecords: true,
-      },
+      objectPermissions: getDefaultObjectPermissions(),
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: true,

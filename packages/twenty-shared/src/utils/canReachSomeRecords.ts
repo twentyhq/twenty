@@ -1,20 +1,21 @@
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
+import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
+import { assertUnreachable } from '@/utils/assertUnreachable';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const canReachSomeRecords = ({
   objectRecordsPermissions,
   operationType,
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions | undefined;
-  operationType: OperationType;
+  operationType: ObjectRecordsOperationType;
 }): boolean => {
   if (!isDefined(objectRecordsPermissions)) {
     return false;
   }
 
-  const { rowLevelRecordsPermissions } = objectRecordsPermissions;
+  const rowLevelRecordsPermissions =
+    objectRecordsPermissions.rowLevelRecordsPermissions;
 
   switch (operationType) {
     case 'select':

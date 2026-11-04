@@ -5,6 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
+import { getCommandMenuContextApiObjectPermissions } from '@/command-menu-item/utils/getCommandMenuContextApiObjectPermissions';
 import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -149,7 +150,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectMetadataItem?.id ?? '',
   );
   const objectPermissions = isDefined(objectMetadataItem)
-    ? currentObjectPermissions
+    ? getCommandMenuContextApiObjectPermissions({
+        objectMetadataId: objectMetadataItem.id,
+        objectRecordsPermissions: currentObjectPermissions,
+      })
     : EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions;
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
