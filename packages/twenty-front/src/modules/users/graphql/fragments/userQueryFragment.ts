@@ -123,6 +123,11 @@ export const USER_QUERY_FRAGMENT = gql`
       aiChatModelTier
       aiChatDirectMessageAssistantMode
       aiChatInboxAssistantMode
+      aiChatAssistantDisplayName
+      aiChatAssistantAvatarShape
+      aiChatAssistantAvatarColor
+      aiChatAssistantAvatarFace
+      isAiChatAssistantAvatarAnimated
       aiAgentModelTier
       isAutoModelSelectionEnabled
       aiModelIdByTier

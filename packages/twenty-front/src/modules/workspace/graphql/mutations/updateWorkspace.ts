@@ -8,6 +8,11 @@ export const UPDATE_WORKSPACE = gql`
       id
       aiChatDirectMessageAssistantMode
       aiChatInboxAssistantMode
+      aiChatAssistantDisplayName
+      aiChatAssistantAvatarShape
+      aiChatAssistantAvatarColor
+      aiChatAssistantAvatarFace
+      isAiChatAssistantAvatarAnimated
       customDomain
       subdomain
       displayName

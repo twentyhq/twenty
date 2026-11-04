@@ -1,3 +1,4 @@
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
@@ -95,6 +96,7 @@ export const mockCurrentWorkspace = {
   aiChatModelTier: AiModelTier.fast,
   aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
   aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
+  ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},

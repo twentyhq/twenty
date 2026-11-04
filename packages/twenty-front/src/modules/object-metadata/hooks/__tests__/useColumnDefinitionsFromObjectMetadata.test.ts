@@ -1,3 +1,4 @@
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { renderHook } from '@testing-library/react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -75,6 +76,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       aiChatModelTier: AiModelTier.fast,
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
       aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
+      ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
       aiAgentModelTier: AiModelTier.fast,
       isAutoModelSelectionEnabled: true,
       aiModelIdByTier: {},

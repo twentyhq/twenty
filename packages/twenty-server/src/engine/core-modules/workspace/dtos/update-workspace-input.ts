@@ -1,19 +1,31 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { isUndefined } from '@sniptt/guards';
+import { isString, isUndefined } from '@sniptt/guards';
+import { Transform } from 'class-transformer';
 
 import GraphQLJSON from 'graphql-type-json';
-import { type AiModelTier } from 'twenty-shared/ai';
+import {
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_FACES,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+  AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
+  type AiChatAssistantAvatarColor,
+  type AiChatAssistantAvatarFace,
+  type AiChatAssistantAvatarShape,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 
 import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsObject,
   IsString,
   IsUUID,
+  Length,
   Matches,
   Max,
   Min,
@@ -173,6 +185,50 @@ export class UpdateWorkspaceInput {
       !isUndefined(aiChatInboxAssistantMode),
   )
   aiChatInboxAssistantMode?: AiChatAssistantMode;
+
+  @Field(() => String, { nullable: true })
+  @Transform(({ value }: { value: unknown }) =>
+    isString(value) ? value.trim() : value,
+  )
+  @IsString()
+  @Length(1, AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH)
+  @ValidateIf(
+    ({ aiChatAssistantDisplayName }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatAssistantDisplayName),
+  )
+  aiChatAssistantDisplayName?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_SHAPES)
+  @ValidateIf(
+    ({ aiChatAssistantAvatarShape }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatAssistantAvatarShape),
+  )
+  aiChatAssistantAvatarShape?: AiChatAssistantAvatarShape;
+
+  @Field(() => String, { nullable: true })
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_COLORS)
+  @ValidateIf(
+    ({ aiChatAssistantAvatarColor }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatAssistantAvatarColor),
+  )
+  aiChatAssistantAvatarColor?: AiChatAssistantAvatarColor;
+
+  @Field(() => String, { nullable: true })
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_FACES)
+  @ValidateIf(
+    ({ aiChatAssistantAvatarFace }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatAssistantAvatarFace),
+  )
+  aiChatAssistantAvatarFace?: AiChatAssistantAvatarFace;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @ValidateIf(
+    ({ isAiChatAssistantAvatarAnimated }: UpdateWorkspaceInput) =>
+      !isUndefined(isAiChatAssistantAvatarAnimated),
+  )
+  isAiChatAssistantAvatarAnimated?: boolean;
 
   @Field({ nullable: true })
   @IsString()

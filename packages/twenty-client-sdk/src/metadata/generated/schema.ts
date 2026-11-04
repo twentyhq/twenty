@@ -4174,6 +4174,10 @@ export interface Workspace {
     activationStatus: WorkspaceActivationStatus
     aiAdditionalInstructions?: Scalars['String']
     aiAgentModelTier: AiModelTier
+    aiChatAssistantAvatarColor: Scalars['String']
+    aiChatAssistantAvatarFace: Scalars['String']
+    aiChatAssistantAvatarShape: Scalars['String']
+    aiChatAssistantDisplayName: Scalars['String']
     aiChatDirectMessageAssistantMode: AiChatAssistantMode
     aiChatInboxAssistantMode: AiChatAssistantMode
     aiChatModelTier: AiModelTier
@@ -4200,6 +4204,7 @@ export interface Workspace {
     iframeMediaPermissions?: IframeMediaPermission[]
     installedApplications: Application[]
     inviteHash?: Scalars['String']
+    isAiChatAssistantAvatarAnimated: Scalars['Boolean']
     isAutoModelSelectionEnabled: Scalars['Boolean']
     isCampaignClickTrackingEnabled: Scalars['Boolean']
     isCampaignOpenTrackingEnabled: Scalars['Boolean']
@@ -8682,7 +8687,7 @@ export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars
 
 export interface UpdateWorkspaceIframeMediaPermissionsInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantAvatarColor?: (Scalars['String'] | null),aiChatAssistantAvatarFace?: (Scalars['String'] | null),aiChatAssistantAvatarShape?: (Scalars['String'] | null),aiChatAssistantDisplayName?: (Scalars['String'] | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAiChatAssistantAvatarAnimated?: (Scalars['Boolean'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -9224,6 +9229,10 @@ export interface WorkspaceGenqlSelection{
     activationStatus?: boolean | number
     aiAdditionalInstructions?: boolean | number
     aiAgentModelTier?: boolean | number
+    aiChatAssistantAvatarColor?: boolean | number
+    aiChatAssistantAvatarFace?: boolean | number
+    aiChatAssistantAvatarShape?: boolean | number
+    aiChatAssistantDisplayName?: boolean | number
     aiChatDirectMessageAssistantMode?: boolean | number
     aiChatInboxAssistantMode?: boolean | number
     aiChatModelTier?: boolean | number
@@ -9250,6 +9259,7 @@ export interface WorkspaceGenqlSelection{
     iframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     installedApplications?: ApplicationGenqlSelection
     inviteHash?: boolean | number
+    isAiChatAssistantAvatarAnimated?: boolean | number
     isAutoModelSelectionEnabled?: boolean | number
     isCampaignClickTrackingEnabled?: boolean | number
     isCampaignOpenTrackingEnabled?: boolean | number

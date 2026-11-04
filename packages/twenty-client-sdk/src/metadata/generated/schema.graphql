@@ -5584,6 +5584,10 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatAssistantAvatarColor: String
+  aiChatAssistantAvatarFace: String
+  aiChatAssistantAvatarShape: String
+  aiChatAssistantDisplayName: String
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
@@ -5596,6 +5600,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   eventLogRetentionDays: Float
   inviteHash: String
+  isAiChatAssistantAvatarAnimated: Boolean
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
   isCampaignOpenTrackingEnabled: Boolean
@@ -6355,6 +6360,10 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatAssistantAvatarColor: String!
+  aiChatAssistantAvatarFace: String!
+  aiChatAssistantAvatarShape: String!
+  aiChatAssistantDisplayName: String!
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
@@ -6381,6 +6390,7 @@ type Workspace {
   iframeMediaPermissions: [IframeMediaPermission!]
   installedApplications: [Application!]!
   inviteHash: String
+  isAiChatAssistantAvatarAnimated: Boolean!
   isAutoModelSelectionEnabled: Boolean!
   isCampaignClickTrackingEnabled: Boolean!
   isCampaignOpenTrackingEnabled: Boolean!

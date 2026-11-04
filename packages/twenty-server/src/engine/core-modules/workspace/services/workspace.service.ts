@@ -9,7 +9,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
-import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import {
+  aiChatAssistantProfileSchema,
+  isAiModelTier,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import {
   FeatureFlagKey,
   type IframeMediaPermission,
@@ -161,6 +165,11 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantDisplayName: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantAvatarShape: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantAvatarColor: PermissionFlagType.AI_SETTINGS,
+    aiChatAssistantAvatarFace: PermissionFlagType.AI_SETTINGS,
+    isAiChatAssistantAvatarAnimated: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -433,11 +442,26 @@ export class WorkspaceService {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const isUpdatingAssistantModes =
+    const assistantProfileUpdate = aiChatAssistantProfileSchema
+      .partial()
+      .safeParse(payload);
+
+    if (!assistantProfileUpdate.success) {
+      throw new WorkspaceException(
+        'Invalid workspace assistant profile',
+        WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID,
+      );
+    }
+
+    const isUpdatingAssistantProfile = Object.values(
+      assistantProfileUpdate.data,
+    ).some(isDefined);
+    const isUpdatingInboxAssistantSettings =
+      isUpdatingAssistantProfile ||
       isDefined(payload.aiChatDirectMessageAssistantMode) ||
       isDefined(payload.aiChatInboxAssistantMode);
     const isInboxRequiredButDisabled =
-      isUpdatingAssistantModes &&
+      isUpdatingInboxAssistantSettings &&
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
@@ -568,6 +592,7 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...assistantProfileUpdate.data,
         ...(payload.customDomain === null
           ? { isCustomDomainEnabled: false }
           : {}),

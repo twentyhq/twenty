@@ -7940,6 +7940,10 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
+  aiChatAssistantAvatarColor?: InputMaybe<Scalars['String']['input']>;
+  aiChatAssistantAvatarFace?: InputMaybe<Scalars['String']['input']>;
+  aiChatAssistantAvatarShape?: InputMaybe<Scalars['String']['input']>;
+  aiChatAssistantDisplayName?: InputMaybe<Scalars['String']['input']>;
   aiChatDirectMessageAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatInboxAssistantMode?: InputMaybe<AiChatAssistantMode>;
   aiChatModelTier?: InputMaybe<AiModelTier>;
@@ -7952,6 +7956,7 @@ export type UpdateWorkspaceInput = {
   editableProfileFields?: InputMaybe<Array<Scalars['String']['input']>>;
   eventLogRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
+  isAiChatAssistantAvatarAnimated?: InputMaybe<Scalars['Boolean']['input']>;
   isAutoModelSelectionEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isCampaignClickTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isCampaignOpenTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8721,6 +8726,10 @@ export type Workspace = {
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
+  aiChatAssistantAvatarColor: Scalars['String']['output'];
+  aiChatAssistantAvatarFace: Scalars['String']['output'];
+  aiChatAssistantAvatarShape: Scalars['String']['output'];
+  aiChatAssistantDisplayName: Scalars['String']['output'];
   aiChatDirectMessageAssistantMode: AiChatAssistantMode;
   aiChatInboxAssistantMode: AiChatAssistantMode;
   aiChatModelTier: AiModelTier;
@@ -8747,6 +8756,7 @@ export type Workspace = {
   iframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
+  isAiChatAssistantAvatarAnimated: Scalars['Boolean']['output'];
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];
   isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
   isCampaignOpenTrackingEnabled: Scalars['Boolean']['output'];
