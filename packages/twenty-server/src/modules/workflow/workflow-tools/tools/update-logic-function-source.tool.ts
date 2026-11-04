@@ -6,8 +6,8 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY } from 'src/engine/metadata-modules/logic-function/constants/logic-function-workflows-access-policy.constant';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 import { canCallerReachEveryApplication } from 'src/modules/workflow/workflow-tools/utils/can-caller-reach-every-application.util';
 
 const updateLogicFunctionSourceSchema = z.object({
@@ -49,7 +49,7 @@ export const main = async (params: { url: string }) => {
 To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.
 
 Only code steps of a DRAFT workflow version can be edited. For an active or past version, call create_draft_from_workflow_version first, then use the logicFunctionId of the same step in the new draft: the draft copies each code step onto a new logic function.`,
-  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  accessPolicy: LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY,
   icon: 'IconSettingsAutomation',
 })
 export class UpdateLogicFunctionSourceTool extends BaseTool<

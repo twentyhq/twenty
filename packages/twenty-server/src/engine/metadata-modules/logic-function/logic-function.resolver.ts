@@ -57,6 +57,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY } from 'src/engine/metadata-modules/logic-function/constants/logic-function-workflows-access-policy.constant';
 
 const LOGIC_FUNCTION_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -71,21 +72,6 @@ const LOGIC_FUNCTION_READ_ACCESS_POLICY: AccessPolicy = {
     application: true,
   },
   requiredPermissionFlags: [],
-};
-
-const LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY: AccessPolicy = {
-  authPrincipals: {
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  },
-  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
 };
 
 const LOGIC_FUNCTION_WRITE_ACCESS_POLICY: AccessPolicy = {
