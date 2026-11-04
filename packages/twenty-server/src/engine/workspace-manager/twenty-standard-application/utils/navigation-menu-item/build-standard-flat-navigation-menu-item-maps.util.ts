@@ -9,6 +9,7 @@ import {
   STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
   STANDARD_NAVIGATION_MENU_ITEMS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import { createStandardNavigationMenuItemWithoutTargetFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-without-target-flat-metadata.util';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
@@ -39,6 +40,19 @@ const FOLDERS = [
   },
 ] as const;
 
+const PINNED_COMMAND_NAMES = [
+  'pinnedCommandsSearch',
+  'pinnedCommandsNewChat',
+] as const;
+
+const HOME_SECTION_NAMES = ['inboxSection', 'favoritesSection'] as const;
+
+const CHATS_TAB_SECTION_NAMES = [
+  'chatsTabFavoriteChats',
+  'chatsTabChannels',
+  'chatsTabRecentChats',
+] as const;
+
 export const buildStandardFlatNavigationMenuItemMaps = ({
   now,
   workspaceId,
@@ -57,6 +71,85 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndFolderId: {},
   };
 
+  const pinnedCommandsDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
+  const pinnedCommandsId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+        universalIdentifier: pinnedCommandsDefinition.universalIdentifier,
+        type: pinnedCommandsDefinition.type,
+        position: pinnedCommandsDefinition.position,
+        navigationMenuItemId: pinnedCommandsId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const pinnedCommandName of PINNED_COMMAND_NAMES) {
+    const pinnedCommandDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[pinnedCommandName];
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+          universalIdentifier: pinnedCommandDefinition.universalIdentifier,
+          type: pinnedCommandDefinition.type,
+          commandKey: pinnedCommandDefinition.commandKey,
+          folderId: pinnedCommandsId,
+          folderUniversalIdentifier:
+            pinnedCommandDefinition.folderUniversalIdentifier,
+          position: pinnedCommandDefinition.position,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
+  }
+
+  for (const homeSectionName of HOME_SECTION_NAMES) {
+    const homeSectionDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[homeSectionName];
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+          universalIdentifier: homeSectionDefinition.universalIdentifier,
+          type: homeSectionDefinition.type,
+          position: homeSectionDefinition.position,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
+  }
+
+  const workspaceSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
+  const workspaceSectionId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+        universalIdentifier: workspaceSectionDefinition.universalIdentifier,
+        type: workspaceSectionDefinition.type,
+        name: workspaceSectionDefinition.name,
+        position: workspaceSectionDefinition.position,
+        navigationMenuItemId: workspaceSectionId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
   for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
     const navigationMenuItemDefinition =
       STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
@@ -67,6 +160,9 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         navigationMenuItemName,
         viewUniversalIdentifier:
           navigationMenuItemDefinition.viewUniversalIdentifier,
+        folderId: workspaceSectionId,
+        folderUniversalIdentifier:
+          navigationMenuItemDefinition.folderUniversalIdentifier,
         position: navigationMenuItemDefinition.position,
         navigationMenuItemId: v4(),
         dependencyFlatEntityMaps: {
@@ -90,6 +186,8 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
       universalIdentifier: folderDefinition.universalIdentifier,
       name: folderDefinition.name,
       icon: folderDefinition.icon,
+      folderId: workspaceSectionId,
+      folderUniversalIdentifier: folderDefinition.folderUniversalIdentifier,
       color: STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[folderName] ?? null,
       position: folderDefinition.position,
       navigationMenuItemId: folderId,
@@ -130,6 +228,48 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         flatNavigationMenuItemMaps,
       });
     }
+  }
+
+  const chatsTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.chatsTab;
+  const chatsTabId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+        universalIdentifier: chatsTabDefinition.universalIdentifier,
+        type: chatsTabDefinition.type,
+        name: chatsTabDefinition.name,
+        icon: chatsTabDefinition.icon,
+        position: chatsTabDefinition.position,
+        navigationMenuItemId: chatsTabId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const chatsTabSectionName of CHATS_TAB_SECTION_NAMES) {
+    const chatsTabSectionDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[chatsTabSectionName];
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemWithoutTargetFlatMetadata({
+          universalIdentifier: chatsTabSectionDefinition.universalIdentifier,
+          type: chatsTabSectionDefinition.type,
+          folderId: chatsTabId,
+          folderUniversalIdentifier:
+            chatsTabSectionDefinition.folderUniversalIdentifier,
+          position: chatsTabSectionDefinition.position,
+          visibleItemLimit: chatsTabSectionDefinition.visibleItemLimit,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
   }
 
   return flatNavigationMenuItemMaps;

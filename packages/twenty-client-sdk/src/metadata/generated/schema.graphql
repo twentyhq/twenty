@@ -1645,6 +1645,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   color: String
+  commandKey: String
   folderId: UUID
   icon: String
   id: UUID
@@ -1657,6 +1658,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
 }
 
 input CreateObjectInput {
@@ -2333,6 +2335,7 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -3644,6 +3647,7 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   applicationId: UUID
   color: String
+  commandKey: String
   createdAt: DateTime!
   folderId: UUID
   icon: String
@@ -3659,15 +3663,26 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
 }
 
 enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL
+  AI_AGENTS
+  AI_CHAT_CHANNELS
+  AI_CHAT_FAVORITES
+  AI_CHAT_INBOX
+  AI_CHAT_RECENTS
+  COMMAND
+  FAVORITES
   FOLDER
   LINK
   OBJECT
   PAGE_LAYOUT
+  PINNED_COMMANDS
   RECORD
+  SECTION
+  TAB
   VIEW
 }
 
@@ -5272,6 +5287,7 @@ input UpdateNavigationMenuItemInput {
   name: String
   pageLayoutId: UUID
   position: Float
+  visibleItemLimit: Int
 }
 
 input UpdateObjectPayload {

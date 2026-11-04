@@ -5,11 +5,49 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  pinnedCommands: {
+    universalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
+    type: NavigationMenuItemType.PINNED_COMMANDS,
+    position: -1,
+  },
+  pinnedCommandsSearch: {
+    universalIdentifier: '20202020-b013-4b13-8b13-c0aba11c0013',
+    type: NavigationMenuItemType.COMMAND,
+    commandKey: 'SEARCH',
+    folderUniversalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
+    position: 0,
+  },
+  pinnedCommandsNewChat: {
+    universalIdentifier: '20202020-b014-4b14-8b14-c0aba11c0014',
+    type: NavigationMenuItemType.COMMAND,
+    commandKey: 'NEW_CHAT',
+    folderUniversalIdentifier: '20202020-b012-4b12-8b12-c0aba11c0012',
+    position: 1,
+  },
+  inboxSection: {
+    universalIdentifier: '20202020-b017-4b17-8b17-c0aba11c0017',
+    type: NavigationMenuItemType.AI_CHAT_INBOX,
+    position: 0,
+  },
+  favoritesSection: {
+    universalIdentifier: '20202020-b015-4b15-8b15-c0aba11c0015',
+    type: NavigationMenuItemType.FAVORITES,
+    position: 1,
+  },
+  workspaceSection: {
+    universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
+    type: NavigationMenuItemType.SECTION,
+    name: i18nLabel(
+      msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
+    ),
+    position: 2,
+  },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 0,
   },
   allPeople: {
@@ -17,6 +55,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 1,
   },
   allOpportunities: {
@@ -24,6 +63,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 2,
   },
   allTasks: {
@@ -31,6 +71,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 3,
   },
   allNotes: {
@@ -38,6 +79,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 4,
   },
   allDashboards: {
@@ -45,6 +87,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 5,
   },
   campaignsFolder: {
@@ -54,6 +97,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       msg({ message: `Campaigns`, context: 'navigationMenuItem.name' }),
     ),
     icon: 'IconSend',
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 7,
   },
   allMessageCampaigns: {
@@ -80,6 +124,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
     ),
     icon: 'IconSettingsAutomation',
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 6,
   },
   workflowsFolderAllWorkflows: {
@@ -106,6 +151,36 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
         .universalIdentifier,
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 2,
+  },
+  chatsTab: {
+    universalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    type: NavigationMenuItemType.TAB,
+    name: i18nLabel(
+      msg({ message: `Chats`, context: 'navigationMenuItem.name' }),
+    ),
+    icon: 'IconMessage',
+    position: 0,
+  },
+  chatsTabFavoriteChats: {
+    universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
+    type: NavigationMenuItemType.AI_CHAT_FAVORITES,
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    position: 0,
+    visibleItemLimit: null,
+  },
+  chatsTabChannels: {
+    universalIdentifier: '20202020-b011-4b11-8b11-c0aba11c0011',
+    type: NavigationMenuItemType.AI_CHAT_CHANNELS,
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    position: 1,
+    visibleItemLimit: null,
+  },
+  chatsTabRecentChats: {
+    universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
+    type: NavigationMenuItemType.AI_CHAT_RECENTS,
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
+    position: 2,
+    visibleItemLimit: 5,
   },
 } as const;
 

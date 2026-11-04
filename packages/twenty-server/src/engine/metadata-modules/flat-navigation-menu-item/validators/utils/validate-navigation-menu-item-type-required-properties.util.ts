@@ -1,5 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { NAVIGATION_MENU_ITEM_COMMAND_KEYS } from 'twenty-shared/constants';
 import {
   type AssertUnreachable,
   NavigationMenuItemType,
@@ -40,6 +42,19 @@ const validateUuidProperty = ({
     ? []
     : [buildInvalidInputError(message, userFriendlyMessage)];
 
+const validateRequiredName = ({
+  name,
+  message,
+  userFriendlyMessage,
+}: {
+  name: string | null | undefined;
+  message: string;
+  userFriendlyMessage: MessageDescriptor;
+}): NavigationMenuItemValidationError[] =>
+  isNonEmptyString(name?.trim())
+    ? []
+    : [buildInvalidInputError(message, userFriendlyMessage)];
+
 export const validateNavigationMenuItemTypeRequiredProperties = ({
   flatNavigationMenuItem,
 }: {
@@ -54,6 +69,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
+    commandKey,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -67,14 +83,25 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
 
   switch (type) {
     case NavigationMenuItemType.FOLDER: {
-      return isDefined(name) && name.trim() !== ''
-        ? []
-        : [
-            buildInvalidInputError(
-              t`A name is required for FOLDER type`,
-              msg`A name is required for FOLDER type`,
-            ),
-          ];
+      return validateRequiredName({
+        name,
+        message: t`A name is required for FOLDER type`,
+        userFriendlyMessage: msg`A name is required for FOLDER type`,
+      });
+    }
+    case NavigationMenuItemType.TAB: {
+      return validateRequiredName({
+        name,
+        message: t`A name is required for TAB type`,
+        userFriendlyMessage: msg`A name is required for TAB type`,
+      });
+    }
+    case NavigationMenuItemType.SECTION: {
+      return validateRequiredName({
+        name,
+        message: t`A name is required for SECTION type`,
+        userFriendlyMessage: msg`A name is required for SECTION type`,
+      });
     }
     case NavigationMenuItemType.OBJECT: {
       return validateUuidProperty({
@@ -111,6 +138,26 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             buildInvalidInputError(
               t`A valid link is required for LINK type`,
               msg`A valid link is required for LINK type`,
+            ),
+          ];
+    }
+    case NavigationMenuItemType.AI_CHAT_INBOX:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case NavigationMenuItemType.AI_AGENTS:
+    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+    case NavigationMenuItemType.FAVORITES:
+    case NavigationMenuItemType.PINNED_COMMANDS: {
+      return [];
+    }
+    case NavigationMenuItemType.COMMAND: {
+      return isDefined(commandKey) &&
+        NAVIGATION_MENU_ITEM_COMMAND_KEYS.includes(commandKey)
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A valid commandKey is required for COMMAND type`,
+              msg`A valid commandKey is required for COMMAND type`,
             ),
           ];
     }

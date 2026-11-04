@@ -1,6 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -64,5 +65,50 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('item-id');
+  });
+
+  it('lists only the items of the requested tab or section, without tabs and sections themselves', () => {
+    const tab = buildOptimisticNavigationMenuItem({
+      id: 'tab-id',
+      type: NavigationMenuItemType.TAB,
+      name: 'Developers',
+      position: 0,
+    });
+    const section = buildOptimisticNavigationMenuItem({
+      id: 'section-id',
+      type: NavigationMenuItemType.SECTION,
+      name: 'Tools',
+      folderId: 'tab-id',
+      position: 0,
+    });
+    const tabLink = buildOptimisticNavigationMenuItem({
+      id: 'tab-link-id',
+      type: NavigationMenuItemType.LINK,
+      link: '/settings/developers',
+      folderId: 'tab-id',
+      position: 1,
+    });
+    const workspaceItems = [tab, section, tabLink, objectBackedItem];
+
+    const homeItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems: workspaceItems,
+      workspaceNavigationMenuItemsSorted: [objectBackedItem, tabLink],
+      objectMetadataItems: [objectMetadataItem],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      includeInaccessibleObjectBackedItems: true,
+    });
+    const tabItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems: workspaceItems,
+      workspaceNavigationMenuItemsSorted: [objectBackedItem, tabLink],
+      objectMetadataItems: [objectMetadataItem],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      includeInaccessibleObjectBackedItems: true,
+      containerId: 'tab-id',
+    });
+
+    expect(homeItems.map((item) => item.id)).toEqual(['item-id']);
+    expect(tabItems.map((item) => item.id)).toEqual(['tab-link-id']);
   });
 });

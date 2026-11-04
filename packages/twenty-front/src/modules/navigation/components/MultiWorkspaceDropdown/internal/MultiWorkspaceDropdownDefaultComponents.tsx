@@ -14,6 +14,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { OPEN_RECORD_IN_OPTIONS } from '@/navigation/constants/OpenRecordInOptions';
 import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -35,6 +36,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -56,6 +58,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const navigateSettings = useNavigateSettings();
   const isMobile = useIsMobile();
   const canDisplaySidePanel = !isMobile;
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   const handleSettings = () => {
     navigateSettings(SettingsPath.ProfilePage);
@@ -145,7 +150,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <Dropdown.Section>
-        {isMobile && (
+        {!isCustomizableSidebarEnabled && isMobile && (
           <Dropdown.ActionItem
             startIcon={<IconSettings />}
             onClick={handleSettings}
@@ -198,6 +203,19 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           </Dropdown.ActionItem>
         )}
       </Dropdown.Section>
+      {isCustomizableSidebarEnabled && (
+        <>
+          <Dropdown.Separator />
+          <Dropdown.Section>
+            <Dropdown.ActionItem
+              startIcon={<IconSettings />}
+              onClick={handleSettings}
+            >
+              {t`Settings`}
+            </Dropdown.ActionItem>
+          </Dropdown.Section>
+        </>
+      )}
     </>
   );
 };

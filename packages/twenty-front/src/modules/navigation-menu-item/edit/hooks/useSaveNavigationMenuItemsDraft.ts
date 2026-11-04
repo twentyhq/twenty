@@ -47,8 +47,6 @@ export const useSaveNavigationMenuItemsDraft = () => {
       .filter((workspaceItem) => !draftIds.has(workspaceItem.id))
       .map((workspaceItem) => workspaceItem.id);
 
-    await deleteManyNavigationMenuItems(deleteAfterLayoutChangeIds);
-
     const currentIds = new Set(workspaceItems.map((item) => item.id));
     const workspaceItemsById = new Map(
       workspaceItems.map((item) => [item.id, item]),
@@ -93,6 +91,8 @@ export const useSaveNavigationMenuItemsDraft = () => {
     });
 
     await updateManyNavigationMenuItems(updateInputs);
+
+    await deleteManyNavigationMenuItems(deleteAfterLayoutChangeIds);
   }, [
     createManyNavigationMenuItems,
     deleteManyNavigationMenuItems,

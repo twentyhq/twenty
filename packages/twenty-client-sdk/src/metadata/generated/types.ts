@@ -3644,6 +3644,9 @@ export default {
             "color": [
                 1
             ],
+            "commandKey": [
+                1
+            ],
             "folderId": [
                 539
             ],
@@ -3679,6 +3682,9 @@ export default {
             ],
             "viewId": [
                 539
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1
@@ -9837,6 +9843,9 @@ export default {
             "color": [
                 1
             ],
+            "commandKey": [
+                1
+            ],
             "createdAt": [
                 213
             ],
@@ -9881,6 +9890,9 @@ export default {
             ],
             "viewId": [
                 539
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1
@@ -14103,6 +14115,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "visibleItemLimit": [
+                10
             ],
             "__typename": [
                 1

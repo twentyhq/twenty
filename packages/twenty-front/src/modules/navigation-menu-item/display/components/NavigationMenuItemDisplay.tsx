@@ -1,5 +1,7 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemCommandDisplay } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommandDisplay';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
@@ -21,7 +23,24 @@ export const NavigationMenuItemDisplay = ({
   readOnly,
   orphanIndex,
 }: NavigationMenuItemDisplayProps) => {
+  if (isNavigationMenuItemContainer(item)) {
+    return null;
+  }
+
   switch (item.type) {
+    case NavigationMenuItemType.COMMAND:
+      return (
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemCommandDisplay
+            item={item}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+          />
+        </NavigationMenuItemEditable>
+      );
     case NavigationMenuItemType.FOLDER:
       return (
         <NavigationMenuItemFolder

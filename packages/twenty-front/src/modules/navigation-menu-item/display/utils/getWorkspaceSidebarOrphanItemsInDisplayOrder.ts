@@ -4,6 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -18,6 +19,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
     typeof getObjectPermissionsForObject
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
+  containerId?: string | null;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -27,9 +29,14 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   views,
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
+  containerId = null,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
-    .filter((item) => !isDefined(item.folderId))
+    .filter(
+      (item) =>
+        (item.folderId ?? null) === containerId &&
+        !isNavigationMenuItemContainer(item),
+    )
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
@@ -51,7 +58,8 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
 
       if (
         rowSource.type === NavigationMenuItemType.LINK ||
-        rowSource.type === NavigationMenuItemType.PAGE_LAYOUT
+        rowSource.type === NavigationMenuItemType.PAGE_LAYOUT ||
+        rowSource.type === NavigationMenuItemType.COMMAND
       ) {
         acc.push(rowSource);
         return acc;

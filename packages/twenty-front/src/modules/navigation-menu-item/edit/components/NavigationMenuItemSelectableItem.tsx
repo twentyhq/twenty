@@ -22,7 +22,7 @@ export const NavigationMenuItemSelectableItem = ({
       }
       onSelect={item.onClick}
       closeOnSelect={!item.hasSubMenu}
-      disabled={item.isDisabled}
+      disabled={item.isDisabled || item.isAlreadyInSidebar}
       description={
         item.isAlreadyInSidebar ? t`Already in sidebar` : item.contextualText
       }

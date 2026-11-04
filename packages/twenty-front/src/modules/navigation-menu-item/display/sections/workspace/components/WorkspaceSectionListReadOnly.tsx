@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -16,7 +17,9 @@ const StyledList = styled.div`
 type WorkspaceSectionListReadOnlyProps = Pick<
   NavigationMenuItemSectionListDndKitProps,
   'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
->;
+> & {
+  footer?: ReactNode;
+};
 
 const READ_ONLY_EDIT_MODE_PROPS = {
   isSelectedInEditMode: false,
@@ -27,6 +30,7 @@ export const WorkspaceSectionListReadOnly = ({
   filteredItems,
   folderChildrenById,
   onActiveObjectMetadataItemClick,
+  footer,
 }: WorkspaceSectionListReadOnlyProps) => {
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
@@ -46,6 +50,7 @@ export const WorkspaceSectionListReadOnly = ({
           readOnly
         />
       ))}
+      {footer}
     </StyledList>
   );
 };

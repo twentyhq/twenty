@@ -26,7 +26,7 @@ describe('navigation record search empty state', () => {
   it('keeps loading between quick empty responses until the current search settles', () => {
     const { result, rerender } = renderHook(
       ({ searchInput }) =>
-        useNavigationMenuItemSearchRecords({ searchInput, currentItems: [] }),
+        useNavigationMenuItemSearchRecords({ searchInput, sectionItems: [] }),
       { initialProps: { searchInput: '' } },
     );
 
@@ -77,20 +77,20 @@ describe('navigation record search duplicates', () => {
       updatedAt: '',
     };
     const { result, rerender } = renderHook(
-      ({ currentItems }: { currentItems: NavigationMenuItem[] }) =>
+      ({ sectionItems }: { sectionItems: NavigationMenuItem[] }) =>
         useNavigationMenuItemSearchRecords({
           searchInput: 'Ivan',
-          currentItems,
+          sectionItems,
         }),
-      { initialProps: { currentItems: [existingItem] } },
+      { initialProps: { sectionItems: [existingItem] } },
     );
     expect(result.current.navigationMenuItemSearchRecords).toEqual([
-      { ...record, isAlreadyInSidebar: true },
+      { ...record, isAlreadyInSection: true },
     ]);
 
-    rerender({ currentItems: [] });
+    rerender({ sectionItems: [] });
     expect(result.current.navigationMenuItemSearchRecords).toEqual([
-      { ...record, isAlreadyInSidebar: false },
+      { ...record, isAlreadyInSection: false },
     ]);
   });
 });

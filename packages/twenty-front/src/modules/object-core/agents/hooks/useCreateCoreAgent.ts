@@ -10,7 +10,10 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { CreateOneAgentDocument } from '~/generated-metadata/graphql';
+import {
+  CreateOneAgentDocument,
+  FindManyAgentsDocument,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
 
@@ -19,7 +22,9 @@ export const useCreateCoreAgent = () => {
     PermissionFlagType.AI_SETTINGS,
   );
 
-  const [createOneAgentMutation] = useMutation(CreateOneAgentDocument);
+  const [createOneAgentMutation] = useMutation(CreateOneAgentDocument, {
+    refetchQueries: [{ query: FindManyAgentsDocument }],
+  });
 
   const [isCreatingCoreAgent, setIsCreatingCoreAgent] = useState(false);
 

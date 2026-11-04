@@ -1,9 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -54,6 +55,8 @@ export const NavigationMenuItemInsertionPreview = ({
   );
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { containerId } = useContext(NavigationMenuItemContainerContext);
+  const isInFolder = isDefined(folderId) && folderId !== containerId;
   const section =
     sectionId === NavigationSections.WORKSPACE ? 'workspace' : 'favorite';
 
@@ -68,7 +71,7 @@ export const NavigationMenuItemInsertionPreview = ({
   return (
     <StyledPreview
       ref={setAnchor}
-      isInFolder={isDefined(folderId)}
+      isInFolder={isInFolder}
       role="status"
       aria-label={t`Select a menu item`}
     >
@@ -76,7 +79,7 @@ export const NavigationMenuItemInsertionPreview = ({
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
         variant="placeholder"
-        indentationLevel={isDefined(folderId) ? 2 : 1}
+        indentationLevel={isInFolder ? 2 : 1}
         subItemState={subItemState}
       />
     </StyledPreview>

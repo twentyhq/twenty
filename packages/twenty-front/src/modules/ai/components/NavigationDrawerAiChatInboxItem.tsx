@@ -1,7 +1,10 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
@@ -20,17 +23,22 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
-type NavigationDrawerAiChatTriageItemProps = {
+const StyledCount = styled.span`
+  display: flex;
+  padding-right: ${themeCssVariables.spacing['1.5']};
+`;
+
+type NavigationDrawerAiChatInboxItemProps = {
   filterStatus: AgentChatThreadFilterStatus;
   count?: number;
   isUnread?: boolean;
 };
 
-export const NavigationDrawerAiChatTriageItem = ({
+export const NavigationDrawerAiChatInboxItem = ({
   filterStatus,
   count,
   isUnread,
-}: NavigationDrawerAiChatTriageItemProps) => {
+}: NavigationDrawerAiChatInboxItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
   const navigate = useNavigateApp();
@@ -54,11 +62,11 @@ export const NavigationDrawerAiChatTriageItem = ({
     setAgentChatChannelView(null);
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
+  const hasCount = isDefined(count) && count > 0;
 
   return (
     <NavigationDrawerItem
       label={t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[filterStatus])}
-      secondaryLabel={isDefined(count) && count > 0 ? `${count}` : undefined}
       isUnread={isUnread}
       Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
       active={
@@ -68,6 +76,14 @@ export const NavigationDrawerAiChatTriageItem = ({
       }
       onClick={handleClick}
       triggerEvent="CLICK"
+      rightOptions={
+        hasCount ? (
+          <StyledCount>
+            <Badge>{count}</Badge>
+          </StyledCount>
+        ) : undefined
+      }
+      alwaysShowRightOptions={hasCount}
     />
   );
 };

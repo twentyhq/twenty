@@ -95,14 +95,12 @@ describe('NavigationMenuItem creation should succeed', () => {
 
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
-    const folderTargetRecordId = faker.string.uuid();
 
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: folderTargetRecordId,
-        targetObjectMetadataId: companyObjectMetadataId,
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
         userWorkspaceId: validUserWorkspaceId ?? undefined,
       },
     });

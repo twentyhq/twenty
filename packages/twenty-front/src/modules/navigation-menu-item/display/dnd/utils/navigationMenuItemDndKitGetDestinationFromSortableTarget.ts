@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import type { DropDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDropDestination';
@@ -37,7 +38,11 @@ export const getDestinationFromSortableTarget = (
   const { folderHeaderPrefix, orphanDroppableId } =
     NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
 
-  const isTopLevelOrphanGroup = destDroppableId === orphanDroppableId;
+  const isTopLevelOrphanGroup =
+    destDroppableId === orphanDroppableId ||
+    destDroppableId.startsWith(
+      NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX,
+    );
 
   const effectiveDropTargetId = isTargetFolder
     ? getDndKitDropTargetId(`${folderHeaderPrefix}${target.id}`, 0)

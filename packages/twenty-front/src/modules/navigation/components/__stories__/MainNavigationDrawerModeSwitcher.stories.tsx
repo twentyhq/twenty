@@ -10,6 +10,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
+import { type NavigationDrawerAttention } from '@/navigation/types/NavigationDrawerAttention';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
@@ -24,6 +25,8 @@ import {
 } from '~/testing/mock-data/users';
 
 type ModeSwitcherStoryProps = {
+  needsInputThreadCount: number;
+  hasUnreadMentionThread: boolean;
   unreadOpenThreadCount: number;
   isExpanded: boolean;
   isInboxEnabled: boolean;
@@ -46,6 +49,8 @@ const ModeSwitcherWithCollapseControl = () => {
 };
 
 const ModeSwitcherStory = ({
+  needsInputThreadCount,
+  hasUnreadMentionThread,
   unreadOpenThreadCount,
   isExpanded,
   isInboxEnabled,
@@ -75,11 +80,15 @@ const ModeSwitcherStory = ({
       data: {
         agentChatOpenThreadsSummary: {
           __typename: 'AgentChatOpenThreadsSummary' as const,
-          openThreadCount: unreadOpenThreadCount + 3,
+          openThreadCount: unreadOpenThreadCount + needsInputThreadCount + 3,
           unreadOpenThreadCount,
-          needsInputThreadCount: 0,
+          needsInputThreadCount,
+          mentionThreadCount: hasUnreadMentionThread ? 1 : 0,
+          assignedToMeThreadCount: 0,
+          assignedThreadCount: 0,
+          unassignedThreadCount: 3,
           hasUnreadOpenThread: unreadOpenThreadCount > 0,
-          hasUnreadMentionThread: false,
+          hasUnreadMentionThread,
           hasUnreadAssignedThread: false,
         },
       },
@@ -97,102 +106,110 @@ const ModeSwitcherStory = ({
   );
 };
 
+const expectInboxButton = async (
+  canvasElement: HTMLElement,
+  {
+    name,
+    attention,
+  }: { name: string; attention: NavigationDrawerAttention | null },
+) => {
+  const inboxButton = await within(canvasElement).findByRole('button', {
+    name,
+  });
+
+  await expect(
+    inboxButton
+      .querySelector('[data-attention]')
+      ?.getAttribute('data-attention') ?? null,
+  ).toBe(attention);
+
+  return inboxButton;
+};
+
 const meta: Meta<ModeSwitcherStoryProps> = {
   title: 'Modules/Navigation/MainNavigationDrawerModeSwitcher',
   component: MainNavigationDrawerModeSwitcher,
   decorators: [ComponentDecorator, ToastDecorator],
   parameters: { container: { width: 240, height: 180 } },
   args: {
-    unreadOpenThreadCount: 3,
+    needsInputThreadCount: 1,
+    hasUnreadMentionThread: false,
+    unreadOpenThreadCount: 0,
     isExpanded: true,
     isInboxEnabled: true,
     routePath: '/',
   },
   render: (args) => (
     <ModeSwitcherStory
-      key={`${args.unreadOpenThreadCount}-${args.isExpanded}-${args.isInboxEnabled}-${args.routePath}`}
+      key={JSON.stringify(args)}
+      needsInputThreadCount={args.needsInputThreadCount}
+      hasUnreadMentionThread={args.hasUnreadMentionThread}
       unreadOpenThreadCount={args.unreadOpenThreadCount}
       isExpanded={args.isExpanded}
       isInboxEnabled={args.isInboxEnabled}
       routePath={args.routePath}
     />
   ),
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    const label = args.isInboxEnabled ? 'Inbox' : 'AI';
-    const shouldShowUnreadCount =
-      args.isInboxEnabled &&
-      args.unreadOpenThreadCount > 0 &&
-      args.routePath !== '/inbox';
-    const inboxButton = await canvas.findByRole('button', {
-      name: shouldShowUnreadCount
-        ? `${label}, ${args.unreadOpenThreadCount} unread`
-        : label,
-    });
-
-    if (shouldShowUnreadCount) {
-      await expect(
-        within(inboxButton).getByText(String(args.unreadOpenThreadCount)),
-      ).toBeVisible();
-      return;
-    }
-
-    await expect(
-      within(inboxButton).queryByText(String(args.unreadOpenThreadCount)),
-    ).not.toBeInTheDocument();
-  },
 };
 
 export default meta;
 type Story = StoryObj<ModeSwitcherStoryProps>;
 
-export const UnreadCount: Story = {
+export const NeedsInput: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const inboxButton = await canvas.findByRole('button', {
-      name: 'Inbox, 3 unread',
-    });
 
-    await expect(within(inboxButton).getByText('3')).toBeVisible();
+    await expectInboxButton(canvasElement, {
+      name: 'Inbox, needs your attention',
+      attention: 'needs-input',
+    });
     await userEvent.click(
       canvas.getByRole('button', { name: 'Collapse sidebar' }),
     );
-    await expect(within(inboxButton).getByText('3')).toBeVisible();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Expand sidebar' }),
-    );
-    await expect(within(inboxButton).getByText('3')).toBeVisible();
+    await expectInboxButton(canvasElement, {
+      name: 'Inbox, needs your attention',
+      attention: 'needs-input',
+    });
   },
 };
 
-export const DoubleDigitCount: Story = {
-  args: { unreadOpenThreadCount: 24 },
+export const UnreadMention: Story = {
+  args: { needsInputThreadCount: 0, hasUnreadMentionThread: true },
+  play: async ({ canvasElement }) => {
+    await expectInboxButton(canvasElement, {
+      name: 'Inbox, needs your attention',
+      attention: 'unread',
+    });
+  },
 };
 
-export const LargeCount: Story = {
-  args: { unreadOpenThreadCount: 128 },
+export const UnreadChatsThatDoNotNeedYou: Story = {
+  args: { needsInputThreadCount: 0, unreadOpenThreadCount: 3 },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const inboxButton = await canvas.findByRole('button', {
-      name: 'Inbox, 128 unread',
-    });
-
-    await expect(within(inboxButton).getByText('99+')).toBeVisible();
+    await expectInboxButton(canvasElement, { name: 'Inbox', attention: null });
   },
 };
 
 export const Collapsed: Story = {
   args: { isExpanded: false },
-};
-
-export const AllRead: Story = {
-  args: { unreadOpenThreadCount: 0 },
+  play: async ({ canvasElement }) => {
+    await expectInboxButton(canvasElement, {
+      name: 'Inbox, needs your attention',
+      attention: 'needs-input',
+    });
+  },
 };
 
 export const InboxActive: Story = {
   args: { routePath: '/inbox' },
+  play: async ({ canvasElement }) => {
+    await expectInboxButton(canvasElement, { name: 'Inbox', attention: null });
+  },
 };
 
 export const InboxDisabled: Story = {
   args: { isInboxEnabled: false },
+  play: async ({ canvasElement }) => {
+    await expectInboxButton(canvasElement, { name: 'AI', attention: null });
+  },
 };

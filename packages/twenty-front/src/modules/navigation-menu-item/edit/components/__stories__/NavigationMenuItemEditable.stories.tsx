@@ -145,8 +145,8 @@ export const OrganizeFromBothMenus: Story = {
       ),
     ).toEqual(['Status', 'Docs']);
     await userEvent.pointer({ target: docs, keys: '[MouseRight]' });
-    await expect(await body.findByText('Add menu item before')).toBeVisible();
-    await expect(await body.findByText('Add menu item after')).toBeVisible();
+    await expect(await body.findByText('Add item before')).toBeVisible();
+    await expect(await body.findByText('Add item after')).toBeVisible();
     await expect(await body.findByText('Move to folder')).toBeVisible();
     await userEvent.click(await body.findByText('Remove from sidebar'));
     await expect(canvas.queryByText('Docs')).not.toBeInTheDocument();
@@ -162,7 +162,7 @@ export const PreviewInsertion: Story = {
       target: await canvas.findByText('Docs'),
       keys: '[MouseRight]',
     });
-    await userEvent.click(await body.findByText('Add menu item after'));
+    await userEvent.click(await body.findByText('Add item after'));
     await expect(
       await canvas.findByRole('button', { name: 'Select a menu item' }),
     ).toBeDisabled();
@@ -181,7 +181,7 @@ export const PreviewInsertion: Story = {
       target: await canvas.findByText('Docs'),
       keys: '[MouseRight]',
     });
-    await userEvent.click(await body.findByText('Add menu item before'));
+    await userEvent.click(await body.findByText('Add item before'));
     await expect(
       (await canvas.findAllByText(/^(Docs|Status|Select a menu item)$/)).map(
         (element) => element.textContent,
@@ -275,7 +275,7 @@ export const ReturnsToActionsFromAddPages: Story = {
     const docs = await canvas.findByText('Docs');
 
     await userEvent.pointer({ target: docs, keys: '[MouseRight]' });
-    await userEvent.click(await body.findByText('Add menu item after'));
+    await userEvent.click(await body.findByText('Add item after'));
     await userEvent.click(await body.findByRole('button', { name: 'Object' }));
     await userEvent.type(
       await body.findByPlaceholderText('Search...'),
@@ -437,8 +437,8 @@ export const AddPickerFocusesSearch: Story = {
       target: await canvas.findByText('Docs'),
       keys: '[MouseRight]',
     });
-    await userEvent.click(await body.findByText('Add menu item after'));
-    const picker = await body.findByRole('dialog', { name: 'Add menu item' });
+    await userEvent.click(await body.findByText('Add item after'));
+    const picker = await body.findByRole('dialog', { name: 'Add item' });
     const search = within(picker).getByPlaceholderText('Search...');
 
     await waitFor(() => expect(search).toHaveFocus());

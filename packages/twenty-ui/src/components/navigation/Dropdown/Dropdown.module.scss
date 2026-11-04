@@ -116,6 +116,10 @@
 
 .search[data-dropdown-search] {
   font-size: var(--t-font-size-sm);
+
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
 }
 
 .status {

@@ -22,6 +22,9 @@ import {
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { getNavigationMenuItemSectionId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemSectionId';
+import { getNavigationMenuItemsInSection } from '@/navigation-menu-item/common/utils/getNavigationMenuItemsInSection';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -65,6 +68,18 @@ export const useNavigationMenuItemAddOptions = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const parentItem = currentItems.find((item) => item.id === folderId);
+  const isInsideFolder =
+    isDefined(parentItem) && isNavigationMenuItemFolder(parentItem);
+  const sectionItems = getNavigationMenuItemsInSection({
+    items: currentItems,
+    sectionId: getNavigationMenuItemSectionId({
+      items: currentItems,
+      containerId: folderId ?? null,
+    }),
+  });
+  const getAlreadyInSectionText = (isAlreadyInSection: boolean) =>
+    isAlreadyInSection ? t`Already in this section` : undefined;
 
   const {
     data: standalonePagesData,
@@ -83,14 +98,14 @@ export const useNavigationMenuItemAddOptions = ({
     objectMetadataIdsWithIndexView,
     objectMetadataIdsAlreadyAdded,
     viewIdsAlreadyAdded,
-  } = useNavigationMenuObjectMetadataForSection(currentItems);
+  } = useNavigationMenuObjectMetadataForSection(sectionItems);
   const {
     navigationMenuItemSearchRecords,
     recordSearchLoading,
     isSearchDebouncing,
   } = useNavigationMenuItemSearchRecords({
     searchInput: search,
-    currentItems,
+    sectionItems,
     skip: step !== 'record' && !isSearchingAllItems,
   });
   const {
@@ -140,11 +155,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: isDefined(folderId)
+          contextualText: isInsideFolder
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: isDefined(folderId) ? IconFolder : undefined,
-          icon: isDefined(folderId) ? undefined : (
+          Icon: isInsideFolder ? IconFolder : undefined,
+          icon: isInsideFolder ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -157,7 +172,7 @@ export const useNavigationMenuItemAddOptions = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: isDefined(folderId),
+          isDisabled: isInsideFolder,
         },
         {
           id: 'link',
@@ -221,9 +236,10 @@ export const useNavigationMenuItemAddOptions = ({
           object.nameSingular,
         ],
         icon: <ObjectMetadataIcon objectMetadataItem={object} />,
-        isAlreadyInSidebar:
+        contextualText: getAlreadyInSectionText(
           targetStep === 'object' &&
-          objectMetadataIdsAlreadyAdded.has(object.id),
+            objectMetadataIdsAlreadyAdded.has(object.id),
+        ),
         isDisabled:
           targetStep === 'object' &&
           objectMetadataIdsAlreadyAdded.has(object.id),
@@ -265,7 +281,9 @@ export const useNavigationMenuItemAddOptions = ({
             label: view.name,
             icon: <TintedIconTile icon={<Icon size={theme.icon.size.md} />} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
-            isAlreadyInSidebar: viewIdsAlreadyAdded.has(view.id),
+            contextualText: getAlreadyInSectionText(
+              viewIdsAlreadyAdded.has(view.id),
+            ),
             onClick: () =>
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
@@ -273,7 +291,7 @@ export const useNavigationMenuItemAddOptions = ({
     }
     if (targetStep === 'page') {
       const pageLayoutIdsAlreadyAdded = new Set(
-        currentItems.map((item) => item.pageLayoutId),
+        sectionItems.map((item) => item.pageLayoutId),
       );
       // Reversed relative to the lookup order: the last Map write wins, so
       // currentItems must come second to keep taking precedence.
@@ -302,7 +320,9 @@ export const useNavigationMenuItemAddOptions = ({
               />
             ),
             isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
-            isAlreadyInSidebar: pageLayoutIdsAlreadyAdded.has(page.id),
+            contextualText: getAlreadyInSectionText(
+              pageLayoutIdsAlreadyAdded.has(page.id),
+            ),
             onClick: () =>
               addItem({
                 type: NavigationMenuItemType.PAGE_LAYOUT,
@@ -317,8 +337,7 @@ export const useNavigationMenuItemAddOptions = ({
         })
         .sort(
           (firstPage, secondPage) =>
-            Number(firstPage.isAlreadyInSidebar) -
-              Number(secondPage.isAlreadyInSidebar) ||
+            Number(firstPage.isDisabled) - Number(secondPage.isDisabled) ||
             firstPage.label.localeCompare(secondPage.label),
         );
     }
@@ -332,8 +351,8 @@ export const useNavigationMenuItemAddOptions = ({
         }
         return [
           {
-            isDisabled: record.isAlreadyInSidebar,
-            isAlreadyInSidebar: record.isAlreadyInSidebar,
+            isDisabled: record.isAlreadyInSection,
+            contextualText: getAlreadyInSectionText(record.isAlreadyInSection),
             id: record.recordId,
             label: record.label,
             icon: (

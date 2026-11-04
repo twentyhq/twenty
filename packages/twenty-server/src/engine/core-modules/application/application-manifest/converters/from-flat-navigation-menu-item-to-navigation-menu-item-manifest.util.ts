@@ -20,6 +20,12 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
   ...(isDefined(flatNavigationMenuItem.color)
     ? { color: flatNavigationMenuItem.color }
     : {}),
+  ...(isDefined(flatNavigationMenuItem.visibleItemLimit)
+    ? { visibleItemLimit: flatNavigationMenuItem.visibleItemLimit }
+    : {}),
+  ...(isDefined(flatNavigationMenuItem.commandKey)
+    ? { commandKey: flatNavigationMenuItem.commandKey }
+    : {}),
   ...(isDefined(flatNavigationMenuItem.link)
     ? { link: flatNavigationMenuItem.link }
     : {}),

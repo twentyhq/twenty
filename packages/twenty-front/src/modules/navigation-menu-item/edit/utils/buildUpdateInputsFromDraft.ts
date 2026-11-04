@@ -5,8 +5,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
+import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -34,19 +36,24 @@ export const buildUpdateInputsFromDraft = ({
     const positionChanged = original.position !== draftItem.position;
     const folderIdChanged =
       (original.folderId ?? null) !== (draftItem.folderId ?? null);
+    const isNamedContainer =
+      isNavigationMenuItemFolder(draftItem) ||
+      isNavigationMenuItemContainer(draftItem);
     const nameChanged =
-      (isNavigationMenuItemFolder(draftItem) ||
-        isNavigationMenuItemLink(draftItem)) &&
+      (isNamedContainer || isNavigationMenuItemLink(draftItem)) &&
       (original.name ?? null) !== (draftItem.name ?? null);
     const linkChanged =
       isNavigationMenuItemLink(draftItem) &&
       (original.link ?? null) !== (draftItem.link ?? null);
     const iconChanged =
-      isNavigationMenuItemFolder(draftItem) &&
-      (original.icon ?? null) !== (draftItem.icon ?? null);
+      isNamedContainer && (original.icon ?? null) !== (draftItem.icon ?? null);
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
+    const visibleItemLimitChanged =
+      isNavigationMenuItemAnySection(draftItem) &&
+      (original.visibleItemLimit ?? null) !==
+        (draftItem.visibleItemLimit ?? null);
 
     if (
       !positionChanged &&
@@ -54,7 +61,8 @@ export const buildUpdateInputsFromDraft = ({
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
-      !colorChanged
+      !colorChanged &&
+      !visibleItemLimitChanged
     ) {
       continue;
     }
@@ -69,10 +77,7 @@ export const buildUpdateInputsFromDraft = ({
         ? resolveFolderId(draftItem.folderId)
         : null;
     }
-    if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
-      updatePayload.name = draftItem.name;
-    }
-    if (nameChanged && isNavigationMenuItemLink(draftItem)) {
+    if (nameChanged) {
       updatePayload.name = draftItem.name;
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
@@ -81,11 +86,14 @@ export const buildUpdateInputsFromDraft = ({
         ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
         : null;
     }
-    if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
+    if (iconChanged) {
       updatePayload.icon = draftItem.icon ?? null;
     }
     if (colorChanged) {
       updatePayload.color = draftItem.color ?? null;
+    }
+    if (visibleItemLimitChanged) {
+      updatePayload.visibleItemLimit = draftItem.visibleItemLimit ?? null;
     }
 
     updateInputs.push({

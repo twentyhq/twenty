@@ -15,6 +15,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
   workspaceId,
   navigationMenuItemName,
   viewUniversalIdentifier,
+  folderId,
+  folderUniversalIdentifier,
   position,
   navigationMenuItemId,
   dependencyFlatEntityMaps: { flatViewMaps },
@@ -24,6 +26,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
   workspaceId: string;
   navigationMenuItemName: keyof typeof STANDARD_NAVIGATION_MENU_ITEMS;
   viewUniversalIdentifier: string;
+  folderId: string;
+  folderUniversalIdentifier: string;
   position: number;
   navigationMenuItemId: string;
   dependencyFlatEntityMaps: {
@@ -71,8 +75,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
       : null,
     viewId: isObjectType ? null : flatView.id,
     viewUniversalIdentifier: isObjectType ? null : flatView.universalIdentifier,
-    folderId: null,
-    folderUniversalIdentifier: null,
+    folderId,
+    folderUniversalIdentifier,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     agentChatChannelId: null,
@@ -80,6 +84,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     name: null,
     link: null,
     icon: null,
+    visibleItemLimit: null,
+    commandKey: null,
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,

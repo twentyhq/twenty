@@ -2,6 +2,7 @@ import { isSortable } from '@dnd-kit/react/sortable';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NAVIGATION_MENU_SECTION_DND_TYPE } from '@/navigation-menu-item/common/constants/NavigationMenuSectionDndType';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import type { DraggableData } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDraggableData';
 import type { DropDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDropDestination';
@@ -9,11 +10,13 @@ import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitSortableTargetDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
+import { extractContainerIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractContainerIdFromDroppableId';
+import { isNavigationMenuItemAlreadyInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAlreadyInSection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitResolveDropTarget';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragOverEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragOverEvent';
@@ -22,6 +25,9 @@ import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-dro
 type DragStartPayload = DragDropProviderDragStartEvent<DraggableData>;
 type DragOverPayload = DragDropProviderDragOverEvent<DraggableData>;
 type DragEndPayload = DragDropProviderDragEndEvent<DraggableData>;
+
+const isSectionDragSource = (source: DragEndPayload['operation']['source']) =>
+  source?.type === NAVIGATION_MENU_SECTION_DND_TYPE;
 
 export type NavigationMenuItemDndKitContextValues = {
   dragSource: { sourceDroppableId: string | null };
@@ -63,6 +69,7 @@ export const useNavigationMenuItemDndKit = (
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleNavigationMenuItemDragAndDrop } =
     useHandleNavigationMenuItemDragAndDrop(sectionType);
+  const { moveNextTo } = useNavigationMenuItemMoveRemove('workspace');
 
   const items = isWorkspaceSection
     ? workspaceNavigationMenuItems
@@ -89,6 +96,26 @@ export const useNavigationMenuItemDndKit = (
       source: { id?: unknown; data?: unknown } | null,
       resolved: SortableTargetDestination,
     ): string | null => {
+      const sourceItemId = isDefined(source?.id)
+        ? String(source.id)
+        : undefined;
+
+      if (
+        isDefined(sourceItemId) &&
+        isNavigationMenuItemAlreadyInSection({
+          items,
+          itemId: sourceItemId,
+          containerId: extractContainerIdFromDroppableId(
+            resolved.destination.droppableId,
+            sectionType,
+          ),
+        })
+      ) {
+        return resolved.isTargetFolder
+          ? resolved.effectiveDropTargetId
+          : resolved.dropTargetId;
+      }
+
       if (!isSourceFolderDrag(source)) {
         return null;
       }
@@ -97,17 +124,22 @@ export const useNavigationMenuItemDndKit = (
         return resolved.effectiveDropTargetId;
       }
 
-      const destFolderId = extractFolderIdFromDroppableId(
-        resolved.destination.droppableId,
-        sectionType,
+      const destinationParent = getNavItemById(
+        extractContainerIdFromDroppableId(
+          resolved.destination.droppableId,
+          sectionType,
+        ) ?? undefined,
       );
-      if (isDefined(destFolderId)) {
+      if (
+        isDefined(destinationParent) &&
+        isNavigationMenuItemFolder(destinationParent)
+      ) {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag],
+    [items, sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(
@@ -130,6 +162,9 @@ export const useNavigationMenuItemDndKit = (
 
   const handleDragStart = (event: DragStartPayload) => {
     const { operation } = event;
+    if (isSectionDragSource(operation.source)) {
+      return;
+    }
     setIsDragging(true);
     const source = operation.source;
     const sourceId = source?.data?.sourceDroppableId ?? null;
@@ -141,6 +176,9 @@ export const useNavigationMenuItemDndKit = (
       const { operation } = event;
       const source = operation.source;
       const target = operation.target;
+      if (isSectionDragSource(source)) {
+        return;
+      }
       const sourceIsSortable = source !== null && isSortable(source);
       const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
@@ -164,6 +202,18 @@ export const useNavigationMenuItemDndKit = (
     [getNavItemById, sectionType, computeForbiddenTargetId],
   );
 
+  const handleSectionDragEnd = ({ canceled, operation }: DragEndPayload) => {
+    if (
+      canceled ||
+      !isDefined(operation.source) ||
+      !isDefined(operation.target)
+    ) {
+      return;
+    }
+
+    void moveNextTo(String(operation.source.id), String(operation.target.id));
+  };
+
   const handleDragEnd = (event: DragEndPayload) => {
     const { operation } = event;
     const source = operation.source;
@@ -176,6 +226,11 @@ export const useNavigationMenuItemDndKit = (
     setSourceDroppableId(null);
     setActiveDropTargetId(null);
     setForbiddenDropTargetId(null);
+
+    if (isSectionDragSource(source)) {
+      handleSectionDragEnd(event);
+      return;
+    }
 
     const sourceIsSortable = source !== null && isSortable(source);
     const targetIsSortable = target !== null && isSortable(target);

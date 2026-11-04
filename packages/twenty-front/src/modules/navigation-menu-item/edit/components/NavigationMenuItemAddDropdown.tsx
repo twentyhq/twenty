@@ -4,6 +4,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent';
+import { getNavigationMenuItemAddDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemAddDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -31,7 +32,9 @@ export const NavigationMenuItemAddDropdown = ({
   const navigationMenuItemInsertionAnchor = useAtomStateValue(
     navigationMenuItemInsertionAnchorState,
   );
-  const dropdownId = `navigation-add-item-${instanceId ?? folderId ?? 'workspace'}`;
+  const dropdownId = getNavigationMenuItemAddDropdownId(
+    instanceId ?? folderId ?? 'workspace',
+  );
   const { closeDropdown } = useCloseDropdown();
 
   return (

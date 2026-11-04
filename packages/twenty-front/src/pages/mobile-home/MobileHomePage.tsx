@@ -1,5 +1,6 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
+import { useNavigationMenuAiChatSections } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatSections';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -33,6 +34,7 @@ export const MobileHomePage = () => {
   const isMobile = useIsMobile();
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const hasAiChatSections = useNavigationMenuAiChatSections().length > 0;
 
   // Desktop keeps the drawer, so the page has nothing to show there.
   if (!isMobile) {
@@ -49,7 +51,7 @@ export const MobileHomePage = () => {
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
           <GettingStartedSidebarCard />
-          {hasAiPermission && <MobileHomeAiChatSection />}
+          {hasAiPermission && !hasAiChatSections && <MobileHomeAiChatSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>
     </StyledContainer>

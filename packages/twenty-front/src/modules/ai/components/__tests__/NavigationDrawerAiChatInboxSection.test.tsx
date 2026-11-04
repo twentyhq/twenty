@@ -1,14 +1,14 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -59,7 +59,7 @@ const READ_SUMMARY: OpenThreadsSummary = {
   hasUnreadAssignedThread: false,
 };
 
-const renderTriage = ({
+const renderInboxSection = ({
   path = '/inbox',
   summary = READ_SUMMARY,
 }: {
@@ -79,14 +79,27 @@ const renderTriage = ({
           ]}
         >
           <MemoryRouter initialEntries={[path]}>
-            <NavigationDrawerAiChatTriageSection />
+            <NavigationDrawerAiChatInboxSection />
           </MemoryRouter>
         </MockedProvider>
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatTriageSection', () => {
+const expectInboxRowToHaveText = ({
+  name,
+  text,
+}: {
+  name: RegExp;
+  text: RegExp;
+}) =>
+  waitFor(() =>
+    expect(
+      screen.getByRole('button', { name }).closest('.navigation-drawer-item'),
+    ).toHaveTextContent(text),
+  );
+
+describe('NavigationDrawerAiChatInboxSection', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
@@ -105,25 +118,26 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('counts every open chat and flags Open when one is unread', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, hasUnreadOpenThread: true } });
+    renderInboxSection({
+      summary: { ...READ_SUMMARY, hasUnreadOpenThread: true },
+    });
 
-    expect(
-      await screen.findByRole('button', { name: /^Open\s*, unread · 2$/ }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({
+      name: /^Open\s*, unread$/,
+      text: /^Open\s*, unread\s*2$/,
+    });
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
 
   it('shows Open as read when every open chat is read', async () => {
-    renderTriage();
+    renderInboxSection();
 
-    expect(
-      await screen.findByRole('button', { name: 'Open · 2' }),
-    ).toBeVisible();
+    await expectInboxRowToHaveText({ name: /^Open$/, text: /^Open\s*2$/ });
   });
 
   it('keeps Open, Snoozed and Done in navigation', () => {
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.getByRole('button', { name: 'Open' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
@@ -149,7 +163,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   ])('keeps Open current for the %s filter', (filterStatus) => {
     jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);
 
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute(
       'aria-current',
@@ -169,7 +183,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
-    renderTriage();
+    renderInboxSection();
 
     expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
       'aria-current',
@@ -181,7 +195,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('marks no status current outside the inbox', () => {
-    renderTriage({ path: '/objects/companies' });
+    renderInboxSection({ path: '/objects/companies' });
 
     expect(
       screen.queryByRole('button', { current: true }),
@@ -196,7 +210,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       filter: AgentChatChannelThreadFilter.ANY,
     });
 
-    renderTriage();
+    renderInboxSection();
 
     expect(
       screen.queryByRole('button', { current: true }),
@@ -204,7 +218,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('opens the inbox on the chosen status', async () => {
-    renderTriage();
+    renderInboxSection();
 
     await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
 

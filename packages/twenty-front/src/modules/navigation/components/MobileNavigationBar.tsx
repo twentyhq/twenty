@@ -1,3 +1,4 @@
+import { MobileNavigationBarItem } from '@/navigation/components/MobileNavigationBarItem';
 import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
 import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavigationBarPadding';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
@@ -5,10 +6,9 @@ import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileN
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
-import { IconButton } from 'twenty-ui/components/input';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
@@ -64,19 +64,10 @@ const StyledNavigationBar = styled.nav`
   }
 `;
 
-const navigationButtonClassName = css`
-  block-size: ${themeCssVariables.spacing[10]};
-  color: ${themeCssVariables.grayScale.gray10};
-  inline-size: ${themeCssVariables.spacing[10]};
-
-  &[aria-current='page'] {
-    background: ${themeCssVariables.background.transparent.medium};
-  }
-`;
-
-const navigationIconClassName = css`
-  block-size: calc(${themeCssVariables.icon.size.lg} * 1px);
-  inline-size: calc(${themeCssVariables.icon.size.lg} * 1px);
+const StyledSeparatorContainer = styled.div`
+  align-self: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[5]};
 `;
 
 export const MobileNavigationBar = () => {
@@ -86,6 +77,8 @@ export const MobileNavigationBar = () => {
     isMobileNavigationBarVisibleState,
   );
   const { items, activeItemName } = useMobileNavigationBarItems();
+  const tabItems = items.filter(({ kind }) => kind === 'tab');
+  const actionItems = items.filter(({ kind }) => kind === 'action');
 
   // The chat page keeps the keyboard up and carries its own close button.
   const isHidden =
@@ -102,19 +95,26 @@ export const MobileNavigationBar = () => {
           aria-hidden={isHidden}
           inert={isHidden || undefined}
         >
-          {items.map(({ Icon, name, label, onClick }) => (
-            <IconButton
-              key={name}
-              className={navigationButtonClassName}
-              variant="ghost"
-              shape="round"
-              aria-label={label}
-              aria-current={activeItemName === name ? 'page' : undefined}
-              onClick={onClick}
-              tabIndex={isHidden ? -1 : 0}
-            >
-              <Icon className={navigationIconClassName} aria-hidden />
-            </IconButton>
+          {tabItems.map((item) => (
+            <MobileNavigationBarItem
+              key={item.name}
+              item={item}
+              isActive={activeItemName === item.name}
+              isHidden={isHidden}
+            />
+          ))}
+          {tabItems.length > 1 && (
+            <StyledSeparatorContainer>
+              <Separator orientation="vertical" />
+            </StyledSeparatorContainer>
+          )}
+          {actionItems.map((item) => (
+            <MobileNavigationBarItem
+              key={item.name}
+              item={item}
+              isActive={activeItemName === item.name}
+              isHidden={isHidden}
+            />
           ))}
         </StyledNavigationBar>
       </StyledFloatingContainer>

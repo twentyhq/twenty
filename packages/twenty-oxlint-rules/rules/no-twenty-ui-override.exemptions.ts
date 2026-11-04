@@ -51,7 +51,7 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/navigation/components/MobileNavigationBar.tsx',
+      'packages/twenty-front/src/modules/navigation/components/MobileNavigationBarItem.tsx',
     reason:
       'IconButton sized as a 40px touch target with the current page fill',
   },

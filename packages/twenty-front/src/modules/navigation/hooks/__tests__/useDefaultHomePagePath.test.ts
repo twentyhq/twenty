@@ -270,6 +270,28 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/people');
     });
   });
+  it('should redirect to the first object of the first Home section', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        {
+          __typename: 'NavigationMenuItem',
+          id: 'workspace-section',
+          type: NavigationMenuItemType.SECTION,
+          name: 'Workspace',
+          position: 0,
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+        buildObjectNavigationMenuItem('person', 0, 'workspace-section'),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
   it('should redirect to a PAGE_LAYOUT navigation menu item as homepage', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,

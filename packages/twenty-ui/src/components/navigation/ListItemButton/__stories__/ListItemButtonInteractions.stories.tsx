@@ -25,6 +25,7 @@ export default meta;
 type Story = StoryObj<typeof ListItemButton>;
 
 export const NativeActivation: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   render: (args) => (
     <div role="presentation" onClick={bubbledClicks}>
       <ListItemButton

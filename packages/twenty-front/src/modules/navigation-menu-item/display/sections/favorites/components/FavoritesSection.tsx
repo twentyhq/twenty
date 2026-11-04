@@ -21,10 +21,10 @@ import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/h
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
+import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledList = styled.div`
   display: flex;
@@ -41,7 +41,11 @@ const StyledListItemRow = styled.div`
 const ORPHAN_DROPPABLE_ID =
   NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
-export const FavoritesSection = () => {
+type FavoritesSectionProps = {
+  title?: string;
+};
+
+export const FavoritesSection = ({ title }: FavoritesSectionProps) => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
@@ -51,10 +55,10 @@ export const FavoritesSection = () => {
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
-    useNavigationSection(doNotTranslate('Favorites'));
+    useNavigationSection(FAVORITES_NAVIGATION_SECTION_ID);
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
-    doNotTranslate('Favorites'),
+    FAVORITES_NAVIGATION_SECTION_ID,
   );
 
   const allTopLevelItems = useMemo(
@@ -105,7 +109,7 @@ export const FavoritesSection = () => {
 
   return (
     <NavigationMenuItemSection
-      title={t`Favorites`}
+      title={title ?? t`Favorites`}
       isOpen={isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={

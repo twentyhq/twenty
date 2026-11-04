@@ -7,6 +7,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: true,
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
+  [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: true,
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: true,
   [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: true,
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: false,

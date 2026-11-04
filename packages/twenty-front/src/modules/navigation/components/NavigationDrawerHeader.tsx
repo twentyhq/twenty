@@ -4,9 +4,12 @@ import { styled } from '@linaria/react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconSearch } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
+import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
@@ -30,7 +33,7 @@ const StyledHeaderRow = styled.div`
   }
 `;
 
-const StyledCollapsedSearch = styled.div`
+const StyledCollapsedActions = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -56,8 +59,11 @@ const StyledWorkspaceDropdownContainer = styled.div`
 export const NavigationDrawerHeader = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   const searchButton = !isMobile && (
     <LightIconButton
@@ -79,7 +85,11 @@ export const NavigationDrawerHeader = () => {
         {isExpanded && (
           <StyledRightActions>
             <MediaAccessIndicator />
-            {searchButton}
+            {isCustomizableSidebarEnabled ? (
+              <MainNavigationDrawerEditButton />
+            ) : (
+              searchButton
+            )}
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -88,10 +98,10 @@ export const NavigationDrawerHeader = () => {
         )}
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
-        <StyledCollapsedSearch>
+        <StyledCollapsedActions>
           <MediaAccessIndicator />
-          {searchButton}
-        </StyledCollapsedSearch>
+          {!isCustomizableSidebarEnabled && searchButton}
+        </StyledCollapsedActions>
       )}
     </StyledContainer>
   );

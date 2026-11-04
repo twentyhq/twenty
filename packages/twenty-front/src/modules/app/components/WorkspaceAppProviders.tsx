@@ -39,7 +39,7 @@ import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/app/components/PageFavicon';
+import { WorkspaceAppPageFavicon } from '@/app/components/WorkspaceAppPageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
@@ -75,7 +75,7 @@ export const WorkspaceAppProviders = () => {
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
-                            <PageFavicon />
+                            <WorkspaceAppPageFavicon />
                             <CoreRecordReferenceFieldsContext.Provider
                               value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
                             >
