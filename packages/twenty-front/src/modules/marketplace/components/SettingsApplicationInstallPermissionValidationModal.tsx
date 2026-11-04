@@ -13,7 +13,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
@@ -22,6 +21,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type MarketplaceAppObject = {
   universalIdentifier: string;
@@ -146,6 +146,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
+  const { t } = useLingui();
   const { closeDialog } = useDialog();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -187,7 +188,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ),
       ...buildApplicationBillingSummary(billsCredits),
     ];
+    // The summary builders translate through the global i18n
   }, [
+    t,
     requestedCapabilities,
     requestedIframeMediaPermissions,
     defaultRole,

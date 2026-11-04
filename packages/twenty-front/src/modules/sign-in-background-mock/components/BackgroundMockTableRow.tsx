@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
@@ -11,6 +9,7 @@ import { IconLink } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRow = styled.div`
   display: flex;
@@ -96,6 +95,7 @@ const PersonChip = ({ fullName }: { fullName: string | null }) => {
 export const BackgroundMockTableRow = ({
   company,
 }: BackgroundMockTableRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const logoUrl = getLogoUrlFromDomainName(company.domainName);

@@ -11,7 +11,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type NavigationDrawerItemModifier } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemModifier';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemIndentationLevel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   IconAppWindow,
@@ -39,6 +38,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+import { useLingui } from '@lingui/react/macro';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -58,6 +58,7 @@ export type SettingsNavigationItem = {
 };
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
+  const { t } = useLingui();
   const billing = useAtomStateValue(billingState);
   const { signOut } = useAuth();
   const supportChat = useAtomStateValue(supportChatState);

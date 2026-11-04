@@ -12,13 +12,13 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconEyeOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
   objectMetadataId: string;
@@ -34,6 +34,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
   recordIndexId,
   onFieldUpdated,
 }: RecordTableFieldsDropdownVisibleFieldsContentProps) => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });

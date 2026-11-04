@@ -1127,7 +1127,7 @@ msgstr "Một ứng dụng chỉ có thể khởi động các quy trình làm v
 #. js-lingui-id: T/ZKXs
 #: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
 msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
-msgstr ""
+msgstr "Một ứng dụng có thể yêu cầu quyền truy cập phương tiện iframe cho tối đa {MAX_ALLOWED_IFRAME_ORIGINS} nguồn gốc"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -8895,14 +8895,14 @@ msgstr "Tin nhắn"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Messages"
-msgstr ""
+msgstr "Tin nhắn"
 
 #. js-lingui-id: JJTyHZ
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Messages"
-msgstr ""
+msgstr "Tin nhắn"
 
 #. js-lingui-id: PLP882
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9838,6 +9838,11 @@ msgstr "Một hoặc nhiều phạm vi được yêu cầu không hợp lệ."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Chỉ có thể gửi chiến dịch ở trạng thái bản nháp hoặc đã lên lịch."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Chỉ nhóm mệnh đề phân quyền cấp hàng gốc mới có thể cấp các thao tác"
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9893,6 +9898,11 @@ msgstr "Chỉ ứng dụng sở hữu tác nhân này mới có thể thay đổ
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Chỉ người đã tạo quy trình làm việc này mới có thể thay đổi người được xem quy trình đó"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Chỉ nhóm cấp cao nhất của quy tắc cấp bản ghi mới có thể cấp các thao tác"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
@@ -10868,11 +10878,6 @@ msgstr "ID chủ thể"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Loại chủ thể"
-
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Bản ghi riêng tư chưa khả dụng trong không gian làm việc này."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13554,7 +13559,7 @@ msgstr "Các phụ thuộc ở môi trường production của ứng dụng quá
 #. js-lingui-id: 2a7bjg
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
-msgstr ""
+msgstr "Các quyền mà ứng dụng yêu cầu đã thay đổi. Hãy xem lại trước khi phê duyệt."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts

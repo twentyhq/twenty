@@ -2141,9 +2141,20 @@ export interface McpServer {
     isActive: Scalars['Boolean']
     label: Scalars['String']
     name: Scalars['String']
+    tools: McpServerTool[]
+    toolsSyncError?: Scalars['String']
+    toolsSyncedAt?: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     url: Scalars['String']
     __typename: 'McpServer'
+}
+
+export interface McpServerTool {
+    annotations?: Scalars['JSON']
+    description?: Scalars['String']
+    inputSchema: Scalars['JSON']
+    name: Scalars['String']
+    __typename: 'McpServerTool'
 }
 
 export interface MessageCampaignBodyConfiguration {
@@ -2524,6 +2535,7 @@ export interface Mutation {
     syncAppMessageFolders: MessageFolder[]
     syncApplication: WorkspaceMigration
     syncMarketplaceCatalog: Scalars['Boolean']
+    syncMcpServerTools: McpServer
     trackAnalytics: Analytics
     transferApplicationRegistrationOwnership: ApplicationRegistration
     triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult
@@ -3371,6 +3383,10 @@ export interface RowLevelPermissionPredicate {
 }
 
 export interface RowLevelPermissionPredicateGroup {
+    canDestroyRecords: Scalars['Boolean']
+    canReadRecords: Scalars['Boolean']
+    canSoftDeleteRecords: Scalars['Boolean']
+    canUpdateRecords: Scalars['Boolean']
     id: Scalars['String']
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator
     objectMetadataId: Scalars['String']
@@ -6772,8 +6788,20 @@ export interface McpServerGenqlSelection{
     isActive?: boolean | number
     label?: boolean | number
     name?: boolean | number
+    tools?: McpServerToolGenqlSelection
+    toolsSyncError?: boolean | number
+    toolsSyncedAt?: boolean | number
     updatedAt?: boolean | number
     url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface McpServerToolGenqlSelection{
+    annotations?: boolean | number
+    description?: boolean | number
+    inputSchema?: boolean | number
+    name?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7140,6 +7168,7 @@ export interface MutationGenqlSelection{
     syncAppMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: SyncAppMessageFoldersInput} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null), manifest: Scalars['JSON']} })
     syncMarketplaceCatalog?: boolean | number
+    syncMcpServerTools?: (McpServerGenqlSelection & { __args: {id: Scalars['UUID']} })
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {event?: (Scalars['String'] | null), name?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null), type: AnalyticsType} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     triggerAddPeopleToMessageListJob?: (TriggerAddPeopleToMessageListJobResultGenqlSelection & { __args: {input: TriggerAddPeopleToMessageListJobInput} })
@@ -8057,6 +8086,10 @@ export interface RowLevelPermissionPredicateGenqlSelection{
 }
 
 export interface RowLevelPermissionPredicateGroupGenqlSelection{
+    canDestroyRecords?: boolean | number
+    canReadRecords?: boolean | number
+    canSoftDeleteRecords?: boolean | number
+    canUpdateRecords?: boolean | number
     id?: boolean | number
     logicalOperator?: boolean | number
     objectMetadataId?: boolean | number
@@ -8067,7 +8100,7 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
+export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
@@ -10939,6 +10972,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMcpServer = (obj?: { __typename?: any } | null): obj is McpServer => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServer"')
       return McpServer_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const McpServerTool_possibleTypes: string[] = ['McpServerTool']
+    export const isMcpServerTool = (obj?: { __typename?: any } | null): obj is McpServerTool => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServerTool"')
+      return McpServerTool_possibleTypes.includes(obj.__typename)
     }
     
 

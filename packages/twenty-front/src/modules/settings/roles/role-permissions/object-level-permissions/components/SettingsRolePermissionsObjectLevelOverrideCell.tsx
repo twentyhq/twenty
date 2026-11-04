@@ -7,9 +7,9 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,6 +28,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   roleId,
   objectLabel,
 }: SettingsRolePermissionsObjectLevelOverrideCellProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

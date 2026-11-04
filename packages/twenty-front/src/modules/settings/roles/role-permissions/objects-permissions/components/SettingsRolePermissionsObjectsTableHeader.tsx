@@ -4,9 +4,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectsTableHeaderProps = {
   roleId: string;
@@ -19,6 +19,7 @@ export const SettingsRolePermissionsObjectsTableHeader = ({
   objectPermissionsConfig,
   isEditable,
 }: SettingsRolePermissionsObjectsTableHeaderProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

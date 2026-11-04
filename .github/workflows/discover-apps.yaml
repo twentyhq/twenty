@@ -38,7 +38,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          fetch-depth: ${{ inputs.changed-only && '0' || '1' }}
+          # changed-files fetches the base it diffs against; depth 0 would clone every branch and tag
+          fetch-depth: ${{ inputs.changed-only && '2' || '1' }}
 
       - name: Ensure no .github folder inside app folders
         run: |

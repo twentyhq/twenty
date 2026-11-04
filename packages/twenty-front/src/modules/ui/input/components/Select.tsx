@@ -5,7 +5,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -19,6 +18,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -67,6 +67,7 @@ export const Select = <TValue extends SelectValue>({
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<TValue>) => {
+  const { t } = useLingui();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');

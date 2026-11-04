@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactElement, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +24,7 @@ import { getIconPickerSearchScore } from '@/ui/input/utils/getIconPickerSearchSc
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useLingui } from '@lingui/react/macro';
 
 type IconPickerProps = {
   disabled?: boolean;
@@ -86,6 +86,7 @@ export const IconPicker = ({
   iconColorPicker,
   iconColor,
 }: IconPickerProps) => {
+  const { t } = useLingui();
   const [searchString, setSearchString] = useState('');
   const [visibleCount, setVisibleCount] = useAtomFamilyState(
     iconPickerVisibleCountState,

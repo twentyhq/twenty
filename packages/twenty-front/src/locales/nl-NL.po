@@ -640,7 +640,7 @@ msgstr "{cardCount, plural, one {# actie goedkeuren?} other {# acties goedkeuren
 #. js-lingui-id: JdxLs0
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
-msgstr ""
+msgstr "{channelName} is niet verbonden."
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -856,6 +856,11 @@ msgstr "{jobCount, plural, one {Dit zal het permanent uit de wachtrij verwijdere
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Dit zal de geselecteerde taak opnieuw proberen. Het wordt opnieuw uitgevoerd vanaf het begin.} other {Dit zal de geselecteerde taken opnieuw proberen. Ze worden opnieuw uitgevoerd vanaf het begin.}}"
+
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr "{keepModelId} (niet beschikbaar)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "Beheerders"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -3969,7 +3973,7 @@ msgstr "Alle {pendingCardCount} goedkeuren"
 #. js-lingui-id: B4OjOW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Approve media access for {applicationName}?"
-msgstr ""
+msgstr "Mediatoegang voor {applicationName} goedkeuren?"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "Automatisch upgraden"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "Automatisch"
@@ -7079,17 +7082,17 @@ msgstr "Verbind AI-assistenten zoals Claude of Cursor met je werkruimte via het 
 #. js-lingui-id: Qfj2/j
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect an account"
-msgstr ""
+msgstr "Een account verbinden"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
-msgstr ""
+msgstr "Verbind e-mail, WhatsApp of LinkedIn om hier je gesprekken te zien."
 
 #. js-lingui-id: d/aeu3
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations with {recordName} here."
-msgstr ""
+msgstr "Verbind e-mail, WhatsApp of LinkedIn om hier je gesprekken met {recordName} te zien."
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10987,7 +10990,7 @@ msgstr "Impersonatie inschakelen"
 #. js-lingui-id: lT1fOr
 #: src/modules/media-access/components/ManagedIframeSession.tsx
 msgid "Enable media access for {ownerName}?"
-msgstr ""
+msgstr "Mediatoegang inschakelen voor {ownerName}?"
 
 #. js-lingui-id: 4Jrl0H
 #: src/modules/media-access/components/ManagedIframeSession.tsx
@@ -12567,7 +12570,7 @@ msgstr "Herstelcode intrekken mislukt."
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
 msgid "Failed to save behavior settings. Try again."
-msgstr ""
+msgstr "Gedragsinstellingen konden niet worden opgeslagen. Probeer het opnieuw."
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -13339,11 +13342,6 @@ msgstr "Volg ons op X"
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Volgend"
-
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "Volgt de werkruimtestandaard voor agents"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -16345,27 +16343,22 @@ msgstr "Kleiner dan of gelijk aan"
 #. js-lingui-id: 6W7LRT
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your camera"
-msgstr ""
+msgstr "{host} uw camera laten gebruiken"
 
 #. js-lingui-id: k6BZVW
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone"
-msgstr ""
+msgstr "{host} uw microfoon laten gebruiken"
 
 #. js-lingui-id: kpTkNv
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone and camera"
-msgstr ""
+msgstr "{host} uw microfoon en camera laten gebruiken"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "Laat elk lid zelf beslissen"
-
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "Sta mensen toe een record alleen zichtbaar te maken voor de maker ervan en de mensen met wie het wordt gedeeld."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17648,7 +17641,7 @@ msgstr "Bericht"
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
-msgstr ""
+msgstr "Bericht {recipientName}"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -17838,6 +17831,7 @@ msgid "Mode"
 msgstr "Modus"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19304,7 +19298,7 @@ msgstr "Geen berichten om weer te geven"
 #. js-lingui-id: +52YnJ
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No messages yet"
-msgstr ""
+msgstr "Nog geen berichten"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -21022,11 +21016,6 @@ msgstr "Overschrijven"
 msgid "Override Draft"
 msgstr "Concept overschrijven"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "Overschrijft de bovenstaande modus totdat je terugschakelt naar automatisch"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21548,11 +21537,6 @@ msgstr "Cirkeldiagram"
 msgid "Pin"
 msgstr "Vastmaken"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "Een specifiek model vastzetten"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21575,11 +21559,6 @@ msgstr "Vastgezet"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Vastgezet tabblad, altijd links weergegeven"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "Vastgezet op een specifiek model"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -21975,11 +21954,6 @@ msgstr "Privacybeleid"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privé"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "Privérecords"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22512,7 +22486,7 @@ msgstr "Opnieuw verbinden"
 #. js-lingui-id: i5U7bC
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Reconnect {channelName} to send messages"
-msgstr ""
+msgstr "Verbind {channelName} opnieuw om berichten te verzenden"
 
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -23669,12 +23643,12 @@ msgstr "Omgekeerd alfabetisch"
 #. js-lingui-id: FIYcTW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review additional microphone or camera access requested by this app. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Controleer de aanvullende toegang tot de microfoon of camera die door deze app is aangevraagd. Leden moeten de toegang nog steeds inschakelen en de browsermachtiging goedkeuren."
 
 #. js-lingui-id: Jlf4oD
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review media access"
-msgstr ""
+msgstr "Mediatoegang controleren"
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25336,7 +25310,7 @@ msgstr "E-mail verzenden"
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
-msgstr ""
+msgstr "Verzenden mislukt"
 
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -25475,11 +25449,6 @@ msgstr "Instellen e-mail zichtbaarheid, beheer je blokkeerlijst en meer."
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Stel in de toekomst aangemaakte velden in op \"zichtbaar\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "Alleen voor deze agent instellen"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31690,6 +31659,11 @@ msgstr "Werkruimtecredits"
 msgid "Workspace default"
 msgstr "Standaardinstelling van werkruimte"
 
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr "Standaardinstelling voor werkruimte · {workspaceTierLabel}"
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -31823,7 +31797,7 @@ msgstr "Schrijf een beschrijving voor deze agent"
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
-msgstr ""
+msgstr "Schrijf een bericht"
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32126,12 +32100,12 @@ msgstr "Je verbindingen konden niet worden geladen. Controleer je verbinding en 
 #. js-lingui-id: 63X4AK
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations will show up here."
-msgstr ""
+msgstr "Je gesprekken verschijnen hier."
 
 #. js-lingui-id: TW/SJs
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations with {recordName} will show up here."
-msgstr ""
+msgstr "Je gesprekken met {recordName} verschijnen hier."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

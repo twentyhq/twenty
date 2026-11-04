@@ -13,7 +13,7 @@ import { buildPermissionsCreatorCondition } from 'src/engine/permissions/private
 import { buildPermissionsShareCondition } from 'src/engine/permissions/record-share/utils/build-permissions-share-condition.util';
 import { buildPermissionsRlsCondition } from 'src/engine/permissions/rls/utils/build-permissions-rls-condition.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/rls/utils/resolve-permissions-row-level-permission-filter.util';
-import { buildPermissionsObjectCondition } from 'src/engine/permissions/role/utils/build-permissions-object-condition.util';
+import { buildPermissionsAllRecordsCondition } from 'src/engine/permissions/all-records/utils/build-permissions-all-records-condition.util';
 
 const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
   conditions.length === 1
@@ -23,14 +23,14 @@ const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
 const buildPermissionsRoleConditions = (
   sqlRequest: PermissionsRowAccessSqlRequest,
 ): SqlCondition[] | true => {
-  const objectCondition = buildPermissionsObjectCondition(sqlRequest);
+  const allRecordsCondition = buildPermissionsAllRecordsCondition(sqlRequest);
 
-  if (objectCondition === true) {
+  if (allRecordsCondition === true) {
     return true;
   }
 
   return [
-    objectCondition === false ? undefined : objectCondition,
+    allRecordsCondition === false ? undefined : allRecordsCondition,
     buildPermissionsRlsCondition(sqlRequest),
   ].filter(isDefined);
 };

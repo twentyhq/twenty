@@ -6,9 +6,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledChipsContainer = styled.div`
   align-items: center;
@@ -37,6 +37,7 @@ export const FormMultiRecordFieldChips = ({
   onUnlinkVariable,
   onRemoveStaticVariable,
 }: FormMultiRecordFieldChipsProps) => {
+  const { t } = useLingui();
   if (draftValue.type === 'variable') {
     return (
       <StyledChipsContainer>

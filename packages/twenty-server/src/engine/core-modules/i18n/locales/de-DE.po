@@ -1127,7 +1127,7 @@ msgstr "Eine Anwendung kann nur ihre eigenen Workflows starten."
 #. js-lingui-id: T/ZKXs
 #: src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util.ts
 msgid "An application can request iframe media access for up to {MAX_ALLOWED_IFRAME_ORIGINS} origins"
-msgstr ""
+msgstr "Eine Anwendung kann für bis zu {MAX_ALLOWED_IFRAME_ORIGINS} Ursprünge Medienzugriff in iFrames anfordern"
 
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -8895,14 +8895,14 @@ msgstr "Nachrichten"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Messages"
-msgstr ""
+msgstr "Nachrichten"
 
 #. js-lingui-id: JJTyHZ
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Messages"
-msgstr ""
+msgstr "Nachrichten"
 
 #. js-lingui-id: PLP882
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9838,6 +9838,11 @@ msgstr "Ein oder mehrere angeforderte Scopes sind ungültig."
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Nur eine Entwurfs- oder geplante Kampagne kann gesendet werden."
 
+#. js-lingui-id: v581MX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only a root row level permission predicate group can grant operations"
+msgstr "Nur eine Stammgruppe von Berechtigungsprädikaten auf Zeilenebene kann Operationen gewähren"
+
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
@@ -9893,6 +9898,11 @@ msgstr "Nur die Anwendung, der dieser Agent gehört, kann seine Trigger ändern"
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Nur die Person, die diesen Workflow erstellt hat, kann ändern, wer ihn sehen kann"
+
+#. js-lingui-id: xdnQgZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
+msgid "Only the top-level group of a record-level rule can grant operations"
+msgstr "Nur die oberste Gruppe einer Regel auf Datensatzebene kann Operationen gewähren"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
@@ -10868,11 +10878,6 @@ msgstr "ID des Berechtigten"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Typ des Berechtigten"
-
-#. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
-msgid "Private records are not available in this workspace yet."
-msgstr "Private Datensätze sind in diesem Arbeitsbereich noch nicht verfügbar."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13554,7 +13559,7 @@ msgstr "Die Produktionsabhängigkeiten der Anwendung sind zu groß, um installie
 #. js-lingui-id: 2a7bjg
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
-msgstr ""
+msgstr "Die von der Anwendung angeforderten Berechtigungen haben sich geändert. Überprüfen Sie sie erneut, bevor Sie zustimmen."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts

@@ -7,8 +7,6 @@ import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/ge
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
@@ -19,6 +17,7 @@ import {
 } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
@@ -98,6 +97,7 @@ export const EmailThreadPreview = ({
   thread,
   divider = false,
 }: EmailThreadPreviewProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
