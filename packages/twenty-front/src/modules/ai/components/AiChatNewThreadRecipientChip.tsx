@@ -7,7 +7,7 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 
 const RECIPIENT_MAX_WIDTH = 240;
 
-const StyledRecipient = styled.span`
+const StyledRecipient = styled.div`
   display: inline-flex;
   max-width: 100%;
   min-width: 0;
