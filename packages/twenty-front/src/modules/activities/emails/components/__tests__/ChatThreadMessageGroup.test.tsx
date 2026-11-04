@@ -24,6 +24,12 @@ const buildMessage = (
   }) as EmailThreadMessageWithSender;
 
 describe('ChatThreadMessageGroup', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
   it('renders the text of each message', () => {
     render(
       <ChatThreadMessageGroup
