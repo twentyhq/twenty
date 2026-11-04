@@ -46,8 +46,7 @@ type SettingsBillingPartnerCodeFormProps = {
   variant: 'onboarding' | 'settings';
 };
 
-// The code only benefits the partner, so the field never asks for attention:
-// onboarding hides it behind a link, and Billing shows it only during the trial.
+// The code only benefits the partner, so the field stays out of the way.
 export const SettingsBillingPartnerCodeForm = ({
   instanceId,
   variant,

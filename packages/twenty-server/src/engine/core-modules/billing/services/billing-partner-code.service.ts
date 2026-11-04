@@ -35,7 +35,6 @@ export class BillingPartnerCodeService {
     return { partnerCode: partner, isEditable: !isDefined(partner) };
   }
 
-  // Once a code is set, only the Twenty team changes it, in Stripe.
   async setPartnerCode({
     workspaceId,
     partnerCode,
@@ -45,7 +44,6 @@ export class BillingPartnerCodeService {
   }): Promise<BillingPartnerCodeDTO> {
     const normalizedPartnerCode = normalizePartner(partnerCode);
 
-    // Unknown codes are accepted: the partners team matches them when recording referrals.
     if (!isDefined(normalizedPartnerCode)) {
       throw new BillingException(
         `Partner code ${partnerCode} is not valid`,
