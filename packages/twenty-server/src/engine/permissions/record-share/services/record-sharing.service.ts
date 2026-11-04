@@ -32,6 +32,7 @@ import {
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
+import { isDirectMessageContentRecord } from 'src/engine/permissions/record-share/utils/is-direct-message-content-record.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -216,6 +217,17 @@ export class RecordSharingService {
             if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
               throw new NotFoundError('Record not found');
             }
+
+            if (
+              await this.isDirectMessageContent({
+                ...args,
+                flatObjectMetadata,
+                transactionScope,
+              })
+            ) {
+              throw new NotFoundError('Record not found');
+            }
+
             await write({
               workspaceId,
               transactionScope,
@@ -338,6 +350,10 @@ export class RecordSharingService {
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
       (await this.isUpdatePermittedByRole({
         authContext: args.authContext,
+        flatObjectMetadata,
+      })) &&
+      !(await this.isDirectMessageContent({
+        ...args,
         flatObjectMetadata,
       }));
     const grants = shares.filter(
@@ -575,6 +591,40 @@ export class RecordSharingService {
         this.workspaceOrmManager
           .getRepository(flatObjectMetadata.nameSingular)
           .isObjectOperationPermittedByRole('update'),
+      authContext,
+    );
+  }
+
+  private isDirectMessageContent({
+    authContext,
+    flatObjectMetadata,
+    recordId,
+    transactionScope,
+  }: RecordSharingArgs & {
+    flatObjectMetadata: FlatObjectMetadata;
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        isDirectMessageContentRecord({
+          flatObjectMetadata,
+          recordId,
+          findRecord: ({ objectName, recordId: contentRecordId, select }) => {
+            const repository = isDefined(transactionScope)
+              ? transactionScope.getRepositoryWithoutPermissionChecks(
+                  objectName,
+                )
+              : this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+                  objectName,
+                );
+
+            return repository.findOne({
+              where: { id: contentRecordId },
+              select,
+              withDeleted: true,
+            });
+          },
+        }),
       authContext,
     );
   }

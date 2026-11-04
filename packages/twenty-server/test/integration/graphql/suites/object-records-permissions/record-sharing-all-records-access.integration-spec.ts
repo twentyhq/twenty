@@ -32,6 +32,8 @@ import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-sh
 import { type RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
 import { type RecordPermissionReadOrmService } from 'src/engine/permissions/record-permission-orm/services/record-permission-read-orm.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/created-by-workspace-member-id-column-name.constant';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -340,7 +342,12 @@ describe('Access to all records and ownership transfer', () => {
     const chatThreadObjectMetadataId = objects.find(
       (object) => object.nameSingular === 'agentChatThread',
     )!.id;
+    const turnObjectMetadataId = objects.find(
+      (object) => object.nameSingular === 'agentTurn',
+    )!.id;
     const privateChatThreadId = randomUUID();
+    const privateTurnId = randomUUID();
+    const turnTable = `${getWorkspaceSchemaName(workspaceId)}.agentTurn`;
 
     await shares.insertMany({
       workspaceId,
@@ -358,6 +365,32 @@ describe('Access to all records and ownership transfer', () => {
     });
 
     try {
+      await global.testDataSource
+        .createQueryBuilder()
+        .insert()
+        .into(turnTable)
+        .values({
+          id: privateTurnId,
+          [IS_PRIVATE_COLUMN_NAME]: true,
+          [CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME]:
+            WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+        })
+        .execute();
+      await shares.insertMany({
+        workspaceId,
+        recordShares: [
+          {
+            objectMetadataId: turnObjectMetadataId,
+            recordId: privateTurnId,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.OWNER,
+            sourceId: privateTurnId,
+          },
+        ],
+      });
+
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
       ).transferRecordSharesToSuccessor({
@@ -394,6 +427,15 @@ describe('Access to all records and ownership transfer', () => {
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
+      const turnShares = await shares.findByRecordIds({
+        workspaceId,
+        objectMetadataId: turnObjectMetadataId,
+        recordIds: [privateTurnId],
+      });
+
+      expect(turnShares.map(({ principalId }) => principalId)).toEqual([
+        WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+      ]);
 
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
@@ -414,6 +456,17 @@ describe('Access to all records and ownership transfer', () => {
         objectMetadataId: chatThreadObjectMetadataId,
         recordIds: [privateChatThreadId],
       });
+      await shares.deleteByRecordIds({
+        workspaceId,
+        objectMetadataId: turnObjectMetadataId,
+        recordIds: [privateTurnId],
+      });
+      await global.testDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(turnTable)
+        .where('id = :privateTurnId', { privateTurnId })
+        .execute();
     }
   });
 });

@@ -1,14 +1,27 @@
 import { randomUUID } from 'node:crypto';
+import { parse } from 'graphql';
 
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
+import { type PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -155,6 +168,141 @@ describe('Canonical direct message identity', () => {
 
     expect(identity).toEqual({ isPrivate: true });
   });
+
+  it.each(['agentChatThread', 'agentMessage'] as const)(
+    'prevents a full-access pair member from changing %s sharing',
+    async (objectName) => {
+      const threadId = await getOrCreate();
+      const message = await context.saveMessage({ threadId });
+      const recordId = objectName === 'agentChatThread' ? threadId : message.id;
+      const { flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(context.workspaceId, ['flatObjectMetadataMaps']);
+      const flatObjectMetadata =
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS[objectName].universalIdentifier
+        ];
+
+      assertIsDefinedOrThrow(flatObjectMetadata);
+
+      const storage = getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
+      const privateRecords =
+        getAppProviderByClassName<PrivateRecordStorageService>(
+          'PrivateRecordStorageService',
+        );
+      const manager = getAppProviderByClassName<WorkspaceOrmManager>(
+        'WorkspaceOrmManager',
+      );
+      const target = { objectMetadataId: flatObjectMetadata.id, recordId };
+      const storageTarget = {
+        workspaceId: context.workspaceId,
+        objectMetadataId: flatObjectMetadata.id,
+        recordIds: [recordId],
+      };
+
+      await manager.executeInWorkspaceContext(
+        () =>
+          manager.runInWorkspaceTransaction(async (transactionScope) => {
+            await privateRecords.setPrivate({
+              workspaceId: context.workspaceId,
+              flatObjectMetadata,
+              recordIds: [recordId],
+              isPrivate: true,
+              transactionScope,
+            });
+            await storage.insertMany({
+              workspaceId: context.workspaceId,
+              transactionScope,
+              recordShares: [
+                WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              ].map((principalId) => ({
+                ...target,
+                sourceId: threadId,
+                principalId,
+                principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                accessLevel: RecordShareAccessLevel.FULL,
+                rowCause: RecordShareRowCause.OWNER,
+              })),
+            });
+          }),
+        buildSystemAuthContext(context.workspaceId),
+      );
+
+      try {
+        const sharesBefore = await storage.findByRecordIds(storageTarget);
+        const sharing = await makeMetadataApiRequest({
+          query: parse(`query Sharing($target: RecordTargetInput!) {
+            recordSharing(target: $target) { isPrivate canManageSharing }
+          }`),
+          variables: { target },
+        });
+
+        expect(sharing.body.errors).toBeUndefined();
+        expect(sharing.body.data.recordSharing).toEqual({
+          isPrivate: true,
+          canManageSharing: false,
+        });
+
+        const mutations = [
+          {
+            query: parse(`mutation MakePublic($target: RecordTargetInput!) {
+              setRecordPrivate(target: $target, isPrivate: false) { isPrivate }
+            }`),
+            variables: { target },
+          },
+          {
+            query:
+              parse(`mutation ShareOutsidePair($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
+              setRecordShare(target: $target, principal: $principal, accessLevel: FULL) { isPrivate }
+            }`),
+            variables: {
+              target,
+              principal: {
+                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+              },
+            },
+          },
+          {
+            query:
+              parse(`mutation RemovePairShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
+              removeRecordShare(target: $target, principal: $principal) { isPrivate }
+            }`),
+            variables: {
+              target,
+              principal: {
+                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              },
+            },
+          },
+        ];
+
+        for (const mutation of mutations) {
+          const response = await makeMetadataApiRequest(mutation);
+
+          expect(response.body.errors?.[0]?.extensions?.code).toBe(
+            ErrorCode.NOT_FOUND,
+          );
+        }
+
+        const sharesAfter = await storage.findByRecordIds(storageTarget);
+        const privateStates = await privateRecords.findStates({
+          workspaceId: context.workspaceId,
+          flatObjectMetadata,
+          recordIds: [recordId],
+        });
+
+        expect(sharesAfter).toHaveLength(sharesBefore.length);
+        expect(sharesAfter).toEqual(expect.arrayContaining(sharesBefore));
+        expect(privateStates.get(recordId)?.isPrivate).toBe(true);
+      } finally {
+        await storage.deleteByRecordIds(storageTarget);
+      }
+    },
+  );
 
   it('allocates a normalized dormant identity without inbox or assistant side effects', async () => {
     const threadId = await getOrCreate({
