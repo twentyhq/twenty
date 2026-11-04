@@ -93,13 +93,10 @@ export const SettingsBillingContent = () => {
       {hasNotCanceledCurrentSubscription && (
         <SettingsBillingUserCreditsSection />
       )}
-      <Section.Root>
-        <Section.Header
-          title={t`Partner`}
-          description={t`The code of the partner who referred or set up your workspace`}
-        />
-        <SettingsBillingPartnerCodeForm instanceId="settings-billing-partner-code" />
-      </Section.Root>
+      <SettingsBillingPartnerCodeForm
+        instanceId="settings-billing-partner-code"
+        variant="settings"
+      />
       <Section.Root>
         <Section.Header
           title={t`Manage billing information`}

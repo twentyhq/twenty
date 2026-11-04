@@ -320,7 +320,10 @@ const UpgradeFreeTrialContent = ({
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledOnboardingContentBlock>
-          <SettingsBillingPartnerCodeForm instanceId="onboarding-partner-code" />
+          <SettingsBillingPartnerCodeForm
+            instanceId="onboarding-partner-code"
+            variant="onboarding"
+          />
         </StyledOnboardingContentBlock>
       </OnboardingStepAnimatedItem>
 

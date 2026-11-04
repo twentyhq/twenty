@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -39,10 +40,14 @@ const StyledHint = styled.span<{ isError: boolean }>`
 
 type SettingsBillingPartnerCodeFormProps = {
   instanceId: string;
+  variant: 'onboarding' | 'settings';
 };
 
+// The code only benefits the partner, so the field never asks for attention:
+// onboarding hides it behind a link, and nothing shows once there is nothing to do.
 export const SettingsBillingPartnerCodeForm = ({
   instanceId,
+  variant,
 }: SettingsBillingPartnerCodeFormProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
@@ -55,21 +60,31 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (!isDefined(data)) {
     return null;
   }
 
   const { partnerCode, isEditable } = data.billingPartnerCode;
+
+  if (!isEditable && (variant === 'onboarding' || !isDefined(partnerCode))) {
+    return null;
+  }
+
+  if (variant === 'onboarding' && !isExpanded) {
+    return (
+      <Button variant="link" onClick={() => setIsExpanded(true)}>
+        {t`Referred by a Twenty partner? Add their code`}
+      </Button>
+    );
+  }
+
   const savedPartnerCode = partnerCode?.toUpperCase() ?? '';
   const displayedPartnerCode = draftPartnerCode ?? savedPartnerCode;
   const trimmedPartnerCode = displayedPartnerCode.trim();
 
   const canApply = isEditable && !loading && trimmedPartnerCode !== '';
-
-  const lockedHint = isDefined(partnerCode)
-    ? t`Your workspace is linked to this partner. Contact support to change it.`
-    : t`A partner code can no longer be added after the first payment. Contact support to add one.`;
 
   const handleChange = (value: string) => {
     setDraftPartnerCode(value);
@@ -96,7 +111,13 @@ export const SettingsBillingPartnerCodeForm = ({
     }
   };
 
-  return (
+  const hint =
+    errorMessage ??
+    (isEditable
+      ? t`Only if a Twenty partner referred you or is setting up your workspace.`
+      : null);
+
+  const form = (
     <StyledContainer>
       <StyledRow>
         <SettingsTextInput
@@ -119,12 +140,23 @@ export const SettingsBillingPartnerCodeForm = ({
           >{t`Apply`}</Button>
         )}
       </StyledRow>
-      <StyledHint isError={isDefined(errorMessage)}>
-        {errorMessage ??
-          (isEditable
-            ? t`Once applied, the code cannot be changed.`
-            : lockedHint)}
-      </StyledHint>
+      {isDefined(hint) && (
+        <StyledHint isError={isDefined(errorMessage)}>{hint}</StyledHint>
+      )}
     </StyledContainer>
+  );
+
+  if (variant === 'onboarding') {
+    return form;
+  }
+
+  return (
+    <Section.Root>
+      <Section.Header
+        title={t`Partner`}
+        description={t`The code of the partner who referred or set up your workspace`}
+      />
+      {form}
+    </Section.Root>
   );
 };

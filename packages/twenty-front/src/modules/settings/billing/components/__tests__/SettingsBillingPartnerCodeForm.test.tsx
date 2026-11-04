@@ -40,12 +40,18 @@ const buildPartnerCodeMock = ({
   },
 });
 
-const renderForm = (mocks: ReadonlyArray<unknown>) =>
+const renderForm = (
+  mocks: ReadonlyArray<unknown>,
+  variant: 'onboarding' | 'settings' = 'settings',
+) =>
   render(
     <JotaiProvider store={createStore()}>
       <MockedProvider mocks={mocks as never}>
         <I18nProvider i18n={i18n}>
-          <SettingsBillingPartnerCodeForm instanceId="partner-code-test" />
+          <SettingsBillingPartnerCodeForm
+            instanceId="partner-code-test"
+            variant={variant}
+          />
         </I18nProvider>
       </MockedProvider>
     </JotaiProvider>,
@@ -113,6 +119,37 @@ describe('SettingsBillingPartnerCodeForm', () => {
     expect(
       await screen.findByText('This partner code does not exist.'),
     ).toBeInTheDocument();
+  });
+
+  it('should keep the onboarding field behind a link until asked for', async () => {
+    renderForm(
+      [buildPartnerCodeMock({ partnerCode: null, isEditable: true })],
+      'onboarding',
+    );
+
+    await userEvent.click(
+      await screen.findByRole('button', {
+        name: 'Referred by a Twenty partner? Add their code',
+      }),
+    );
+
+    expect(await screen.findByLabelText('Partner code')).toBeEnabled();
+  });
+
+  it('should show nothing in onboarding when a referral link set the code', async () => {
+    renderForm(
+      [buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })],
+      'onboarding',
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', {
+          name: 'Referred by a Twenty partner? Add their code',
+        }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByLabelText('Partner code')).not.toBeInTheDocument();
   });
 
   it('should lock a code that is already set', async () => {
