@@ -210,7 +210,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     };
     const conversationWriter = new AgentConversationWriterService(
       turns as never,
-      new AgentHistoryTransactionService(orm as never),
+      new AgentHistoryTransactionService(
+        orm as never,
+        {
+          share: jest
+            .fn()
+            .mockRejectedValue(
+              new Error('DM identity is disabled for the migration fixture'),
+            ),
+        } as never,
+      ),
       {
         getOrRecompute: async () => ({
           flatWorkspaceMemberMaps: {

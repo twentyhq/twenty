@@ -1,3 +1,7 @@
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { isArray, isString } from '@sniptt/guards';
+import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Injectable } from '@nestjs/common';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
@@ -7,7 +11,10 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 
 @Injectable()
 export class AgentHistoryTransactionService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly directMessageRecordsService: AgentChatDirectMessageRecordsService,
+  ) {}
 
   async run<TResult>(
     workspaceId: string,
@@ -22,10 +29,70 @@ export class AgentHistoryTransactionService {
                 shouldSkipEventEmission: true,
               });
 
+            const standardThreadIds = new Set<string>();
+            const threadIdsByMessageId = new Map<string, string>();
+
             return work({
               executeRawQuery: transactionScope.executeRawQuery,
               insert: async (name, values) => {
-                await getRepository(name).insert(values);
+                const { identifiers } =
+                  await getRepository(name).insert(values);
+                if (
+                  !getWorkspaceContext().featureFlagsMap[
+                    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
+                  ]
+                ) {
+                  return;
+                }
+
+                const records = isArray(values) ? values : [values];
+
+                for (const [index, record] of records.entries()) {
+                  const recordId = identifiers[index]?.id;
+                  if (
+                    name === 'agentMessage' &&
+                    isString(recordId) &&
+                    isString(record.threadId)
+                  ) {
+                    threadIdsByMessageId.set(recordId, record.threadId);
+                  }
+
+                  const messageThreadId =
+                    name === 'agentMessagePart' && isString(record.messageId)
+                      ? (threadIdsByMessageId.get(record.messageId) ??
+                        (
+                          await getRepository('agentMessage').findOne({
+                            where: { id: record.messageId },
+                            select: ['threadId'],
+                          })
+                        )?.threadId)
+                      : undefined;
+                  const threadId =
+                    name === 'agentChatThread'
+                      ? recordId
+                      : (messageThreadId ?? record.threadId);
+
+                  if (
+                    !isString(recordId) ||
+                    !isString(threadId) ||
+                    standardThreadIds.has(threadId)
+                  ) {
+                    continue;
+                  }
+
+                  const isDirectMessage =
+                    await this.directMessageRecordsService.share({
+                      workspaceId,
+                      transactionScope,
+                      threadId,
+                      objectName: name,
+                      recordIds: [recordId],
+                    });
+
+                  if (!isDirectMessage) {
+                    standardThreadIds.add(threadId);
+                  }
+                }
               },
               update: async (name, where, values) => {
                 const result = await getRepository(name).update(where, values);

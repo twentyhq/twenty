@@ -1,3 +1,4 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Injectable } from '@nestjs/common';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -46,6 +47,13 @@ export class AgentChatTurnPreflightService {
       workspaceMemberId,
       workspaceId: workspace.id,
     });
+
+    if (thread.conversationType === 'DIRECT_MESSAGE') {
+      throw new AiException(
+        doNotTranslate('Direct messages do not run an assistant'),
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
 
     await this.assertAiExecutionAllowed({ userWorkspaceId, workspace });
 

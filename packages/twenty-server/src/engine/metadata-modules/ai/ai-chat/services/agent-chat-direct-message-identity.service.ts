@@ -1,4 +1,7 @@
+import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Injectable } from '@nestjs/common';
+import { isNonEmptyString } from '@sniptt/guards';
+import { IsNull } from 'typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +35,81 @@ export class AgentChatDirectMessageIdentityService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly directMessageRecordsService: AgentChatDirectMessageRecordsService,
   ) {}
+
+  async open({
+    workspaceId,
+    firstWorkspaceMemberId,
+    secondWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    firstWorkspaceMemberId: string;
+    secondWorkspaceMemberId: string;
+  }): Promise<string> {
+    const pair = normalizeAgentChatDirectMessagePairOrThrow({
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+    const { flatWorkspaceMemberMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'featureFlagsMap',
+      ]);
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
+
+    const threadId = await this.getOrCreate({
+      workspaceId,
+      firstWorkspaceMemberId,
+      secondWorkspaceMemberId,
+    });
+    const title = [
+      pair.directMessageFirstWorkspaceMemberId,
+      pair.directMessageSecondWorkspaceMemberId,
+    ]
+      .map((workspaceMemberId) => {
+        const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+
+        if (!isDefined(member)) {
+          return throwAgentChatThreadNotFound();
+        }
+
+        const name = `${member.name.firstName} ${member.name.lastName}`.trim();
+
+        return isNonEmptyString(name) ? name : member.userEmail;
+      })
+      .join(', ');
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            await this.directMessageRecordsService.share({
+              workspaceId,
+              transactionScope,
+              threadId,
+              objectName: 'agentChatThread',
+              recordIds: [threadId],
+            });
+            await transactionScope
+              .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+                'agentChatThread',
+                { shouldSkipEventEmission: true },
+              )
+              .update({ id: threadId, title: IsNull() }, { title });
+          },
+        ),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
+
+    return threadId;
+  }
 
   async getOrCreate({
     workspaceId,

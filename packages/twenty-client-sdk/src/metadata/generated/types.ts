@@ -8432,6 +8432,15 @@ export default {
                     ]
                 }
             ],
+            "openDirectMessage": [
+                539,
+                {
+                    "workspaceMemberId": [
+                        539,
+                        "UUID!"
+                    ]
+                }
+            ],
             "prepareGettingStartedWorkflow": [
                 305,
                 {
