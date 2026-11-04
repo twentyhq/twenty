@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -58,7 +58,7 @@ export const ChatThreadsCardContent = ({
   const sidePanelThreadId =
     isSidePanelOpened &&
     sidePanelRecord?.objectNameSingular ===
-      CoreObjectNameSingular.AgentChatThread
+      StandardObjectNameSingular.AgentChatThread
       ? sidePanelRecord.objectRecordId
       : undefined;
   const isThreadsEmpty = !isNonEmptyArray(threads);
@@ -113,7 +113,7 @@ export const ChatThreadsCardContent = ({
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
-            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+            objectNameSingular: StandardObjectNameSingular.AgentChatThread,
           })
         }
         onDetachThread={onDetachThread}

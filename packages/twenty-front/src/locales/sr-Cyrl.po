@@ -16564,7 +16564,7 @@ msgstr "Веза копирана у клипборд"
 #. js-lingui-id: /RZu15
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessages.tsx
 msgid "Link email threads"
 msgstr "Повежи нити имејлова"
 
@@ -18552,6 +18552,11 @@ msgstr "Нови кључ"
 msgid "New limit"
 msgstr "Ново ограничење"
 
+#. js-lingui-id: mTBAsF
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "New message"
+msgstr "Нова порука"
+
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20312,11 +20317,6 @@ msgstr "само на радне дане"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "На којим објектима би овај окидач требало да буде доступан"
-
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Уводни пакети"
 
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -25238,6 +25238,11 @@ msgstr "Пошаљи имејлове са повезаних налога"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Пошаљи имејлове преко повезаних налога"
+
+#. js-lingui-id: l/ipRX
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Send from"
+msgstr "Пошаљи са"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

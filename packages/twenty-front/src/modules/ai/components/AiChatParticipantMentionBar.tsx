@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconUsers } from 'twenty-ui/icon';
@@ -67,7 +67,7 @@ export const AiChatParticipantMentionBar = ({
       if (
         node.type.name === TIPTAP_NODE_TYPES.MENTION_TAG &&
         node.attrs.objectNameSingular ===
-          CoreObjectNameSingular.WorkspaceMember &&
+          StandardObjectNameSingular.WorkspaceMember &&
         node.attrs.shouldAddAsParticipant === true
       ) {
         transaction.setNodeMarkup(position, undefined, {

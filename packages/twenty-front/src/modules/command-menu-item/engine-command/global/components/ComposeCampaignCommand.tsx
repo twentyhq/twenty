@@ -1,4 +1,4 @@
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -9,7 +9,7 @@ export const ComposeCampaignCommand = () => {
   const navigateApp = useNavigateApp();
 
   const { createOneRecord: createMessageCampaign } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
   });
 
   const handleExecute = async () => {
@@ -18,7 +18,7 @@ export const ComposeCampaignCommand = () => {
     await createMessageCampaign({ id: campaignId });
 
     navigateApp(AppPath.RecordShowPage, {
-      objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+      objectNameSingular: StandardObjectNameSingular.MessageCampaign,
       objectRecordId: campaignId,
     });
   };

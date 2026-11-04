@@ -16564,7 +16564,7 @@ msgstr "Đã sao chép đường dẫn vào bảng tạm"
 #. js-lingui-id: /RZu15
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessages.tsx
 msgid "Link email threads"
 msgstr "Liên kết chuỗi email"
 
@@ -18552,6 +18552,11 @@ msgstr "Khóa Mới"
 msgid "New limit"
 msgstr "Giới hạn mới"
 
+#. js-lingui-id: mTBAsF
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "New message"
+msgstr "Tin nhắn mới"
+
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20312,11 +20317,6 @@ msgstr "chỉ vào các ngày trong tuần"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "Trên đối tượng nào cần kích hoạt này sẽ khả dụng"
-
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Gói mở đầu"
 
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -25238,6 +25238,11 @@ msgstr "Gửi email từ các tài khoản đã kết nối"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Gửi email qua các tài khoản đã kết nối"
+
+#. js-lingui-id: l/ipRX
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Send from"
+msgstr "Gửi từ"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

@@ -16564,7 +16564,7 @@ msgstr "Enlace copiado al portapapeles"
 #. js-lingui-id: /RZu15
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessages.tsx
 msgid "Link email threads"
 msgstr "Vincular conversaciones de correo electrónico"
 
@@ -18552,6 +18552,11 @@ msgstr "Nueva clave"
 msgid "New limit"
 msgstr "Nuevo límite"
 
+#. js-lingui-id: mTBAsF
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "New message"
+msgstr "Nuevo mensaje"
+
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20312,11 +20317,6 @@ msgstr "solo en días laborables"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "¿En qué objeto(s) debería estar disponible este disparador?"
-
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Paquetes de Incorporación"
 
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -25238,6 +25238,11 @@ msgstr "Enviar correos electrónicos desde cuentas conectadas"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Enviar correos electrónicos a través de cuentas conectadas"
+
+#. js-lingui-id: l/ipRX
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Send from"
+msgstr "Enviar desde"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx

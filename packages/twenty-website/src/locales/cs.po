@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -6314,11 +6314,6 @@ msgstr "Onboarding"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · dokumentace · řízení změny · L1/L2 podpora · managed services"
 
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Onboarding balíčky"
-
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -6735,7 +6730,7 @@ msgstr "Zadejte prosím platnou e-mailovou adresu."
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "Zadejte prosím odkaz na svůj hlavní kanál, například youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7962,10 +7957,10 @@ msgstr "Položky postranního panelu"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Sierra Leone 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Zaregistrujte se do Cloudu za méně než minutu a spusťte svou 30denní zkušební verzi. U větších rolloutů vás naše 4hodinové onboarding balíčky nebo certifikovaní partneři dostanou do produkce za 1–2 týdny."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "Zaregistrujte se do Cloudu za méně než minutu a spusťte svou 30denní zkušební verzi. U větších rolloutů vás náš tým může podpořit na každém kroku. Ozvěte se nám a probereme, co potřebujete."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10104,9 +10099,6 @@ msgstr "Yemen 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Ano"
@@ -10304,7 +10296,7 @@ msgstr "YouTube, newslettery, LinkedIn, TikTok: kdokoli, kdo se věnuje nástroj
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

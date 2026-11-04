@@ -25,13 +25,13 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const PUBLIC_DOMAIN_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -41,9 +41,25 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
-)
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
+
+const PUBLIC_DOMAIN_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PublicDomainExceptionFilter,
@@ -61,6 +77,7 @@ export class PublicDomainResolver {
   ) {}
 
   @Query(() => [PublicDomainDTO])
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_ACCESS_POLICY))
   async findManyPublicDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO[]> {
@@ -69,17 +86,7 @@ export class PublicDomainResolver {
 
   @Mutation(() => PublicDomainDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
+    AccessPolicyGuard(PUBLIC_DOMAIN_WRITE_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async createPublicDomain(
@@ -99,19 +106,7 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_WRITE_ACCESS_POLICY))
   async deletePublicDomain(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -125,6 +120,7 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })
+  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_ACCESS_POLICY))
   async checkPublicDomainValidRecords(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
@@ -49,7 +49,7 @@ export const SidePanelSendCampaignTestPage = () => {
   const [toAddress, setToAddress] = useState(currentUser?.email ?? '');
 
   const { record: campaign } = useFindOneRecord<MessageCampaign>({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
     objectRecordId: sendCampaignTestCampaignId ?? '',
     skip: !isDefined(sendCampaignTestCampaignId),
   });

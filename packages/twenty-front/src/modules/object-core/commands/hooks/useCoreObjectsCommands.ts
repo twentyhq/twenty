@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
 } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -40,7 +40,7 @@ export const useCoreObjectsCommands = () => {
   const isOnCoreWorkflowsIndex =
     commandMenuContextApi.pageType === ContextStorePageType.Index &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
-      CoreObjectNameSingular.Workflow;
+      StandardObjectNameSingular.Workflow;
 
   const matchesSidePanelSearch = (label: string) =>
     normalizeSearchText(label).includes(

@@ -21,7 +21,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,
@@ -80,7 +83,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const firstAvailableObjectMetadataItem =
     readableObjectMetadataItems.find(
       (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === CoreObjectNameSingular.Company,
+        objectMetadataItem.nameSingular === StandardObjectNameSingular.Company,
     ) ||
     [...readableObjectMetadataItems].sort((first, second) =>
       first.labelPlural.localeCompare(second.labelPlural),
