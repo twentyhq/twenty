@@ -27,9 +27,29 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-const [leadAgent, followUpAgent, remoteAgent] = CORE_AGENTS_STORY_AGENTS;
+const [leadAgent, followUpAgent, remoteAgent, managedAgent] =
+  CORE_AGENTS_STORY_AGENTS;
+const REFRESHED_MANAGED_AGENT_LABEL =
+  'Managed assistant refreshed after deletion';
+
+const createAgentListResponseGate = () => {
+  let releaseResponse: (() => void) | undefined;
+  const responseReady = new Promise<void>((resolve) => {
+    releaseResponse = resolve;
+  });
+
+  return {
+    hasStarted: false,
+    responseReady,
+    releaseResponse: () => releaseResponse?.(),
+  };
+};
+
 let availableAgents = CORE_AGENTS_STORY_AGENTS;
 let failedDeletionIds = new Set<string>();
+let heldAgentListResponse:
+  | ReturnType<typeof createAgentListResponseGate>
+  | undefined;
 
 const meta = {
   title: 'Modules/ObjectCore/Agents/CoreAgentsIndex',
@@ -49,9 +69,19 @@ const meta = {
     catalog: { options: { elementContainer: { width: 1000, height: 600 } } },
     msw: {
       handlers: [
-        graphql.query('FindManyAgents', () =>
-          HttpResponse.json({ data: { findManyAgents: availableAgents } }),
-        ),
+        graphql.query('FindManyAgents', async () => {
+          const agentsAtRequest = [...availableAgents];
+          const heldResponse = heldAgentListResponse;
+
+          if (isDefined(heldResponse) && !heldResponse.hasStarted) {
+            heldResponse.hasStarted = true;
+            await heldResponse.responseReady;
+          }
+
+          return HttpResponse.json({
+            data: { findManyAgents: agentsAtRequest },
+          });
+        }),
         graphql.mutation<
           DeleteOneAgentMutation,
           DeleteOneAgentMutationVariables
@@ -86,6 +116,7 @@ const meta = {
   beforeEach: () => {
     availableAgents = [...CORE_AGENTS_STORY_AGENTS];
     failedDeletionIds = new Set([followUpAgent.id]);
+    heldAgentListResponse = undefined;
     mockedApolloClient.cache.restore({});
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jotaiStore.set(currentUserWorkspaceState.atom, {
@@ -93,6 +124,11 @@ const meta = {
       permissionFlags: [PermissionFlagType.AI_SETTINGS],
     });
     jotaiStore.set(coreAgentsFilterSettingsState.atom, {});
+
+    return () => {
+      heldAgentListResponse?.releaseResponse();
+      heldAgentListResponse = undefined;
+    };
   },
 } satisfies Meta<typeof CoreAgentsIndex>;
 
@@ -127,6 +163,11 @@ export const SelectionAndPartialDeletion: Story = {
       expect(canvas.queryByText(remoteAgent.label)).not.toBeInTheDocument(),
     );
     await expect(await canvas.findByText('2 selected')).toBeVisible();
+
+    const heldRefresh = createAgentListResponseGate();
+    heldAgentListResponse = heldRefresh;
+    window.dispatchEvent(new CustomEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME));
+    await waitFor(() => expect(heldRefresh.hasStarted).toBe(true));
     await userEvent.click(
       canvas.getByRole('button', { name: 'Delete selected agents' }),
     );
@@ -134,17 +175,40 @@ export const SelectionAndPartialDeletion: Story = {
     const confirmation = await body.findByRole('dialog', {
       name: 'Delete 2 agents?',
     });
-    await userEvent.click(
-      within(confirmation).getByRole('button', { name: 'Delete agents' }),
-    );
+    const deleteAgentsButton = within(confirmation).getByRole('button', {
+      name: 'Delete agents',
+    });
+    const batchConfirmationInput = within(confirmation).getByRole('textbox');
+
+    await expect(deleteAgentsButton).toBeDisabled();
+    await userEvent.type(batchConfirmationInput, 'DEL');
+    await expect(deleteAgentsButton).toBeDisabled();
+    await userEvent.type(batchConfirmationInput, 'ETE');
+    await expect(deleteAgentsButton).toBeEnabled();
+    await userEvent.click(deleteAgentsButton);
 
     await waitFor(() =>
       expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument(),
     );
+
+    availableAgents = availableAgents.map((agent) => {
+      if (agent.id !== managedAgent.id) {
+        return agent;
+      }
+
+      return { ...agent, label: REFRESHED_MANAGED_AGENT_LABEL };
+    });
+    heldRefresh.releaseResponse();
+
+    await expect(
+      await canvas.findByText(REFRESHED_MANAGED_AGENT_LABEL),
+    ).toBeVisible();
+    await expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument();
     await expect(await canvas.findByText('1 selected')).toBeVisible();
     await expect(
       canvas.getByRole('checkbox', { name: 'Select row' }),
     ).toBeChecked();
+    await waitFor(() => expect(confirmation).not.toBeInTheDocument());
     await userEvent.click(
       canvas.getByRole('button', { name: 'Delete selected agents' }),
     );
@@ -152,9 +216,17 @@ export const SelectionAndPartialDeletion: Story = {
     const retryConfirmation = await body.findByRole('dialog', {
       name: 'Delete agent?',
     });
-    await userEvent.click(
-      within(retryConfirmation).getByRole('button', { name: 'Delete agent' }),
+    const deleteAgentButton = within(retryConfirmation).getByRole('button', {
+      name: 'Delete agent',
+    });
+
+    await expect(deleteAgentButton).toBeDisabled();
+    await userEvent.type(
+      within(retryConfirmation).getByRole('textbox'),
+      followUpAgent.label,
     );
+    await expect(deleteAgentButton).toBeEnabled();
+    await userEvent.click(deleteAgentButton);
     await waitFor(() =>
       expect(canvas.queryByText(followUpAgent.label)).not.toBeInTheDocument(),
     );
