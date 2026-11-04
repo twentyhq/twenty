@@ -8,6 +8,5 @@ export const agentChatNewThreadRecipientsFamilyState = createAtomFamilyState<
 >({
   key: 'ai/agentChatNewThreadRecipientsFamilyState',
   defaultValue: AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
-  useLocalStorage: true,
-  localStorageOptions: { getOnInit: true },
+  useSessionStorage: true,
 });
