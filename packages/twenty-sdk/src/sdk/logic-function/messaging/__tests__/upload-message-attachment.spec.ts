@@ -76,6 +76,12 @@ describe('uploadMessageAttachment', () => {
 
     expect(uploadUrl).toBe(UPLOAD_URL);
     expect(uploadInit?.method).toBe('PUT');
+    expect(new Headers(uploadInit?.headers).get('Content-Type')).toBe(
+      'image/png',
+    );
+    expect(
+      new Uint8Array(await (uploadInit?.body as Blob).arrayBuffer()),
+    ).toEqual(new Uint8Array([1, 2, 3]));
 
     const [, completeInit] = fetchSpy.mock.calls[2];
 
@@ -83,6 +89,20 @@ describe('uploadMessageAttachment', () => {
       fileId: 'pending-file',
     });
   });
+
+  it.each(['', 'a'.repeat(256)])(
+    'refuses a filename ingestMessages would reject before uploading anything',
+    async (filename) => {
+      await expect(
+        uploadMessageAttachment({
+          filename,
+          content: new Uint8Array([1, 2, 3]),
+        }),
+      ).rejects.toThrow('filename must be 1 to 255 characters long');
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+    },
+  );
 
   it('does not complete an upload the storage refused', async () => {
     fetchSpy

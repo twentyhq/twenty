@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
 import { type IngestMessageAttachment } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
@@ -20,6 +22,9 @@ const COMPLETE_MESSAGE_ATTACHMENT_UPLOAD_MUTATION = `
   }
 `;
 
+// Mirrors the label limit ingestMessages enforces, so a name it would refuse never reaches storage
+const MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH = 255;
+
 // Requires the UPLOAD_FILE permission flag on the app's role. Upload only for messages
 // ingestMessages reports without attachments: a file it does not attach is kept anyway
 export const uploadMessageAttachment = async ({
@@ -32,6 +37,15 @@ export const uploadMessageAttachment = async ({
   content: Uint8Array;
   signal?: AbortSignal;
 }): Promise<IngestMessageAttachment> => {
+  if (
+    !isNonEmptyString(filename) ||
+    filename.length > MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH
+  ) {
+    throw new Error(
+      `uploadMessageAttachment() failed: filename must be 1 to ${MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH} characters long`,
+    );
+  }
+
   const { createFileUpload: uploadTarget } = await postGraphqlRequest<
     {
       filename: string;
