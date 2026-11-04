@@ -13,6 +13,10 @@ on:
         type: string
         required: false
         description: 'Old Twenty version to upgrade from (defaults to oldest supported: v1.22)'
+      previous_version:
+        type: string
+        required: false
+        description: 'Release still serving during the rolling upgrade check (defaults to the latest release on Docker Hub)'
   workflow_dispatch:
     inputs:
       from_version:
@@ -20,6 +24,11 @@ on:
         required: false
         default: ''
         description: 'Old Twenty version to upgrade from (defaults to oldest supported: v1.22)'
+      previous_version:
+        type: string
+        required: false
+        default: ''
+        description: 'Release still serving during the rolling upgrade check (defaults to the latest release on Docker Hub)'
 
 permissions:
   contents: read
@@ -362,4 +371,223 @@ jobs:
           docker rm postgres 2>/dev/null || true
           docker stop redis 2>/dev/null || true
           docker rm redis 2>/dev/null || true
+          docker network rm twenty-net 2>/dev/null || true
+
+  # Self-hosted and dedicated deployments run the upgrade while the previous release's pods still
+  # serve, and replace them only afterwards. This job keeps the latest release running on a seeded
+  # database, upgrades that database from source, and checks the old release still serves.
+  # Renaming or dropping a column in the same release breaks it; ship the replacement first and
+  # drop the old column a release later (docs/UPGRADE_COMMANDS.md, deferred drops).
+  rolling-upgrade:
+    if: format('{0}', inputs.skip) != 'true'
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute run config
+        env:
+          INPUT_PREVIOUS_VERSION: ${{ inputs.previous_version }}
+        run: |
+          PREVIOUS_VERSION="${INPUT_PREVIOUS_VERSION:-}"
+          if [ -z "$PREVIOUS_VERSION" ]; then
+            PREVIOUS_VERSION=$(curl -fsS --retry 3 \
+              'https://hub.docker.com/v2/namespaces/twentycrm/repositories/twenty/tags?page_size=100&ordering=last_updated' \
+              | jq -r '.results[].name' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          fi
+          if [ -z "$PREVIOUS_VERSION" ]; then
+            echo "::error::Could not resolve the latest Twenty release on Docker Hub"
+            exit 1
+          fi
+          printf 'PREVIOUS_VERSION=%s\n' "$PREVIOUS_VERSION" >> "$GITHUB_ENV"
+          GENERATED_APP_SECRET="$(openssl rand -hex 32)"
+          echo "::add-mask::${GENERATED_APP_SECRET}"
+          printf 'APP_SECRET=%s\n' "$GENERATED_APP_SECRET" >> "$GITHUB_ENV"
+          echo "Upgrading a ${PREVIOUS_VERSION} database from source while ${PREVIOUS_VERSION} keeps serving"
+
+      - name: Create Docker network
+        run: docker network create twenty-net
+
+      - name: Start Postgres
+        run: |
+          docker run -d --name postgres --network twenty-net \
+            -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=default \
+            -p 5432:5432 postgres:16
+          for _ in $(seq 1 30); do
+            docker exec postgres pg_isready -U postgres 2>/dev/null && exit 0
+            sleep 2
+          done
+          echo "::error::Postgres did not become ready in time"
+          exit 1
+
+      - name: Start Redis
+        run: |
+          docker run -d --name redis --network twenty-net -p 6379:6379 redis:7-alpine
+          for _ in $(seq 1 10); do
+            docker exec redis redis-cli ping 2>/dev/null | grep -q PONG && exit 0
+            sleep 1
+          done
+          echo "::error::Redis did not become ready in time"
+          exit 1
+
+      # ================================================================
+      # Phase 1 — Previous release: start, seed, baseline
+      # ================================================================
+
+      - name: Previous release / Start container
+        run: |
+          docker run -d --name twenty-previous --network twenty-net -p 3000:3000 \
+            -e NODE_PORT=3000 \
+            -e SERVER_URL=http://localhost:3000 \
+            -e PG_DATABASE_URL="${OLD_PG_DATABASE_URL}" \
+            -e REDIS_URL="${OLD_REDIS_URL}" \
+            -e APP_SECRET="${APP_SECRET}" \
+            "twentycrm/twenty:${PREVIOUS_VERSION}"
+          for _ in $(seq 1 120); do
+            if curl -fs -o /dev/null http://localhost:3000/healthz; then
+              echo "Previous release is ready"
+              exit 0
+            fi
+            if [ "$(docker inspect --format='{{.State.Status}}' twenty-previous)" = "exited" ]; then
+              docker logs twenty-previous 2>&1 | tail -100
+              echo "::error::twenty-previous exited"
+              exit 1
+            fi
+            sleep 5
+          done
+          docker logs twenty-previous 2>&1 | tail -100
+          echo "::error::Previous release did not become ready in time"
+          exit 1
+
+      - name: Previous release / Seed dev data and mint an API key
+        run: |
+          docker exec twenty-previous sh -c "cd /app/packages/twenty-server && yarn command:prod workspace:seed:dev"
+          OUTPUT=$(docker exec -e NO_COLOR=1 twenty-previous sh -c \
+            "cd /app/packages/twenty-server && yarn command:prod workspace:generate-api-key -w ${SEED_WORKSPACE_ID} -n rolling-upgrade-ci")
+          TOKEN=$(echo "$OUTPUT" | sed -E 's/\x1b\[[0-9;]*m//g' | grep -o 'TOKEN:[A-Za-z0-9._-]*' | head -1 | cut -d: -f2-)
+          if [ -z "$TOKEN" ]; then
+            echo "$OUTPUT"
+            echo "::error::Failed to generate API token on the previous release"
+            exit 1
+          fi
+          echo "::add-mask::$TOKEN"
+          printf 'API_KEY=%s\n' "$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Previous release / Write smoke checks
+        run: |
+          cat > "$RUNNER_TEMP/smoke-previous.sh" <<'EOF'
+          #!/usr/bin/env bash
+          # Requests a running release makes on every page load and API call.
+          set -uo pipefail
+          failed=0
+          check() {
+            local name="$1" expected="$2" code
+            shift 2
+            code=$(curl -s -o /tmp/smoke.out -w '%{http_code}' "$@" || echo 000)
+            if [ "$code" != "$expected" ] || grep -q '"errors"' /tmp/smoke.out; then
+              echo "::error::${name}: HTTP ${code}"
+              head -c 1500 /tmp/smoke.out; echo
+              failed=1
+            else
+              echo "ok  ${name}: HTTP ${code}"
+            fi
+          }
+          check "web app document" 200 -H 'Accept: text/html' http://localhost:3000/
+          check "client config" 200 http://localhost:3000/client-config
+          check "graphql companies" 200 http://localhost:3000/graphql \
+            -H "Authorization: Bearer ${API_KEY}" -H 'Content-Type: application/json' \
+            -d '{"query":"{ companies(first: 5) { edges { node { id name } } } }"}'
+          check "graphql people" 200 http://localhost:3000/graphql \
+            -H "Authorization: Bearer ${API_KEY}" -H 'Content-Type: application/json' \
+            -d '{"query":"{ people(first: 5) { edges { node { id } } } }"}'
+          check "metadata objects" 200 http://localhost:3000/metadata \
+            -H "Authorization: Bearer ${API_KEY}" -H 'Content-Type: application/json' \
+            -d '{"query":"{ objects(paging: { first: 5 }) { edges { node { id nameSingular } } } }"}'
+          check "rest companies" 200 "http://localhost:3000/rest/companies?limit=5" \
+            -H "Authorization: Bearer ${API_KEY}"
+          exit $failed
+          EOF
+          chmod +x "$RUNNER_TEMP/smoke-previous.sh"
+
+      - name: Previous release / Baseline smoke checks
+        run: '"$RUNNER_TEMP/smoke-previous.sh"'
+
+      # ================================================================
+      # Phase 2 — Current branch: upgrade the database, previous release still running
+      # ================================================================
+
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Restore server build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+
+      - name: Server / Write .env
+        run: |
+          npx nx reset:env twenty-server
+          sed -i "s|^APP_SECRET=.*|APP_SECRET=${APP_SECRET}|" packages/twenty-server/.env
+
+      - name: Server / Build
+        run: npx nx build twenty-server
+
+      # Same order as the Docker entrypoint and the dedicated deployments' migrations job.
+      - name: Server / Flush cache, upgrade, flush cache
+        run: |
+          npx nx run twenty-server:command-no-deps -- cache:flush
+          npx nx run twenty-server:command-no-deps -- upgrade --verbose
+          npx nx run twenty-server:command-no-deps -- cache:flush
+
+      # ================================================================
+      # Phase 3 — The previous release must keep serving the upgraded database
+      # ================================================================
+
+      - name: Previous release / Smoke checks on the upgraded database
+        run: |
+          if ! "$RUNNER_TEMP/smoke-previous.sh"; then
+            echo "::error::${PREVIOUS_VERSION} stops serving once this branch's upgrade has run. Rolling upgrades keep it serving until it is replaced, so it must read the new schema: add the replacement column now and rename or drop the old one in a later release (packages/twenty-server/docs/UPGRADE_COMMANDS.md, deferred drops)."
+            exit 1
+          fi
+
+      - name: Collect logs
+        if: always()
+        run: |
+          mkdir -p upgrade-logs
+          docker logs twenty-previous > upgrade-logs/twenty-previous.log 2>&1 || true
+          docker logs postgres > upgrade-logs/postgres.log 2>&1 || true
+          grep -iE 'error|does not exist' upgrade-logs/twenty-previous.log | sed -E 's/\x1b\[[0-9;]*m//g' | sort | uniq -c | sort -rn | head -20 || true
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rolling-upgrade-logs
+          path: upgrade-logs/
+          if-no-files-found: ignore
+
+      - name: Job summary
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+        run: |
+          {
+            echo "## Rolling upgrade: ${PREVIOUS_VERSION} keeps serving while current branch upgrades"
+            echo ""
+            echo "| **Result** | \`${RESULT}\` |"
+            echo "|---|---|"
+            echo "| **Serving release** | \`${PREVIOUS_VERSION}\` (Docker Hub) |"
+            echo "| **Upgrade** | current branch (built from source) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f twenty-previous postgres redis 2>/dev/null || true
           docker network rm twenty-net 2>/dev/null || true
