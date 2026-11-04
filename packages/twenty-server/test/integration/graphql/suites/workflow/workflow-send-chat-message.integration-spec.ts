@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import gql from 'graphql-tag';
 import { findMyParticipant } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
@@ -131,7 +132,9 @@ describe('Send chat message workflow step', () => {
           },
         });
 
-      threadId = stepResult?.threadId as string | undefined;
+      const stepThreadId = stepResult?.threadId;
+
+      threadId = isString(stepThreadId) ? stepThreadId : undefined;
 
       expect({ status, stepStatus, stepError }).toEqual({
         status: 'COMPLETED',

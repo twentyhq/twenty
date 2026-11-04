@@ -446,9 +446,6 @@ describe('Sending an inbox message as an application', () => {
         idempotencyKey: '',
       }).threadId;
 
-    const sendMention = (overrides: Record<string, unknown>) =>
-      sendInboxMessage(applicationToken, { toolCall: null, ...overrides });
-
     it('mentions every member it names, the owner too, once for a message sent twice at once', async () => {
       const threadKey = `inbox-thread-${uuidv4()}`;
       const mentionThreadId = buildThreadId(threadKey);
@@ -457,7 +454,8 @@ describe('Sending an inbox message as an application', () => {
       try {
         const responses = await Promise.all(
           [1, 2].map(() =>
-            sendMention({
+            sendInboxMessage(applicationToken, {
+              toolCall: null,
               threadKey,
               idempotencyKey: 'review-request',
               text: `${mention(JONY)}, ${mention(JANE)} and ${mention(JONY)} again: the deck is ready.`,
@@ -502,7 +500,8 @@ describe('Sending an inbox message as an application', () => {
       const mentionThreadId = buildThreadId(threadKey);
 
       try {
-        await sendMention({
+        await sendInboxMessage(applicationToken, {
+          toolCall: null,
           threadKey,
           idempotencyKey: 'comment:1',
           text: `${mention(JONY)}, can you check the figures?`,
@@ -515,13 +514,15 @@ describe('Sending an inbox message as an application', () => {
           mentionThreadId,
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
-        const retryResponse = await sendMention({
+        const retryResponse = await sendInboxMessage(applicationToken, {
+          toolCall: null,
           threadKey,
           idempotencyKey: 'comment:1',
           text: `${mention(TIM)}, can you check the figures?`,
         });
 
         expect(retryResponse.body.errors).toBeUndefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
         expect(
           await findMyParticipant(
             mentionThreadId,
@@ -539,7 +540,8 @@ describe('Sending an inbox message as an application', () => {
           ),
         ).toEqual([]);
 
-        await sendMention({
+        await sendInboxMessage(applicationToken, {
+          toolCall: null,
           threadKey,
           idempotencyKey: 'comment:2',
           text: `${mention(JONY)}, one more thing.`,
@@ -565,7 +567,8 @@ describe('Sending an inbox message as an application', () => {
 
     it('refuses a mention of a member who cannot have the conversation', async () => {
       const threadKey = `inbox-thread-${uuidv4()}`;
-      const response = await sendMention({
+      const response = await sendInboxMessage(applicationToken, {
+        toolCall: null,
         threadKey,
         idempotencyKey: 'stranger',
         text: `${mention(uuidv4())}, can you check the figures?`,
@@ -575,6 +578,7 @@ describe('Sending an inbox message as an application', () => {
         'THREAD_NOT_FOUND',
       );
       expect(await readMessages(buildThreadId(threadKey))).toEqual([]);
+      expect(await findMyParticipant(buildThreadId(threadKey))).toBeUndefined();
     });
 
     it('writes neither the message nor its mention when the mention fails, and delivers both on retry', async () => {
@@ -600,20 +604,17 @@ describe('Sending an inbox message as an application', () => {
           this: WorkspaceRepository,
           ...args: Parameters<WorkspaceRepository['insert']>
         ) {
-          const { tableShape } = (
-            this as unknown as {
-              options: { tableShape: { nameSingular: string } };
-            }
-          ).options;
+          const [values] = args;
 
-          if (tableShape.nameSingular === 'agentChatThreadParticipant') {
+          if ([values].flat().some((value) => 'lastMentionedAt' in value)) {
             return Promise.reject(new Error('Participant write failed'));
           }
 
           return insert.apply(this, args);
         });
       const send = () =>
-        sendMention({
+        sendInboxMessage(applicationToken, {
+          toolCall: null,
           threadKey,
           idempotencyKey: 'review-request',
           text: `${mention(JONY)}, the deck is ready.`,

@@ -103,7 +103,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **A member mentioned in an inbox message is now notified.** `sendInboxMessage` and the Send to Inbox workflow step read the mentions `inboxMention` writes in `text`: each mentioned member gets the conversation in their inbox, unread, with a mention to resolve, without being listed in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A mentioned member who cannot have the conversation fails the call with `THREAD_NOT_FOUND`, and nothing is written. Mentions are read when the message is first written, so sending it again with the same keys notifies no one; mentions in code or with escaped brackets never notify.
+- **A member mentioned in an inbox message is now notified.** `sendInboxMessage` and the Send to Inbox workflow step read the mentions `inboxMention` writes in `text`: each mentioned member gets the conversation in their inbox, unread, with a mention to resolve, without being listed in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A mentioned member who cannot have the conversation fails the call with `THREAD_NOT_FOUND`, and no message or mention is written. Mentions are read when the message is first written, so sending it again with the same keys notifies no one; mentions in code or with escaped brackets never notify.
 
   ```ts
   await sendInboxMessage({

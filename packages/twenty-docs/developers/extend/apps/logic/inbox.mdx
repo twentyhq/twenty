@@ -103,6 +103,7 @@ The owner and the manager are mentioned, so each has a mention to resolve; the s
 To bring the mentions of a comment into the inbox, send its body as markdown. When a comment is saved, Twenty writes its `markdown` from the editor's content: each mention becomes a mention token, and brackets someone typed are escaped, so they notify no one. Skip a comment whose body is empty rather than assuming `markdown` is set:
 
 ```ts src/logic-functions/relay-article-comment.ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   type DatabaseEventPayload,
   type ObjectRecordCreateEvent,
@@ -122,6 +123,18 @@ const handler = async (
   const body = comment.body.markdown?.trim();
 
   if (!body) {
+    return;
+  }
+
+  const { articles } = await new CoreApiClient().query({
+    articles: {
+      __args: { filter: { id: { eq: comment.articleId } }, first: 1 },
+      edges: { node: { title: true, ownerId: true } },
+    },
+  });
+  const article = articles?.edges?.[0]?.node;
+
+  if (!article?.ownerId) {
     return;
   }
 
