@@ -62,21 +62,6 @@ import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-const OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
-  authPrincipals: {
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  },
-  requiredPermissionFlags: [],
-};
-
 const OBJECT_RECORD_STATISTICS_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
@@ -109,7 +94,7 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectConnectionDTO)
   @AllowSuspendedWorkspace()
   async objects(
@@ -153,7 +138,7 @@ export class ObjectMetadataResolver {
     };
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectMetadataDTO)
   async object(
     @Args('id', {
