@@ -1,5 +1,7 @@
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -8,7 +10,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
-import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
@@ -22,7 +23,6 @@ export const useAiChatFileUpload = () => {
     agentChatUploadedFilesState,
   );
   const store = useStore();
-  const isDirectMessage = useIsCurrentDirectMessage();
 
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
     const abortController = new AbortController();
@@ -72,7 +72,14 @@ export const useAiChatFileUpload = () => {
   };
 
   const uploadFiles = async (files: File[]) => {
-    if (isDirectMessage) {
+    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
+    const currentThread = store.get(
+      agentChatThreadRecordFamilySelector.selectorFamily(
+        currentAiChatThread ?? '',
+      ),
+    );
+
+    if (currentThread?.conversationType === 'DIRECT_MESSAGE') {
       return [];
     }
 
