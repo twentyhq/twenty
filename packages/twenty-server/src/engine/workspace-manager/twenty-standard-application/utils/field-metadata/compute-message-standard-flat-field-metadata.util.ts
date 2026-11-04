@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
@@ -16,6 +15,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
 export const buildMessageStandardFlatFieldMetadatas = ({
   now,
   objectName,

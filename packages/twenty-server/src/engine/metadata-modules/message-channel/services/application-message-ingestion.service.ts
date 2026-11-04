@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -19,10 +22,7 @@ import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/mess
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -32,6 +32,9 @@ import { type PersonHandleField } from 'src/modules/match-participant/person-han
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
+
+const MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.message.fields.attachments.universalIdentifier;
 
 type IngestArgs = {
   applicationId: string;
@@ -52,6 +55,8 @@ export class ApplicationMessageIngestionService {
     private readonly personHandleFieldService: PersonHandleFieldService,
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
 
   async ingest({
@@ -102,34 +107,29 @@ export class ApplicationMessageIngestionService {
     // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
-      async () => {
-        const saved =
-          await this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
-            messagesToSave: await this.withMessageFolderIdsOrThrow({
-              workspaceId,
-              messageChannelId,
-              messages: messagesToSave,
-            }),
-            // the save path only reads inert settings and the id off the channel
-            messageChannel,
-            connectedAccount,
+      async () =>
+        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
+          messagesToSave: await this.withMessageFolderIdsOrThrow({
             workspaceId,
-            personHandleField: personHandleField ?? undefined,
-          });
-
-        if (!isDefined(saved)) {
-          return saved;
-        }
-
-        return {
-          ...saved,
-          messageIdsWithAttachments: await this.storeMissingAttachments({
-            workspaceId,
-            messages,
-            messageExternalIdsAndIdsMap: saved.messageExternalIdsAndIdsMap,
+            messageChannelId,
+            messages: messagesToSave,
           }),
-        };
-      },
+          // the save path only reads inert settings and the id off the channel
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+          personHandleField: personHandleField ?? undefined,
+          withinTransaction: ({
+            transactionScope,
+            messageExternalIdsAndIdsMap,
+          }) =>
+            this.storeMissingAttachments({
+              workspaceId,
+              transactionScope,
+              messages,
+              messageExternalIdsAndIdsMap,
+            }),
+        }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       APP_INGESTION_LOCK_OPTIONS,
     );
@@ -144,7 +144,7 @@ export class ApplicationMessageIngestionService {
     const {
       messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap,
-      messageIdsWithAttachments,
+      withinTransactionResult: messageIdsWithAttachments = new Set<string>(),
     } = savedMessages;
 
     // never drop a row: the app would see success with nothing to retry
@@ -175,10 +175,12 @@ export class ApplicationMessageIngestionService {
   // the save path shared with email import writes no files, and a message that already holds some keeps them
   private async storeMissingAttachments({
     workspaceId,
+    transactionScope,
     messages,
     messageExternalIdsAndIdsMap,
   }: {
     workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
     messages: AppMessageInput[];
     messageExternalIdsAndIdsMap: Map<string, string>;
   }): Promise<Set<string>> {
@@ -188,67 +190,100 @@ export class ApplicationMessageIngestionService {
       return new Set();
     }
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const messageRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
-            'message',
-          );
+    const messageRepository =
+      transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+        'message',
+      );
 
-        const storedMessages = await messageRepository.find({
-          where: { id: In(messageIds) },
-          select: { id: true, attachments: true },
-        });
+    const storedMessages = await messageRepository.find({
+      where: { id: In(messageIds) },
+      select: { id: true, attachments: true },
+    });
 
-        const messageIdsWithAttachments = new Set(
-          storedMessages
-            .filter((storedMessage) =>
-              isNonEmptyArray(storedMessage.attachments),
-            )
-            .map((storedMessage) => storedMessage.id),
-        );
-
-        for (const message of messages) {
-          const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
-
-          if (
-            !isDefined(messageId) ||
-            !isNonEmptyArray(message.attachments) ||
-            messageIdsWithAttachments.has(messageId)
-          ) {
-            continue;
-          }
-
-          // one record per call: the files field sync refuses multi-record updates
-          try {
-            await messageRepository.update(messageId, {
-              attachments: message.attachments.map(({ fileId, label }) => ({
-                fileId,
-                label,
-              })),
-            });
-          } catch (error) {
-            if (
-              error instanceof TwentyOrmException &&
-              error.code === TwentyOrmExceptionCode.INVALID_INPUT
-            ) {
-              throw new MessageChannelException(
-                `Attachments of message ${message.externalId} were not stored: ${error.message}`,
-                MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-              );
-            }
-
-            throw error;
-          }
-
-          messageIdsWithAttachments.add(messageId);
-        }
-
-        return messageIdsWithAttachments;
-      },
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
+    const messageIdsWithAttachments = new Set(
+      storedMessages
+        .filter((storedMessage) => isNonEmptyArray(storedMessage.attachments))
+        .map((storedMessage) => storedMessage.id),
     );
+
+    const messagesToAttach = messages.flatMap((message) => {
+      const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+
+      return isDefined(messageId) &&
+        isNonEmptyArray(message.attachments) &&
+        !messageIdsWithAttachments.has(messageId)
+        ? [{ messageId, attachments: message.attachments }]
+        : [];
+    });
+
+    // the files sync marks a file permanent outside this transaction, so every file is checked before any is attached
+    await this.assertFilesAreAttachableOrThrow({
+      workspaceId,
+      fileIds: messagesToAttach.flatMap(({ attachments }) =>
+        attachments.map(({ fileId }) => fileId),
+      ),
+    });
+
+    for (const { messageId, attachments } of messagesToAttach) {
+      // one record per call: the files field sync refuses multi-record updates
+      await messageRepository.update(messageId, {
+        attachments: attachments.map(({ fileId, label }) => ({
+          fileId,
+          label,
+        })),
+      });
+
+      messageIdsWithAttachments.add(messageId);
+    }
+
+    return messageIdsWithAttachments;
+  }
+
+  private async assertFilesAreAttachableOrThrow({
+    workspaceId,
+    fileIds,
+  }: {
+    workspaceId: string;
+    fileIds: string[];
+  }): Promise<void> {
+    if (fileIds.length === 0) {
+      return;
+    }
+
+    const repeatedFileIds = fileIds.filter(
+      (fileId, index) => fileIds.indexOf(fileId) !== index,
+    );
+
+    if (repeatedFileIds.length > 0) {
+      throw new MessageChannelException(
+        `File(s) attached to more than one message in the same batch: ${[...new Set(repeatedFileIds)].join(', ')}`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const files = await this.fileRepository.find(workspaceId, {
+      where: { id: In(fileIds) },
+      select: { id: true, path: true, status: true, settings: true },
+    });
+    const fileById = new Map(files.map((file) => [file.id, file]));
+
+    const unattachableFileIds = fileIds.filter((fileId) => {
+      const file = fileById.get(fileId);
+
+      return (
+        !isDefined(file) ||
+        file.status !== FILE_STATUS.UPLOADED ||
+        file.settings?.isTemporaryFile !== true ||
+        !file.path.includes(MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER)
+      );
+    });
+
+    if (unattachableFileIds.length > 0) {
+      throw new MessageChannelException(
+        `File(s) ${unattachableFileIds.join(', ')} cannot be attached: each must be a completed upload into the message attachments field that no record holds yet`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
   }
 
   private toMessageWithParticipants({

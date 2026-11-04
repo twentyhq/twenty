@@ -14,10 +14,10 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { MESSAGE_ATTACHMENTS_MAX_NUMBER_OF_VALUES } from 'src/modules/messaging/common/constants/message-attachments-max-number-of-values.constant';
 
 // the role is a SELECT on messageParticipant, so this is the first surface exposing it as a GraphQL enum
 registerEnumType(MessageParticipantRole, { name: 'MessageParticipantRole' });

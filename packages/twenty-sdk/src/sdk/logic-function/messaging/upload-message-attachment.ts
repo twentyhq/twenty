@@ -1,27 +1,14 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
 import { MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER } from '@/sdk/logic-function/messaging/message-attachments-field-universal-identifier.constant';
 import { type IngestMessageAttachment } from '@/sdk/logic-function/messaging/types/ingest-message.type';
-import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
+import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
 
-const CREATE_MESSAGE_ATTACHMENT_UPLOAD_MUTATION = `
-  mutation CreateMessageAttachmentUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
-    createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) {
-      fileId
-      uploadUrl
-      contentType
-    }
-  }
-`;
+// Mirrors the label limit ingestMessages enforces, so a name it would refuse never reaches storage
+const MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH = 255;
 
-const COMPLETE_MESSAGE_ATTACHMENT_UPLOAD_MUTATION = `
-  mutation CompleteMessageAttachmentUpload($fileId: String!) {
-    completeFileUpload(fileId: $fileId) {
-      id
-    }
-  }
-`;
-
-// Requires the UPLOAD_FILE permission flag on the app's role. Upload only for messages
-// ingestMessages reports without attachments: a file it does not attach is kept anyway
+// Needs UPLOAD_FILE on the app's role; a file no message ends up holding is kept, so upload only for messages without attachments
 export const uploadMessageAttachment = async ({
   filename,
   content,
@@ -32,55 +19,33 @@ export const uploadMessageAttachment = async ({
   content: Uint8Array;
   signal?: AbortSignal;
 }): Promise<IngestMessageAttachment> => {
-  const { createFileUpload: uploadTarget } = await postGraphqlRequest<
-    {
-      filename: string;
-      size: number;
-      fieldMetadataUniversalIdentifier: string;
-    },
-    {
-      createFileUpload: {
-        fileId: string;
-        uploadUrl: string;
-        contentType: string;
-      };
-    }
-  >({
-    query: CREATE_MESSAGE_ATTACHMENT_UPLOAD_MUTATION,
-    variables: {
-      filename,
-      size: content.byteLength,
-      fieldMetadataUniversalIdentifier:
-        MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-    caller: 'uploadMessageAttachment',
-    signal,
-  });
-
-  const uploadResponse = await fetch(uploadTarget.uploadUrl, {
-    method: 'PUT',
-    headers: { 'Content-Type': uploadTarget.contentType },
-    body: new Blob([content as Uint8Array<ArrayBuffer>], {
-      type: uploadTarget.contentType,
-    }),
-    signal,
-  });
-
-  if (!uploadResponse.ok) {
+  if (
+    !isNonEmptyString(filename) ||
+    filename.length > MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH
+  ) {
     throw new Error(
-      `uploadMessageAttachment() failed: upload answered HTTP ${uploadResponse.status} ${uploadResponse.statusText}`,
+      `uploadMessageAttachment() failed: filename must be 1 to ${MESSAGE_ATTACHMENT_LABEL_MAX_LENGTH} characters long`,
     );
   }
 
-  const { completeFileUpload } = await postGraphqlRequest<
-    { fileId: string },
-    { completeFileUpload: { id: string } }
-  >({
-    query: COMPLETE_MESSAGE_ATTACHMENT_UPLOAD_MUTATION,
-    variables: { fileId: uploadTarget.fileId },
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow({
     caller: 'uploadMessageAttachment',
-    signal,
   });
 
-  return { fileId: completeFileUpload.id, label: filename };
+  const client = new MetadataApiClient({
+    url: `${apiUrl}/metadata`,
+    headers: { Authorization: `Bearer ${accessToken}` },
+    // uploadFile builds its own storage request, so the signal rides on fetch to reach it too
+    fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+      fetch(input, { ...init, signal }),
+  });
+
+  const uploadedFile = await client.uploadFile({
+    fileBuffer: Buffer.from(content),
+    filename,
+    fieldMetadataUniversalIdentifier:
+      MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+  });
+
+  return { fileId: uploadedFile.id, label: filename };
 };

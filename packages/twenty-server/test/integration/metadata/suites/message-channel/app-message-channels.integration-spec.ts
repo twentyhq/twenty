@@ -1323,6 +1323,60 @@ describe('app message channels API (e2e)', () => {
       ]);
     });
 
+    it('saves nothing from a batch with one unattachable file, and the valid file stays attachable', async () => {
+      const channel = await createChannelOrThrow();
+      const validFileId = await uploadMessageAttachment();
+      const threadExternalId = `thread-${uuidv4()}`;
+      const withValidFile = {
+        ...buildMessage({
+          externalId: 'valid-file',
+          threadExternalId,
+          senderHandle: 'candidate@linkedin.test',
+        }),
+        attachments: [{ fileId: validFileId, label: 'photo.png' }],
+      };
+
+      const rejected = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          withValidFile,
+          {
+            ...buildMessage({
+              externalId: 'unknown-file',
+              threadExternalId,
+              senderHandle: 'candidate@linkedin.test',
+            }),
+            attachments: [{ fileId: uuidv4(), label: 'photo.png' }],
+          },
+        ],
+      });
+
+      expect(rejected.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+
+      const [{ count }] = await globalThis.testDataSource.query(
+        `SELECT count(*) AS count FROM "${WORKSPACE_SCHEMA}"."message"
+           WHERE "headerMessageId" LIKE $1`,
+        [`app:${owningApplicationDbId}:${channel.id}:%`],
+      );
+
+      expect(Number(count)).toBe(0);
+
+      const retried = await ingest({
+        messageChannelId: channel.id,
+        messages: [withValidFile],
+      });
+
+      expect(retried.body.errors).toBeUndefined();
+
+      const [ingested] = retried.body.data.ingestAppMessages.messages;
+
+      expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
+        validFileId,
+      ]);
+    });
+
     it('refuses a file that was never uploaded', async () => {
       const channel = await createChannelOrThrow();
 

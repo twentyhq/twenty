@@ -17,6 +17,12 @@ const UPLOAD_URL = 'https://storage.test/upload/pending-file';
 const toGraphqlResponse = (data: Record<string, unknown>) =>
   new Response(JSON.stringify({ data }), { status: 200 });
 
+const readBodyBytes = async (body: BodyInit | null | undefined) =>
+  new Uint8Array(await new Response(body).arrayBuffer());
+
+const readGraphqlVariables = async (body: BodyInit | null | undefined) =>
+  JSON.parse(await new Response(body).text()).variables;
+
 describe('MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER', () => {
   it('matches the standard message attachments field', () => {
     expect(MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER).toBe(
@@ -65,7 +71,7 @@ describe('uploadMessageAttachment', () => {
     const [createUrl, createInit] = fetchSpy.mock.calls[0];
 
     expect(createUrl).toBe('https://api.test/metadata');
-    expect(JSON.parse(createInit?.body as string).variables).toEqual({
+    expect(await readGraphqlVariables(createInit?.body)).toEqual({
       filename: 'photo.png',
       size: 3,
       fieldMetadataUniversalIdentifier:
@@ -76,13 +82,33 @@ describe('uploadMessageAttachment', () => {
 
     expect(uploadUrl).toBe(UPLOAD_URL);
     expect(uploadInit?.method).toBe('PUT');
+    expect(new Headers(uploadInit?.headers).get('Content-Type')).toBe(
+      'image/png',
+    );
+    expect(await readBodyBytes(uploadInit?.body)).toEqual(
+      new Uint8Array([1, 2, 3]),
+    );
 
     const [, completeInit] = fetchSpy.mock.calls[2];
 
-    expect(JSON.parse(completeInit?.body as string).variables).toEqual({
+    expect(await readGraphqlVariables(completeInit?.body)).toEqual({
       fileId: 'pending-file',
     });
   });
+
+  it.each(['', 'a'.repeat(256)])(
+    'refuses a filename ingestMessages would reject before uploading anything',
+    async (filename) => {
+      await expect(
+        uploadMessageAttachment({
+          filename,
+          content: new Uint8Array([1, 2, 3]),
+        }),
+      ).rejects.toThrow('filename must be 1 to 255 characters long');
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+    },
+  );
 
   it('does not complete an upload the storage refused', async () => {
     fetchSpy
@@ -104,7 +130,7 @@ describe('uploadMessageAttachment', () => {
         filename: 'photo.png',
         content: new Uint8Array([1, 2, 3]),
       }),
-    ).rejects.toThrow('HTTP 403 Forbidden');
+    ).rejects.toThrow('403 Forbidden');
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
