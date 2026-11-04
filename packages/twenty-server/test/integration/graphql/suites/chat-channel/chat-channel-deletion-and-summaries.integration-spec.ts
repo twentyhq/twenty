@@ -127,18 +127,15 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
       }),
     );
 
-    try {
-      await waitForBlockedDatabaseQueryOrThrow(processId);
+    await waitForBlockedDatabaseQueryOrThrow(processId);
 
-      assertGraphQLSuccessfulResponse(
-        await makeMetadataApiRequest({
-          query: MOVE_THREAD,
-          variables: { threadId, channelId: otherChannelId },
-        }),
-      );
-    } finally {
-      await queryRunner.commitTransaction();
-    }
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
+        query: MOVE_THREAD,
+        variables: { threadId, channelId: otherChannelId },
+      }),
+    );
+    await queryRunner.commitTransaction();
 
     assertGraphQLSuccessfulResponse(await pendingDeleteResponse);
     expect((await readChannelState(threadId)).channelId).toBe(otherChannelId);
@@ -363,7 +360,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
     const channelId = await createChannel();
     const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
-    const { hasEmittedThreadEvent } = watchThreadEvents();
+    const { findEmittedThreadEvent } = watchThreadEvents();
 
     jest
       .spyOn(getChannelMetadataService(), 'deleteChannel')
@@ -382,7 +379,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
       { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
     expect(await isChannelInCore(channelId)).toBe(true);
-    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+    expect(findEmittedThreadEvent(threadId)).toBeDefined();
 
     await createThreadInChannel(channelId);
   });

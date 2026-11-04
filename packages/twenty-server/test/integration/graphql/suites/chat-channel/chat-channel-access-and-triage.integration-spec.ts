@@ -572,7 +572,6 @@ describe('Chat channel access and triage through the authenticated API', () => {
       'SELECT pg_backend_pid() AS "processId"',
     );
 
-    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
     await queryRunner.query(
       `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
       [threadId],
@@ -585,6 +584,7 @@ describe('Chat channel access and triage through the authenticated API', () => {
 
     await waitForBlockedDatabaseQueryOrThrow(processId);
     await queryRunner.commitTransaction();
+    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
     await pendingRewrite;
 
     expect(await readChannelGrants(threadId)).toEqual([]);

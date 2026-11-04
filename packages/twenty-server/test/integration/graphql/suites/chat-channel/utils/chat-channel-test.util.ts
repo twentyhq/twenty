@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { lockAgentChatChannelForThreadWriteInTestOrThrow } from 'test/integration/ai/utils/lock-agent-chat-channel-for-thread-write-in-test-or-throw.util';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
@@ -344,11 +344,7 @@ export const watchThreadEvents = () => {
       )
       .find((event) => 'recordId' in event && event.recordId === threadId);
 
-  return {
-    findEmittedThreadEvent,
-    hasEmittedThreadEvent: (threadId: string) =>
-      isDefined(findEmittedThreadEvent(threadId)),
-  };
+  return { findEmittedThreadEvent };
 };
 
 export const getChannelMetadataService = () =>
