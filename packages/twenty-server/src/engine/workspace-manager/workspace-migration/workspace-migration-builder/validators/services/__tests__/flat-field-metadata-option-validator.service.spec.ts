@@ -133,8 +133,25 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
         remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
       });
 
-    it('accepts a valid option on a select field', () => {
-      expect(validate({ option: buildOption() }).errors).toEqual([]);
+    it.each([
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+      FieldMetadataType.RATING,
+    ])('accepts a valid option on a %s field', (type) => {
+      const enumField = getFlatFieldMetadataMock({
+        universalIdentifier: v4(),
+        objectMetadataId: v4(),
+        type,
+      });
+
+      expect(
+        validate({
+          option: buildOption({
+            fieldMetadataUniversalIdentifier: enumField.universalIdentifier,
+          }),
+          fields: [enumField],
+        }).errors,
+      ).toEqual([]);
     });
 
     it('rejects an option whose field does not exist', () => {
@@ -370,6 +387,18 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
   });
 
   describe('deletion', () => {
+    it('accepts deleting an existing option', () => {
+      const option = buildOption();
+
+      expect(
+        validator.validateFlatFieldMetadataOptionDeletion({
+          ...buildCommonValidationArgs({ existingOptions: [option] }),
+          flatEntityToValidate: option,
+          remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+        }).errors,
+      ).toEqual([]);
+    });
+
     it('rejects deleting an option that does not exist', () => {
       expect(
         errorCodes(
