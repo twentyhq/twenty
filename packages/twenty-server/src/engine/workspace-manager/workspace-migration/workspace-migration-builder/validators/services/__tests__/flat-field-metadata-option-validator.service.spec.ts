@@ -181,6 +181,42 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       ).not.toEqual([]);
     });
 
+    it('rejects a label override containing a comma', () => {
+      expect(
+        validate({
+          option: buildOption({
+            overrides: {
+              [APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'A, B' },
+            },
+          }),
+        }).errors,
+      ).not.toEqual([]);
+    });
+
+    it('rejects an unsupported color override', () => {
+      expect(
+        validate({
+          option: buildOption({
+            overrides: {
+              [APPLICATION_UNIVERSAL_IDENTIFIER]: { color: 'not-a-color' },
+            },
+          }),
+        }).errors,
+      ).not.toEqual([]);
+    });
+
+    it('accepts a valid label override', () => {
+      expect(
+        validate({
+          option: buildOption({
+            overrides: {
+              [APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'Renamed' },
+            },
+          }),
+        }).errors,
+      ).toEqual([]);
+    });
+
     it('rejects a value already used by another option of the same field', () => {
       expect(
         errorCodes(
