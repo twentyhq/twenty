@@ -148,7 +148,7 @@ export class BillingUsageService {
           return { workspaceCreditsUsedMicro: 0, userCreditsUsedMicro: 0 };
         }),
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
-      this.billingWorkspaceCreditAllowanceService.findAllWorkspaceCreditAllowances(
+      this.billingWorkspaceCreditAllowanceService.findUnexpiredWorkspaceCreditAllowances(
         workspaceId,
       ),
     ]);

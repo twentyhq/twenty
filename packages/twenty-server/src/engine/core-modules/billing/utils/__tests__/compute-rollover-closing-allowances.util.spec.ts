@@ -88,4 +88,18 @@ describe('computeRolloverClosingAllowances', () => {
       closingSeatAllowanceMicro: 0,
     });
   });
+
+  it('puts an active workspace credit allowance in the seat slot instead of the trial credits', () => {
+    expect(
+      computeRolloverClosingAllowances({
+        planWorkspaceCredits,
+        trialAllowanceMicro: 2_500_000,
+        isFirstPeriodAfterTrial: true,
+        workspaceCreditAllowanceMicro: 5_000_000,
+      }),
+    ).toEqual({
+      closingAllowanceMicro: 0,
+      closingSeatAllowanceMicro: 5_000_000,
+    });
+  });
 });

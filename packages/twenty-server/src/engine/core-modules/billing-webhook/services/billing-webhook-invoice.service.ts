@@ -155,32 +155,32 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    const [params, workspaceCreditAllowanceMicro] = await Promise.all([
-      this.resourceCreditService.getResourceCreditRolloverParameters({
-        workspaceId: subscription.workspaceId,
-        subscriptionId: subscription.id,
-        boundary,
-        interval: closingPeriodInterval,
-      }),
-      this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
-        {
+    const [resourceCreditRolloverParameters, workspaceCreditAllowanceMicro] =
+      await Promise.all([
+        this.resourceCreditService.getResourceCreditRolloverParameters({
           workspaceId: subscription.workspaceId,
-          nowMs: closingPeriodEnd.getTime() - 1,
+          subscriptionId: subscription.id,
+          boundary,
           interval: closingPeriodInterval,
-          isTrialing: isFirstPeriodAfterTrial,
-        },
-      ),
-    ]);
+        }),
+        this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
+          {
+            workspaceId: subscription.workspaceId,
+            nowMs: closingPeriodEnd.getTime() - 1,
+            interval: closingPeriodInterval,
+            isTrialing: isFirstPeriodAfterTrial,
+          },
+        ),
+      ]);
 
     const closingAllowances = computeRolloverClosingAllowances({
-      planWorkspaceCredits: params,
+      planWorkspaceCredits: resourceCreditRolloverParameters,
       trialAllowanceMicro:
         this.billingUsageService.getTrialResourceUsageCap(subscription),
       isFirstPeriodAfterTrial,
       workspaceCreditAllowanceMicro,
     });
 
-    // Skipping the transition forfeits the unspent part of every grant of this workspace
     if (!isDefined(closingAllowances)) {
       this.logger.error(
         `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack, seats or a workspace credit allowance`,
@@ -195,7 +195,8 @@ export class BillingWebhookInvoiceService {
       closingPeriodEnd,
       ...closingAllowances,
       nextPeriodStart,
-      nextAllowanceMicro: params?.workspaceCreditsForPackMicro ?? 0,
+      nextAllowanceMicro:
+        resourceCreditRolloverParameters?.workspaceCreditsForPackMicro ?? 0,
     });
   }
 

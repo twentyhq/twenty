@@ -22,7 +22,6 @@ export const computePlanAllowanceMicro = ({
   }): number | null => {
   const workspaceCreditAllowanceMicro = findActiveWorkspaceCreditAllowanceMicro(
     {
-      // Entries cached before this field existed lack it until recomputed
       workspaceCreditAllowances: workspaceCreditAllowances ?? [],
       nowMs,
       interval,
