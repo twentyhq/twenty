@@ -6,13 +6,11 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { coreAgentsIsDeletingFamilyState } from '@/object-core/agents/states/coreAgentsIsDeletingFamilyState';
 import { coreAgentsSelectionFamilyState } from '@/object-core/agents/states/coreAgentsSelectionFamilyState';
 import { getCoreAgentSelectionAfterDeletion } from '@/object-core/agents/utils/getCoreAgentSelectionAfterDeletion';
-import { getSelectedCoreAgentIds } from '@/object-core/agents/utils/getSelectedCoreAgentIds';
+import { getCustomCoreAgentIds } from '@/object-core/agents/utils/getCustomCoreAgentIds';
 import { refreshCoreAgentQueries } from '@/object-core/agents/utils/refreshCoreAgentQueries';
-import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import {
   DeleteOneAgentDocument,
@@ -38,22 +36,17 @@ export const useDeleteCoreAgents = (tableId: string) => {
       return false;
     }
 
-    const filterSettings = store.get(coreAgentsFilterSettingsState.atom);
-    const currentWorkspace = store.get(currentWorkspaceState.atom);
     const cachedAgents =
       apolloClient.readQuery({ query: FindManyAgentsDocument })
         ?.findManyAgents ?? [];
-    const selectedAgentIds = getSelectedCoreAgentIds({
-      selection: { filterSettings, rowIds: agentIds },
-      filterSettings,
-      coreAgents: cachedAgents.filter((agent) =>
-        isCoreAgentMatchingFilterSettings({ agent, filterSettings }),
-      ),
-      workspaceCustomApplicationId:
-        currentWorkspace?.workspaceCustomApplication?.id,
+    const deletableAgentIds = getCustomCoreAgentIds({
+      agentIds,
+      coreAgents: cachedAgents,
+      workspaceCustomApplicationId: store.get(currentWorkspaceState.atom)
+        ?.workspaceCustomApplication?.id,
     });
 
-    if (!isNonEmptyArray(selectedAgentIds)) {
+    if (!isNonEmptyArray(deletableAgentIds)) {
       return false;
     }
 
@@ -64,7 +57,7 @@ export const useDeleteCoreAgents = (tableId: string) => {
       const deletionErrors: unknown[] = [];
       const unconfirmedDeletionIds: string[] = [];
 
-      for (const agentId of selectedAgentIds) {
+      for (const agentId of deletableAgentIds) {
         try {
           const { data } = await deleteOneAgent({
             variables: { input: { id: agentId } },

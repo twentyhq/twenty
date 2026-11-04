@@ -1,6 +1,6 @@
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreAgentsSelection } from '@/object-core/agents/types/CoreAgentsSelection';
-import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
+import { getCustomCoreAgentIds } from '@/object-core/agents/utils/getCustomCoreAgentIds';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const getSelectedCoreAgentIds = ({
@@ -18,15 +18,9 @@ export const getSelectedCoreAgentIds = ({
     return [];
   }
 
-  const selectableAgentIds = new Set(
-    coreAgents
-      .filter((agent) =>
-        getIsMetadataItemCustom(agent, workspaceCustomApplicationId),
-      )
-      .map(({ id }) => id),
-  );
-
-  return [...new Set(selection.rowIds)].filter((id) =>
-    selectableAgentIds.has(id),
-  );
+  return getCustomCoreAgentIds({
+    agentIds: selection.rowIds,
+    coreAgents,
+    workspaceCustomApplicationId,
+  });
 };
