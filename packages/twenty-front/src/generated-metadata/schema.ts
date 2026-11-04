@@ -348,6 +348,7 @@ export enum AllMetadataName {
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',
+  fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
