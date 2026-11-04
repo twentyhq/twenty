@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -23,6 +24,19 @@ export class AgentChatDirectMessageRecordsService {
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
+
+  async isEnabled(workspaceId: string): Promise<boolean> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    return (
+      featureFlagsMap[
+        FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
+      ] === true
+    );
+  }
 
   async share({
     workspaceId,

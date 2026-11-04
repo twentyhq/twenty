@@ -1,3 +1,4 @@
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
@@ -31,11 +32,9 @@ const READ_DIRECT_MESSAGE = gql`
 
 describe('Private text direct messages', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
-  let threadIds: Set<string>;
 
   beforeEach(async () => {
     context = await createChatParticipationTestContext();
-    threadIds = new Set();
   });
 
   const readContentRecords = (
@@ -51,15 +50,6 @@ describe('Private text direct messages', () => {
     );
 
   afterEach(async () => {
-    for (const threadId of threadIds) {
-      const records = await readContentRecords(threadId);
-
-      await global.testDataSource.query(
-        `DELETE FROM "${context.schema}"."recordShare" WHERE "recordId" = ANY($1::uuid[])`,
-        [records.map(({ id }) => id)],
-      );
-    }
-
     await context.cleanup();
   });
 
@@ -79,7 +69,6 @@ describe('Private text direct messages', () => {
 
     const threadId = response.body.data.openDirectMessage as string;
 
-    threadIds.add(threadId);
     context.registerThread(threadId);
 
     return threadId;
@@ -181,9 +170,10 @@ describe('Private text direct messages', () => {
         ...payload,
       });
 
-      expect(response.body.errors?.[0]?.extensions?.code).toBe(
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
+      expect(response.body.errors?.[0]?.extensions).toMatchObject({
+        code: ErrorCode.BAD_USER_INPUT,
+        subCode: AiExceptionCode.INVALID_AGENT_INPUT,
+      });
       expect(await readContentRecords(threadId)).toHaveLength(1);
     },
   );

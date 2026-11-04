@@ -1,5 +1,3 @@
-import { FeatureFlagKey } from 'twenty-shared/types';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { isArray, isString } from '@sniptt/guards';
 import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Injectable } from '@nestjs/common';
@@ -20,6 +18,9 @@ export class AgentHistoryTransactionService {
     workspaceId: string,
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
   ): Promise<TResult> {
+    const shouldShareDirectMessageRecords =
+      await this.directMessageRecordsService.isEnabled(workspaceId);
+
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -37,11 +38,7 @@ export class AgentHistoryTransactionService {
               insert: async (name, values) => {
                 const { identifiers } =
                   await getRepository(name).insert(values);
-                if (
-                  !getWorkspaceContext().featureFlagsMap[
-                    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
-                  ]
-                ) {
+                if (!shouldShareDirectMessageRecords) {
                   return;
                 }
 

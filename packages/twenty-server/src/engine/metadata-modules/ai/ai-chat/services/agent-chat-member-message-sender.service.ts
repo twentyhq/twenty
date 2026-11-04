@@ -85,6 +85,11 @@ export class AgentChatMemberMessageSenderService {
       recipientWorkspaceMemberIds:
         addressing.initialRecipientWorkspaceMemberIds,
     };
+    const preparedMessage =
+      await this.memberMessagePartsService.prepareMemberMessage({
+        workspaceId: actor.workspaceId,
+        message,
+      });
 
     await this.chatThreadService.createThreadIfMissing({
       ...threadAccess,
@@ -134,10 +139,7 @@ export class AgentChatMemberMessageSenderService {
         await this.memberMessageWriterService.writeMemberMessage({
           actor,
           thread,
-          message: await this.memberMessagePartsService.prepareMemberMessage({
-            workspaceId: actor.workspaceId,
-            message,
-          }),
+          message: preparedMessage,
           placement: AgentChatMemberMessagePlacement.COMPLETED,
           participation: {
             isAssistantParticipant: false,
@@ -158,11 +160,6 @@ export class AgentChatMemberMessageSenderService {
       };
     }
 
-    const preparedMessage =
-      await this.memberMessagePartsService.prepareMemberMessage({
-        workspaceId: actor.workspaceId,
-        message,
-      });
     const participation =
       await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,

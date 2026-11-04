@@ -223,6 +223,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       new AgentHistoryTransactionService(
         orm as never,
         {
+          isEnabled: jest.fn().mockResolvedValue(false),
           share: jest
             .fn()
             .mockRejectedValue(

@@ -237,7 +237,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     },
   );
 
-  it('keeps a canonical DM mention-only when only one human participant remains', async () => {
+  it('keeps a canonical DM human-only when only one participant remains', async () => {
     models.enableEvaluation();
     const threadId = await context.createThread();
 
@@ -253,7 +253,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     await expect(shouldReply({ threadId })).resolves.toBe(false);
     await expect(
       shouldReply({ threadId, isAssistantMentioned: true }),
-    ).resolves.toBe(true);
+    ).resolves.toBe(false);
     expect(models.evaluate).not.toHaveBeenCalled();
   });
 
