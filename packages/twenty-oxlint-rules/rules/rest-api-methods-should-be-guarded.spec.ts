@@ -179,6 +179,18 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        @UseGuards(JwtAuthGuard, WorkspaceNotSuspendedGuard)
+        class TestController {
+          @Get()
+          @UseGuards(${ACCEPT_USER_SESSIONS})
+          testMethod() {}
+        }
+      `,
+      errors: [{ messageId: 'classGuardBeforeMethodAccessPolicy' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         @UseGuards(JwtAuthGuard, WorkspaceNotSuspendedGuard, ${ACCEPT_EVERY_PRINCIPAL})
         class TestController {
           @Get()

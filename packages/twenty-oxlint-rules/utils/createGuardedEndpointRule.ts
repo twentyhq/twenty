@@ -14,6 +14,8 @@ const ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID =
   'accessPolicyGuardWithoutPolicy';
 const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
   'accessPolicyGuardOnClassAndMethod';
+const CLASS_GUARD_BEFORE_METHOD_ACCESS_POLICY_MESSAGE_ID =
+  'classGuardBeforeMethodAccessPolicy';
 
 const findClassDeclaration = (node: any): any | null => {
   if (node.type === 'ClassDeclaration') return node;
@@ -60,6 +62,8 @@ export const createGuardedEndpointRule = ({
           'AccessPolicyGuard takes a *_ACCESS_POLICY constant or an inline policy object (no spread, no shorthand).',
         [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
           'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
+        [CLASS_GUARD_BEFORE_METHOD_ACCESS_POLICY_MESSAGE_ID]:
+          'Class guards run before method guards, so this guard runs before the method-level AccessPolicyGuard. Move it after the policy on each method, or put the policy on the class.',
       },
       schema: [],
       hasSuggestions: false,
@@ -104,9 +108,34 @@ export const createGuardedEndpointRule = ({
         }
       };
 
+      const reportClassGuardsBeforeMethodAccessPolicy = (
+        classNode: any,
+        endpoints: any[],
+      ): void => {
+        const isAccessPolicyOnMethods =
+          typedTokenHelpers.getAccessPolicyGuards(classNode).length === 0 &&
+          endpoints.some(
+            (endpoint) =>
+              typedTokenHelpers.getAccessPolicyGuards(endpoint).length > 0,
+          );
+
+        if (!isAccessPolicyOnMethods) {
+          return;
+        }
+
+        for (const guard of typedTokenHelpers.getClassGuardsRunningBeforeAccessPolicy(
+          classNode,
+        )) {
+          context.report({
+            node: guard,
+            messageId: CLASS_GUARD_BEFORE_METHOD_ACCESS_POLICY_MESSAGE_ID,
+          });
+        }
+      };
+
       return {
         ClassDeclaration: (node: any): void => {
-          const hasEndpoint = node.body.body.some(
+          const endpoints = node.body.body.filter(
             (member: any) =>
               member.type === 'MethodDefinition' &&
               typedTokenHelpers.nodeHasDecoratorsNamed(
@@ -115,9 +144,12 @@ export const createGuardedEndpointRule = ({
               ),
           );
 
-          if (hasEndpoint) {
-            reportAccessPolicyGuardUsage(node);
+          if (endpoints.length === 0) {
+            return;
           }
+
+          reportAccessPolicyGuardUsage(node);
+          reportClassGuardsBeforeMethodAccessPolicy(node, endpoints);
         },
         MethodDefinition: (node: any): void => {
           if (

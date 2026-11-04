@@ -238,6 +238,22 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @Query()
+          @UseGuards(AccessPolicyGuard(TIMELINE_READ_ACCESS_POLICY))
+          testQuery() {}
+
+          @Query()
+          @UseGuards(AccessPolicyGuard(TIMELINE_READ_ACCESS_POLICY))
+          otherQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'classGuardBeforeMethodAccessPolicy' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         @UseGuards(CustomPermissionGuard, ${ACCEPT_EVERY_PRINCIPAL})
         class TestResolver {
           @Query()

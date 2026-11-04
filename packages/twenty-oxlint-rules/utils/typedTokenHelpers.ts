@@ -138,6 +138,12 @@ export const typedTokenHelpers = {
       ),
     ),
 
+  // Class guards run before method guards, so only those setting the principal may precede a method policy
+  getClassGuardsRunningBeforeAccessPolicy: (classNode: any): any[] =>
+    getUseGuardsArguments(classNode).filter(
+      (arg: any) => !isAuthenticatingGuard(arg),
+    ),
+
   nodeHasPermissionsGuard: (node: any): boolean => {
     if (!node.decorators) {
       return false;
