@@ -54,6 +54,7 @@ const buildAction = async () => {
     getExecutionContext: jest.fn().mockResolvedValue({
       authContext: { type: 'application' },
       application: APPLICATION,
+      workflowId: 'workflow-id',
     }),
     assertRunApplicationCanTriggerStepTargetOrThrow: jest.fn(),
   };
@@ -123,6 +124,7 @@ describe('CodeWorkflowAction', () => {
       flatApplication: APPLICATION,
       code,
       payload: { a: 1, b: 2 },
+      workflowId: 'workflow-id',
     });
     expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
     expect(result).toEqual({ result: { sum: 3 } });
