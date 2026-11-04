@@ -32,7 +32,10 @@ export const withQueueOrderTestContext = async (
       },
       {
         provide: TwentyConfigService,
-        useValue: { get: () => undefined },
+        useValue: {
+          get: (key: string) =>
+            key === 'JOB_QUEUE_MAX_JOB_SIZE_BYTES' ? 1_048_576 : undefined,
+        },
       },
       { provide: EventEmitter2, useValue: new EventEmitter2() },
       {
