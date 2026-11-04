@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-
-import { DataSource } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,6 +24,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -50,8 +49,8 @@ export class AgentChatChannelService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
   ) {}
 
   async findChannels({
@@ -240,12 +239,9 @@ export class AgentChatChannelService {
       after: AgentChatThreadWorkspaceEntity;
     }[]
   > {
-    const channelRepository = this.coreDataSource.getRepository(
-      AgentChatChannelEntity,
-    );
     const [doesSourceChannelExist, doesSourceChannelHaveThreads] =
       await Promise.all([
-        channelRepository.existsBy({ id: channelId, workspaceId }),
+        this.channelRepository.existsBy(workspaceId, { id: channelId }),
         this.threadRepository.existsBy(workspaceId, { channelId }),
       ]);
 
