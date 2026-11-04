@@ -44,9 +44,11 @@ export class AddWorkspaceIdToTotoFastInstanceCommand
 
 ### Slow instance commands
 
-Use a slow instance command when adding columns to a heavily used core table, such as `workspace`. Annotate each new entity property with `@WasIntroducedInUpgrade` pointing to that command. Introduce query selections, API exposure, cache projections, generated client contracts and frontend usage only after the containing version is deployed and the slow upgrade has completed. A schema-only slow command can leave `runDataMigration` empty.
+Use slow instance commands for potentially long-running data migrations and for new columns on heavily used core tables, such as `workspace`. A slow command can contain only schema changes; leave `runDataMigration` empty when no data backfill is needed.
 
-Slow commands are used when a potentially long-running data migration must happen before the schema change. They only run when the `--include-slow` flag is passed.
+For new columns, annotate each entity property with `@WasIntroducedInUpgrade` pointing to the introducing command. Introduce query selections, API exposure, cache projections, generated client contracts and frontend usage only after the containing version is deployed and the slow upgrade has completed. Older released commands retain their original classification.
+
+The `upgrade` command runs slow commands in sequence. With `run-instance-commands`, pass `--include-slow` to include them.
 
 A slow command implements `SlowInstanceCommand`, which extends `FastInstanceCommand` with an additional `runDataMigration` method that executes before `up`:
 
@@ -73,7 +75,7 @@ export class BackfillWorkspaceIdSlowInstanceCommand
 }
 ```
 
-A common pattern is to pair a **fast** command (add a nullable column) with a **slow** command (backfill existing rows, then set `NOT NULL`).
+When an immediate column addition is appropriate, a common pattern is to pair a **fast** command (add a nullable column) with a **slow** command (backfill existing rows, then set `NOT NULL`). New columns on heavily used tables follow the slow-command rollout above.
 
 ## Workspace Commands
 
