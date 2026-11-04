@@ -172,6 +172,7 @@ describe('McpCoreController', () => {
         'meta',
       );
 
+      expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledTimes(1);
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         expect.objectContaining({ isDirectMode: false }),
