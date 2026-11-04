@@ -12884,7 +12884,7 @@ msgstr "目的地字段"
 #. js-lingui-id: 5Lk6iG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field option"
-msgstr ""
+msgstr "字段选项"
 
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

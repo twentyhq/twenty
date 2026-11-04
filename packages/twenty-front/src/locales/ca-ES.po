@@ -12884,7 +12884,7 @@ msgstr "Camp a la destinació"
 #. js-lingui-id: 5Lk6iG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field option"
-msgstr ""
+msgstr "opció de camp"
 
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

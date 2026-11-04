@@ -5595,18 +5595,18 @@ msgstr "Fält hittades inte."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option field not found"
-msgstr ""
+msgstr "Fältalternativfält hittades inte"
 
 #. js-lingui-id: aG/F93
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option not found"
-msgstr ""
+msgstr "Fältalternativ hittades inte"
 
 #. js-lingui-id: cBUqMY
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Field option not found."
-msgstr ""
+msgstr "Fältalternativ hittades inte."
 
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -6968,7 +6968,7 @@ msgstr "Ogiltig fältinmatning."
 #. js-lingui-id: XRDeBh
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Invalid field option input."
-msgstr ""
+msgstr "Ogiltig inmatning för fältalternativ."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10158,7 +10158,7 @@ msgstr "Alternativvärdet \"{sanitizedValue}\" understiger 1 tecken"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option value \"{value}\" already exists on this field"
-msgstr ""
+msgstr "Alternativvärdet \"{value}\" finns redan i det här fältet"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10191,7 +10191,7 @@ msgstr "Alternativ är nödvändiga för enum fält"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Options can only belong to select, multi-select or rating fields"
-msgstr ""
+msgstr "Alternativ kan endast tillhöra fält för val, flerval eller betyg"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts

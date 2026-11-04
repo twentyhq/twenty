@@ -12884,7 +12884,7 @@ msgstr "Champ sur la destination"
 #. js-lingui-id: 5Lk6iG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field option"
-msgstr ""
+msgstr "option de champ"
 
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

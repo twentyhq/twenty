@@ -12884,7 +12884,7 @@ msgstr "Campo en destino"
 #. js-lingui-id: 5Lk6iG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field option"
-msgstr ""
+msgstr "opción de campo"
 
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

@@ -5595,18 +5595,18 @@ msgstr "Поле не знайдено."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option field not found"
-msgstr ""
+msgstr "Поле параметра поля не знайдено"
 
 #. js-lingui-id: aG/F93
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option not found"
-msgstr ""
+msgstr "Параметр поля не знайдено"
 
 #. js-lingui-id: cBUqMY
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Field option not found."
-msgstr ""
+msgstr "Параметр поля не знайдено."
 
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -6968,7 +6968,7 @@ msgstr "Некоректні вхідні дані поля."
 #. js-lingui-id: XRDeBh
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Invalid field option input."
-msgstr ""
+msgstr "Некоректні вхідні дані параметра поля."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10156,7 +10156,7 @@ msgstr "Значення опції \"{sanitizedValue}\" містить менш
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option value \"{value}\" already exists on this field"
-msgstr ""
+msgstr "Значення параметра \"{value}\" уже існує в цьому полі"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10189,7 +10189,7 @@ msgstr "Опції необхідні для полів з енумераціє�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Options can only belong to select, multi-select or rating fields"
-msgstr ""
+msgstr "Параметри можуть належати лише полям вибору, множинного вибору або оцінювання"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts

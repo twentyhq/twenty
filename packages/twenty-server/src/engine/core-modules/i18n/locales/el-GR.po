@@ -5595,18 +5595,18 @@ msgstr "Το πεδίο δεν βρέθηκε."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option field not found"
-msgstr ""
+msgstr "Το πεδίο της επιλογής πεδίου δεν βρέθηκε"
 
 #. js-lingui-id: aG/F93
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option not found"
-msgstr ""
+msgstr "Η επιλογή πεδίου δεν βρέθηκε"
 
 #. js-lingui-id: cBUqMY
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Field option not found."
-msgstr ""
+msgstr "Η επιλογή πεδίου δεν βρέθηκε."
 
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -6968,7 +6968,7 @@ msgstr "Μη έγκυρα δεδομένα εισόδου πεδίου."
 #. js-lingui-id: XRDeBh
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Invalid field option input."
-msgstr ""
+msgstr "Μη έγκυρα δεδομένα εισόδου επιλογής πεδίου."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10156,7 +10156,7 @@ msgstr "Η τιμή επιλογής \"{sanitizedValue}\" είναι κάτω α
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option value \"{value}\" already exists on this field"
-msgstr ""
+msgstr "Η τιμή επιλογής \"{value}\" υπάρχει ήδη σε αυτό το πεδίο"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10189,7 +10189,7 @@ msgstr "Απαιτούνται επιλογές για πεδία λίστας"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Options can only belong to select, multi-select or rating fields"
-msgstr ""
+msgstr "Οι επιλογές μπορούν να ανήκουν μόνο σε πεδία επιλογής, πολλαπλής επιλογής ή αξιολόγησης"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts

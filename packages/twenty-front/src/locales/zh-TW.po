@@ -12884,7 +12884,7 @@ msgstr "目的地資料欄位"
 #. js-lingui-id: 5Lk6iG
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field option"
-msgstr ""
+msgstr "欄位選項"
 
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

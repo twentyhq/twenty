@@ -5595,18 +5595,18 @@ msgstr "Feld nicht gefunden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option field not found"
-msgstr ""
+msgstr "Feldoptionsfeld nicht gefunden"
 
 #. js-lingui-id: aG/F93
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Field option not found"
-msgstr ""
+msgstr "Feldoption nicht gefunden"
 
 #. js-lingui-id: cBUqMY
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Field option not found."
-msgstr ""
+msgstr "Feldoption nicht gefunden."
 
 #. js-lingui-id: krbBsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -6968,7 +6968,7 @@ msgstr "Ungültige Feldeingabe."
 #. js-lingui-id: XRDeBh
 #: src/engine/metadata-modules/field-metadata-option/field-metadata-option.exception.ts
 msgid "Invalid field option input."
-msgstr ""
+msgstr "Ungültige Feldoptionseingabe."
 
 #. js-lingui-id: FHBTxe
 #: src/engine/api/common/common-select-fields/common-select-fields.exception.ts
@@ -10156,7 +10156,7 @@ msgstr "Optionswert \"{sanitizedValue}\" ist unter 1 Zeichen"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option value \"{value}\" already exists on this field"
-msgstr ""
+msgstr "Optionswert \"{value}\" existiert bereits in diesem Feld"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10189,7 +10189,7 @@ msgstr "Optionen sind für Enum-Felder erforderlich"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Options can only belong to select, multi-select or rating fields"
-msgstr ""
+msgstr "Optionen können nur zu Auswahl-, Mehrfachauswahl- oder Bewertungsfeldern gehören"
 
 #. js-lingui-id: piAYqn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
