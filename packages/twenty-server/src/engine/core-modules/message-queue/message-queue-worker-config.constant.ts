@@ -1,3 +1,4 @@
+import { WORKFLOW_RUN_GROUP_KEY_KIND } from 'src/engine/core-modules/message-queue/constants/workflow-run-group-key-kind.constant';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
@@ -181,6 +182,9 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
+    },
+    groupRateLimits: {
+      [WORKFLOW_RUN_GROUP_KEY_KIND]: { max: 100, durationMs: 60_000 },
     },
   },
   [MessageQueue.delayedJobsQueue]: {

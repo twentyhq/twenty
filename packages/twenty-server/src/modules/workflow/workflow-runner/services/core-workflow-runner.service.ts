@@ -1,14 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { buildWorkflowRunGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workflow-run-group-key.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -41,6 +44,8 @@ export class CoreWorkflowRunnerService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -112,9 +117,13 @@ export class CoreWorkflowRunnerService {
     const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
     const isManualTrigger =
       workflowVersion.triggers[0].type === WorkflowTriggerType.MANUAL;
+    const isPacedByGroupRateLimit =
+      !isManualTrigger &&
+      (await this.isWorkflowRunGroupRateLimitEnabled(workspaceId));
+    const isEnqueuedImmediately = isManualTrigger || isPacedByGroupRateLimit;
     const status = isHardThrottled
       ? WorkflowRunStatus.FAILED
-      : isManualTrigger
+      : isEnqueuedImmediately
         ? WorkflowRunStatus.ENQUEUED
         : WorkflowRunStatus.NOT_STARTED;
     const createdBy = buildWorkflowRunCreatedBy({
@@ -142,7 +151,7 @@ export class CoreWorkflowRunnerService {
       return { workflowRunId: createdWorkflowRunId };
     }
 
-    if (isManualTrigger) {
+    if (isEnqueuedImmediately) {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
         { workspaceId, workflowRunId: createdWorkflowRunId },
@@ -152,6 +161,9 @@ export class CoreWorkflowRunnerService {
             await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
               { workspaceId, applicationId: workflow.applicationId },
             ),
+          groupKeys: isPacedByGroupRateLimit
+            ? [buildWorkflowRunGroupKey(workspaceId)]
+            : undefined,
         }),
       );
     } else {
@@ -169,6 +181,20 @@ export class CoreWorkflowRunnerService {
     }
 
     return { workflowRunId: createdWorkflowRunId };
+  }
+
+  // Without the worker flag the driver would not pace the run, so the soft
+  // throttle stays in charge.
+  private async isWorkflowRunGroupRateLimitEnabled(
+    workspaceId: string,
+  ): Promise<boolean> {
+    return (
+      this.twentyConfigService.get('IS_WORKER_GROUP_RATE_LIMIT_ENABLED') &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_RUN_GROUP_RATE_LIMIT_ENABLED,
+        workspaceId,
+      ))
+    );
   }
 
   private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {

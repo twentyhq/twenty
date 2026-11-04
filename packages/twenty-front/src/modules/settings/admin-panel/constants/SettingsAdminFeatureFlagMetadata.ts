@@ -56,4 +56,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
+  [FeatureFlagKey.IS_WORKFLOW_RUN_GROUP_RATE_LIMIT_ENABLED]: {
+    label: msg`Workflow run pacing`,
+    description: msg`Pace automated workflow runs with the worker group rate limit instead of the workflow run throttling.`,
+  },
 };

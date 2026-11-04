@@ -1,5 +1,6 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
@@ -13,7 +14,16 @@ const WORKFLOWS = {
   'workflow-b': { id: 'workflow-b', applicationId: 'application-b' },
 };
 
-const buildService = (triggerType: WorkflowTriggerType) => {
+const buildService = (
+  triggerType: WorkflowTriggerType,
+  {
+    isFeatureFlagEnabled = false,
+    isWorkerGroupRateLimitEnabled = false,
+  }: {
+    isFeatureFlagEnabled?: boolean;
+    isWorkerGroupRateLimitEnabled?: boolean;
+  } = {},
+) => {
   const messageQueueService = { add: jest.fn() };
   const workflowRunWorkspaceService = {
     createCoreWorkflowRun: jest
@@ -78,6 +88,14 @@ const buildService = (triggerType: WorkflowTriggerType) => {
       workspaceCacheService as never,
       {} as never,
     ),
+    {
+      isFeatureEnabled: jest.fn().mockResolvedValue(isFeatureFlagEnabled),
+    } as never,
+    {
+      get: (key: string) =>
+        key === 'IS_WORKER_GROUP_RATE_LIMIT_ENABLED' &&
+        isWorkerGroupRateLimitEnabled,
+    } as never,
     messageQueueService as never,
   );
 
@@ -97,7 +115,7 @@ const buildService = (triggerType: WorkflowTriggerType) => {
     }
   };
 
-  return { runBothWorkflows, messageQueueService };
+  return { runBothWorkflows, messageQueueService, workflowRunWorkspaceService };
 };
 
 describe('CoreWorkflowRunnerService', () => {
@@ -150,6 +168,78 @@ describe('CoreWorkflowRunnerService', () => {
         { workspaceId: WORKSPACE_ID, isCacheMode: true },
         { workspaceId: WORKSPACE_ID, isWorkspaceJob: true },
       ],
+    ]);
+  });
+
+  it('enqueues automated runs right away with the workflow run group key when the workspace flag and the worker flag are on', async () => {
+    const {
+      runBothWorkflows,
+      messageQueueService,
+      workflowRunWorkspaceService,
+    } = buildService(WorkflowTriggerType.DATABASE_EVENT, {
+      isFeatureFlagEnabled: true,
+      isWorkerGroupRateLimitEnabled: true,
+    });
+
+    await runBothWorkflows();
+
+    expect(messageQueueService.add.mock.calls).toEqual([
+      [
+        RUN_WORKFLOW_JOB_NAME,
+        { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-a' },
+        {
+          id: 'run-of-workflow-a',
+          doNotCheckDuplicatesBasedOnPrefix: true,
+          groupKeys: [`workflowRun:${WORKSPACE_ID}`],
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: 'application-a-universal-id',
+        },
+      ],
+      [
+        RUN_WORKFLOW_JOB_NAME,
+        { workspaceId: WORKSPACE_ID, workflowRunId: 'run-of-workflow-b' },
+        {
+          id: 'run-of-workflow-b',
+          doNotCheckDuplicatesBasedOnPrefix: true,
+          groupKeys: [`workflowRun:${WORKSPACE_ID}`],
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: 'application-b-universal-id',
+        },
+      ],
+    ]);
+    expect(
+      workflowRunWorkspaceService.createCoreWorkflowRun.mock.calls.map(
+        ([{ status }]) => status,
+      ),
+    ).toEqual([WorkflowRunStatus.ENQUEUED, WorkflowRunStatus.ENQUEUED]);
+  });
+
+  it('keeps the throttled dispatcher when the worker group rate limit is off', async () => {
+    const { runBothWorkflows, messageQueueService } = buildService(
+      WorkflowTriggerType.DATABASE_EVENT,
+      { isFeatureFlagEnabled: true, isWorkerGroupRateLimitEnabled: false },
+    );
+
+    await runBothWorkflows();
+
+    expect(
+      messageQueueService.add.mock.calls.map(([jobName]) => jobName),
+    ).toEqual([WorkflowRunEnqueueJob.name, WorkflowRunEnqueueJob.name]);
+  });
+
+  it('never paces manual runs', async () => {
+    const { runBothWorkflows, messageQueueService } = buildService(
+      WorkflowTriggerType.MANUAL,
+      { isFeatureFlagEnabled: true, isWorkerGroupRateLimitEnabled: true },
+    );
+
+    await runBothWorkflows();
+
+    expect(
+      messageQueueService.add.mock.calls.map(([, , options]) => options),
+    ).toEqual([
+      expect.not.objectContaining({ groupKeys: expect.anything() }),
+      expect.not.objectContaining({ groupKeys: expect.anything() }),
     ]);
   });
 });
