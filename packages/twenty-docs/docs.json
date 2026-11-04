@@ -8055,7 +8055,11 @@
     },
     {
       "source": "/developers/backend-development/zapier",
-      "destination": "/developers/contribute/capabilities/backend-development/zapier"
+      "destination": "/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger"
+    },
+    {
+      "source": "/developers/contribute/capabilities/backend-development/zapier",
+      "destination": "/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger"
     },
     {
       "source": "/user-guide/getting-started/what-is-twenty",

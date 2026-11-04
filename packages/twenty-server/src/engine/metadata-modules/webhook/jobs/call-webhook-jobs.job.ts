@@ -38,8 +38,6 @@ export class CallWebhookJobsJob {
   async handle(
     workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>,
   ): Promise<void> {
-    // Keep in sync with packages/twenty-zapier/src/triggers/trigger_record.ts and computeWebhooks.utils.ts
-
     const { flatWebhookMaps, flatObjectMetadataMaps, flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
