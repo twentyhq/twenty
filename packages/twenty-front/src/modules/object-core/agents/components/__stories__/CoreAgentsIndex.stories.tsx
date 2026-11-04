@@ -16,6 +16,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   type DeleteOneAgentMutation,
   type DeleteOneAgentMutationVariables,
+  FindManyAgentsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -47,6 +48,7 @@ const createAgentListResponseGate = () => {
 
 let availableAgents = CORE_AGENTS_STORY_AGENTS;
 let failedDeletionIds = new Set<string>();
+let shouldFailAgentListRefresh = false;
 let heldAgentListResponse:
   | ReturnType<typeof createAgentListResponseGate>
   | undefined;
@@ -70,6 +72,12 @@ const meta = {
     msw: {
       handlers: [
         graphql.query('FindManyAgents', async () => {
+          if (shouldFailAgentListRefresh) {
+            return HttpResponse.json({
+              errors: [{ message: 'Agent list refresh failed' }],
+            });
+          }
+
           const agentsAtRequest = [...availableAgents];
           const heldResponse = heldAgentListResponse;
 
@@ -113,11 +121,13 @@ const meta = {
       ],
     },
   },
-  beforeEach: () => {
+  beforeEach: async () => {
+    heldAgentListResponse?.releaseResponse();
+    await mockedApolloClient.clearStore();
     availableAgents = [...CORE_AGENTS_STORY_AGENTS];
     failedDeletionIds = new Set([followUpAgent.id]);
+    shouldFailAgentListRefresh = false;
     heldAgentListResponse = undefined;
-    mockedApolloClient.cache.restore({});
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -125,9 +135,10 @@ const meta = {
     });
     jotaiStore.set(coreAgentsFilterSettingsState.atom, {});
 
-    return () => {
+    return async () => {
       heldAgentListResponse?.releaseResponse();
       heldAgentListResponse = undefined;
+      await mockedApolloClient.clearStore();
     };
   },
 } satisfies Meta<typeof CoreAgentsIndex>;
@@ -145,9 +156,11 @@ export const SelectionAndPartialDeletion: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Create agent' }),
     ).toBeVisible();
-    await expect(
-      canvas.getAllByRole('checkbox', { name: 'Select row' }),
-    ).toHaveLength(3);
+    await waitFor(() =>
+      expect(
+        canvas.getAllByRole('checkbox', { name: 'Select row' }),
+      ).toHaveLength(3),
+    );
     await userEvent.click(
       canvas.getByRole('checkbox', { name: 'Select all loaded rows' }),
     );
@@ -188,7 +201,11 @@ export const SelectionAndPartialDeletion: Story = {
     await userEvent.click(deleteAgentsButton);
 
     await waitFor(() =>
-      expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument(),
+      expect(
+        mockedApolloClient
+          .readQuery({ query: FindManyAgentsDocument })
+          ?.findManyAgents.some(({ id }) => id === leadAgent.id),
+      ).toBe(false),
     );
 
     availableAgents = availableAgents.map((agent) => {
@@ -240,5 +257,26 @@ export const SelectionAndPartialDeletion: Story = {
     await expect(
       await canvas.findByText('Managed assistant updated'),
     ).toBeVisible();
+  },
+};
+
+export const EmptyListRefreshFailure: Story = {
+  beforeEach: () => {
+    availableAgents = [];
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Add your first Agent')).toBeVisible();
+    shouldFailAgentListRefresh = true;
+    window.dispatchEvent(new CustomEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME));
+    await expect(await canvas.findByText('Something went wrong')).toBeVisible();
+
+    shouldFailAgentListRefresh = false;
+    window.dispatchEvent(new CustomEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME));
+    await expect(await canvas.findByText('Add your first Agent')).toBeVisible();
+    await expect(
+      canvas.queryByText('Something went wrong'),
+    ).not.toBeInTheDocument();
   },
 };

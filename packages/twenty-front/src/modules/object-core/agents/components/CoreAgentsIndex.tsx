@@ -39,7 +39,7 @@ export const CoreAgentsIndex = () => {
   const tableId =
     useWorkspaceSurfaceScopedComponentInstanceId(CORE_AGENTS_TABLE_ID);
 
-  const { coreAgents, isInitialLoading, hasLoadedData, error } = useCoreAgents({
+  const { coreAgents, isInitialLoading, error } = useCoreAgents({
     tableId,
   });
 
@@ -56,7 +56,7 @@ export const CoreAgentsIndex = () => {
   });
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
-  const hasError = isDefined(error) && !hasLoadedData;
+  const hasError = isDefined(error) && !isNonEmptyArray(coreAgents);
 
   const isEmpty =
     !isInitialLoading && !hasError && !isNonEmptyArray(coreAgents);

@@ -62,7 +62,6 @@ export const useCoreAgents = ({
   return {
     coreAgents,
     isInitialLoading: loading && !isDefined(availableData),
-    hasLoadedData: isDefined(availableData),
     error,
   };
 };

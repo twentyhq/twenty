@@ -144,7 +144,6 @@ describe('useCoreAgents', () => {
     expect(result.current.coreAgents.map(({ label }) => label)).toEqual([
       'Lead qualifier',
     ]);
-    expect(result.current.hasLoadedData).toBe(true);
     expect(result.current.error).toBeInstanceOf(Error);
   });
 
@@ -155,7 +154,7 @@ describe('useCoreAgents', () => {
     });
     await waitFor(() => expect(result.current.isInitialLoading).toBe(false));
 
-    expect(result.current.hasLoadedData).toBe(false);
+    expect(result.current.coreAgents).toEqual([]);
     expect(result.current.error).toBeInstanceOf(Error);
   });
 });
