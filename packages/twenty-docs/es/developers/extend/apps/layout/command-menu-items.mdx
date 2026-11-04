@@ -34,6 +34,7 @@ export default defineCommandMenuItem({
 | `isPinned`                              | No          | Cuando es `true`, muestra el comando como un botón de acción rápida en la esquina superior derecha de la página                                                                                                                                                                                            |
 | `availabilityType`                      | No          | Controla dónde aparece el comando: `'GLOBAL'` (siempre disponible), `'GLOBAL_OBJECT_CONTEXT'` (solo en páginas con un contexto de objeto: páginas de índice y de registro), `'RECORD_SELECTION'` (solo cuando hay registros seleccionados) o `'FALLBACK'` (se muestra cuando ningún otro comando coincide) |
 | `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                                                                                                                                      |
+| `availabilityCoreObjectName`            | No          | Restringe el comando a las páginas de un objeto central integrado en lugar de un objeto de espacio de trabajo. Solo se admite `'workflow'` (la lista de Workflows y la página de un workflow). No se puede combinar con `availabilityObjectUniversalIdentifier`                                            |
 | `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                                                                                                                               |
 | `conditionalPinnedExpression`           | No          | Una expresión booleana que restringe `isPinned`: el comando se muestra como un botón de acción rápida solo mientras se cumple y, de lo contrario, permanece en el menú de comandos. La misma sintaxis y variables que `conditionalAvailabilityExpression`                                                  |
 
@@ -85,20 +86,21 @@ export default defineCommandMenuItem({
 
 Estas representan el estado actual de la página:
 
-| Variable                       | Tipo      | Descripción                                                         |
-| ------------------------------ | --------- | ------------------------------------------------------------------- |
-| `pageType`                     | `string`  | Tipo de página actual (p. ej., 'RecordIndexPage', 'RecordShowPage') |
-| `isInSidePanel`                | `boolean` | Si el componente se renderiza en un panel lateral                   |
-| `numberOfSelectedRecords`      | `number`  | Número de registros seleccionados actualmente                       |
-| `isSelectAll`                  | `boolean` | Si "seleccionar todo" está activo                                   |
-| `selectedRecords`              | `array`   | Los objetos de registro seleccionados                               |
-| `favoriteRecordIds`            | `array`   | IDs de registros marcados como favoritos                            |
-| `objectPermissions`            | `object`  | Permisos para el tipo de objeto actual                              |
-| `targetObjectReadPermissions`  | `object`  | Permisos de lectura para el objeto de destino                       |
-| `targetObjectWritePermissions` | `object`  | Permisos de escritura para el objeto de destino                     |
-| `featureFlags`                 | `object`  | Indicadores de características activos                              |
-| `objectMetadataItem`           | `object`  | Metadatos del tipo de objeto actual                                 |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Si la vista actual tiene un filtro de eliminación lógica            |
+| Variable                       | Tipo             | Descripción                                                                                            |
+| ------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `pageType`                     | `string`         | Tipo de página actual (p. ej., 'RecordIndexPage', 'RecordShowPage')                                    |
+| `isInSidePanel`                | `boolean`        | Si el componente se renderiza en un panel lateral                                                      |
+| `numberOfSelectedRecords`      | `number`         | Número de registros seleccionados actualmente                                                          |
+| `isSelectAll`                  | `boolean`        | Si "seleccionar todo" está activo                                                                      |
+| `selectedRecords`              | `array`          | Los objetos de registro seleccionados                                                                  |
+| `favoriteRecordIds`            | `array`          | IDs de registros marcados como favoritos                                                               |
+| `objectPermissions`            | `object`         | Permisos para el tipo de objeto actual                                                                 |
+| `targetObjectReadPermissions`  | `object`         | Permisos de lectura para el objeto de destino                                                          |
+| `targetObjectWritePermissions` | `object`         | Permisos de escritura para el objeto de destino                                                        |
+| `featureFlags`                 | `object`         | Indicadores de características activos                                                                 |
+| `objectMetadataItem`           | `object`         | Metadatos del tipo de objeto actual                                                                    |
+| `coreObjectName`               | `string \| null` | Objeto central de la página actual (`'workflow'` en las páginas de Workflows); de lo contrario, `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | Si la vista actual tiene un filtro de eliminación lógica                                               |
 
 ### Operadores
 

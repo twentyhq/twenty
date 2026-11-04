@@ -244,10 +244,12 @@ export const writeDefineFile = ({
   definer,
   config,
   enumBindings = [],
+  importStatements = [],
 }: {
   definer: string;
   config: unknown;
   enumBindings?: EnumBinding[];
+  importStatements?: string[];
 }): { content: string; requiredSdkExports: string[] } => {
   const usedSymbols = new Set<string>();
 
@@ -282,7 +284,7 @@ export const writeDefineFile = ({
       : `import {\n${imported.map((name) => `  ${name},`).join('\n')}\n} from 'twenty-sdk/define';`;
 
   return {
-    content: `${importStatement}
+    content: `${[...importStatements, importStatement].join('\n')}
 
 export default ${definer}(${body});
 `,

@@ -651,10 +651,10 @@ msgstr "3 条产品线"
 msgid "30 days"
 msgstr "30 天"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "点击后 30 天内。如果访客在此期间创建其工作区，并随后成为付费的 Cloud Organization 或 Enterprise 客户，佣金将归您所有。如果他们在创建工作区前点击了另一位合作伙伴的链接，则该合作伙伴将获得归属。"
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr ""
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4723,10 +4723,10 @@ msgstr "HubSpot 将自定义对象锁在其 $150/席位 的 Enterprise 套餐后
 msgid "Hungary 🇭🇺"
 msgstr "匈牙利 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
-msgstr "我同意<0>联盟计划条款</0>"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr ""
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4748,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "身份信息"
+
+#. js-lingui-id: 02Xy0V
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr ""
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -6096,6 +6101,7 @@ msgstr "目前暂无可用应用。请稍后再来查看。"
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "没有匹配的国家。"
 
@@ -7614,6 +7620,7 @@ msgstr "筛选中"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "搜索国家…"
 
@@ -7735,6 +7742,7 @@ msgstr "使用 Cmd 和 Shift 选择记录"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "选择你的国家"
 
@@ -9759,6 +9767,11 @@ msgstr "认证包括哪些内容？"
 #: src/sections/faq/faq.data.ts
 msgid "What does Twenty cost?"
 msgstr "Twenty 的价格是多少？"
+
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr ""
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

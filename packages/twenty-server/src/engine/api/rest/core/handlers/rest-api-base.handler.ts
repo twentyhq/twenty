@@ -85,13 +85,13 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
-    const objectsPermissions =
-      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+    const recordsPermissions =
+      await this.recordAccessPolicyService.getRecordsPermissionsOrThrow(
         authContext,
       );
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
-      objectsPermissions,
+      recordsPermissions,
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
           authContext,
@@ -124,13 +124,13 @@ export abstract class RestApiBaseHandler {
   }): Promise<{
     selectedFields: CommonSelectedFields;
   }> {
-    const objectsPermissions =
-      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+    const recordsPermissions =
+      await this.recordAccessPolicyService.getRecordsPermissionsOrThrow(
         authContext,
       );
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
-      objectsPermissions,
+      recordsPermissions,
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
           authContext,

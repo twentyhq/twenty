@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
+import { getWorkflowCodeStepFolderPath } from '@/app/pull/extract-workflow-code-step-files';
 import {
   type PullEntity,
   type SkippedPullEntity,
@@ -66,6 +67,10 @@ export const preserveNestedPullEntities = ({
   ];
   const skipped: SkippedPullEntity[] = [];
   const skippedPaths = new Set<string>();
+  const skippedWorkflows: {
+    codeStepFolderPath: string;
+    identifiers: Set<string>;
+  }[] = [];
 
   let previousSkippedCount: number;
 
@@ -124,6 +129,24 @@ export const preserveNestedPullEntities = ({
 
       if (isDefined(omittedIdentifier)) {
         skippedPaths.add(change.relativePath);
+
+        if (change.kind === 'workflow') {
+          const identifiers = new Set(
+            localIdentifiersByPath.get(change.relativePath),
+          );
+
+          collectIdentifiers({
+            value: exportedConfigByIdentifier.get(
+              change.universalIdentifier.toLowerCase(),
+            ),
+            identifiers,
+          });
+          skippedWorkflows.push({
+            codeStepFolderPath: `${getWorkflowCodeStepFolderPath(change.relativePath)}/`,
+            identifiers,
+          });
+        }
+
         skipped.push({
           kind: change.kind,
           universalIdentifier: change.universalIdentifier,
@@ -133,11 +156,21 @@ export const preserveNestedPullEntities = ({
     }
   } while (skippedPaths.size !== previousSkippedCount);
 
+  // A preserved workflow still reads its own code step files; its folder may hold another workflow's
+  const isPreserved = ({
+    relativePath,
+    universalIdentifier,
+  }: Pick<PullDeletion, 'relativePath' | 'universalIdentifier'>) =>
+    skippedPaths.has(relativePath) ||
+    skippedWorkflows.some(
+      ({ codeStepFolderPath, identifiers }) =>
+        relativePath.startsWith(codeStepFolderPath) &&
+        identifiers.has(universalIdentifier.toLowerCase()),
+    );
+
   return {
-    writes: writes.filter((write) => !skippedPaths.has(write.relativePath)),
-    deletions: deletions.filter(
-      (deletion) => !skippedPaths.has(deletion.relativePath),
-    ),
+    writes: writes.filter((write) => !isPreserved(write)),
+    deletions: deletions.filter((deletion) => !isPreserved(deletion)),
     skipped,
   };
 };

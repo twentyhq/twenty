@@ -6,7 +6,7 @@ export const rule = createGuardedEndpointRule({
   triggerDecorators: ['Query', 'Mutation', 'Subscription'],
   messageId: 'graphqlResolversShouldBeGuarded',
   description:
-    'GraphQL root resolvers (Query, Mutation, Subscription) should declare the principals they accept with AuthPrincipalGuard({ ... }) or be explicitly marked as public (PublicEndpointGuard), and have permission guards (SettingsPermissionGuard or CustomPermissionGuard) to maintain our security model. AccessPolicyGuard covers both.',
+    'GraphQL root resolvers (Query, Mutation, Subscription) should declare who can call them and which flags they need with AccessPolicyGuard, or be explicitly marked as public (PublicEndpointGuard) with a permission guard such as NoPermissionGuard.',
   message:
-    'All GraphQL resolvers must have an authentication guard (@UseGuards(AuthPrincipalGuard({ ... })) or PublicEndpointGuard) and permission guards (@UseGuards(..., SettingsPermissionGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases like onboarding), or a single AccessPolicyGuard covering both.',
+    'All GraphQL resolvers must have an AccessPolicyGuard (@UseGuards(AccessPolicyGuard(SOME_ACCESS_POLICY)) or an inline policy) on the method or its class, or be marked as public with PublicEndpointGuard and NoPermissionGuard.',
 });

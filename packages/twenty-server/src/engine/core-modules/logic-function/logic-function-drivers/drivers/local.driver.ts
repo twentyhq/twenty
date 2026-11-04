@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
@@ -111,6 +112,21 @@ export class LocalDriver implements LogicFunctionDriver {
         sourcemap: true,
         packages: 'external',
         banner: NODE_ESM_CJS_BANNER,
+      }).catch((error: unknown) => {
+        // esbuild reports source diagnostics in `errors`; anything else is not the user's code
+        if (
+          !(error instanceof Error) ||
+          !('errors' in error) ||
+          !Array.isArray(error.errors) ||
+          !isNonEmptyArray(error.errors)
+        ) {
+          throw error;
+        }
+
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
       });
 
       const builtCode = await fs.readFile(builtBundleFilePath, 'utf-8');

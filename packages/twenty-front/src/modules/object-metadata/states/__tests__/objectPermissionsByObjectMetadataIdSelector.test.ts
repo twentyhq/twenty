@@ -4,38 +4,79 @@ import {
   type CurrentUserWorkspace,
   currentUserWorkspaceState,
 } from '@/auth/states/currentUserWorkspaceState';
-import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
+import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+} from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const COMPANY_OBJECT_PERMISSIONS: ObjectPermissionsWithObjectMetadataId = {
-  objectMetadataId: 'company-object-metadata-id',
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
-  restrictedFields: {
-    'company-name-field-metadata-id': { canRead: true, canUpdate: false },
-  },
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+const COMPANY_OBJECT_RECORDS_PERMISSIONS: CurrentUserWorkspaceObjectRecordsPermissions =
+  {
+    objectMetadataId: 'company-object-metadata-id',
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    restrictedFields: {
+      'company-name-field-metadata-id': { canRead: true, canUpdate: false },
+    },
+  };
+
+const PERSON_ROW_LEVEL_PERMISSION_PREDICATE: RowLevelPermissionPredicate = {
+  id: 'person-predicate-id',
+  fieldMetadataId: 'person-owner-field-metadata-id',
+  objectMetadataId: 'person-object-metadata-id',
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  subFieldName: null,
+  rowLevelPermissionPredicateGroupId: null,
+  workspaceMemberFieldMetadataId: 'workspace-member-id-field-metadata-id',
+  workspaceMemberSubFieldName: null,
+  roleId: 'role-id',
 };
 
-const PERSON_OBJECT_PERMISSIONS_WITH_UNSET_FLAGS: CurrentUserWorkspaceObjectPermissions =
+const PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP: RowLevelPermissionPredicateGroup =
+  {
+    id: 'person-predicate-group-id',
+    logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    objectMetadataId: 'person-object-metadata-id',
+    parentRowLevelPermissionPredicateGroupId: null,
+    positionInRowLevelPermissionPredicateGroup: null,
+    canReadRecords: true,
+    canUpdateRecords: true,
+    canSoftDeleteRecords: false,
+    canDestroyRecords: false,
+    roleId: 'role-id',
+  };
+
+const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorkspaceObjectRecordsPermissions =
   {
     objectMetadataId: 'person-object-metadata-id',
-    canReadObjectRecords: false,
-    canUpdateObjectRecords: null,
-    restrictedFields: null,
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    restrictedFields: {},
+    rowLevelRecordsPermissions: {
+      canReadRecords: true,
+      canUpdateRecords: true,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
+      predicateGroups: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP],
+    },
   };
 
 const buildCurrentUserWorkspace = (
-  objectsPermissions: CurrentUserWorkspace['objectsPermissions'],
+  objectRecordsPermissions: CurrentUserWorkspace['objectRecordsPermissions'],
 ): CurrentUserWorkspace => ({
   permissionFlags: [],
   twoFactorAuthenticationMethodSummary: [],
-  objectsPermissions,
+  objectRecordsPermissions,
   isImpersonating: false,
 });
 
@@ -59,23 +100,38 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
 
     store.set(
       currentUserWorkspaceState.atom,
-      buildCurrentUserWorkspace([COMPANY_OBJECT_PERMISSIONS]),
+      buildCurrentUserWorkspace([COMPANY_OBJECT_RECORDS_PERMISSIONS]),
     );
 
     expect(store.get(objectPermissionsByObjectMetadataIdSelector.atom)).toEqual(
       {
-        [COMPANY_OBJECT_PERMISSIONS.objectMetadataId]:
-          COMPANY_OBJECT_PERMISSIONS,
+        'company-object-metadata-id': {
+          objectMetadataId: 'company-object-metadata-id',
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+          restrictedFields: {
+            'company-name-field-metadata-id': {
+              canRead: true,
+              canUpdate: false,
+            },
+          },
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
       },
     );
   });
 
-  it('should allow the flags the server left unset', () => {
+  it('should allow the operations reachable through row level permissions', () => {
     const store = createStore();
 
     store.set(
       currentUserWorkspaceState.atom,
-      buildCurrentUserWorkspace([PERSON_OBJECT_PERMISSIONS_WITH_UNSET_FLAGS]),
+      buildCurrentUserWorkspace([
+        PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS,
+      ]),
     );
 
     expect(
@@ -84,13 +140,15 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
       ],
     ).toEqual({
       objectMetadataId: 'person-object-metadata-id',
-      canReadObjectRecords: false,
+      canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
       restrictedFields: {},
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
+      rowLevelPermissionPredicateGroups: [
+        PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP,
+      ],
     });
   });
 
@@ -99,7 +157,7 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
 
     store.set(
       currentUserWorkspaceState.atom,
-      buildCurrentUserWorkspace([COMPANY_OBJECT_PERMISSIONS]),
+      buildCurrentUserWorkspace([COMPANY_OBJECT_RECORDS_PERMISSIONS]),
     );
 
     const initialObjectPermissionsByObjectMetadataId = store.get(
@@ -107,7 +165,7 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
     );
 
     store.set(currentUserWorkspaceState.atom, {
-      ...buildCurrentUserWorkspace([{ ...COMPANY_OBJECT_PERMISSIONS }]),
+      ...buildCurrentUserWorkspace([{ ...COMPANY_OBJECT_RECORDS_PERMISSIONS }]),
       permissionFlags: [PermissionFlagType.DATA_MODEL],
     });
 

@@ -25,7 +25,7 @@ const setPartnerOnAppUrl = (href: string, partner: string): string => {
       return href;
     }
 
-    url.searchParams.set('partner', partner);
+    url.searchParams.set('via', partner);
 
     return url.toString();
   } catch {

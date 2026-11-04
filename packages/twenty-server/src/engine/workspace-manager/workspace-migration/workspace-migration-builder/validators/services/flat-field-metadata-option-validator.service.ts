@@ -110,7 +110,6 @@ export class FlatFieldMetadataOptionValidatorService {
         : []),
     ];
 
-    // Scans every option until the field lists its own.
     const hasDuplicateValue = Object.values(
       flatFieldMetadataOptionMaps.byUniversalIdentifier,
     ).some(

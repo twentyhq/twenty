@@ -1,10 +1,6 @@
 /* @license Enterprise */
 
-import {
-  FeatureFlagKey,
-  type ObjectPermissions,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
@@ -12,6 +8,8 @@ import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
@@ -23,14 +21,12 @@ const flatObjectMetadata = {
   applicationId: APPLICATION_ID,
 };
 
-const readOnlyPermissions: ObjectPermissions = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
+const readOnlyPermissions: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -72,9 +68,13 @@ const resolveOutcome = ({
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
-        [READ_ONLY_ROLE_ID]: { [flatObjectMetadata.id]: readOnlyPermissions },
+        [READ_ONLY_ROLE_ID]: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: readOnlyPermissions },
+        },
         [APPLICATION_ROLE_ID]: {
-          [flatObjectMetadata.id]: readOnlyPermissions,
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: readOnlyPermissions },
         },
       },
       flatApplicationMaps: {
@@ -162,10 +162,13 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipals,
       aiRunScope: {
-        objectsPermissions: {
-          [flatObjectMetadata.id]: {
-            ...readOnlyPermissions,
-            canReadObjectRecords,
+        recordsPermissions: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: {
+            [flatObjectMetadata.id]: {
+              ...readOnlyPermissions,
+              canReadAllRecords: canReadObjectRecords,
+            },
           },
         },
         permissionFlags: {},
