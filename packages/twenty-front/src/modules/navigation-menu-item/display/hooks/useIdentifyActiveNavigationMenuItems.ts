@@ -103,6 +103,17 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
+      const matchingPathNavigationMenuItemIds = navigationMenuItems
+        .filter(
+          (item) =>
+            item.type === NavigationMenuItemType.LINK &&
+            isLinkNavigationMenuItemActive({
+              computedLink: getLinkNavigationMenuItemComputedLink(item),
+              location: { pathname: currentPath, search: currentSearch },
+            }),
+        )
+        .map((item) => item.id);
+
       const matchingNativePageNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
@@ -117,21 +128,13 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       // Native pages don't reset the context store's view id, so a view match would win on them.
       if (matchingNativePageNavigationMenuItemIds.length > 0) {
         return {
-          activeNavigationMenuItemIds: matchingNativePageNavigationMenuItemIds,
+          activeNavigationMenuItemIds: [
+            ...matchingNativePageNavigationMenuItemIds,
+            ...matchingPathNavigationMenuItemIds,
+          ],
           objectMetadataIdForOpenedSection: null,
         };
       }
-
-      const matchingPathNavigationMenuItemIds = navigationMenuItems
-        .filter(
-          (item) =>
-            item.type === NavigationMenuItemType.LINK &&
-            isLinkNavigationMenuItemActive({
-              computedLink: getLinkNavigationMenuItemComputedLink(item),
-              location: { pathname: currentPath, search: currentSearch },
-            }),
-        )
-        .map((item) => item.id);
 
       if (isOnRecordShowPage) {
         const matchingRecordNavigationMenuItemIds = navigationMenuItems
