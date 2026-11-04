@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconAlertTriangle, IconInbox, IconMessage } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconInbox } from 'twenty-ui/icon';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -18,12 +18,9 @@ import { useLingui } from '@lingui/react/macro';
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
 type SettingsAiBehaviorSectionProps = {
-  directMessageMode: AiChatAssistantMode | null;
   inboxMode: AiChatAssistantMode | null;
-  onDirectMessageModeChange: (value: AiChatAssistantMode) => void;
   onInboxModeChange: (value: AiChatAssistantMode) => void;
   isLoading?: boolean;
-  isDirectMessageModeVisible?: boolean;
   disabled?: boolean;
   errorMessage?: string;
 };
@@ -36,18 +33,14 @@ const StyledBehaviorMessages = styled.div`
 `;
 
 export const SettingsAiBehaviorSection = ({
-  directMessageMode,
   inboxMode,
-  onDirectMessageModeChange,
   onInboxModeChange,
   isLoading = false,
-  isDirectMessageModeVisible = true,
   disabled = false,
   errorMessage,
 }: SettingsAiBehaviorSectionProps) => {
   const { t } = useLingui();
   const sectionId = useId();
-  const directMessagesLabelId = `${sectionId}-direct-messages`;
   const inboxLabelId = `${sectionId}-inbox`;
   const helperId = `${sectionId}-helper`;
   const errorId = `${sectionId}-error`;
@@ -67,23 +60,6 @@ export const SettingsAiBehaviorSection = ({
         aria-busy={isLoading}
       >
         <StyledSettingsSelectGroup controlWidth={BEHAVIOR_SELECT_CONTROL_WIDTH}>
-          {isDirectMessageModeVisible && (
-            <SettingsOptionCardContentSelect
-              Icon={IconMessage}
-              title={<span id={directMessagesLabelId}>{t`DMs`}</span>}
-              description={t`One-to-one conversations between people`}
-              divider
-            >
-              <SettingsAiBehaviorModeSelect
-                value={directMessageMode}
-                onChange={onDirectMessageModeChange}
-                labelledBy={directMessagesLabelId}
-                describedBy={describedBy}
-                disabled={isDisabled}
-                isLoading={isLoading}
-              />
-            </SettingsOptionCardContentSelect>
-          )}
           <SettingsOptionCardContentSelect
             Icon={IconInbox}
             title={<span id={inboxLabelId}>{t`Global inbox`}</span>}

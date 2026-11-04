@@ -9,38 +9,23 @@ type SettingsAiBehaviorExampleProps = ComponentProps<
 };
 
 export const SettingsAiBehaviorExample = ({
-  directMessageMode,
   inboxMode,
-  onDirectMessageModeChange,
   onInboxModeChange,
   isLoading,
-  isDirectMessageModeVisible,
   disabled,
   errorMessage,
   shouldRejectChanges = false,
 }: SettingsAiBehaviorExampleProps) => {
-  const [currentDirectMessageMode, setDirectMessageMode] =
-    useState(directMessageMode);
   const [currentInboxMode, setInboxMode] = useState(inboxMode);
 
   return (
     <>
       <SettingsAiBehaviorExampleSyncEffect
-        directMessageMode={directMessageMode}
         inboxMode={inboxMode}
-        setDirectMessageMode={setDirectMessageMode}
         setInboxMode={setInboxMode}
       />
       <SettingsAiBehaviorSection
-        directMessageMode={currentDirectMessageMode}
         inboxMode={currentInboxMode}
-        onDirectMessageModeChange={(value) => {
-          onDirectMessageModeChange(value);
-
-          if (!shouldRejectChanges) {
-            setDirectMessageMode(value);
-          }
-        }}
         onInboxModeChange={(value) => {
           onInboxModeChange(value);
 
@@ -49,7 +34,6 @@ export const SettingsAiBehaviorExample = ({
           }
         }}
         isLoading={isLoading}
-        isDirectMessageModeVisible={isDirectMessageModeVisible}
         disabled={disabled}
         errorMessage={errorMessage}
       />

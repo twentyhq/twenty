@@ -67,9 +67,7 @@ export const WithSections: Story = {
     ),
     behaviorSection: (
       <SettingsAiBehaviorExample
-        directMessageMode={AiChatAssistantMode.MENTION_ONLY}
         inboxMode={AiChatAssistantMode.AUTOMATIC}
-        onDirectMessageModeChange={fn()}
         onInboxModeChange={fn()}
       />
     ),

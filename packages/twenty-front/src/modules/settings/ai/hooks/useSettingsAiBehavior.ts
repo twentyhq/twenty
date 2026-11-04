@@ -15,10 +15,6 @@ import {
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { useLingui } from '@lingui/react/macro';
 
-type AssistantModeField =
-  | 'aiChatDirectMessageAssistantMode'
-  | 'aiChatInboxAssistantMode';
-
 export const useSettingsAiBehavior = () => {
   const { t } = useLingui();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -33,25 +29,17 @@ export const useSettingsAiBehavior = () => {
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const defaultSaveErrorMessage = t`Failed to save behavior settings. Try again.`;
-  const directMessageMode =
-    currentWorkspace?.aiChatDirectMessageAssistantMode ?? null;
   const inboxMode = currentWorkspace?.aiChatInboxAssistantMode ?? null;
-  const isLoading = !isDefined(directMessageMode) || !isDefined(inboxMode);
+  const isLoading = !isDefined(inboxMode);
 
-  const saveMode = async ({
-    field,
-    value,
-  }: {
-    field: AssistantModeField;
-    value: AiChatAssistantMode;
-  }) => {
+  const saveInboxMode = async (value: AiChatAssistantMode) => {
     if (
       !canEditBehavior ||
       !isInboxEnabled ||
       !isDefined(currentWorkspace) ||
       isLoading ||
       isSaving ||
-      currentWorkspace[field] === value
+      currentWorkspace.aiChatInboxAssistantMode === value
     ) {
       return;
     }
@@ -61,7 +49,7 @@ export const useSettingsAiBehavior = () => {
 
     try {
       const { data } = await updateWorkspace({
-        variables: { input: { [field]: value } },
+        variables: { input: { aiChatInboxAssistantMode: value } },
       });
       const savedWorkspace = data?.updateWorkspace;
 
@@ -72,7 +60,10 @@ export const useSettingsAiBehavior = () => {
 
       setCurrentWorkspace((previousWorkspace) =>
         previousWorkspace?.id === workspaceId
-          ? { ...previousWorkspace, [field]: savedWorkspace[field] }
+          ? {
+              ...previousWorkspace,
+              aiChatInboxAssistantMode: savedWorkspace.aiChatInboxAssistantMode,
+            }
           : previousWorkspace,
       );
     } catch (error) {
@@ -88,20 +79,12 @@ export const useSettingsAiBehavior = () => {
     }
   };
 
-  const saveDirectMessageMode = (value: AiChatAssistantMode) =>
-    saveMode({ field: 'aiChatDirectMessageAssistantMode', value });
-
-  const saveInboxMode = (value: AiChatAssistantMode) =>
-    saveMode({ field: 'aiChatInboxAssistantMode', value });
-
   return {
-    directMessageMode,
     inboxMode,
     isLoading,
     isSaving,
     isBehaviorVisible: isInboxEnabled && canEditBehavior,
     errorMessage,
-    saveDirectMessageMode,
     saveInboxMode,
   };
 };

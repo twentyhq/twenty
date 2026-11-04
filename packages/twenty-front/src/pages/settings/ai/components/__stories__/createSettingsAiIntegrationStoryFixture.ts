@@ -158,9 +158,9 @@ export const createSettingsAiIntegrationStoryFixture = () => {
       'UpdateWorkspace',
       async ({ variables }) => {
         const requestGeneration = resetGeneration;
-        const hasBehaviorUpdate =
-          isDefined(variables.input.aiChatDirectMessageAssistantMode) ||
-          isDefined(variables.input.aiChatInboxAssistantMode);
+        const hasBehaviorUpdate = isDefined(
+          variables.input.aiChatInboxAssistantMode,
+        );
         const hasInstructionsUpdate =
           'aiAdditionalInstructions' in variables.input;
         const pendingSave = hasBehaviorUpdate ? pendingBehaviorSave : undefined;
@@ -199,9 +199,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           aiAdditionalInstructions: hasInstructionsUpdate
             ? (variables.input.aiAdditionalInstructions ?? null)
             : workspace.aiAdditionalInstructions,
-          aiChatDirectMessageAssistantMode:
-            variables.input.aiChatDirectMessageAssistantMode ??
-            workspace.aiChatDirectMessageAssistantMode,
           aiChatInboxAssistantMode:
             variables.input.aiChatInboxAssistantMode ??
             workspace.aiChatInboxAssistantMode,
