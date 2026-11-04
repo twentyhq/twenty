@@ -21,7 +21,7 @@ import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types
 import { fromCallToolResultToToolOutput } from 'src/engine/metadata-modules/mcp-server/utils/from-call-tool-result-to-tool-output.util';
 import { isMcpUnknownToolError } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-unknown-tool-error.util';
 
-const MCP_TOOL_ICON = 'IconPlugConnected';
+const MCP_TOOL_ICON = 'IconSparkles';
 // A server that failed its last sync is retried from chat at most this often.
 const UNSYNCED_SERVER_RETRY_MS = 5 * 60 * 1000;
 

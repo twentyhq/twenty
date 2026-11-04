@@ -108,7 +108,7 @@ describe('McpToolProvider', () => {
       description: 'Search the documentation (MCP server: Docs)',
       category: 'MCP',
       executionRef: { kind: 'static', toolId: 'mcp_docs_search_docs' },
-      icon: 'IconPlugConnected',
+      icon: 'IconSparkles',
       inputSchema: {
         type: 'object',
         properties: { query: { type: 'string' } },
