@@ -29,6 +29,7 @@ import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/m
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { MESSAGE_CAMPAIGN_SEND_PREVIEW_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-send-preview-access-policy.constant';
 import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -139,22 +140,7 @@ export class EmailingSendResolver {
   }
 
   @Query(() => PreviewMessageCampaignSendOutputDTO)
-  @UseGuards(
-    AccessPolicyGuard({
-      authPrincipals: {
-        userSession: {
-          standard: true,
-          impersonated: true,
-          playground: false,
-          workspaceAgnostic: false,
-        },
-        apiKey: false,
-        oauthClient: false,
-        application: false,
-      },
-      requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_SEND_PREVIEW_ACCESS_POLICY))
   async previewMessageCampaignSend(
     @Args('input') input: PreviewMessageCampaignSendInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
