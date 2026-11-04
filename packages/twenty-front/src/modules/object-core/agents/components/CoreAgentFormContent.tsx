@@ -1,7 +1,6 @@
 import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
@@ -66,9 +65,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   });
   const agentId = agent.id;
 
-  const [initialFormValues] = useState(() =>
-    getCoreAgentInitialFormValues(agent),
-  );
+  const initialFormValues = getCoreAgentInitialFormValues(agent);
 
   const tabListComponentId = `${CORE_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
   const activeTabId = useAtomComponentStateValue(
@@ -107,7 +104,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
     field: keyof CoreAgentFormValues,
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => {
-    setFieldValue(field, value);
+    setFieldValue({ field, value });
     scheduleAutoSave();
   };
 
