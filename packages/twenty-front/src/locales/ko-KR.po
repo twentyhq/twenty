@@ -20318,11 +20318,6 @@ msgstr "평일에만"
 msgid "On which object(s) should this trigger be available"
 msgstr "이 트리거는 어떤 개체에서 사용할 수 있습니까?"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "온보딩 패키지"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

@@ -8,7 +8,7 @@ import { IconUserCircle } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Field } from 'twenty-ui/primitives/input';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
@@ -48,7 +48,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
 
     const { objectMetadataItem: workspaceMemberMetadataItem } =
       useObjectMetadataItem({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       });
 
     const selectedFieldMetadataItem = useAtomComponentSelectorValue(
@@ -86,7 +86,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
     const isRelationToWorkspaceMember =
       selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
       selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.WorkspaceMember;
+        StandardObjectNameSingular.WorkspaceMember;
 
     const getCompatibleWorkspaceMemberFields = () => {
       if (!isDefined(workspaceMemberMetadataItem)) {

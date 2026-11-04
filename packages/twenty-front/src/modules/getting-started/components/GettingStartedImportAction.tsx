@@ -13,7 +13,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -55,14 +55,16 @@ export const GettingStartedImportAction = () => {
   const { enqueueToast } = useToast();
   const { updateGettingStarted } = useUpdateGettingStarted();
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
   });
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID,
   );
   const { openObjectRecordsSpreadsheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog(CoreObjectNameSingular.Person);
+    useOpenObjectRecordsSpreadsheetImportDialog(
+      StandardObjectNameSingular.Person,
+    );
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const canSendAgentChatMessage = useCanSendAgentChatMessage();

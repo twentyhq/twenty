@@ -20318,11 +20318,6 @@ msgstr "només entre setmana"
 msgid "On which object(s) should this trigger be available"
 msgstr "A quins objectes hauria d'estar disponible aquest desencadenador"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Packs d'Integració"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

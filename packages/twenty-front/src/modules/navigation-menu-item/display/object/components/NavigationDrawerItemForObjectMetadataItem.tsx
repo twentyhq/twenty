@@ -21,7 +21,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useNavigate } from 'react-router-dom';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -141,7 +141,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     ? () => (
         <Avatar
           shape={
-            objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
+            objectMetadataItem.nameSingular ===
+            StandardObjectNameSingular.Company
               ? 'square'
               : 'circle'
           }

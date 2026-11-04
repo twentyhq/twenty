@@ -20318,11 +20318,6 @@ msgstr "vain arkipäivinä"
 msgid "On which object(s) should this trigger be available"
 msgstr "Missä objektissa/objekteissa tämän laukaisimen pitäisi olla käytettävissä?"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Perehdytyspaketit"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

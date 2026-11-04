@@ -20318,11 +20318,6 @@ msgstr "тільки у будні дні"
 msgid "On which object(s) should this trigger be available"
 msgstr "На яких об'єктах має бути доступний цей тригер"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Пакети для початку роботи"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

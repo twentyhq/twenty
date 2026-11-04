@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 // Remove with the workspace workflowVersion object, once the core migration owns it.
 const HIDDEN_WORKSPACE_WORKFLOW_RUN_RELATION_FIELD_NAMES = ['workflowVersion'];
@@ -10,5 +10,5 @@ export const isHiddenWorkspaceWorkflowRunRelationField = ({
   objectNameSingular?: string | null;
   fieldName: string;
 }) =>
-  objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
+  objectNameSingular === StandardObjectNameSingular.WorkflowRun &&
   HIDDEN_WORKSPACE_WORKFLOW_RUN_RELATION_FIELD_NAMES.includes(fieldName);

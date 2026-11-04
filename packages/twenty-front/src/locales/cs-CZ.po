@@ -20318,11 +20318,6 @@ msgstr "pouze ve všední dny"
 msgid "On which object(s) should this trigger be available"
 msgstr "Na kterém objektu(y) by měl být tento spouštěč dostupný"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Úvodní balíčky"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

@@ -20318,11 +20318,6 @@ msgstr "רק בימי חול"
 msgid "On which object(s) should this trigger be available"
 msgstr "על איזה אובייקט(ים) צריך להיות זמין הטריגר הזה"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "חבילות התחלה"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

@@ -10,7 +10,7 @@ import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOp
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -218,7 +218,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   // The /objects/workflows route redirects on its own; keep it out of the NotFound check.
   if (
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
-    objectNamePlural === CoreObjectNamePlural.Workflow
+    objectNamePlural === StandardObjectNamePlural.Workflow
   ) {
     return undefined;
   }

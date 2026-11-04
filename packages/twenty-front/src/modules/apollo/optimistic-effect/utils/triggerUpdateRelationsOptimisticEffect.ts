@@ -2,7 +2,6 @@ import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import {
-  CoreObjectNameSingular,
   FieldMetadataType,
   RelationType,
   type ObjectPermissions,
@@ -40,6 +39,8 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 
+const COMMENT_OBJECT_NAME_SINGULAR = 'comment';
+
 // A junction only links its two sides, so detaching destroys it; comments are the one non-junction cascade.
 const shouldCascadeDeleteOnDetach = ({
   targetObjectMetadata,
@@ -49,7 +50,7 @@ const shouldCascadeDeleteOnDetach = ({
   junctionObjectMetadataIds: ReadonlySet<string>;
 }) =>
   junctionObjectMetadataIds.has(targetObjectMetadata.id) ||
-  targetObjectMetadata.nameSingular === CoreObjectNameSingular.Comment;
+  targetObjectMetadata.nameSingular === COMMENT_OBJECT_NAME_SINGULAR;
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,

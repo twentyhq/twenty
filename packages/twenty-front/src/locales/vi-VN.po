@@ -20318,11 +20318,6 @@ msgstr "chỉ vào các ngày trong tuần"
 msgid "On which object(s) should this trigger be available"
 msgstr "Trên đối tượng nào cần kích hoạt này sẽ khả dụng"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Gói mở đầu"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"
