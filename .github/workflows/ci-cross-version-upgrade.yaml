@@ -460,7 +460,8 @@ jobs:
       - name: Previous release / Seed dev data and mint an API key
         run: |
           docker exec twenty-previous sh -c "cd /app/packages/twenty-server && yarn command:prod workspace:seed:dev"
-          OUTPUT=$(docker exec -e NO_COLOR=1 twenty-previous sh -c \
+          # The command refuses to run under the image's NODE_ENV=production.
+          OUTPUT=$(docker exec -e NO_COLOR=1 -e NODE_ENV=development twenty-previous sh -c \
             "cd /app/packages/twenty-server && yarn command:prod workspace:generate-api-key -w ${SEED_WORKSPACE_ID} -n rolling-upgrade-ci")
           TOKEN=$(echo "$OUTPUT" | sed -E 's/\x1b\[[0-9;]*m//g' | grep -o 'TOKEN:[A-Za-z0-9._-]*' | head -1 | cut -d: -f2-)
           if [ -z "$TOKEN" ]; then
