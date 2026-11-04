@@ -101,9 +101,9 @@ Ask your AI assistant to interact with your CRM:
 
 ## Available Tools
 
-Once connected, the MCP server lists every tool your role can use, with its input schema: `find_many_companies`, `create_one_person`, `list_workflows`, and several hundred more. Your assistant calls them by name. Tools for objects or app functions created while you are connected appear after reconnecting.
+Once connected, the MCP server lists the tools your connection can use, with their input schemas: `find_many_companies`, `create_one_person`, `list_workflows`, and several hundred more. Your assistant calls them by name. Tools for objects or app functions created while you are connected appear after reconnecting.
 
-This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do. A client that loads every tool definition up front can run out of context.
+This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do by default. A client that loads every tool definition up front, including Claude Code with tool search turned off, can run out of context.
 
 ### Meta mode
 
