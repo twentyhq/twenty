@@ -45,10 +45,16 @@ export class CodeStepRunnerService {
     userWorkspaceId?: string;
     workflowId?: string;
   }): Promise<LogicFunctionExecuteResult> {
-    let builtHandlerPath: string;
-
     try {
-      builtHandlerPath = await this.getOrBuild({ flatApplication, code });
+      return await this.logicFunctionExecutorService.executeBuiltCode({
+        workspaceId: flatApplication.workspaceId,
+        flatApplication,
+        getBuiltHandlerPath: () => this.getOrBuild({ flatApplication, code }),
+        payload,
+        userId,
+        userWorkspaceId,
+        workflowId,
+      });
     } catch (error) {
       if (
         !(error instanceof LogicFunctionException) ||
@@ -71,16 +77,6 @@ export class CodeStepRunnerService {
         },
       };
     }
-
-    return this.logicFunctionExecutorService.executeBuiltCode({
-      workspaceId: flatApplication.workspaceId,
-      flatApplication,
-      builtHandlerPath,
-      payload,
-      userId,
-      userWorkspaceId,
-      workflowId,
-    });
   }
 
   async getOrBuild({

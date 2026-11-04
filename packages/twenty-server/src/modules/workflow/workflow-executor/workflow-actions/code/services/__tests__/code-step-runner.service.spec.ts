@@ -34,7 +34,17 @@ const buildService = async ({
 }) => {
   const logicFunctionExecutorService = {
     transpile: jest.fn().mockResolvedValue({ builtCode: 'built' }),
-    executeBuiltCode: jest.fn().mockResolvedValue(EXECUTE_RESULT),
+    executeBuiltCode: jest.fn(
+      async ({
+        getBuiltHandlerPath,
+      }: {
+        getBuiltHandlerPath: () => Promise<string>;
+      }) => {
+        await getBuiltHandlerPath();
+
+        return EXECUTE_RESULT;
+      },
+    ),
   };
   const logicFunctionResourceService = {
     builtFileExists: jest.fn().mockResolvedValue(builtFileExists),
@@ -94,7 +104,6 @@ describe('CodeStepRunnerService', () => {
       expect.objectContaining({
         workspaceId: 'workspace-id',
         flatApplication: FLAT_APPLICATION,
-        builtHandlerPath,
         payload: { name: 'Acme' },
       }),
     );
@@ -158,10 +167,8 @@ describe('CodeStepRunnerService', () => {
     });
 
     expect(result.status).toBe(LogicFunctionExecutionStatus.ERROR);
+    expect(result.error?.errorType).toBe('BuildError');
     expect(result.error?.errorMessage).toBe('Unexpected token');
-    expect(
-      logicFunctionExecutorService.executeBuiltCode,
-    ).not.toHaveBeenCalled();
   });
 
   it('lets an infrastructure failure during the build throw', async () => {
