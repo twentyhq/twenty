@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type JobTooLargeDetails } from 'src/engine/core-modules/message-queue/types/job-too-large-details.type';
 import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -33,6 +34,7 @@ export enum ApplicationExceptionCode {
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
   APPLICATION_NOT_EXPORTABLE = 'APPLICATION_NOT_EXPORTABLE',
   STANDARD_APPLICATION_NOT_EXPORTABLE = 'STANDARD_APPLICATION_NOT_EXPORTABLE',
+  JOB_TOO_LARGE = 'JOB_TOO_LARGE',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -93,6 +95,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Only applications synced from local source can be exported.`;
     case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
       return msg`The standard application cannot be exported.`;
+    case ApplicationExceptionCode.JOB_TOO_LARGE:
+      return msg`This job is too large to be queued. Store large data in a record or a file and pass its id instead.`;
     default:
       assertUnreachable(code);
   }
@@ -100,6 +104,7 @@ const getApplicationExceptionUserFriendlyMessage = (
 
 export class ApplicationException extends CustomException<ApplicationExceptionCode> {
   context?: FlatEntityMapsExceptionContext;
+  jobTooLargeDetails?: JobTooLargeDetails;
 
   constructor(
     message: string,
@@ -107,9 +112,11 @@ export class ApplicationException extends CustomException<ApplicationExceptionCo
     {
       userFriendlyMessage,
       context,
+      jobTooLargeDetails,
     }: {
       userFriendlyMessage?: MessageDescriptor;
       context?: FlatEntityMapsExceptionContext;
+      jobTooLargeDetails?: JobTooLargeDetails;
     } = {},
   ) {
     super(message, code, {
@@ -118,5 +125,6 @@ export class ApplicationException extends CustomException<ApplicationExceptionCo
     });
 
     this.context = context;
+    this.jobTooLargeDetails = jobTooLargeDetails;
   }
 }

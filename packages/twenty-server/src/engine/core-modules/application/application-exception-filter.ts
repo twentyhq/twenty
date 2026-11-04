@@ -49,6 +49,16 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.INVALID_SERVER_VERSION:
       case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
         throw new InternalServerError(exception);
+      case ApplicationExceptionCode.JOB_TOO_LARGE: {
+        const jobTooLargeError = new UserInputError(exception);
+
+        jobTooLargeError.extensions = {
+          ...jobTooLargeError.extensions,
+          ...exception.jobTooLargeDetails,
+        };
+
+        throw jobTooLargeError;
+      }
       case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED: {
         const installationError = new BaseGraphQLError(
           exception,

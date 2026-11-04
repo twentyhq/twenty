@@ -40,6 +40,8 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE:
     case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
       return 400;
+    case ApplicationExceptionCode.JOB_TOO_LARGE:
+      return 413;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
     case ApplicationExceptionCode.POST_INSTALL_ERROR:
     case ApplicationExceptionCode.PRE_INSTALL_ERROR:

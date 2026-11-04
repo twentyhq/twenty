@@ -804,3 +804,95 @@ describe('BullMQDriver fair dispatch', () => {
     });
   });
 });
+
+describe('BullMQDriver job size limit', () => {
+  const MAX_JOB_SIZE_BYTES = 2048;
+  const incrementCounterForEvent = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { incrementCounterForEvent } as never,
+    { get: () => MAX_JOB_SIZE_BYTES } as never,
+    {} as never,
+  );
+  const APPLICATION_JOB = {
+    workspaceId: 'ws-1',
+    applicationUniversalIdentifier: 'app-1',
+  };
+  const smallData = { payload: 'small' };
+  const largeData = { payload: 'x'.repeat(MAX_JOB_SIZE_BYTES) };
+
+  driver.register(MessageQueue.logicFunctionQueue);
+  driver.register(MessageQueue.workspaceQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetRanges.mockResolvedValue([]);
+    mockAllocateTickets.mockResolvedValue(undefined);
+    mockAdd.mockImplementation(async (_name, _data, opts) => ({
+      id: opts.jobId,
+    }));
+    mockAddBulk.mockImplementation(async (jobs) =>
+      jobs.map((_job: unknown, index: number) => ({ id: `auto-${index}` })),
+    );
+  });
+
+  it('adds a job under the limit', async () => {
+    await driver.add(
+      MessageQueue.logicFunctionQueue,
+      'job',
+      smallData,
+      APPLICATION_JOB,
+    );
+
+    expect(mockAdd).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses a job over the limit and counts the refusal', async () => {
+    await expect(
+      driver.add(
+        MessageQueue.logicFunctionQueue,
+        'job',
+        largeData,
+        APPLICATION_JOB,
+      ),
+    ).rejects.toMatchObject({
+      code: 'JOB_TOO_LARGE',
+      details: { index: 0, maxBytes: MAX_JOB_SIZE_BYTES },
+    });
+
+    expect(mockAdd).not.toHaveBeenCalled();
+    expect(incrementCounterForEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: MetricsKeys.JobMemoryLimitRefused,
+        attributes: {
+          queue: MessageQueue.logicFunctionQueue,
+          reason: 'size',
+          mode: 'enforce',
+        },
+      }),
+    );
+  });
+
+  it('refuses the whole batch and reports the index of the first job over the limit', async () => {
+    await expect(
+      driver.bulkAdd(MessageQueue.logicFunctionQueue, 'job', [
+        { data: smallData, ...APPLICATION_JOB },
+        { data: largeData, ...APPLICATION_JOB },
+      ]),
+    ).rejects.toMatchObject({ details: { index: 1 } });
+
+    expect(mockAddBulk).not.toHaveBeenCalled();
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
+  });
+
+  it('does not limit the size of jobs on other queues', async () => {
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      largeData,
+      buildWorkspaceJobScope('ws-1'),
+    );
+
+    expect(mockAdd).toHaveBeenCalledTimes(1);
+  });
+});

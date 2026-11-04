@@ -27,6 +27,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { JobTooLargeException } from 'src/engine/core-modules/message-queue/exceptions/job-too-large.exception';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -124,27 +125,39 @@ export class ApplicationJobService {
 
     const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
 
-    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      jobItems.map((jobItem, index) => ({
-        data: {
-          logicFunctionId: flatLogicFunction.id,
+    try {
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        jobItems.map((jobItem, index) => ({
+          data: {
+            logicFunctionId: flatLogicFunction.id,
+            workspaceId,
+            payload: jobItem.payload ?? {},
+            ...(isDefined(userId) ? { userId } : {}),
+            ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+          },
+          jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
           workspaceId,
-          payload: jobItem.payload ?? {},
-          ...(isDefined(userId) ? { userId } : {}),
-          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+          applicationUniversalIdentifier: application.universalIdentifier,
+        })),
+        {
+          retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          priority: ENQUEUE_JOB_PRIORITY,
+          ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
         },
-        jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
-        workspaceId,
-        applicationUniversalIdentifier: application.universalIdentifier,
-      })),
-      {
-        retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        priority: ENQUEUE_JOB_PRIORITY,
-        ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
-      },
-    );
+      );
+    } catch (error) {
+      if (error instanceof JobTooLargeException) {
+        throw new ApplicationException(
+          error.message,
+          ApplicationExceptionCode.JOB_TOO_LARGE,
+          { jobTooLargeDetails: error.details },
+        );
+      }
+
+      throw error;
+    }
 
     return {
       enqueued: true,

@@ -346,7 +346,7 @@ export const createFairnessHarness = async () => {
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    { get: () => undefined } as never,
+    { get: () => Number.MAX_SAFE_INTEGER } as never,
     { emit: jest.fn() } as never,
   );
 

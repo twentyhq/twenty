@@ -14,6 +14,7 @@ export enum ServerRouteTriggerExceptionCode {
   RESOLVER_REQUIRES_AUTHENTICATION = 'RESOLVER_REQUIRES_AUTHENTICATION',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   AMBIGUOUS_SERVER_ROUTE = 'AMBIGUOUS_SERVER_ROUTE',
+  JOB_TOO_LARGE = 'JOB_TOO_LARGE',
 }
 
 const getServerRouteTriggerExceptionUserFriendlyMessage = (
@@ -38,6 +39,8 @@ const getServerRouteTriggerExceptionUserFriendlyMessage = (
       return msg`This HTTP method is not allowed on this server route.`;
     case ServerRouteTriggerExceptionCode.AMBIGUOUS_SERVER_ROUTE:
       return msg`Several applications declare this server route. Use the application registration URL instead.`;
+    case ServerRouteTriggerExceptionCode.JOB_TOO_LARGE:
+      return msg`The request is too large to be queued.`;
     default:
       assertUnreachable(code);
   }

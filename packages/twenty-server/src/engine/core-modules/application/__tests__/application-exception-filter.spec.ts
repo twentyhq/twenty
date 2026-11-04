@@ -90,4 +90,28 @@ describe('ApplicationExceptionFilter response error format', () => {
       },
     }).toMatchSnapshot();
   });
+
+  it('should surface a job too large as a user input error carrying the sizes', () => {
+    const graphqlError = catchAsGraphQLError(
+      new ApplicationException(
+        'Job at index 2 is 2000000 bytes, over the 1048576 bytes limit',
+        ApplicationExceptionCode.JOB_TOO_LARGE,
+        {
+          jobTooLargeDetails: {
+            index: 2,
+            sizeBytes: 2_000_000,
+            maxBytes: 1_048_576,
+          },
+        },
+      ),
+    );
+
+    expect(graphqlError.extensions).toMatchObject({
+      code: ErrorCode.BAD_USER_INPUT,
+      subCode: ApplicationExceptionCode.JOB_TOO_LARGE,
+      index: 2,
+      sizeBytes: 2_000_000,
+      maxBytes: 1_048_576,
+    });
+  });
 });

@@ -90,6 +90,15 @@ export class ServerRouteTriggerRestApiExceptionFilter implements ExceptionFilter
           undefined,
           { shouldBeCapturedBySentry: false },
         );
+      case ServerRouteTriggerExceptionCode.JOB_TOO_LARGE:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          413,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
+        );
       case ServerRouteTriggerExceptionCode.AMBIGUOUS_SERVER_ROUTE:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

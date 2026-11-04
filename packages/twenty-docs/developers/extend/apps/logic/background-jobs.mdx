@@ -115,6 +115,10 @@ await enqueueJobs({
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
 
+## Job size
+
+A queued job can be at most **1 MB**, counting its serialized payload and options. If any job in a call is over the limit, the whole call is refused with a `JOB_TOO_LARGE` error whose extensions carry `index` (the first job over the limit), `sizeBytes` and `maxBytes`, and nothing is enqueued. Keep large data in a record or a file and pass its id in the payload.
+
 ## Retry a transient failure
 
 Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, a queued logic function can request up to three retries by throwing `RetryableLogicFunctionError`.

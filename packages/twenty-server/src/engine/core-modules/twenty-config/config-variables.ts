@@ -1940,6 +1940,15 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT = 2000;
 
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum size in bytes of a job enqueued on the logic function and workflow queues (serialized data and options plus a fixed overhead). Larger jobs are refused at enqueue.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 1_048_576;
+
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,

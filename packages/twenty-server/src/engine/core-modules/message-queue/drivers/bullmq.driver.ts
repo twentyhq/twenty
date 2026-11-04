@@ -23,6 +23,7 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
   type QueueJobRecipient,
+  type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
@@ -38,14 +39,18 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
+import { JOB_SIZE_LIMITED_QUEUES } from 'src/engine/core-modules/message-queue/constants/job-size-limited-queues.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { JobTooLargeException } from 'src/engine/core-modules/message-queue/exceptions/job-too-large.exception';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
+import { computeQueueJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-queue-job-size-bytes.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
@@ -536,6 +541,13 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+
+    this.assertJobsWithinSizeLimit({
+      queueName,
+      jobs: [{ data, options: queueOptions, scope: options }],
+      additionalGroupKeys: options.groupKeys,
+    });
+
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
@@ -550,6 +562,52 @@ export class BullMQDriver
     });
 
     return job.id;
+  }
+
+  private assertJobsWithinSizeLimit({
+    queueName,
+    jobs,
+    additionalGroupKeys,
+  }: {
+    queueName: MessageQueue;
+    jobs: { data: unknown; options: BullMQJobsOptions; scope: QueueJobScope }[];
+    additionalGroupKeys?: string[];
+  }): void {
+    if (!JOB_SIZE_LIMITED_QUEUES.has(queueName)) {
+      return;
+    }
+
+    const maxBytes = this.twentyConfigService.get(
+      'JOB_QUEUE_MAX_JOB_SIZE_BYTES',
+    );
+
+    for (const [index, job] of jobs.entries()) {
+      const sizeBytes = computeQueueJobSizeBytes({
+        data: job.data,
+        options: job.options,
+      });
+
+      if (sizeBytes <= maxBytes) {
+        continue;
+      }
+
+      const groupKeys = buildQueueJobGroupKeys({
+        scope: job.scope,
+        additionalGroupKeys,
+      });
+
+      void this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.JobMemoryLimitRefused,
+        attributes: { queue: queueName, reason: 'size', mode: 'enforce' },
+        shouldStoreInCache: false,
+      });
+
+      this.logger.warn(
+        `Job memory limit refused on queue ${queueName} [key=${groupKeys.join(',')} reason=size mode=enforce requestedBytes=${sizeBytes} limitBytes=${maxBytes}]`,
+      );
+
+      throw new JobTooLargeException({ index, sizeBytes, maxBytes });
+    }
   }
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
@@ -589,6 +647,21 @@ export class BullMQDriver
       );
     }
 
+    const queueOptions = this.buildJobsOptions(options);
+    const buildBulkJobId = (jobId: string | undefined, index: number) =>
+      jobId ??
+      (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined);
+
+    this.assertJobsWithinSizeLimit({
+      queueName,
+      jobs: jobs.map((job, index) => ({
+        data: job.data,
+        options: { ...queueOptions, jobId: buildBulkJobId(job.jobId, index) },
+        scope: job,
+      })),
+      additionalGroupKeys: options?.groupKeys,
+    });
+
     const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
       ? jobs
       : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
@@ -597,7 +670,6 @@ export class BullMQDriver
       return [];
     }
 
-    const queueOptions = this.buildJobsOptions(options);
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
@@ -613,9 +685,7 @@ export class BullMQDriver
         opts: {
           ...queueOptions,
           ...jobOptions[index],
-          jobId:
-            jobId ??
-            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
+          jobId: buildBulkJobId(jobId, index),
         },
       })),
     );

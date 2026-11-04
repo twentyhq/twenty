@@ -19,6 +19,7 @@ import {
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { JobTooLargeException } from 'src/engine/core-modules/message-queue/exceptions/job-too-large.exception';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
@@ -347,22 +348,33 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      {
-        logicFunctionId: logicFunction.id,
-        workspaceId,
-        payload,
-      },
-      {
-        retryLimit: QUEUED_TARGET_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
-        workspaceId,
-        applicationUniversalIdentifier:
-          logicFunction.application.universalIdentifier,
-      },
-    );
+    try {
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId: logicFunction.id,
+          workspaceId,
+          payload,
+        },
+        {
+          retryLimit: QUEUED_TARGET_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+          workspaceId,
+          applicationUniversalIdentifier:
+            logicFunction.application.universalIdentifier,
+        },
+      );
+    } catch (error) {
+      if (error instanceof JobTooLargeException) {
+        throw new ServerRouteTriggerException(
+          error.message,
+          ServerRouteTriggerExceptionCode.JOB_TOO_LARGE,
+        );
+      }
+
+      throw error;
+    }
 
     return { statusCode: 200, headers: {}, body: { queued: true } };
   }
