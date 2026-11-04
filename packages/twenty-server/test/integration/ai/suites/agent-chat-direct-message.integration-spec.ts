@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { randomUUID } from 'node:crypto';
 
@@ -67,7 +68,11 @@ describe('Private text direct messages', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    const threadId = response.body.data.openDirectMessage as string;
+    const threadId: unknown = response.body.data.openDirectMessage;
+
+    if (!isString(threadId)) {
+      throw new Error('Expected a direct-message thread ID');
+    }
 
     context.registerThread(threadId);
 
@@ -87,6 +92,9 @@ describe('Private text direct messages', () => {
     const sent = await sendChatParticipationMessage({
       threadId,
       text: 'Hello Jony',
+      recipientWorkspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY.toUpperCase(),
+      ],
     });
     const reply = await sendChatParticipationMessage({
       threadId,
