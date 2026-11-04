@@ -107,6 +107,7 @@ export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
 export { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from './constants/TwentyPublicAppUniversalIdentifiers';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from './constants/WellKnownOAuthClientUniversalIdentifiers';
 export type {
   AuthorizeConnectionPayload,
   AuthorizeConnectionResult,

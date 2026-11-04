@@ -4,6 +4,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('ApplicationRegistrationSummary')
 export class ApplicationRegistrationSummaryDTO {
@@ -22,4 +23,7 @@ export class ApplicationRegistrationSummaryDTO {
   @IsString()
   @Field(() => String, { nullable: true })
   logoUrl?: string | null;
+
+  @Field(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 }

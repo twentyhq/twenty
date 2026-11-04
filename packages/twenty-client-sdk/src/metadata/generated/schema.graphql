@@ -726,6 +726,7 @@ type ApplicationRegistrationSummary {
   latestAvailableVersion: String
   logoUrl: String
   sourceType: ApplicationRegistrationSourceType!
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type ApplicationRegistrationVariable {
@@ -3059,6 +3060,7 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type MarketplaceAppObject {
@@ -6281,6 +6283,11 @@ type Webhook {
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
+}
+
+enum WellKnownOAuthClient {
+  CHATGPT
+  CLAUDE
 }
 
 union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration

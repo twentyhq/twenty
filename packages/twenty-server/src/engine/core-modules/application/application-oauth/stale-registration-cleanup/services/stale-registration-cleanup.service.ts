@@ -5,6 +5,7 @@ import { In, Repository } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { RESERVED_APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/utils/is-reserved-application-registration-universal-identifier.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { STALE_REGISTRATION_CLEANUP_BATCH_SIZE } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-cleanup-batch-size.constant';
 import { STALE_REGISTRATION_GRACE_PERIOD_DAYS } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-grace-period-days.constant';
@@ -100,6 +101,14 @@ export class StaleRegistrationCleanupService {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .andWhere('registration.createdAt < :cutoffDate', { cutoffDate })
+      .andWhere('registration.isListed = false')
+      .andWhere(
+        'registration.universalIdentifier NOT IN (:...reservedUniversalIdentifiers)',
+        {
+          reservedUniversalIdentifiers:
+            RESERVED_APPLICATION_REGISTRATION_UNIVERSAL_IDENTIFIERS,
+        },
+      )
       .orderBy('registration.createdAt', 'ASC')
       .take(batchSize);
 

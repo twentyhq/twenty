@@ -797,6 +797,7 @@ export type ApplicationRegistrationSummary = {
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type ApplicationRegistrationVariable = {
@@ -3231,6 +3232,7 @@ export type MarketplaceAppDetail = {
   termsUrl?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type MarketplaceAppObject = {
@@ -8654,6 +8656,11 @@ export type Webhook = {
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum WellKnownOAuthClient {
+  CHATGPT = 'CHATGPT',
+  CLAUDE = 'CLAUDE'
+}
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 

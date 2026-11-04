@@ -17,6 +17,7 @@ import { type IframeMediaPermission } from 'twenty-shared/types';
 import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 
 @ObjectType('MarketplaceAppDetail')
@@ -38,6 +39,9 @@ export class MarketplaceAppDetailDTO {
 
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
+
+  @Field(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 
   @IsOptional()
   @IsString()

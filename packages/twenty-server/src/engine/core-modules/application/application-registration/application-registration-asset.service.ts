@@ -9,13 +9,13 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type ApplicationRegistrationAssetManifest } from 'src/engine/core-modules/application/application-registration/types/application-registration-asset-manifest.type';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { isStorableAssetPath } from 'src/engine/core-modules/application/application-registration/utils/is-storable-asset-path.util';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
-import type { ApplicationManifest } from 'twenty-shared/application';
 
 export type ReadRegistrationAsset = (path: string) => Promise<Buffer | null>;
 
@@ -42,7 +42,7 @@ export class ApplicationRegistrationAssetService {
     skipAlreadyStoredPaths = false,
   }: {
     applicationRegistrationId: string;
-    manifestApplication: ApplicationManifest | undefined;
+    manifestApplication: ApplicationRegistrationAssetManifest | undefined;
     readAsset: ReadRegistrationAsset;
     // Set when asset contents are known to be unchanged (same package
     // version): assets that already have a stored file for the same path are
