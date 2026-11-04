@@ -90,9 +90,9 @@ export const WithSections: Story = {
       'Workspace Instructions',
       'System Prompt',
     ]);
-    expect(canvas.getByRole('combobox', { name: 'DMs' })).toHaveTextContent(
-      'Only when mentioned',
-    );
+    expect(
+      canvas.queryByRole('combobox', { name: 'DMs' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.getByRole('combobox', { name: 'Global inbox' }),
     ).toHaveTextContent('Auto');
