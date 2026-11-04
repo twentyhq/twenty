@@ -1,15 +1,12 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 
 import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/activities/emails/constants/ChatMessageBubbleMaxWidth';
-import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { FileChip } from '@/ui/field/display/components/FileChip';
-import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useOpenFilePreview } from '@/ui/field/display/hooks/useOpenFilePreview';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -57,32 +54,25 @@ type ChatThreadMessageAttachmentProps = {
 export const ChatThreadMessageAttachment = ({
   file,
 }: ChatThreadMessageAttachmentProps) => {
-  const setFilePreview = useSetAtomState(filePreviewState);
-  const isAttachmentPreviewEnabled = useAtomStateValue(
-    isAttachmentPreviewEnabledState,
-  );
+  const { openFilePreview } = useOpenFilePreview();
+  const [hasMediaFailedToLoad, setHasMediaFailedToLoad] = useState(false);
 
-  const handlePreview = (fileToPreview: FieldFilesValue) => {
-    if (isAttachmentPreviewEnabled) {
-      setFilePreview(fileToPreview);
+  const handleMediaError = () => setHasMediaFailedToLoad(true);
 
-      return;
-    }
-
-    if (isNonEmptyString(fileToPreview.url)) {
-      downloadFile(fileToPreview.url, fileToPreview.label);
-    }
-  };
-
-  if (!isNonEmptyString(file.url) || file.isDeleted === true) {
-    return <FileChip file={file} onClick={handlePreview} />;
+  if (!isNonEmptyString(file.url) || file.isDeleted || hasMediaFailedToLoad) {
+    return <FileChip file={file} onClick={openFilePreview} />;
   }
 
   switch (getFieldFilesValueCategory(file)) {
     case FILE_CATEGORIES.IMAGE:
       return (
-        <StyledImageButton type="button" onClick={() => handlePreview(file)}>
-          <StyledImage src={file.url} alt={file.label} loading="lazy" />
+        <StyledImageButton type="button" onClick={() => openFilePreview(file)}>
+          <StyledImage
+            src={file.url}
+            alt={file.label}
+            loading="lazy"
+            onError={handleMediaError}
+          />
         </StyledImageButton>
       );
     case FILE_CATEGORIES.VIDEO:
@@ -92,6 +82,7 @@ export const ChatThreadMessageAttachment = ({
           aria-label={file.label}
           controls
           preload="metadata"
+          onError={handleMediaError}
         />
       );
     case FILE_CATEGORIES.AUDIO:
@@ -101,9 +92,10 @@ export const ChatThreadMessageAttachment = ({
           aria-label={file.label}
           controls
           preload="metadata"
+          onError={handleMediaError}
         />
       );
     default:
-      return <FileChip file={file} onClick={handlePreview} />;
+      return <FileChip file={file} onClick={openFilePreview} />;
   }
 };

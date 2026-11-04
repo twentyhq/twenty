@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
@@ -109,7 +109,70 @@ describe('ChatThreadMessageGroup', () => {
     );
 
     expect(screen.getByText('See you tomorrow')).toBeInTheDocument();
-    expect(screen.getByText('offer.pdf')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /offer\.pdf/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders no empty text bubble for a message that only holds files', () => {
+    const { container } = render(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              text: '',
+              attachments: [
+                {
+                  fileId: 'image-file-id',
+                  label: 'photo.png',
+                  extension: '.png',
+                  url: 'https://files.test/photo.png',
+                },
+              ],
+            }),
+          ],
+        }}
+      />,
+    );
+
+    const group = container.firstElementChild;
+
+    expect(group?.children).toHaveLength(1);
+    expect(group?.firstElementChild).toContainElement(
+      screen.getByRole('img', { name: 'photo.png' }),
+    );
+  });
+
+  it('falls back to a file chip when the browser cannot play a file', () => {
+    render(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              text: '',
+              attachments: [
+                {
+                  fileId: 'video-file-id',
+                  label: 'clip.wmv',
+                  extension: '.wmv',
+                  url: 'https://files.test/clip.wmv',
+                },
+              ],
+            }),
+          ],
+        }}
+      />,
+    );
+
+    fireEvent.error(screen.getByLabelText('clip.wmv'));
+
+    expect(
+      screen.getByRole('button', { name: /clip\.wmv/ }),
+    ).toBeInTheDocument();
   });
 
   it('does not render a body masked by metadata visibility', () => {
