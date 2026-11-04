@@ -1,11 +1,8 @@
-export type AssistantAvatarColor =
-  | 'blue'
-  | 'sky'
-  | 'turquoise'
-  | 'green'
-  | 'yellow'
-  | 'orange'
-  | 'red'
-  | 'pink'
-  | 'purple'
-  | 'gray';
+import { type ThemeColor } from '@ui/theme/constants/MainColorNames';
+
+import { ASSISTANT_AVATAR_COLORS } from '../internal/constants/assistantAvatarColors.constant';
+
+export type AssistantAvatarColor = Extract<
+  ThemeColor,
+  (typeof ASSISTANT_AVATAR_COLORS)[number]
+>;

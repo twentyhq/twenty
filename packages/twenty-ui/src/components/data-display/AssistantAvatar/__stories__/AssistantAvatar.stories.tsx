@@ -9,6 +9,7 @@ import {
 } from '@ui/testing';
 
 import { AssistantAvatar } from '../AssistantAvatar';
+import { ASSISTANT_AVATAR_COLORS } from '../internal/constants/assistantAvatarColors.constant';
 import { type AssistantAvatarColor } from '../types/AssistantAvatarColor';
 import { type AssistantAvatarFace } from '../types/AssistantAvatarFace';
 import { type AssistantAvatarShape } from '../types/AssistantAvatarShape';
@@ -34,18 +35,6 @@ const FACES = [
   'sleepy',
   'love',
 ] as const;
-const COLORS = [
-  'blue',
-  'sky',
-  'turquoise',
-  'green',
-  'yellow',
-  'orange',
-  'red',
-  'pink',
-  'purple',
-  'gray',
-] as const;
 const SIZES = [14, 16, 20, 24, 40] as const;
 
 const meta = {
@@ -55,7 +44,7 @@ const meta = {
   argTypes: {
     shape: { control: 'select', options: SHAPES },
     face: { control: 'select', options: FACES },
-    color: { control: 'select', options: COLORS },
+    color: { control: 'select', options: ASSISTANT_AVATAR_COLORS },
     size: { control: 'select', options: SIZES },
   },
 } satisfies Meta<typeof AssistantAvatar>;
@@ -133,7 +122,7 @@ export const PaletteAndSizes: CatalogStory<Story, typeof AssistantAvatar> = {
         },
         {
           name: 'color',
-          values: [...COLORS],
+          values: [...ASSISTANT_AVATAR_COLORS],
           props: (color: AssistantAvatarColor) => ({ color }),
         },
       ],
@@ -143,7 +132,7 @@ export const PaletteAndSizes: CatalogStory<Story, typeof AssistantAvatar> = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    for (const color of COLORS) {
+    for (const color of ASSISTANT_AVATAR_COLORS) {
       for (const size of SIZES) {
         const avatar = canvas.getByRole('img', { name: `${color} ${size}` });
         const bounds = avatar.getBoundingClientRect();
