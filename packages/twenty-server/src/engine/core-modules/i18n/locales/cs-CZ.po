@@ -3321,6 +3321,11 @@ msgstr "Konfliktní telefonní předvolba."
 msgid "Conflicting phone country code."
 msgstr "Konfliktní telefonní kód země."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Nejprve připojte účet pro tento server MCP."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "Logická funkce, která se má spustit při odpojení, nebyla nalezena."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Parametry požadavku MCP jsou neplatné."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Server MCP poskytuje příliš mnoho nástrojů k synchronizaci."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
