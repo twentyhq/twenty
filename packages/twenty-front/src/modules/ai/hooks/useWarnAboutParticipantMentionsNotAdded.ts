@@ -52,10 +52,18 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
       };
       const writerWorkspaceMemberIds =
         await getVerifiedWriterWorkspaceMemberIds();
-      const { notAddedLabels } = getAgentChatParticipantAdditionStatus({
-        ...requestedParticipants,
-        writerWorkspaceMemberIds,
-      });
+      const { hasUnverifiedInitialRecipients, notAddedLabels } =
+        getAgentChatParticipantAdditionStatus({
+          ...requestedParticipants,
+          writerWorkspaceMemberIds,
+        });
+
+      if (hasUnverifiedInitialRecipients) {
+        enqueueToast({
+          status: 'warning',
+          children: t`Recipient delivery could not be verified. Check the chat participants.`,
+        });
+      }
 
       if (isNonEmptyString(notAddedLabels)) {
         enqueueToast({
