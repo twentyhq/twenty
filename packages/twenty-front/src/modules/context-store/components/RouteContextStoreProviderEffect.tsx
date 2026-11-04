@@ -1,5 +1,4 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -13,12 +12,10 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
-import { type CommandMenuCoreObjectName } from 'twenty-shared/types';
 
 type RouteContextStoreProviderEffectProps = {
   viewId?: string;
   objectMetadataItem?: EnrichedObjectMetadataItem;
-  coreObjectName: CommandMenuCoreObjectName | null;
   isRecordIndexPage: boolean;
   isRecordShowPage: boolean;
   isStandalonePage: boolean;
@@ -28,7 +25,6 @@ type RouteContextStoreProviderEffectProps = {
 export const RouteContextStoreProviderEffect = ({
   viewId,
   objectMetadataItem,
-  coreObjectName,
   isRecordIndexPage,
   isRecordShowPage,
   isStandalonePage,
@@ -55,11 +51,6 @@ export const RouteContextStoreProviderEffect = ({
   ] = useAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
-
-  const [
-    contextStoreCurrentCoreObjectName,
-    setContextStoreCurrentCoreObjectName,
-  ] = useAtomComponentState(contextStoreCurrentCoreObjectNameComponentState);
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: viewId ?? '',
@@ -90,16 +81,6 @@ export const RouteContextStoreProviderEffect = ({
     setContextStoreCurrentObjectMetadataItemId,
     setLastVisitedViewForObjectMetadataNamePlural,
     viewId,
-  ]);
-
-  useEffect(() => {
-    if (contextStoreCurrentCoreObjectName !== coreObjectName) {
-      setContextStoreCurrentCoreObjectName(coreObjectName);
-    }
-  }, [
-    contextStoreCurrentCoreObjectName,
-    coreObjectName,
-    setContextStoreCurrentCoreObjectName,
   ]);
 
   useEffect(() => {

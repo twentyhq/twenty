@@ -1,4 +1,5 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { RouteContextStoreCoreObjectNameEffect } from '@/context-store/components/RouteContextStoreCoreObjectNameEffect';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -140,21 +141,23 @@ export const RouteContextStoreProvider = () => {
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 
-  if (!shouldComputeContextStore) {
-    return null;
-  }
+  const coreObjectName =
+    isCoreWorkflowIndexPage || isCoreWorkflowShowPage ? 'workflow' : null;
 
+  // Set on every route: pages without a context store (e.g. /agents) must not keep a previous core object.
   return (
-    <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
-      objectMetadataItem={objectMetadataItem}
-      coreObjectName={
-        isCoreWorkflowIndexPage || isCoreWorkflowShowPage ? 'workflow' : null
-      }
-      isRecordIndexPage={isRecordIndexPage}
-      isRecordShowPage={isRecordShowPage}
-      isStandalonePage={isStandalonePage}
-      isSettingsPage={isSettingsPage}
-    />
+    <>
+      <RouteContextStoreCoreObjectNameEffect coreObjectName={coreObjectName} />
+      {shouldComputeContextStore && (
+        <RouteContextStoreProviderEffect
+          viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
+          objectMetadataItem={objectMetadataItem}
+          isRecordIndexPage={isRecordIndexPage}
+          isRecordShowPage={isRecordShowPage}
+          isStandalonePage={isStandalonePage}
+          isSettingsPage={isSettingsPage}
+        />
+      )}
+    </>
   );
 };
