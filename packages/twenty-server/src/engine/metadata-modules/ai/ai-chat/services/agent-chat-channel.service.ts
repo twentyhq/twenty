@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
@@ -241,18 +241,19 @@ export class AgentChatChannelService {
       after: AgentChatThreadWorkspaceEntity;
     }[]
   > {
-    const [doesSourceChannelExist, threadsBefore] = await Promise.all([
-      this.coreDataSource
-        .getRepository(AgentChatChannelEntity)
-        .existsBy({ id: channelId, workspaceId }),
-      this.threadRepository.find(workspaceId, { where: { channelId } }),
-    ]);
+    const [doesSourceChannelExist, doesSourceChannelHaveThreads] =
+      await Promise.all([
+        this.coreDataSource
+          .getRepository(AgentChatChannelEntity)
+          .existsBy({ id: channelId, workspaceId }),
+        this.threadRepository.existsBy(workspaceId, { channelId }),
+      ]);
 
     if (!doesSourceChannelExist) {
       throwAgentChatChannelNotFound();
     }
 
-    if (!isNonEmptyArray(threadsBefore)) {
+    if (!doesSourceChannelHaveThreads) {
       return [];
     }
 
@@ -279,10 +280,7 @@ export class AgentChatChannelService {
             channelId: destinationChannelId,
             updatedAt: () => 'CURRENT_TIMESTAMP',
           })
-          .where('id = ANY(:threadIds::uuid[])', {
-            threadIds: threadsBefore.map(({ id }) => id),
-          })
-          .andWhere('"channelId" = :sourceChannelId', {
+          .where('"channelId" = :sourceChannelId', {
             sourceChannelId: channelId,
           })
           .returning('*')
@@ -299,14 +297,10 @@ export class AgentChatChannelService {
         return threadsAfter;
       },
     );
-    const threadBeforeById = new Map(
-      threadsBefore.map((thread) => [thread.id, thread]),
-    );
 
-    return threadsAfter.flatMap((after) => {
-      const before = threadBeforeById.get(after.id);
-
-      return isDefined(before) ? [{ before, after }] : [];
-    });
+    return threadsAfter.map((after) => ({
+      before: { ...after, channelId },
+      after,
+    }));
   }
 }
