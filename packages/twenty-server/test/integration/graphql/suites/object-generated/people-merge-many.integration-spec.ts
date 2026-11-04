@@ -348,23 +348,35 @@ describe('people merge resolvers (integration)', () => {
 
       expect(mergeResponse.body.errors).toBeUndefined();
 
-      const findMigratedResponse = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'timelineActivity',
-          objectMetadataPluralName: 'timelineActivities',
-          gqlFields: 'id targetPersonId',
-          filter: { id: { in: createdTimelineActivityIdsForCleaning } },
-          first: timelineActivityCount,
-        }),
-      );
+      const migratedTargetPersonIds: string[] = [];
+      let after: string | undefined;
+      let hasNextPage = true;
 
-      expect(findMigratedResponse.body.errors).toBeUndefined();
-
-      const migratedTargetPersonIds =
-        findMigratedResponse.body.data.timelineActivities.edges.map(
-          ({ node }: { node: { targetPersonId: string } }) =>
-            node.targetPersonId,
+      while (hasNextPage) {
+        const findMigratedResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: 'timelineActivity',
+            objectMetadataPluralName: 'timelineActivities',
+            gqlFields: 'id targetPersonId',
+            filter: { id: { in: createdTimelineActivityIdsForCleaning } },
+            after,
+          }),
         );
+
+        expect(findMigratedResponse.body.errors).toBeUndefined();
+
+        const { edges, pageInfo } =
+          findMigratedResponse.body.data.timelineActivities;
+
+        migratedTargetPersonIds.push(
+          ...edges.map(
+            ({ node }: { node: { targetPersonId: string } }) =>
+              node.targetPersonId,
+          ),
+        );
+        after = pageInfo.endCursor;
+        hasNextPage = pageInfo.hasNextPage;
+      }
 
       expect(migratedTargetPersonIds).toHaveLength(timelineActivityCount);
       expect(new Set(migratedTargetPersonIds)).toEqual(
