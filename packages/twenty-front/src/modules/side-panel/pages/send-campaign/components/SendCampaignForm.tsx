@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,7 +71,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   );
 
   const { record: list } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
     skip: !hasList,
   });

@@ -13,7 +13,7 @@ import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordId
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -89,7 +89,7 @@ export const PageLayoutRecordPageRenderer = ({
               },
               layoutType:
                 targetRecordIdentifier.targetObjectNameSingular ===
-                CoreObjectNameSingular.Dashboard
+                StandardObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
               isRecordIdentifierBarHidden,

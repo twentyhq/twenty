@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { useEffect } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
@@ -284,7 +284,7 @@ const meta: Meta<EmailThreadStoryArgs> = {
         >
           <SeedEmailThreadPageLayoutEffect />
           <RecordShowResourceLoader
-            objectNameSingular={CoreObjectNameSingular.MessageThread}
+            objectNameSingular={StandardObjectNameSingular.MessageThread}
             recordId={THREAD_ID}
           />
           <Story />
@@ -303,7 +303,7 @@ const meta: Meta<EmailThreadStoryArgs> = {
     },
     targetRecordIdentifier: {
       id: THREAD_ID,
-      targetObjectNameSingular: CoreObjectNameSingular.MessageThread,
+      targetObjectNameSingular: StandardObjectNameSingular.MessageThread,
     },
   },
   parameters: {

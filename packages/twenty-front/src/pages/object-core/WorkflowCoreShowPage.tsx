@@ -20,7 +20,7 @@ import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/use
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -145,7 +145,7 @@ const CoreWorkflowShowContent = ({
               {
                 children: t`Workflows`,
                 href: getAppPath(AppPath.RecordIndexPage, {
-                  objectNamePlural: CoreObjectNamePlural.Workflow,
+                  objectNamePlural: StandardObjectNamePlural.Workflow,
                 }),
               },
               {

@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { expect, within } from 'storybook/test';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -267,7 +267,8 @@ const meta: Meta<typeof PageLayoutRenderer> = {
               value={{
                 layoutType: PageLayoutType.DASHBOARD,
                 targetRecordIdentifier: {
-                  targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
+                  targetObjectNameSingular:
+                    StandardObjectNameSingular.Dashboard,
                   id: mixedGraphsPageLayoutMocks.id,
                 },
               }}

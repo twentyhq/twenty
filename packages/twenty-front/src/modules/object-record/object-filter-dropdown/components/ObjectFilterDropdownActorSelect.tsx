@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -56,7 +56,7 @@ export const ObjectFilterDropdownActorSelect = ({
     useRecordsForSelect({
       searchFilterText: objectFilterDropdownSearchInput,
       selectedIds: selectedRecordIds,
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       limit: 10,
       allowRequestsToTwentyIcons: false,
     });

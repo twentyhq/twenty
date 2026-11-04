@@ -16,7 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
 
@@ -124,7 +124,8 @@ export const SettingsObjectDetailPage = () => {
       Icon: IconAppWindow,
       hide:
         objectMetadataItem.isRemote ||
-        objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
+        objectMetadataItem.nameSingular ===
+          StandardObjectNameSingular.Dashboard,
     },
   ];
 
