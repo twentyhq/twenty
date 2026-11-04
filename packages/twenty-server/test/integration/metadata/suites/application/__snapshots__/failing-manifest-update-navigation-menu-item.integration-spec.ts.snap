@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Failing manifest update - navigation menu items when a folder that still contains items changes type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A folder that still contains items cannot change type",
+              "userFriendlyMessage": "Move or remove the items in this folder before changing its type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Test Folder",
+            "type": "LINK",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Move or remove the items in this folder before changing its type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Failing manifest update - navigation menu items when an item is re-pointed away from a page layout deleted in the same sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Cannot re-point a navigation menu item away from a target deleted in the same sync",
+              "userFriendlyMessage": "Re-point this menu item first, then remove its previous target in a later sync",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Funnel",
+            "type": "PAGE_LAYOUT",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Re-point this menu item first, then remove its previous target in a later sync",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Failing manifest update - navigation menu items when an item is re-pointed away from a view deleted in the same sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Cannot re-point a navigation menu item away from a target deleted in the same sync",
+              "userFriendlyMessage": "Re-point this menu item first, then remove its previous target in a later sync",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Companies",
+            "type": "VIEW",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Re-point this menu item first, then remove its previous target in a later sync",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

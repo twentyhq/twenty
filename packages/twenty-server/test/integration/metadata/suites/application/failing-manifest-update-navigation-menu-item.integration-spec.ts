@@ -1,12 +1,19 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import {
   type Manifest,
   type NavigationMenuItemManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
 import {
   NavigationMenuItemType,
   PageLayoutType,
@@ -16,8 +23,37 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
-const TEST_FOLDER_ID = uuidv4();
-const TEST_CHILD_ID = uuidv4();
+const TEST_VIEW_ITEM_ID = uuidv4();
+const TEST_PAGE_LAYOUT_ITEM_ID = uuidv4();
+
+const NAVIGATION_MENU_ITEM_GQL_FIELDS = `
+  id
+  type
+  name
+  link
+  position
+  folderId
+  viewId
+  pageLayoutId
+  targetObjectMetadataId
+  applicationId
+`;
+
+const FOLDER: NavigationMenuItemManifest = {
+  universalIdentifier: uuidv4(),
+  type: NavigationMenuItemType.FOLDER,
+  name: 'Test Folder',
+  position: 0,
+};
+
+const CHILD: NavigationMenuItemManifest = {
+  universalIdentifier: uuidv4(),
+  type: NavigationMenuItemType.LINK,
+  name: 'Child Link',
+  position: 1,
+  link: 'https://example.com',
+  folderUniversalIdentifier: FOLDER.universalIdentifier,
+};
 
 const buildView = (name: string): Manifest['views'][number] => ({
   universalIdentifier: uuidv4(),
@@ -28,7 +64,7 @@ const buildView = (name: string): Manifest['views'][number] => ({
   position: 1,
 });
 
-const buildStandalonePage = (
+const buildStandalonePageLayout = (
   name: string,
 ): Manifest['pageLayouts'][number] => ({
   universalIdentifier: uuidv4(),
@@ -37,40 +73,111 @@ const buildStandalonePage = (
   tabs: [{ universalIdentifier: uuidv4(), title: 'Overview', position: 0 }],
 });
 
-const findItemRows = (universalIdentifier: string) =>
-  globalThis.testDataSource.query(
-    `SELECT id FROM core."navigationMenuItem" WHERE "universalIdentifier" = $1`,
-    [universalIdentifier],
-  );
+const OLD_VIEW = buildView('Old companies');
+const NEW_VIEW = buildView('New companies');
+const OLD_PAGE_LAYOUT = buildStandalonePageLayout('Old funnel');
+const NEW_PAGE_LAYOUT = buildStandalonePageLayout('New funnel');
 
-const FOLDER: NavigationMenuItemManifest = {
-  universalIdentifier: TEST_FOLDER_ID,
-  type: NavigationMenuItemType.FOLDER,
-  name: 'Test Folder',
-  position: 0,
+const buildViewItem = (
+  view: Manifest['views'][number],
+): NavigationMenuItemManifest => ({
+  universalIdentifier: TEST_VIEW_ITEM_ID,
+  type: NavigationMenuItemType.VIEW,
+  name: 'Companies',
+  position: 2,
+  viewUniversalIdentifier: view.universalIdentifier,
+});
+
+const buildPageLayoutItem = (
+  pageLayout: Manifest['pageLayouts'][number],
+): NavigationMenuItemManifest => ({
+  universalIdentifier: TEST_PAGE_LAYOUT_ITEM_ID,
+  type: NavigationMenuItemType.PAGE_LAYOUT,
+  name: 'Funnel',
+  position: 2,
+  pageLayoutUniversalIdentifier: pageLayout.universalIdentifier,
+});
+
+type ManifestOverrides = Partial<
+  Pick<Manifest, 'navigationMenuItems' | 'views' | 'pageLayouts'>
+>;
+
+type TestContext = {
+  initialManifestOverrides: ManifestOverrides;
+  failingManifestOverrides: ManifestOverrides;
 };
 
-const CHILD: NavigationMenuItemManifest = {
-  universalIdentifier: TEST_CHILD_ID,
-  type: NavigationMenuItemType.LINK,
-  name: 'Child Link',
-  position: 0,
-  link: 'https://example.com',
-  folderUniversalIdentifier: TEST_FOLDER_ID,
-};
+const failingNavigationMenuItemUpdateTestCases: EachTestingContext<TestContext>[] =
+  [
+    {
+      title: 'when a folder that still contains items changes type',
+      context: {
+        initialManifestOverrides: { navigationMenuItems: [FOLDER, CHILD] },
+        failingManifestOverrides: {
+          navigationMenuItems: [
+            {
+              ...FOLDER,
+              type: NavigationMenuItemType.LINK,
+              link: 'https://example.com/folder',
+            },
+            CHILD,
+          ],
+        },
+      },
+    },
+    {
+      title:
+        'when an item is re-pointed away from a view deleted in the same sync',
+      context: {
+        initialManifestOverrides: {
+          navigationMenuItems: [buildViewItem(OLD_VIEW)],
+          views: [OLD_VIEW],
+        },
+        failingManifestOverrides: {
+          navigationMenuItems: [buildViewItem(NEW_VIEW)],
+          views: [NEW_VIEW],
+        },
+      },
+    },
+    {
+      title:
+        'when an item is re-pointed away from a page layout deleted in the same sync',
+      context: {
+        initialManifestOverrides: {
+          navigationMenuItems: [buildPageLayoutItem(OLD_PAGE_LAYOUT)],
+          pageLayouts: [OLD_PAGE_LAYOUT],
+        },
+        failingManifestOverrides: {
+          navigationMenuItems: [buildPageLayoutItem(NEW_PAGE_LAYOUT)],
+          pageLayouts: [NEW_PAGE_LAYOUT],
+        },
+      },
+    },
+  ];
 
-const buildManifest = (
-  navigationMenuItems: NavigationMenuItemManifest[],
-  overrides?: Partial<Pick<Manifest, 'views' | 'pageLayouts'>>,
-) =>
+const buildManifest = (overrides: ManifestOverrides) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
-    overrides: { navigationMenuItems, ...overrides },
+    overrides,
   });
 
-describe('Manifest update - navigation menu items should fail', () => {
-  beforeAll(async () => {
+const findApplicationNavigationMenuItems = async (applicationId: string) => {
+  const { data } = await findNavigationMenuItems({
+    gqlFields: NAVIGATION_MENU_ITEM_GQL_FIELDS,
+    expectToFail: false,
+    input: undefined,
+  });
+
+  return data.navigationMenuItems.filter(
+    (navigationMenuItem) => navigationMenuItem.applicationId === applicationId,
+  );
+};
+
+describe('Failing manifest update - navigation menu items', () => {
+  let testApplicationId: string;
+
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
@@ -78,109 +185,42 @@ describe('Manifest update - navigation menu items should fail', () => {
       sourcePath: 'test-failing-manifest-update-nav',
     });
 
-    await syncApplication({
-      manifest: buildManifest([FOLDER, CHILD]),
+    const { data } = await findOneApplication({
+      input: { universalIdentifier: TEST_APP_ID },
+      gqlFields: 'id',
       expectToFail: false,
     });
+
+    testApplicationId = data.findOneApplication.id;
   }, 60000);
 
-  afterAll(async () => {
+  afterEach(async () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: TEST_APP_ID,
     });
   });
 
-  it('when a folder that still contains items changes type', async () => {
-    const { errors } = await syncApplication({
-      manifest: buildManifest([
-        {
-          ...FOLDER,
-          type: NavigationMenuItemType.LINK,
-          link: 'https://example.com/folder',
-        },
-        CHILD,
-      ]),
-      expectToFail: true,
-    });
+  it.each(eachTestingContextFilter(failingNavigationMenuItemUpdateTestCases))(
+    '$title',
+    async ({ context }) => {
+      await syncApplication({
+        manifest: buildManifest(context.initialManifestOverrides),
+        expectToFail: false,
+      });
 
-    expect(JSON.stringify(errors)).toContain(
-      'A folder that still contains items cannot change type',
-    );
+      const navigationMenuItemsBeforeFailingSync =
+        await findApplicationNavigationMenuItems(testApplicationId);
 
-    const [folderRow] = await globalThis.testDataSource.query(
-      `SELECT type FROM core."navigationMenuItem" WHERE "universalIdentifier" = $1`,
-      [TEST_FOLDER_ID],
-    );
+      const { errors } = await syncApplication({
+        manifest: buildManifest(context.failingManifestOverrides),
+        expectToFail: true,
+      });
 
-    expect(folderRow.type).toBe(NavigationMenuItemType.FOLDER);
-  }, 60000);
-
-  // The delete runs before the update and cascades to the item, which the update then misses.
-  it('when an item is re-pointed away from a view deleted in the same sync', async () => {
-    const itemUniversalIdentifier = uuidv4();
-    const oldView = buildView('Old companies');
-    const newView = buildView('New companies');
-    const itemPointingTo = (viewUniversalIdentifier: string) => ({
-      universalIdentifier: itemUniversalIdentifier,
-      type: NavigationMenuItemType.VIEW,
-      name: 'Companies',
-      position: 1,
-      viewUniversalIdentifier,
-    });
-
-    await syncApplication({
-      manifest: buildManifest(
-        [FOLDER, CHILD, itemPointingTo(oldView.universalIdentifier)],
-        { views: [oldView] },
-      ),
-      expectToFail: false,
-    });
-
-    const { errors } = await syncApplication({
-      manifest: buildManifest(
-        [FOLDER, CHILD, itemPointingTo(newView.universalIdentifier)],
-        { views: [newView] },
-      ),
-      expectToFail: true,
-    });
-
-    expect(JSON.stringify(errors)).toContain(
-      'Cannot re-point a navigation menu item away from a target deleted in the same sync',
-    );
-    expect(await findItemRows(itemUniversalIdentifier)).toHaveLength(1);
-  }, 60000);
-
-  it('when an item is re-pointed away from a page layout deleted in the same sync', async () => {
-    const itemUniversalIdentifier = uuidv4();
-    const oldPage = buildStandalonePage('Old funnel');
-    const newPage = buildStandalonePage('New funnel');
-    const itemPointingTo = (pageLayoutUniversalIdentifier: string) => ({
-      universalIdentifier: itemUniversalIdentifier,
-      type: NavigationMenuItemType.PAGE_LAYOUT,
-      name: 'Funnel',
-      position: 1,
-      pageLayoutUniversalIdentifier,
-    });
-
-    await syncApplication({
-      manifest: buildManifest(
-        [FOLDER, CHILD, itemPointingTo(oldPage.universalIdentifier)],
-        { pageLayouts: [oldPage] },
-      ),
-      expectToFail: false,
-    });
-
-    const { errors } = await syncApplication({
-      manifest: buildManifest(
-        [FOLDER, CHILD, itemPointingTo(newPage.universalIdentifier)],
-        { pageLayouts: [newPage] },
-      ),
-      expectToFail: true,
-    });
-
-    expect(JSON.stringify(errors)).toContain(
-      'Cannot re-point a navigation menu item away from a target deleted in the same sync',
-    );
-    expect(await findItemRows(itemUniversalIdentifier)).toHaveLength(1);
-  }, 60000);
+      expectOneNotInternalServerErrorSnapshot({ errors });
+      expect(
+        await findApplicationNavigationMenuItems(testApplicationId),
+      ).toEqual(navigationMenuItemsBeforeFailingSync);
+    },
+    60000,
+  );
 });
