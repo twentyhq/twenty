@@ -1,21 +1,27 @@
+import { StepLogicalOperator, type StepFilter } from 'twenty-shared/types';
 import { fastDeepEqual } from 'twenty-shared/utils';
 
 import { getUsableCoreAgentStepFilters } from '@/object-core/agents/utils/getUsableCoreAgentStepFilters';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
+const getCoreAgentFilterRuleKey = ({
+  stepOutputKey,
+  operand,
+  value,
+}: Pick<StepFilter, 'stepOutputKey' | 'operand' | 'value'>) =>
+  JSON.stringify([stepOutputKey, operand, value]);
+
 const getEffectiveCoreAgentFilter = (filterSettings: FilterSettings) => {
   const usableStepFilters = getUsableCoreAgentStepFilters(filterSettings);
+  const [rootStepFilterGroup] = filterSettings.stepFilterGroups ?? [];
 
   return {
-    rules: usableStepFilters.map(({ stepOutputKey, operand, value }) => ({
-      stepOutputKey,
-      operand,
-      value,
-    })),
+    ruleKeys: usableStepFilters.map(getCoreAgentFilterRuleKey).toSorted(),
     logicalOperator:
-      usableStepFilters.length > 1
-        ? filterSettings.stepFilterGroups?.[0]?.logicalOperator
-        : undefined,
+      usableStepFilters.length > 1 &&
+      rootStepFilterGroup?.logicalOperator === StepLogicalOperator.OR
+        ? StepLogicalOperator.OR
+        : StepLogicalOperator.AND,
   };
 };
 
