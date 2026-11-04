@@ -7,4 +7,8 @@ describe('getKnownOAuthClientLogoUrl', () => {
     );
     expect(getKnownOAuthClientLogoUrl('hooks.zapier.com')).toBeUndefined();
   });
+
+  it('ignores hosts named after object built-ins', () => {
+    expect(getKnownOAuthClientLogoUrl('constructor')).toBeUndefined();
+  });
 });

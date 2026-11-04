@@ -40,12 +40,12 @@ const StyledWorkspaceLogoContainer = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
-  bottom: calc(-1 * ${themeCssVariables.spacing[3]});
+  bottom: calc(-1 * ${themeCssVariables.spacing[2]});
   display: flex;
   height: ${themeCssVariables.spacing[7]};
   justify-content: center;
   position: absolute;
-  right: calc(-1 * ${themeCssVariables.spacing[3]});
+  right: calc(-1 * ${themeCssVariables.spacing[2]});
   width: ${themeCssVariables.spacing[7]};
 `;
 

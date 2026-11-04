@@ -60,7 +60,7 @@ export const buildMcpSetupCategories = ({
         ctaLabel: t`Install`,
         disabledTooltip: t`Claude install links require an HTTPS MCP URL.`,
         href: isHttpsInstallLinkEnabled
-          ? buildClaudeInstallLink(mcpServerUrl, workspaceName)
+          ? buildClaudeInstallLink({ mcpServerUrl, workspaceName })
           : undefined,
         isDisabled: !isHttpsInstallLinkEnabled,
         logo: <McpClientLogo src={ClaudeLogo} />,

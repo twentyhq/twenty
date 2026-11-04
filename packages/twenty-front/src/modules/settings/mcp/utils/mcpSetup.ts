@@ -33,10 +33,13 @@ export const buildMcpConfig = (mcpServerUrl: string) =>
     2,
   );
 
-export const buildClaudeInstallLink = (
-  mcpServerUrl: string,
-  workspaceName?: string | null,
-) => {
+export const buildClaudeInstallLink = ({
+  mcpServerUrl,
+  workspaceName,
+}: {
+  mcpServerUrl: string;
+  workspaceName?: string | null;
+}) => {
   const params = new URLSearchParams({
     modal: 'add-custom-connector',
     connectorName: isNonEmptyString(workspaceName)
