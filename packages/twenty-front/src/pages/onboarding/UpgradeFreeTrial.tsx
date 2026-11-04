@@ -319,16 +319,11 @@ const UpgradeFreeTrialContent = ({
       </OnboardingStepAnimatedItem>
 
       <OnboardingStepAnimatedItem index={3}>
-        <StyledOnboardingContentBlock>
+        <StyledFooter>
           <SettingsBillingPartnerCodeForm
             instanceId="onboarding-partner-code"
             variant="onboarding"
           />
-        </StyledOnboardingContentBlock>
-      </OnboardingStepAnimatedItem>
-
-      <OnboardingStepAnimatedItem index={4}>
-        <StyledFooter>
           {requirePaymentMethod && isPaymentAvailable ? (
             <UpgradeFreeTrialSubmitButton
               plan={planKey}

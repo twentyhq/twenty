@@ -1061,7 +1061,7 @@ export type BillingMeteredProduct = BillingProductDto & {
 
 export type BillingPartnerCode = {
   __typename?: 'BillingPartnerCode';
-  /** False once the workspace has made its first payment */
+  /** True while no code is set and the workspace has not paid yet */
   isEditable: Scalars['Boolean']['output'];
   partnerCode?: Maybe<Scalars['String']['output']>;
 };

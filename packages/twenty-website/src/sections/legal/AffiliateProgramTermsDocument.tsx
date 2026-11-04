@@ -69,8 +69,8 @@ export function AffiliateProgramTermsDocument() {
           browser for 30 days. If they create their Twenty workspace in that
           time, the workspace is attributed to you. Until the workspace is
           created, a click on another partner&rsquo;s link replaces yours: the
-          latest click counts. Once the workspace exists, its attribution is
-          final.
+          latest click counts. Once the workspace exists, its attribution to you
+          is final.
         </li>
         <li>
           <strong>The code</strong> is how a customer who did not come through

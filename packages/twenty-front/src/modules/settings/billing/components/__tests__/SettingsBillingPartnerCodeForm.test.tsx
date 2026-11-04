@@ -1,3 +1,4 @@
+import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -40,13 +41,16 @@ const buildPartnerCodeMock = ({
   },
 });
 
-const renderForm = (
-  mocks: ReadonlyArray<unknown>,
-  variant: 'onboarding' | 'settings' = 'settings',
-) =>
+const renderForm = ({
+  mocks,
+  variant = 'settings',
+}: {
+  mocks: MockedResponse[];
+  variant?: 'onboarding' | 'settings';
+}) =>
   render(
     <JotaiProvider store={createStore()}>
-      <MockedProvider mocks={mocks as never}>
+      <MockedProvider mocks={mocks}>
         <I18nProvider i18n={i18n}>
           <SettingsBillingPartnerCodeForm
             instanceId="partner-code-test"
@@ -69,17 +73,19 @@ describe('SettingsBillingPartnerCodeForm', () => {
       },
     }));
 
-    renderForm([
-      buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
-      {
-        request: {
-          query: SetBillingPartnerCodeDocument,
-          variables: { partnerCode: 'ACME' },
+    renderForm({
+      mocks: [
+        buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
+        {
+          request: {
+            query: SetBillingPartnerCodeDocument,
+            variables: { partnerCode: 'ACME' },
+          },
+          result: setPartnerCodeResult,
         },
-        result: setPartnerCodeResult,
-      },
-      buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
-    ]);
+        buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
+      ],
+    });
 
     const input = await screen.findByLabelText('Partner code');
 
@@ -90,25 +96,27 @@ describe('SettingsBillingPartnerCodeForm', () => {
   });
 
   it('should show why a code was refused under the field', async () => {
-    renderForm([
-      buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
-      {
-        request: {
-          query: SetBillingPartnerCodeDocument,
-          variables: { partnerCode: 'NORTH WIND!' },
-        },
-        result: {
-          errors: [
-            {
-              message: 'Partner code NORTH WIND! is not valid',
-              extensions: {
-                userFriendlyMessage: 'This partner code is not valid.',
+    renderForm({
+      mocks: [
+        buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
+        {
+          request: {
+            query: SetBillingPartnerCodeDocument,
+            variables: { partnerCode: 'NORTH WIND!' },
+          },
+          result: {
+            errors: [
+              {
+                message: 'Partner code NORTH WIND! is not valid',
+                extensions: {
+                  userFriendlyMessage: 'This partner code is not valid.',
+                },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    ]);
+      ],
+    });
 
     await userEvent.type(
       await screen.findByLabelText('Partner code'),
@@ -122,10 +130,10 @@ describe('SettingsBillingPartnerCodeForm', () => {
   });
 
   it('should keep the onboarding field behind a link until asked for', async () => {
-    renderForm(
-      [buildPartnerCodeMock({ partnerCode: null, isEditable: true })],
-      'onboarding',
-    );
+    renderForm({
+      mocks: [buildPartnerCodeMock({ partnerCode: null, isEditable: true })],
+      variant: 'onboarding',
+    });
 
     await userEvent.click(
       await screen.findByRole('button', {
@@ -137,19 +145,31 @@ describe('SettingsBillingPartnerCodeForm', () => {
   });
 
   it('should show nothing in onboarding when a referral link set the code', async () => {
-    const { container } = renderForm(
-      [buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })],
-      'onboarding',
+    const partnerCodeResult = jest.fn(
+      () =>
+        buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })
+          .result,
     );
 
+    const { container } = renderForm({
+      mocks: [
+        {
+          request: { query: BillingPartnerCodeDocument },
+          result: partnerCodeResult,
+        },
+      ],
+      variant: 'onboarding',
+    });
+
+    await waitFor(() => expect(partnerCodeResult).toHaveBeenCalledTimes(1));
     await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it('should keep a code applied during onboarding visible', async () => {
-    renderForm(
-      [
+    renderForm({
+      mocks: [
         buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
         {
           request: {
@@ -168,8 +188,8 @@ describe('SettingsBillingPartnerCodeForm', () => {
         },
         buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
       ],
-      'onboarding',
-    );
+      variant: 'onboarding',
+    });
 
     await userEvent.click(
       await screen.findByRole('button', {
@@ -185,9 +205,11 @@ describe('SettingsBillingPartnerCodeForm', () => {
   });
 
   it('should lock a code that is already set', async () => {
-    renderForm([
-      buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false }),
-    ]);
+    renderForm({
+      mocks: [
+        buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false }),
+      ],
+    });
 
     expect(await screen.findByDisplayValue('NORTHWIND')).toBeDisabled();
     expect(

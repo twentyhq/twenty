@@ -46,6 +46,15 @@ describe('BillingPartnerCodeService', () => {
     });
   });
 
+  it('should lock adding a code once the workspace has paid', async () => {
+    const { service } = buildService({ hasPaidInvoice: true });
+
+    await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
+      partnerCode: null,
+      isEditable: false,
+    });
+  });
+
   it('should store the normalized code on the Stripe customer', async () => {
     const { service, updateCustomerPartner } = buildService();
 
@@ -55,6 +64,7 @@ describe('BillingPartnerCodeService', () => {
         partnerCode: ' Acme ',
       }),
     ).resolves.toEqual({ partnerCode: 'acme', isEditable: false });
+    expect(updateCustomerPartner).toHaveBeenCalledTimes(1);
     expect(updateCustomerPartner).toHaveBeenCalledWith(
       STRIPE_CUSTOMER_ID,
       'acme',
@@ -67,7 +77,10 @@ describe('BillingPartnerCodeService', () => {
     });
 
     await expect(
-      service.setPartnerCode({ workspaceId: WORKSPACE_ID, partnerCode: 'acme' }),
+      service.setPartnerCode({
+        workspaceId: WORKSPACE_ID,
+        partnerCode: 'acme',
+      }),
     ).rejects.toMatchObject({
       code: BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
     });
@@ -80,7 +93,10 @@ describe('BillingPartnerCodeService', () => {
     });
 
     await expect(
-      service.setPartnerCode({ workspaceId: WORKSPACE_ID, partnerCode: 'acme' }),
+      service.setPartnerCode({
+        workspaceId: WORKSPACE_ID,
+        partnerCode: 'acme',
+      }),
     ).rejects.toMatchObject({
       code: BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
     });

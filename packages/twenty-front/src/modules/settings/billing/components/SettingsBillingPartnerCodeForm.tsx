@@ -1,6 +1,7 @@
 import { isErrorLike } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,7 +56,7 @@ export const SettingsBillingPartnerCodeForm = ({
   const { data } = useQuery(BillingPartnerCodeDocument);
   const [setBillingPartnerCode, { loading }] = useMutation(
     SetBillingPartnerCodeDocument,
-    { refetchQueries: [BillingPartnerCodeDocument] },
+    { refetchQueries: [BillingPartnerCodeDocument], awaitRefetchQueries: true },
   );
 
   const [draftPartnerCode, setDraftPartnerCode] = useState<string | null>(null);
@@ -87,7 +88,8 @@ export const SettingsBillingPartnerCodeForm = ({
   const displayedPartnerCode = draftPartnerCode ?? savedPartnerCode;
   const trimmedPartnerCode = displayedPartnerCode.trim();
 
-  const canApply = isEditable && !loading && trimmedPartnerCode !== '';
+  const canApply =
+    isEditable && !loading && isNonEmptyString(trimmedPartnerCode);
 
   const handleChange = (value: string) => {
     setDraftPartnerCode(value);
@@ -104,6 +106,7 @@ export const SettingsBillingPartnerCodeForm = ({
         variables: { partnerCode: trimmedPartnerCode },
       });
       setDraftPartnerCode(null);
+      setErrorMessage(null);
       setHasAppliedCode(true);
       enqueueToast({ status: 'success', children: t`Partner code applied` });
     } catch (error) {
@@ -117,7 +120,9 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const hint =
     errorMessage ??
-    (isEditable ? t`Only if a Twenty partner referred you.` : null);
+    (isEditable
+      ? t`Only if a Twenty partner referred you. Once applied, it can't be changed.`
+      : null);
 
   const form = (
     <StyledContainer>
@@ -132,6 +137,7 @@ export const SettingsBillingPartnerCodeForm = ({
           noErrorHelper
           onInputEnter={handleApply}
           disabled={!isEditable}
+          autoFocusOnMount={variant === 'onboarding'}
         />
         {isEditable && (
           <Button

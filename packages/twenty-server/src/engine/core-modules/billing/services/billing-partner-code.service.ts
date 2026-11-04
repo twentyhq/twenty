@@ -27,15 +27,7 @@ export class BillingPartnerCodeService {
   async getPartnerCode(workspaceId: string): Promise<BillingPartnerCodeDTO> {
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
 
-    const [partnerCode, hasPaidInvoice] = await Promise.all([
-      this.stripeCustomerService.getCustomerPartner(stripeCustomerId),
-      this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
-    ]);
-
-    return {
-      partnerCode,
-      isEditable: !isDefined(partnerCode) && !hasPaidInvoice,
-    };
+    return this.getPartnerCodeOfStripeCustomer(stripeCustomerId);
   }
 
   // Once a code is set or the workspace has paid, only the Twenty team changes it, in Stripe.
@@ -58,12 +50,10 @@ export class BillingPartnerCodeService {
 
     const stripeCustomerId = await this.getStripeCustomerIdOrThrow(workspaceId);
 
-    const [existingPartnerCode, hasPaidInvoice] = await Promise.all([
-      this.stripeCustomerService.getCustomerPartner(stripeCustomerId),
-      this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
-    ]);
+    const { isEditable } =
+      await this.getPartnerCodeOfStripeCustomer(stripeCustomerId);
 
-    if (isDefined(existingPartnerCode) || hasPaidInvoice) {
+    if (!isEditable) {
       throw new BillingException(
         `Partner code of workspace ${workspaceId} is locked`,
         BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED,
@@ -76,6 +66,20 @@ export class BillingPartnerCodeService {
     );
 
     return { partnerCode: normalizedPartnerCode, isEditable: false };
+  }
+
+  private async getPartnerCodeOfStripeCustomer(
+    stripeCustomerId: string,
+  ): Promise<BillingPartnerCodeDTO> {
+    const [partnerCode, hasPaidInvoice] = await Promise.all([
+      this.stripeCustomerService.getCustomerPartner(stripeCustomerId),
+      this.stripeInvoiceService.hasPaidInvoice(stripeCustomerId),
+    ]);
+
+    return {
+      partnerCode,
+      isEditable: !isDefined(partnerCode) && !hasPaidInvoice,
+    };
   }
 
   private async getStripeCustomerIdOrThrow(workspaceId: string) {

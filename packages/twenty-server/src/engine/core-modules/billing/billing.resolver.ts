@@ -120,10 +120,12 @@ export class BillingResolver {
   async billingPartnerCode(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
+      applicationId: application?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -149,10 +151,12 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { partnerCode }: BillingSetPartnerCodeInput,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<BillingPartnerCodeDTO> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
+      applicationId: application?.id,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
