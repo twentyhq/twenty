@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -33,13 +33,11 @@ export const CoreAgentMetadataEventsEffect = ({
 }: CoreAgentMetadataEventsEffectProps) => {
   const apolloClient = useApolloClient();
 
-  useEffect(() => {
+  const refreshAgents = useCallback(() => {
     void refreshCoreAgentQueries({ apolloClient, agentId }).catch(logError);
   }, [apolloClient, agentId]);
 
-  const refreshAgents = () => {
-    void refreshCoreAgentQueries({ apolloClient, agentId }).catch(logError);
-  };
+  useEffect(refreshAgents, [refreshAgents]);
 
   useListenToMetadataOperationBrowserEvent<Pick<CoreAgent, 'id'>>({
     metadataName: 'agent',
