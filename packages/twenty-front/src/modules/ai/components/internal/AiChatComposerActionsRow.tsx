@@ -29,14 +29,14 @@ type AiChatComposerActionsRowProps = {
   leftActions?: ReactNode;
   modelTierDropdownId: string;
   sendButton: ReactNode;
-  hideModelPicker?: boolean;
+  isModelPickerHidden?: boolean;
 };
 
 export const AiChatComposerActionsRow = ({
   leftActions,
   modelTierDropdownId,
   sendButton,
-  hideModelPicker = false,
+  isModelPickerHidden = false,
 }: AiChatComposerActionsRowProps) => {
   const aiModels = useAtomStateValue(aiModelsState);
 
@@ -44,7 +44,7 @@ export const AiChatComposerActionsRow = ({
     <StyledActionsRow>
       <StyledLeftActions>{leftActions}</StyledLeftActions>
       <StyledRightActions>
-        {!hideModelPicker && (
+        {!isModelPickerHidden && (
           <AiModelTierDropdown
             dropdownId={modelTierDropdownId}
             disabled={aiModels.length === 0}

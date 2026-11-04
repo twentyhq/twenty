@@ -194,7 +194,7 @@ const EditableAiChatEditorSection = () => {
           )
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
-        hideModelPicker={isDirectMessage}
+        isModelPickerHidden={isDirectMessage}
         sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
       />
     </StyledInputBox>
