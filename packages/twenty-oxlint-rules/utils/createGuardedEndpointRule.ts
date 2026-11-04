@@ -9,11 +9,7 @@ type GuardedEndpointRuleOptions = {
   message: string;
 };
 
-const AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID =
-  'authPrincipalGuardConfigNotInline';
-const AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID =
-  'authPrincipalGuardWiderThanClass';
-const AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID = 'authPrincipalGuardNotFirst';
+const ACCESS_POLICY_GUARD_NOT_FIRST_MESSAGE_ID = 'accessPolicyGuardNotFirst';
 const ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID =
   'accessPolicyGuardWithoutPolicy';
 const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
@@ -58,12 +54,8 @@ export const createGuardedEndpointRule = ({
       docs: { description },
       messages: {
         [messageId]: message,
-        [AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID]:
-          'AuthPrincipalGuard takes an inline object literal (no variable, no spread, no shorthand) so the principals an endpoint accepts can be read at the endpoint.',
-        [AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID]:
-          'This method-level AuthPrincipalGuard accepts {{ principalVariants }}, which the class-level AuthPrincipalGuard refuses: a method can only narrow what its class accepts.',
-        [AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID]:
-          'AuthPrincipalGuard and AccessPolicyGuard must come first in their @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after them only run once the principal is known.',
+        [ACCESS_POLICY_GUARD_NOT_FIRST_MESSAGE_ID]:
+          'AccessPolicyGuard must come first in its @UseGuards list, or right after JwtAuthGuard or McpAuthGuard, so the guards after it only run once the principal is known.',
         [ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID]:
           'AccessPolicyGuard takes a *_ACCESS_POLICY constant or an inline policy object (no spread, no shorthand).',
         [ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID]:
@@ -74,22 +66,13 @@ export const createGuardedEndpointRule = ({
       type: 'suggestion',
     },
     create: (context) => {
-      const reportAuthPrincipalGuardUsage = (node: any): void => {
-        for (const guard of typedTokenHelpers.getAuthPrincipalGuardsWithoutInlineConfig(
+      const reportAccessPolicyGuardUsage = (node: any): void => {
+        for (const guard of typedTokenHelpers.getMisplacedAccessPolicyGuards(
           node,
         )) {
           context.report({
             node: guard,
-            messageId: AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID,
-          });
-        }
-
-        for (const guard of typedTokenHelpers.getMisplacedAuthPrincipalGuards(
-          node,
-        )) {
-          context.report({
-            node: guard,
-            messageId: AUTH_PRINCIPAL_GUARD_NOT_FIRST_MESSAGE_ID,
+            messageId: ACCESS_POLICY_GUARD_NOT_FIRST_MESSAGE_ID,
           });
         }
 
@@ -100,46 +83,6 @@ export const createGuardedEndpointRule = ({
             node: guard,
             messageId: ACCESS_POLICY_GUARD_WITHOUT_POLICY_MESSAGE_ID,
           });
-        }
-      };
-
-      const reportMethodGuardWiderThanClassGuard = (node: any): void => {
-        const classNode = findClassDeclaration(node);
-
-        if (!classNode) {
-          return;
-        }
-
-        const classGuards =
-          typedTokenHelpers.getInlineAuthPrincipalGuards(classNode);
-
-        if (classGuards.length === 0) {
-          return;
-        }
-
-        for (const methodGuard of typedTokenHelpers.getInlineAuthPrincipalGuards(
-          node,
-        )) {
-          const principalVariantsRefusedByClass = [
-            ...new Set<string>(
-              classGuards.flatMap((classGuard: any) =>
-                typedTokenHelpers.getPrincipalsRefusedByClassGuard(
-                  methodGuard,
-                  classGuard,
-                ),
-              ),
-            ),
-          ];
-
-          if (principalVariantsRefusedByClass.length > 0) {
-            context.report({
-              node: methodGuard,
-              messageId: AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID,
-              data: {
-                principalVariants: principalVariantsRefusedByClass.join(', '),
-              },
-            });
-          }
         }
       };
 
@@ -173,7 +116,7 @@ export const createGuardedEndpointRule = ({
           );
 
           if (hasEndpoint) {
-            reportAuthPrincipalGuardUsage(node);
+            reportAccessPolicyGuardUsage(node);
           }
         },
         MethodDefinition: (node: any): void => {
@@ -183,8 +126,7 @@ export const createGuardedEndpointRule = ({
             return;
           }
 
-          reportAuthPrincipalGuardUsage(node);
-          reportMethodGuardWiderThanClassGuard(node);
+          reportAccessPolicyGuardUsage(node);
           reportAccessPolicyGuardOnClassAndMethod(node);
 
           if (isMissingGuards(node, triggerDecorators)) {
