@@ -3,46 +3,29 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
-import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
+import { type ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
-  const objectPermissions: UserWorkspacePermissionsDto['objectPermissions'] =
-    [];
+  const objectRecordsPermissions: ObjectRecordsPermissionsDTO[] = [];
 
-  for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
+  for (const [objectMetadataId, permissions] of Object.entries(
     recordsPermissions.objects,
   )) {
-    if (!isDefined(objectRecordsPermissions)) {
+    if (!isDefined(permissions)) {
       continue;
     }
 
-    objectPermissions.push({
+    objectRecordsPermissions.push({
       objectMetadataId,
-      canReadObjectRecords: canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'select',
-      }),
-      canUpdateObjectRecords: canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'update',
-      }),
-      canSoftDeleteObjectRecords: canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'soft-delete',
-      }),
-      canDestroyObjectRecords: canReachSomeRecords({
-        objectRecordsPermissions,
-        operationType: 'delete',
-      }),
-      restrictedFields: objectRecordsPermissions.restrictedFields,
-      rowLevelPermissionPredicates:
-        objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
-      rowLevelPermissionPredicateGroups:
-        objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ??
-        [],
+      canReadAllRecords: permissions.canReadAllRecords,
+      canUpdateAllRecords: permissions.canUpdateAllRecords,
+      canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
+      canDestroyAllRecords: permissions.canDestroyAllRecords,
+      restrictedFields: permissions.restrictedFields,
+      rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
   }
 
@@ -51,8 +34,7 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   ).filter((feature) => rawSettingsPermissions[feature] === true);
 
   return {
-    objectPermissions,
-    objectsPermissions: objectPermissions,
+    objectRecordsPermissions,
     permissionFlags,
   };
 };
