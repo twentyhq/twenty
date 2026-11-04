@@ -20,7 +20,7 @@ describe('runSingleEnrichment', () => {
     vi.clearAllMocks();
   });
 
-  it('uses both workflow overrides for a single name-based match', async () => {
+  it('uses the workflow overrides for a single name-based match', async () => {
     vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '8');
     vi.stubEnv(PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '10');
     vi.stubEnv(PDL_COMPANY_REQUIRED_FIELDS_ENV_VAR_NAME, '["employee_count"]');

@@ -55,17 +55,10 @@ describe('enrichCompany', () => {
 
   it('returns one outcome per request, preserving order', async () => {
     postPdlSingleEnrichMock
-      .mockResolvedValueOnce({
-        outcome: 'matched',
-        httpStatus: 200,
-        data: { id: '1' },
-      })
+      .mockResolvedValueOnce({ outcome: 'matched', httpStatus: 200, data: { id: '1' } })
       .mockResolvedValueOnce({ outcome: 'not_found', httpStatus: 404 });
 
-    const results = await enrichCompany([
-      { website: 'a.com' },
-      { website: 'b.com' },
-    ]);
+    const results = await enrichCompany([{ website: 'a.com' }, { website: 'b.com' }]);
 
     expect(results).toEqual([
       { outcome: 'matched', httpStatus: 200, data: { id: '1' } },

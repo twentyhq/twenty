@@ -36,23 +36,23 @@ describe('resolveRequiredFields', () => {
     );
   });
 
-  it('uses the workflow selection instead of the app setting', () => {
+  it('uses the workflow selection, by label or value, instead of the app setting', () => {
     vi.stubEnv(PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME, 'invalid');
 
     expect(
       resolveRequiredFields({
         ...CONFIGURATION,
-        requiredFields: ['phone_numbers', 'phone_numbers'],
+        requiredFields: ['Phone numbers', 'phone_numbers'],
       }),
     ).toBe('phone_numbers');
   });
 
-  it('allows a workflow to clear the app requirements', () => {
+  it('uses the app setting when the workflow selection is empty', () => {
     vi.stubEnv(PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME, '["work_email"]');
 
     expect(
       resolveRequiredFields({ ...CONFIGURATION, requiredFields: [] }),
-    ).toBeUndefined();
+    ).toBe('work_email');
   });
 
   it.each(['invalid', '{}', '["unknown_field"]', '[1]'])(
@@ -65,6 +65,17 @@ describe('resolveRequiredFields', () => {
       );
     },
   );
+
+  it('names the unsupported values of the app setting', () => {
+    vi.stubEnv(
+      PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME,
+      '["work_email","job_title_level"]',
+    );
+
+    expect(() => resolveRequiredFields(CONFIGURATION)).toThrow(
+      'Unsupported values: "job_title_level".',
+    );
+  });
 
   it('rejects unsupported workflow fields', () => {
     expect(() =>

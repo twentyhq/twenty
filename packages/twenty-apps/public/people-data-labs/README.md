@@ -17,8 +17,8 @@ Pay only for matches, in Twenty credits — **not found and skipped records are 
 
 ## Match requirements
 
-In the app settings, use **Required fields for people matches** and **Required fields for company matches** to select the output fields a match must contain. Both selections are empty by default. Every selected field must be present, following PDL's [`required` parameter](https://docs.peopledatalabs.com/docs/input-parameters-person-enrichment-api#required).
+In the app settings, **Required fields for people matches** and **Required fields for company matches** select the output fields a match must contain, using PDL's [`required` parameter](https://docs.peopledatalabs.com/docs/input-parameters-person-enrichment-api#required). Both are empty by default.
 
-All four enrichment workflow actions also have a **Required fields for a match** multiselect. An untouched selection uses the app setting. A workflow selection overrides it, and clearing a selection requires no fields for that action.
+All four enrichment workflow actions also have a **Required fields for a match** multiselect. An empty selection uses the app setting, and any selection replaces it for that action. Refreshing a record that already has a PDL ID skips the requirements.
 
-The selectors offer output fields supported by the app. Fields sent as matching inputs, such as company name and website, are excluded because PDL does not support requiring them in the same request.
+Fields sent as matching inputs, such as company name and website, can't be selected because PDL does not support requiring them in the same request.

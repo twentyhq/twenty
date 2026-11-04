@@ -1,3 +1,5 @@
+import { type PdlPersonData } from 'src/types/pdl-person-data';
+
 export const PDL_PERSON_REQUIRED_FIELD_OPTIONS = [
   { label: 'Work email', value: 'work_email' },
   { label: 'Personal emails', value: 'personal_emails' },
@@ -49,4 +51,4 @@ export const PDL_PERSON_REQUIRED_FIELD_OPTIONS = [
   { label: 'Country', value: 'location_country' },
   { label: 'Metro area', value: 'location_metro' },
   { label: 'Coordinates', value: 'location_geo' },
-];
+] satisfies { label: string; value: keyof PdlPersonData }[];

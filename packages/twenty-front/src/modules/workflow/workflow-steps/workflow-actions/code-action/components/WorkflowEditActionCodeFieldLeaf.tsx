@@ -12,6 +12,7 @@ import {
   type FieldArrayValue,
   type FieldMultiSelectValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getWorkflowCodeFieldsEnumArraySelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumArraySelectOptions';
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import {
@@ -107,7 +108,10 @@ export const WorkflowEditActionCodeFieldLeaf = ({
             ? (inputValue as FieldMultiSelectValue | string)
             : undefined
         }
-        options={getWorkflowCodeFieldsEnumSelectOptions(schemaProperty?.items)}
+        options={getWorkflowCodeFieldsEnumArraySelectOptions({
+          itemsProperty: schemaProperty?.items,
+          selectedValues: inputValue,
+        })}
         onChange={onChange}
         readonly={readonly}
         VariablePicker={VariablePicker}

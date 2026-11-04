@@ -9,6 +9,7 @@ import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-resu
 import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-matched-enrichments';
 import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
 import { isPdlAccountErrorOutcome } from 'src/logic-functions/utils/is-pdl-account-error-outcome';
+import { isPdlInvalidRequestOutcome } from 'src/logic-functions/utils/is-pdl-invalid-request-outcome';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { resolveUpdateFieldsMode } from 'src/logic-functions/utils/resolve-update-fields-mode';
 import { toPdlOutcomeErrorMessage } from 'src/logic-functions/utils/to-pdl-outcome-error-message';
@@ -216,10 +217,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   }
 
   const nodeByRecordId = new Map(
-    recordNodes.map((recordNode) => [
-      adapter.getNodeId(recordNode),
-      recordNode,
-    ]),
+    recordNodes.map((recordNode) => [adapter.getNodeId(recordNode), recordNode]),
   );
 
   const recordsToEnrich: { recordId: string; node: TNode; params: TParams }[] =
@@ -240,6 +238,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     const matchParams = adapter.extractParams({
       node: recordNode,
       minLikelihoods,
+      required,
     });
     if (!isDefined(matchParams)) {
       resultById.set(
@@ -265,7 +264,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   let pdlEnrichmentOutcomes: PdlEnrichResult<TData>[];
   try {
     pdlEnrichmentOutcomes = await adapter.enrichBatch(
-      recordsToEnrich.map(({ params }) => ({ ...params, required })),
+      recordsToEnrich.map((recordToEnrich) => recordToEnrich.params),
     );
   } catch (enrichBatchError) {
     const isPdlConfigError = enrichBatchError instanceof PdlConfigError;
@@ -293,7 +292,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     }
 
     return isPdlConfigError
-      ? { pdlAccessErrorMessage: enrichBatchErrorMessage }
+      ? { stopErrorMessage: enrichBatchErrorMessage }
       : {};
   }
 
@@ -312,10 +311,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     const { recordId, node: recordNode } = recordsToEnrich[index];
     const enrichmentOutcome = pdlEnrichmentOutcomes[index];
 
-    if (
-      !isDefined(enrichmentOutcome) ||
-      enrichmentOutcome.outcome === 'error'
-    ) {
+    if (!isDefined(enrichmentOutcome) || enrichmentOutcome.outcome === 'error') {
       resultById.set(
         recordId,
         buildErrorResult({
@@ -387,9 +383,17 @@ export const enrichChunk = async <TNode, TData, TParams>({
     pdlEnrichmentOutcomes.length > 0 &&
     pdlEnrichmentOutcomes.every(isPdlAccountErrorOutcome);
 
+  if (hasOnlyPdlAccountErrorOutcomes) {
+    return { stopErrorMessage: PDL_ACCESS_ERROR_MESSAGE };
+  }
+
+  const hasOnlyPdlInvalidRequestOutcomes =
+    pdlEnrichmentOutcomes.length > 0 &&
+    pdlEnrichmentOutcomes.every(isPdlInvalidRequestOutcome);
+
   return {
-    pdlAccessErrorMessage: hasOnlyPdlAccountErrorOutcomes
-      ? PDL_ACCESS_ERROR_MESSAGE
+    stopErrorMessage: hasOnlyPdlInvalidRequestOutcomes
+      ? pdlEnrichmentOutcomes.find(isPdlInvalidRequestOutcome)?.message
       : undefined,
   };
 };

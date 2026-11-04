@@ -14,7 +14,7 @@ const meta: Meta<typeof WorkflowEditActionCodeFields> = {
     WorkflowStepDecorator,
   ],
   args: {
-    functionInput: {},
+    functionInput: { requiredFields: ['legacy_field'] },
     inputSchema: [
       {
         type: 'object',
@@ -27,11 +27,6 @@ const meta: Meta<typeof WorkflowEditActionCodeFields> = {
               enum: ['work_email', 'phone_numbers'],
             },
           },
-          tags: {
-            type: 'array',
-            label: 'Tags',
-            items: { type: 'string' },
-          },
         },
       },
     ],
@@ -43,7 +38,7 @@ export default meta;
 
 type Story = StoryObj<typeof WorkflowEditActionCodeFields>;
 
-export const PersistedUnsetEnumArray: Story = {
+export const EnumArrayWithUnknownValue: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -52,33 +47,21 @@ export const PersistedUnsetEnumArray: Story = {
       await canvas.findByRole('button', { name: 'Required fields' }),
     );
 
-    expect(canvas.queryByText('Tags')).not.toBeInTheDocument();
-
     const picker = within(
       await body.findByRole('dialog', { name: 'Required fields' }),
     );
-    const workEmail = await picker.findByRole('button', { name: 'work_email' });
-    const phoneNumbers = picker.getByRole('button', { name: 'phone_numbers' });
 
-    expect(workEmail).toHaveAttribute('aria-pressed', 'false');
-    expect(phoneNumbers).toHaveAttribute('aria-pressed', 'false');
-    expect(args.onInputChange).not.toHaveBeenCalled();
+    expect(
+      await picker.findByRole('button', { name: 'legacy_field' }),
+    ).toHaveAttribute('aria-pressed', 'true');
 
-    await userEvent.click(workEmail);
-    await userEvent.click(phoneNumbers);
+    await userEvent.click(picker.getByRole('button', { name: 'work_email' }));
 
     await waitFor(() => {
       expect(args.onInputChange).toHaveBeenLastCalledWith(
-        ['phone_numbers', 'work_email'],
+        expect.arrayContaining(['work_email', 'legacy_field']),
         ['requiredFields'],
       );
-    });
-
-    await userEvent.click(workEmail);
-    await userEvent.click(phoneNumbers);
-
-    await waitFor(() => {
-      expect(args.onInputChange).toHaveBeenLastCalledWith([], ['requiredFields']);
     });
   },
 };

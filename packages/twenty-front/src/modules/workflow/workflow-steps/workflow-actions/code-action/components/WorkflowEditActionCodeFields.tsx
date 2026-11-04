@@ -40,21 +40,9 @@ export const WorkflowEditActionCodeFields = ({
   fullWidth,
   inputSchema,
 }: WorkflowEditActionCodeFieldsProps) => {
-  const schemaProperties = getInputSchemaPropertyAtPath(inputSchema, path)
-    ?.properties;
-  const enumArrayDefaults = Object.fromEntries(
-    Object.entries(schemaProperties ?? {})
-      .filter(
-        ([, schemaProperty]) =>
-          getWorkflowCodeFieldsLeafKind(schemaProperty) === 'enum-array',
-      )
-      .map(([inputKey]) => [inputKey, undefined]),
-  );
-  const displayedFunctionInput = { ...enumArrayDefaults, ...functionInput };
-
   return (
     <StyledContainer fullWidth={fullWidth}>
-      {Object.entries(displayedFunctionInput).map(([inputKey, inputValue]) => {
+      {Object.entries(functionInput ?? {}).map(([inputKey, inputValue]) => {
         const currentPath = [...path, inputKey];
         const pathKey = currentPath.join('.');
 

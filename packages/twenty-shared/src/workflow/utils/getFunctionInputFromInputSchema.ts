@@ -1,7 +1,7 @@
 import { type InputSchema, type FunctionInput } from '@/workflow';
 import { type InputJsonSchema } from '@/logic-function';
 import { isRecordObjectSchema } from '@/logic-function/is-record-object-schema';
-import { isDefined, isNonEmptyArray } from '@/utils';
+import { isDefined } from '@/utils';
 
 export const getFunctionInputFromInputSchema = (
   inputSchema: InputSchema | InputJsonSchema[],
@@ -19,26 +19,18 @@ export const getFunctionInputFromInputSchema = (
       isDefined(param.type) &&
       ['string', 'number', 'boolean'].includes(param.type)
     ) {
-      return isNonEmptyArray(param.enum) ? param.enum[0] : null;
-    }
-
-    if (param.type === 'object') {
+      return param.enum && param.enum.length > 0 ? param.enum[0] : null;
+    } else if (param.type === 'object') {
       const result: FunctionInput = {};
-
-      for (const [key, property] of Object.entries(param.properties ?? {})) {
-        result[key] = getFunctionInputFromInputSchema([property])[0];
+      if (isDefined(param.properties)) {
+        Object.entries(param.properties).forEach(([key, val]) => {
+          result[key] = getFunctionInputFromInputSchema([val])[0];
+        });
       }
-
       return result;
+    } else if (param.type === 'array' && isDefined(param.items)) {
+      return [];
     }
-
-    if (param.type === 'array' && isDefined(param.items)) {
-      const isEnumArray =
-        param.items.type === 'string' && isNonEmptyArray(param.items.enum);
-
-      return isEnumArray ? undefined : [];
-    }
-
     return null;
   });
 };

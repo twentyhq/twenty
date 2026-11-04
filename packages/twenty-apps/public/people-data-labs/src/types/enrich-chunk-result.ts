@@ -1,3 +1,3 @@
 export type EnrichChunkResult = {
-  pdlAccessErrorMessage?: string;
+  stopErrorMessage?: string;
 };

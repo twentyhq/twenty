@@ -1,24 +1,17 @@
-import {
-  defineLogicFunction,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk/define';
+import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
-import { PDL_PERSON_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-person-required-field-options';
+import { PDL_PERSON_REQUIRED_FIELD_LABELS } from 'src/constants/pdl-person-required-field-labels';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichPeopleCore } from 'src/logic-functions/handlers/enrich-people';
-import {
-  type EnrichInput,
-  toBulkEnrichInput,
-} from 'src/logic-functions/utils/to-bulk-enrich-input';
+import { type EnrichInput, toBulkEnrichInput } from 'src/logic-functions/utils/to-bulk-enrich-input';
 
 const handler = (input: EnrichInput) => {
   return enrichPeopleCore({ input: toBulkEnrichInput(input) });
 };
 
 export default defineLogicFunction({
-  universalIdentifier:
-    PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
+  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.universalIdentifier,
   name: 'enrich-people',
   description: 'Enrich one or more Person records with People Data Labs data',
   timeoutSeconds: 300,
@@ -26,7 +19,7 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: PDL_LOGIC_FUNCTION_CONSTANTS.enrichPeople.path,
     httpMethod: 'POST',
-    isAuthRequired: true,
+    isAuthRequired: true
   },
   workflowActionTriggerSettings: {
     label: 'Enrich People',
@@ -51,7 +44,7 @@ export default defineLogicFunction({
             label: 'Required fields for a match',
             items: {
               type: 'string',
-              enum: PDL_PERSON_REQUIRED_FIELD_OPTIONS.map(({ value }) => value),
+              enum: [...PDL_PERSON_REQUIRED_FIELD_LABELS],
             },
           },
           minLikelihood: {

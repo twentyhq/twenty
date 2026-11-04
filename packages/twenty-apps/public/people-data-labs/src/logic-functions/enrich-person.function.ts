@@ -1,9 +1,6 @@
-import {
-  defineLogicFunction,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk/define';
+import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
-import { PDL_PERSON_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-person-required-field-options';
+import { PDL_PERSON_REQUIRED_FIELD_LABELS } from 'src/constants/pdl-person-required-field-labels';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
@@ -12,8 +9,7 @@ import { type SingleEnrichInput } from 'src/types/single-enrich-input';
 const handler = (input: SingleEnrichInput) => enrichPersonCore({ input });
 
 export default defineLogicFunction({
-  universalIdentifier:
-    PDL_LOGIC_FUNCTION_CONSTANTS.enrichPerson.universalIdentifier,
+  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.enrichPerson.universalIdentifier,
   name: 'enrich-person',
   description:
     'Enrich a single Person record with People Data Labs data (job, location, social profiles, etc.) given its record id.',
@@ -42,7 +38,7 @@ export default defineLogicFunction({
             label: 'Required fields for a match',
             items: {
               type: 'string',
-              enum: PDL_PERSON_REQUIRED_FIELD_OPTIONS.map(({ value }) => value),
+              enum: [...PDL_PERSON_REQUIRED_FIELD_LABELS],
             },
           },
           minLikelihood: {

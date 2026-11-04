@@ -1,3 +1,5 @@
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
+
 export const PDL_COMPANY_REQUIRED_FIELD_OPTIONS = [
   { label: 'Display name', value: 'display_name' },
   { label: 'Alternative names', value: 'alternative_names' },
@@ -27,4 +29,4 @@ export const PDL_COMPANY_REQUIRED_FIELD_OPTIONS = [
   { label: 'Last funding date', value: 'last_funding_date' },
   { label: 'Number of funding rounds', value: 'number_funding_rounds' },
   { label: 'Location', value: 'location' },
-];
+] satisfies { label: string; value: keyof PdlCompanyData }[];
