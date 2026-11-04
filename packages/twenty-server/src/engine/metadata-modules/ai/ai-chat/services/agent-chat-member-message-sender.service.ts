@@ -116,7 +116,7 @@ export class AgentChatMemberMessageSenderService {
       const hasOutsideRecipient = [
         ...addressing.mentionedWorkspaceMemberIds,
         ...addressing.initialRecipientWorkspaceMemberIds,
-      ].some((memberId) => !pair.includes(memberId));
+      ].some((memberId) => !pair.includes(memberId.toLowerCase()));
 
       if (!pair.includes(actor.workspaceMemberId) || hasOutsideRecipient) {
         return throwAgentChatThreadNotFound();

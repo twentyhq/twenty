@@ -206,7 +206,7 @@ export class AgentChatSharingService {
   // Members join as editors so they can reply. Sharing is left to whoever may
   // manage it, so only the members who can reply afterwards are returned
   async shareThreadWithMembers({
-    memberIds,
+    memberIds: providedMemberIds,
     ...args
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
@@ -215,6 +215,9 @@ export class AgentChatSharingService {
       ...args,
       operationType: 'update',
     });
+    const memberIds = providedMemberIds.map((memberId) =>
+      memberId.toLowerCase(),
+    );
     const pair = [
       thread.directMessageFirstWorkspaceMemberId,
       thread.directMessageSecondWorkspaceMemberId,
