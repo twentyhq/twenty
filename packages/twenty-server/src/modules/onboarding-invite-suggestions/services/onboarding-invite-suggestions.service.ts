@@ -68,18 +68,25 @@ export class OnboardingInviteSuggestionsService {
     userId: string;
     userWorkspaceId: string;
   }): Promise<CalendarAttendee[]> {
+    const cacheKey = getOnboardingInviteSuggestionsCacheKey(
+      workspaceId,
+      userId,
+    );
+
     const suggestions = await this.computeSuggestionsFromConnectedAccount({
       workspaceId,
       userWorkspaceId,
     });
 
-    // A failed calendar read is not cached, so the next read retries it.
+    // A failed calendar read clears the cache instead of filling it, so the next read retries it.
     if (!isDefined(suggestions)) {
+      await this.cacheStorageService.del(cacheKey);
+
       return [];
     }
 
     await this.cacheStorageService.set<CalendarAttendee[]>(
-      getOnboardingInviteSuggestionsCacheKey(workspaceId, userId),
+      cacheKey,
       suggestions,
       ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
     );
