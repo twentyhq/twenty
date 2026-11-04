@@ -1,4 +1,7 @@
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -49,6 +52,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
   ) {}
 
   async sendMemberMessage({
@@ -94,10 +98,20 @@ export class AgentChatMemberMessageSenderService {
         workspaceMemberId: actor.workspaceMemberId,
         thread,
         ...assistantParticipationInput,
+        isReplyRequested: assistant.isReplyRequested,
       });
 
+    const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      assistant.isReplyRequested || !isInboxEnabled;
+      !isInboxEnabled ||
+      (await this.replyPolicyService.shouldReply({
+        decision: replyDecision,
+        threadId: thread.id,
+        pendingQuestionMessageId: thread.pendingQuestionMessageId,
+        workspaceId: actor.workspaceId,
+        userWorkspaceId: actor.userWorkspaceId,
+        text: message.text,
+      }));
 
     if (shouldGenerateAssistantReply) {
       const workspace = await this.coreEntityCacheService.get(
@@ -134,6 +148,12 @@ export class AgentChatMemberMessageSenderService {
       message: preparedMessage,
       addressing: isInboxEnabled ? addressing : undefined,
       participation,
+      assistantReplyContext: {
+        isAssistantMentioned: assistant.isMentioned,
+        isDirectAssistantChat:
+          replyDecision === AgentChatReplyDecision.ASSISTANT_CHAT_REPLY,
+        isStructuredRequestContinuation: false,
+      },
     };
     let result: AgentChatMemberMessageResult;
 
@@ -185,11 +205,16 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     participation,
     execution,
+    assistantReplyContext,
   }: Pick<AgentChatMemberMessageSendArguments, 'actor' | 'execution'> & {
     message: AgentChatPreparedMemberMessage;
     addressing?: AgentChatMemberMessageSendArguments['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
-    participation?: AgentChatAssistantParticipation;
+    assistantReplyContext?: AgentChatAssistantReplyContext;
+    participation?: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant' | 'isInitialMessage'
+    >;
   }): Promise<AgentChatMemberMessageResult> {
     const threadAccess = {
       workspaceId: actor.workspaceId,
@@ -225,6 +250,7 @@ export class AgentChatMemberMessageSenderService {
       message,
       addressing,
       participation,
+      assistantReplyContext,
     };
     const startedAssistantReply =
       hasQueuedBacklog || isDefined(conversationWait.suspendedRun)

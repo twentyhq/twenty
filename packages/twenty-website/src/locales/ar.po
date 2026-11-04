@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -6730,7 +6730,7 @@ msgstr "يُرجى إدخال عنوان بريد إلكتروني صالح."
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "يرجى إدخال رابط قناتك الرئيسية، على سبيل المثال youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7960,7 +7960,7 @@ msgstr "سيراليون 🇸🇱"
 #. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
 msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
-msgstr ""
+msgstr "سجّل في Cloud في أقل من دقيقة وابدأ فترة تجريبية مدتها 30 يومًا. لعمليات النشر الأكبر، يمكن لفريقنا دعمك طوال الطريق. تواصل معنا لمناقشة ما تحتاجه."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10306,7 +10306,7 @@ msgstr "YouTube والنشرات الإخبارية وLinkedIn وTikTok: كل م
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

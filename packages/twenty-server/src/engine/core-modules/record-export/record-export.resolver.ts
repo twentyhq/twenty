@@ -12,23 +12,24 @@ import { CreateRecordExportInput } from 'src/engine/core-modules/record-export/d
 import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportExceptionFilter } from 'src/engine/core-modules/record-export/record-export-exception-filter';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: true,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [PermissionFlagType.EXPORT_CSV],
   }),
-  SettingsPermissionGuard(PermissionFlagType.EXPORT_CSV),
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(

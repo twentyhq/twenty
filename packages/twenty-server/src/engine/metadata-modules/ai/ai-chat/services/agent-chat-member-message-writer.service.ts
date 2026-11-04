@@ -10,10 +10,12 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
 import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-actor.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
@@ -41,19 +43,38 @@ export class AgentChatMemberMessageWriterService {
     placement,
     participation,
     addressing,
+    assistantReplyContext,
   }: {
     actor: AgentChatMemberMessageActor;
     thread: AgentChatThreadWorkspaceEntity;
     message: AgentChatPreparedMemberMessage;
     placement: AgentChatMemberMessagePlacement;
-    participation?: AgentChatAssistantParticipation;
+    participation?: Pick<
+      AgentChatAssistantParticipation,
+      'isAssistantParticipant' | 'isInitialMessage'
+    >;
     addressing?: AgentChatMessageAddressing;
+    assistantReplyContext?: AgentChatAssistantReplyContext;
   }) {
     const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
       threadId: thread.id,
     };
+    const messagePartsWithReplyContext = message.parts.map(
+      (messagePart, partIndex) => {
+        if (partIndex !== 0 || messagePart.type !== 'text') {
+          return messagePart;
+        }
+
+        return {
+          ...messagePart,
+          providerMetadata: buildAgentChatAssistantReplyProviderMetadata(
+            assistantReplyContext,
+          ),
+        };
+      },
+    );
     const persistedMessage =
       await this.conversationWriterService.runInTransaction(
         actor.workspaceId,
@@ -79,7 +100,10 @@ export class AgentChatMemberMessageWriterService {
               ...actor,
               threadId: thread.id,
               id: message.id,
-              uiMessage: { role: AgentMessageRole.USER, parts: message.parts },
+              uiMessage: {
+                role: AgentMessageRole.USER,
+                parts: messagePartsWithReplyContext,
+              },
               turnStatus:
                 placement === AgentChatMemberMessagePlacement.RUNNING
                   ? AgentTurnStatus.RUNNING
@@ -102,7 +126,10 @@ export class AgentChatMemberMessageWriterService {
           await transactionScope.insert('agentMessage', queuedMemberMessage);
           await transactionScope.insert(
             'agentMessagePart',
-            mapUIMessagePartsToDBParts(message.parts, queuedMemberMessage.id),
+            mapUIMessagePartsToDBParts(
+              messagePartsWithReplyContext,
+              queuedMemberMessage.id,
+            ),
           );
 
           return queuedMemberMessage;

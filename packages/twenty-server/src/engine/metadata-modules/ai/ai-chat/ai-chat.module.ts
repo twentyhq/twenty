@@ -1,3 +1,4 @@
+import { AgentChatReplyPolicyModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-reply-policy.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
 import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
@@ -64,6 +65,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
     AgentChatThreadModule,
+    AgentChatReplyPolicyModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),

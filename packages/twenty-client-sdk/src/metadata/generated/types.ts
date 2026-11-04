@@ -2970,6 +2970,9 @@ export default {
             "applicationId": [
                 540
             ],
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],
@@ -3372,6 +3375,9 @@ export default {
             ]
         },
         "CreateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],
@@ -3671,6 +3677,9 @@ export default {
                 1
             ],
             "name": [
+                1
+            ],
+            "nativePageKey": [
                 1
             ],
             "pageLayoutId": [
@@ -9888,6 +9897,9 @@ export default {
             "name": [
                 1
             ],
+            "nativePageKey": [
+                1
+            ],
             "pageLayoutId": [
                 540
             ],
@@ -13811,6 +13823,9 @@ export default {
             ]
         },
         "UpdateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],

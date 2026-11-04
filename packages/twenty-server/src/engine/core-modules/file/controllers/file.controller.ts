@@ -40,8 +40,8 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 // workspaceId is bound onto the request by FileByIdGuard.
 type FileByIdRequest = Request & { workspaceId: string };
@@ -197,16 +197,19 @@ export class FileController {
   @Get(`${ApiPath.File}/${FileFolder.RecordExport}/:id`)
   @UseGuards(
     JwtAuthGuard,
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
       },
-      apiKey: true,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      requiredPermissionFlags: [],
     }),
     CustomPermissionGuard,
   )

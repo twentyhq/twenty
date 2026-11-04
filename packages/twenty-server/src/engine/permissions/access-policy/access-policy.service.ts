@@ -38,7 +38,7 @@ export class AccessPolicyService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // Throws what AuthPrincipalGuard, FeatureFlagGuard and SettingsPermissionGuard throw
+  // Throws what the legacy principal, feature flag and permission guards threw
   async assertRequestAccessPolicySatisfiedOrThrow({
     accessPolicy,
     request,

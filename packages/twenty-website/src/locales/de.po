@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -6730,7 +6730,7 @@ msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "Bitte gib den Link zu deinem Hauptkanal ein, zum Beispiel youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7960,7 +7960,7 @@ msgstr "Sierra Leone 🇸🇱"
 #. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
 msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
-msgstr ""
+msgstr "Melden Sie sich in weniger als einer Minute für Cloud an und starten Sie Ihre 30-tägige Testphase. Bei größeren Rollouts unterstützt Sie unser Team auf dem Weg dorthin. Kontaktieren Sie uns, um zu besprechen, was Sie benötigen."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10306,7 +10306,7 @@ msgstr "YouTube, Newsletter, LinkedIn, TikTok: alle, die über GTM-Tools bericht
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
