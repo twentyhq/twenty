@@ -3,47 +3,40 @@ import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilterOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { type ThemeColor } from 'twenty-ui/theme';
 
+import { type ApplicationContentFilterOption } from '@/settings/applications/types/ApplicationContentFilterOption';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
-type SettingsApplicationContentObjectFilterOption = {
-  universalIdentifier: string;
-  label: string;
-  icon?: string | null;
-  color: ThemeColor;
+type SettingsApplicationContentFilterDropdownProps = {
+  options: ApplicationContentFilterOption[];
+  selectedUniversalIdentifier: string | null;
+  onChange: (universalIdentifier: string | null) => void;
 };
 
-type SettingsApplicationContentObjectFilterProps = {
-  options: SettingsApplicationContentObjectFilterOption[];
-  selectedObjectUniversalIdentifier: string | null;
-  onChange: (objectUniversalIdentifier: string | null) => void;
-};
-
-export const SettingsApplicationContentObjectFilter = ({
+export const SettingsApplicationContentFilterDropdown = ({
   options,
-  selectedObjectUniversalIdentifier,
+  selectedUniversalIdentifier,
   onChange,
-}: SettingsApplicationContentObjectFilterProps) => {
+}: SettingsApplicationContentFilterDropdownProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
   return (
     <DropdownRoot
-      dropdownId="settings-application-content-object-filter"
+      dropdownId="settings-application-content-filter"
       type="picker"
     >
-      <SettingsSearchFilterTrigger ariaLabel={t`Filter by object`} />
+      <SettingsSearchFilterTrigger />
       <DropdownContent side="bottom" align="end" sideOffset={8}>
         <Dropdown.Section scrollable>
           {options.map((option) => (
             <Dropdown.OptionItem
               key={option.universalIdentifier}
               selected={
-                option.universalIdentifier === selectedObjectUniversalIdentifier
+                option.universalIdentifier === selectedUniversalIdentifier
               }
               onSelect={() => onChange(option.universalIdentifier)}
               startIcon={
@@ -57,7 +50,7 @@ export const SettingsApplicationContentObjectFilter = ({
             </Dropdown.OptionItem>
           ))}
         </Dropdown.Section>
-        {isDefined(selectedObjectUniversalIdentifier) && (
+        {isDefined(selectedUniversalIdentifier) && (
           <>
             <Dropdown.Separator />
             <Dropdown.Section>

@@ -24,6 +24,12 @@ export class ApplicationContentItemDTO {
   parentLabel?: string | null;
 
   @Field(() => String, { nullable: true })
+  parentUniversalIdentifier?: string | null;
+
+  @Field(() => String, { nullable: true })
+  fieldUniversalIdentifier?: string | null;
+
+  @Field(() => String, { nullable: true })
   tag?: string | null;
 
   @Field(() => Int, { nullable: true })

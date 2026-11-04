@@ -104,7 +104,6 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
   const permissionFlags = findOwned(flatEntityMaps.flatPermissionFlagMaps);
 
-  const allViewFields = getAllFlatEntities(flatEntityMaps.flatViewFieldMaps);
   const allPageLayoutWidgets = getAllFlatEntities(
     flatEntityMaps.flatPageLayoutWidgetMaps,
   );
@@ -117,15 +116,15 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     (field) => field.objectMetadataUniversalIdentifier,
   );
   const viewCountByField = countByKey(
-    allViewFields,
+    viewFields,
     (viewField) => viewField.fieldMetadataUniversalIdentifier,
   );
   const viewFieldCountByView = countByKey(
-    allViewFields,
+    viewFields,
     (viewField) => viewField.viewUniversalIdentifier,
   );
   const tabCountByPageLayout = countByKey(
-    getAllFlatEntities(flatEntityMaps.flatPageLayoutTabMaps),
+    pageLayoutTabs,
     (tab) => tab.pageLayoutUniversalIdentifier,
   );
   const widgetCountByTab = countByKey(
@@ -210,6 +209,8 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         flatEntityMaps.flatViewMaps.byUniversalIdentifier[
           viewField.viewUniversalIdentifier
         ]?.name,
+      parentUniversalIdentifier: viewField.viewUniversalIdentifier,
+      fieldUniversalIdentifier: viewField.fieldMetadataUniversalIdentifier,
       count: viewField.position,
     })),
     pageLayouts: pageLayouts.map((pageLayout) => ({
@@ -227,6 +228,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         flatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
           tab.pageLayoutUniversalIdentifier
         ]?.name,
+      parentUniversalIdentifier: tab.pageLayoutUniversalIdentifier,
       count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
     })),
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
@@ -248,12 +250,18 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       icon: navigationMenuItem.icon,
       color: navigationMenuItem.color,
       objectUniversalIdentifier:
-        navigationMenuItem.targetObjectMetadataUniversalIdentifier,
+        navigationMenuItem.targetObjectMetadataUniversalIdentifier ??
+        (isDefined(navigationMenuItem.viewUniversalIdentifier)
+          ? flatEntityMaps.flatViewMaps.byUniversalIdentifier[
+              navigationMenuItem.viewUniversalIdentifier
+            ]?.objectMetadataUniversalIdentifier
+          : undefined),
       parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)
         ? flatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
             navigationMenuItem.folderUniversalIdentifier
           ]?.name
         : null,
+      parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
       count: navigationMenuItem.position,
     })),
@@ -292,6 +300,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         label: logicFunction.name,
         description: logicFunction.description,
         tag: getLogicFunctionTriggerTag(logicFunction),
+        count: logicFunction.timeoutSeconds,
       }),
     ),
     agents: findOwned(flatEntityMaps.flatAgentMaps).map((agent) => ({

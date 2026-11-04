@@ -9,6 +9,8 @@ const buildItem = (label: string, objectUniversalIdentifier?: string) => ({
   description: null,
   objectUniversalIdentifier: objectUniversalIdentifier ?? null,
   parentLabel: null,
+  parentUniversalIdentifier: null,
+  fieldUniversalIdentifier: null,
   tag: null,
   count: null,
 });

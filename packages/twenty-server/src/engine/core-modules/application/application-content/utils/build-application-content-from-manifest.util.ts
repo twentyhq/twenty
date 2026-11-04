@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentItemDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content-item.dto';
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
+import { DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/core-modules/application/application-content/constants/default-logic-function-timeout-seconds.constant';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
@@ -96,6 +97,12 @@ export const buildApplicationContentFromManifest = (
   const viewNameByUniversalIdentifier = new Map(
     views.map((view) => [view.universalIdentifier, view.name]),
   );
+  const viewObjectByUniversalIdentifier = new Map(
+    views.map((view) => [
+      view.universalIdentifier,
+      view.objectUniversalIdentifier,
+    ]),
+  );
   const pageLayoutNameByUniversalIdentifier = new Map(
     pageLayouts.map((pageLayout) => [
       pageLayout.universalIdentifier,
@@ -170,6 +177,8 @@ export const buildApplicationContentFromManifest = (
       parentLabel: viewNameByUniversalIdentifier.get(
         viewField.viewUniversalIdentifier,
       ),
+      parentUniversalIdentifier: viewField.viewUniversalIdentifier,
+      fieldUniversalIdentifier: viewField.fieldMetadataUniversalIdentifier,
       count: viewField.position,
     })),
     pageLayouts: pageLayouts.map((pageLayout) => ({
@@ -188,6 +197,7 @@ export const buildApplicationContentFromManifest = (
             tab.pageLayoutUniversalIdentifier,
           )
         : null,
+      parentUniversalIdentifier: tab.pageLayoutUniversalIdentifier,
       count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
     })),
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
@@ -209,12 +219,18 @@ export const buildApplicationContentFromManifest = (
       icon: navigationMenuItem.icon,
       color: navigationMenuItem.color,
       objectUniversalIdentifier:
-        navigationMenuItem.targetObjectUniversalIdentifier,
+        navigationMenuItem.targetObjectUniversalIdentifier ??
+        (isDefined(navigationMenuItem.viewUniversalIdentifier)
+          ? viewObjectByUniversalIdentifier.get(
+              navigationMenuItem.viewUniversalIdentifier,
+            )
+          : undefined),
       parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)
         ? navigationMenuItemNameByUniversalIdentifier.get(
             navigationMenuItem.folderUniversalIdentifier,
           )
         : null,
+      parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
       count: navigationMenuItem.position,
     })),
@@ -248,6 +264,8 @@ export const buildApplicationContentFromManifest = (
       label: logicFunction.name ?? logicFunction.handlerName,
       description: logicFunction.description,
       tag: getLogicFunctionTriggerTag(logicFunction),
+      count:
+        logicFunction.timeoutSeconds ?? DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS,
     })),
     agents: (manifest.agents ?? []).map((agent) => ({
       universalIdentifier: agent.universalIdentifier,

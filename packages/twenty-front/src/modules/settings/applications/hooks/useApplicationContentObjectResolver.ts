@@ -25,6 +25,7 @@ export const useApplicationContentObjectResolver = (
         labelSingular: objectMetadataItem.labelSingular,
         icon: objectMetadataItem.icon,
         color: getObjectColorWithFallback(objectMetadataItem),
+        colorSource: objectMetadataItem,
       };
     }
 
@@ -43,6 +44,11 @@ export const useApplicationContentObjectResolver = (
             color: contentObject.color,
             isSystem: false,
           }),
+          colorSource: {
+            color: contentObject.color,
+            isSystem: false,
+            nameSingular: '',
+          },
         }
       : undefined;
   };

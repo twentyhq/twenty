@@ -36,43 +36,76 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Objects`,
     description: msg`Record schemas and their behavior`,
     Icon: IconBox,
-    secondaryColumn: { label: msg`Description`, source: 'description' },
-    countColumnLabel: msg`Fields`,
+    columns: [
+      { label: msg`Description`, source: 'description' },
+      {
+        label: msg`Fields`,
+        source: 'count',
+        link: { contentType: 'fields', filter: 'object' },
+      },
+    ],
   },
   fields: {
     label: msg`Fields`,
     description: msg`Properties and relations contributed to objects`,
     Icon: IconListSearch,
-    secondaryColumn: { label: msg`Object`, source: 'object' },
-    countColumnLabel: msg`Views`,
+    columns: [
+      { label: msg`Object`, source: 'object' },
+      {
+        label: msg`Views`,
+        source: 'count',
+        link: { contentType: 'views', filter: 'field' },
+      },
+    ],
+    filters: ['object'],
   },
   indexes: {
     label: msg`Indexes`,
     description: msg`Declarable constraints and lookup indexes`,
     Icon: IconKey,
-    secondaryColumn: { label: msg`Object`, source: 'object' },
-    countColumnLabel: msg`Fields`,
+    columns: [
+      { label: msg`Object`, source: 'object' },
+      { label: msg`Fields`, source: 'count' },
+    ],
+    filters: ['object'],
   },
   views: {
     label: msg`Views`,
     description: msg`Saved table, board and calendar configurations`,
     Icon: IconTable,
-    secondaryColumn: { label: msg`Object`, source: 'object' },
-    countColumnLabel: msg`Fields`,
+    columns: [
+      { label: msg`Object`, source: 'object' },
+      {
+        label: msg`Fields`,
+        source: 'count',
+        link: { contentType: 'viewFields', filter: 'view' },
+      },
+    ],
+    filters: ['object', 'field'],
   },
   viewFields: {
     label: msg`View fields`,
     description: msg`Field visibility and order inside views`,
     Icon: IconListDetails,
-    secondaryColumn: { label: msg`View`, source: 'parent' },
-    countColumnLabel: msg`Position`,
+    columns: [
+      { label: msg`View`, source: 'parent' },
+      { label: msg`Position`, source: 'count' },
+    ],
+    filters: ['view'],
   },
   pageLayouts: {
     label: msg`Page layouts`,
     description: msg`Reusable record and standalone page structures`,
     Icon: IconAppWindow,
-    secondaryColumn: { label: msg`Type`, source: 'tag' },
-    countColumnLabel: msg`Tabs`,
+    columns: [
+      { label: msg`Type`, source: 'tag' },
+      {
+        label: msg`Tabs`,
+        source: 'count',
+        link: { contentType: 'pageLayoutTabs', filter: 'pageLayout' },
+      },
+    ],
+    filters: ['object'],
     tags: {
       [PageLayoutType.RECORD_PAGE]: { label: msg`Record`, color: 'blue' },
       [PageLayoutType.RECORD_INDEX]: { label: msg`Index`, color: 'sky' },
@@ -88,21 +121,28 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Page layout tabs`,
     description: msg`Declarable tabs within a page layout`,
     Icon: IconLayoutNavbar,
-    secondaryColumn: { label: msg`Layout`, source: 'parent' },
-    countColumnLabel: msg`Widgets`,
+    columns: [
+      { label: msg`Layout`, source: 'parent' },
+      { label: msg`Widgets`, source: 'count' },
+    ],
+    filters: ['pageLayout'],
   },
   navigationMenuItems: {
     label: msg`Navigation items`,
     description: msg`Proposed placements in the workspace sidebar`,
     Icon: IconCompass,
-    secondaryColumn: { label: msg`Folder`, source: 'parent' },
-    countColumnLabel: msg`Position`,
+    columns: [
+      { label: msg`Folder`, source: 'parent' },
+      { label: msg`Position`, source: 'count' },
+    ],
+    filters: ['object'],
   },
   commandMenuItems: {
     label: msg`Command menu items`,
     description: msg`Actions exposed through the command menu`,
     Icon: IconCommand,
-    secondaryColumn: { label: msg`Scope`, source: 'tag' },
+    columns: [{ label: msg`Scope`, source: 'tag' }],
+    filters: ['object'],
     tags: {
       [CommandMenuItemAvailabilityType.RECORD_SELECTION]: {
         label: msg`Record`,
@@ -126,8 +166,10 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Widgets & front components`,
     description: msg`App-provided widgets, panels and interface components`,
     Icon: IconLayoutGridAdd,
-    secondaryColumn: { label: msg`Type`, source: 'tag' },
-    countColumnLabel: msg`Placements`,
+    columns: [
+      { label: msg`Type`, source: 'tag' },
+      { label: msg`Placements`, source: 'count' },
+    ],
     tags: {
       WIDGET: { label: msg`Widget`, color: 'blue' },
       FRONT_COMPONENT: { label: msg`Front component`, color: 'purple' },
@@ -137,7 +179,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Workflows`,
     description: msg`User-facing automations with a canonical app editor`,
     Icon: IconSettingsAutomation,
-    secondaryColumn: { label: msg`Status`, source: 'tag' },
+    columns: [{ label: msg`Status`, source: 'tag' }],
     tags: {
       ACTIVE: { label: msg`Active`, color: 'green' },
       DRAFT: { label: msg`Draft`, color: 'gray' },
@@ -147,7 +189,11 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Logic functions`,
     description: msg`Executable functions used by apps and automations`,
     Icon: IconBrandTypescript,
-    secondaryColumn: { label: msg`Trigger`, source: 'tag' },
+    columns: [
+      { label: msg`Description`, source: 'description' },
+      { label: msg`Trigger`, source: 'tag' },
+      { label: msg`Timeout`, source: 'duration' },
+    ],
     tags: {
       DATABASE_EVENT: { label: msg`Database event`, color: 'blue' },
       HTTP_ROUTE: { label: msg`HTTP route`, color: 'purple' },
@@ -161,27 +207,31 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Agents`,
     description: msg`Reusable AI actors that can also serve end users`,
     Icon: IconLego,
-    secondaryColumn: { label: msg`Description`, source: 'description' },
+    columns: [{ label: msg`Description`, source: 'description' }],
   },
   skills: {
     label: msg`Skills`,
     description: msg`Instruction and capability packages for agents`,
     Icon: IconBook,
-    secondaryColumn: { label: msg`Description`, source: 'description' },
+    columns: [{ label: msg`Description`, source: 'description' }],
   },
   roles: {
     label: msg`Roles`,
     description: msg`Permission bundles that apps can contribute`,
     Icon: IconLock,
-    secondaryColumn: { label: msg`Description`, source: 'description' },
-    countColumnLabel: msg`Members`,
+    columns: [
+      { label: msg`Description`, source: 'description' },
+      { label: msg`Members`, source: 'count' },
+    ],
   },
   permissionFlags: {
     label: msg`Permission flags`,
     description: msg`Declarable feature-level access controls`,
     Icon: IconFlag,
-    secondaryColumn: { label: msg`Type`, source: 'tag' },
-    countColumnLabel: msg`Roles`,
+    columns: [
+      { label: msg`Type`, source: 'tag' },
+      { label: msg`Roles`, source: 'count' },
+    ],
     tags: {
       settings: { label: msg`Settings`, color: 'blue' },
       tool: { label: msg`Tool`, color: 'purple' },
@@ -191,7 +241,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Connection providers`,
     description: msg`External account and credential definitions`,
     Icon: IconPlug,
-    secondaryColumn: { label: msg`Type`, source: 'tag' },
+    columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
       oauth: { label: msg`OAuth`, color: 'blue' },
       custom: { label: msg`Custom`, color: 'purple' },
@@ -201,7 +251,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Public assets`,
     description: msg`Images and files packaged with applications`,
     Icon: IconPhoto,
-    secondaryColumn: { label: msg`Type`, source: 'tag' },
+    columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
       IMAGE: { label: msg`Image`, color: 'blue' },
       FILE: { label: msg`File`, color: 'purple' },
@@ -211,6 +261,6 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Translations`,
     description: msg`Localized labels and interface copy`,
     Icon: IconLanguage,
-    countColumnLabel: msg`Keys`,
+    columns: [{ label: msg`Keys`, source: 'count' }],
   },
 };

@@ -9,6 +9,8 @@ export const APPLICATION_CONTENT_FRAGMENT = gql`
     description
     objectUniversalIdentifier
     parentLabel
+    parentUniversalIdentifier
+    fieldUniversalIdentifier
     tag
     count
   }

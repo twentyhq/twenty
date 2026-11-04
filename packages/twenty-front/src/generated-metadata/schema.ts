@@ -608,10 +608,12 @@ export type ApplicationContentItem = {
   color?: Maybe<Scalars['String']['output']>;
   count?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  fieldUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   label: Scalars['String']['output'];
   objectUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   parentLabel?: Maybe<Scalars['String']['output']>;
+  parentUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   tag?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
 };
