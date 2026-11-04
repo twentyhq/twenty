@@ -113,9 +113,7 @@ export const SettingsBillingPartnerCodeForm = ({
 
   const hint =
     errorMessage ??
-    (isEditable
-      ? t`Only if a Twenty partner referred you or is setting up your workspace.`
-      : null);
+    (isEditable ? t`Only if a Twenty partner referred you.` : null);
 
   const form = (
     <StyledContainer>
@@ -154,7 +152,7 @@ export const SettingsBillingPartnerCodeForm = ({
     <Section.Root>
       <Section.Header
         title={t`Partner`}
-        description={t`The code of the partner who referred or set up your workspace`}
+        description={t`The code of the Twenty partner who referred you`}
       />
       {form}
     </Section.Root>
