@@ -43,8 +43,15 @@ const COLUMN_WIDTH_BY_SOURCE: Record<ApplicationContentColumnSource, string> = {
   parent: 'minmax(0, 1fr)',
   tag: 'minmax(0, 148px)',
   count: '88px',
+  position: '88px',
   duration: '88px',
 };
+
+const RIGHT_ALIGNED_COLUMN_SOURCES = new Set<ApplicationContentColumnSource>([
+  'count',
+  'position',
+  'duration',
+]);
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -242,6 +249,8 @@ export const SettingsApplicationContentItemsTable = ({
       }
       case 'duration':
         return isDefined(item.count) ? formatDuration(item.count) : null;
+      case 'position':
+        return item.position;
       case 'count': {
         if (!isDefined(item.count)) {
           return null;
@@ -316,7 +325,7 @@ export const SettingsApplicationContentItemsTable = ({
             <TableHeader
               key={column.label.id}
               align={
-                column.source === 'count' || column.source === 'duration'
+                RIGHT_ALIGNED_COLUMN_SOURCES.has(column.source)
                   ? 'right'
                   : undefined
               }
@@ -339,7 +348,7 @@ export const SettingsApplicationContentItemsTable = ({
               <TableCell
                 key={column.label.id}
                 align={
-                  column.source === 'count' || column.source === 'duration'
+                  RIGHT_ALIGNED_COLUMN_SOURCES.has(column.source)
                     ? 'right'
                     : undefined
                 }

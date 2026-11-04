@@ -179,7 +179,7 @@ export const buildApplicationContentFromManifest = (
       ),
       parentUniversalIdentifier: viewField.viewUniversalIdentifier,
       fieldUniversalIdentifier: viewField.fieldMetadataUniversalIdentifier,
-      count: viewField.position,
+      position: viewField.position,
     })),
     pageLayouts: pageLayouts.map((pageLayout) => ({
       universalIdentifier: pageLayout.universalIdentifier,
@@ -232,7 +232,7 @@ export const buildApplicationContentFromManifest = (
         : null,
       parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
-      count: navigationMenuItem.position,
+      position: navigationMenuItem.position,
     })),
     commandMenuItems: commandMenuItems.map((commandMenuItem) => ({
       universalIdentifier: commandMenuItem.universalIdentifier,

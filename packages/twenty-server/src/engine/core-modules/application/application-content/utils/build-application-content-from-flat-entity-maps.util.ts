@@ -74,7 +74,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     (object) => !object.isSystem,
   );
   const fields = findOwned(flatEntityMaps.flatFieldMetadataMaps).filter(
-    (field) => !field.isSystem,
+    (field) => !field.isSystem && !field.isSystemSideEffect,
   );
   const indexes = findOwned(flatEntityMaps.flatIndexMaps).filter(
     (index) => !index.isSystemSideEffect,
@@ -202,7 +202,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         ]?.name,
       parentUniversalIdentifier: viewField.viewUniversalIdentifier,
       fieldUniversalIdentifier: viewField.fieldMetadataUniversalIdentifier,
-      count: viewField.position,
+      position: viewField.position,
     })),
     pageLayouts: pageLayouts.map((pageLayout) => ({
       id: pageLayout.id,
@@ -257,7 +257,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         : null,
       parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
-      count: navigationMenuItem.position,
+      position: navigationMenuItem.position,
     })),
     commandMenuItems: commandMenuItems.map((commandMenuItem) => ({
       id: commandMenuItem.id,

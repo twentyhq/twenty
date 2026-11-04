@@ -89,7 +89,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     Icon: IconListDetails,
     columns: [
       { label: msg`View`, source: 'parent' },
-      { label: msg`Position`, source: 'count' },
+      { label: msg`Position`, source: 'position' },
     ],
     filters: ['view'],
   },
@@ -133,7 +133,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     Icon: IconCompass,
     columns: [
       { label: msg`Folder`, source: 'parent' },
-      { label: msg`Position`, source: 'count' },
+      { label: msg`Position`, source: 'position' },
     ],
     filters: ['object'],
   },

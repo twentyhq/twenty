@@ -4,4 +4,5 @@ export type ApplicationContentColumnSource =
   | 'parent'
   | 'tag'
   | 'count'
+  | 'position'
   | 'duration';

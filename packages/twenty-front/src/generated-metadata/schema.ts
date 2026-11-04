@@ -615,6 +615,7 @@ export type ApplicationContentItem = {
   objectUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   parentLabel?: Maybe<Scalars['String']['output']>;
   parentUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  position?: Maybe<Scalars['Float']['output']>;
   tag?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
 };

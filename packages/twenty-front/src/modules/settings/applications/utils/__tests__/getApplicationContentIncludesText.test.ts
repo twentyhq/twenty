@@ -14,6 +14,7 @@ const buildItem = (label: string, objectUniversalIdentifier?: string) => ({
   fieldUniversalIdentifier: null,
   tag: null,
   count: null,
+  position: null,
 });
 
 const OBJECT_LABELS: Record<string, string> = {

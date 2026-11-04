@@ -7,10 +7,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { EMPTY_APPLICATION_CONTENT } from 'src/engine/core-modules/application/application-content/constants/empty-application-content.constant';
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
-import {
-  APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS,
-  buildApplicationContentFromFlatEntityMaps,
-} from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-flat-entity-maps.util';
+import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -67,6 +64,7 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationContentService: ApplicationContentService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -317,7 +315,8 @@ export class ApplicationResolver {
 
   @ResolveField(() => ApplicationContentDTO, { nullable: true })
   async content(
-    @Parent() application: Pick<ApplicationDTO, 'id'>,
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
@@ -334,14 +333,10 @@ export class ApplicationResolver {
       return EMPTY_APPLICATION_CONTENT;
     }
 
-    const flatEntityMaps = await this.workspaceCacheService.getOrRecompute(
+    return this.applicationContentService.getInstalledApplicationContent({
       workspaceId,
-      [...APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS],
-    );
-
-    return buildApplicationContentFromFlatEntityMaps({
       applicationId: application.id,
-      flatEntityMaps,
+      applicationRegistrationId: application.applicationRegistrationId,
     });
   }
 

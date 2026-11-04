@@ -14,6 +14,7 @@ export const APPLICATION_CONTENT_FRAGMENT = gql`
     fieldUniversalIdentifier
     tag
     count
+    position
   }
 
   fragment ApplicationContentFields on ApplicationContent {

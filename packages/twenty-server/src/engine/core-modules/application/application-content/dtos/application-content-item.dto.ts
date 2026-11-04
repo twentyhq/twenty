@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('ApplicationContentItem')
 export class ApplicationContentItemDTO {
@@ -37,4 +37,7 @@ export class ApplicationContentItemDTO {
 
   @Field(() => Int, { nullable: true })
   count?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  position?: number | null;
 }

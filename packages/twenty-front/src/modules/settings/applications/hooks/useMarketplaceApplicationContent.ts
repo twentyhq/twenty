@@ -2,33 +2,46 @@ import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
+import { addInstalledIdsToApplicationContent } from '@/settings/applications/utils/addInstalledIdsToApplicationContent';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindMarketplaceAppContentDocument } from '~/generated-metadata/graphql';
 
 export const useMarketplaceApplicationContent = (
   universalIdentifier?: string,
 ) => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
   const { data, loading } = useQuery(FindMarketplaceAppContentDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
     skip: !isNonEmptyString(universalIdentifier),
   });
 
-  const marketplaceApplication = data?.findMarketplaceAppDetail;
-
-  // Built-in apps have no manifest, so their installed content stands in
-  const shouldUseInstalledContent =
-    !loading && !isDefined(marketplaceApplication?.content);
+  const isInstalled =
+    currentWorkspace?.installedApplications.some(
+      (installedApplication) =>
+        installedApplication.universalIdentifier === universalIdentifier,
+    ) ?? false;
 
   const installed = useInstalledApplicationContent({
     universalIdentifier,
-    skip: !shouldUseInstalledContent,
+    skip: !isInstalled,
   });
+
+  const marketplaceApplication = data?.findMarketplaceAppDetail;
+  const manifestContent = marketplaceApplication?.content;
+
+  // The manifest describes the listing; installed ids only add settings links
+  const content = isDefined(manifestContent)
+    ? addInstalledIdsToApplicationContent(manifestContent, installed.content)
+    : installed.content;
 
   return {
     name: marketplaceApplication?.name ?? installed.application?.name,
     logoUrl: marketplaceApplication?.logoUrl ?? installed.application?.logoUrl,
     installedApplicationId: installed.application?.id,
-    content: marketplaceApplication?.content ?? installed.content,
+    content,
     isLoading: loading || installed.isLoading,
   };
 };
