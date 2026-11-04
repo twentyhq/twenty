@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -16,6 +15,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GetAgentRunsDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const RUNS_POLL_INTERVAL_MS = 10000;
 
@@ -44,6 +44,7 @@ type CoreAgentRunsTabProps = {
 };
 
 export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
+  const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const [expandedThreadIds, setExpandedThreadIds] = useState<Set<string>>(
     new Set(),

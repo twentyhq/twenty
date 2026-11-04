@@ -1,11 +1,11 @@
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconGripVertical, IconPencil } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type PageLayoutTabMenuItemSelectAvatarProps = {
   tab: SingleTabProps;
@@ -28,6 +28,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
+  const { t } = useLingui();
   const handleRef = useContext(DragDropItemSortableHandleRefContext);
 
   return (

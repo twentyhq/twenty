@@ -640,7 +640,7 @@ msgstr "{cardCount, plural, one {Approvare # azione?} other {Approvare # azioni?
 #. js-lingui-id: JdxLs0
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
-msgstr ""
+msgstr "{channelName} è disconnesso."
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -856,6 +856,11 @@ msgstr "{jobCount, plural, one {Questo lo rimuoverà definitivamente dalla coda.
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Questo riproverà il lavoro selezionato. Verrà rieseguito dall'inizio.} other {Questo riproverà i lavori selezionati. Verranno rieseguiti dall'inizio.}}"
+
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr "{keepModelId} (non disponibile)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "Amministratori"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -3969,7 +3973,7 @@ msgstr "Approva tutti {pendingCardCount}"
 #. js-lingui-id: B4OjOW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Approve media access for {applicationName}?"
-msgstr ""
+msgstr "Approvare l'accesso ai contenuti multimediali per {applicationName}?"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "Aggiornamento automatico"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "Automatico"
@@ -7079,17 +7082,17 @@ msgstr "Collega gli assistenti AI come Claude o Cursor al tuo spazio di lavoro t
 #. js-lingui-id: Qfj2/j
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect an account"
-msgstr ""
+msgstr "Collega un account"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
-msgstr ""
+msgstr "Collega email, WhatsApp o LinkedIn per vedere qui le tue conversazioni."
 
 #. js-lingui-id: d/aeu3
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations with {recordName} here."
-msgstr ""
+msgstr "Collega email, WhatsApp o LinkedIn per vedere qui le tue conversazioni con {recordName}."
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10987,7 +10990,7 @@ msgstr "Abilita impersonificazione"
 #. js-lingui-id: lT1fOr
 #: src/modules/media-access/components/ManagedIframeSession.tsx
 msgid "Enable media access for {ownerName}?"
-msgstr ""
+msgstr "Abilitare l'accesso ai contenuti multimediali per {ownerName}?"
 
 #. js-lingui-id: 4Jrl0H
 #: src/modules/media-access/components/ManagedIframeSession.tsx
@@ -12567,7 +12570,7 @@ msgstr "Impossibile revocare il codice di recupero."
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
 msgid "Failed to save behavior settings. Try again."
-msgstr ""
+msgstr "Impossibile salvare le impostazioni di comportamento. Riprova."
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -13339,11 +13342,6 @@ msgstr "Seguici su X"
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Seguito"
-
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "Segue l'impostazione predefinita dello spazio di lavoro per gli agenti"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -16345,27 +16343,22 @@ msgstr "Minore o uguale"
 #. js-lingui-id: 6W7LRT
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your camera"
-msgstr ""
+msgstr "Consenti a {host} di usare la tua fotocamera"
 
 #. js-lingui-id: k6BZVW
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone"
-msgstr ""
+msgstr "Consenti a {host} di usare il tuo microfono"
 
 #. js-lingui-id: kpTkNv
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone and camera"
-msgstr ""
+msgstr "Consenti a {host} di usare il tuo microfono e la tua fotocamera"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "Lascia che ogni membro decida per conto proprio"
-
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "Consenti alle persone di rendere un record visibile solo al suo creatore e alle persone con cui è condiviso."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17648,7 +17641,7 @@ msgstr "Messaggio"
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
-msgstr ""
+msgstr "Messaggio {recipientName}"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -17838,6 +17831,7 @@ msgid "Mode"
 msgstr "Modalità"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19304,7 +19298,7 @@ msgstr "Nessun messaggio da mostrare"
 #. js-lingui-id: +52YnJ
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No messages yet"
-msgstr ""
+msgstr "Nessun messaggio ancora"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -21022,11 +21016,6 @@ msgstr "Sovrascrivi"
 msgid "Override Draft"
 msgstr "Sostituisci Bozza"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "Sostituisce la modalità precedente finché non torni alla selezione automatica"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21548,11 +21537,6 @@ msgstr "Grafico a Torta"
 msgid "Pin"
 msgstr "Fissa"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "Fissa un modello specifico"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21575,11 +21559,6 @@ msgstr "Fissato"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Scheda fissata, sempre mostrata a sinistra"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "Fissato a un modello specifico"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -21975,11 +21954,6 @@ msgstr "Informativa sulla privacy"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privata"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "Record privati"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22512,7 +22486,7 @@ msgstr "Riconnessione"
 #. js-lingui-id: i5U7bC
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Reconnect {channelName} to send messages"
-msgstr ""
+msgstr "Riconnetti {channelName} per inviare messaggi"
 
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -23669,12 +23643,12 @@ msgstr "Alfabetico inverso"
 #. js-lingui-id: FIYcTW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review additional microphone or camera access requested by this app. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Esamina l'accesso aggiuntivo al microfono o alla fotocamera richiesto da questa app. I membri devono comunque abilitare l'accesso e approvare l'autorizzazione del browser."
 
 #. js-lingui-id: Jlf4oD
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review media access"
-msgstr ""
+msgstr "Esamina l'accesso ai contenuti multimediali"
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25336,7 +25310,7 @@ msgstr "Invio email in corso"
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
-msgstr ""
+msgstr "Invio non riuscito"
 
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -25475,11 +25449,6 @@ msgstr "Imposta la visibilità dell'email, gestisci la tua blocklist e altro."
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Imposta i campi che verranno creati in futuro come \"visibili\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "Imposta solo per questo agente"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31690,6 +31659,11 @@ msgstr "Crediti dello spazio di lavoro"
 msgid "Workspace default"
 msgstr "Predefinito del workspace"
 
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr "Predefinito dello spazio di lavoro · {workspaceTierLabel}"
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -31823,7 +31797,7 @@ msgstr "Scrivi una descrizione per questo agente"
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
-msgstr ""
+msgstr "Scrivi un messaggio"
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32126,12 +32100,12 @@ msgstr "Impossibile caricare le tue connessioni. Controlla la connessione e ripr
 #. js-lingui-id: 63X4AK
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations will show up here."
-msgstr ""
+msgstr "Le tue conversazioni verranno visualizzate qui."
 
 #. js-lingui-id: TW/SJs
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations with {recordName} will show up here."
-msgstr ""
+msgstr "Le tue conversazioni con {recordName} verranno visualizzate qui."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

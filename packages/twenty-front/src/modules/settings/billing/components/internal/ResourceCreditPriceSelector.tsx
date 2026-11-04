@@ -10,7 +10,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -27,6 +26,7 @@ import {
   SubscriptionInterval,
   type BillingPriceLicensed,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const PREDEFINED_RESOURCE_CREDIT_PACKAGE_MULTIPLIERS = [2, 4];
 
@@ -63,6 +63,7 @@ export const ResourceCreditPriceSelector = ({
   canCancelCreditPackSwitch?: boolean;
   onCancelCreditPackSwitch?: () => void;
 }) => {
+  const { t } = useLingui();
   const {
     currentResourceCreditBillingPrice,
     currentResourceCreditSubscriptionItem,

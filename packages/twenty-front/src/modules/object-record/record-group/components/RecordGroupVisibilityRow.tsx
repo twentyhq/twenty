@@ -8,10 +8,10 @@ import {
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordGroupVisibilityRowProps = {
   recordGroupId: string;
@@ -28,6 +28,7 @@ export const RecordGroupVisibilityRow = ({
   onVisibilityChange,
   isVisibleLimitReached = false,
 }: RecordGroupVisibilityRowProps) => {
+  const { t } = useLingui();
   const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     recordGroupId,

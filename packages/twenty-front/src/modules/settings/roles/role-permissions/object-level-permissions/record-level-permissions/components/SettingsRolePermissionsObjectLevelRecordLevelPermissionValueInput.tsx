@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +28,7 @@ import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/rol
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -101,6 +101,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
+    const { t } = useLingui();
     const theme = useTheme();
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
