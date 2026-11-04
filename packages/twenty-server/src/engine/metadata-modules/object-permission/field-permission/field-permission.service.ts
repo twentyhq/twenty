@@ -26,6 +26,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 type DesiredFieldPermission = {
   objectMetadataId: string;
@@ -351,7 +352,7 @@ export class FieldPermissionService {
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    rolesPermissions: Record<string, Record<string, unknown>> | undefined;
+    rolesPermissions: Record<string, RoleRecordsPermissions> | undefined;
     flatRole: { id: string } | undefined;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(
@@ -421,7 +422,9 @@ export class FieldPermissionService {
     }
 
     const rolePermissionOnObject = isDefined(flatRole)
-      ? rolesPermissions?.[flatRole.id]?.[fieldPermission.objectMetadataId]
+      ? rolesPermissions?.[flatRole.id]?.objects[
+          fieldPermission.objectMetadataId
+        ]
       : undefined;
 
     if (isDefined(flatRole) && !isDefined(rolePermissionOnObject)) {

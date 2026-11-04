@@ -25,6 +25,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 
 export class GraphqlQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -126,7 +127,9 @@ export class GraphqlQueryParser {
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
-      queryBuilder.objectRecordsPermissions,
+      fromRoleRecordsPermissionsToObjectsPermissions({
+        roleRecordsPermissions: queryBuilder.recordsPermissions,
+      }),
     );
 
     for (const joinInfo of parseResult.relationJoins) {

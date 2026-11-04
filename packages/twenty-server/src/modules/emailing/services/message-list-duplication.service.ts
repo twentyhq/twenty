@@ -20,6 +20,7 @@ import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
+import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 
@@ -76,7 +77,7 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
       await Promise.all([
         this.permissionsService.getUserWorkspacePermissions({
           workspaceId,
@@ -86,6 +87,10 @@ export class MessageListDuplicationService {
           'flatObjectMetadataMaps',
         ]),
       ]);
+
+    const objectsPermissions = fromRoleRecordsPermissionsToObjectsPermissions({
+      roleRecordsPermissions: recordsPermissions,
+    });
 
     for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
       const objectMetadata =

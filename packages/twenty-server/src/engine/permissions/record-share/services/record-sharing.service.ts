@@ -40,6 +40,7 @@ import { type RecordTargetInput } from 'src/engine/permissions/record-permission
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
@@ -427,19 +428,26 @@ export class RecordSharingService {
           ),
       )
       .map(({ id, label }) => {
-        const roleObjectsPermissions = rolesPermissions[id];
+        const roleRecordsPermissions = rolesPermissions[id];
 
-        if (!isDefined(roleObjectsPermissions)) {
+        if (!isDefined(roleRecordsPermissions)) {
           return { id, label, canRead: null, canUpdate: null };
         }
 
-        const objectPermissions = roleObjectsPermissions[objectMetadataId];
+        const objectRecordsPermissions =
+          roleRecordsPermissions.objects[objectMetadataId];
 
         return {
           id,
           label,
-          canRead: objectPermissions?.canReadObjectRecords ?? false,
-          canUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
+          canRead: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'select',
+          }),
+          canUpdate: canReachSomeRecords({
+            objectRecordsPermissions,
+            operationType: 'update',
+          }),
         };
       });
   }

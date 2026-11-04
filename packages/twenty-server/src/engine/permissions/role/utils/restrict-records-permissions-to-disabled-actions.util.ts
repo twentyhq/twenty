@@ -1,6 +1,8 @@
-import { type FieldPermissionAction } from 'twenty-shared/application';
 import {
-  type ObjectsPermissions,
+  type FieldPermissionAction,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
+import {
   type RestrictedFieldPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -11,6 +13,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatFieldMetadatasWithDisabledActionsByObjectId } from 'src/engine/permissions/role/utils/get-flat-field-metadatas-with-disabled-actions-by-object-id.util';
+import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION: Record<
   FieldPermissionAction,
@@ -18,6 +22,51 @@ const RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION: Record<
 > = {
   canReadFieldValue: 'canRead',
   canUpdateFieldValue: 'canUpdate',
+};
+
+const restrictObjectRecordsPermissionsToDisabledActions = ({
+  objectRecordsPermissions,
+  disabledObjectPermissionActions,
+}: {
+  objectRecordsPermissions: ObjectRecordsPermissions;
+  disabledObjectPermissionActions: ObjectPermissionAction[];
+}): ObjectRecordsPermissions => {
+  const isEnabled = (action: ObjectPermissionAction) =>
+    !disabledObjectPermissionActions.includes(action);
+  const { rowLevelRecordsPermissions } = objectRecordsPermissions;
+
+  return {
+    ...objectRecordsPermissions,
+    canReadAllRecords:
+      objectRecordsPermissions.canReadAllRecords &&
+      isEnabled('canReadObjectRecords'),
+    canUpdateAllRecords:
+      objectRecordsPermissions.canUpdateAllRecords &&
+      isEnabled('canUpdateObjectRecords'),
+    canSoftDeleteAllRecords:
+      objectRecordsPermissions.canSoftDeleteAllRecords &&
+      isEnabled('canSoftDeleteObjectRecords'),
+    canDestroyAllRecords:
+      objectRecordsPermissions.canDestroyAllRecords &&
+      isEnabled('canDestroyObjectRecords'),
+    ...(isDefined(rowLevelRecordsPermissions) && {
+      rowLevelRecordsPermissions: {
+        ...rowLevelRecordsPermissions,
+        canReadRecords:
+          rowLevelRecordsPermissions.canReadRecords &&
+          isEnabled('canReadObjectRecords'),
+        canUpdateRecords:
+          rowLevelRecordsPermissions.canUpdateRecords &&
+          isEnabled('canUpdateObjectRecords'),
+        canSoftDeleteRecords:
+          rowLevelRecordsPermissions.canSoftDeleteRecords &&
+          isEnabled('canSoftDeleteObjectRecords'),
+        canDestroyRecords:
+          rowLevelRecordsPermissions.canDestroyRecords &&
+          isEnabled('canDestroyObjectRecords'),
+      },
+    }),
+  };
 };
 
 const getDisabledObjectPermissionActions = ({
@@ -83,30 +132,33 @@ const restrictFieldsToDisabledActions = ({
   return updatedRestrictedFields;
 };
 
-export const restrictObjectsPermissionsToDisabledActions = ({
-  objectsPermissions,
+export const restrictRecordsPermissionsToDisabledActions = ({
+  recordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   actingApplicationId,
 }: {
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: RoleRecordsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   actingApplicationId: string | undefined;
-}): ObjectsPermissions => {
+}): RoleRecordsPermissions => {
   const fieldsWithDisabledActionsByObjectId =
     getFlatFieldMetadatasWithDisabledActionsByObjectId(flatFieldMetadataMaps);
-  let restrictedObjectsPermissions: ObjectsPermissions | undefined;
+  let restrictedObjects: RoleRecordsPermissions['objects'] | undefined;
 
-  for (const [objectMetadataId, objectPermissions] of Object.entries(
-    objectsPermissions,
+  for (const [objectMetadataId, objectRecordsPermissions] of Object.entries(
+    recordsPermissions.objects,
   )) {
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    if (!isDefined(flatObjectMetadata)) {
+    if (
+      !isDefined(flatObjectMetadata) ||
+      !isDefined(objectRecordsPermissions)
+    ) {
       continue;
     }
 
@@ -128,14 +180,14 @@ export const restrictObjectsPermissionsToDisabledActions = ({
       continue;
     }
 
-    restrictedObjectsPermissions ??= { ...objectsPermissions };
-    restrictedObjectsPermissions[objectMetadataId] = {
-      ...objectPermissions,
-      ...Object.fromEntries(
-        disabledObjectPermissionActions.map((action) => [action, false]),
-      ),
+    restrictedObjects ??= { ...recordsPermissions.objects };
+    restrictedObjects[objectMetadataId] = {
+      ...restrictObjectRecordsPermissionsToDisabledActions({
+        objectRecordsPermissions,
+        disabledObjectPermissionActions,
+      }),
       restrictedFields: restrictFieldsToDisabledActions({
-        restrictedFields: objectPermissions.restrictedFields,
+        restrictedFields: objectRecordsPermissions.restrictedFields,
         fieldsWithDisabledActions,
         labelIdentifierFieldMetadataId:
           flatObjectMetadata.labelIdentifierFieldMetadataId,
@@ -143,5 +195,7 @@ export const restrictObjectsPermissionsToDisabledActions = ({
     };
   }
 
-  return restrictedObjectsPermissions ?? objectsPermissions;
+  return isDefined(restrictedObjects)
+    ? { ...recordsPermissions, objects: restrictedObjects }
+    : recordsPermissions;
 };
