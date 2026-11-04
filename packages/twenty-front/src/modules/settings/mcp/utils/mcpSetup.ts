@@ -40,10 +40,11 @@ export const buildClaudeInstallLink = ({
   mcpServerUrl: string;
   workspaceName?: string | null;
 }) => {
+  const trimmedWorkspaceName = workspaceName?.trim();
   const params = new URLSearchParams({
     modal: 'add-custom-connector',
-    connectorName: isNonEmptyString(workspaceName)
-      ? `${MCP_SETUP.server.displayName} (${workspaceName})`
+    connectorName: isNonEmptyString(trimmedWorkspaceName)
+      ? `${MCP_SETUP.server.displayName} (${trimmedWorkspaceName})`
       : MCP_SETUP.server.displayName,
     connectorUrl: mcpServerUrl,
   });

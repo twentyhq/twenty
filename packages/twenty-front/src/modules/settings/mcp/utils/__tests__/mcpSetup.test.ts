@@ -77,16 +77,20 @@ describe('buildClaudeInstallLink', () => {
     expect(params.get('connectorUrl')).toBe(mcpServerUrl);
   });
 
-  it('names the connector after the workspace', () => {
-    const link = buildClaudeInstallLink({
-      mcpServerUrl,
-      workspaceName: 'Acme',
-    });
+  it.each([
+    ['Acme', 'Twenty (Acme)'],
+    ['  Acme  ', 'Twenty (Acme)'],
+    ['   ', 'Twenty'],
+  ])(
+    'names the connector after the workspace "%s"',
+    (workspaceName, connectorName) => {
+      const link = buildClaudeInstallLink({ mcpServerUrl, workspaceName });
 
-    expect(new URL(link).searchParams.get('connectorName')).toBe(
-      'Twenty (Acme)',
-    );
-  });
+      expect(new URL(link).searchParams.get('connectorName')).toBe(
+        connectorName,
+      );
+    },
+  );
 });
 
 describe('buildCursorInstallLink', () => {
