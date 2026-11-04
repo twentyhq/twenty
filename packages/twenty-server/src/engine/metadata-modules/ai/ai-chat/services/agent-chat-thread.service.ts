@@ -19,7 +19,6 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
-import { getAgentChatThreadTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-table.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
@@ -27,6 +26,7 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { getWorkspaceAgentHistoryTable } from 'src/engine/metadata-modules/ai/ai-history/utils/get-workspace-agent-history-table.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -278,7 +278,7 @@ export class AgentChatThreadService {
 
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
 
-    const setUpThreads =
+    const setUpThreadIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
           this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -316,7 +316,7 @@ export class AgentChatThreadService {
     }
 
     // Sent first, so a new thread never shows as unread to its creator
-    for (const { id: threadId } of setUpThreads) {
+    for (const threadId of setUpThreadIds) {
       await this.participantService.emitParticipantCreated({
         workspaceId,
         workspaceMemberId,
@@ -527,7 +527,7 @@ export class AgentChatThreadService {
               }
 
               const [lockedThread] = await transactionScope.executeRawQuery(
-                `SELECT "channelId" FROM ${getAgentChatThreadTable(args.workspaceId)} WHERE id = $1 FOR NO KEY UPDATE`,
+                `SELECT "channelId" FROM ${getWorkspaceAgentHistoryTable(args.workspaceId)('agentChatThread')} WHERE id = $1 FOR NO KEY UPDATE`,
                 [args.threadId],
               );
 
