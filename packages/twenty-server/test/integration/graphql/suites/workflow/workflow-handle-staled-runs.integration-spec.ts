@@ -8,7 +8,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
-import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { type WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -171,9 +170,8 @@ describe('workflow stale-run recovery', () => {
 
     expect(
       addJob.mock.calls.filter(
-        ([jobName, data]) =>
-          jobName === RUN_WORKFLOW_JOB_NAME &&
-          (data as RunWorkflowJobData).workflowRunId === lostRunId,
+        ([jobName, , options]) =>
+          jobName === RUN_WORKFLOW_JOB_NAME && options.id === lostRunId,
       ),
     ).toHaveLength(1);
     await waitForRun(lostRunId, 'COMPLETED');

@@ -78,8 +78,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         workspaceId,
       );
 
-    // Overlapping sweeps see the same lost runs, so each run is enqueued only by the sweep whose
-    // conditional update claims it first: once claimed, the run no longer matches the stale criteria
+    // Overlapping sweeps see the same lost runs: a run goes to the sweep whose conditional update claims it first
     const claimedRuns =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowRunRepository =
