@@ -542,7 +542,7 @@ export class BullMQDriver
 
     const queueOptions = this.buildJobsOptions(options);
 
-    this.assertJobsWithinSizeLimit({
+    this.assertJobsWithinSizeLimitOrThrow({
       queueName,
       jobs: [{ data, options: queueOptions, scope: options }],
       additionalGroupKeys: options.groupKeys,
@@ -564,7 +564,7 @@ export class BullMQDriver
     return job.id;
   }
 
-  private assertJobsWithinSizeLimit({
+  private assertJobsWithinSizeLimitOrThrow({
     queueName,
     jobs,
     additionalGroupKeys,
@@ -652,7 +652,7 @@ export class BullMQDriver
       jobId ??
       (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined);
 
-    this.assertJobsWithinSizeLimit({
+    this.assertJobsWithinSizeLimitOrThrow({
       queueName,
       jobs: jobs.map((job, index) => ({
         data: job.data,
