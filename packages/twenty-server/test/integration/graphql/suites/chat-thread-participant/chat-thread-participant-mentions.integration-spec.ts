@@ -1,11 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { EventEmitter, once } from 'node:events';
 import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
+import { writeChatMemberMessage } from 'test/integration/ai/utils/write-chat-member-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -99,9 +101,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
     const mentionedThreadId = await createTestThread();
     const assignedThreadId = await createTestThread();
 
-    await addParticipants(mentionedThreadId, [
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    ]);
+    await addParticipants({
+      threadId: mentionedThreadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
     await assign(assignedThreadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
 
     expect(await findOpenThreadsSummary()).toMatchObject({
@@ -143,7 +146,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('resolves the mention when the member reads the chat and keeps it when they mark it unread', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     for (const action of ['READ', 'UNREAD']) {
       const response = await runInboxAction(action, threadId, {
@@ -159,7 +165,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('preserves unresolved mentions while marking unread and snoozing', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     for (const action of ['UNREAD', 'SNOOZE']) {
       const response = await runInboxAction(action, threadId, {
@@ -181,22 +190,27 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('resolves only the member who successfully sends a reply', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-    await addParticipants(
+    await addParticipants({
       threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    );
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
 
-    await getAppProviderByClassName<AgentChatService>(
-      'AgentChatService',
-    ).addMessageAndResolveMention({
-      ...buildJonyThreadAccess(threadId),
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [{ type: 'text', text: 'I have handled this.' }],
+    await writeChatMemberMessage({
+      actor: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
       },
+      thread: await getAppProviderByClassName<AgentChatThreadService>(
+        'AgentChatThreadService',
+      ).getWritableThread(buildJonyThreadAccess(threadId)),
+      message: { text: 'I have handled this.' },
+      placement: AgentChatMemberMessagePlacement.RUNNING,
     });
 
     const repliedParticipant = await findMyParticipant(
@@ -216,7 +230,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('keeps a mention resolved after Done until an explicit new mention arrives', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
     await runInboxAction('ARCHIVE', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
@@ -248,7 +265,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
       mentionsResolvedAt: doneParticipant!.mentionsResolvedAt,
     });
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const mentionedAgain = await findMyParticipant(
       threadId,
@@ -263,7 +283,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('resolves a mention when the member unsubscribes', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
     await runInboxAction('UNSUBSCRIBE', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
@@ -280,13 +303,18 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   });
 
   describe('queued replies to a mention', () => {
-    const queueReply = (threadId: string) =>
-      getAppProviderByClassName<AgentChatQueueService>(
-        'AgentChatQueueService',
-      ).queueMessage({
-        ...buildJonyThreadAccess(threadId),
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        text: 'On it',
+    const queueReply = async (threadId: string) =>
+      writeChatMemberMessage({
+        actor: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        },
+        thread: await getAppProviderByClassName<AgentChatThreadService>(
+          'AgentChatThreadService',
+        ).getWritableThread(buildJonyThreadAccess(threadId)),
+        message: { text: 'On it' },
+        placement: AgentChatMemberMessagePlacement.QUEUED,
       });
 
     const deleteQueuedReply = (messageId: string) =>
@@ -300,7 +328,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
     it('resolves the mention when the member queues a reply and keeps it after the reply is deleted', async () => {
       const threadId = await createTestThread();
 
-      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+      await addParticipants({
+        threadId,
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      });
 
       const reply = await queueReply(threadId);
       const repliedParticipant = await findMyParticipant(
@@ -324,7 +355,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
     it('queues a reply while another write of the member locks the chat', async () => {
       const threadId = await createTestThread();
 
-      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+      await addParticipants({
+        threadId,
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      });
 
       const writeEvents = new EventEmitter();
       const writeStarted = once(writeEvents, 'started');
@@ -363,17 +397,19 @@ describe('Chat thread participant mentions through the authenticated API', () =>
 
   it('delivers app recipients without creating or clearing an explicit mention', async () => {
     const threadId = await createTestThread();
-    const threadService = getAppProviderByClassName<AgentChatThreadService>(
-      'AgentChatThreadService',
-    );
+    const inboxDeliveryService =
+      getAppProviderByClassName<AgentChatInboxDeliveryService>(
+        'AgentChatInboxDeliveryService',
+      );
     const delivery = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId,
-      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
     };
 
-    await threadService.deliverToParticipants(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -384,14 +420,17 @@ describe('Chat thread participant mentions through the authenticated API', () =>
       mentionsResolvedAt: null,
     });
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const mentionedParticipant = await findMyParticipant(
       threadId,
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    await threadService.deliverToParticipants(delivery);
+    await inboxDeliveryService.deliverThreadToMemberInboxes(delivery);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -404,7 +443,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('rolls mention resolution back when a response cannot be recorded', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     await expect(
       getAppProviderByClassName<AgentChatThreadParticipantService>(
@@ -425,7 +467,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
   it('preserves a newer mention when an older response finishes first', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const responseEvents = new EventEmitter();
     const responseStarted = once(responseEvents, 'started');
@@ -444,9 +489,10 @@ describe('Chat thread participant mentions through the authenticated API', () =>
 
     await responseStarted;
 
-    const laterMention = participantService.markAsMentioned(
-      buildJonyThreadAccess(threadId),
-    );
+    const laterMention = addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     responseEvents.emit('finished');
     await Promise.all([response, laterMention]);
@@ -465,14 +511,20 @@ describe('Chat thread participant mentions through the authenticated API', () =>
     const threadId = await createTestThread();
     const resolvedAt = new Date(Date.now() + 60_000).toISOString();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."agentChatThreadParticipant"
        SET "lastMentionedAt" = $3, "mentionsResolvedAt" = $3
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],
     );
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const participant = await findMyParticipant(
       threadId,
