@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -13,7 +12,7 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
-import { buildAgentChatThreadParticipantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-lock-key.util';
+import { acquireAgentChatThreadParticipantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-thread-participant-locks.util';
 import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-last-mentioned-at.util';
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
@@ -23,10 +22,6 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const PARTICIPANT_LOCK_QUERY = doNotTranslate(
-  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-);
 
 @Injectable()
 export class AgentChatInboxParticipantWriterService {
@@ -139,15 +134,15 @@ export class AgentChatInboxParticipantWriterService {
     reason: AgentChatInboxDeliveryReason;
     participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
-    for (const workspaceMemberId of [...participantWorkspaceMemberIds].sort()) {
-      await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
-        buildAgentChatThreadParticipantLockKey({
-          workspaceId,
-          threadId,
-          workspaceMemberId,
-        }),
-      ]);
-    }
+    await acquireAgentChatThreadParticipantLocks({
+      executeQuery: ({ query, parameters }) =>
+        scope.executeRawQuery(query, parameters),
+      participants: participantWorkspaceMemberIds.map((workspaceMemberId) => ({
+        workspaceId,
+        threadId,
+        workspaceMemberId,
+      })),
+    });
 
     const participantRepository =
       scope.getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(

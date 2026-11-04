@@ -27,7 +27,7 @@ import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-module
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
-import { buildAgentChatThreadParticipantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-lock-key.util';
+import { acquireAgentChatThreadParticipantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-thread-participant-locks.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
@@ -54,9 +54,6 @@ const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."up
 const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
 
 const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
-
-const PARTICIPANT_LOCK_QUERY =
-  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
 // Saved as ended when already due, since its queued end may have run before this write
 const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
@@ -267,9 +264,11 @@ export class AgentChatThreadParticipantService {
       args.workspaceId,
     );
     // Taken by the writes on the other pool too, so before and after stay this write's
-    await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
-      buildAgentChatThreadParticipantLockKey(args),
-    ]);
+    await acquireAgentChatThreadParticipantLocks({
+      executeQuery: ({ query, parameters }) =>
+        scope.executeRawQuery(query, parameters),
+      participants: [args],
+    });
     await scope.executeRawQuery(
       buildMentionResolutionQuery({
         participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
@@ -611,13 +610,17 @@ export class AgentChatThreadParticipantService {
     // Also taken when the row does not exist yet, so two first writes cannot
     // both send it as created
     if (lock) {
-      await manager.query(PARTICIPANT_LOCK_QUERY, [
-        buildAgentChatThreadParticipantLockKey({
-          workspaceId,
-          threadId,
-          workspaceMemberId,
-        }),
-      ]);
+      await acquireAgentChatThreadParticipantLocks({
+        executeQuery: ({ query, parameters }) =>
+          manager.query(query, parameters),
+        participants: [
+          {
+            workspaceId,
+            threadId,
+            workspaceMemberId,
+          },
+        ],
+      });
     }
 
     const [participant] = await manager.query<AgentChatThreadParticipantRow[]>(
