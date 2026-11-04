@@ -27,6 +27,7 @@ export class ViewAccessService {
   async canUserModifyView(
     viewId: string | null,
     accessContext: ViewAccessContext,
+    nextVisibility?: ViewVisibility,
   ): Promise<boolean> {
     // A missing view or child entity is let through so the service throws
     // its entity-specific NOT_FOUND error instead of a generic one
@@ -43,7 +44,7 @@ export class ViewAccessService {
       return true;
     }
 
-    await this.assertCanModifyView({ view, accessContext });
+    await this.assertCanModifyView({ view, accessContext, nextVisibility });
 
     return true;
   }

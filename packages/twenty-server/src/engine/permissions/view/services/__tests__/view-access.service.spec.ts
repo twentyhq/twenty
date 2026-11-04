@@ -181,6 +181,25 @@ describe('ViewAccessService', () => {
         viewAccessService.canUserModifyView(viewId, requestAccessContext),
       ).resolves.toBe(true);
     });
+
+    it('should check the visibility the update sets', async () => {
+      const { viewAccessService, viewService } = buildViewAccessService({
+        hasViewsPermission: false,
+      });
+
+      viewService.findByIdIncludingDeleted.mockResolvedValue(ownUnlistedView);
+
+      await expect(
+        viewAccessService.canUserModifyView(viewId, requestAccessContext),
+      ).resolves.toBe(true);
+      await expect(
+        viewAccessService.canUserModifyView(
+          viewId,
+          requestAccessContext,
+          ViewVisibility.WORKSPACE,
+        ),
+      ).rejects.toThrow(MODIFY_DENIED);
+    });
   });
 
   describe('canUserCreateView', () => {
