@@ -1,11 +1,24 @@
 import { computeRecordUpdateFieldsToComplete } from '@/object-record/record-form/utils/computeRecordUpdateFieldsToComplete';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 const STAGE_FIELD_ID = 'stage-field';
 const LOST_REASON_FIELD_ID = 'lost-reason-field';
 
 const FIELDS = [
+  {
+    name: 'company',
+    type: FieldMetadataType.RELATION,
+    universalIdentifier: 'company',
+    relationType: RelationType.MANY_TO_ONE,
+    relationTargetFields: [
+      {
+        name: 'employees',
+        type: FieldMetadataType.NUMBER,
+        universalIdentifier: 'company-employees',
+      },
+    ],
+  },
   {
     name: 'stage',
     type: FieldMetadataType.SELECT,
@@ -46,17 +59,26 @@ const LOST_REASON_RULE: ValidationRule = {
   isActive: true,
 };
 
+const COMPANY_SIZE_RULE: ValidationRule = {
+  ...LOST_REASON_RULE,
+  id: 'company-size-rule',
+  expression: 'company.employees >= 10',
+  message: 'Pick a company with at least 10 employees',
+};
+
 const compute = ({
   currentRecord,
   updateInput,
   canUpdateField = () => true,
+  validationRules = [LOST_REASON_RULE],
 }: {
   currentRecord: Record<string, unknown>;
   updateInput: Record<string, unknown>;
   canUpdateField?: (fieldMetadataId: string) => boolean;
+  validationRules?: ValidationRule[];
 }) =>
   computeRecordUpdateFieldsToComplete({
-    validationRules: [LOST_REASON_RULE],
+    validationRules,
     currentRecord,
     updateInput,
     fields: FIELDS,
@@ -110,5 +132,21 @@ describe('computeRecordUpdateFieldsToComplete', () => {
           fieldMetadataId !== LOST_REASON_FIELD_ID,
       }).fieldMetadataIds,
     ).toEqual([]);
+  });
+
+  it('leaves rules reading a relation to the server when the update changes it', () => {
+    const result = compute({
+      currentRecord: {
+        stage: 'PROPOSAL',
+        lostReason: null,
+        companyId: 'small-company',
+        company: { id: 'small-company', employees: 3 },
+      },
+      updateInput: { companyId: 'unknown-company' },
+      validationRules: [COMPANY_SIZE_RULE],
+    });
+
+    expect(result.draftRecord).not.toHaveProperty('company');
+    expect(result.fieldMetadataIds).toEqual([]);
   });
 });

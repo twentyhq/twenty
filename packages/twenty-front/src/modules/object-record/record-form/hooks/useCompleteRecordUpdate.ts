@@ -8,6 +8,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useRecordUpdateFormContextOrThrow } from '@/object-record/record-form/contexts/RecordUpdateFormContext';
 import { computeRecordUpdateFieldsToComplete } from '@/object-record/record-form/utils/computeRecordUpdateFieldsToComplete';
+import { isRecordPathLoaded } from '@/object-record/record-form/utils/isRecordPathLoaded';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
@@ -81,7 +82,7 @@ export const useCompleteRecordUpdate = ({
         const storedRecord =
           store.get(recordStoreFamilyState.atomFamily(recordId)) ?? {};
 
-        const fieldNamesReadByRules = activeValidationRules.flatMap(
+        const bindingPathsReadByRules = activeValidationRules.flatMap(
           (validationRule) => {
             const compilationResult = compileValidationRuleExpression({
               expression: validationRule.expression,
@@ -89,21 +90,22 @@ export const useCompleteRecordUpdate = ({
             });
 
             return compilationResult.isValid
-              ? Object.keys(compilationResult.bindings).map(
-                  (bindingPath) => bindingPath.split('.')[0],
-                )
+              ? Object.keys(compilationResult.bindings)
               : [];
           },
         );
 
         // Views load only the fields they show, so a rule may read one the store does not have yet
-        const isEveryFieldReadByRulesStored = fieldNamesReadByRules.every(
-          (fieldName) => fieldName in storedRecord || fieldName in updateInput,
+        const isEveryBindingPathLoaded = bindingPathsReadByRules.every((path) =>
+          isRecordPathLoaded({
+            record: { ...storedRecord, ...updateInput },
+            path,
+          }),
         );
 
         let currentRecord: Partial<ObjectRecord> = storedRecord;
 
-        if (!isEveryFieldReadByRulesStored) {
+        if (!isEveryBindingPathLoaded) {
           const { data: recordData } = await apolloCoreClient.query<
             Record<string, RecordGqlNode>
           >({

@@ -6,7 +6,10 @@ import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const computeRecordUpdateFieldsToComplete = ({
   validationRules,
@@ -40,7 +43,22 @@ export const computeRecordUpdateFieldsToComplete = ({
   fieldMetadataIds: string[];
   violations: ValidationRuleViolation[];
 } => {
-  const draftRecord = { ...currentRecord, ...updateInput };
+  // A changed join column leaves the loaded related record stale, so rules reading it are left to the server
+  const relationFieldNamesWithChangedJoinColumn = fields
+    .filter(
+      (field) =>
+        isDefined(field.relationTargetFields) &&
+        computeRelationGqlFieldJoinColumnName({ name: field.name }) in
+          updateInput,
+    )
+    .map((field) => field.name);
+
+  const draftRecord = Object.fromEntries(
+    Object.entries({ ...currentRecord, ...updateInput }).filter(
+      ([fieldName]) =>
+        !relationFieldNamesWithChangedJoinColumn.includes(fieldName),
+    ),
+  );
 
   const violations = computeDraftValidationRuleViolations({
     validationRules,

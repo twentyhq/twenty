@@ -7,20 +7,17 @@ import { type RecordUpdateFormCompletionRequest } from '@/object-record/record-f
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { pendingRecordUpdateFormState } from '@/object-record/record-form/states/pendingRecordUpdateFormState';
 import { recordUpdateFormRequestComponentState } from '@/side-panel/pages/record-update-form/states/recordUpdateFormRequestComponentState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEdit } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-
-type PendingRecordUpdateForm = {
-  requestId: string;
-  resolve: (completedFields: Partial<ObjectRecord> | null) => void;
-};
 
 type RecordUpdateFormProviderProps = {
   children: ReactNode;
@@ -34,9 +31,9 @@ export const RecordUpdateFormProvider = ({
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
-  const [pendingRecordUpdateForms, setPendingRecordUpdateForms] = useState<
-    PendingRecordUpdateForm[]
-  >([]);
+  const pendingRecordUpdateForm = useAtomStateValue(
+    pendingRecordUpdateFormState,
+  );
 
   const settleRecordUpdateForm = useCallback(
     ({
@@ -46,27 +43,23 @@ export const RecordUpdateFormProvider = ({
       requestId: string;
       completedFields: Partial<ObjectRecord> | null;
     }) => {
-      const pendingRecordUpdateForm = pendingRecordUpdateForms.find(
-        (candidate) => candidate.requestId === requestId,
+      const settlingRecordUpdateForm = store.get(
+        pendingRecordUpdateFormState.atom,
       );
 
-      if (!isDefined(pendingRecordUpdateForm)) {
+      if (settlingRecordUpdateForm?.requestId !== requestId) {
         return;
       }
+
+      store.set(pendingRecordUpdateFormState.atom, null);
 
       if (isDefined(completedFields)) {
         removePageFromSidePanelHistory(requestId);
       }
 
-      pendingRecordUpdateForm.resolve(completedFields);
-
-      setPendingRecordUpdateForms((previousPendingRecordUpdateForms) =>
-        previousPendingRecordUpdateForms.filter(
-          (candidate) => candidate.requestId !== requestId,
-        ),
-      );
+      settlingRecordUpdateForm.resolve(completedFields);
     },
-    [pendingRecordUpdateForms, removePageFromSidePanelHistory],
+    [removePageFromSidePanelHistory, store],
   );
 
   const requestRecordUpdateFormCompletion = useCallback(
@@ -76,8 +69,9 @@ export const RecordUpdateFormProvider = ({
       fieldMetadataIds,
       violations,
     }: RecordUpdateFormCompletionRequest) => {
-      // One form at a time: further updates, like the rest of a multi-card drop, go to the server unchanged
-      if (pendingRecordUpdateForms.length > 0) {
+      // Read from the store, not a render value: the cards of one multi-card drop all ask before any re-render.
+      // One form at a time, so the rest of that drop goes to the server unchanged
+      if (isDefined(store.get(pendingRecordUpdateFormState.atom))) {
         return Promise.resolve({});
       }
 
@@ -99,10 +93,7 @@ export const RecordUpdateFormProvider = ({
       );
 
       return new Promise<Partial<ObjectRecord> | null>((resolve) => {
-        setPendingRecordUpdateForms((previousPendingRecordUpdateForms) => [
-          ...previousPendingRecordUpdateForms,
-          { requestId, resolve },
-        ]);
+        store.set(pendingRecordUpdateFormState.atom, { requestId, resolve });
 
         navigateSidePanelMenu({
           page: SidePanelPages.RecordUpdateForm,
@@ -112,12 +103,7 @@ export const RecordUpdateFormProvider = ({
         });
       });
     },
-    [
-      closeAnyOpenDropdown,
-      navigateSidePanelMenu,
-      pendingRecordUpdateForms.length,
-      store,
-    ],
+    [closeAnyOpenDropdown, navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordUpdateForm = useCallback(
@@ -135,13 +121,13 @@ export const RecordUpdateFormProvider = ({
   return (
     <RecordUpdateFormContextProvider value={contextValue}>
       {children}
-      {pendingRecordUpdateForms.map(({ requestId }) => (
+      {isDefined(pendingRecordUpdateForm) && (
         <RecordCreationFormCancellationEffect
-          key={requestId}
-          requestId={requestId}
+          key={pendingRecordUpdateForm.requestId}
+          requestId={pendingRecordUpdateForm.requestId}
           onCancel={cancelPendingRecordUpdateForm}
         />
-      ))}
+      )}
     </RecordUpdateFormContextProvider>
   );
 };
