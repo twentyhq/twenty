@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -24,8 +25,9 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const PARTICIPANT_LOCK_QUERY =
-  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
+const PARTICIPANT_LOCK_QUERY = doNotTranslate(
+  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+);
 
 @Injectable()
 export class AgentChatInboxParticipantWriterService {
