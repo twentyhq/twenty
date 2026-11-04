@@ -977,6 +977,12 @@ type BillingMeteredProduct implements BillingProductDTO {
   prices: [BillingPriceMetered!]
 }
 
+type BillingPartnerCode {
+  """True while no code is set and the workspace has not paid yet"""
+  isEditable: Boolean!
+  partnerCode: String
+}
+
 type BillingPaymentIntent {
   clientSecret: String!
   paymentIntentType: String!
@@ -3533,6 +3539,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
@@ -4167,6 +4174,7 @@ type Query {
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
+  billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
