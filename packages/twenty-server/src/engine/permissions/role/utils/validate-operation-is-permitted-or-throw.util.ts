@@ -19,11 +19,9 @@ import {
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
-export type OperationType = ObjectRecordsOperationType;
-
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
-  operationType: OperationType;
+  operationType: ObjectRecordsOperationType;
   recordsPermissions: RoleRecordsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
