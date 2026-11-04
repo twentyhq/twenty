@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { createViewFilterInputSchema } from 'src/engine/metadata-modules/view-filter/tools/schemas/create-view-filter-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { VIEW_FILTER_ACCESS_POLICY } from 'src/engine/metadata-modules/view-filter/constants/view-filter-access-policy.constant';
 
 const createManyViewFiltersInputSchema = z.object({
@@ -32,7 +32,7 @@ export class CreateManyViewFiltersTool extends BaseTool<
 
   constructor(
     private readonly viewFilterService: ViewFilterService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -45,11 +45,9 @@ export class CreateManyViewFiltersTool extends BaseTool<
   >): Promise<ToolOutput> {
     await Promise.all(
       input.filters.map(({ viewId }) =>
-        this.viewToolAccessService.findViewEditableByUserOrThrow({
+        this.viewAccessService.findModifiableViewOrThrow({
           viewId,
-          workspaceId,
-          userWorkspaceId,
-          authContext,
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         }),
       ),
     );

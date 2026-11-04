@@ -16,7 +16,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 
 const fieldReferenceShape = {
@@ -188,7 +188,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
   constructor(
     private readonly completeViewUpsertService: CompleteViewUpsertService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
   ) {
     super();
@@ -201,20 +201,16 @@ export class UpsertCompleteViewTool extends BaseTool<
     typeof upsertCompleteViewInputSchema
   >): Promise<ToolOutput> {
     const existingView = isDefined(input.id)
-      ? await this.viewToolAccessService.findViewEditableByUserOrThrow({
+      ? await this.viewAccessService.findModifiableViewOrThrow({
           viewId: input.id,
-          workspaceId,
-          userWorkspaceId,
-          authContext,
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         })
       : undefined;
 
     if (!isDefined(existingView)) {
-      await this.viewToolAccessService.assertCanCreateViewOrThrow({
+      await this.viewAccessService.canUserCreateView({
         visibility: input.visibility ?? ViewVisibility.WORKSPACE,
-        workspaceId,
-        userWorkspaceId,
-        authContext,
+        accessContext: { workspaceId, userWorkspaceId, authContext },
       });
     }
 

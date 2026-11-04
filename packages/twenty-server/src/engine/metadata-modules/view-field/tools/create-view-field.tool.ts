@@ -6,7 +6,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { createViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/create-view-field-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { VIEW_FIELD_ACCESS_POLICY } from 'src/engine/metadata-modules/view-field/constants/view-field-access-policy.constant';
 
 @DefineTool({
@@ -23,7 +23,7 @@ export class CreateViewFieldTool extends BaseTool<
 
   constructor(
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -32,11 +32,9 @@ export class CreateViewFieldTool extends BaseTool<
     input,
     context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewFieldInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableViewOrThrow({
       viewId: input.viewId,
-      workspaceId,
-      userWorkspaceId,
-      authContext,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const viewField = await this.viewFieldService.createOne({

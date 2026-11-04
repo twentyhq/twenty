@@ -26,10 +26,10 @@ export class ViewPermissionGuard implements CanActivate {
     const nextVisibility: ViewVisibility | undefined =
       args?.input?.visibility ?? request.body?.visibility;
 
-    return this.viewAccessService.canUserModifyView(
+    return this.viewAccessService.canUserModifyView({
       viewId,
-      resolveViewAccessContext(request),
+      accessContext: resolveViewAccessContext(request),
       nextVisibility,
-    );
+    });
   }
 }

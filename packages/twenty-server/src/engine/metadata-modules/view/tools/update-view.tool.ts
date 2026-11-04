@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 
 const updateViewInputSchema = z.object({
   id: z.string().uuid().describe('View ID to update'),
@@ -26,7 +26,7 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
 
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -35,11 +35,9 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
     input,
     context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableViewOrThrow({
       viewId: input.id,
-      workspaceId,
-      userWorkspaceId,
-      authContext,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const view = await this.viewService.updateOne({

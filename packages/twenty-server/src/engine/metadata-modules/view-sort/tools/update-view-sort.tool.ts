@@ -7,7 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 const updateViewSortInputSchema = z.object({
@@ -32,7 +32,7 @@ export class UpdateViewSortTool extends BaseTool<
 
   constructor(
     private readonly viewSortService: ViewSortService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -41,12 +41,10 @@ export class UpdateViewSortTool extends BaseTool<
     input,
     context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewSortInputSchema>): Promise<ToolOutput> {
-    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+    await this.viewAccessService.findModifiableParentViewOrThrow({
       kind: 'viewSort',
       entityId: input.id,
-      workspaceId,
-      userWorkspaceId,
-      authContext,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 
     const sort = await this.viewSortService.updateOne({

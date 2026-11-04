@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { updateViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/update-view-field-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { VIEW_FIELD_ACCESS_POLICY } from 'src/engine/metadata-modules/view-field/constants/view-field-access-policy.constant';
 
 const updateManyViewFieldsInputSchema = z.object({
@@ -32,7 +32,7 @@ export class UpdateManyViewFieldsTool extends BaseTool<
 
   constructor(
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -45,12 +45,10 @@ export class UpdateManyViewFieldsTool extends BaseTool<
   >): Promise<ToolOutput> {
     await Promise.all(
       input.viewFields.map(({ id }) =>
-        this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+        this.viewAccessService.findModifiableParentViewOrThrow({
           kind: 'viewField',
           entityId: id,
-          workspaceId,
-          userWorkspaceId,
-          authContext,
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         }),
       ),
     );

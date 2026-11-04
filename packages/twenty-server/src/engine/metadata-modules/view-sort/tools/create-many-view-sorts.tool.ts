@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { createViewSortInputSchema } from 'src/engine/metadata-modules/view-sort/tools/schemas/create-view-sort-input.schema';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { VIEW_SORT_ACCESS_POLICY } from 'src/engine/metadata-modules/view-sort/constants/view-sort-access-policy.constant';
 
 const createManyViewSortsInputSchema = z.object({
@@ -32,7 +32,7 @@ export class CreateManyViewSortsTool extends BaseTool<
 
   constructor(
     private readonly viewSortService: ViewSortService,
-    private readonly viewToolAccessService: ViewToolAccessService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
@@ -45,11 +45,9 @@ export class CreateManyViewSortsTool extends BaseTool<
   >): Promise<ToolOutput> {
     await Promise.all(
       input.sorts.map(({ viewId }) =>
-        this.viewToolAccessService.findViewEditableByUserOrThrow({
+        this.viewAccessService.findModifiableViewOrThrow({
           viewId,
-          workspaceId,
-          userWorkspaceId,
-          authContext,
+          accessContext: { workspaceId, userWorkspaceId, authContext },
         }),
       ),
     );
