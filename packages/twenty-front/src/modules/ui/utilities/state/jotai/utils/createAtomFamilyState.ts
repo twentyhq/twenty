@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
@@ -10,6 +10,7 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
   defaultValue,
   useLocalStorage = false,
+  useSessionStorage = false,
   localStorageOptions,
   storage,
   scope,
@@ -17,6 +18,7 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
+  useSessionStorage?: boolean;
   localStorageOptions?: { getOnInit?: boolean };
   storage?: JotaiSyncStorage<ValueType>;
   scope?: 'routed-flow';
@@ -63,6 +65,15 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
           defaultValue,
           storage,
           localStorageOptions ?? { getOnInit: true },
+        );
+      }
+
+      if (useSessionStorage) {
+        return atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          createJSONStorage<ValueType>(() => sessionStorage),
+          { getOnInit: true },
         );
       }
 

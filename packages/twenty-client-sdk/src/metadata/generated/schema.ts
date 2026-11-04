@@ -2795,6 +2795,17 @@ export interface ObjectRecordEventWithQueryIds {
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
 export type ObjectRecordGroupByDateGranularity = 'DAY' | 'DAY_OF_THE_WEEK' | 'MONTH' | 'MONTH_OF_THE_YEAR' | 'NONE' | 'QUARTER' | 'QUARTER_OF_THE_YEAR' | 'WEEK' | 'YEAR'
 
+export interface ObjectRecordsPermissions {
+    canDestroyAllRecords: Scalars['Boolean']
+    canReadAllRecords: Scalars['Boolean']
+    canSoftDeleteAllRecords: Scalars['Boolean']
+    canUpdateAllRecords: Scalars['Boolean']
+    objectMetadataId: Scalars['UUID']
+    restrictedFields: Scalars['JSON']
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissions
+    __typename: 'ObjectRecordsPermissions'
+}
+
 
 /** Onboarding status */
 export type OnboardingStatus = 'BOOK_CALL' | 'COMPLETED' | 'INVITE_TEAM' | 'PLAN_REQUIRED' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'WORKSPACE_ACTIVATION'
@@ -3411,6 +3422,16 @@ export type RowLevelPermissionPredicateGroupLogicalOperator = 'AND' | 'OR'
 
 export type RowLevelPermissionPredicateOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_OR_EQUAL' | 'IS' | 'IS_AFTER' | 'IS_BEFORE' | 'IS_EMPTY' | 'IS_IN_FUTURE' | 'IS_IN_PAST' | 'IS_NOT' | 'IS_NOT_EMPTY' | 'IS_NOT_NULL' | 'IS_RELATIVE' | 'IS_TODAY' | 'LESS_THAN_OR_EQUAL' | 'VECTOR_SEARCH'
 
+export interface RowLevelRecordsPermissions {
+    canDestroyRecords: Scalars['Boolean']
+    canReadRecords: Scalars['Boolean']
+    canSoftDeleteRecords: Scalars['Boolean']
+    canUpdateRecords: Scalars['Boolean']
+    predicateGroups: RowLevelPermissionPredicateGroup[]
+    predicates: RowLevelPermissionPredicate[]
+    __typename: 'RowLevelRecordsPermissions'
+}
+
 export type RunAgentMessageRole = 'assistant' | 'user'
 
 export interface RunAgentResult {
@@ -3927,8 +3948,7 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
-    objectPermissions?: ObjectPermission[]
-    objectsPermissions?: ObjectPermission[]
+    objectRecordsPermissions?: ObjectRecordsPermissions[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -7460,6 +7480,18 @@ export interface ObjectRecordEventWithQueryIdsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ObjectRecordsPermissionsGenqlSelection{
+    canDestroyAllRecords?: boolean | number
+    canReadAllRecords?: boolean | number
+    canSoftDeleteAllRecords?: boolean | number
+    canUpdateAllRecords?: boolean | number
+    objectMetadataId?: boolean | number
+    restrictedFields?: boolean | number
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissionsGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface OnboardingStepNavigationGenqlSelection{
     /** Onboarding status the user landed on */
     onboardingStatus?: boolean | number
@@ -8127,6 +8159,17 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
 export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+
+export interface RowLevelRecordsPermissionsGenqlSelection{
+    canDestroyRecords?: boolean | number
+    canReadRecords?: boolean | number
+    canSoftDeleteRecords?: boolean | number
+    canUpdateRecords?: boolean | number
+    predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
+    predicates?: RowLevelPermissionPredicateGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface RunAgentInput {additionalInstructions?: (Scalars['String'] | null),agentUniversalIdentifier: Scalars['String'],input?: (RunAgentMessageInput[] | null),messages?: (RunAgentMessageInput[] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),thread?: (RunAgentThreadInput | null),waitForCompletion?: (Scalars['Boolean'] | null)}
 
@@ -8956,8 +8999,7 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
-    objectPermissions?: ObjectPermissionGenqlSelection
-    objectsPermissions?: ObjectPermissionGenqlSelection
+    objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -11233,6 +11275,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ObjectRecordsPermissions_possibleTypes: string[] = ['ObjectRecordsPermissions']
+    export const isObjectRecordsPermissions = (obj?: { __typename?: any } | null): obj is ObjectRecordsPermissions => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordsPermissions"')
+      return ObjectRecordsPermissions_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
     export const isOnboardingStepNavigation = (obj?: { __typename?: any } | null): obj is OnboardingStepNavigation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
@@ -11581,6 +11631,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isRowLevelPermissionPredicateGroup = (obj?: { __typename?: any } | null): obj is RowLevelPermissionPredicateGroup => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicateGroup"')
       return RowLevelPermissionPredicateGroup_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RowLevelRecordsPermissions_possibleTypes: string[] = ['RowLevelRecordsPermissions']
+    export const isRowLevelRecordsPermissions = (obj?: { __typename?: any } | null): obj is RowLevelRecordsPermissions => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelRecordsPermissions"')
+      return RowLevelRecordsPermissions_possibleTypes.includes(obj.__typename)
     }
     
 
