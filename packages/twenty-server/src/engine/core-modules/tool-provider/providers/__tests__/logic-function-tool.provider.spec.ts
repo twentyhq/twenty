@@ -122,6 +122,39 @@ describe('LogicFunctionToolProvider', () => {
     expect(descriptors).toEqual([]);
   });
 
+  it('should skip tools whose input schema root is not an object', async () => {
+    const descriptors = await generateDescriptors([
+      createFlatLogicFunction({
+        name: 'object-root',
+        toolTriggerSettings: {
+          inputSchema: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+          },
+        },
+      }),
+      createFlatLogicFunction({
+        name: 'record-root',
+        toolTriggerSettings: {
+          inputSchema: {
+            type: 'record',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+        },
+      }),
+      createFlatLogicFunction({
+        name: 'array-root',
+        toolTriggerSettings: {
+          inputSchema: { type: 'array', items: { type: 'string' } },
+        },
+      }),
+    ]);
+
+    expect(descriptors.map((descriptor) => descriptor.name)).toEqual([
+      'app_object_root',
+    ]);
+  });
+
   it('should only expose the calling application tools to an application token', async () => {
     const logicFunctions = [
       createFlatLogicFunction({

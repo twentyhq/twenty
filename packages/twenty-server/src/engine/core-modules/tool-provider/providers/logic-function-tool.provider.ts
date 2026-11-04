@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   buildToolInputJsonSchema,
   DEFAULT_TOOL_INPUT_SCHEMA,
+  isObjectRootToolInputSchema,
 } from 'twenty-shared/logic-function';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -83,6 +84,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
+        // A non-object root cannot be sent as the function's payload, so no caller could invoke the tool
+        (!isDefined(fn.toolTriggerSettings.inputSchema) ||
+          isObjectRootToolInputSchema(fn.toolTriggerSettings.inputSchema)) &&
         fn.deletedAt === null &&
         canCallerReachApplication({
           callingApplication: context.application,
