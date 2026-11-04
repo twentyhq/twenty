@@ -877,6 +877,24 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_ENDPOINT?: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Subnet IDs to attach logic function Lambdas to, comma separated. Set together with LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS to run them inside a VPC; leave both empty to run them outside any VPC.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  LOGIC_FUNCTION_LAMBDA_SUBNET_IDS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Security group IDs for logic function Lambdas attached to a VPC, comma separated. Set together with LOGIC_FUNCTION_LAMBDA_SUBNET_IDS.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS: string[] = [];
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',

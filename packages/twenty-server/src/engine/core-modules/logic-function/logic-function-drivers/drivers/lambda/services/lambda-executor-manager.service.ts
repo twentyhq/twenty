@@ -10,6 +10,7 @@ import {
   TagResourceCommand,
   UpdateFunctionCodeCommand,
   UpdateFunctionConfigurationCommand,
+  type VpcConfigResponse,
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -39,6 +40,8 @@ import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { buildLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-tags.util';
+import { buildLambdaVpcConfig } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-vpc-config.util';
+import { isLambdaVpcConfigUpToDate } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/is-lambda-vpc-config-up-to-date.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -61,7 +64,7 @@ export class LambdaExecutorManagerService {
   constructor(
     private readonly options: Pick<
       LambdaDriverOptions,
-      'lambdaRole' | 'resourceTags'
+      'lambdaRole' | 'resourceTags' | 'vpcConfig'
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
@@ -299,6 +302,10 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
+      isLambdaVpcConfigUpToDate({
+        expectedVpcConfig: this.options.vpcConfig,
+        currentVpcConfig: lambdaExecutor.Configuration?.VpcConfig,
+      }) &&
       (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
@@ -378,6 +385,7 @@ export class LambdaExecutorManagerService {
       flatLogicFunction,
       depsLayerArn,
       sdkLayerArn,
+      currentVpcConfig: lambdaExecutor.Configuration?.VpcConfig,
     });
     await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
 
@@ -399,10 +407,12 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
+    currentVpcConfig,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
+    currentVpcConfig: VpcConfigResponse | undefined;
   }): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
@@ -413,6 +423,10 @@ export class LambdaExecutorManagerService {
         Runtime: flatLogicFunction.runtime,
         Timeout: EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
+        VpcConfig: buildLambdaVpcConfig({
+          expectedVpcConfig: this.options.vpcConfig,
+          currentVpcConfig,
+        }),
       }),
     );
   }
@@ -453,6 +467,10 @@ export class LambdaExecutorManagerService {
         Tags: buildLambdaResourceTags({
           resourceTags: this.options.resourceTags,
           sdkClientCoreChecksum,
+        }),
+        VpcConfig: buildLambdaVpcConfig({
+          expectedVpcConfig: this.options.vpcConfig,
+          currentVpcConfig: undefined,
         }),
       };
 

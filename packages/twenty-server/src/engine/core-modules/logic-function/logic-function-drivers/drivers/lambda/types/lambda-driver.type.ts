@@ -47,6 +47,11 @@ export type LambdaDriverOptions = LambdaConnectionOptions & {
   coreEntityCacheService: CoreEntityCacheService;
 };
 
+export type LambdaVpcConfig = {
+  subnetIds: string[];
+  securityGroupIds: string[];
+};
+
 export type LambdaConnectionOptions = LambdaClientConfig & {
   region: string;
   lambdaRole: string;
@@ -55,6 +60,7 @@ export type LambdaConnectionOptions = LambdaClientConfig & {
   layerBucketRegion: string;
   resourceNamespace: string;
   resourceTags?: Record<string, string>;
+  vpcConfig?: LambdaVpcConfig;
 };
 
 export enum LambdaExecutionPhase {
