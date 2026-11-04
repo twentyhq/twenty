@@ -150,18 +150,11 @@ export class AgentInboxService {
         : undefined;
 
     // read from a new message only, so sending it again mentions no one
-    const mentionedWorkspaceMemberIds =
-      extractInboxMessageMentionedWorkspaceMemberIds(input.text);
-    const { thread } = await this.openThread({
+    const { thread, mentionDelivery } = await this.openThread({
       ...threadArgs,
-      mentionedWorkspaceMemberIds,
+      mentionedWorkspaceMemberIds:
+        extractInboxMessageMentionedWorkspaceMemberIds(input.text),
     });
-    const mentionDelivery =
-      await this.inboxDeliveryService.prepareMentionDeliveryOrThrow({
-        workspaceId,
-        thread,
-        mentionedWorkspaceMemberIds,
-      });
 
     await this.ensureOpener({
       workspaceId,
@@ -219,7 +212,7 @@ export class AgentInboxService {
     workspaceId: string;
     sender: AgentInboxSender;
     workspaceMemberIds: string[];
-    // delivered with the message instead, so a send that fails leaves them nothing
+    // checked before any recipient is delivered, and delivered with the message
     mentionedWorkspaceMemberIds?: string[];
     threadKey: string;
     title: string;
@@ -227,6 +220,7 @@ export class AgentInboxService {
   }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isCreated: boolean;
+    mentionDelivery?: AgentChatMentionDelivery;
   }> {
     const threadId = buildInboxThreadId({
       senderKey: getAgentInboxSenderDetails(sender).key,
@@ -271,18 +265,27 @@ export class AgentInboxService {
           isArchived: isArchivedOnCreate,
         });
 
-    if (!isDefined(openedThread.thread.deletedAt)) {
-      await this.addParticipants({
-        workspaceId,
-        thread: openedThread.thread,
-        workspaceMemberIds: workspaceMemberIds.filter(
-          (workspaceMemberId) =>
-            !mentionedWorkspaceMemberIds.includes(workspaceMemberId),
-        ),
-      });
+    if (isDefined(openedThread.thread.deletedAt)) {
+      return openedThread;
     }
 
-    return openedThread;
+    const mentionDelivery =
+      await this.inboxDeliveryService.prepareMentionDeliveryOrThrow({
+        workspaceId,
+        thread: openedThread.thread,
+        mentionedWorkspaceMemberIds,
+      });
+
+    await this.addParticipants({
+      workspaceId,
+      thread: openedThread.thread,
+      workspaceMemberIds: workspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !mentionedWorkspaceMemberIds.includes(workspaceMemberId),
+      ),
+    });
+
+    return { ...openedThread, mentionDelivery };
   }
 
   private async createThread({
@@ -362,8 +365,7 @@ export class AgentInboxService {
     }
   }
 
-  // One transaction writes the message, its activity and the mentions it
-  // delivers, so a send that fails leaves none of them
+  // One transaction, so a failed send leaves neither the message nor its mentions
   private async writeMessage({
     workspaceId,
     thread,
