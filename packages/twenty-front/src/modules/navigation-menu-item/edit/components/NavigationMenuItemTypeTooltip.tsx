@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconAddressBook,
+  IconCompass,
   IconBox,
   IconFolder,
   IconHash,
@@ -40,6 +41,7 @@ export const NavigationMenuItemTypeTooltip = ({
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
     AGENT_CHAT_CHANNEL: { label: t`Channel`, Icon: IconHash },
+    NATIVE_PAGE: { label: t`Native page`, Icon: IconCompass },
   };
 
   const { label, Icon } = labelsByType[type];

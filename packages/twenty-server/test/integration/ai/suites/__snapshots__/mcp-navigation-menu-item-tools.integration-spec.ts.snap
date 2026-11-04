@@ -27,7 +27,7 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
           "type": "string",
         },
         "type": {
-          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).",
+          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, NATIVE_PAGE).",
           "enum": [
             "FOLDER",
             "LINK",
@@ -35,6 +35,7 @@ exports[`MCP navigation menu item tools (integration) should describe the naviga
             "VIEW",
             "RECORD",
             "PAGE_LAYOUT",
+            "NATIVE_PAGE",
           ],
           "type": "string",
         },
@@ -53,6 +54,7 @@ Type chooses the variant:
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+- NATIVE_PAGE: pins a built-in page, Workflows or Agents (label auto-derived; only pass 'name' for a custom label).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.",
     "inputSchema": {
@@ -350,6 +352,58 @@ Note: creating a new custom object via create_object_metadata already auto-creat
             "scope",
             "pageLayoutId",
             "name",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "description": "Optional hex colour",
+              "type": "string",
+            },
+            "folderId": {
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "icon": {
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
+            },
+            "name": {
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
+            },
+            "nativePageKey": {
+              "description": "Built-in page to pin: workflows or agents",
+              "enum": [
+                "workflows",
+                "agents",
+              ],
+              "type": "string",
+            },
+            "position": {
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
+            },
+            "scope": {
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
+            },
+            "type": {
+              "const": "NATIVE_PAGE",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "nativePageKey",
           ],
           "type": "object",
         },

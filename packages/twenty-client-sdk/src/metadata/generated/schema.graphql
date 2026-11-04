@@ -1365,6 +1365,7 @@ type CollectionHash {
 
 type CommandMenuItem {
   applicationId: UUID
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType!
   conditionalAvailabilityExpression: String
@@ -1536,6 +1537,7 @@ type CreateCalendarEventOutput {
 }
 
 input CreateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   conditionalAvailabilityExpression: String
@@ -1651,6 +1653,7 @@ input CreateNavigationMenuItemInput {
   id: UUID
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float
   targetObjectMetadataId: UUID
@@ -3651,6 +3654,7 @@ type NavigationMenuItem {
   id: UUID!
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float!
   targetObjectMetadataId: UUID
@@ -3666,6 +3670,7 @@ enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL
   FOLDER
   LINK
+  NATIVE_PAGE
   OBJECT
   PAGE_LAYOUT
   RECORD
@@ -5136,6 +5141,7 @@ input UpdateCalendarChannelInputUpdates {
 }
 
 input UpdateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   engineComponentKey: EngineComponentKey

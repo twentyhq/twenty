@@ -31,6 +31,8 @@ export type {
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
+export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
@@ -178,6 +180,8 @@ export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignat
 export { MetadataReadability } from './MetadataReadability';
 export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NativePageKey } from './NativePageKey';
+export { NATIVE_PAGE_KEYS } from './NativePageKey';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
