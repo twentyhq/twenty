@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
@@ -7,7 +8,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, IsNull, Not, Or } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
@@ -15,11 +16,13 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-hi
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentConversationViewer } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-viewer.type';
+import { type AgentConversationMessageText } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-message-text.type';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 
@@ -68,6 +71,65 @@ export class AgentConversationReaderService {
     return (
       parts.find((candidate) => candidate.messageId === message?.id) ?? null
     );
+  }
+
+  async loadRecentMessageTexts({
+    workspaceId,
+    threadId,
+    limit,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    limit: number;
+  }): Promise<AgentConversationMessageText[]> {
+    const failedTurns = await this.turnRepository.find(workspaceId, {
+      where: { threadId, status: AgentTurnStatus.FAILED },
+      select: ['id'],
+    });
+    const recentMessages = await this.messageRepository.find(workspaceId, {
+      where: {
+        threadId,
+        role: In([AgentMessageRole.USER, AgentMessageRole.ASSISTANT]),
+        status: Not(AgentMessageStatus.QUEUED),
+        ...(isNonEmptyArray(failedTurns) && {
+          turnId: Or(IsNull(), Not(In(failedTurns.map(({ id }) => id)))),
+        }),
+      },
+      select: ['id', 'role'],
+      order: {
+        processedAt: { order: 'DESC', nulls: 'NULLS FIRST' },
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
+      take: limit,
+    });
+    const textParts = await this.messagePartRepository.find(workspaceId, {
+      where: {
+        messageId: In(recentMessages.map(({ id }) => id)),
+        type: 'text',
+      },
+      select: ['messageId', 'textContent'],
+      order: { orderIndex: 'ASC' },
+    });
+
+    return recentMessages.reverse().flatMap(({ id, role }) => {
+      if (
+        role !== AgentMessageRole.USER &&
+        role !== AgentMessageRole.ASSISTANT
+      ) {
+        return [];
+      }
+
+      const text = textParts
+        .filter(
+          ({ messageId, textContent }) =>
+            messageId === id && isNonEmptyString(textContent?.trim()),
+        )
+        .map(({ textContent }) => textContent)
+        .join('\n\n');
+
+      return isNonEmptyString(text) ? [{ role, text }] : [];
+    });
   }
 
   async loadMessages({

@@ -9,13 +9,13 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { WorkflowSendChatMessageToolArguments } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
+import { useLingui } from '@lingui/react/macro';
 
 type SendChatMessageFormData =
   WorkflowSendChatMessageAction['settings']['input'];
@@ -38,6 +38,7 @@ export const WorkflowEditActionSendChatMessage = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendChatMessageProps) => {
+  const { t } = useLingui();
   const { toolIndex } = useGetToolIndex();
   const [formData, setFormData] = useState<SendChatMessageFormData>(
     action.settings.input,
@@ -122,14 +123,14 @@ export const WorkflowEditActionSendChatMessage = ({
           },
         ]
       : [noneOption, ...indexedToolOptions];
-  }, [toolIndex, storedToolName]);
+  }, [toolIndex, storedToolName, t]);
 
   return (
     <>
       <WorkflowStepBody>
         <FormSingleRecordPicker
           label={t`Recipient`}
-          objectNameSingulars={[CoreObjectNameSingular.WorkspaceMember]}
+          objectNameSingulars={[StandardObjectNameSingular.WorkspaceMember]}
           defaultValue={formData.workspaceMemberId}
           onChange={(workspaceMemberId) =>
             handleFieldChange('workspaceMemberId', workspaceMemberId ?? '')

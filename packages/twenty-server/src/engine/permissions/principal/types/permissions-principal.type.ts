@@ -1,8 +1,7 @@
 /* @license Enterprise */
 
-// TODO(@charlesBochet): drop deprecatedRoleOnly once every caller names the principal holding the role
-export type PermissionsDeprecatedRoleOnlyPrincipal = {
-  type: 'deprecatedRoleOnly';
+export type PermissionsRolePrincipal = {
+  type: 'role';
   roleId: string;
 };
 
@@ -41,13 +40,10 @@ export type PermissionsMainPrincipal =
   | PermissionsAgentPrincipal
   | PermissionsWebhookPrincipal
   | PermissionsApplicationIdPrincipal
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsRolePrincipal;
 
-export type PermissionsLimitingPrincipal =
-  | PermissionsAgentPrincipal
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+export type PermissionsLimitingPrincipal = PermissionsAgentPrincipal;
 
 export type PermissionsApplicationPrincipal =
   | PermissionsApplicationIdPrincipal
-  | PermissionsCustomApplicationPrincipal
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsCustomApplicationPrincipal;

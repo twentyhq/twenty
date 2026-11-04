@@ -25,16 +25,8 @@ describe('BullMQDriver fairness mechanics', () => {
       });
     };
 
-    it('flag off: the duplicate is skipped, the rest is FIFO', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processAll()).toEqual(['A1', 'A2', 'B1', 'B2']);
-    });
-
-    it('flag on: the duplicate neither runs nor advances the clock of A', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the duplicate neither runs nor advances the clock of A', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -55,16 +47,8 @@ describe('BullMQDriver fairness mechanics', () => {
       });
     };
 
-    it('flag off: the retry re-enters the FIFO behind the waiting jobs', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await enqueue(harness);
-
-      expect(await harness.processNext(4)).toEqual(['R', 'B1', 'B2', 'R']);
-    });
-
-    it('flag on: the retry keeps its ticket, comes back as soon as its turn does, and leaves the clocks untouched', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the retry keeps its ticket, comes back as soon as its turn does, and leaves the clocks untouched', async () => {
+      const harness = await createFairnessHarness();
 
       await enqueue(harness);
 
@@ -95,15 +79,8 @@ describe('BullMQDriver fairness mechanics', () => {
       return processed;
     };
 
-    it('flag off: nothing to rebase, FIFO', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      expect(await enqueueAndProcessThree(harness)).toEqual(['A1', 'A2', 'A3']);
-      expect(await harness.processAll()).toEqual(['B1', 'B2', 'B3', 'A4']);
-    });
-
-    it('flag on: the dispatch that crosses the threshold shifts the virtual time, the waiting tickets and the clocks by one step, the order is kept', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the dispatch that crosses the threshold shifts the virtual time, the waiting tickets and the clocks by one step, the order is kept', async () => {
+      const harness = await createFairnessHarness();
 
       expect(await enqueueAndProcessThree(harness)).toEqual(['A1', 'B1', 'A2']);
       expect(await harness.readVirtualTime()).toBe(
@@ -130,16 +107,8 @@ describe('BullMQDriver fairness mechanics', () => {
     };
     const expectedOrder = ['CRON', ...buildLabels({ prefix: 'A', count: 3 })];
 
-    it('flag off: the cron instance has no priority, BullMQ serves it before every prioritized job', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: false });
-
-      await prepare(harness);
-
-      expect(await harness.processAll()).toEqual(expectedOrder);
-    });
-
-    it('flag on: same order, cron instances carry no ticket and stay outside fairness', async () => {
-      const harness = await createFairnessHarness({ isFairnessEnabled: true });
+    it('the cron instance carries no ticket, stays outside fairness and runs before every ticketed job', async () => {
+      const harness = await createFairnessHarness();
 
       await prepare(harness);
 

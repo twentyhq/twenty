@@ -4,12 +4,13 @@ import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsS
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
+import { useLingui } from '@lingui/react/macro';
 
 export const useWorkflowNodeLabel = (
   data: WorkflowDiagramStepNodeData,
 ): string => {
+  const { t } = useLingui();
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const logicFunctionId =

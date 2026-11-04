@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -18,6 +17,7 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledThreadsContainer = styled.div`
   display: flex;
@@ -48,6 +48,7 @@ export const ChatThreadsCardContent = ({
   hasNextPage = false,
   pagination,
 }: ChatThreadsCardContentProps) => {
+  const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const sidePanelRoutedPath = useCurrentSidePanelRoutedPath();
@@ -57,7 +58,7 @@ export const ChatThreadsCardContent = ({
   const sidePanelThreadId =
     isSidePanelOpened &&
     sidePanelRecord?.objectNameSingular ===
-      CoreObjectNameSingular.AgentChatThread
+      StandardObjectNameSingular.AgentChatThread
       ? sidePanelRecord.objectRecordId
       : undefined;
   const isThreadsEmpty = !isNonEmptyArray(threads);
@@ -112,7 +113,7 @@ export const ChatThreadsCardContent = ({
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
-            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+            objectNameSingular: StandardObjectNameSingular.AgentChatThread,
           })
         }
         onDetachThread={onDetachThread}

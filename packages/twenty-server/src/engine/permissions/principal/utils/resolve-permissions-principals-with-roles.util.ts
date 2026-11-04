@@ -23,9 +23,10 @@ import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/is-permission-main-principal-workspace-member.util';
 
-export type PermissionsPrincipalRoleMaps = {
-  flatWorkspaceMemberMaps: {
+export type PermissionsPrincipalsRoleMaps = {
+  flatWorkspaceMemberMaps?: {
     byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'userId'>>>;
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
   };
@@ -54,14 +55,14 @@ const findWorkspaceMemberRoleId = ({
 }: {
   workspaceMemberId: string;
   roleMaps: Pick<
-    PermissionsPrincipalRoleMaps,
+    PermissionsPrincipalsRoleMaps,
     'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap'
   >;
 }): string | undefined => {
   const userId =
-    roleMaps.flatWorkspaceMemberMaps.byId[workspaceMemberId]?.userId;
+    roleMaps.flatWorkspaceMemberMaps?.byId[workspaceMemberId]?.userId;
   const userWorkspaceId = isDefined(userId)
-    ? roleMaps.flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId]
+    ? roleMaps.flatWorkspaceMemberMaps?.userWorkspaceIdByUserId[userId]
     : undefined;
 
   return isDefined(userWorkspaceId)
@@ -74,10 +75,10 @@ const findMainPrincipalRoleId = ({
   roleMaps,
 }: {
   mainPrincipal: PermissionsMainPrincipal;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  roleMaps: PermissionsPrincipalsRoleMaps;
 }): string | undefined => {
   switch (mainPrincipal.type) {
-    case 'deprecatedRoleOnly':
+    case 'role':
       return mainPrincipal.roleId;
     case 'workspaceMember':
       return findWorkspaceMemberRoleId({
@@ -113,12 +114,8 @@ const resolveLimitingPrincipal = ({
   roleMaps,
 }: {
   limitingPrincipal: PermissionsLimitingPrincipal;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  roleMaps: PermissionsPrincipalsRoleMaps;
 }): PermissionsLimitingPrincipalWithRole | undefined => {
-  if (limitingPrincipal.type === 'deprecatedRoleOnly') {
-    return limitingPrincipal;
-  }
-
   const roleId =
     roleMaps.flatRoleTargetByAgentIdMaps[limitingPrincipal.agentId]?.roleId;
 
@@ -134,7 +131,7 @@ const resolveApplicationPrincipal = ({
 }: {
   applicationPrincipal: PermissionsApplicationPrincipal;
   mainPrincipal: PermissionsMainPrincipalWithRole;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  roleMaps: PermissionsPrincipalsRoleMaps;
 }): PermissionsApplicationPrincipalWithRole | undefined => {
   if (applicationPrincipal.type !== 'application') {
     return applicationPrincipal;
@@ -149,10 +146,9 @@ const resolveApplicationPrincipal = ({
 
   const applicationRoleId = resolveApplicationRoleId({
     application: flatApplication,
-    userRoleId:
-      mainPrincipal.type === 'workspaceMember'
-        ? mainPrincipal.roleId
-        : undefined,
+    userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
+      ? mainPrincipal.roleId
+      : undefined,
   });
 
   return isDefined(applicationRoleId)
@@ -234,7 +230,7 @@ export const resolvePermissionsPrincipalsWithRoles = ({
   roleMaps,
 }: {
   authContext: PermissionsAuthContext;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  roleMaps: PermissionsPrincipalsRoleMaps;
 }): PermissionsPrincipalsWithRolesContext | undefined => {
   const identities = getPermissionsIdentitiesFromAuthContext(authContext);
 

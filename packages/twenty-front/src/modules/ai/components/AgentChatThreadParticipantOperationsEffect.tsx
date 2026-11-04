@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
@@ -26,7 +26,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: CoreObjectNameSingular.AgentChatThreadParticipant,
+      objectName: StandardObjectNameSingular.AgentChatThreadParticipant,
       objectNameType: 'singular',
     },
   );
@@ -41,7 +41,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   // the member's own are asked for
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadParticipant,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
       variables: {
         filter: { workspaceMemberId: { eq: currentWorkspaceMemberId } },
       },

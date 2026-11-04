@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -59,7 +59,7 @@ export class GateWorkflowVersionNavigationByCoreIndexFlagCommand extends Provisi
           buildNavigationConditionalAvailabilityExpression({
             universalIdentifier:
               STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-            nameSingular: CoreObjectNameSingular.WorkflowVersion,
+            nameSingular: StandardObjectNameSingular.WorkflowVersion,
           }),
         now: new Date().toISOString(),
       });

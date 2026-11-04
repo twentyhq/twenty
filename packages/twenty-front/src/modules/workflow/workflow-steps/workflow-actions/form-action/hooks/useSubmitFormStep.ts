@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
@@ -24,7 +24,7 @@ export const useSubmitFormStep = ({
 
   const { findOneRecordQuery: findOneWorkflowRunQuery } = useFindOneRecordQuery(
     {
-      objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+      objectNameSingular: StandardObjectNameSingular.WorkflowRun,
       recordGqlFields: {
         id: true,
         name: true,

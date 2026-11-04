@@ -20,4 +20,5 @@ export type AgentHistoryTransactionScope = {
     conflictPaths: string[],
   ) => Promise<void>;
   delete: (name: AgentHistoryObjectName, where: ObjectLiteral) => Promise<void>;
+  afterCommit: WorkspaceTransactionScope['afterCommit'];
 };

@@ -21,6 +21,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   color: 'green',
   position: 12.5,
   link: 'https://example.com/pets',
+  nativePageKey: 'workflows',
   folderUniversalIdentifier: FOLDER_UID,
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,

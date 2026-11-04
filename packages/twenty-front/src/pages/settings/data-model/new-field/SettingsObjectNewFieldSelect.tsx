@@ -9,7 +9,6 @@ import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsDataModelFieldTypeFormSchema';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -18,8 +17,10 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsObjectNewFieldSelect = () => {
+  const { t } = useLingui();
   const navigate = useNavigateApp();
   const workspaceSurface = useWorkspaceSurface();
   const { objectNamePlural = '' } = useParams();

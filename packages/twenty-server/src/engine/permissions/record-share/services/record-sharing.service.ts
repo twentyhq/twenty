@@ -40,10 +40,9 @@ import { type RecordTargetInput } from 'src/engine/permissions/record-permission
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
-import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
+import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
+import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principals-share-keys.util';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -72,6 +71,7 @@ export class RecordSharingService {
     private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
   ) {}
 
   async getSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
@@ -456,35 +456,18 @@ export class RecordSharingService {
   }) {
     const workspaceId = authContext.workspace.id;
     const { flatObjectMetadata, isShareable } = sharingObject;
-    const {
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
-      flatWorkspaceMemberMaps,
-      roleIdsWithAllRecordsAccess,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-      'flatApplicationMaps',
-      'flatWorkspaceMemberMaps',
-      'roleIdsWithAllRecordsAccess',
-    ]);
-    const principal = resolvePermissionsPrincipalsWithRoles({
-      authContext,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
-        flatWorkspaceMemberMaps,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-        flatApplicationMaps,
-      }),
-    });
+    const { roleIdsWithAllRecordsAccess } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'roleIdsWithAllRecordsAccess',
+      ]);
+    const principals =
+      await this.permissionsPrincipalsService.findPrincipalsWithRoles(
+        authContext,
+      );
     const canAccessAllRecords =
-      isDefined(principal) &&
+      isDefined(principals) &&
       canRolesAccessAllRecords({
-        roleIds: getPermissionsPrincipalRoleIds(principal),
+        roleIds: getPermissionsPrincipalsRoleIds(principals),
         roleIdsWithAllRecordsAccess,
       });
     const shares = await this.recordShareStorageService.findByRecordIds({
@@ -507,8 +490,8 @@ export class RecordSharingService {
       recordShares: shares,
       principalIds: [
         EVERYONE_PRINCIPAL_ID,
-        ...(isDefined(principal)
-          ? getPermissionsPrincipalShareKeys(principal)
+        ...(isDefined(principals)
+          ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
       implicitAccessLevels: isShareable

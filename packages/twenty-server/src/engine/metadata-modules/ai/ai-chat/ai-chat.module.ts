@@ -1,3 +1,9 @@
+import { AgentChatReplyPolicyModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-reply-policy.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
+import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
+import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
+import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
@@ -55,9 +61,11 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
 
 @Module({
   imports: [
+    CoreEntityCacheModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
     AgentChatThreadModule,
+    AgentChatReplyPolicyModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
@@ -91,6 +99,11 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentInboxResolver,
     AgentInboxProposalService,
     AgentChatQueueService,
+    AgentChatMemberMessageSenderService,
+    AgentChatMemberMessageWriterService,
+    AgentChatMemberMessagePartsService,
+    AgentChatStreamClaimService,
+
     AgentChatConversationAccessService,
     AgentChatService,
     AgentChatThreadTargetService,

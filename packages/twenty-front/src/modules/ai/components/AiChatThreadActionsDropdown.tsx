@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -53,7 +53,7 @@ export const AiChatThreadActionsDropdown = ({
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: CoreObjectNameSingular.AgentChatThread,
+      objectName: StandardObjectNameSingular.AgentChatThread,
       objectNameType: 'singular',
     },
   );

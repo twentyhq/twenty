@@ -1,7 +1,12 @@
+import { type AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
+
 // exactly one per started turn so started = completed + cancelled + failed on dashboards
 export type AgentChatTurnOutcome =
   | { kind: 'completed'; outcome: 'answered' | 'awaiting_user' | 'silent' }
-  | { kind: 'cancelled'; reason: 'user_cancelled' | 'superseded' }
+  | {
+      kind: 'cancelled';
+      reason: AgentChatTurnCancellationReason;
+    }
   | {
       kind: 'failed';
       failurePhase:

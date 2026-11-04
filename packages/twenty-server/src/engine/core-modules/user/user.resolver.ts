@@ -63,10 +63,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { buildUserSessionRequiredError } from 'src/engine/guards/utils/is-user-session-principal.util';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -81,7 +78,18 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
+const USER_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
 
@@ -132,15 +140,7 @@ export class UserResolver {
   }
 
   @Query(() => UserEntity)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    NoPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
@@ -403,13 +403,15 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: true,
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
@@ -417,15 +419,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserWorkspaceEntity)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    }),
-    CustomPermissionGuard,
-  )
+  @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY), CustomPermissionGuard)
   @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
@@ -505,16 +499,19 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+      requiredPermissionFlags: [],
     }),
     CustomPermissionGuard,
   )
@@ -754,18 +751,20 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
       },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.PROFILE_INFORMATION],
     }),
-    SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
   @UseFilters(EmailVerificationExceptionFilter)
   async updateUserEmail(

@@ -1,5 +1,5 @@
 import { type getDefaultStore } from 'jotai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -20,7 +20,7 @@ export const setRecordPageActiveTabId = ({
   store: ReturnType<typeof getDefaultStore>;
 }) => {
   // Dashboards resolve their page layout from record data, not object metadata
-  if (objectNameSingular === CoreObjectNameSingular.Dashboard) {
+  if (objectNameSingular === StandardObjectNameSingular.Dashboard) {
     return;
   }
 

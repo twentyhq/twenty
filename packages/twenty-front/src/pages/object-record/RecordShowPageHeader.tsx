@@ -7,7 +7,7 @@ import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 type RecordShowPageHeaderProps = {
   objectNameSingular: string;
@@ -91,7 +91,7 @@ const RecordShowPagePanelHeader = ({
     <PageCardHeader
       title={
         <>
-          {objectNameSingular === CoreObjectNameSingular.MessageThread ? (
+          {objectNameSingular === StandardObjectNameSingular.MessageThread ? (
             <MessageThreadSidePanelTitle
               messageThreadId={objectRecordId}
               emailThreadTitle={recordTitle}

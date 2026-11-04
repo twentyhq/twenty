@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
@@ -15,7 +15,7 @@ const getItemKey = (item: MentionSearchResult) =>
 
 const getItemSection = (item: MentionSearchResult) => ({
   key: isTeammateMentionSearchResult(item)
-    ? CoreObjectNameSingular.WorkspaceMember
+    ? StandardObjectNameSingular.WorkspaceMember
     : item.objectNameSingular,
   label: item.objectLabelPlural,
 });

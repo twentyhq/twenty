@@ -16,7 +16,6 @@ import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNaviga
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
@@ -29,6 +28,8 @@ import {
 } from 'twenty-ui/primitives/typography';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
+import { useLingui } from '@lingui/react/macro';
+
 const DEFAULT_INDENTATION_LEVEL = 1;
 const INTERACTIVE_OPTIONS_SELECTOR = doNotTranslate(
   'button, a, [role="button"]',
@@ -240,6 +241,7 @@ export const NavigationDrawerItem = ({
   variant = 'default',
   isUnread = false,
 }: NavigationDrawerItemProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
