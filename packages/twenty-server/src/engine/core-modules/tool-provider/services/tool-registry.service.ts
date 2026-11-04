@@ -7,6 +7,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -27,7 +28,6 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -198,18 +198,18 @@ export class ToolRegistryService {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
-      rolePermissionConfig: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
+      authContext?: WorkspaceAuthContext;
       application?: FlatApplication;
     },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
-      rolePermissionConfig: options.rolePermissionConfig,
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
       locale: options.locale,
+      authContext: options.authContext,
       application: options.application,
     });
 
@@ -418,14 +418,21 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, compactOutput, spillLargeOutput } =
-      options;
-
-    const descriptors = await this.getCatalog(context, {
+    const {
       categories,
       excludeTools,
-      includeSchemas: true,
-    });
+      isToolOffered = () => true,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
+
+    const descriptors = (
+      await this.getCatalog(context, {
+        categories,
+        excludeTools,
+        includeSchemas: true,
+      })
+    ).filter(isToolOffered);
 
     const toolSet = this.hydrateToolSet(descriptors, context, {
       compactOutput,
@@ -520,7 +527,7 @@ export class ToolRegistryService {
 
     return {
       ...(await context.resolveExecutionContext()),
-      explicitObjectGrantsRoleId: context.explicitObjectGrantsRoleId,
+      explicitObjectGrants: context.explicitObjectGrants,
     };
   }
 
@@ -535,7 +542,7 @@ export class ToolRegistryService {
             )
         : undefined,
       workspaceId: context.workspaceId,
-      rolePermissionConfig: context.rolePermissionConfig,
+      approvedToolName: context.approvedToolName,
       authContext: context.authContext,
       application: context.application,
       actorContext: context.actorContext,

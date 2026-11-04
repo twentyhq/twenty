@@ -21,6 +21,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   taskTarget: '20202020-5a9a-44e8-95df-771cd06d0fb1',
   person: '20202020-e674-48e5-a542-72570eee7213',
   recordShare: 'fecdb92c-d150-4544-81f8-f1158d18a7a2',
+  accessGroup: '47f4ed44-4312-467f-b6f5-787f91037a1d',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   opportunity: '20202020-9549-49dd-b2b2-883999db8938',
   note: '20202020-0b00-45cd-b6f6-6cd806fc6804',

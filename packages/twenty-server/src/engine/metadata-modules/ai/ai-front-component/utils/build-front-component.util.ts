@@ -1,3 +1,6 @@
+import { FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-core-api-client-import-specifier.constant';
+import { isDefined } from 'twenty-shared/utils';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { PageLayoutType } from 'twenty-shared/types';
 import { createHash } from 'crypto';
 import { dirname, join } from 'path';
@@ -10,7 +13,6 @@ import {
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
-import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-shared-dependencies-banner-prefix.constant';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
@@ -32,6 +34,7 @@ export const buildFrontComponent = async ({
   componentName: string;
   compiledSource: string;
   checksum: string;
+  hasSdkClientImport: boolean;
   sharedDependenciesChecksum: string;
 }> => {
   validateFrontComponentSourceOrThrow(input.source);
@@ -46,13 +49,12 @@ export const buildFrontComponent = async ({
       loader: 'tsx',
     },
     write: false,
+    metafile: true,
     platform: 'browser',
-    external: [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER],
-    banner: {
-      js:
-        FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX +
-        sharedDependencies.checksum,
-    },
+    external: [
+      FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+      FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
+    ],
     plugins: [
       {
         name: 'front-component-imports',
@@ -72,7 +74,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER} and the supported twenty-ui imports.`,
                 },
               ],
             };
@@ -98,10 +100,24 @@ export const buildFrontComponent = async ({
       }),
     ],
   });
+  if (!isDefined(result.metafile)) {
+    throw new FrontComponentBuildException({
+      message: 'Component build did not return import metadata.',
+      code: 'BUILD_FAILED',
+    });
+  }
+
   const compiledSource = result.outputFiles[0].text;
 
   return {
     source,
+    hasSdkClientImport: Object.values(result.metafile.outputs).some((output) =>
+      output.imports.some(
+        (entry) =>
+          entry.external &&
+          entry.path === FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
+      ),
+    ),
     sharedDependenciesChecksum: sharedDependencies.checksum,
     componentName: FRONT_COMPONENT_WRAPPER_NAME,
     compiledSource,

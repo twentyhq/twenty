@@ -61,6 +61,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   roleTarget: {
     role: true,
     agent: true,
+    webhook: true,
   },
   agent: {
     role: true,

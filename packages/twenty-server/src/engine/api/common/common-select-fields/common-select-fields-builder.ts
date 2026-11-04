@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
@@ -17,11 +13,54 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
-  buildFromDepth = ({
-    objectsPermissions,
+  constructor(
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+  ) {}
+
+  // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
+  async findReadableObjectMetadataIds({
+    authContext,
+    flatObjectMetadataMaps,
+  }: {
+    authContext: PermissionsAuthContext;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  }): Promise<Set<string>> {
+    const flatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    const recordAccessPolicy =
+      this.recordAccessPolicyService.forAuthContext(authContext);
+    const readableFlags = await Promise.all(
+      flatObjectMetadatas.map((flatObjectMetadata) =>
+        recordAccessPolicy.hasAccessToSomeRecords({
+          flatObjectMetadata,
+          operationType: 'select',
+        }),
+      ),
+    );
+
+    return new Set(
+      flatObjectMetadatas
+        .filter((_, index) => readableFlags[index])
+        .map((flatObjectMetadata) => flatObjectMetadata.id),
+    );
+  }
+
+  buildFromDepth({
+    recordsPermissions,
+    readableObjectMetadataIds,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatObjectMetadata,
@@ -31,7 +70,8 @@ export class CommonSelectFieldsBuilder {
     requestedFields,
     maximumDefaultFieldCount,
   }: {
-    objectsPermissions: ObjectsPermissions;
+    recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
+    readableObjectMetadataIds: ReadonlySet<string>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -42,9 +82,18 @@ export class CommonSelectFieldsBuilder {
     maximumDefaultFieldCount?: number;
   }): {
     selectedFields: CommonSelectedFields;
-  } => {
-    const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id].restrictedFields;
+  } {
+    const objectRecordsPermissions =
+      recordsPermissions.objects[flatObjectMetadata.id];
+
+    if (!isDefined(objectRecordsPermissions)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    const restrictedFields = objectRecordsPermissions.restrictedFields;
 
     const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatObjectMetadata.fieldIds,
@@ -85,7 +134,8 @@ export class CommonSelectFieldsBuilder {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
-      objectsPermissions,
+      recordsPermissions,
+      readableObjectMetadataIds,
       depth,
       onlyUseLabelIdentifierFieldsInRelations,
       recurseIntoJunctionTableRelations,
@@ -104,7 +154,7 @@ export class CommonSelectFieldsBuilder {
         ...relationsSelectFields,
       },
     };
-  };
+  }
 
   private validateRequestedFields({
     requestedFields,

@@ -17,6 +17,7 @@ import {
   type ViewFilterManifest,
   type ViewGroupManifest,
   type ViewManifest,
+  type RelatedRecordPathManifest,
   type SkillManifest,
   type ViewSortManifest,
   type WorkflowManifest,
@@ -41,6 +42,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
+import { fromFlatRelatedRecordPathToRelatedRecordPathManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-related-record-path-to-related-record-path-manifest.util';
+import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-skill-to-skill-manifest.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
@@ -229,6 +232,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   color: 'green',
   position: 12,
   link: 'https://example.com/pets',
+  nativePageKey: 'workflows',
   folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
@@ -339,6 +343,9 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     position: 0,
   };
 
+const PREDICATE_GROUP_OPERATIONS_GAP =
+  'not in app manifests until the engine reads predicate group operations';
+
 const ROW_LEVEL_PERMISSION_KIND_GAPS = {
   deletedAt:
     'soft-deleted row-level permission predicates and groups are reported as excluded instead of exported',
@@ -434,6 +441,15 @@ const SKILL_MANIFEST: SkillManifest = {
   icon: 'IconBrain',
   description: 'Guides an outreach',
   content: 'Research the company first.',
+};
+
+const RELATED_RECORD_PATH_MANIFEST: RelatedRecordPathManifest = {
+  universalIdentifier: APP_UID,
+  objectUniversalIdentifier: OBJECT_UID,
+  firstFieldMetadataUniversalIdentifier: FIELD_UID,
+  secondFieldMetadataUniversalIdentifier: FIELD_UID,
+  thirdFieldMetadataUniversalIdentifier: FIELD_UID,
+  isInherent: true,
 };
 
 type ExportedKind = {
@@ -797,7 +813,13 @@ const EXPORTED_KINDS: ExportedKind[] = [
       positionInRowLevelPermissionPredicateGroup: 'position',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      canReadRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+    },
   },
   {
     metadataName: 'rowLevelPermissionPredicate',
@@ -822,7 +844,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'workspaceMemberFieldUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      relationFieldMetadataUniversalIdentifier:
+        'no manifest slot yet for a predicate reached through a relation',
+    },
   },
   {
     metadataName: 'permissionFlag',
@@ -877,6 +903,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'member role assignments are reported as excluded, only agent roles are exported',
       apiKeyId:
         'API key role assignments are reported as excluded, only agent roles are exported',
+      webhookUniversalIdentifier:
+        'webhook role assignments are reported as excluded, only agent roles are exported',
     },
   },
   {
@@ -896,6 +924,24 @@ const EXPORTED_KINDS: ExportedKind[] = [
       isSystem:
         'always false for application skills; any other value is reported as unsupported',
     },
+  },
+  {
+    metadataName: 'relatedRecordPath',
+    emittedProperties: Object.keys(
+      fromFlatRelatedRecordPathToRelatedRecordPathManifest({
+        flatRelatedRecordPath:
+          fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath({
+            relatedRecordPathManifest: RELATED_RECORD_PATH_MANIFEST,
+            applicationUniversalIdentifier: APP_UID,
+            now: NOW,
+          }),
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+    },
+    workspaceLocalProperties: [],
+    knownGaps: {},
   },
 ];
 

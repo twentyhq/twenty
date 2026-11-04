@@ -41,6 +41,7 @@ import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nul
 )
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
+@Index('IDX_FILE_TEMPORARY_EXPIRES_AT', { synchronize: false })
 @Unique('IDX_FILE_APPLICATION_ID_WORKSPACE_ID_PATH_UNIQUE', [
   'applicationId',
   'workspaceId',

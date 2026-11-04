@@ -35,6 +35,7 @@ const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
 const STANDALONE_MODULES = [
   'assets',
   'components/code-editor',
+  'icon/provider',
   'styles',
   'testing',
 ];

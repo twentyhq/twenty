@@ -7,7 +7,7 @@ type WorkflowAiAgentPermissionsFlagListProps = {
   permissions: SettingsRolePermissionsSettingPermission[];
   enabledPermissionFlagKeys: string[];
   readonly: boolean;
-  showDeleteButton?: boolean;
+  shouldShowDeleteButton?: boolean;
   onAddPermissionFlag?: (permissionKey: string) => void;
   onDeletePermissionFlag?: (permissionKey: string) => void;
 };
@@ -17,7 +17,7 @@ export const WorkflowAiAgentPermissionsFlagList = ({
   permissions,
   enabledPermissionFlagKeys,
   readonly,
-  showDeleteButton = false,
+  shouldShowDeleteButton = false,
   onAddPermissionFlag,
   onDeletePermissionFlag,
 }: WorkflowAiAgentPermissionsFlagListProps) => {
@@ -36,7 +36,7 @@ export const WorkflowAiAgentPermissionsFlagList = ({
             permission={permission}
             isEnabled={isEnabled}
             readonly={readonly}
-            showDeleteButton={showDeleteButton}
+            shouldShowDeleteButton={shouldShowDeleteButton}
             onAdd={() => onAddPermissionFlag?.(permission.key)}
             onDelete={() => onDeletePermissionFlag?.(permission.key)}
           />

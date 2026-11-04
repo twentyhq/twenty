@@ -29,6 +29,18 @@ export const slackPostMessageInputSchema: InputJsonSchema = {
       description:
         'Optional. `markdown`: send as Slack `markdown_text` so usual Markdown in `messageText` works (**bold**, lists, fenced code). `plain`: send as `text` with `mrkdwn: false` (no markup). Omit: send as `text` and let Slack use its default (legacy mrkdwn may still apply in `text`).',
     },
+    unfurlLinks: {
+      type: 'boolean',
+      label: 'Unfurl links',
+      description:
+        'Optional. Set to false to post without the link preview card.',
+    },
+    unfurlMedia: {
+      type: 'boolean',
+      label: 'Unfurl media',
+      description:
+        'Optional. Set to false to post without inline media previews.',
+    },
   },
   required: ['slackChannelId', 'messageText'],
   additionalProperties: false,

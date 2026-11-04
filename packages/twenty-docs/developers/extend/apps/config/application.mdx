@@ -48,10 +48,10 @@ Notes:
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables. A variable with `scope: 'USER'` holds the value of the member the code runs for: see [Workspace and user variables](#workspace-and-user-variables).
 - Your app can also read and update its own variable values at runtime, which is how a custom settings component saves what the user typed: see [Reading and updating variables at runtime](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). An application only ever reaches its own variables, in its own workspace.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
-- Pre-install, post-install, and uninstall functions, and the health check, are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+- Pre-install, post-install, and uninstall functions, and health checks, are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
-- An app can report its own configuration state with [`defineHealthCheck()`](/developers/extend/apps/logic/logic-functions#health-check), for what only the app can know — a key that is present but revoked, a third-party account on the wrong plan. `isRequired` covers what Twenty can see by itself; the health check covers the rest.
+- An app can report its own configuration state with [`defineHealthCheck()`](/developers/extend/apps/logic/logic-functions#health-check), for what only the app can know — a key that is present but revoked, a third-party account on the wrong plan. `isRequired` covers what Twenty can see by itself; the health check covers the rest. Set `runOnUserPreferences: true` to check each member's own setup on their Apps preferences page instead of workspace app settings. Omitting the option or setting it to `false` keeps the existing workspace check.
 - Both kinds of variable accept `isRequired: true`. A required variable the workspace has not filled in yet leaves the app unconfigured: its settings page shows a banner naming the missing variables, with a button that jumps to the tab where they are set. Mark as required only what the app genuinely cannot run without — an optional variable with a sensible default should stay optional.
 - Both kinds of variable accept `isDeprecated: true`. Use it to retire a variable instead of deleting it: keeping the key declared preserves the stored value (deleting it destroys the value the operator entered), and the variable is still injected, so your code can fall back to it — `process.env.NEW_API_KEY ?? process.env.API_KEY`. A deprecated variable disappears from the app's settings once it has no value, and never counts toward the app's configuration check, so `isDeprecated` beats `isRequired`.
 - Twenty sets these names for every logic function run, so they are reserved: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID`. Every other name starting with `TWENTY_` is reserved too, for variables Twenty adds later. A manifest that declares a reserved name as an application or server variable is rejected when the app is synced or published.
@@ -77,6 +77,29 @@ Declared capabilities appear during installation. Approval requires a workspace 
 An installed app without the required grant pauses capture and shows an approval dialog on first use, including older apps without capability declarations. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically grant additional access. Locally synced development apps receive the capabilities declared in their manifest.
 
 See [Media capture](/developers/extend/apps/layout/front-components#media-capture) for capture behavior and recording indicators.
+
+## Embedded website media access
+
+Set `requestedIframeMediaPermissions` when a front component or an `IFRAME` page layout widget embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately. Origins must be unique, contain no path or wildcard, and request at least one of microphone or camera access.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Phone',
+  description: 'Call your contacts from Twenty',
+  requestedIframeMediaPermissions: [
+    { origin: 'https://workspace.aircall.io', microphone: true, camera: false },
+  ],
+});
+```
+
+Declared websites appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace, for the app's own front components and iframe widgets. Workspace security approvals apply only to widgets created in the workspace. Locally synced development apps receive the websites declared in their manifest. These grants do not replace browser or operating system permissions. Browser headers have a size limit, so if a workspace's websites exceed it, workspace-approved websites come first and the remaining websites do not receive media access.
+
+Updates to published apps preserve existing grants and do not automatically grant additional media access. To approve new requests, a member who can manage apps opens the installed app's **General** tab and selects **Review media access** under **Embedded website media access**. This approval uses a native browser confirmation showing the app, website origins, and requested microphone or camera access. After approving, reload open Twenty tabs to apply the updated permissions.
+
+See [Embedded websites with media access](/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) for the iframe requirements.
 
 ## Variable types
 

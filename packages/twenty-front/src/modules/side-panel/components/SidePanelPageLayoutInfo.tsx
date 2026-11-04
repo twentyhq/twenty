@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -19,9 +18,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
@@ -39,6 +39,7 @@ export const SidePanelPageLayoutInfo = ({
 }: {
   pageLayoutId: string;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);

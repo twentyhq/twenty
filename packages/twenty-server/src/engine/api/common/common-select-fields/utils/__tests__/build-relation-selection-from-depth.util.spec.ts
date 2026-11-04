@@ -172,12 +172,12 @@ const buildArgs = (
     flatFields: fields.filter((field) =>
       opportunity.fieldIds.includes(field.id),
     ),
-    objectsPermissions: Object.fromEntries(
-      objects.map((object) => [
-        object.id,
-        { canReadObjectRecords: true, restrictedFields: {} },
-      ]),
-    ),
+    recordsPermissions: {
+      objects: Object.fromEntries(
+        objects.map((object) => [object.id, { restrictedFields: {} }]),
+      ),
+    },
+    readableObjectMetadataIds: new Set(objects.map((object) => object.id)),
     depth,
   };
 };

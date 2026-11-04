@@ -7,7 +7,7 @@ import {
 } from 'test/integration/graphql/suites/application-role-intersection/utils/create-workspace-blocklist-entry.util';
 import { deleteBlocklistEntryThroughMcp } from 'test/integration/graphql/suites/application-role-intersection/utils/delete-blocklist-entry-through-mcp.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
-import { findObjectMetadataIdByName } from 'test/integration/graphql/suites/application-role-intersection/utils/find-object-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { workspaceBlocklistEntryExists } from 'test/integration/graphql/suites/application-role-intersection/utils/read-target-state.util';
 import {
   cleanupDelegatedApplications,
@@ -26,7 +26,7 @@ import { updateOneView } from 'test/integration/metadata/suites/view/utils/updat
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const findWorkspaceMemberIdByEmail = async (

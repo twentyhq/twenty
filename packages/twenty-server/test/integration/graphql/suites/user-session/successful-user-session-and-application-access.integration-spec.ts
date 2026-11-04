@@ -354,7 +354,7 @@ describe('User session operations and application access that must keep working'
     });
 
     // Billing is off in the integration environment, so the mutation cannot
-    // complete; what this asserts is that AuthPrincipalGuard is not what
+    // complete; what this asserts is that the access policy is not what
     // stopped it, leaving checkoutSession on its permission path.
     it('should reach the checkout session permission path', async () => {
       const { errors } = await checkoutSession({

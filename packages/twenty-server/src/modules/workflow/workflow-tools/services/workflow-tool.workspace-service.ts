@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
@@ -11,9 +12,9 @@ import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflo
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { createActivateWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/activate-workflow-version.tool';
 import { createComputeStepOutputSchemaTool } from 'src/modules/workflow/workflow-tools/tools/compute-step-output-schema.tool';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
@@ -30,7 +31,6 @@ import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/to
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
 import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 import { createListWorkflowsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflows.tool';
-import { createUpdateWorkflowAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-agent.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
@@ -57,6 +57,7 @@ export class WorkflowToolWorkspaceService {
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     agentService: AgentService,
+    workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
   ) {
     this.deps = {
       coreWorkflowListService,
@@ -70,22 +71,23 @@ export class WorkflowToolWorkspaceService {
       logicFunctionFromSourceService,
       flatEntityMapsCacheService,
       agentService,
+      workflowAiAgentStepAgentService,
     };
   }
 
   generateWorkflowTools({
     workspaceId,
-    rolePermissionConfig,
+    authContext,
     userWorkspaceId,
   }: {
     workspaceId: string;
-    rolePermissionConfig: RolePermissionConfig;
+    authContext: WorkspaceAuthContext;
     userWorkspaceId?: string;
   }): ToolSet {
     const context: WorkflowToolContext = {
       workspaceId,
-      rolePermissionConfig,
       userWorkspaceId,
+      authContext,
     };
 
     const tools = [
@@ -109,7 +111,6 @@ export class WorkflowToolWorkspaceService {
       createGetLogicFunctionSourceTool(this.deps, context),
       createUpdateLogicFunctionSourceTool(this.deps, context),
       createListLogicFunctionToolsTool(this.deps, context),
-      createUpdateWorkflowAgentTool(this.deps, context),
       createValidateWorkflowTool(this.deps, context),
     ];
 

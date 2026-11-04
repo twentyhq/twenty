@@ -11,7 +11,7 @@ export const useAddBuiltInAccount = () => {
     if (
       builtInAccountApp.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV
     ) {
-      navigateSettings(SettingsPath.NewImapSmtpCaldavConnection);
+      navigateSettings(SettingsPath.AppPreferencesNewImapSmtpCaldavConnection);
       return;
     }
 

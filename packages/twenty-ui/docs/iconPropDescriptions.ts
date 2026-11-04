@@ -1,6 +1,6 @@
 import { type ComponentProps } from 'react';
 
-import { type Icon } from '../src/icon/components/Icon';
+import { type Icon } from '../src/icon/provider/components/Icon';
 
 export const ICON_PROP_DESCRIPTIONS = {
   name: 'Icon name resolved through IconsProvider. Unknown names fall back to Icon123.',

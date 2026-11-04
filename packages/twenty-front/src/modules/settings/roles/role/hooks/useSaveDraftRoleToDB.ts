@@ -338,6 +338,7 @@ export const useSaveDraftRoleToDB = ({
             predicates: objectPredicates.map((predicate) => ({
               id: predicate.id,
               fieldMetadataId: predicate.fieldMetadataId,
+              relationFieldMetadataId: predicate.relationFieldMetadataId,
               operand: predicate.operand as RowLevelPermissionPredicateOperand,
               value: predicate.value,
               subFieldName: predicate.subFieldName,

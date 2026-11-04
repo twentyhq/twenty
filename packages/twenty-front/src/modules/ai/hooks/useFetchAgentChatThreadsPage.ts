@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,6 +20,7 @@ import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/t
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
+import { logError } from '~/utils/logError';
 
 export const useFetchAgentChatThreadsPage = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -36,7 +37,7 @@ export const useFetchAgentChatThreadsPage = () => {
     }) => {
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
-          objectName: CoreObjectNameSingular.AgentChatThread,
+          objectName: StandardObjectNameSingular.AgentChatThread,
           objectNameType: 'singular',
         }),
       );
@@ -70,7 +71,11 @@ export const useFetchAgentChatThreadsPage = () => {
           },
           fetchPolicy: 'network-only',
         })
-        .catch(() => undefined);
+        .catch((error) => {
+          logError(error);
+
+          return undefined;
+        });
 
       const connection = result?.data?.[chatObjectMetadataItem.namePlural];
 

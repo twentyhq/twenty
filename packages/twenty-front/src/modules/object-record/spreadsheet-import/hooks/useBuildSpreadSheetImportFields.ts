@@ -1,5 +1,4 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
-import { t } from '@lingui/core/macro';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -23,8 +22,9 @@ import {
   getUniqueConstraintsFields,
   isDefined,
 } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const getSourceLocaleAlternateMatches = ({
   label,
@@ -36,6 +36,7 @@ const getSourceLocaleAlternateMatches = ({
   label === sourceLocaleLabel ? {} : { alternateMatches: [sourceLocaleLabel] };
 
 export const useBuildSpreadsheetImportFields = () => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 

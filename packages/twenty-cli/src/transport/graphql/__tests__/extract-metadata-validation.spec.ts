@@ -45,11 +45,13 @@ describe('extractMetadataValidation', () => {
         {
           metadataName: 'fieldMetadata',
           entityLabel: 'invalidField',
+          code: 'INVALID_NAME',
           message: 'Field name "123" is invalid',
         },
         {
           metadataName: 'fieldMetadata',
           entityLabel: 'status',
+          code: 'DUPLICATE',
           message: 'A field with this name already exists',
         },
       ],
@@ -90,6 +92,59 @@ describe('extractMetadataValidation', () => {
         },
       ]),
     ).toEqual({ errors: [] });
+  });
+
+  it('keeps valid messages when optional diagnostics are malformed', () => {
+    const { errors } = extractMetadataValidation([
+      {
+        extensions: {
+          code: 'METADATA_VALIDATION_FAILED',
+          errors: {
+            fieldMetadata: [
+              {
+                errors: [
+                  null,
+                  { code: 'INVALID', message: 42 },
+                  { message: 'Missing code' },
+                  {
+                    code: 42,
+                    message: 'Invalid code',
+                    userFriendlyMessage: {},
+                  },
+                  {
+                    code: 'INVALID_NAME',
+                    message: 'Invalid characters',
+                    userFriendlyMessage: 'Name is invalid',
+                    value: 'private-value',
+                  },
+                ],
+                flatEntityMinimalInformation: { name: 'status' },
+              },
+            ],
+          },
+        },
+      },
+    ]);
+
+    expect(errors).toEqual([
+      {
+        metadataName: 'fieldMetadata',
+        entityLabel: 'status',
+        message: 'Missing code',
+      },
+      {
+        metadataName: 'fieldMetadata',
+        entityLabel: 'status',
+        message: 'Invalid code',
+      },
+      {
+        metadataName: 'fieldMetadata',
+        entityLabel: 'status',
+        code: 'INVALID_NAME',
+        message: 'Invalid characters',
+        userFriendlyMessage: 'Name is invalid',
+      },
+    ]);
   });
 
   it('ignores a breakdown without the validation-failed code', () => {

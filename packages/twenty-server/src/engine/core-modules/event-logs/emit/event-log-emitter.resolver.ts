@@ -17,7 +17,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 import { Analytics } from './dtos/analytics.dto';
@@ -27,6 +26,7 @@ import {
   isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
 import { EventLogEmitterService } from './event-log-emitter.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)
@@ -42,18 +42,20 @@ export class EventLogEmitterResolver {
 
   @Mutation(() => Analytics)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
       },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
+      requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async createObjectEvent(
     @Args()

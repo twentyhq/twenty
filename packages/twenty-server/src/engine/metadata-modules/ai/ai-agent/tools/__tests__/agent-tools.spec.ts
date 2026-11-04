@@ -6,6 +6,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
@@ -17,7 +18,8 @@ import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -50,9 +52,11 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
-  },
+  authContext: {
+    type: 'user',
+    workspace: { id: workspaceId },
+    userSessionVariant: 'standard',
+  } as UserWorkspaceAuthContext,
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,
@@ -94,7 +98,7 @@ const buildAgentTools = (options?: {
     }),
   };
   const permissionsService = {
-    checkRolesPermissions: jest
+    hasPermissionFlag: jest
       .fn()
       .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
   };
@@ -108,7 +112,6 @@ const buildAgentTools = (options?: {
   const manageableAgentService = new ManageableAgentService(
     agentService as unknown as AgentService,
     applicationService as unknown as ApplicationService,
-    workspaceCacheService as unknown as WorkspaceCacheService,
   );
 
   const tools = [
@@ -125,6 +128,7 @@ const buildAgentTools = (options?: {
     new DeleteAgentTool(
       agentService as unknown as AgentService,
       manageableAgentService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
     ),
   ];
 
@@ -133,7 +137,10 @@ const buildAgentTools = (options?: {
       getProviders: () =>
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
-    permissionsService as unknown as PermissionsService,
+    new AccessPolicyService(
+      permissionsService as unknown as PermissionsService,
+      featureFlagService as unknown as FeatureFlagService,
+    ),
     featureFlagService as unknown as FeatureFlagService,
   );
 
@@ -176,33 +183,16 @@ const buildAgentTools = (options?: {
   };
 };
 
-const workflowVersionsWithAgentStep = {
-  flatWorkflowVersionMaps: {
-    byUniversalIdentifier: {
-      'workflow-version-id': {
-        steps: [
-          {
-            type: WorkflowActionType.AI_AGENT,
-            settings: { input: { agentId } },
-          },
-        ],
-      },
-    },
-  },
-};
-
 describe('Agent tools', () => {
   describe('availability', () => {
     it('is available when the caller has the AI settings permission', async () => {
       const { listToolNames, permissionsService } = buildAgentTools();
 
       await expect(listToolNames()).resolves.toHaveLength(4);
-      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledTimes(1);
-      expect(permissionsService.checkRolesPermissions).toHaveBeenCalledWith(
-        context.rolePermissionConfig,
-        workspaceId,
-        PermissionFlagType.AI_SETTINGS,
-      );
+      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+        authContext: context.authContext,
+        setting: PermissionFlagType.AI_SETTINGS,
+      });
     });
 
     it('is not available without the AI settings permission', async () => {
@@ -231,7 +221,7 @@ describe('Agent tools', () => {
         success: false,
         message: 'Tool "list_agents" is not available',
       });
-      expect(permissionsService.checkRolesPermissions).not.toHaveBeenCalled();
+      expect(permissionsService.hasPermissionFlag).not.toHaveBeenCalled();
       expect(agentService.findManyAgents).not.toHaveBeenCalled();
     });
   });
@@ -421,23 +411,6 @@ describe('Agent tools', () => {
         workspaceId,
       });
     });
-
-    it('refuses to change an agent backing a workflow step', async () => {
-      const { executeTool, agentService, workspaceCacheService } =
-        buildAgentTools();
-
-      workspaceCacheService.getOrRecompute.mockResolvedValue(
-        workflowVersionsWithAgentStep,
-      );
-
-      await expect(
-        executeTool({
-          toolName: 'update_agent',
-          args: { id: agentId, prompt: 'Something else' },
-        }),
-      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-      expect(agentService.updateOneAgent).not.toHaveBeenCalled();
-    });
   });
 
   describe('delete_agent', () => {
@@ -457,13 +430,24 @@ describe('Agent tools', () => {
       );
     });
 
-    it('refuses to delete an agent backing a workflow step', async () => {
+    it('refuses to delete a reusable agent that workflow steps run', async () => {
       const { executeTool, agentService, workspaceCacheService } =
         buildAgentTools();
 
-      workspaceCacheService.getOrRecompute.mockResolvedValue(
-        workflowVersionsWithAgentStep,
-      );
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkflowVersionMaps: {
+          byUniversalIdentifier: {
+            'workflow-version-id': {
+              steps: [
+                {
+                  type: WorkflowActionType.AI_AGENT,
+                  settings: { input: { agentId } },
+                },
+              ],
+            },
+          },
+        },
+      });
 
       await expect(
         executeTool({ toolName: 'delete_agent', args: { id: agentId } }),

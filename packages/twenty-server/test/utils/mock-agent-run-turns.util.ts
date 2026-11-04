@@ -28,6 +28,8 @@ export const buildAgentExecutionResult = (
     stopReason: null,
     modelId: 'test-model',
     steps: [],
+    totalCostInDollars: 0,
+    creditsUsedMicro: 0,
     ...overrides,
   }) as AgentExecutionResult;
 
@@ -129,6 +131,7 @@ export const mockAgentRunTurns = (
     startTurn.mockImplementationOnce(async () => ({
       turn: {} as never,
       spenders: {},
+      isStructuredOutputInSameRequest: false,
       source: {
         parts: new ReadableStream({
           start: (controller) => {

@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectRecord,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
@@ -11,6 +8,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
 // TODO(@charlesBochet): replace with row-level security once it can express channel visibility
@@ -37,14 +35,14 @@ export class CommonRecordVisibilityService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    objectsPermissions,
+    recordsPermissions,
   }: {
     records: ObjectRecord[];
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
-    objectsPermissions: ObjectsPermissions;
+    recordsPermissions: RoleRecordsPermissions;
   }): Promise<void> {
     if (this.handlersByObjectNameSingular.size === 0 || records.length === 0) {
       return;
@@ -67,7 +65,7 @@ export class CommonRecordVisibilityService {
         ?.applyVisibilityRestrictions({
           records: collectedRecords,
           authContext,
-          objectsPermissions,
+          recordsPermissions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         });

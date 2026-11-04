@@ -22,7 +22,6 @@ import {
   type FieldMetadataSettings,
   FieldMetadataType,
   type FieldMetadataDefaultValue,
-  MetadataWritability,
 } from 'twenty-shared/types';
 import { type FieldPermissionAction } from 'twenty-shared/application';
 
@@ -93,10 +92,10 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isUIEditable?: boolean;
 
-  @IsEnum(MetadataWritability)
+  @IsBoolean()
   @IsOptional()
-  @Field(() => MetadataWritability, { nullable: true })
-  writability?: MetadataWritability;
+  @Field({ nullable: true })
+  isSystemSideEffect?: boolean;
 
   @Field(() => [String], { nullable: true })
   disabledFieldPermissionActions?: FieldPermissionAction[] | null;

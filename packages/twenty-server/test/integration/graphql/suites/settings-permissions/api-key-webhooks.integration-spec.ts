@@ -1,7 +1,7 @@
 import request from 'supertest';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -34,7 +34,7 @@ describe('api key and webhooks permissions', () => {
     });
 
     // Non-ACCESS tokens (API_KEY here, PLAYGROUND same path) must never mint
-    // an API key, which the resolver's AuthPrincipalGuard enforces.
+    // an API key, which the resolver's access policy enforces.
     it('should reject a non-ACCESS token even with API key permission', async () => {
       const queryData = {
         query: `

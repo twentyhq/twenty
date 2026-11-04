@@ -508,7 +508,7 @@ Cada conexión tiene uno de dos ámbitos:
 El `scope` del proveedor determina cuál reciben sus nuevas conexiones:
 
 * `scope: 'WORKSPACE'` (el predeterminado) — la aplicación funciona con conexiones compartidas con el espacio de trabajo. **Agregar conexión** en la configuración del espacio de trabajo de la aplicación crea una conexión compartida con el espacio de trabajo.
-* `scope: 'USER'` — cada miembro conecta su propia cuenta, creando conexiones personales. Los miembros las agregan, reconectan y eliminan desde la página de la app en **Configuración > Usuario > Preferencias de apps**, lo que requiere el permiso `CONNECTED_ACCOUNTS` (Apps de usuario). La configuración del espacio de trabajo de la aplicación no tiene un botón **Agregar conexión** para un proveedor `USER`.
+* `scope: 'USER'` — cada miembro conecta su propia cuenta, creando conexiones personales. Los miembros las añaden, reconectan y eliminan desde la página de la aplicación en **Configuración > Usuario > Preferencias de aplicaciones**, lo que requiere el permiso Aplicaciones de usuario. La configuración del espacio de trabajo de la aplicación no tiene un botón **Agregar conexión** para un proveedor `USER`.
 
 <Note>
   **Preferencias de apps** aún no está habilitado en todos los espacios de trabajo: donde no lo está,
@@ -520,7 +520,7 @@ Un proveedor tiene exactamente un ámbito. Si tu aplicación necesita tanto una 
 
 Una conexión siempre tiene el ámbito de su proveedor, y el ámbito de un proveedor forma parte de su identidad: una versión posterior no puede cambiar el `scope` de un proveedor existente, y la actualización se rechaza si lo intenta. Para mover un servicio de un ámbito a otro, declare un proveedor nuevo con un `universalIdentifier` nuevo y elimine el anterior. La actualización elimina entonces el proveedor anterior y todas las conexiones realizadas con él mediante la ruta de desconexión habitual (`onDisconnectLogicFunction`, revocación de tokens, limpieza de canales), y los miembros se conectan de nuevo mediante el proveedor nuevo.
 
-Agregar o volver a conectar una conexión **Solo para mí** requiere el permiso `CONNECTED_ACCOUNTS`, y agregar o volver a conectar una conexión **Compartida con el espacio de trabajo** requiere el permiso `APPLICATIONS`.
+Para añadir o reconectar una conexión **Solo para mí** se requiere el permiso Aplicaciones de usuario, y para añadir o reconectar una conexión **Compartida en el espacio de trabajo** se requiere el permiso Aplicaciones del espacio de trabajo.
 
 Usa la conexión adecuada para cada controlador:
 

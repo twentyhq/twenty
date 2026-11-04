@@ -31,6 +31,8 @@ export type {
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
+export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
@@ -73,7 +75,6 @@ export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { ContextStorePageType } from './ContextStorePageType';
-export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
 export type { EmailConnectionParameters } from './EmailConnectionParameters';
@@ -150,6 +151,7 @@ export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IframeMediaPermission } from './IframeMediaPermission';
 export type { IndexOf } from './IndexOf';
 export { IndexType } from './IndexType';
 export type { IsEmptyObject } from './IsEmptyObject';
@@ -178,6 +180,8 @@ export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignat
 export { MetadataReadability } from './MetadataReadability';
 export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NativePageKey } from './NativePageKey';
+export { NATIVE_PAGE_KEYS } from './NativePageKey';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -198,7 +202,6 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export { ObjectSharingReach } from './ObjectSharingReach';
 export type { ObjectsPermissions } from './ObjectsPermissions';
-export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
@@ -326,6 +329,7 @@ export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
+export { StandardObjectNameSingular } from './StandardObjectNameSingular';
 export type {
   StepFilterGroup,
   StepFilter,

@@ -1,6 +1,6 @@
-import { currentUserWorkspaceObjectsPermissionsSelector } from '@/auth/states/currentUserWorkspaceObjectsPermissionsSelector';
+import { currentUserWorkspaceObjectRecordsPermissionsSelector } from '@/auth/states/currentUserWorkspaceObjectRecordsPermissionsSelector';
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
-import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
+import { getObjectPermissionsFromObjectRecordsPermissions } from '@/object-metadata/utils/getObjectPermissionsFromObjectRecordsPermissions';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -9,43 +9,16 @@ export const objectPermissionsByObjectMetadataIdSelector =
     key: 'objectPermissionsByObjectMetadataIdSelector',
     areEqual: isDeeplyEqual,
     get: ({ get }) => {
-      const objectsPermissions =
-        get(currentUserWorkspaceObjectsPermissionsSelector) ?? [];
+      const allObjectRecordsPermissions =
+        get(currentUserWorkspaceObjectRecordsPermissionsSelector) ?? [];
 
       return Object.fromEntries(
-        objectsPermissions.map((objectPermissions) => {
-          const defaultObjectPermissions = getDefaultObjectPermissions(
-            objectPermissions.objectMetadataId,
-          );
-
-          return [
-            objectPermissions.objectMetadataId,
-            {
-              objectMetadataId: objectPermissions.objectMetadataId,
-              canReadObjectRecords:
-                objectPermissions.canReadObjectRecords ??
-                defaultObjectPermissions.canReadObjectRecords,
-              canUpdateObjectRecords:
-                objectPermissions.canUpdateObjectRecords ??
-                defaultObjectPermissions.canUpdateObjectRecords,
-              canSoftDeleteObjectRecords:
-                objectPermissions.canSoftDeleteObjectRecords ??
-                defaultObjectPermissions.canSoftDeleteObjectRecords,
-              canDestroyObjectRecords:
-                objectPermissions.canDestroyObjectRecords ??
-                defaultObjectPermissions.canDestroyObjectRecords,
-              restrictedFields:
-                objectPermissions.restrictedFields ??
-                defaultObjectPermissions.restrictedFields,
-              rowLevelPermissionPredicates:
-                objectPermissions.rowLevelPermissionPredicates ??
-                defaultObjectPermissions.rowLevelPermissionPredicates,
-              rowLevelPermissionPredicateGroups:
-                objectPermissions.rowLevelPermissionPredicateGroups ??
-                defaultObjectPermissions.rowLevelPermissionPredicateGroups,
-            },
-          ];
-        }),
+        allObjectRecordsPermissions.map((objectRecordsPermissions) => [
+          objectRecordsPermissions.objectMetadataId,
+          getObjectPermissionsFromObjectRecordsPermissions({
+            objectRecordsPermissions,
+          }),
+        ]),
       );
     },
   });

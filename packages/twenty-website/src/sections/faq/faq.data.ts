@@ -13,7 +13,7 @@ export const FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`How long does it take to get started?`,
-    answer: msg`Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks.`,
+    answer: msg`Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need.`,
   },
   {
     question: msg`Can I migrate from Salesforce or HubSpot?`,

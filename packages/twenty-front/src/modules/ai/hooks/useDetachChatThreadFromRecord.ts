@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -7,7 +7,7 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 export const useDetachChatThreadFromRecord = () => {
   const { enqueueToast } = useToast();
   const { deleteManyRecords: deleteLinks } = useDeleteManyRecords({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
   });
 
   // A custom leg has no unique index, so there can be several links.

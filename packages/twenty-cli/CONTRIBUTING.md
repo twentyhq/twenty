@@ -49,6 +49,7 @@ changed server workflows against a disposable workspace when appropriate.
 | `src/config`, `src/target`, `src/oauth` | Saved connections, target selection and authentication |
 | `src/transport` | HTTP/GraphQL requests, proxy routing, limits and cancellation |
 | `src/metadata`, `src/data` | Workspace metadata inspection and record reads |
+| `src/local` | Local development instance lifecycle, Docker subprocesses, image selection and readiness |
 | `src/doctor` | Read-only setup and connection diagnostics |
 | `src/app` | Project tooling and application lifecycle, see its [module map](src/app/README.md) |
 | `src/input`, `src/output` | Input parsing, human/JSON/NDJSON output and error contracts |

@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { BackgroundMockTableRow } from '@/sign-in-background-mock/components/BackgroundMockTableRow';
 import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/BackgroundMockColumns';
 import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableWrapper = styled.div`
   display: flex;
@@ -148,6 +148,7 @@ const StyledLastEmptyCell = styled.div`
 `;
 
 export const BackgroundMockTable = () => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
 

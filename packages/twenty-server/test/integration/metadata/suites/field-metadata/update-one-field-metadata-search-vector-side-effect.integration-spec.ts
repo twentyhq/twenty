@@ -22,7 +22,7 @@ const findSearchVectorGinIndexDefinitions = async (
     `SELECT indexdef FROM pg_indexes
      WHERE schemaname = $1 AND tablename = $2
        AND indexdef ILIKE '%using gin%'
-       AND indexdef ILIKE '%searchVector%'`,
+       AND indexdef ILIKE '%("searchVector")%'`,
     [TEST_SCHEMA_NAME, tableName],
   );
 

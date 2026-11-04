@@ -19,7 +19,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { Select } from '@/ui/input/components/Select';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
@@ -27,14 +26,12 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsBuiltInAccountApp = () => {
   const { t } = useLingui();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
-  const { builtInAccountAppId } = useParams<{ builtInAccountAppId: string }>();
+  const { applicationId: builtInAccountAppId } = useParams<{
+    applicationId: string;
+  }>();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const app = enabledBuiltInAccountApps.find(
     (enabledApp) => enabledApp.id === builtInAccountAppId,
@@ -80,8 +77,10 @@ export const SettingsBuiltInAccountApp = () => {
     tabs.map((tab) => tab.id),
   );
 
-  if (!isAppPreferencesEnabled || !isDefined(app)) {
-    return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
+  if (!isDefined(app)) {
+    return (
+      <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
+    );
   }
 
   const appName = t(app.name);
@@ -189,7 +188,7 @@ export const SettingsBuiltInAccountApp = () => {
         },
         {
           children: t`Apps preferences`,
-          href: getSettingsPath(SettingsPath.Accounts),
+          href: getSettingsPath(SettingsPath.AppPreferences),
         },
         { children: appName },
       ]}

@@ -38,7 +38,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   const [isCreatePending, setIsCreatePending] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { enqueueToast } = useToast();
-  const { createRecordWithOptionalForm } = useRecordCreationForm();
+  const { requestRecordCreation } = useRecordCreationForm();
   const { buildRecordInputFromRLSPredicates } =
     useBuildRecordInputFromRLSPredicates();
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -121,7 +121,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
       setIsCreatePending(true);
 
       try {
-        const targetRecord = await createRecordWithOptionalForm({
+        const targetRecord = await requestRecordCreation({
           objectMetadataItem: targetObjectMetadataItem,
           initialDraftRecord: {
             ...buildRecordInputFromRLSPredicates({
@@ -155,7 +155,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
     [
       buildRecordInputFromRLSPredicates,
       createJunctionRecord,
-      createRecordWithOptionalForm,
+      requestRecordCreation,
       enqueueToast,
       junctionConfig,
       objectMetadataItems,

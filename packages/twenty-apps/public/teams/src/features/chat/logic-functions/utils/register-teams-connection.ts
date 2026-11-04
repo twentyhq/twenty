@@ -6,6 +6,7 @@ import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/b
 import { fetchTeamsTenantId } from 'src/features/chat/logic-functions/utils/fetch-teams-tenant-id';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { releaseTeamsConnectionTenant } from 'src/features/chat/logic-functions/utils/release-teams-connection-tenant';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 
 export const registerTeamsConnection = async ({
   connectedAccountId,
@@ -17,13 +18,15 @@ export const registerTeamsConnection = async ({
     ? await getConnection(connectedAccountId)
     : undefined;
 
-  if (connection?.visibility !== 'workspace') {
+  if (connection?.scope !== 'WORKSPACE') {
     await releaseTeamsConnectionTenant({ connectedAccountId });
 
     return { claimedTenantId: null };
   }
 
-  const tenantId = await fetchTeamsTenantId(connection.accessToken);
+  const tenantId = await fetchTeamsTenantId(
+    getConnectionAccessTokenOrThrow(connection),
+  );
   const connectedAccountTenantKvKey =
     buildTeamsConnectedAccountTenantKvKey(connectedAccountId);
   const previousTenantId = await kv.get<string>(connectedAccountTenantKvKey);

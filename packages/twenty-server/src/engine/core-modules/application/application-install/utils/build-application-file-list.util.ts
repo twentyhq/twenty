@@ -2,6 +2,7 @@ import {
   APPLICATION_PACKAGE_YARN_LOCK_PATH,
   type Manifest,
 } from 'twenty-shared/application';
+import { getSharedDependenciesBuildManifestPath } from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -68,11 +69,20 @@ export const buildApplicationFileList = (
     manifest.application.frontComponentSharedDependencies;
 
   if (isDefined(sharedDependencies)) {
-    files.push({
-      relativePath: sharedDependencies.builtPath,
-      fileFolder: FileFolder.BuiltFrontComponent,
-      isRequired: true,
-    });
+    files.push(
+      {
+        relativePath: sharedDependencies.builtPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
+        isRequired: true,
+      },
+      {
+        relativePath: getSharedDependenciesBuildManifestPath(
+          sharedDependencies.builtPath,
+        ),
+        fileFolder: FileFolder.Dependencies,
+        isRequired: false,
+      },
+    );
   }
 
   for (const publicAsset of manifest.publicAssets ?? []) {

@@ -72,7 +72,6 @@ const QUEUE = MessageQueue.logicFunctionQueue;
 const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const JOB_NAME = 'scenario-job';
-const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
 const GROUP_RATE_LIMIT_FLAG = 'IS_WORKER_GROUP_RATE_LIMIT_ENABLED';
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
@@ -343,18 +342,15 @@ const buildScenarioJobScope = ({
 };
 
 export const createFairnessHarness = async ({
-  isFairnessEnabled: initialFairnessEnabled,
   isGroupRateLimitEnabled = false,
 }: {
-  isFairnessEnabled: boolean;
   isGroupRateLimitEnabled?: boolean;
-}) => {
+} = {}) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
   mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
 
-  let isFairnessEnabled = initialFairnessEnabled;
   const metricsService = {
     recordHistogram: jest.fn(),
     incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
@@ -363,15 +359,8 @@ export const createFairnessHarness = async ({
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
     {
-      get: (key: string) => {
-        if (key === FAIRNESS_FLAG) {
-          return isFairnessEnabled;
-        }
-
-        return key === GROUP_RATE_LIMIT_FLAG
-          ? isGroupRateLimitEnabled
-          : undefined;
-      },
+      get: (key: string) =>
+        key === GROUP_RATE_LIMIT_FLAG ? isGroupRateLimitEnabled : undefined,
     } as never,
     { emit: jest.fn() } as never,
   );
@@ -536,9 +525,6 @@ export const createFairnessHarness = async ({
     },
     advanceTime: ({ milliseconds }: { milliseconds: number }) => {
       mockBullMQ.now += milliseconds;
-    },
-    setFairnessEnabled: (value: boolean) => {
-      isFairnessEnabled = value;
     },
     failNextAttempts: ({ label, count }: { label: string; count: number }) => {
       remainingFailures.set(label, count);

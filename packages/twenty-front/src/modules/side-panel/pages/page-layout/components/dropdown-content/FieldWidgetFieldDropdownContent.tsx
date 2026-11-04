@@ -18,19 +18,20 @@ import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hoo
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { FieldWidgetNestedFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetNestedFieldDropdownContent';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
-import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type FieldWidgetFieldSelectionRow =
   | { type: 'navigation'; fieldMetadataItem: FieldMetadataItem }
   | { type: 'options'; fieldMetadataItems: FieldMetadataItem[] };
 
 export const FieldWidgetFieldDropdownContent = () => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
 
   const { pageLayoutId, targetRecordIdentifier } =

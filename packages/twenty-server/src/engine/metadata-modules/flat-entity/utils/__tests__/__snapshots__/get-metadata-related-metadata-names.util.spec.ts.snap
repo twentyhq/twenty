@@ -156,6 +156,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "role",
   "agent",
+  "webhook",
 ]
 `;
 

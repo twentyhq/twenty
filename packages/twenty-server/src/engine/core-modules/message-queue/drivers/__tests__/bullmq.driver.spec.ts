@@ -22,7 +22,7 @@ const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
-const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
+const mockTwentyConfigService = { get: jest.fn() };
 const mockAllocateTickets = jest.fn();
 const mockRecordDispatch = jest.fn();
 
@@ -68,7 +68,7 @@ const buildWorkspaceJobScope = (
 describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
-    {} as never,
+    { incrementCounterForEvent: jest.fn() } as never,
     mockTwentyConfigService as never,
     {} as never,
   );
@@ -89,7 +89,7 @@ describe('BullMQDriver deduplication', () => {
   });
 
   describe.each([undefined, 0, 2])('job priority %s', (priority) => {
-    it('uses the caller priority or the shared default to add', async () => {
+    it('without a fair ticket, uses the caller priority or the shared default to add', async () => {
       await driver.add(
         MessageQueue.workspaceQueue,
         'job',
@@ -104,7 +104,7 @@ describe('BullMQDriver deduplication', () => {
       );
     });
 
-    it('uses the caller priority or the shared default to bulkAdd', async () => {
+    it('without a fair ticket, uses the caller priority or the shared default to bulkAdd', async () => {
       await driver.bulkAdd(
         MessageQueue.workspaceQueue,
         'job',
@@ -540,9 +540,7 @@ describe('BullMQDriver fair tickets', () => {
   const driver = new BullMQDriver(
     {} as never,
     { incrementCounterForEvent } as never,
-    {
-      get: jest.fn((key: string) => key === 'IS_WORKER_FAIRNESS_ENABLED'),
-    } as never,
+    { get: jest.fn() } as never,
     {} as never,
   );
 
@@ -767,20 +765,11 @@ describe('BullMQDriver fair tickets', () => {
 });
 
 describe('BullMQDriver fair dispatch', () => {
-  const processJob = async ({
-    isFairnessEnabled,
-  }: {
-    isFairnessEnabled: boolean;
-  }) => {
+  const processJob = async () => {
     const driver = new BullMQDriver(
       {} as never,
       { recordHistogram: jest.fn() } as never,
-      {
-        get: jest.fn(
-          (key: string) =>
-            key === 'IS_WORKER_FAIRNESS_ENABLED' && isFairnessEnabled,
-        ),
-      } as never,
+      { get: jest.fn() } as never,
       {} as never,
     );
 
@@ -806,18 +795,12 @@ describe('BullMQDriver fair dispatch', () => {
     } as unknown as Job);
   };
 
-  it('records the dispatch of a job when fairness is on', async () => {
-    await processJob({ isFairnessEnabled: true });
+  it('records the dispatch of a job', async () => {
+    await processJob();
 
     expect(mockRecordDispatch).toHaveBeenCalledWith({
       queueName: MessageQueue.workflowQueue,
       jobId: 'job-id',
     });
-  });
-
-  it('records nothing when fairness is off', async () => {
-    await processJob({ isFairnessEnabled: false });
-
-    expect(mockRecordDispatch).not.toHaveBeenCalled();
   });
 });

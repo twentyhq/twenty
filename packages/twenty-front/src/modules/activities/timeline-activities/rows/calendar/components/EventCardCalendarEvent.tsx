@@ -1,8 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   isDefined,
   isFieldValueRestricted,
@@ -21,6 +20,7 @@ import {
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
 } from '~/utils/format/formatDate';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEventCardCalendarEventContainer = styled.div`
   cursor: pointer;
@@ -93,6 +93,7 @@ export const EventCardCalendarEvent = ({
 }: {
   calendarEventId: string;
 }) => {
+  const { t } = useLingui();
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
   const { timeZone } = useContext(UserContext);
 
@@ -101,7 +102,7 @@ export const EventCardCalendarEvent = ({
     loading,
     error,
   } = useFindOneRecord<CalendarEvent>({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    objectNameSingular: StandardObjectNameSingular.CalendarEvent,
     objectRecordId: calendarEventId,
     recordGqlFields: {
       id: true,

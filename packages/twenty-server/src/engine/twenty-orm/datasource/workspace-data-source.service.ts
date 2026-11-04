@@ -101,7 +101,6 @@ export class WorkspaceDataSourceService
       pool,
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,
-      objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
     });
   }
 
@@ -117,13 +116,14 @@ export class WorkspaceDataSourceService
         workspaceContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps: workspaceContext.flatWorkspaceMemberMaps,
       flatValidationRuleMaps: workspaceContext.flatValidationRuleMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-      roleIdsWithAllRecordsAccess: workspaceContext.roleIdsWithAllRecordsAccess,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+      rolesPermissions: workspaceContext.permissionsPerRoleId,
       flatRoleTargetByAgentIdMaps: workspaceContext.flatRoleTargetByAgentIdMaps,
       flatApplicationMaps: workspaceContext.flatApplicationMaps,
       eventEmitterService: this.workspaceEventEmitter,

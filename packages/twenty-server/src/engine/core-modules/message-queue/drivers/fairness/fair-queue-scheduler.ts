@@ -137,7 +137,7 @@ export class FairQueueScheduler {
       () => ({ priority: staticPriority }),
     );
 
-    if (!this.isFairnessEnabled() || callerDelayMs > 0) {
+    if (callerDelayMs > 0) {
       return staticJobOptions;
     }
 
@@ -241,10 +241,6 @@ export class FairQueueScheduler {
     queueName: MessageQueue;
     jobId: string;
   }): void {
-    if (!this.isFairnessEnabled()) {
-      return;
-    }
-
     void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
   }
 
@@ -254,9 +250,5 @@ export class FairQueueScheduler {
         'IS_WORKER_GROUP_RATE_LIMIT_ENABLED',
       ) && isDefined(this.options.getGroupRateLimits(queueName))
     );
-  }
-
-  private isFairnessEnabled(): boolean {
-    return this.options.twentyConfigService.get('IS_WORKER_FAIRNESS_ENABLED');
   }
 }

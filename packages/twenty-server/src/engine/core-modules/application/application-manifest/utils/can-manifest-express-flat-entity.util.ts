@@ -9,6 +9,8 @@ const METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION: AllMetadataName[] = [
 const WORKSPACE_BOUND_PROPERTIES = [
   'userWorkspaceId',
   'apiKeyId',
+  'webhookId',
+  'targetApplicationId',
   'workflowVersionId',
   'coreWorkflowVersionId',
   'targetRecordId',

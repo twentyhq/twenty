@@ -42,7 +42,6 @@ export class GroupByRecordsService {
       orderBy = 'DESC',
       filter,
       authContext,
-      rolePermissionConfig,
     } = params;
 
     try {
@@ -50,11 +49,10 @@ export class GroupByRecordsService {
         queryRunnerContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions,
+        recordsPermissions,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       const availableAggregations =
@@ -62,7 +60,7 @@ export class GroupByRecordsService {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           restrictedFields:
-            objectsPermissions[flatObjectMetadata.id]?.restrictedFields,
+            recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields,
         });
 
       let aggregateFieldKey: string;

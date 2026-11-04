@@ -1,10 +1,10 @@
-import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useId, useMemo } from 'react';
 import { PhoneCountryPicker } from 'twenty-ui/components/input';
 
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useLingui } from '@lingui/react/macro';
 
 type PhoneCountryPickerDropdownButtonProps = {
   value?: string;
@@ -29,6 +29,7 @@ export const PhoneCountryPickerDropdownButton = ({
   disabled,
   readOnly,
 }: PhoneCountryPickerDropdownButtonProps) => {
+  const { t } = useLingui();
   const dropdownId = useId();
   const availableCountries = useCountries();
   const countries = useMemo(

@@ -78,6 +78,7 @@ const createCommandMenuItem = (
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
+  availabilityCoreObjectName: null,
   payload: null,
   ...overrides,
 });
@@ -193,7 +194,7 @@ const createDecorator = ({
   permissionFlags,
 }: CreateDecoratorParams): Decorator => {
   const currentUserWorkspace = isDefined(permissionFlags)
-    ? { permissionFlags, objectsPermissions: [] }
+    ? { permissionFlags, objectRecordsPermissions: [] }
     : null;
 
   return (Story) => {

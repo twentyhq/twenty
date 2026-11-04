@@ -91,7 +91,13 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     timeout: INTERACTION_TIMEOUT,
   });
   expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  expect(page.getByRole('dialog', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () =>
+      expect(
+        page.getByRole('dialog', { name: 'Assignee actions' }),
+      ).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
   await waitFor(
     () => expect(search).not.toHaveAttribute('aria-activedescendant'),
     { timeout: INTERACTION_TIMEOUT },

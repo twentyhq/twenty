@@ -1,11 +1,15 @@
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
+import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsNewAccount = () => {
+  const { t } = useLingui();
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+
   return (
     <SettingsPageLayout
       title={t`New Account`}
@@ -14,10 +18,7 @@ export const SettingsNewAccount = () => {
           children: t`User`,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        {
-          children: t`Accounts`,
-          href: getSettingsPath(SettingsPath.Accounts),
-        },
+        accountsBreadcrumbLink,
         { children: t`New` },
       ]}
     >

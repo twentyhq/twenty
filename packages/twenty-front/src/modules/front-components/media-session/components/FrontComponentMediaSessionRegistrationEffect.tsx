@@ -1,4 +1,5 @@
-import { frontComponentMediaSessionsState } from '@/front-components/media-session/states/frontComponentMediaSessionsState';
+import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
+import { getMediaAccessOwnerId } from '@/media-access/utils/getMediaAccessOwnerId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect, useId } from 'react';
 import {
@@ -23,9 +24,7 @@ export const FrontComponentMediaSessionRegistrationEffect = ({
   onStop,
 }: FrontComponentMediaSessionRegistrationEffectProps) => {
   const id = useId();
-  const setFrontComponentMediaSessions = useSetAtomState(
-    frontComponentMediaSessionsState,
-  );
+  const setMediaAccessSessions = useSetAtomState(mediaAccessSessionsState);
 
   useEffect(() => {
     const activeMediaTypes = [
@@ -40,20 +39,25 @@ export const FrontComponentMediaSessionRegistrationEffect = ({
       return;
     }
 
-    setFrontComponentMediaSessions((sessions) => [
+    setMediaAccessSessions((sessions) => [
       ...sessions.filter((session) => session.id !== id),
       {
         id,
-        applicationId,
-        applicationName,
-        activeMediaTypes,
-        pendingMediaTypes,
+        ownerId: getMediaAccessOwnerId({
+          type: 'application',
+          id: applicationId,
+        }),
+        ownerName: applicationName,
+        status: isNonEmptyArray(activeMediaTypes) ? 'capturing' : 'pending',
+        mediaTypes: isNonEmptyArray(activeMediaTypes)
+          ? activeMediaTypes
+          : pendingMediaTypes,
         onStop,
       },
     ]);
 
     return () => {
-      setFrontComponentMediaSessions((sessions) =>
+      setMediaAccessSessions((sessions) =>
         sessions.filter((session) => session.id !== id),
       );
     };
@@ -64,7 +68,7 @@ export const FrontComponentMediaSessionRegistrationEffect = ({
     id,
     onStop,
     pendingStartMediaTypes,
-    setFrontComponentMediaSessions,
+    setMediaAccessSessions,
   ]);
 
   return null;

@@ -3,6 +3,7 @@ name: twenty
 services:
   server:
     image: twentycrm/twenty:${TAG:-latest}
+    stop_grace_period: 120s
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
