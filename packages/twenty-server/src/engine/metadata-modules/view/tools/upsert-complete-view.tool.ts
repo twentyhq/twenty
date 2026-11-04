@@ -206,7 +206,6 @@ export class UpsertCompleteViewTool extends BaseTool<
           workspaceId,
           userWorkspaceId,
           authContext,
-          nextVisibility: input.visibility,
         })
       : undefined;
 

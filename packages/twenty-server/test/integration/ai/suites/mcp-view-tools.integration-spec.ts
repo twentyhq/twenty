@@ -700,7 +700,7 @@ describe('MCP view tools (integration)', () => {
       }
     });
 
-    it('should edit its own unlisted view but not publish it', async () => {
+    it('should edit and delete its own unlisted view', async () => {
       const unlistedView = await runViewTool<ViewSummary>({
         toolName: 'create_view',
         toolArguments: {
@@ -722,18 +722,6 @@ describe('MCP view tools (integration)', () => {
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
         }),
       ).toMatchObject({ id: unlistedView.id, name: renamedViewName });
-
-      expect(
-        await runFailingViewTool({
-          toolName: 'upsert_complete_view',
-          toolArguments: { id: unlistedView.id, visibility: 'WORKSPACE' },
-          token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
-        }),
-      ).toEqual({
-        success: false,
-        message: 'Failed to execute upsert_complete_view',
-        error: 'You do not have permission to modify this view',
-      });
 
       expect(
         await runViewTool({

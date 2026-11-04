@@ -1091,30 +1091,6 @@ describe('View tools', () => {
         ).not.toHaveBeenCalled();
       });
 
-      it('should reject publishing own unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
-        viewService.findById.mockResolvedValue({
-          ...mockView,
-          visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
-        } as any);
-
-        const tools = buildViewTools({
-          workspaceId: mockWorkspaceId,
-          userWorkspaceId: mockUserWorkspaceId,
-        });
-
-        await expect(
-          tools.upsert_complete_view.execute({
-            id: mockViewId,
-            visibility: ViewVisibility.WORKSPACE,
-          }),
-        ).rejects.toThrow('You do not have permission to modify this view');
-        expect(
-          completeViewUpsertService.upsertCompleteView,
-        ).not.toHaveBeenCalled();
-      });
-
       it('should reject updating another users unlisted view', async () => {
         const existingView = {
           ...mockView,

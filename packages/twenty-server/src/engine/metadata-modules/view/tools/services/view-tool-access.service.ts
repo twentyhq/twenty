@@ -38,12 +38,8 @@ export class ViewToolAccessService {
 
   async findViewEditableByUserOrThrow({
     viewId,
-    nextVisibility,
     ...caller
-  }: ViewToolCaller & {
-    viewId: string;
-    nextVisibility?: ViewVisibility;
-  }): Promise<ViewDTO> {
+  }: ViewToolCaller & { viewId: string }): Promise<ViewDTO> {
     const view = await this.viewService.findById(viewId, caller.workspaceId);
 
     if (!isDefined(view)) {
@@ -56,7 +52,6 @@ export class ViewToolAccessService {
     await this.viewAccessService.assertCanModifyView({
       view,
       accessContext: caller,
-      nextVisibility,
       // Holding VIEWS does not let an agent change another member's unlisted view
       unlistedViewsOwnerOnly: true,
     });
