@@ -1,5 +1,7 @@
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -146,6 +148,12 @@ export class AgentChatMemberMessageSenderService {
       message: preparedMessage,
       addressing: isInboxEnabled ? addressing : undefined,
       participation,
+      assistantReplyContext: {
+        isAssistantMentioned: assistant.isMentioned,
+        isDirectAssistantChat:
+          replyDecision === AgentChatReplyDecision.ASSISTANT_CHAT_REPLY,
+        isStructuredRequestContinuation: false,
+      },
     };
     let result: AgentChatMemberMessageResult;
 
@@ -197,10 +205,12 @@ export class AgentChatMemberMessageSenderService {
     addressing,
     participation,
     execution,
+    assistantReplyContext,
   }: Pick<AgentChatMemberMessageSendArguments, 'actor' | 'execution'> & {
     message: AgentChatPreparedMemberMessage;
     addressing?: AgentChatMemberMessageSendArguments['addressing'];
     thread: AgentChatThreadWorkspaceEntity;
+    assistantReplyContext?: AgentChatAssistantReplyContext;
     participation?: Pick<
       AgentChatAssistantParticipation,
       'isAssistantParticipant' | 'isInitialMessage'
@@ -240,6 +250,7 @@ export class AgentChatMemberMessageSenderService {
       message,
       addressing,
       participation,
+      assistantReplyContext,
     };
     const startedAssistantReply =
       hasQueuedBacklog || isDefined(conversationWait.suspendedRun)
