@@ -23,6 +23,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
@@ -723,6 +724,75 @@ describe('OAuth well-known clients (integration)', () => {
 
     const isInstalled = async (clientId: string): Promise<boolean> =>
       (await findInstalls(clientId)).length > 0;
+
+    it('should list the members of older per-connection installs as members of the shared Claude install', async () => {
+      const { legacyClaudeClientId } =
+        await connectLegacyAndSharedClaudeMembers();
+      const [legacyInstall] = await findInstalls(legacyClaudeClientId);
+      const [sharedInstall] = await findInstalls(claudeClientId);
+
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query WorkspaceApplicationAuthorizations($applicationId: UUID!) {
+            workspaceApplicationAuthorizations(applicationId: $applicationId) {
+              applicationId
+              wellKnownOAuthClient
+            }
+          }
+        `,
+        variables: { applicationId: sharedInstall.id },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.workspaceApplicationAuthorizations).toEqual(
+        expect.arrayContaining([
+          { applicationId: legacyInstall.id, wellKnownOAuthClient: 'CLAUDE' },
+          { applicationId: sharedInstall.id, wellKnownOAuthClient: 'CLAUDE' },
+        ]),
+      );
+    });
+
+    it('should revoke every grant of a member across the shared and older Claude installs', async () => {
+      const legacyClaudeClientId = await registerLegacyClaudeClient();
+      const legacyRefreshToken = await connect({
+        clientId: legacyClaudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const sharedRefreshToken = await connect({
+        clientId: claudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const [sharedInstall] = await findInstalls(claudeClientId);
+
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          mutation RevokeWorkspaceApplicationMemberAccess(
+            $applicationId: UUID!
+            $userId: UUID!
+          ) {
+            revokeWorkspaceApplicationMemberAccess(
+              applicationId: $applicationId
+              userId: $userId
+            )
+          }
+        `,
+        variables: {
+          applicationId: sharedInstall.id,
+          userId: USER_DATA_SEED_IDS.JONY,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.revokeWorkspaceApplicationMemberAccess).toBe(
+        true,
+      );
+
+      await expectBothMembersDisconnected({
+        legacyClaudeClientId,
+        legacyRefreshToken,
+        sharedRefreshToken,
+      });
+    });
 
     it('should disconnect the members of older per-connection Claude installs too', async () => {
       const connections = await connectLegacyAndSharedClaudeMembers();
