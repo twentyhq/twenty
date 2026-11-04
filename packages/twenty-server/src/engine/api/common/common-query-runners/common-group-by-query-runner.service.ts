@@ -339,7 +339,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         restrictedFields:
-          queryBuilder.objectRecordsPermissions[flatObjectMetadata.id]
+          queryBuilder.recordsPermissions.objects[flatObjectMetadata.id]
             ?.restrictedFields ?? {},
         appliedFilters,
         workspaceId,

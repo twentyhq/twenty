@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 
 const HOSTILE_VALUES = [
   "'; DROP TABLE company; --",
@@ -43,7 +44,7 @@ const buildQueryBuilder = (columnNames = ['id', 'name', 'deletedAt']) =>
   new WorkspaceSelectQueryBuilder('person', {
     tableShape: buildTableShape(columnNames),
     executor: { execute: async () => [] },
-    objectRecordsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
     tableShapeByObjectMetadataId: () => buildTableShape(columnNames),
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,

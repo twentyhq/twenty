@@ -36,6 +36,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 
 export type ParentFilterScope = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -104,7 +105,9 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      objectsPermissions: fromRoleRecordsPermissionsToObjectsPermissions({
+        roleRecordsPermissions: outerQueryBuilder.recordsPermissions,
+      }),
       flatObjectMetadata: this.flatObjectMetadata,
       flatFieldMetadata: fieldMetadata,
     });
@@ -354,7 +357,9 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      objectsPermissions: fromRoleRecordsPermissionsToObjectsPermissions({
+        roleRecordsPermissions: outerQueryBuilder.recordsPermissions,
+      }),
       flatObjectMetadata: referencedScope.flatObjectMetadata,
       flatFieldMetadata: referencedFieldMetadata,
     });

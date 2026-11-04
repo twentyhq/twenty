@@ -6,16 +6,14 @@ import {
   type PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
-import { computeObjectsPermissionsForRoleDefinition } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-definition.util';
+import { computeRoleRecordsPermissions } from 'src/engine/permissions/role/utils/compute-role-records-permissions.util';
 import { buildIsPermissionFlagGranted } from 'src/engine/permissions/role/utils/build-is-permission-flag-granted.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -51,14 +49,16 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('rolesPermissions', { packingPonderation: 2 })
-export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<ObjectsPermissionsByRoleId> {
+export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<
+  Record<string, RoleRecordsPermissions>
+> {
   override readonly rowsRequirement = ROLES_PERMISSIONS_ROWS_REQUIREMENT;
 
   computeForCache({
     rows,
   }: WorkspaceCacheProviderContext<
     typeof ROLES_PERMISSIONS_ROWS_REQUIREMENT
-  >): ObjectsPermissionsByRoleId {
+  >): Record<string, RoleRecordsPermissions> {
     const {
       role: roles,
       objectPermission: objectPermissions,
@@ -81,7 +81,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       ]),
     );
 
-    const permissionsByRoleId: ObjectsPermissionsByRoleId = {};
+    const permissionsByRoleId: Record<string, RoleRecordsPermissions> = {};
 
     for (const role of roles) {
       const isPermissionFlagGranted = buildIsPermissionFlagGranted({
@@ -98,25 +98,23 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         ),
       });
 
-      permissionsByRoleId[role.id] = computeObjectsPermissionsForRoleDefinition(
-        {
-          roleDefinition: {
-            canReadAllObjectRecords: role.canReadAllObjectRecords,
-            canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
-            canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
-            canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
-            isPermissionFlagGranted,
-            objectPermissions: objectPermissions.byRoleId.get(role.id) ?? [],
-            fieldPermissions: fieldPermissions.byRoleId.get(role.id) ?? [],
-            rowLevelPermissionPredicates:
-              rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [],
-            rowLevelPermissionPredicateGroups:
-              rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
-          },
-          objectMetadataCollection: workspaceObjectMetadataCollection,
-          resolveMorphRelationPermissionFieldIds,
+      permissionsByRoleId[role.id] = computeRoleRecordsPermissions({
+        roleDefinition: {
+          canReadAllObjectRecords: role.canReadAllObjectRecords,
+          canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+          canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+          canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+          isPermissionFlagGranted,
+          objectPermissions: objectPermissions.byRoleId.get(role.id) ?? [],
+          fieldPermissions: fieldPermissions.byRoleId.get(role.id) ?? [],
+          rowLevelPermissionPredicates:
+            rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [],
+          rowLevelPermissionPredicateGroups:
+            rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
         },
-      );
+        objectMetadataCollection: workspaceObjectMetadataCollection,
+        resolveMorphRelationPermissionFieldIds,
+      });
     }
 
     return permissionsByRoleId;

@@ -4,7 +4,8 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/compute-principals-records-permissions.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -83,7 +84,7 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: computeObjectsPermissionsForRoles({
+      recordsPermissions: computePrincipalsRecordsPermissions({
         principals: {
           mainPrincipal: { type: 'role', roleId: flatRole.id },
           applicationPrincipal: { type: 'customApplication' },
@@ -103,7 +104,7 @@ export class PermissionsService {
         false,
       ]),
     ) as Record<PermissionFlagType, boolean>,
-    objectsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
   });
 
   public async userHasWorkspaceSettingPermission({

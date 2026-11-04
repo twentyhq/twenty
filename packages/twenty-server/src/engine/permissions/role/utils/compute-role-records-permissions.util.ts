@@ -2,7 +2,6 @@ import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  type ObjectsPermissions,
   type RestrictedFieldsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -14,13 +13,15 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
+import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];
 
-type RoleDefinitionForObjectsPermissions = Pick<
+type RoleDefinitionForRecordsPermissions = Pick<
   FlatRole,
   | 'canReadAllObjectRecords'
   | 'canUpdateAllObjectRecords'
@@ -73,7 +74,7 @@ const resolveObjectRecordsAccess = ({
     ObjectMetadataEntity,
     'id' | 'isSystem' | 'universalIdentifier'
   >;
-  roleDefinition: RoleDefinitionForObjectsPermissions;
+  roleDefinition: RoleDefinitionForRecordsPermissions;
 }): ObjectRecordsAccess => {
   const { isPermissionFlagGranted, objectPermissions } = roleDefinition;
 
@@ -136,7 +137,7 @@ const buildRestrictedFields = ({
     ObjectMetadataEntity,
     'id' | 'labelIdentifierFieldMetadataId'
   >;
-  fieldPermissions: RoleDefinitionForObjectsPermissions['fieldPermissions'];
+  fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
 }): RestrictedFieldsPermissions => {
   const restrictedFields: RestrictedFieldsPermissions = {};
@@ -176,25 +177,63 @@ const buildRestrictedFields = ({
   return restrictedFields;
 };
 
-export const computeObjectsPermissionsForRoleDefinition = ({
+const buildObjectRecordsPermissions = ({
+  objectRecordsAccess,
+  restrictedFields,
+  predicates,
+  predicateGroups,
+}: {
+  objectRecordsAccess: ObjectRecordsAccess;
+  restrictedFields: RestrictedFieldsPermissions;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+}): ObjectRecordsPermissions => {
+  if (predicates.length === 0) {
+    return {
+      canReadAllRecords: objectRecordsAccess.canRead,
+      canUpdateAllRecords: objectRecordsAccess.canUpdate,
+      canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
+      canDestroyAllRecords: objectRecordsAccess.canDestroy,
+      restrictedFields,
+    };
+  }
+
+  return {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    restrictedFields,
+    rowLevelRecordsPermissions: {
+      canReadRecords: objectRecordsAccess.canRead,
+      canUpdateRecords: objectRecordsAccess.canUpdate,
+      canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,
+      canDestroyRecords: objectRecordsAccess.canDestroy,
+      predicates,
+      predicateGroups,
+    },
+  };
+};
+
+export const computeRoleRecordsPermissions = ({
   roleDefinition,
   objectMetadataCollection,
   resolveMorphRelationPermissionFieldIds,
 }: {
-  roleDefinition: RoleDefinitionForObjectsPermissions;
+  roleDefinition: RoleDefinitionForRecordsPermissions;
   objectMetadataCollection: Pick<
     ObjectMetadataEntity,
     'id' | 'isSystem' | 'universalIdentifier' | 'labelIdentifierFieldMetadataId'
   >[];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
-}): ObjectsPermissions => {
+}): RoleRecordsPermissions => {
   const {
     isPermissionFlagGranted,
     fieldPermissions,
     rowLevelPermissionPredicates,
     rowLevelPermissionPredicateGroups,
   } = roleDefinition;
-  const objectsPermissions: ObjectsPermissions = {};
+  const objects: RoleRecordsPermissions['objects'] = {};
 
   for (const objectMetadata of objectMetadataCollection) {
     const { id: objectMetadataId, universalIdentifier } = objectMetadata;
@@ -219,25 +258,31 @@ export const computeObjectsPermissionsForRoleDefinition = ({
         STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
       isPermissionFlagGranted(PermissionFlagType.AI);
 
-    objectsPermissions[objectMetadataId] = {
-      canReadObjectRecords: objectRecordsAccess.canRead && hasAiAccess,
-      canUpdateObjectRecords: objectRecordsAccess.canUpdate && hasAiAccess,
-      canSoftDeleteObjectRecords:
-        objectRecordsAccess.canSoftDelete && hasAiAccess,
-      canDestroyObjectRecords: objectRecordsAccess.canDestroy && hasAiAccess,
+    objects[objectMetadataId] = buildObjectRecordsPermissions({
+      objectRecordsAccess: {
+        canRead: objectRecordsAccess.canRead && hasAiAccess,
+        canUpdate: objectRecordsAccess.canUpdate && hasAiAccess,
+        canSoftDelete: objectRecordsAccess.canSoftDelete && hasAiAccess,
+        canDestroy: objectRecordsAccess.canDestroy && hasAiAccess,
+      },
       restrictedFields,
-      rowLevelPermissionPredicates: rowLevelPermissionPredicates.filter(
+      predicates: rowLevelPermissionPredicates.filter(
         (rowLevelPermissionPredicate) =>
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
       ),
-      rowLevelPermissionPredicateGroups:
-        rowLevelPermissionPredicateGroups.filter(
-          (rowLevelPermissionPredicateGroup) =>
-            rowLevelPermissionPredicateGroup.objectMetadataId ===
-            objectMetadataId,
-        ),
-    };
+      predicateGroups: rowLevelPermissionPredicateGroups.filter(
+        (rowLevelPermissionPredicateGroup) =>
+          rowLevelPermissionPredicateGroup.objectMetadataId ===
+          objectMetadataId,
+      ),
+    });
   }
 
-  return objectsPermissions;
+  return {
+    canReadAllRecords: roleDefinition.canReadAllObjectRecords,
+    canUpdateAllRecords: roleDefinition.canUpdateAllObjectRecords,
+    canSoftDeleteAllRecords: roleDefinition.canSoftDeleteAllObjectRecords,
+    canDestroyAllRecords: roleDefinition.canDestroyAllObjectRecords,
+    objects,
+  };
 };

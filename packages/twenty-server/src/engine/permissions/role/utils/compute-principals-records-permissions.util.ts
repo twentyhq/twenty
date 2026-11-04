@@ -1,9 +1,5 @@
 /* @license Enterprise */
 
-import {
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -13,11 +9,13 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principa
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principals-acting-application-id.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
-import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
-import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
+import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-records-permissions-to-disabled-actions.util';
+import { restrictRecordsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-records-permissions-to-scope.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-export const computeObjectsPermissionsForRoles = ({
+export const computePrincipalsRecordsPermissions = ({
   principals,
   rolesPermissions,
   flatObjectMetadataMaps,
@@ -31,15 +29,15 @@ export const computeObjectsPermissionsForRoles = ({
     | 'applicationPrincipal'
     | 'aiRunScope'
   >;
-  rolesPermissions: ObjectsPermissionsByRoleId;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
-}): ObjectsPermissions => {
+}): RoleRecordsPermissions => {
   const roleIds = getPermissionsPrincipalsRoleIds(principals);
 
   if (!isNonEmptyArray(roleIds)) {
-    return {};
+    return NO_ROLE_RECORDS_PERMISSIONS;
   }
 
   const actingApplicationId = getPermissionsPrincipalsActingApplicationId({
@@ -50,12 +48,12 @@ export const computeObjectsPermissionsForRoles = ({
     ? flatApplicationMaps.byId[actingApplicationId]?.defaultRoleId
     : undefined;
 
-  const permissionsPerRole = roleIds.map((roleId) => {
-    const rolePermissions = rolesPermissions[roleId];
+  const recordsPermissionsPerRole = roleIds.map((roleId) => {
+    const roleRecordsPermissions = rolesPermissions[roleId];
 
-    return isDefined(rolePermissions)
-      ? restrictObjectsPermissionsToDisabledActions({
-          objectsPermissions: rolePermissions,
+    return isDefined(roleRecordsPermissions)
+      ? restrictRecordsPermissionsToDisabledActions({
+          recordsPermissions: roleRecordsPermissions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           actingApplicationId:
@@ -66,16 +64,18 @@ export const computeObjectsPermissionsForRoles = ({
       : undefined;
   });
 
-  if (!permissionsPerRole.every(isDefined)) {
-    return {};
+  if (!recordsPermissionsPerRole.every(isDefined)) {
+    return NO_ROLE_RECORDS_PERMISSIONS;
   }
 
-  const objectsPermissions = computePermissionIntersection(permissionsPerRole);
+  const recordsPermissions = computePermissionIntersection(
+    recordsPermissionsPerRole,
+  );
 
   return isDefined(principals.aiRunScope)
-    ? restrictObjectsPermissionsToScope({
-        objectsPermissions,
+    ? restrictRecordsPermissionsToScope({
+        recordsPermissions,
         aiRunScope: principals.aiRunScope,
       })
-    : objectsPermissions;
+    : recordsPermissions;
 };

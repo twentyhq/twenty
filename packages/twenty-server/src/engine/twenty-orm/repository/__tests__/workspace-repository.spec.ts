@@ -111,12 +111,18 @@ const buildRepository = ({
       roleIdsWithAllRecordsAccess: [ROLE_ID],
       rolesPermissions: {
         [ROLE_ID]: {
-          [OBJECT_METADATA_ID]: {
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: true,
-            restrictedFields: {},
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
+          objects: {
+            [OBJECT_METADATA_ID]: {
+              canReadAllRecords: true,
+              canUpdateAllRecords: true,
+              canSoftDeleteAllRecords: true,
+              canDestroyAllRecords: true,
+              restrictedFields: {},
+            },
           },
         },
       },

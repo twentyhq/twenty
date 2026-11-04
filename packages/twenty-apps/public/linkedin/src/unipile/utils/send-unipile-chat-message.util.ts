@@ -21,11 +21,9 @@ export const sendUnipileChatMessage = async ({
         path: { account_id: accountId, chat_id: chatId },
         body: { text },
       }),
-    // A member is waiting on the send, so a rate limit fails it rather than sleeping.
     { deadlineAtMs: Date.now() },
   );
 
-  // Only attachments split a send into several ids, and this sends text alone.
   const [messageId] = [data.message_id].flat();
 
   if (!isNonEmptyString(messageId)) {
