@@ -230,9 +230,14 @@ export const SelectionAndPartialDeletion: Story = {
     );
     await expect(deleteAgentButton).toBeEnabled();
     await userEvent.click(deleteAgentButton);
+    await waitFor(() => expect(retryConfirmation).not.toBeInTheDocument());
     await waitFor(() =>
       expect(canvas.queryByText(followUpAgent.label)).not.toBeInTheDocument(),
     );
+    await expect(canvas.getByText(managedAgent.label)).toBeVisible();
+    await expect(
+      canvas.queryByText('Something went wrong'),
+    ).not.toBeInTheDocument();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
 
     shouldFailAgentListRefresh = false;
@@ -260,8 +265,9 @@ export const EmptyListRefreshFailure: Story = {
     await expect(await canvas.findByText('Something went wrong')).toBeVisible();
 
     shouldFailAgentListRefresh = false;
+    availableAgents = [leadAgent];
     window.dispatchEvent(new CustomEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME));
-    await expect(await canvas.findByText('Add your first Agent')).toBeVisible();
+    await expect(await canvas.findByText(leadAgent.label)).toBeVisible();
     await expect(
       canvas.queryByText('Something went wrong'),
     ).not.toBeInTheDocument();

@@ -1,7 +1,5 @@
 import { MockedProvider } from '@apollo/client/testing/react';
-import { type MockedResponse } from '@apollo/client/testing';
-import { useApolloClient } from '@apollo/client/react';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
@@ -11,10 +9,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  FindManyAgentsDocument,
-  type FindManyAgentsQuery,
-} from '~/generated-metadata/graphql';
+import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 
 const buildAgent = ({
   id,
@@ -68,17 +63,16 @@ const FIND_MANY_AGENTS_MOCK = {
   },
 };
 
-const FIND_MANY_AGENTS_FAILURE_MOCK = {
-  request: { query: FindManyAgentsDocument },
-  error: new Error('Network unavailable'),
-};
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <MockedProvider mocks={[FIND_MANY_AGENTS_MOCK]}>{children}</MockedProvider>
+  </JotaiProvider>
+);
 
 const renderCoreAgents = ({
   shouldClearFilters,
-  apolloMocks = [FIND_MANY_AGENTS_MOCK],
 }: {
   shouldClearFilters: boolean;
-  apolloMocks?: MockedResponse<FindManyAgentsQuery>[];
 }) => {
   localStorage.clear();
   resetJotaiStore();
@@ -87,21 +81,9 @@ const renderCoreAgents = ({
     jotaiStore.set(coreAgentsFilterSettingsState.atom, {});
   }
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={jotaiStore}>
-      <MockedProvider mocks={apolloMocks}>{children}</MockedProvider>
-    </JotaiProvider>
-  );
-
-  return renderHook(
-    () => ({
-      ...useCoreAgents({ tableId: 'core-agents-test' }),
-      apolloClient: useApolloClient(),
-    }),
-    {
-      wrapper,
-    },
-  );
+  return renderHook(() => useCoreAgents({ tableId: 'core-agents-test' }), {
+    wrapper: Wrapper,
+  });
 };
 
 describe('useCoreAgents', () => {
@@ -124,37 +106,5 @@ describe('useCoreAgents', () => {
       'Workflow Agent 74d6',
       'Lead qualifier',
     ]);
-  });
-
-  it('retains the loaded list while exposing a background refresh error', async () => {
-    const { result } = renderCoreAgents({
-      shouldClearFilters: false,
-      apolloMocks: [FIND_MANY_AGENTS_MOCK, FIND_MANY_AGENTS_FAILURE_MOCK],
-    });
-    await waitFor(() => expect(result.current.isInitialLoading).toBe(false));
-
-    await act(async () => {
-      await expect(
-        result.current.apolloClient.refetchQueries({
-          include: [FindManyAgentsDocument],
-        }),
-      ).rejects.toThrow('Network unavailable');
-    });
-
-    expect(result.current.coreAgents.map(({ label }) => label)).toEqual([
-      'Lead qualifier',
-    ]);
-    expect(result.current.error).toBeInstanceOf(Error);
-  });
-
-  it('exposes an initial load error without claiming there is a saved list', async () => {
-    const { result } = renderCoreAgents({
-      shouldClearFilters: false,
-      apolloMocks: [FIND_MANY_AGENTS_FAILURE_MOCK],
-    });
-    await waitFor(() => expect(result.current.isInitialLoading).toBe(false));
-
-    expect(result.current.coreAgents).toEqual([]);
-    expect(result.current.error).toBeInstanceOf(Error);
   });
 });

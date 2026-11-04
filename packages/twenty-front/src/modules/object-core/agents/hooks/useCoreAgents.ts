@@ -28,24 +28,19 @@ export const useCoreAgents = ({
   );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
-  const { data, previousData, loading, error } = useQuery(
-    FindManyAgentsDocument,
-    {
-      fetchPolicy: 'cache-and-network',
-    },
-  );
-
-  const availableData = data ?? previousData;
+  const { data, loading, error } = useQuery(FindManyAgentsDocument, {
+    fetchPolicy: 'cache-and-network',
+  });
 
   const listedAgents = useMemo(
     () =>
-      (availableData?.findManyAgents ?? []).filter((agent) =>
+      (data?.findManyAgents ?? []).filter((agent) =>
         isCoreAgentMatchingFilterSettings({
           agent,
           filterSettings: coreAgentsFilterSettings,
         }),
       ),
-    [availableData?.findManyAgents, coreAgentsFilterSettings],
+    [data?.findManyAgents, coreAgentsFilterSettings],
   );
 
   const tableMetadata = useMemo(
@@ -61,7 +56,7 @@ export const useCoreAgents = ({
 
   return {
     coreAgents,
-    isInitialLoading: loading && !isDefined(availableData),
+    isInitialLoading: loading && !isDefined(data),
     error,
   };
 };
