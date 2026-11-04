@@ -323,6 +323,7 @@ describe('Shared conversation API boundaries', () => {
     });
 
     expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage.streamId).toBeNull();
     expect(
       response.body.data.sendChatMessage.mentionedParticipantWorkspaceMemberIds,
     ).toEqual([recipientId]);

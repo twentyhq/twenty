@@ -16,6 +16,9 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
+import { type AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
+import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -28,6 +31,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { STANDARD_AGENT_CHAT_CHANNEL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent-chat-channel.constant';
 
 export const createChatParticipationTestContext = async () => {
   const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -65,11 +69,19 @@ export const createChatParticipationTestContext = async () => {
     getAppProviderByClassName<AgentChatInboxDeliveryService>(
       'AgentChatInboxDeliveryService',
     );
+  const assistantParticipationService =
+    getAppProviderByClassName<AgentChatAssistantParticipationService>(
+      'AgentChatAssistantParticipationService',
+    );
   const chatService =
     getAppProviderByClassName<AgentChatService>('AgentChatService');
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
     'AgentChatSharingService',
   );
+  const replyPolicyService =
+    getAppProviderByClassName<AgentChatReplyPolicyService>(
+      'AgentChatReplyPolicyService',
+    );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
   const wasInboxEnabled = await featureFlagService.isFeatureEnabled(
@@ -135,6 +147,25 @@ export const createChatParticipationTestContext = async () => {
         isAssistantParticipant,
       });
     }
+
+    return threadId;
+  };
+  const createChannelThread = async () => {
+    const channel = await getCoreRepository<AgentChatChannelEntity>(
+      AgentChatChannelEntity,
+    ).findOneByOrFail({
+      workspaceId,
+      universalIdentifier:
+        STANDARD_AGENT_CHAT_CHANNEL.general.universalIdentifier,
+    });
+    const threadId = registerThread();
+
+    await threadService.createThread({
+      id: threadId,
+      workspaceId,
+      workspaceMemberId,
+      channelId: channel.id,
+    });
 
     return threadId;
   };
@@ -236,13 +267,16 @@ export const createChatParticipationTestContext = async () => {
     schema,
     threadService,
     inboxDeliveryService,
+    assistantParticipationService,
     chatService,
     sharingService,
+    replyPolicyService,
     featureFlagService,
     setAssistantModes,
     setConversationType,
     registerThread,
     createThread,
+    createChannelThread,
     readThread,
     readParticipants,
     share,
