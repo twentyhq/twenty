@@ -1,4 +1,3 @@
-import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
@@ -96,7 +95,6 @@ const mockWorkspace = {
   aiChatModelTier: AiModelTier.fast,
   aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
   aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
-  ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},

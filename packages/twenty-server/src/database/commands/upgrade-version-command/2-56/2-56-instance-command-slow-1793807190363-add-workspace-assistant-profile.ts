@@ -1,10 +1,12 @@
-import { type QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.56.0', 1793804108381)
-export class AddWorkspaceAssistantProfileFastInstanceCommand implements FastInstanceCommand {
+@RegisteredInstanceCommand('2.56.0', 1793807190363, { type: 'slow' })
+export class AddWorkspaceAssistantProfileSlowInstanceCommand implements SlowInstanceCommand {
+  async runDataMigration(_dataSource: DataSource): Promise<void> {}
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."workspace" ADD "aiChatAssistantDisplayName" character varying(64) NOT NULL DEFAULT \'Ada\'',

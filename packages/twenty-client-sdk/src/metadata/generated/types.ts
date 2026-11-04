@@ -14817,18 +14817,6 @@ export default {
             "aiAgentModelTier": [
                 31
             ],
-            "aiChatAssistantAvatarColor": [
-                1
-            ],
-            "aiChatAssistantAvatarFace": [
-                1
-            ],
-            "aiChatAssistantAvatarShape": [
-                1
-            ],
-            "aiChatAssistantDisplayName": [
-                1
-            ],
             "aiChatDirectMessageAssistantMode": [
                 28
             ],
@@ -14864,9 +14852,6 @@ export default {
             ],
             "inviteHash": [
                 1
-            ],
-            "isAiChatAssistantAvatarAnimated": [
-                4
             ],
             "isAutoModelSelectionEnabled": [
                 4
@@ -16307,18 +16292,6 @@ export default {
             "aiAgentModelTier": [
                 31
             ],
-            "aiChatAssistantAvatarColor": [
-                1
-            ],
-            "aiChatAssistantAvatarFace": [
-                1
-            ],
-            "aiChatAssistantAvatarShape": [
-                1
-            ],
-            "aiChatAssistantDisplayName": [
-                1
-            ],
             "aiChatDirectMessageAssistantMode": [
                 28
             ],
@@ -16396,9 +16369,6 @@ export default {
             ],
             "inviteHash": [
                 1
-            ],
-            "isAiChatAssistantAvatarAnimated": [
-                4
             ],
             "isAutoModelSelectionEnabled": [
                 4

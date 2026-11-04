@@ -44,6 +44,8 @@ export class AddWorkspaceIdToTotoFastInstanceCommand
 
 ### Slow instance commands
 
+Use a slow instance command when adding columns to a heavily used core table, such as `workspace`. Annotate each new entity property with `@WasIntroducedInUpgrade` pointing to that command. Introduce query selections, API exposure, cache projections, generated client contracts and frontend usage only after the containing version is deployed and the slow upgrade has completed. A schema-only slow command can leave `runDataMigration` empty.
+
 Slow commands are used when a potentially long-running data migration must happen before the schema change. They only run when the `--include-slow` flag is passed.
 
 A slow command implements `SlowInstanceCommand`, which extends `FastInstanceCommand` with an additional `runDataMigration` method that executes before `up`:

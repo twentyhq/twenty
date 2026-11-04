@@ -2,12 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { isUndefined } from '@sniptt/guards';
 
 import GraphQLJSON from 'graphql-type-json';
-import {
-  type AiChatAssistantAvatarColor,
-  type AiChatAssistantAvatarFace,
-  type AiChatAssistantAvatarShape,
-  type AiModelTier,
-} from 'twenty-shared/ai';
+import { type AiModelTier } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 
 import {
@@ -178,21 +173,6 @@ export class UpdateWorkspaceInput {
       !isUndefined(aiChatInboxAssistantMode),
   )
   aiChatInboxAssistantMode?: AiChatAssistantMode;
-
-  @Field(() => String, { nullable: true })
-  aiChatAssistantDisplayName?: string;
-
-  @Field(() => String, { nullable: true })
-  aiChatAssistantAvatarShape?: AiChatAssistantAvatarShape;
-
-  @Field(() => String, { nullable: true })
-  aiChatAssistantAvatarColor?: AiChatAssistantAvatarColor;
-
-  @Field(() => String, { nullable: true })
-  aiChatAssistantAvatarFace?: AiChatAssistantAvatarFace;
-
-  @Field({ nullable: true })
-  isAiChatAssistantAvatarAnimated?: boolean;
 
   @Field({ nullable: true })
   @IsString()

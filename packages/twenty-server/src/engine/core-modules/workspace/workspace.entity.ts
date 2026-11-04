@@ -417,7 +417,6 @@ export class WorkspaceEntity {
   })
   aiChatInboxAssistantMode: AiChatAssistantMode;
 
-  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })
@@ -429,7 +428,6 @@ export class WorkspaceEntity {
   })
   aiChatAssistantDisplayName: AiChatAssistantProfile['aiChatAssistantDisplayName'];
 
-  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })
@@ -440,7 +438,6 @@ export class WorkspaceEntity {
   })
   aiChatAssistantAvatarShape: AiChatAssistantProfile['aiChatAssistantAvatarShape'];
 
-  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })
@@ -451,7 +448,6 @@ export class WorkspaceEntity {
   })
   aiChatAssistantAvatarColor: AiChatAssistantProfile['aiChatAssistantAvatarColor'];
 
-  @Field(() => String)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })
@@ -462,7 +458,6 @@ export class WorkspaceEntity {
   })
   aiChatAssistantAvatarFace: AiChatAssistantProfile['aiChatAssistantAvatarFace'];
 
-  @Field(() => Boolean)
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
   })

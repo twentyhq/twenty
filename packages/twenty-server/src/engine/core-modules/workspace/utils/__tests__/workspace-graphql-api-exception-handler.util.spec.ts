@@ -72,15 +72,4 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
       genericError,
     );
   });
-
-  it('reports an invalid assistant profile as a user input error', () => {
-    const error = new WorkspaceException(
-      'Invalid workspace assistant profile',
-      WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID,
-    );
-
-    expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
-      UserInputError,
-    );
-  });
 });
