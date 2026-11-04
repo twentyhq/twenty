@@ -214,16 +214,14 @@ export const mockedUserData: MockedUser = {
       PermissionFlagType.CONNECTED_ACCOUNTS,
     ],
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+    objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
       (item) => ({
         objectMetadataId: item.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
         restrictedFields: {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
       }),
     ),
   },
@@ -242,21 +240,21 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map((item) => {
-      const hasAccess =
-        item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
+    objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+      (item) => {
+        const hasAccess =
+          item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
 
-      return {
-        objectMetadataId: item.id,
-        canReadObjectRecords: hasAccess,
-        canUpdateObjectRecords: hasAccess,
-        canSoftDeleteObjectRecords: hasAccess,
-        canDestroyObjectRecords: hasAccess,
-        restrictedFields: {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      };
-    }),
+        return {
+          objectMetadataId: item.id,
+          canReadAllRecords: hasAccess,
+          canUpdateAllRecords: hasAccess,
+          canSoftDeleteAllRecords: hasAccess,
+          canDestroyAllRecords: hasAccess,
+          restrictedFields: {},
+        };
+      },
+    ),
   },
 };
 
@@ -282,13 +280,11 @@ export const mockedOnboardingUserData = (
       objectPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
           restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
         }),
       ),
     },

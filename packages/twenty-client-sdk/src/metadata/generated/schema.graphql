@@ -3844,6 +3844,16 @@ enum ObjectRecordGroupByDateGranularity {
   YEAR
 }
 
+type ObjectRecordsPermissions {
+  canDestroyAllRecords: Boolean!
+  canReadAllRecords: Boolean!
+  canSoftDeleteAllRecords: Boolean!
+  canUpdateAllRecords: Boolean!
+  objectMetadataId: UUID!
+  restrictedFields: JSON!
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions
+}
+
 """Onboarding status"""
 enum OnboardingStatus {
   BOOK_CALL
@@ -4581,6 +4591,15 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   LESS_THAN_OR_EQUAL
   VECTOR_SEARCH
+}
+
+type RowLevelRecordsPermissions {
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
+  predicates: [RowLevelPermissionPredicate!]!
 }
 
 input RunAgentInput {
@@ -5992,8 +6011,7 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!]
-  objectsPermissions: [ObjectPermission!]
+  objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!

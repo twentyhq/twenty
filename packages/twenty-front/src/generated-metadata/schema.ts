@@ -5574,6 +5574,17 @@ export enum ObjectRecordGroupByDateGranularity {
   YEAR = 'YEAR'
 }
 
+export type ObjectRecordsPermissions = {
+  __typename?: 'ObjectRecordsPermissions';
+  canDestroyAllRecords: Scalars['Boolean']['output'];
+  canReadAllRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllRecords: Scalars['Boolean']['output'];
+  canUpdateAllRecords: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  restrictedFields: Scalars['JSON']['output'];
+  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_CALL = 'BOOK_CALL',
@@ -6885,6 +6896,16 @@ export enum RowLevelPermissionPredicateOperand {
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
+
+export type RowLevelRecordsPermissions = {
+  __typename?: 'RowLevelRecordsPermissions';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  predicateGroups: Array<RowLevelPermissionPredicateGroup>;
+  predicates: Array<RowLevelPermissionPredicate>;
+};
 
 export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
@@ -8335,8 +8356,7 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
-  objectsPermissions?: Maybe<Array<ObjectPermission>>;
+  objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];
