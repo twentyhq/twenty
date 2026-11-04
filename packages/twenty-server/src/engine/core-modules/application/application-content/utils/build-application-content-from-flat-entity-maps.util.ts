@@ -167,6 +167,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       universalIdentifier: object.universalIdentifier,
       label: object.labelPlural,
       icon: object.icon,
+      color: object.color,
       description: object.description,
       count: fieldCountByObject.get(object.universalIdentifier) ?? 0,
     })),
@@ -245,6 +246,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         navigationMenuItem.link ??
         navigationMenuItem.type,
       icon: navigationMenuItem.icon,
+      color: navigationMenuItem.color,
       objectUniversalIdentifier:
         navigationMenuItem.targetObjectMetadataUniversalIdentifier,
       parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)

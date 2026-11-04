@@ -5,6 +5,7 @@ export const APPLICATION_CONTENT_FRAGMENT = gql`
     universalIdentifier
     label
     icon
+    color
     description
     objectUniversalIdentifier
     parentLabel

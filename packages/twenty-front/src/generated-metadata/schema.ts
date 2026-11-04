@@ -605,6 +605,7 @@ export type ApplicationContent = {
 
 export type ApplicationContentItem = {
   __typename?: 'ApplicationContentItem';
+  color?: Maybe<Scalars['String']['output']>;
   count?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;

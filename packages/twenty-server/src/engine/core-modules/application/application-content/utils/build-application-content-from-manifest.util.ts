@@ -126,6 +126,7 @@ export const buildApplicationContentFromManifest = (
       universalIdentifier: object.universalIdentifier,
       label: object.labelPlural,
       icon: object.icon,
+      color: object.color,
       description: object.description,
       count: fieldCountByObject.get(object.universalIdentifier) ?? 0,
     })),
@@ -206,6 +207,7 @@ export const buildApplicationContentFromManifest = (
         navigationMenuItem.link ??
         navigationMenuItem.type,
       icon: navigationMenuItem.icon,
+      color: navigationMenuItem.color,
       objectUniversalIdentifier:
         navigationMenuItem.targetObjectUniversalIdentifier,
       parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)

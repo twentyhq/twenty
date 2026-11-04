@@ -14,8 +14,14 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 
 export const SettingsApplicationContentTypeDetail = () => {
   const { t } = useLingui();
-  const { contentType, name, content, applicationPath, contentPath } =
-    useApplicationContentRoute();
+  const {
+    contentType,
+    name,
+    content,
+    applicationPath,
+    contentPath,
+    getContentTypePath,
+  } = useApplicationContentRoute();
 
   if (!isApplicationContentType(contentType)) {
     return <Navigate to={contentPath} replace />;
@@ -49,6 +55,7 @@ export const SettingsApplicationContentTypeDetail = () => {
           <SettingsApplicationContentItemsTable
             contentType={contentType}
             content={content}
+            getContentTypePath={getContentTypePath}
           />
         ) : (
           <SettingsSectionSkeletonLoader />

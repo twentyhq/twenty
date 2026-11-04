@@ -5,6 +5,7 @@ const buildItem = (label: string, objectUniversalIdentifier?: string) => ({
   universalIdentifier: label,
   label,
   icon: null,
+  color: null,
   description: null,
   objectUniversalIdentifier: objectUniversalIdentifier ?? null,
   parentLabel: null,
