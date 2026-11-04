@@ -12,6 +12,7 @@ import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/wor
 import { type WorkflowIfElseActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-action-settings.type';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowLogicFunctionActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/types/workflow-logic-function-action-settings.type';
+import { type WorkflowMcpToolActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/types/workflow-mcp-tool-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import { type WorkflowSendChatMessageActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-settings.type';
 import {
@@ -45,6 +46,11 @@ export type WorkflowCodeAction = BaseWorkflowAction & {
 export type WorkflowLogicFunctionAction = BaseWorkflowAction & {
   type: WorkflowActionType.LOGIC_FUNCTION;
   settings: WorkflowLogicFunctionActionSettings;
+};
+
+export type WorkflowMcpToolAction = BaseWorkflowAction & {
+  type: WorkflowActionType.MCP_TOOL;
+  settings: WorkflowMcpToolActionSettings;
 };
 
 export type WorkflowSendEmailAction = BaseWorkflowAction & {
@@ -149,6 +155,7 @@ export type WorkflowWaitForEventAction = BaseWorkflowAction & {
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowLogicFunctionAction
+  | WorkflowMcpToolAction
   | WorkflowSendEmailAction
   | WorkflowDraftEmailAction
   | WorkflowSendChatMessageAction
