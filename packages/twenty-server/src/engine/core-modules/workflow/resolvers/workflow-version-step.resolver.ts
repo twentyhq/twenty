@@ -60,6 +60,22 @@ const WORKFLOW_VERSION_STEP_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
 };
 
+// Inline code runs with the workspace custom application's token, which no app or OAuth caller may borrow
+const WORKFLOW_CODE_STEP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -197,19 +213,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
   async workflowCodeStepAvailablePackages(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -226,20 +230,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  // the code runs with the workspace custom application's token, which no app or OAuth caller may borrow
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
   async testWorkflowCodeStep(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,
