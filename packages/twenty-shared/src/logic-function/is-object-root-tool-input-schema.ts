@@ -2,8 +2,7 @@ import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { isRecordObjectSchema } from '@/logic-function/is-record-object-schema';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// Tool callers and the logic function payload both require an object root;
-// a record root is advertised as a string id, so it does not qualify either
+// Tool callers and the function payload need an object; a record root is advertised as a string id
 export const isObjectRootToolInputSchema = (
   inputSchema: InputJsonSchema,
 ): boolean =>

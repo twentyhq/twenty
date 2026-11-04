@@ -71,6 +71,9 @@ describe('validateToolInputSchemaRoots', () => {
           }),
         ],
       }),
-    ).toHaveLength(2);
+    ).toEqual([
+      `Logic function "tag-records" declares a tool input schema whose root is not an object. Wrap the input in an object property, for example { type: 'object', properties: { recordId: ... } }.`,
+      `Logic function "lookup" declares a tool input schema whose root is not an object. Wrap the input in an object property, for example { type: 'object', properties: { recordId: ... } }.`,
+    ]);
   });
 });
