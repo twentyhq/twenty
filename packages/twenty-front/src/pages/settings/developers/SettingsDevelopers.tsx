@@ -10,10 +10,12 @@ import PlaygroundCoverLight from '@/settings/developers/assets/cover-light.png';
 import { PlaygroundSetupForm } from '@/settings/developers/components/PlaygroundSetupForm';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { SettingsMcpServersTable } from '@/settings/mcp-servers/components/SettingsMcpServersTable';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -21,6 +23,7 @@ import {
   IconApps,
   IconPlus,
   IconSparkle2,
+  IconSparkles,
   IconTerminal2,
   IconWebhook,
 } from 'twenty-ui/icon';
@@ -63,6 +66,9 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
+  const isMcpServersEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+  );
 
   const tabs = [
     {
@@ -75,6 +81,15 @@ export const SettingsDevelopers = () => {
       title: t`Webhooks`,
       Icon: IconWebhook,
     },
+    ...(isMcpServersEnabled
+      ? [
+          {
+            id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS,
+            title: t`MCP servers`,
+            Icon: IconSparkles,
+          },
+        ]
+      : []),
     {
       id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
       title: t`Apps`,
@@ -192,6 +207,29 @@ export const SettingsDevelopers = () => {
             </Section.Root>
           </StyledTabContent>
         )}
+
+        {isMcpServersEnabled &&
+          activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS && (
+            <StyledTabContent>
+              <Section.Root>
+                <Section.Header
+                  title={t`MCP servers`}
+                  description={t`Connect remote MCP servers so agents can use their tools.`}
+                />
+                <StyledTableContainer isMobile={isMobile}>
+                  <SettingsMcpServersTable />
+                  <StyledButtonContainer>
+                    <NavigationButton
+                      startIcon={<IconPlus />}
+                      size="sm"
+                      to={getSettingsPath(SettingsPath.NewMcpServer)}
+                      variant="outline"
+                    >{t`Add MCP server`}</NavigationButton>
+                  </StyledButtonContainer>
+                </StyledTableContainer>
+              </Section.Root>
+            </StyledTabContent>
+          )}
 
         {isAppsTab && <SettingsDevelopersAppsTab />}
 
