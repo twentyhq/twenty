@@ -14,6 +14,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { formatRecordReference } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -150,7 +151,7 @@ describe('Send chat message workflow step', () => {
     } finally {
       await setRecordSharingEnabled(false);
 
-      if (threadId !== undefined) {
+      if (isDefined(threadId)) {
         await destroyAgentChatThread({ threadId });
       }
     }

@@ -164,7 +164,7 @@ export class AgentChatInboxDeliveryService {
     mentionedWorkspaceMemberIds,
   }: {
     workspaceId: string;
-    thread: AgentChatThreadWorkspaceEntity;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
     mentionedWorkspaceMemberIds: string[];
   }): Promise<AgentChatMentionDelivery | undefined> {
     if (!isNonEmptyArray(mentionedWorkspaceMemberIds)) {
