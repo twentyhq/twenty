@@ -29,8 +29,7 @@ const getLegacyCodeStepLogicFunctionId = (
   return input.logicFunctionId;
 };
 
-// logicFunctionId stays so the previous version keeps running the step after a rollback;
-// a step whose function exists but has no readable source keeps running from it, only a gone function gets the stub
+// logicFunctionId stays for rollback; only a step whose function is gone gets the stub
 export const inlineCodeStepSources = ({
   steps,
   sourceByLogicFunctionId,
