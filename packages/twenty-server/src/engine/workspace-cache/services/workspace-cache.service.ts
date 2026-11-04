@@ -120,10 +120,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheKeyName,
     number
   >();
-  private readonly storageVersionByKey = new Map<
-    WorkspaceCacheKeyName,
-    number
-  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -177,13 +173,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             workspaceCacheKeyName,
             options.packingPonderation,
           );
-
-          if (isDefined(options.storageVersion)) {
-            this.storageVersionByKey.set(
-              workspaceCacheKeyName,
-              options.storageVersion,
-            );
-          }
         }
       }
 
@@ -511,18 +500,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         value: expectedHash,
         ttl: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
       })),
-      keysToDelete: [
-        ...cacheKeyNames.map(
-          (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
-        ),
-        // Pods still on the previous storage version read the unversioned entry, so it goes too
-        ...cacheKeyNames
-          .filter((keyName) => this.storageVersionByKey.has(keyName))
-          .flatMap((keyName) => [
-            `${keyName}:${workspaceId}:hash`,
-            `${keyName}:${workspaceId}:data`,
-          ]),
-      ],
+      keysToDelete: cacheKeyNames.map(
+        (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
+      ),
     });
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
@@ -1044,10 +1024,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
   ): string {
-    const storageVersion = this.storageVersionByKey.get(keyName);
-
-    return isDefined(storageVersion)
-      ? `${keyName}:v${storageVersion}:${workspaceId}`
-      : `${keyName}:${workspaceId}`;
+    return `${keyName}:${workspaceId}`;
   }
 }
