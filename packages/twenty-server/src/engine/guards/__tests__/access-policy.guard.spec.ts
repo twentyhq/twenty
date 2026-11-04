@@ -1,5 +1,13 @@
 import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -13,10 +21,20 @@ import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const user = { id: 'user-id' };
 const workspace = { id: 'workspace-id' };
+const activeWorkspace = {
+  ...workspace,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
+};
 const oauthClient = {
   id: 'oauth-client-id',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
@@ -716,6 +734,261 @@ describe('AccessPolicyGuard', () => {
 
       expect(response.status).toBe(403);
       expect(response.body.message).toBe(AUTH_PRINCIPAL_REFUSED_MESSAGE);
+    });
+  });
+
+  describe('permission flags', () => {
+    let mockPermissionsService: {
+      userHasWorkspaceSettingPermission: jest.Mock;
+    };
+    let sessionRequest: Record<string, unknown>;
+
+    beforeEach(() => {
+      mockPermissionsService = { userHasWorkspaceSettingPermission: jest.fn() };
+      sessionRequest = {
+        user,
+        workspace: activeWorkspace,
+        userWorkspaceId: 'user-workspace-id',
+        tokenType: JwtTokenTypeEnum.ACCESS,
+      };
+    });
+
+    const canActivateSession = () =>
+      canActivateOverHttp(
+        {
+          authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+          requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+        },
+        sessionRequest,
+        buildAccessPolicyService(
+          mockPermissionsService as unknown as PermissionsService,
+        ),
+      );
+
+    it('should bypass the permission check while the workspace is being created', async () => {
+      sessionRequest.workspace = {
+        ...activeWorkspace,
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      };
+
+      await expect(canActivateSession()).resolves.toBe(true);
+      expect(
+        mockPermissionsService.userHasWorkspaceSettingPermission,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should let the caller through when it has the permission flag', async () => {
+      mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+        true,
+      );
+
+      await expect(canActivateSession()).resolves.toBe(true);
+      expect(
+        mockPermissionsService.userHasWorkspaceSettingPermission,
+      ).toHaveBeenCalledWith({
+        userWorkspaceId: 'user-workspace-id',
+        setting: PermissionFlagType.WORKSPACE,
+        workspaceId: 'workspace-id',
+        apiKeyId: undefined,
+      });
+    });
+
+    it('should throw PermissionsException when the caller lacks the permission flag', async () => {
+      mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+        false,
+      );
+
+      await expect(canActivateSession()).rejects.toThrow(PermissionsException);
+    });
+  });
+
+  describe('permission flags with an application-only token', () => {
+    let mockWorkspaceCacheService: { getOrRecompute: jest.Mock };
+    let accessPolicyService: AccessPolicyService;
+
+    const mockCache = ({
+      defaultRoleId,
+      canUpdateAllSettings = false,
+      isLayoutsFlagAssigned = false,
+      canAgentRoleUpdateAllSettings = false,
+    }: {
+      defaultRoleId: string | null;
+      canUpdateAllSettings?: boolean;
+      isLayoutsFlagAssigned?: boolean;
+      canAgentRoleUpdateAllSettings?: boolean;
+    }) =>
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        userWorkspaceRoleMap: {},
+        flatRoleTargetByAgentIdMaps: {
+          'agent-id': { roleId: 'agent-role-id' },
+        },
+        flatApplicationMaps: {
+          byId: {
+            'application-id': {
+              id: 'application-id',
+              defaultRoleId,
+              deletedAt: null,
+            },
+          },
+          idByUniversalIdentifier: {},
+        },
+        flatRoleMaps: {
+          byUniversalIdentifier: {
+            'role-universal-identifier': {
+              id: 'role-id',
+              canUpdateAllSettings,
+              canAccessAllTools: false,
+              rolePermissionFlagIds: isLayoutsFlagAssigned
+                ? ['role-permission-flag-id']
+                : [],
+            },
+            'agent-role-universal-identifier': {
+              id: 'agent-role-id',
+              canUpdateAllSettings: canAgentRoleUpdateAllSettings,
+              canAccessAllTools: false,
+              rolePermissionFlagIds: [],
+            },
+          },
+          universalIdentifierById: {
+            'role-id': 'role-universal-identifier',
+            'agent-role-id': 'agent-role-universal-identifier',
+          },
+        },
+        flatRolePermissionFlagMaps: {
+          byUniversalIdentifier: {
+            'role-permission-flag-universal-identifier': {
+              id: 'role-permission-flag-id',
+              permissionFlagUniversalIdentifier:
+                SystemPermissionFlag[PermissionFlagType.LAYOUTS],
+            },
+          },
+          universalIdentifierById: {
+            'role-permission-flag-id':
+              'role-permission-flag-universal-identifier',
+          },
+        },
+      });
+
+    beforeEach(async () => {
+      mockWorkspaceCacheService = { getOrRecompute: jest.fn() };
+
+      const module = await Test.createTestingModule({
+        providers: [
+          PermissionsService,
+          PermissionsPrincipalsService,
+          { provide: ApiKeyRoleService, useValue: {} },
+          {
+            provide: WorkspaceCacheService,
+            useValue: mockWorkspaceCacheService,
+          },
+        ],
+      }).compile();
+
+      accessPolicyService = buildAccessPolicyService(
+        module.get(PermissionsService),
+      );
+    });
+
+    const canActivateApplication = ({
+      applicationId = 'application-id',
+      agentId,
+    }: { applicationId?: string; agentId?: string } = {}) =>
+      canActivateOverHttp(
+        {
+          authPrincipals: {
+            ...ACCEPT_EVERY_PRINCIPAL,
+            application: { withUser: true, withoutUser: true, withAgent: true },
+          },
+          requiredPermissionFlags: [PermissionFlagType.LAYOUTS],
+        },
+        {
+          application: { ...installedApplication, id: applicationId },
+          agentId,
+          workspace: activeWorkspace,
+          tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        },
+        accessPolicyService,
+      );
+
+    it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
+      mockCache({ defaultRoleId: null });
+
+      await expect(canActivateApplication()).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+    });
+
+    it('should allow when the default role of the application grants the setting', async () => {
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+
+      await expect(canActivateApplication()).resolves.toBe(true);
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledTimes(1);
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+        'workspace-id',
+        [
+          'userWorkspaceRoleMap',
+          'flatApplicationMaps',
+          'flatRoleMaps',
+          'flatRolePermissionFlagMaps',
+          'flatRoleTargetByAgentIdMaps',
+        ],
+      );
+    });
+
+    it('should allow when the setting is assigned to the default role of the application', async () => {
+      mockCache({
+        defaultRoleId: 'role-id',
+        canUpdateAllSettings: false,
+        isLayoutsFlagAssigned: true,
+      });
+
+      await expect(canActivateApplication()).resolves.toBe(true);
+    });
+
+    it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: false });
+
+      await expect(canActivateApplication()).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+    });
+
+    it('should allow when both the application and the agent roles grant the setting', async () => {
+      mockCache({
+        defaultRoleId: 'role-id',
+        canUpdateAllSettings: true,
+        canAgentRoleUpdateAllSettings: true,
+      });
+
+      await expect(
+        canActivateApplication({ agentId: 'agent-id' }),
+      ).resolves.toBe(true);
+    });
+
+    it.each([
+      { title: 'the agent role lacks it', agentId: 'agent-id' },
+      { title: 'the agent has no role', agentId: 'agent-without-role' },
+    ])(
+      'should deny with PERMISSION_DENIED a setting the application grants when $title',
+      async ({ agentId }) => {
+        mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+
+        await expect(canActivateApplication({ agentId })).rejects.toMatchObject(
+          {
+            code: PermissionsExceptionCode.PERMISSION_DENIED,
+          },
+        );
+      },
+    );
+
+    it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
+      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+
+      await expect(
+        canActivateApplication({ applicationId: 'unknown-application-id' }),
+      ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      });
     });
   });
 });
