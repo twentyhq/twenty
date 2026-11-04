@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import {
+  appendCopySuffix,
+  canReachSomeRecords,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -76,7 +80,7 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
       await Promise.all([
         this.permissionsService.getUserWorkspacePermissions({
           workspaceId,
@@ -90,13 +94,19 @@ export class MessageListDuplicationService {
     for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
       const objectMetadata =
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectPermissions = isDefined(objectMetadata)
-        ? objectsPermissions[objectMetadata.id]
+      const objectRecordsPermissions = isDefined(objectMetadata)
+        ? recordsPermissions.objects[objectMetadata.id]
         : undefined;
 
       if (
-        !objectPermissions?.canReadObjectRecords ||
-        !objectPermissions.canUpdateObjectRecords
+        !canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'select',
+        }) ||
+        !canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'update',
+        })
       ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,

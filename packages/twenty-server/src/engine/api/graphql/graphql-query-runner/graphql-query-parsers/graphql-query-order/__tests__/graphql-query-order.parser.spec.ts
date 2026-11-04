@@ -118,15 +118,15 @@ describe('GraphqlQueryOrderFieldParser', () => {
   );
 
   it('should compile scalar, composite and relation leaves to their columns', () => {
-    const result = parser.parse(
-      [
+    const result = parser.parse({
+      orderBy: [
         { closeDate: OrderByDirection.DescNullsLast },
         { fullName: { firstName: OrderByDirection.AscNullsLast } },
         { company: { name: OrderByDirection.AscNullsLast } },
         // oxlint-disable-next-line typescript/no-explicit-any
       ] as any,
-      'opportunity',
-    );
+      objectNameSingular: 'opportunity',
+    });
 
     expect(result.orderBy).toEqual({
       'opportunity.closeDate': {
@@ -152,8 +152,8 @@ describe('GraphqlQueryOrderFieldParser', () => {
   });
 
   it('should compile a composite target field of a relation onto the join alias', () => {
-    const result = parser.parse(
-      [
+    const result = parser.parse({
+      orderBy: [
         {
           company: {
             contactName: { firstName: OrderByDirection.AscNullsLast },
@@ -164,8 +164,8 @@ describe('GraphqlQueryOrderFieldParser', () => {
         },
         // oxlint-disable-next-line typescript/no-explicit-any
       ] as any,
-      'opportunity',
-    );
+      objectNameSingular: 'opportunity',
+    });
 
     expect(Object.keys(result.orderBy)).toEqual([
       'company.contactNameFirstName',
@@ -176,10 +176,10 @@ describe('GraphqlQueryOrderFieldParser', () => {
   });
 
   it('should treat a join column access as a scalar of the root object', () => {
-    const result = parser.parse(
-      [{ companyId: OrderByDirection.AscNullsFirst }],
-      'opportunity',
-    );
+    const result = parser.parse({
+      orderBy: [{ companyId: OrderByDirection.AscNullsFirst }],
+      objectNameSingular: 'opportunity',
+    });
 
     expect(result.orderBy).toEqual({
       'opportunity.companyId': {
@@ -193,11 +193,11 @@ describe('GraphqlQueryOrderFieldParser', () => {
   });
 
   it('should reverse direction and NULLS placement for backward pagination', () => {
-    const result = parser.parse(
-      [{ stage: OrderByDirection.AscNullsLast }],
-      'opportunity',
-      false,
-    );
+    const result = parser.parse({
+      orderBy: [{ stage: OrderByDirection.AscNullsLast }],
+      objectNameSingular: 'opportunity',
+      isForwardPagination: false,
+    });
 
     expect(result.orderBy['opportunity.stage']).toMatchObject({
       order: 'DESC',
@@ -206,13 +206,13 @@ describe('GraphqlQueryOrderFieldParser', () => {
   });
 
   it('should keep the first direction when the same field is ordered twice', () => {
-    const result = parser.parse(
-      [
+    const result = parser.parse({
+      orderBy: [
         { stage: OrderByDirection.AscNullsLast },
         { stage: OrderByDirection.DescNullsFirst },
       ],
-      'opportunity',
-    );
+      objectNameSingular: 'opportunity',
+    });
 
     expect(result.orderBy['opportunity.stage']).toMatchObject({
       order: 'ASC',
@@ -222,26 +222,30 @@ describe('GraphqlQueryOrderFieldParser', () => {
 
   it('should reject ordering by a field the role cannot read', () => {
     expect(() =>
-      parser.parse(
-        [{ stage: OrderByDirection.AscNullsLast }],
-        'opportunity',
-        true,
-        {
-          [objectMetadataId]: {
-            restrictedFields: { 'stage-id': { canRead: false } },
-            // oxlint-disable-next-line typescript/no-explicit-any
-          } as any,
+      parser.parse({
+        orderBy: [{ stage: OrderByDirection.AscNullsLast }],
+        objectNameSingular: 'opportunity',
+        recordsPermissions: {
+          objects: {
+            [objectMetadataId]: {
+              canReadAllRecords: true,
+              canUpdateAllRecords: true,
+              canSoftDeleteAllRecords: true,
+              canDestroyAllRecords: true,
+              restrictedFields: { 'stage-id': { canRead: false } },
+            },
+          },
         },
-      ),
+      }),
     ).toThrow('does not have permission');
   });
 
   it('should reject unknown fields', () => {
     expect(() =>
-      parser.parse(
-        [{ unknownField: OrderByDirection.AscNullsLast }],
-        'opportunity',
-      ),
+      parser.parse({
+        orderBy: [{ unknownField: OrderByDirection.AscNullsLast }],
+        objectNameSingular: 'opportunity',
+      }),
     ).toThrow('does not exist or is not sortable');
   });
 });

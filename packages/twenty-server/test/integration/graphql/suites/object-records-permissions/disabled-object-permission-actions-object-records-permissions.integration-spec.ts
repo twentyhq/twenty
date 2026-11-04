@@ -69,15 +69,21 @@ describe('disabled object permission actions', () => {
   it("reports the actions disabled on record shares in an admin user's permissions", async () => {
     const response = await makeMetadataApiRequest({
       query: gql`
-        query CurrentUserObjectsPermissions {
+        query CurrentUserObjectRecordsPermissions {
           currentUser {
             currentUserWorkspace {
-              objectsPermissions {
+              objectRecordsPermissions {
                 objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-                canSoftDeleteObjectRecords
-                canDestroyObjectRecords
+                canReadAllRecords
+                canUpdateAllRecords
+                canSoftDeleteAllRecords
+                canDestroyAllRecords
+                rowLevelRecordsPermissions {
+                  canReadRecords
+                  canUpdateRecords
+                  canSoftDeleteRecords
+                  canDestroyRecords
+                }
               }
             }
           }
@@ -87,16 +93,17 @@ describe('disabled object permission actions', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(
-      response.body.data.currentUser.currentUserWorkspace.objectsPermissions.find(
+      response.body.data.currentUser.currentUserWorkspace.objectRecordsPermissions.find(
         ({ objectMetadataId }: { objectMetadataId: string }) =>
           objectMetadataId === recordShareObjectMetadataId,
       ),
     ).toEqual({
       objectMetadataId: recordShareObjectMetadataId,
-      canReadObjectRecords: false,
-      canUpdateObjectRecords: false,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      rowLevelRecordsPermissions: null,
     });
   });
 });

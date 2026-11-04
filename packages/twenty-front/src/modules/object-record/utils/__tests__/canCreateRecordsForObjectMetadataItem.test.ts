@@ -1,3 +1,4 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 
 const creatableObjectMetadataItem = {
@@ -6,11 +7,7 @@ const creatableObjectMetadataItem = {
   isRemote: false,
 };
 
-const objectPermissionsAllowingUpdate = {
-  canUpdateObjectRecords: true,
-  objectMetadataId: '123',
-  restrictedFields: {},
-};
+const objectPermissionsAllowingUpdate = getDefaultObjectPermissions();
 
 describe('canCreateRecordsForObjectMetadataItem', () => {
   it('should return true for a creatable, editable, non-remote object with update permission', () => {
@@ -62,7 +59,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: {
         ...objectPermissionsAllowingUpdate,
-        canUpdateObjectRecords: false,
+        canUpdateAllRecords: false,
       },
       objectMetadataItem: creatableObjectMetadataItem,
     });

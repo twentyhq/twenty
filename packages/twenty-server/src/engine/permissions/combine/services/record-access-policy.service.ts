@@ -4,10 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import {
-  type ObjectsPermissions,
-  type RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
@@ -17,7 +14,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
-import { getPermissionsPrincipalsObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-objects-permissions.util';
+import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principals-records-permissions.util';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
@@ -39,6 +36,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { filterReadableEvents } from 'src/engine/permissions/combine/utils/filter-readable-events.util';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
@@ -67,7 +65,7 @@ type PrincipalsWithRoles = Promise<
 export type ScopedRecordAccessPolicy = {
   hasAccessToSomeRecords: (request: ObjectAccessRequest) => Promise<boolean>;
   hasAccessToRecords: (request: RecordsAccessRequest) => Promise<boolean>;
-  findObjectsPermissions: () => Promise<ObjectsPermissions | undefined>;
+  findRecordsPermissions: () => Promise<RoleRecordsPermissions | undefined>;
 };
 
 @Injectable()
@@ -100,8 +98,8 @@ export class RecordAccessPolicyService {
         this.hasPrincipalsAccessToSomeRecords({ ...request, principals }),
       hasAccessToRecords: (request) =>
         this.hasPrincipalsAccessToRecords({ ...request, principals }),
-      findObjectsPermissions: () =>
-        this.findPrincipalsObjectsPermissions(principals),
+      findRecordsPermissions: () =>
+        this.findPrincipalsRecordsPermissions(principals),
     };
   }
 
@@ -209,39 +207,39 @@ export class RecordAccessPolicyService {
     return uniqueRecordIds.every((recordId) => admittedRecordIds.has(recordId));
   }
 
-  async getObjectsPermissionsOrThrow(
+  async getRecordsPermissionsOrThrow(
     authContext: PermissionsAuthContext,
-  ): Promise<ObjectsPermissions> {
-    const objectsPermissions = await this.findObjectsPermissions(authContext);
+  ): Promise<RoleRecordsPermissions> {
+    const recordsPermissions = await this.findRecordsPermissions(authContext);
 
-    if (!isDefined(objectsPermissions)) {
+    if (!isDefined(recordsPermissions)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
 
-    return objectsPermissions;
+    return recordsPermissions;
   }
 
-  async findObjectsPermissions(
+  async findRecordsPermissions(
     authContext: PermissionsAuthContext,
-  ): Promise<ObjectsPermissions | undefined> {
-    return this.findPrincipalsObjectsPermissions(
+  ): Promise<RoleRecordsPermissions | undefined> {
+    return this.findPrincipalsRecordsPermissions(
       this.resolvePrincipalsWithRoles(authContext),
     );
   }
 
-  private async findPrincipalsObjectsPermissions(
+  private async findPrincipalsRecordsPermissions(
     principalsWithRoles: PrincipalsWithRoles,
-  ): Promise<ObjectsPermissions | undefined> {
+  ): Promise<RoleRecordsPermissions | undefined> {
     const principals = await principalsWithRoles;
 
     if (!isDefined(principals)) {
       return undefined;
     }
 
-    return getPermissionsPrincipalsObjectsPermissions({
+    return getPermissionsPrincipalsRecordsPermissions({
       principals,
       metadataMaps: await this.findPrincipalsMetadataMaps(principals),
     });
@@ -423,7 +421,7 @@ export class RecordAccessPolicyService {
           events: candidateEvents,
           admittedRecordIds: await findAdmittedRecordIds(principals),
           objectMetadata,
-          objectsPermissions: getPermissionsPrincipalsObjectsPermissions({
+          recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
             principals,
             metadataMaps: principalMetadataMaps,
           }),

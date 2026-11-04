@@ -10,6 +10,7 @@ import {
   type StandaloneViewFieldManifest,
   type ViewFilterManifest,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
@@ -22,9 +23,11 @@ import {
 import { describe, expect, it } from 'vitest';
 
 const planManifestPullWrites = (
-  options: Parameters<typeof preparePullEntities>[0] & {
-    workspaceUniversalIdentifiers: ReadonlySet<string>;
-  },
+  options: Parameters<typeof preparePullEntities>[0] &
+    Pick<
+      Parameters<typeof planPullWrites>[0],
+      'workspaceUniversalIdentifiers' | 'localCodeStepFilesByWorkflowPath'
+    >,
 ) => {
   const { entities, baseEntities, skipped } = preparePullEntities(options);
 
@@ -111,6 +114,48 @@ const MANIFEST = buildManifest([
     labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UID,
   }),
 ]);
+
+const GREET_WORKFLOW_UID = '1e1e1e1e-1e1e-41e1-81e1-1e1e1e1e1e1e';
+const GREET_STEP_UID = '1f1f1f1f-1f1f-41f1-81f1-1f1f1f1f1f1f';
+const WELCOME_WORKFLOW_UID = '2a2a2a2a-2a2a-42a2-82a2-2a2a2a2a2a2a';
+const WELCOME_STEP_UID = '2b2b2b2b-2b2b-42b2-82b2-2b2b2b2b2b2b';
+const GREET_WORKFLOW_PATH = 'src/workflows/welcome.ts';
+
+const buildCodeStepWorkflow = ({
+  universalIdentifier,
+  name,
+  stepUniversalIdentifier,
+}: {
+  universalIdentifier: string;
+  name: string;
+  stepUniversalIdentifier: string;
+}): WorkflowManifest => ({
+  universalIdentifier,
+  name,
+  version: {
+    trigger: { type: 'MANUAL', nextStepIds: [stepUniversalIdentifier] },
+    steps: [
+      {
+        universalIdentifier: stepUniversalIdentifier,
+        name: 'Format',
+        type: 'CODE',
+        nextStepIds: [],
+        input: {
+          code: 'export const main = async () => ({});',
+          logicFunctionInput: {},
+        },
+      },
+    ],
+  },
+});
+
+const GREET_WORKFLOW_FILE: ScannedSourceFile = {
+  relativePath: GREET_WORKFLOW_PATH,
+  entityKey: 'workflows',
+  targetFunctionName: 'defineWorkflow',
+  universalIdentifier: GREET_WORKFLOW_UID,
+  isReadable: true,
+};
 
 const buildView = (
   overrides: Partial<ViewManifest> & { universalIdentifier: string },
@@ -1401,4 +1446,113 @@ describe('planPullWrites', () => {
     );
     expect(plan.deletions).toEqual([]);
   });
+
+  it('should keep apart the code step files of workflows sharing a folder', () => {
+    const plan = planManifestPullWrites({
+      manifest: {
+        ...MANIFEST,
+        workflows: [
+          buildCodeStepWorkflow({
+            universalIdentifier: GREET_WORKFLOW_UID,
+            name: 'Greet',
+            stepUniversalIdentifier: GREET_STEP_UID,
+          }),
+          buildCodeStepWorkflow({
+            universalIdentifier: WELCOME_WORKFLOW_UID,
+            name: 'Welcome',
+            stepUniversalIdentifier: WELCOME_STEP_UID,
+          }),
+        ],
+      },
+      baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
+      scannedFiles: [GREET_WORKFLOW_FILE],
+    });
+
+    expect(
+      plan.writes
+        .filter((write) => write.relativePath.endsWith('.code.ts'))
+        .map(({ universalIdentifier, relativePath }) => ({
+          universalIdentifier,
+          relativePath,
+        })),
+    ).toEqual([
+      {
+        universalIdentifier: GREET_STEP_UID,
+        relativePath: 'src/workflows/welcome/format.code.ts',
+      },
+      {
+        universalIdentifier: WELCOME_STEP_UID,
+        relativePath: `src/workflows/welcome/${WELCOME_STEP_UID.slice(0, 8)}-format.code.ts`,
+      },
+    ]);
+  });
+
+  it.each([
+    {
+      hasOwnPreviousFile: true,
+      expectedPath: `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format.code.ts`,
+    },
+    {
+      hasOwnPreviousFile: false,
+      expectedPath: `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format-2.code.ts`,
+    },
+  ])(
+    'should write a code step file only over its own previous file, has own previous file: $hasOwnPreviousFile',
+    ({ hasOwnPreviousFile, expectedPath }) => {
+      const previousPath = `src/workflows/welcome/${GREET_STEP_UID.slice(0, 8)}-format.code.ts`;
+      const plainFile = (relativePath: string): ScannedSourceFile => ({
+        relativePath,
+        entityKey: null,
+        targetFunctionName: null,
+        universalIdentifier: null,
+        isReadable: true,
+      });
+
+      const plan = planManifestPullWrites({
+        manifest: {
+          ...MANIFEST,
+          workflows: [
+            buildCodeStepWorkflow({
+              universalIdentifier: GREET_WORKFLOW_UID,
+              name: 'Greet',
+              stepUniversalIdentifier: GREET_STEP_UID,
+            }),
+          ],
+        },
+        baseManifest: null,
+        workspaceUniversalIdentifiers: new Set(),
+        scannedFiles: [
+          GREET_WORKFLOW_FILE,
+          plainFile('src/workflows/welcome/format.code.ts'),
+          plainFile(previousPath),
+        ],
+        localCodeStepFilesByWorkflowPath: new Map(
+          hasOwnPreviousFile
+            ? [
+                [
+                  GREET_WORKFLOW_PATH,
+                  [
+                    {
+                      universalIdentifier: GREET_STEP_UID,
+                      relativePath: previousPath,
+                    },
+                  ],
+                ],
+              ]
+            : [],
+        ),
+      });
+
+      expect(
+        plan.writes.find(
+          (write) => write.universalIdentifier === GREET_STEP_UID,
+        ),
+      ).toMatchObject({
+        relativePath: expectedPath,
+        isRegeneration: hasOwnPreviousFile,
+      });
+      expect(plan.codeStepFileDeletions).toEqual([]);
+    },
+  );
 });
