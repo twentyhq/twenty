@@ -4,7 +4,6 @@ import {
   AggregateOperations,
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
-  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
   isFieldMetadataArrayKind,
@@ -70,17 +69,17 @@ const buildSingleKeyObject = ({
 
 const buildGroupByEntries = ({
   objectMetadata,
-  restrictedFields,
+  readableFieldMetadataIds,
   definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  readableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
 }): { schema: JSONSchema7; label: string }[] =>
   objectMetadata.fields
     .filter(
       (field) =>
-        restrictedFields?.[field.id]?.canRead !== false &&
+        readableFieldMetadataIds?.has(field.id) !== false &&
         isFieldMetadataSupportedInGroupBy(field),
     )
     .flatMap((field) => {
@@ -170,16 +169,16 @@ const buildGroupByEntries = ({
 
 export const generateGroupByToolInputSchema = ({
   objectMetadata,
-  restrictedFields,
+  readableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  readableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 | null => {
   const definitions: JsonSchemaDefinitions = {};
 
   const groupByEntries = buildGroupByEntries({
     objectMetadata,
-    restrictedFields,
+    readableFieldMetadataIds,
     definitions,
   });
 
@@ -189,13 +188,13 @@ export const generateGroupByToolInputSchema = ({
 
   const { properties: filterProperties } = generateRecordFilterJsonSchema({
     objectMetadata,
-    restrictedFields,
+    readableFieldMetadataIds,
     definitions,
   });
 
   const availableAggregations = getAvailableAggregationsFromObjectFields(
     objectMetadata.fields.filter(
-      (field) => restrictedFields?.[field.id]?.canRead !== false,
+      (field) => readableFieldMetadataIds?.has(field.id) !== false,
     ),
   );
 

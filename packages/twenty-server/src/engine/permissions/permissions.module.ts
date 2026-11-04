@@ -32,8 +32,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     PermissionsService,
     PermissionsPrincipalsService,
-    // TODO(@charlesBochet): stop exporting once PermissionsService answers field questions
-    RecordAccessPolicyService,
     ApiKeyRoleService,
   ],
 })

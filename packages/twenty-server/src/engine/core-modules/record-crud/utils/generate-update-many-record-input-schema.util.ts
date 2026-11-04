@@ -1,5 +1,4 @@
 import { type JSONSchema7 } from 'json-schema';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 
 import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-filter.json-schema';
 import { generateRecordPropertiesJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-properties.json-schema';
@@ -9,23 +8,25 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateUpdateManyRecordInputSchema = ({
   objectMetadata,
-  restrictedFields,
+  readableFieldMetadataIds,
+  updatableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  readableFieldMetadataIds?: ReadonlySet<string>;
+  updatableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   const { reference: filterReference } = generateRecordFilterJsonSchema({
     objectMetadata,
-    restrictedFields,
+    readableFieldMetadataIds,
     definitions,
     additionalExcludedFieldNames: ['createdAt', 'updatedAt'],
   });
 
   const { properties } = generateRecordPropertiesJsonSchema({
     objectMetadata,
-    restrictedFields,
+    updatableFieldMetadataIds,
     definitions,
     isPartial: true,
   });

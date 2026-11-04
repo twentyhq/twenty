@@ -56,6 +56,15 @@ type RecordIdsAccessQuestion = RecordsAccessQuestion & {
   transactionScope?: WorkspaceTransactionScope;
 };
 
+type FieldsAccessQuestion = Pick<
+  RecordsAccessQuestion,
+  'principals' | 'objectMetadataId'
+>;
+
+type FieldAccessQuestion = FieldsAccessQuestion & {
+  fieldMetadataId: string;
+};
+
 @Injectable()
 export class PermissionsService {
   constructor(
@@ -111,6 +120,48 @@ export class PermissionsService {
     return [...new Set(question.recordIds)].filter((recordId) =>
       admittedRecordIds.has(recordId.toLowerCase()),
     );
+  }
+
+  public async canReadField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldAccessQuestion): Promise<boolean> {
+    return (
+      await this.findReadableFieldMetadataIds({ principals, objectMetadataId })
+    ).includes(fieldMetadataId);
+  }
+
+  public async canUpdateField({
+    principals,
+    objectMetadataId,
+    fieldMetadataId,
+  }: FieldAccessQuestion): Promise<boolean> {
+    return (
+      await this.findUpdatableFieldMetadataIds({ principals, objectMetadataId })
+    ).includes(fieldMetadataId);
+  }
+
+  public findReadableFieldMetadataIds({
+    principals,
+    objectMetadataId,
+  }: FieldsAccessQuestion): Promise<string[]> {
+    return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canRead',
+    });
+  }
+
+  public findUpdatableFieldMetadataIds({
+    principals,
+    objectMetadataId,
+  }: FieldsAccessQuestion): Promise<string[]> {
+    return this.recordAccessPolicyService.findPermittedFieldMetadataIds({
+      principals,
+      objectMetadataId,
+      fieldPermission: 'canUpdate',
+    });
   }
 
   // Pass the same batch object on every call: lookups are shared per batch

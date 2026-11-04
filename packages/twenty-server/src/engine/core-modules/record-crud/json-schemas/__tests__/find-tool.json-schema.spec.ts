@@ -28,10 +28,14 @@ const COMPANY_FIELDS = [
   }),
 ];
 
-const generateSchema = (restrictedFields = {}) =>
+const generateSchema = (unreadableFieldMetadataIds: string[] = []) =>
   generateFindToolInputSchema({
     objectMetadata: { fields: COMPANY_FIELDS },
-    restrictedFields,
+    readableFieldMetadataIds: new Set(
+      COMPANY_FIELDS.map((field) => field.id).filter(
+        (fieldId) => !unreadableFieldMetadataIds.includes(fieldId),
+      ),
+    ),
   });
 
 const DIRECTION_REFERENCE = { $ref: '#/$defs/OrderByDirection' };
@@ -62,9 +66,7 @@ describe('generateFindToolInputSchema', () => {
   });
 
   it('should not offer sorting on one-to-many, deleted-at or unreadable fields', () => {
-    expect(
-      generateSchema({ 'field-id-name': { canRead: false } }),
-    ).toMatchObject({
+    expect(generateSchema(['field-id-name'])).toMatchObject({
       properties: {
         orderBy: {
           items: {
@@ -92,8 +94,6 @@ describe('generateFindToolInputSchema', () => {
   });
 
   it('should not offer filtering on unreadable fields', () => {
-    expect(
-      generateSchema({ 'field-id-name': { canRead: false } }).properties?.name,
-    ).toBeUndefined();
+    expect(generateSchema(['field-id-name']).properties?.name).toBeUndefined();
   });
 });

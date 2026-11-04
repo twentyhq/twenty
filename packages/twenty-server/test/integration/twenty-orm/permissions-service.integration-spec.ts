@@ -9,6 +9,10 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
+import { createApiKeyWithFieldPermission } from 'test/integration/permissions/utils/create-api-key-with-field-permission.util';
+import { type ApiKeyWithObjectRecordGrants } from 'test/integration/permissions/utils/create-api-key-with-object-record-grants.util';
+import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permissions/utils/delete-api-keys-with-object-record-grants.util';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -179,4 +183,99 @@ describe('PermissionsService', () => {
       });
     },
   );
+  describe('field questions', () => {
+    let readRestricted: ApiKeyWithObjectRecordGrants;
+    let updateRestricted: ApiKeyWithObjectRecordGrants;
+    let introFieldMetadataId: string;
+    let jobTitleFieldMetadataId: string;
+
+    beforeAll(async () => {
+      [readRestricted, updateRestricted] = await Promise.all([
+        createApiKeyWithFieldPermission({
+          objectNameSingular: 'person',
+          fieldName: 'intro',
+          canReadFieldValue: false,
+        }),
+        createApiKeyWithFieldPermission({
+          objectNameSingular: 'person',
+          fieldName: 'intro',
+          canUpdateFieldValue: false,
+        }),
+      ]);
+      [introFieldMetadataId, jobTitleFieldMetadataId] = await Promise.all(
+        ['intro', 'jobTitle'].map((fieldName) =>
+          findFieldMetadataIdByName({
+            objectMetadataId: personFlatObjectMetadata.id,
+            fieldName,
+          }),
+        ),
+      );
+    });
+
+    afterAll(async () => {
+      await deleteApiKeysWithObjectRecordGrants([
+        readRestricted,
+        updateRestricted,
+      ]);
+    });
+
+    const buildApiKeyPrincipals = (apiKey: ApiKeyWithObjectRecordGrants) =>
+      permissionsService.buildPermissionsPrincipals({
+        authContext: {
+          type: 'apiKey',
+          workspace: { id: SEED_APPLE_WORKSPACE_ID },
+          apiKey: { id: apiKey.apiKeyId },
+        },
+      });
+
+    it('hides a field the role cannot read from reads and updates', async () => {
+      const principals = await buildApiKeyPrincipals(readRestricted);
+      const question = {
+        principals,
+        objectMetadataId: personFlatObjectMetadata.id,
+        fieldMetadataId: introFieldMetadataId,
+      };
+
+      expect(await permissionsService.canReadField(question)).toBe(false);
+      expect(await permissionsService.canUpdateField(question)).toBe(false);
+
+      const readableFieldMetadataIds =
+        await permissionsService.findReadableFieldMetadataIds({
+          principals,
+          objectMetadataId: personFlatObjectMetadata.id,
+        });
+
+      expect(readableFieldMetadataIds).toContain(jobTitleFieldMetadataId);
+      expect(readableFieldMetadataIds).not.toContain(introFieldMetadataId);
+    });
+
+    it('keeps a read-only field readable but not updatable', async () => {
+      const principals = await buildApiKeyPrincipals(updateRestricted);
+      const question = {
+        principals,
+        objectMetadataId: personFlatObjectMetadata.id,
+        fieldMetadataId: introFieldMetadataId,
+      };
+
+      expect(await permissionsService.canReadField(question)).toBe(true);
+      expect(await permissionsService.canUpdateField(question)).toBe(false);
+      expect(
+        await permissionsService.findUpdatableFieldMetadataIds({
+          principals,
+          objectMetadataId: personFlatObjectMetadata.id,
+        }),
+      ).toContain(jobTitleFieldMetadataId);
+    });
+
+    it('denies every field to an API key with no role', async () => {
+      expect(
+        await permissionsService.findReadableFieldMetadataIds({
+          principals: await permissionsService.buildPermissionsPrincipals({
+            authContext: missingRoleAuthContext,
+          }),
+          objectMetadataId: personFlatObjectMetadata.id,
+        }),
+      ).toEqual([]);
+    });
+  });
 });

@@ -16,9 +16,7 @@ import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const workspaceId = 'workspace-id';
 
@@ -60,6 +58,7 @@ const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
   >
 > = {
   select: 'canReadAllRecords',
+  insert: 'canUpdateAllRecords',
   update: 'canUpdateAllRecords',
   'soft-delete': 'canSoftDeleteAllRecords',
   delete: 'canDestroyAllRecords',
@@ -83,15 +82,6 @@ describe('DatabaseToolProvider', () => {
     const objectRecordsPermissions = {
       ...allObjectRecordsPermissions,
       ...options?.composedObjectRecordsPermissions,
-    };
-    const composedRecordsPermissions: RoleRecordsPermissions = {
-      canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
-      canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
-      canSoftDeleteAllRecords: objectRecordsPermissions.canSoftDeleteAllRecords,
-      canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
-      objects: Object.fromEntries(
-        objects.map((object) => [object.id, objectRecordsPermissions]),
-      ),
     };
 
     const flatEntityMapsCacheService = {
@@ -123,11 +113,6 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
-    const recordAccessPolicyService = {
-      findRecordsPermissions: jest
-        .fn()
-        .mockResolvedValue(composedRecordsPermissions),
-    } as unknown as RecordAccessPolicyService;
     const permissionsService = {
       buildPermissionsPrincipals: jest.fn().mockResolvedValue({
         workspaceId,
@@ -154,11 +139,12 @@ describe('DatabaseToolProvider', () => {
           );
         },
       ),
+      findReadableFieldMetadataIds: jest.fn().mockResolvedValue([]),
+      findUpdatableFieldMetadataIds: jest.fn().mockResolvedValue([]),
     } as unknown as PermissionsService;
 
     const provider = new DatabaseToolProvider(
       permissionsService,
-      recordAccessPolicyService,
       flatEntityMapsCacheService,
       i18nService,
       applicationTranslationCatalogService,

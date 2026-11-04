@@ -6,7 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { loadPermissionsMetadataMaps } from 'src/engine/permissions/combine/utils/load-permissions-metadata-maps.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
@@ -28,7 +28,6 @@ type RecordSharePrincipal = Pick<
 export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -111,10 +110,10 @@ export class RecordSharePrincipalService {
       workspaceId,
       principals: namedPrincipals,
     });
-    const metadataMaps =
-      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
-        workspaceId,
-      );
+    const metadataMaps = await loadPermissionsMetadataMaps({
+      workspaceCacheService: this.workspaceCacheService,
+      workspaceId,
+    });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
