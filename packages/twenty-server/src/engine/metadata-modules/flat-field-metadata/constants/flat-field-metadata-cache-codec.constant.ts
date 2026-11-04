@@ -9,6 +9,8 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   defaultValue: '$7',
   description: '$8',
   fieldPermissionIds: '$9',
+  fieldMetadataOptionIds: '$P',
+  fieldMetadataOptionUniversalIdentifiers: '$Q',
   fieldPermissionUniversalIdentifiers: '$a',
   icon: '$b',
   id: '$c',
@@ -81,6 +83,8 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'searchFieldMetadataIds',
   'searchFieldMetadataUniversalIdentifiers',
   'fieldPermissionUniversalIdentifiers',
+  'fieldMetadataOptionIds',
+  'fieldMetadataOptionUniversalIdentifiers',
 ] as const satisfies readonly (keyof typeof FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY)[];
 
 export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEY_SET: ReadonlySet<string> =

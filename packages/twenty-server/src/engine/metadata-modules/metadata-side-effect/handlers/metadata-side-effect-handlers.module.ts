@@ -12,6 +12,9 @@ import { FieldRecordFormWidgetOnCreateSideEffectHandlerService } from 'src/engin
 import { FieldRecordFormWidgetOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-delete-side-effect-handler.service';
 import { FieldRecordFormWidgetOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-update-side-effect-handler.service';
 import { FieldRecordPageViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-page-view-field-on-create-side-effect-handler.service';
+import { FieldMetadataOptionsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-metadata-options-on-create-side-effect-handler.service';
+import { FieldMetadataOptionsOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-metadata-options-on-update-side-effect-handler.service';
+import { FieldMetadataOptionsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-metadata-options-on-delete-side-effect-handler.service';
 import { FieldSearchFieldMetadataOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-update-side-effect-handler.service';
 import { FieldSystemViewFieldsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-system-view-fields-on-delete-side-effect-handler.service';
 import { FieldMorphRelationHeadOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-morph-relation-head-on-create-side-effect-handler.service';
@@ -51,6 +54,9 @@ import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engin
     FieldSearchFieldMetadataOnCreateSideEffectHandlerService,
     FieldSearchFieldMetadataOnDeleteSideEffectHandlerService,
     FieldSearchFieldMetadataOnUpdateSideEffectHandlerService,
+    FieldMetadataOptionsOnCreateSideEffectHandlerService,
+    FieldMetadataOptionsOnUpdateSideEffectHandlerService,
+    FieldMetadataOptionsOnDeleteSideEffectHandlerService,
     FieldIndexViewFieldOnCreateSideEffectHandlerService,
     FieldRecordPageViewFieldOnCreateSideEffectHandlerService,
     FieldRecordFormWidgetOnCreateSideEffectHandlerService,
