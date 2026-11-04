@@ -141,19 +141,26 @@ export const useAiChatEditor = () => {
     mentionStorage.searchMentionRecords = isDirectMessage
       ? async () => []
       : searchMentionRecords;
-    mentionStorage.searchWorkspaceMembers =
-      isAiChatInboxEnabled && !isDirectMessage
-        ? (query) => [
-            ...(aiModels.length > 0
-              ? getAgentChatAssistantMentionSearchResults({
-                  query,
-                  objectLabelSingular: t`Assistant`,
-                  objectLabelPlural: t`Teammates`,
-                })
-              : []),
-            ...searchWorkspaceMembers(query),
-          ]
-        : () => [];
+    mentionStorage.searchWorkspaceMembers = (query) => {
+      if (!isAiChatInboxEnabled || isDirectMessage) {
+        return [];
+      }
+
+      const matchingWorkspaceMembers = searchWorkspaceMembers(query);
+
+      if (!isNonEmptyArray(aiModels)) {
+        return matchingWorkspaceMembers;
+      }
+
+      return [
+        ...getAgentChatAssistantMentionSearchResults({
+          query,
+          objectLabelSingular: t`Assistant`,
+          objectLabelPlural: t`Teammates`,
+        }),
+        ...matchingWorkspaceMembers,
+      ];
+    };
 
     const skillStorage = storage['skill-suggestion'] as {
       searchSkills: typeof searchSkills;
