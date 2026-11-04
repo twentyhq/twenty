@@ -17,7 +17,7 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -110,8 +110,8 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
           useValue: { withLock: jest.fn((_key, fn) => fn()) },
         },
         {
-          provide: CoreEntityCacheService,
-          useValue: { invalidate: jest.fn() },
+          provide: ApplicationRegistrationSeedingService,
+          useValue: { invalidateMarketplaceCatalog: jest.fn() },
         },
         {
           provide: MetricsService,

@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
@@ -17,6 +16,7 @@ import { ApplicationTarballService } from 'src/engine/core-modules/application/a
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationRegistrationSeedingModule } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -47,6 +47,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationVersionModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
+    ApplicationRegistrationSeedingModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,
@@ -68,7 +69,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,
     ApplicationRegistrationAssetService,
-    ApplicationRegistrationAssetUrlService,
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
@@ -76,7 +76,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationClaimService,
     ApplicationRegistrationVariableModule,
     ApplicationRegistrationAssetService,
-    ApplicationRegistrationAssetUrlService,
+    ApplicationRegistrationLookupModule,
   ],
 })
 export class ApplicationRegistrationModule {}
