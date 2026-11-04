@@ -65,9 +65,10 @@ export class AgentChatDirectMessageRecordsService {
       return false;
     }
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatWorkspaceMemberMaps',
       ]);
     const flatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
@@ -80,6 +81,12 @@ export class AgentChatDirectMessageRecordsService {
       );
     }
 
+    const activePair = pair.filter((workspaceMemberId) => {
+      const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+
+      return isDefined(member) && !isDefined(member.deletedAt);
+    });
+
     await this.privateRecordStorageService.setPrivate({
       workspaceId,
       flatObjectMetadata,
@@ -91,7 +98,7 @@ export class AgentChatDirectMessageRecordsService {
       workspaceId,
       transactionScope,
       recordShares: recordIds.flatMap((recordId) =>
-        pair.map((principalId) => ({
+        activePair.map((principalId) => ({
           objectMetadataId: flatObjectMetadata.id,
           recordId,
           principalId,
