@@ -7,7 +7,6 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import { TriggerAddPeopleToMessageListJobResultDTO } from 'src/modules/emailing/dtos/trigger-add-people-to-message-list-job-result.dto';
@@ -47,7 +46,6 @@ export class MessageListResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async duplicateMessageList(
     @Args('id', { type: () => UUIDScalarType }) id: string,
@@ -78,7 +76,6 @@ export class MessageListResolver {
       },
       requiredPermissionFlags: [],
     }),
-    NoPermissionGuard,
   )
   async triggerAddPeopleToMessageListJob(
     @Args('input') input: TriggerAddPeopleToMessageListJobInput,
