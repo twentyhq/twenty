@@ -2,10 +2,13 @@ import { type VpcConfigResponse } from '@aws-sdk/client-lambda';
 
 import { type LambdaVpcConfig } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 
-const haveSameIds = (
-  expectedIds: string[] = [],
-  currentIds: string[] = [],
-): boolean => {
+const haveSameIds = ({
+  expectedIds = [],
+  currentIds = [],
+}: {
+  expectedIds: string[] | undefined;
+  currentIds: string[] | undefined;
+}): boolean => {
   const expectedIdSet = new Set(expectedIds);
   const currentIdSet = new Set(currentIds);
 
@@ -22,8 +25,11 @@ export const isLambdaVpcConfigUpToDate = ({
   expectedVpcConfig: LambdaVpcConfig | undefined;
   currentVpcConfig: VpcConfigResponse | undefined;
 }): boolean =>
-  haveSameIds(expectedVpcConfig?.subnetIds, currentVpcConfig?.SubnetIds) &&
-  haveSameIds(
-    expectedVpcConfig?.securityGroupIds,
-    currentVpcConfig?.SecurityGroupIds,
-  );
+  haveSameIds({
+    expectedIds: expectedVpcConfig?.subnetIds,
+    currentIds: currentVpcConfig?.SubnetIds,
+  }) &&
+  haveSameIds({
+    expectedIds: expectedVpcConfig?.securityGroupIds,
+    currentIds: currentVpcConfig?.SecurityGroupIds,
+  });

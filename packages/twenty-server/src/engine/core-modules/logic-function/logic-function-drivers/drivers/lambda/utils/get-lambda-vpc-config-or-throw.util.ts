@@ -7,7 +7,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-export const getLambdaVpcConfig = ({
+export const getLambdaVpcConfigOrThrow = ({
   subnetIds,
   securityGroupIds,
 }: {
