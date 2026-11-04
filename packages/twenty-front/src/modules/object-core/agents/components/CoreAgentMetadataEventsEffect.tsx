@@ -1,15 +1,13 @@
 import { useApolloClient } from '@apollo/client/react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { type MetadataOperation } from '@/browser-event/types/MetadataOperation';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { refreshCoreAgentQueries } from '@/object-core/agents/utils/refreshCoreAgentQueries';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
-import {
-  FindManyAgentsDocument,
-  FindOneAgentDocument,
-} from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 const getAffectedAgentId = (
@@ -35,17 +33,12 @@ export const CoreAgentMetadataEventsEffect = ({
 }: CoreAgentMetadataEventsEffectProps) => {
   const apolloClient = useApolloClient();
 
+  useEffect(() => {
+    void refreshCoreAgentQueries({ apolloClient, agentId }).catch(logError);
+  }, [apolloClient, agentId]);
+
   const refreshAgents = () => {
-    void apolloClient
-      .refetchQueries({
-        include: [
-          isDefined(agentId) ? FindOneAgentDocument : FindManyAgentsDocument,
-        ],
-        onQueryUpdated: (query) =>
-          query.options.fetchPolicy !== 'standby' &&
-          (!isDefined(agentId) || query.variables.id === agentId),
-      })
-      .catch(logError);
+    void refreshCoreAgentQueries({ apolloClient, agentId }).catch(logError);
   };
 
   useListenToMetadataOperationBrowserEvent<Pick<CoreAgent, 'id'>>({

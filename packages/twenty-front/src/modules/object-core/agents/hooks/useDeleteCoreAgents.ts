@@ -11,6 +11,7 @@ import { coreAgentsIsDeletingFamilyState } from '@/object-core/agents/states/cor
 import { coreAgentsSelectionFamilyState } from '@/object-core/agents/states/coreAgentsSelectionFamilyState';
 import { getCoreAgentSelectionAfterDeletion } from '@/object-core/agents/utils/getCoreAgentSelectionAfterDeletion';
 import { getSelectedCoreAgentIds } from '@/object-core/agents/utils/getSelectedCoreAgentIds';
+import { refreshCoreAgentQueries } from '@/object-core/agents/utils/refreshCoreAgentQueries';
 import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import {
@@ -90,20 +91,21 @@ export const useDeleteCoreAgents = (tableId: string) => {
 
       apolloClient.cache.updateQuery(
         { query: FindManyAgentsDocument },
-        (data) =>
-          isDefined(data)
-            ? {
-                ...data,
-                findManyAgents: data.findManyAgents.filter(
-                  ({ id }) => !deletedAgentIdSet.has(id),
-                ),
-              }
-            : data,
+        (data) => {
+          if (!isDefined(data)) {
+            return data;
+          }
+
+          return {
+            ...data,
+            findManyAgents: data.findManyAgents.filter(
+              ({ id }) => !deletedAgentIdSet.has(id),
+            ),
+          };
+        },
       );
 
-      void apolloClient
-        .refetchQueries({ include: [FindManyAgentsDocument] })
-        .catch(logError);
+      await refreshCoreAgentQueries({ apolloClient }).catch(logError);
 
       if (isNonEmptyArray(deletionErrors)) {
         enqueueToast(getToastOptionsFromError({ error: deletionErrors[0] }));
