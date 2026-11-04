@@ -1,3 +1,4 @@
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -101,6 +102,8 @@ export class AgentChatMessageReactionService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly storageService: AgentHistoryWorkspaceStorageService,
     private readonly sharingService: AgentChatSharingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -186,6 +189,15 @@ export class AgentChatMessageReactionService {
 
     // Contexts given to the model are never shown, so cannot be reacted to
     if (!isDefined(message) || message.role === AgentMessageRole.SYSTEM) {
+      return throwAgentChatMessageNotFound();
+    }
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: message.threadId },
+      select: ['conversationType'],
+    });
+
+    if (thread?.conversationType === 'DIRECT_MESSAGE') {
       return throwAgentChatMessageNotFound();
     }
 

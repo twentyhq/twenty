@@ -1,3 +1,4 @@
+import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -44,6 +45,14 @@ export class AgentChatAssistantParticipationService {
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
   }): Promise<AgentChatAssistantParticipation> {
+    if (thread.conversationType === 'DIRECT_MESSAGE') {
+      return {
+        isAssistantParticipant: false,
+        replyDecision: AgentChatReplyDecision.SKIP,
+        isInitialMessage: false,
+      };
+    }
+
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
     const isInitialMessage =

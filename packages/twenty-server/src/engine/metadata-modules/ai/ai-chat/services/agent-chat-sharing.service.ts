@@ -234,6 +234,22 @@ export class AgentChatSharingService {
   }: AgentChatThreadAccessArgs & {
     memberIds: string[];
   }): Promise<string[]> {
+    const thread = await this.getThreadWithAccess({
+      ...args,
+      operationType: 'update',
+    });
+    const pair = [
+      thread.directMessageFirstWorkspaceMemberId,
+      thread.directMessageSecondWorkspaceMemberId,
+    ];
+
+    if (
+      thread.conversationType === 'DIRECT_MESSAGE' &&
+      memberIds.some((memberId) => !pair.includes(memberId))
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
     const chatMemberIds = await this.filterMemberIds(memberIds, (memberId) =>
       this.getAuthContext({
         workspaceId: args.workspaceId,

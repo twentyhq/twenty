@@ -3699,6 +3699,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
+  openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
@@ -4636,6 +4637,11 @@ export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
 export type MutationMoveAgentChatThreadToChannelArgs = {
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationOpenDirectMessageArgs = {
+  workspaceMemberId: Scalars['UUID']['input'];
 };
 
 

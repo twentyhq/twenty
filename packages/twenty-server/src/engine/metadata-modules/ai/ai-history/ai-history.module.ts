@@ -1,3 +1,5 @@
+import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
+import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { Module } from '@nestjs/common';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
@@ -22,16 +24,18 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 }));
 
 @Module({
-  imports: [FileUrlModule, WorkspaceCacheModule],
+  imports: [FileUrlModule, WorkspaceCacheModule, RecordShareStorageModule],
   providers: [
     AgentHistoryWorkspaceStorageService,
     AgentHistoryTransactionService,
+    AgentChatDirectMessageRecordsService,
     AgentConversationReaderService,
     AgentConversationWriterService,
     AgentTurnRecorderService,
     ...REPOSITORY_PROVIDERS,
   ],
   exports: [
+    AgentChatDirectMessageRecordsService,
     AgentHistoryWorkspaceStorageService,
     AgentConversationReaderService,
     AgentConversationWriterService,

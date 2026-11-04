@@ -505,6 +505,10 @@ export class AgentChatThreadService {
   }): Promise<void> {
     const thread = await this.getWritableThread(args);
 
+    if (thread.conversationType === 'DIRECT_MESSAGE' && isDefined(channelId)) {
+      return throwAgentChatThreadNotFound();
+    }
+
     if (isDefined(channelId)) {
       await this.channelAccessService.assertChannelAccess({
         ...args,

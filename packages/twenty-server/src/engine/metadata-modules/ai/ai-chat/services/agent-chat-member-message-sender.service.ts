@@ -1,10 +1,16 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
 import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -63,11 +69,6 @@ export class AgentChatMemberMessageSenderService {
     assistant,
     execution,
   }: AgentChatMemberMessageSendArguments): Promise<AgentChatMemberMessageResult> {
-    const preparedMessage =
-      await this.memberMessagePartsService.prepareMemberMessage({
-        workspaceId: actor.workspaceId,
-        message,
-      });
     const threadAccess = {
       workspaceId: actor.workspaceId,
       workspaceMemberId: actor.workspaceMemberId,
@@ -92,6 +93,76 @@ export class AgentChatMemberMessageSenderService {
     });
 
     const thread = await this.chatThreadService.getWritableThread(threadAccess);
+    if (thread.conversationType === 'DIRECT_MESSAGE') {
+      const isDirectMessageIdentityEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+          actor.workspaceId,
+        );
+
+      if (!isDirectMessageIdentityEnabled) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      const pair = [
+        thread.directMessageFirstWorkspaceMemberId,
+        thread.directMessageSecondWorkspaceMemberId,
+      ];
+      const hasOutsideRecipient = [
+        ...addressing.mentionedWorkspaceMemberIds,
+        ...addressing.initialRecipientWorkspaceMemberIds,
+      ].some((memberId) => !pair.includes(memberId));
+
+      if (!pair.includes(actor.workspaceMemberId) || hasOutsideRecipient) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      if (
+        isNonEmptyArray(message.attachments) ||
+        assistant.isMentioned ||
+        isDefined(target.channelId)
+      ) {
+        throw new AiException(
+          doNotTranslate(
+            'Direct messages only support text between two workspace members',
+          ),
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
+      const persistedMessage =
+        await this.memberMessageWriterService.writeMemberMessage({
+          actor,
+          thread,
+          message: await this.memberMessagePartsService.prepareMemberMessage({
+            workspaceId: actor.workspaceId,
+            message,
+          }),
+          placement: AgentChatMemberMessagePlacement.COMPLETED,
+          participation: {
+            isAssistantParticipant: false,
+            isInitialMessage: true,
+          },
+          addressing: {
+            mentionedWorkspaceMemberIds: [],
+            initialRecipientWorkspaceMemberIds: pair
+              .filter(isDefined)
+              .filter((memberId) => memberId !== actor.workspaceMemberId),
+          },
+        });
+
+      return {
+        messageId: persistedMessage.id,
+        isQueued: false,
+        delivery: persistedMessage.delivery,
+      };
+    }
+
+    const preparedMessage =
+      await this.memberMessagePartsService.prepareMemberMessage({
+        workspaceId: actor.workspaceId,
+        message,
+      });
     const participation =
       await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,
