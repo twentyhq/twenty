@@ -1,6 +1,6 @@
 import { getDeleteCoreAgentsConfirmationContent } from '@/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent';
 import { i18n } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 afterEach(() => {
@@ -8,9 +8,9 @@ afterEach(() => {
 });
 
 it('keeps the bulk confirmation token unchanged in another locale', () => {
-  const confirmationToken = msg`DELETE`;
+  const confirmationTokenId = generateMessageId('DELETE');
   i18n.load('fr-FR', {
-    [confirmationToken.id]: 'localized-confirmation-token',
+    [confirmationTokenId]: 'localized-confirmation-token',
   });
   i18n.activate('fr-FR');
 
@@ -19,7 +19,7 @@ it('keeps the bulk confirmation token unchanged in another locale', () => {
     'Second agent',
   ]);
 
-  expect(i18n._(confirmationToken)).toBe('localized-confirmation-token');
+  expect(i18n._(confirmationTokenId)).toBe('localized-confirmation-token');
   expect(confirmation.confirmationValue).toBe('DELETE');
   expect(confirmation.subtitle).toContain('"DELETE"');
 });
