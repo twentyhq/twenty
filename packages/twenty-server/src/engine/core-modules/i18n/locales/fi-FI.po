@@ -3321,6 +3321,11 @@ msgstr "Ristiriitainen puhelimen suuntanumero."
 msgid "Conflicting phone country code."
 msgstr "Ristiriitainen puhelimen maatunnus."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Yhdistä ensin tili tähän MCP-palvelimeen."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "Yhteyden katkaisemisen yhteydessä suoritettavaa logiikkafunktiota ei l�
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "MCP-pyynnön parametrit eivät kelpaa."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "MCP-palvelin tarjoaa synkronoitavaksi liian monta työkalua."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

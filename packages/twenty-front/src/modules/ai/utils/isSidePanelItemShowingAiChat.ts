@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router-dom';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +22,6 @@ export const isSidePanelItemShowingAiChat = (
   return (
     sidePanelItem.page === SidePanelPages.RoutedPage &&
     matchPath(AppPath.RecordShowPage, sidePanelItem.routedLocation.pathname)
-      ?.params.objectNameSingular === CoreObjectNameSingular.AgentChatThread
+      ?.params.objectNameSingular === StandardObjectNameSingular.AgentChatThread
   );
 };

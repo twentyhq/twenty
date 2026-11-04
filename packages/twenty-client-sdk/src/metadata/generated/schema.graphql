@@ -123,6 +123,7 @@ type AgentChatThread {
   createdAt: DateTime!
   deletedAt: DateTime
   id: ID!
+  isAssistantParticipant: Boolean!
   title: String
   totalCacheReadTokens: Int!
   totalInputCredits: Float!
@@ -1364,6 +1365,7 @@ type CollectionHash {
 
 type CommandMenuItem {
   applicationId: UUID
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType!
   conditionalAvailabilityExpression: String
@@ -1535,6 +1537,7 @@ type CreateCalendarEventOutput {
 }
 
 input CreateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   conditionalAvailabilityExpression: String
@@ -1650,6 +1653,7 @@ input CreateNavigationMenuItemInput {
   id: UUID
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float
   targetObjectMetadataId: UUID
@@ -3525,7 +3529,7 @@ type Mutation {
   runMyApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
-  sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], isAssistantMentioned: Boolean, isAssistantParticipant: Boolean, mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, recipientWorkspaceMemberIds: [UUID!], shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
@@ -3650,6 +3654,7 @@ type NavigationMenuItem {
   id: UUID!
   link: String
   name: String
+  nativePageKey: String
   pageLayoutId: UUID
   position: Float!
   targetObjectMetadataId: UUID
@@ -3665,6 +3670,7 @@ enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL
   FOLDER
   LINK
+  NATIVE_PAGE
   OBJECT
   PAGE_LAYOUT
   RECORD
@@ -4671,6 +4677,7 @@ type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!
+  recipientParticipantWorkspaceMemberIds: [UUID!]
   streamId: String
 }
 
@@ -5134,6 +5141,7 @@ input UpdateCalendarChannelInputUpdates {
 }
 
 input UpdateCommandMenuItemInput {
+  availabilityCoreObjectName: String
   availabilityObjectMetadataId: UUID
   availabilityType: CommandMenuItemAvailabilityType
   engineComponentKey: EngineComponentKey

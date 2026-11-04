@@ -10,7 +10,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 
 import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
 import { ToolCategory } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -57,7 +57,7 @@ export class DashboardToolProvider implements ToolProvider {
     const icon = await resolveObjectIcon(
       this.flatEntityMapsCacheService,
       context.workspaceId,
-      CoreObjectNameSingular.Dashboard,
+      StandardObjectNameSingular.Dashboard,
     );
 
     return toolSetToDescriptors(toolSet, ToolCategory.DASHBOARD, {

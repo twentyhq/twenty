@@ -15,7 +15,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
@@ -66,10 +66,10 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  // TODO: make useResetRecordSelection accept an empty recordIndexId, then drop CoreObjectNamePlural.Person
+  // TODO: make useResetRecordSelection accept an empty recordIndexId, then drop StandardObjectNamePlural.Person
   const objectNamePlural =
     matchPath(AppPath.RecordIndexPage, location.pathname)?.params
-      .objectNamePlural ?? CoreObjectNamePlural.Person;
+      .objectNamePlural ?? StandardObjectNamePlural.Person;
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
@@ -215,7 +215,9 @@ export const PageChangeEffect = () => {
     }
 
     switch (true) {
-      case isMatchingLocation(location, AppPath.RecordIndexPage): {
+      case isMatchingLocation(location, AppPath.RecordIndexPage) ||
+        isMatchingLocation(location, AppPath.WorkflowIndexPage) ||
+        isMatchingLocation(location, AppPath.AgentIndexPage): {
         resetFocusStackToRecordIndex();
         break;
       }

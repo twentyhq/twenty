@@ -1,15 +1,15 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { t } from '@lingui/core/macro';
 
 export const getEmptyStateTitle = (
   objectNameSingular: string,
   objectLabel: string,
 ) => {
-  if (objectNameSingular === CoreObjectNameSingular.WorkflowVersion) {
+  if (objectNameSingular === StandardObjectNameSingular.WorkflowVersion) {
     return t`No workflow versions yet`;
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+  if (objectNameSingular === StandardObjectNameSingular.WorkflowRun) {
     return t`No workflow runs yet`;
   }
 

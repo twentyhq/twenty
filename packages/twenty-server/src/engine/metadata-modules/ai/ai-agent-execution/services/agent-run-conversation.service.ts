@@ -7,7 +7,8 @@ import {
 } from 'twenty-shared/ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -85,6 +86,8 @@ export class AgentRunConversationService {
     senderApplicationId,
     createdBy,
     messages,
+    queuedMessageIds,
+    requiresQueuedMessages = isDefined(queuedMessageIds),
   }: {
     workspaceId: string;
     threadId: string;
@@ -94,11 +97,17 @@ export class AgentRunConversationService {
     senderApplicationId: string | null;
     createdBy: ActorMetadata;
     messages: RunAgentMessage[];
+    queuedMessageIds?: string[];
+    requiresQueuedMessages?: boolean;
   }): Promise<{
     turnId: string;
     promptMessageIds: string[];
     hasTakenQueuedMessages: boolean;
-  }> {
+  } | null> {
+    if (requiresQueuedMessages && !isNonEmptyArray(queuedMessageIds)) {
+      return null;
+    }
+
     return this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
@@ -114,13 +123,25 @@ export class AgentRunConversationService {
 
         const takenMessageCount = await scope.update(
           'agentMessage',
-          { threadId, status: AgentMessageStatus.QUEUED },
+          {
+            threadId,
+            status: AgentMessageStatus.QUEUED,
+            ...(isDefined(queuedMessageIds)
+              ? { id: In(queuedMessageIds) }
+              : {}),
+          },
           {
             status: AgentMessageStatus.SENT,
             turnId,
             processedAt: new Date().toISOString(),
           },
         );
+
+        if (requiresQueuedMessages && takenMessageCount === 0) {
+          await scope.delete('agentTurn', { id: turnId });
+
+          return null;
+        }
 
         const promptMessageIds: string[] = [];
 

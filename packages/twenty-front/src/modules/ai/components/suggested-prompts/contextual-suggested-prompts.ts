@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   IconCheckbox,
   IconFilter,
@@ -64,7 +64,7 @@ export const RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR: Record<
   string,
   SuggestedPrompt[]
 > = {
-  [CoreObjectNameSingular.Workflow]: [
+  [StandardObjectNameSingular.Workflow]: [
     {
       id: 'explain-workflow',
       label: msg`Explain this workflow`,
@@ -88,7 +88,7 @@ export const RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR: Record<
       ],
     },
   ],
-  [CoreObjectNameSingular.Company]: [
+  [StandardObjectNameSingular.Company]: [
     {
       id: 'research-company',
       label: msg`Research this company`,

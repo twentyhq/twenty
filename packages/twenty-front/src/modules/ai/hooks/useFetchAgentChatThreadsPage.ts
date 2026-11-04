@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,7 +36,7 @@ export const useFetchAgentChatThreadsPage = () => {
     }) => {
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
-          objectName: CoreObjectNameSingular.AgentChatThread,
+          objectName: StandardObjectNameSingular.AgentChatThread,
           objectNameType: 'singular',
         }),
       );

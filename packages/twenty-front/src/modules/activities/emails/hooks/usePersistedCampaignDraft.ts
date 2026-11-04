@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { PREVIEW_MESSAGE_CAMPAIGN_SEND } from '@/activities/emails/graphql/metadata-queries/previewMessageCampaignSend';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -30,7 +30,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
     upstreamDraft: initialDraft(),
     onPersist: (nextDraft) => {
       updateOneRecord<MessageCampaign>({
-        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+        objectNameSingular: StandardObjectNameSingular.MessageCampaign,
         idToUpdate: campaignId,
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
       }).then(

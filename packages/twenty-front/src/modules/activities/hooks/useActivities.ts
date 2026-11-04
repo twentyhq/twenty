@@ -6,7 +6,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getRelatedRecordFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordFromJunction';
 import {
-  type CoreObjectNameSingular,
+  type StandardObjectNameSingular,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -20,7 +20,9 @@ export const useActivities = ({
   skip,
   limit,
 }: {
-  objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
+  objectNameSingular:
+    | StandardObjectNameSingular.Note
+    | StandardObjectNameSingular.Task;
   targetableObjects: ActivityTargetableObject[];
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   skip?: boolean;

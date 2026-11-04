@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
@@ -72,7 +72,7 @@ export const useChatThreadsForRecord = ({
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   });
 
   const filter = useMemo(
@@ -90,7 +90,7 @@ export const useChatThreadsForRecord = ({
   const isRecordLinkable = isNonEmptyArray(filter?.or);
   const chatObjectMetadataItem = objectMetadataItems.find(
     ({ nameSingular }) =>
-      nameSingular === CoreObjectNameSingular.AgentChatThread,
+      nameSingular === StandardObjectNameSingular.AgentChatThread,
   );
 
   const {
@@ -102,7 +102,7 @@ export const useChatThreadsForRecord = ({
     hasNextPage,
     queryIdentifier,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
-    objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+    objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
     orderBy: [
@@ -116,7 +116,7 @@ export const useChatThreadsForRecord = ({
 
   const { findManyRecordsQuery: findThreadLinksQuery } =
     useFindManyRecordsQuery({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
     });
   const { canReadObjectRecords } = useObjectPermissionsForObject(
@@ -149,7 +149,7 @@ export const useChatThreadsForRecord = ({
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       variables: { filter },
     }),
     [filter],
