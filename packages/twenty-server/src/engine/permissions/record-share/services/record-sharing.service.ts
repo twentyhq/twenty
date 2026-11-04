@@ -33,7 +33,7 @@ import {
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
-import { isDirectMessageContentRecord } from 'src/engine/permissions/record-share/utils/is-direct-message-content-record.util';
+import { DirectMessageContentService } from 'src/engine/permissions/record-share/services/direct-message-content.service';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -76,6 +76,7 @@ export class RecordSharingService {
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly directMessageContentService: DirectMessageContentService,
   ) {}
 
   async getSharing(args: RecordSharingArgs): Promise<RecordSharingDTO> {
@@ -220,10 +221,11 @@ export class RecordSharingService {
             }
 
             if (
-              await this.isDirectMessageContent({
+              await this.directMessageContentService.isDirectMessageContent({
                 authContext: args.authContext,
                 recordId: args.recordId,
-                flatObjectMetadata,
+                objectUniversalIdentifier:
+                  flatObjectMetadata.universalIdentifier,
                 transactionScope,
               })
             ) {
@@ -354,10 +356,10 @@ export class RecordSharingService {
         authContext: args.authContext,
         flatObjectMetadata,
       })) &&
-      !(await this.isDirectMessageContent({
+      !(await this.directMessageContentService.isDirectMessageContent({
         authContext: args.authContext,
         recordId: args.recordId,
-        flatObjectMetadata,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       }));
     const grants = shares.filter(
       (share) =>
@@ -594,40 +596,6 @@ export class RecordSharingService {
         this.workspaceOrmManager
           .getRepository(flatObjectMetadata.nameSingular)
           .isObjectOperationPermittedByRole('update'),
-      authContext,
-    );
-  }
-
-  private isDirectMessageContent({
-    authContext,
-    flatObjectMetadata,
-    recordId,
-    transactionScope,
-  }: Pick<RecordSharingArgs, 'authContext' | 'recordId'> & {
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>;
-    transactionScope?: WorkspaceTransactionScope;
-  }): Promise<boolean> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        isDirectMessageContentRecord({
-          flatObjectMetadata,
-          recordId,
-          findRecord: ({ objectName, recordId: contentRecordId, select }) => {
-            const repository = isDefined(transactionScope)
-              ? transactionScope.getRepositoryWithoutPermissionChecks(
-                  objectName,
-                )
-              : this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-                  objectName,
-                );
-
-            return repository.findOne({
-              where: { id: contentRecordId },
-              select,
-              withDeleted: true,
-            });
-          },
-        }),
       authContext,
     );
   }
