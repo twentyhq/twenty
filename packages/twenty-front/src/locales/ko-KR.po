@@ -31222,7 +31222,7 @@ msgid "Welcome to Twenty"
 msgstr "Twenty에 오신 것을 환영합니다"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "워크스페이스에 오신 것을 환영합니다"
