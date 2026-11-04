@@ -2,7 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
@@ -29,6 +33,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
@@ -58,6 +64,7 @@ export class OnboardingService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly onboardingInviteSuggestionsService: OnboardingInviteSuggestionsService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -490,6 +497,11 @@ export class OnboardingService {
       userId,
       workspaceId,
     });
+
+    await this.setOnboardingInviteTeamPendingIfInviteSuggestionsFound({
+      userId,
+      workspaceId,
+    });
   }
 
   async skipOnboardingConnectAccountStep({
@@ -593,6 +605,56 @@ export class OnboardingService {
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding import-contacts reward for workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
+  private async setOnboardingInviteTeamPendingIfInviteSuggestionsFound({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    // Without billing the step is set at workspace creation, so it always shows.
+    if (!this.billingService.isBillingEnabled()) {
+      return;
+    }
+
+    try {
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { userId, workspaceId },
+        relations: { user: true },
+      });
+
+      if (
+        !isDefined(userWorkspace) ||
+        !isWorkEmail(userWorkspace.user.email) ||
+        !(await this.isWorkspaceCreator({ userId, workspaceId }))
+      ) {
+        return;
+      }
+
+      const inviteSuggestions =
+        await this.onboardingInviteSuggestionsService.getOrComputeSuggestions({
+          workspaceId,
+          userId,
+          userWorkspaceId: userWorkspace.id,
+        });
+
+      if (!isNonEmptyArray(inviteSuggestions)) {
+        return;
+      }
+
+      await this.setOnboardingInviteTeamPending({
+        userId,
+        workspaceId,
+        value: true,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to flag the invite-team onboarding step for user ${userId} in workspace ${workspaceId}`,
         error,
       );
     }

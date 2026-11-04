@@ -753,13 +753,15 @@ export class SignInUpService {
             queryRunner,
           );
 
-          await this.onboardingService.setOnboardingInviteTeamPending(
-            {
-              workspaceId: workspace.id,
-              value: true,
-            },
-            queryRunner,
-          );
+          if (!this.billingService.isBillingEnabled()) {
+            await this.onboardingService.setOnboardingInviteTeamPending(
+              {
+                workspaceId: workspace.id,
+                value: true,
+              },
+              queryRunner,
+            );
+          }
 
           return {
             user,
