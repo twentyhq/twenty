@@ -5,6 +5,8 @@ import { type CSSProperties } from 'react';
 import { themeCssVariables } from '@ui/theme/themeCssVariables';
 
 import styles from './AssistantAvatar.module.scss';
+import { ASSISTANT_AVATAR_BODY_ASSET_BY_SHAPE } from './internal/constants/assistantAvatarBodyAssetByShape.constant';
+import { ASSISTANT_AVATAR_FACE_ASSET_BY_FACE } from './internal/constants/assistantAvatarFaceAssetByFace.constant';
 import { type AssistantAvatarProps } from './types/AssistantAvatarProps';
 
 export const AssistantAvatar = ({
@@ -48,8 +50,20 @@ export const AssistantAvatar = ({
       aria-labelledby={ariaLabelledBy}
       aria-hidden={ariaHidden ?? (hasAccessibleName ? undefined : true)}
     >
-      <span aria-hidden="true" className={styles.body} />
-      <span aria-hidden="true" className={styles.face} />
+      <span
+        aria-hidden="true"
+        className={styles.body}
+        style={{
+          maskImage: `url("${ASSISTANT_AVATAR_BODY_ASSET_BY_SHAPE[shape]}")`,
+        }}
+      />
+      <span
+        aria-hidden="true"
+        className={styles.face}
+        style={{
+          maskImage: `url("${ASSISTANT_AVATAR_FACE_ASSET_BY_FACE[face]}")`,
+        }}
+      />
     </span>
   );
 };
