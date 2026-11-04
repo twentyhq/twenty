@@ -55,11 +55,13 @@ export class BillingDiscountService {
       await this.applyDiscountArrangementSync({
         workspaceId,
         stripeDiscounts,
+        shouldRecordDiscount: true,
       });
     }, buildBillingArrangementLockKey(workspaceId));
   }
 
-  // Subscription events fire on every seat change, so only a workspace with a discount row to end is synced
+  // Subscription events fire on every seat change, so only a workspace with a discount row to end is synced.
+  // They only end rows: a new discount is recorded by its own discount event, and an overlap must not fail the subscription webhook.
   async syncDiscountArrangementIfActive({
     workspaceId,
     stripeCustomerId,
@@ -77,6 +79,7 @@ export class BillingDiscountService {
       await this.applyDiscountArrangementSync({
         workspaceId,
         stripeDiscounts,
+        shouldRecordDiscount: false,
       });
     }, buildBillingArrangementLockKey(workspaceId));
   }
@@ -123,9 +126,11 @@ export class BillingDiscountService {
   private async applyDiscountArrangementSync({
     workspaceId,
     stripeDiscounts,
+    shouldRecordDiscount,
   }: {
     workspaceId: string;
     stripeDiscounts: StripeDiscount[];
+    shouldRecordDiscount: boolean;
   }): Promise<void> {
     const now = new Date();
     const discountArrangements =
@@ -142,23 +147,29 @@ export class BillingDiscountService {
       now,
     });
 
-    if (isNonEmptyArray(unmirroredStripeDiscountIds)) {
+    const notMirroredStripeDiscountIds =
+      shouldRecordDiscount || !isDefined(discountToRecord)
+        ? unmirroredStripeDiscountIds
+        : [...unmirroredStripeDiscountIds, discountToRecord.stripeDiscountId];
+
+    if (isNonEmptyArray(notMirroredStripeDiscountIds)) {
       this.logger.warn(
-        `Stripe discounts not mirrored for workspace ${workspaceId}: ${unmirroredStripeDiscountIds.join(', ')}`,
+        `Stripe discounts not mirrored for workspace ${workspaceId}: ${notMirroredStripeDiscountIds.join(', ')}`,
       );
     }
 
-    const arrangementToRecord = isDefined(discountToRecord)
-      ? this.buildDiscountArrangementOrThrow({
-          workspaceId,
-          discount: discountToRecord,
-          workspaceArrangements: discountArrangements.map((arrangement) =>
-            arrangementIdsToEnd.includes(arrangement.id)
-              ? { ...arrangement, endsAt: now }
-              : arrangement,
-          ),
-        })
-      : null;
+    const arrangementToRecord =
+      shouldRecordDiscount && isDefined(discountToRecord)
+        ? this.buildDiscountArrangementOrThrow({
+            workspaceId,
+            discount: discountToRecord,
+            workspaceArrangements: discountArrangements.map((arrangement) =>
+              arrangementIdsToEnd.includes(arrangement.id)
+                ? { ...arrangement, endsAt: now }
+                : arrangement,
+            ),
+          })
+        : null;
 
     await this.dataSource.transaction(async (entityManager) => {
       const billingArrangementRepository =
