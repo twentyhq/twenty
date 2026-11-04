@@ -26,6 +26,7 @@ import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/state
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
+import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
@@ -38,6 +39,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -78,6 +80,7 @@ export const useNavigationMenuItemAddOptions = ({
   });
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -207,7 +210,12 @@ export const useNavigationMenuItemAddOptions = ({
         currentItems.map((item) => item.nativePageKey),
       );
 
-      return NATIVE_PAGE_KEYS.map((nativePageKey) => {
+      return NATIVE_PAGE_KEYS.filter((nativePageKey) =>
+        hasNativePagePermission({
+          item: { nativePageKey },
+          permissionFlagMap,
+        }),
+      ).map((nativePageKey) => {
         const { label, Icon } =
           NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS[nativePageKey];
         const isAlreadyInSidebar =
