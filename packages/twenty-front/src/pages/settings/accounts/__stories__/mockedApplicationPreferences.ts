@@ -298,6 +298,9 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   graphql.query('IsApplicationStopped', () =>
     HttpResponse.json({ data: { isApplicationStopped: false } }),
   ),
+  graphql.query('CurrentUserApplicationAuthorizations', () =>
+    HttpResponse.json({ data: { currentUserApplicationAuthorizations: [] } }),
+  ),
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 

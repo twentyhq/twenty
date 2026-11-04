@@ -1,6 +1,7 @@
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
@@ -10,11 +11,15 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
@@ -407,4 +412,19 @@ export const seedAccountGroupsStory = async () => {
     ...mockedWorkspaceMemberData,
     userWorkspaceId: MY_USER_WORKSPACE_ID,
   });
+  jotaiStore.set(
+    currentUserWorkspaceState.atom,
+    mockedUserData.currentUserWorkspace,
+  );
 };
+
+export const removeConnectedAccountsPermission = () =>
+  jotaiStore.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags: (
+      mockedUserData.currentUserWorkspace.permissionFlags ?? []
+    ).filter(
+      (permissionFlag) =>
+        permissionFlag !== PermissionFlagType.CONNECTED_ACCOUNTS,
+    ),
+  });

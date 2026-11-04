@@ -1,3 +1,5 @@
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import { useBuiltInMcpClientAppStatusesById } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppStatusesById';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -30,25 +32,38 @@ export const SettingsAppPreferencesAppsSection = () => {
     error: accountGroupsError,
     refetch: refetchAccountGroups,
   } = useMyAccountGroups();
+  const {
+    statusesById: builtInMcpClientAppStatusesById,
+    isLoading: isLoadingBuiltInMcpClientAppStatuses,
+    hasLoadError: hasBuiltInMcpClientAppStatusesLoadError,
+    refetch: refetchBuiltInMcpClientAppStatuses,
+  } = useBuiltInMcpClientAppStatusesById();
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
-  const isLoadingStatuses = accountGroupsLoading && !hasLoadedAccountGroups;
+  const isLoadingStatuses =
+    (accountGroupsLoading && !hasLoadedAccountGroups) ||
+    isLoadingBuiltInMcpClientAppStatuses;
   const hasAccountGroupsLoadError = isDefined(accountGroupsError);
+  const hasConnectionsLoadError =
+    hasAccountGroupsLoadError || hasBuiltInMcpClientAppStatusesLoadError;
   const statusesById =
-    isLoadingStatuses || hasAccountGroupsLoadError
+    isLoadingStatuses || hasConnectionsLoadError
       ? {}
-      : getAppPreferencesAppStatusesById({
-          groups,
-          builtInAccountApps: enabledBuiltInAccountApps,
-          applicationsWithPreferences,
-        });
+      : {
+          ...getAppPreferencesAppStatusesById({
+            groups,
+            builtInAccountApps: enabledBuiltInAccountApps,
+            applicationsWithPreferences,
+          }),
+          ...builtInMcpClientAppStatusesById,
+        };
 
   return (
     <SettingsApplicationsTable
       title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
-        hasApplicationsLoadError || hasAccountGroupsLoadError ? (
+        hasApplicationsLoadError || hasConnectionsLoadError ? (
           <StyledToolbar>
             {hasApplicationsLoadError && (
               <SettingsApplicationLoadErrorBanner
@@ -56,10 +71,17 @@ export const SettingsAppPreferencesAppsSection = () => {
                 onRetry={() => refetch().catch(() => undefined)}
               />
             )}
-            {hasAccountGroupsLoadError && (
+            {hasConnectionsLoadError && (
               <SettingsApplicationLoadErrorBanner
                 message={t`Your connections could not be loaded. Check your connection and try again.`}
-                onRetry={() => refetchAccountGroups().catch(() => undefined)}
+                onRetry={() =>
+                  Promise.all([
+                    hasAccountGroupsLoadError ? refetchAccountGroups() : null,
+                    hasBuiltInMcpClientAppStatusesLoadError
+                      ? refetchBuiltInMcpClientAppStatuses()
+                      : null,
+                  ]).catch(() => undefined)
+                }
               />
             )}
           </StyledToolbar>
@@ -68,7 +90,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       applications={applicationsWithPreferences.map(
         ({ application }) => application,
       )}
-      builtInApps={enabledBuiltInAccountApps}
+      builtInApps={[...enabledBuiltInAccountApps, ...BUILT_IN_MCP_CLIENT_APPS]}
       linkTarget="applicationPreferences"
       middleColumn="status"
       statusesById={statusesById}
