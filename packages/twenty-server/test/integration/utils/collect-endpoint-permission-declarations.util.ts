@@ -46,6 +46,7 @@ type EndpointPermissionDeclarations = {
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags: FeatureFlagKey[];
   applicationTarget: ApplicationTarget | null;
+  requiredApplicationReach?: DefineToolOptions['requiredApplicationReach'];
 };
 
 type EndpointClass = Type<object>;
@@ -181,16 +182,20 @@ const toAcceptedAuthPrincipals = (
 
 // Tools are checked by AccessPolicyService.isToolAccessPolicySatisfied, not the endpoint guards
 const toToolPermissionDeclarations = ({
-  authPrincipals,
-  requiredPermissionFlags,
-  requiredFeatureFlags = [],
-}: AccessPolicy): EndpointPermissionDeclarations => ({
+  accessPolicy: {
+    authPrincipals,
+    requiredPermissionFlags,
+    requiredFeatureFlags = [],
+  },
+  requiredApplicationReach,
+}: DefineToolOptions): EndpointPermissionDeclarations => ({
   acceptedAuthPrincipals: toAcceptedAuthPrincipals([
     withAgentsAdmitted(authPrincipals),
   ]),
   requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
   requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
   applicationTarget: null,
+  ...(isDefined(requiredApplicationReach) && { requiredApplicationReach }),
 });
 
 const compareCodePoints = (left: string, right: string): number =>
@@ -240,7 +245,7 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
 
       declarationsByEndpoint.set(
         tool,
-        toToolPermissionDeclarations(defineToolOptions.accessPolicy),
+        toToolPermissionDeclarations(defineToolOptions),
       );
     }
 

@@ -4,6 +4,7 @@ import { DiscoveryService } from '@nestjs/core';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
@@ -142,7 +143,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
   private async isToolAvailableToCaller({
     definedTool: {
-      options: { accessPolicy },
+      options: { accessPolicy, requiredApplicationReach },
     },
     context,
     featureFlagsMap,
@@ -151,6 +152,18 @@ export class DefinedToolRegistryService implements OnModuleInit {
     context: ToolProviderContext;
     featureFlagsMap: FeatureFlagMap;
   }): Promise<boolean> {
+    if (
+      isDefined(requiredApplicationReach) &&
+      getReachableApplications({
+        callingApplication: context.application,
+        operation: requiredApplicationReach,
+        workspaceCustomApplicationId:
+          context.authContext?.workspace.workspaceCustomApplicationId,
+      }).type !== 'all'
+    ) {
+      return false;
+    }
+
     return this.accessPolicyService.isToolAccessPolicySatisfied({
       accessPolicy,
       authContext: context.authContext,

@@ -162,6 +162,46 @@ class RotateWebhookSecretTool extends BaseTool<
   }
 }
 
+const triggerWebhookInputSchema = z.object({ id: z.uuid() });
+
+@DefineTool({
+  name: 'trigger_webhook',
+  category: ToolCategory.WEBHOOK,
+  description: 'Trigger a webhook.',
+  accessPolicy: WEBHOOK_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+})
+class TriggerWebhookTool extends BaseTool<typeof triggerWebhookInputSchema> {
+  readonly inputSchema = triggerWebhookInputSchema;
+
+  async execute({
+    input,
+  }: ToolExecuteArgs<typeof triggerWebhookInputSchema>): Promise<ToolOutput> {
+    return { success: true, message: `Webhook ${input.id} triggered` };
+  }
+}
+
+const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+
+const buildCallingApplicationContext = (
+  application?: Pick<FlatApplication, 'id' | 'sourceType'>,
+): ToolProviderContext => ({
+  ...context,
+  application: application as FlatApplication | undefined,
+  authContext: {
+    ...MEMBER_AUTH_CONTEXT,
+    application: application as FlatApplication | undefined,
+    workspace: {
+      workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+    },
+  } as UserWorkspaceAuthContext,
+});
+
+const SCOPED_APPLICATION_CONTEXT = buildCallingApplicationContext({
+  id: 'scoped-application-id',
+  sourceType: ApplicationRegistrationSourceType.NPM,
+});
+
 const buildDefinedToolRegistryService = ({
   tools,
   isGranted,
@@ -353,6 +393,57 @@ describe('DefinedToolRegistryService', () => {
     });
   });
 
+  describe('getAvailableDescriptors with a required application reach', () => {
+    const tools = [new RenameWebhookTool(), new TriggerWebhookTool()];
+
+    it.each([
+      {
+        title: 'a caller without an application',
+        callerContext: buildCallingApplicationContext(),
+      },
+      {
+        title: 'the workspace custom application',
+        callerContext: buildCallingApplicationContext({
+          id: WORKSPACE_CUSTOM_APPLICATION_ID,
+          sourceType: ApplicationRegistrationSourceType.NPM,
+        }),
+      },
+      {
+        title: 'an OAuth client',
+        callerContext: buildCallingApplicationContext({
+          id: 'oauth-client-id',
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        }),
+      },
+    ])(
+      'should list the tool to $title, which reaches every application',
+      async ({ callerContext }) => {
+        const { definedToolRegistryService } = buildDefinedToolRegistryService({
+          tools,
+          isGranted: true,
+        });
+
+        expect(
+          await listToolNames(definedToolRegistryService, callerContext),
+        ).toEqual(['rename_webhook', 'trigger_webhook']);
+      },
+    );
+
+    it('should hide the tool from an application that only reaches itself', async () => {
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools,
+        isGranted: true,
+      });
+
+      expect(
+        await listToolNames(
+          definedToolRegistryService,
+          SCOPED_APPLICATION_CONTEXT,
+        ),
+      ).toEqual(['rename_webhook']);
+    });
+  });
+
   describe('execute', () => {
     it('should run the tool with its parsed input when every flag is granted', async () => {
       const { definedToolRegistryService, definedTool } =
@@ -425,6 +516,31 @@ describe('DefinedToolRegistryService', () => {
         message: 'Tool "rotate_webhook_secret" is not available',
       });
       expect(executeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should refuse the tool to an application that only reaches itself', async () => {
+      const tool = new TriggerWebhookTool();
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools: [tool],
+        isGranted: true,
+      });
+      const definedTool =
+        definedToolRegistryService.findDefinedTool('trigger_webhook');
+      const executeSpy = jest.spyOn(tool, 'execute');
+
+      jestExpectToBeDefined(definedTool);
+
+      expect(
+        await definedToolRegistryService.execute({
+          definedTool,
+          args: { id: webhookId },
+          context: SCOPED_APPLICATION_CONTEXT,
+        }),
+      ).toMatchObject({
+        success: false,
+        message: 'Tool "trigger_webhook" is not available',
+      });
+      expect(executeSpy).not.toHaveBeenCalled();
     });
 
     it('should refuse the tool when a feature flag is disabled at call time', async () => {
