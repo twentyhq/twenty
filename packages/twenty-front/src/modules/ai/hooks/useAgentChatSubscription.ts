@@ -258,6 +258,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        case 'stream-ended':
         case 'message-persisted': {
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
