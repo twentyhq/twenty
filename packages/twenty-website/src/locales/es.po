@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 10:14\n"
+"PO-Revision-Date: 2026-11-04 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -651,10 +651,10 @@ msgstr "3 líneas de producto"
 msgid "30 days"
 msgstr "30 días"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "30 días después del clic. Si el visitante crea su espacio de trabajo dentro de ese plazo y posteriormente se convierte en cliente de pago de Cloud Organization o Enterprise, la comisión es suya. Si hace clic en el enlace de otro socio antes de crear su espacio de trabajo, ese socio recibe el crédito."
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "30 días después del clic. Si el visitante crea su espacio de trabajo dentro de ese plazo y posteriormente se convierte en cliente de pago de Cloud Organization o Enterprise, la comisión será suya. Si hace clic en el enlace de otro partner antes de crear su espacio de trabajo, ese partner se lleva la atribución. Una vez creado el espacio de trabajo, la atribución es definitiva."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4723,10 +4723,10 @@ msgstr "HubSpot bloquea los objetos personalizados detrás de su nivel Enterpris
 msgid "Hungary 🇭🇺"
 msgstr "Hungría 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
-msgstr "Acepto los <0>términos del programa de afiliados</0>"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr "Acepto los <0>Términos del Programa de Afiliados</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4748,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Identidad"
+
+#. js-lingui-id: 02Xy0V
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Si es su primer espacio de trabajo de Twenty y aún no tiene ningún código de partner configurado, puede introducir el suyo en Configuración → Facturación durante su prueba gratuita. En un plazo de 30 días desde el primer pago, también puede pedirnos que lo añadamos. Una vez que se guarda un código en un espacio de trabajo, no se puede cambiar."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -6096,6 +6101,7 @@ msgstr "No hay aplicaciones disponibles en este momento. Vuelve a comprobarlo pr
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Ningún país coincide."
 
@@ -7614,6 +7620,7 @@ msgstr "Cribado"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Buscar un país…"
 
@@ -7735,6 +7742,7 @@ msgstr "Selecciona registros con Cmd y Mayús"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Selecciona tu país"
 
@@ -9759,6 +9767,11 @@ msgstr "¿Qué implica la certificación?"
 #: src/sections/faq/faq.data.ts
 msgid "What does Twenty cost?"
 msgstr "¿Cuánto cuesta Twenty?"
+
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "¿Qué ocurre si un cliente se registra sin mi enlace?"
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

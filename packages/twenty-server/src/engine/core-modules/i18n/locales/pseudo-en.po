@@ -10379,6 +10379,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr ""
 
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr ""
+
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13989,6 +13994,11 @@ msgstr ""
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr ""
 
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr ""
+
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14857,6 +14867,11 @@ msgstr ""
 #. js-lingui-id: 8TiDJj
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr ""
+
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
 msgstr ""
 
 #. js-lingui-id: 3q5jw3
