@@ -5,7 +5,7 @@ import { isUsableCoreObjectFilterRule } from '@/object-core/filters/utils/isUsab
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const getUsableCoreAgentStepFilters = (
-  filterSettings: FilterSettings,
+  filterSettings: Pick<FilterSettings, 'stepFilters'>,
 ): StepFilter[] =>
   (filterSettings.stepFilters ?? []).filter((stepFilter) =>
     isUsableCoreObjectFilterRule({

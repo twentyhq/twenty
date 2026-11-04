@@ -19,10 +19,13 @@ const getEffectiveCoreAgentFilter = (filterSettings: FilterSettings) => {
   };
 };
 
-export const areCoreAgentFilterSettingsEquivalent = (
-  filterSettings: FilterSettings,
-  otherFilterSettings: FilterSettings,
-): boolean =>
+export const areCoreAgentFilterSettingsEquivalent = ({
+  filterSettings,
+  otherFilterSettings,
+}: {
+  filterSettings: FilterSettings;
+  otherFilterSettings: FilterSettings;
+}): boolean =>
   fastDeepEqual(
     getEffectiveCoreAgentFilter(filterSettings),
     getEffectiveCoreAgentFilter(otherFilterSettings),

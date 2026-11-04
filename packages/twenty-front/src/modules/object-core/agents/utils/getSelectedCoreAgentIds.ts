@@ -16,10 +16,10 @@ export const getSelectedCoreAgentIds = ({
   workspaceCustomApplicationId?: string;
 }): string[] => {
   if (
-    !areCoreAgentFilterSettingsEquivalent(
-      selection.filterSettings,
-      filterSettings,
-    )
+    !areCoreAgentFilterSettingsEquivalent({
+      filterSettings: selection.filterSettings,
+      otherFilterSettings: filterSettings,
+    })
   ) {
     return [];
   }
