@@ -27,6 +27,26 @@ export const useDeleteCoreAgents = (tableId: string) => {
   const selectionAtom = coreAgentsSelectionFamilyState.getAtom(tableId, null);
   const isDeletingAtom = coreAgentsIsDeletingFamilyState.getAtom(tableId, null);
 
+  const removeAgentsFromCache = (agentIds: string[]) => {
+    const agentIdSet = new Set(agentIds);
+
+    apolloClient.cache.updateQuery(
+      { query: FindManyAgentsDocument },
+      (data) => {
+        if (!isDefined(data)) {
+          return data;
+        }
+
+        return {
+          ...data,
+          findManyAgents: data.findManyAgents.filter(
+            ({ id }) => !agentIdSet.has(id),
+          ),
+        };
+      },
+    );
+  };
+
   const deleteCoreAgents = async ({ agentIds }: { agentIds: string[] }) => {
     const canManageAgents = store.get(permissionFlagMapSelector.atom)[
       PermissionFlagType.AI_SETTINGS
@@ -71,6 +91,7 @@ export const useDeleteCoreAgents = (tableId: string) => {
           }
 
           deletedAgentIds.push(agentId);
+          removeAgentsFromCache([agentId]);
         } catch (error) {
           deletionErrors.push(error);
         }
@@ -80,28 +101,8 @@ export const useDeleteCoreAgents = (tableId: string) => {
         getCoreAgentSelectionAfterDeletion({ selection, deletedAgentIds }),
       );
 
-      const deletedAgentIdSet = new Set(deletedAgentIds);
-
-      const removeDeletedAgentsFromCache = () =>
-        apolloClient.cache.updateQuery(
-          { query: FindManyAgentsDocument },
-          (data) => {
-            if (!isDefined(data)) {
-              return data;
-            }
-
-            return {
-              ...data,
-              findManyAgents: data.findManyAgents.filter(
-                ({ id }) => !deletedAgentIdSet.has(id),
-              ),
-            };
-          },
-        );
-
-      removeDeletedAgentsFromCache();
       await refreshCoreAgentQueries(apolloClient).catch(logError);
-      removeDeletedAgentsFromCache();
+      removeAgentsFromCache(deletedAgentIds);
 
       if (isNonEmptyArray(deletionErrors)) {
         enqueueToast(getToastOptionsFromError({ error: deletionErrors[0] }));
