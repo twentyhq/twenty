@@ -31,7 +31,7 @@ export const useCoreAgents = ({
   const { data, previousData, loading, error } = useQuery(
     FindManyAgentsDocument,
     {
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
     },
   );
 

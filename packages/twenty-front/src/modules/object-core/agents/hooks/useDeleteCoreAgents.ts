@@ -89,23 +89,26 @@ export const useDeleteCoreAgents = (tableId: string) => {
 
       const deletedAgentIdSet = new Set(deletedAgentIds);
 
-      apolloClient.cache.updateQuery(
-        { query: FindManyAgentsDocument },
-        (data) => {
-          if (!isDefined(data)) {
-            return data;
-          }
+      const removeDeletedAgentsFromCache = () =>
+        apolloClient.cache.updateQuery(
+          { query: FindManyAgentsDocument },
+          (data) => {
+            if (!isDefined(data)) {
+              return data;
+            }
 
-          return {
-            ...data,
-            findManyAgents: data.findManyAgents.filter(
-              ({ id }) => !deletedAgentIdSet.has(id),
-            ),
-          };
-        },
-      );
+            return {
+              ...data,
+              findManyAgents: data.findManyAgents.filter(
+                ({ id }) => !deletedAgentIdSet.has(id),
+              ),
+            };
+          },
+        );
 
+      removeDeletedAgentsFromCache();
       await refreshCoreAgentQueries(apolloClient).catch(logError);
+      removeDeletedAgentsFromCache();
 
       if (isNonEmptyArray(deletionErrors)) {
         enqueueToast(getToastOptionsFromError({ error: deletionErrors[0] }));

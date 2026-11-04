@@ -16,7 +16,6 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   type DeleteOneAgentMutation,
   type DeleteOneAgentMutationVariables,
-  FindManyAgentsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -30,8 +29,6 @@ import {
 
 const [leadAgent, followUpAgent, remoteAgent, managedAgent] =
   CORE_AGENTS_STORY_AGENTS;
-const REFRESHED_MANAGED_AGENT_LABEL =
-  'Managed assistant refreshed after deletion';
 
 const createAgentListResponseGate = () => {
   let releaseResponse: (() => void) | undefined;
@@ -201,31 +198,20 @@ export const SelectionAndPartialDeletion: Story = {
     await userEvent.click(deleteAgentsButton);
 
     await waitFor(() =>
-      expect(
-        mockedApolloClient
-          .readQuery({ query: FindManyAgentsDocument })
-          ?.findManyAgents.some(({ id }) => id === leadAgent.id),
-      ).toBe(false),
+      expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument(),
     );
 
-    availableAgents = availableAgents.map((agent) => {
-      if (agent.id !== managedAgent.id) {
-        return agent;
-      }
-
-      return { ...agent, label: REFRESHED_MANAGED_AGENT_LABEL };
-    });
+    shouldFailAgentListRefresh = true;
     heldRefresh.releaseResponse();
 
-    await expect(
-      await canvas.findByText(REFRESHED_MANAGED_AGENT_LABEL),
-    ).toBeVisible();
-    await expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument();
+    await waitFor(() => expect(confirmation).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(canvas.queryByText(leadAgent.label)).not.toBeInTheDocument(),
+    );
     await expect(await canvas.findByText('1 selected')).toBeVisible();
     await expect(
       canvas.getByRole('checkbox', { name: 'Select row' }),
     ).toBeChecked();
-    await waitFor(() => expect(confirmation).not.toBeInTheDocument());
     await userEvent.click(
       canvas.getByRole('button', { name: 'Delete selected agents' }),
     );
@@ -249,6 +235,7 @@ export const SelectionAndPartialDeletion: Story = {
     );
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
 
+    shouldFailAgentListRefresh = false;
     availableAgents = availableAgents.map((agent) => ({
       ...agent,
       label: 'Managed assistant updated',
