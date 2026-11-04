@@ -483,8 +483,12 @@ jobs:
             local name="$1" expected="$2" code
             shift 2
             code=$(curl -s -o /tmp/smoke.out -w '%{http_code}' "$@" || echo 000)
-            if [ "$code" != "$expected" ] || grep -q '"errors"' /tmp/smoke.out; then
-              echo "::error::${name}: HTTP ${code}"
+            if [ "$code" != "$expected" ]; then
+              echo "::error::${name}: HTTP ${code}, expected ${expected}"
+              head -c 1500 /tmp/smoke.out; echo
+              failed=1
+            elif grep -q '"errors"' /tmp/smoke.out; then
+              echo "::error::${name}: HTTP ${code} with errors in the response"
               head -c 1500 /tmp/smoke.out; echo
               failed=1
             else
