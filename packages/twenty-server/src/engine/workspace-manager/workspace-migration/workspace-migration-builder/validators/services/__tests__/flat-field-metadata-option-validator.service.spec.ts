@@ -355,22 +355,6 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       ).toEqual([]);
     });
 
-    it('rejects moving an option to another field', () => {
-      const option = buildOption();
-
-      expect(
-        errorCodes(
-          validate({
-            existingOptions: [option],
-            universalIdentifier: option.universalIdentifier,
-            flatEntityUpdate: { fieldMetadataUniversalIdentifier: v4() },
-          }),
-        ),
-      ).toEqual([
-        FieldMetadataOptionExceptionCode.INVALID_FIELD_METADATA_OPTION_INPUT,
-      ]);
-    });
-
     it('rejects updating an option that does not exist', () => {
       expect(
         errorCodes(

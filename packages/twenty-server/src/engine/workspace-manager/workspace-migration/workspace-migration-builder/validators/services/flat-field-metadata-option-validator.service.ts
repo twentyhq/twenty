@@ -226,20 +226,6 @@ export class FlatFieldMetadataOptionValidatorService {
       return validationResult;
     }
 
-    if (
-      isDefined(flatEntityUpdate.fieldMetadataUniversalIdentifier) &&
-      flatEntityUpdate.fieldMetadataUniversalIdentifier !==
-        existingFlatFieldMetadataOption.fieldMetadataUniversalIdentifier
-    ) {
-      validationResult.errors.push({
-        code: FieldMetadataOptionExceptionCode.INVALID_FIELD_METADATA_OPTION_INPUT,
-        message: t`An option cannot be moved to another field`,
-        userFriendlyMessage: msg`An option cannot be moved to another field`,
-      });
-
-      return validationResult;
-    }
-
     validationResult.errors.push(
       ...this.collectOptionErrors({
         universalFlatFieldMetadataOption: {
