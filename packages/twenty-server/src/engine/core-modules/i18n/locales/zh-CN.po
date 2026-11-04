@@ -185,7 +185,7 @@ msgstr "组件 \"{widgetTitle}\" 的图表筛选器没有字段元数据的通�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A command menu item cannot target both an object and a core object"
-msgstr ""
+msgstr "命令菜单项不能同时以对象和核心对象为目标"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -503,7 +503,7 @@ msgstr "对于 LINK 类型，必须提供有效的链接"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid nativePageKey is required for NATIVE_PAGE type"
-msgstr ""
+msgstr "NATIVE_PAGE 类型需要有效的 nativePageKey"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15783,12 +15783,12 @@ msgstr "未知"
 #. js-lingui-id: jR10dh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown availabilityCoreObjectName {availabilityCoreObjectName}"
-msgstr ""
+msgstr "未知的 availabilityCoreObjectName {availabilityCoreObjectName}"
 
 #. js-lingui-id: U1gpBt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown core object for this command menu item"
-msgstr ""
+msgstr "此命令菜单项的核心对象未知"
 
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts

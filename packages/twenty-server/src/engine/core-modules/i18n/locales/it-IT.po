@@ -185,7 +185,7 @@ msgstr "Un filtro del grafico del widget \"{widgetTitle}\" non ha l'identificato
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A command menu item cannot target both an object and a core object"
-msgstr ""
+msgstr "Una voce del menu comandi non può avere come destinazione sia un oggetto sia un oggetto core"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -503,7 +503,7 @@ msgstr "Un link valido è obbligatorio per il tipo LINK"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid nativePageKey is required for NATIVE_PAGE type"
-msgstr ""
+msgstr "Per il tipo NATIVE_PAGE è richiesto un nativePageKey valido"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15783,12 +15783,12 @@ msgstr "Sconosciuto"
 #. js-lingui-id: jR10dh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown availabilityCoreObjectName {availabilityCoreObjectName}"
-msgstr ""
+msgstr "Nome availabilityCoreObjectName sconosciuto: {availabilityCoreObjectName}"
 
 #. js-lingui-id: U1gpBt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown core object for this command menu item"
-msgstr ""
+msgstr "Oggetto core sconosciuto per questa voce del menu comandi"
 
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts

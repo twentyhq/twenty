@@ -185,7 +185,7 @@ msgstr "Filter dijagrama vidžeta \"{widgetTitle}\" nema univerzalni identifikat
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A command menu item cannot target both an object and a core object"
-msgstr ""
+msgstr "Stavka menija komandi ne može ciljati i objekat i osnovni objekat"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -503,7 +503,7 @@ msgstr "Ispravan link je obavezan za tip LINK"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid nativePageKey is required for NATIVE_PAGE type"
-msgstr ""
+msgstr "Za tip NATIVE_PAGE potreban je važeći nativePageKey"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -15783,12 +15783,12 @@ msgstr "Nepoznato"
 #. js-lingui-id: jR10dh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown availabilityCoreObjectName {availabilityCoreObjectName}"
-msgstr ""
+msgstr "Nepoznat availabilityCoreObjectName {availabilityCoreObjectName}"
 
 #. js-lingui-id: U1gpBt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Unknown core object for this command menu item"
-msgstr ""
+msgstr "Nepoznat osnovni objekat za ovu stavku menija komandi"
 
 #. js-lingui-id: aHCw//
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts

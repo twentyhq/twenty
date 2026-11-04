@@ -18337,12 +18337,12 @@ msgstr "name@{emailDomain}"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Native page"
-msgstr ""
+msgstr "صفحه بومی"
 
 #. js-lingui-id: u7/nYk
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Native pages"
-msgstr ""
+msgstr "صفحه‌های بومی"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx

@@ -18339,12 +18339,12 @@ msgstr "namn@{emailDomain}"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Native page"
-msgstr ""
+msgstr "Inbyggd sida"
 
 #. js-lingui-id: u7/nYk
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Native pages"
-msgstr ""
+msgstr "Inbyggda sidor"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
