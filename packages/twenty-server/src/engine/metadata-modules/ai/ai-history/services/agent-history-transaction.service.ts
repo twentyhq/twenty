@@ -1,3 +1,4 @@
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { isArray, isString } from '@sniptt/guards';
 import { AgentChatDirectMessageRecordsService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-records.service';
 import { Inject, Injectable } from '@nestjs/common';
@@ -60,17 +61,18 @@ export class AgentHistoryTransactionService {
                 ].filter((messageId) => !threadIdsByMessageId.has(messageId));
 
                 if (isNonEmptyArray(missingMessageIds)) {
-                  const messages = await getRepository('agentMessage').find({
-                    where: { id: In(missingMessageIds) },
-                    select: ['id', 'threadId'],
-                    withDeleted: true,
-                  });
+                  const messages = await transactionScope
+                    .getRepositoryWithoutPermissionChecks<AgentMessageWorkspaceEntity>(
+                      'agentMessage',
+                      { shouldSkipEventEmission: true },
+                    )
+                    .find({
+                      where: { id: In(missingMessageIds) },
+                      select: ['id', 'threadId'],
+                      withDeleted: true,
+                    });
 
                   for (const message of messages) {
-                    if (!isString(message.id) || !isString(message.threadId)) {
-                      continue;
-                    }
-
                     threadIdsByMessageId.set(message.id, message.threadId);
                   }
                 }
