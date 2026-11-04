@@ -4,9 +4,9 @@ import { type WorkflowAiAgentStepPanelProps } from '@/workflow/workflow-steps/wo
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentConversationFieldsProps = WorkflowAiAgentStepPanelProps;
 
@@ -16,6 +16,7 @@ export const WorkflowAiAgentConversationFields = ({
   readonly,
   onInputChange,
 }: WorkflowAiAgentConversationFieldsProps) => {
+  const { t } = useLingui();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );

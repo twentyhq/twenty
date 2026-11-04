@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import type { ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -11,6 +10,7 @@ import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/us
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { logError } from '~/utils/logError';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordCalendarDragDropContextProps = {
   children: ReactNode;
@@ -19,6 +19,7 @@ type RecordCalendarDragDropContextProps = {
 export const RecordCalendarDragDropContext = ({
   children,
 }: RecordCalendarDragDropContextProps) => {
+  const { t } = useLingui();
   const store = useStore();
 
   const { userTimezone } = useUserTimezone();

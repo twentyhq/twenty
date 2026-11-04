@@ -15,6 +15,36 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [PermissionFlagType.WORKSPACE] }))
+          testMutation() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
           @Query()
           @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
           testQuery() {}
@@ -540,6 +570,53 @@ ruleTester.run(RULE_NAME, rule, {
         @UseGuards(FeatureFlagGuard, ${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
         class TestResolver {
           @Query()
+          testQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'authPrincipalGuardNotFirst' }],
+      filename: 'test.tsx',
+    },
+    ...[
+      'AccessPolicyGuard({ ...VIEW_WRITE_ACCESS_POLICY })',
+      'AccessPolicyGuard({})',
+      'AccessPolicyGuard({ authPrincipals: {}, requiredPermissionFlags: [] })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false } })',
+      'AccessPolicyGuard({ authPrincipals, requiredPermissionFlags: [] })',
+      'AccessPolicyGuard({ authPrincipals: { ...USER_SESSIONS_ONLY, apiKey: true }, requiredPermissionFlags: [] })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: USER_SESSION_VARIANTS, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [] })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: [...VIEW_FLAGS] })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: VIEW_FLAGS })',
+    ].map((accessPolicyGuard) => ({
+      code: `
+        class TestResolver {
+          @Mutation()
+          @UseGuards(${accessPolicyGuard})
+          testMutation() {}
+        }
+      `,
+      errors: [
+        { messageId: 'graphqlResolversShouldBeGuarded' },
+        { messageId: 'accessPolicyGuardWithoutPolicy' },
+      ],
+      filename: 'test.tsx',
+    })),
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      errors: [{ messageId: 'accessPolicyGuardOnClassAndMethod' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @Query()
+          @UseGuards(WorkspaceAuthGuard, AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
           testQuery() {}
         }
       `,

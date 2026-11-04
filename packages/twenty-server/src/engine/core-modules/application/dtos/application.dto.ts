@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
@@ -20,6 +21,7 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 
 @ObjectType('Application')
 export class ApplicationDTO {
@@ -144,4 +146,10 @@ export class ApplicationDTO {
   @IsOptional()
   @Field(() => ApplicationRegistrationSummaryDTO, { nullable: true })
   applicationRegistration?: ApplicationRegistrationSummaryDTO;
+
+  @Field(() => [IframeMediaPermissionDTO])
+  requestedIframeMediaPermissions?: IframeMediaPermission[];
+
+  @Field(() => [IframeMediaPermissionDTO])
+  grantedIframeMediaPermissions?: IframeMediaPermission[];
 }

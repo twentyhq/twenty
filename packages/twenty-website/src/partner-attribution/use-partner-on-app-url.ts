@@ -3,11 +3,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SITE_URLS } from '@/platform/site-urls';
 
-import { readSavedPartner } from './partner-storage';
+import { readSavedPartner } from './read-saved-partner';
 
 const APP_HOSTNAME = new URL(SITE_URLS.appWelcome).hostname;
 
 const subscribe = () => () => {};
+
+const readSavedPartnerSafely = (): string | null => {
+  try {
+    return readSavedPartner({ storage: localStorage, now: Date.now() });
+  } catch {
+    return null;
+  }
+};
 
 const setPartnerOnAppUrl = (href: string, partner: string): string => {
   try {
@@ -30,7 +38,7 @@ export const usePartnerOnAppUrl = (
 ): string | undefined => {
   const partner = useSyncExternalStore(
     subscribe,
-    () => readSavedPartner(),
+    readSavedPartnerSafely,
     () => null,
   );
 

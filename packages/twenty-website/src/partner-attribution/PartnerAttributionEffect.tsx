@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { savePartner } from './partner-storage';
+import { savePartner } from './save-partner';
 
 const PARTNER_QUERY_PARAM = 'via';
 
@@ -17,7 +17,11 @@ export function PartnerAttributionEffect(): null {
       return;
     }
 
-    savePartner(partner);
+    try {
+      savePartner({ storage: localStorage, code: partner, now: Date.now() });
+    } catch {
+      return;
+    }
   }, []);
 
   return null;

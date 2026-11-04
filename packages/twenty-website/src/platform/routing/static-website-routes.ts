@@ -130,6 +130,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Twenty Affiliate Program — Earn 20% on Every Referral`,
   },
   {
+    changeFrequency: 'yearly',
+    description: msg`The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty.`,
+    id: 'affiliatePartnersTerms',
+    indexed: false,
+    path: '/affiliate-partners/terms',
+    priority: 0.3,
+    title: msg`Affiliate Program Terms | Twenty`,
+  },
+  {
     changeFrequency: 'monthly',
     description: msg`Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform.`,
     id: 'whyTwenty',

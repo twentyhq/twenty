@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
@@ -10,6 +9,7 @@ import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/compone
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTableContainer = styled.div`
   height: 100%;
@@ -54,6 +54,7 @@ export const CoreObjectIndexPageLayout = ({
   onFetchNextPage,
   children,
 }: CoreObjectIndexPageLayoutProps) => {
+  const { t } = useLingui();
   return (
     <>
       <PageTitle title={labelPlural} />

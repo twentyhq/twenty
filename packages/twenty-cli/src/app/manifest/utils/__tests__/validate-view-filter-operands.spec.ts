@@ -100,6 +100,34 @@ describe('validateViewFilterOperands', () => {
     expect(errors).toEqual([]);
   });
 
+  it.each([ViewFilterOperand.IS, ViewFilterOperand.IS_NOT])(
+    'should accept %s on a TEXT field',
+    (operand) => {
+      const errors = validateViewFilterOperands({
+        views: [
+          buildView([
+            {
+              universalIdentifier: 'filter-uid',
+              fieldMetadataUniversalIdentifier: 'field-uid',
+              operand,
+              value: 'Acme',
+            },
+          ]),
+        ],
+        objects: [],
+        fields: [
+          buildField({
+            universalIdentifier: 'field-uid',
+            type: FieldMetadataType.TEXT,
+            name: 'company',
+          }),
+        ],
+      });
+
+      expect(errors).toEqual([]);
+    },
+  );
+
   it('should return an error when operand is invalid for the field type', () => {
     const errors = validateViewFilterOperands({
       views: [
