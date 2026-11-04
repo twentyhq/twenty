@@ -75,7 +75,7 @@ describe('Private text direct messages', () => {
     return threadId;
   };
 
-  it('reopens one pair and persists private pair-shared messages in both directions without running Ada', async () => {
+  it('reuses one private pair and restores it when the other member replies without running Ada', async () => {
     const threadId = await openDirectMessage();
 
     expect(
@@ -92,6 +92,12 @@ describe('Private text direct messages', () => {
         WORKSPACE_MEMBER_DATA_SEED_IDS.JONY.toUpperCase(),
       ],
     });
+
+    await global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+      [threadId],
+    );
+
     const reply = await sendChatParticipationMessage({
       threadId,
       text: 'Hello Jane',
@@ -123,6 +129,7 @@ describe('Private text direct messages', () => {
       ]),
     );
     expect(await context.readThread(threadId)).toMatchObject({
+      deletedAt: null,
       isAssistantParticipant: false,
       activeStreamId: null,
     });

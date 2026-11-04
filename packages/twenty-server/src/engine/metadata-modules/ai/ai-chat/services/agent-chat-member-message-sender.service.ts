@@ -138,6 +138,10 @@ export class AgentChatMemberMessageSenderService {
         );
       }
 
+      if (isDefined(thread.deletedAt)) {
+        await this.chatThreadService.restoreThread(threadAccess);
+      }
+
       const persistedMessage =
         await this.memberMessageWriterService.writeMemberMessage({
           actor,
