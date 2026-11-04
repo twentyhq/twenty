@@ -21,6 +21,7 @@ export const SettingsApplicationContentTypeDetail = () => {
     applicationPath,
     contentPath,
     getContentTypePath,
+    installedApplicationId,
   } = useApplicationContentRoute();
 
   if (!isApplicationContentType(contentType)) {
@@ -56,6 +57,7 @@ export const SettingsApplicationContentTypeDetail = () => {
             contentType={contentType}
             content={content}
             getContentTypePath={getContentTypePath}
+            installedApplicationId={installedApplicationId}
           />
         ) : (
           <SettingsSectionSkeletonLoader />

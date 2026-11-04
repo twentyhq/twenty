@@ -19,6 +19,7 @@ import { SettingsApplicationContentTypeIcon } from '@/settings/applications/comp
 import { APPLICATION_CONTENT_FILTER_LABELS } from '@/settings/applications/constants/ApplicationContentFilterLabels';
 import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/constants/ApplicationContentTypeConfigs';
 import { useApplicationContentFilters } from '@/settings/applications/hooks/useApplicationContentFilters';
+import { useApplicationContentItemSettingsPath } from '@/settings/applications/hooks/useApplicationContentItemSettingsPath';
 import { useApplicationContentItemDisplay } from '@/settings/applications/hooks/useApplicationContentItemDisplay';
 import { useApplicationContentObjectResolver } from '@/settings/applications/hooks/useApplicationContentObjectResolver';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
@@ -53,16 +54,27 @@ const StyledCountLink = styled(UndecoratedLink)`
   color: inherit;
 `;
 
+const StyledNameLink = styled(UndecoratedLink)`
+  color: inherit;
+  min-width: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 type SettingsApplicationContentItemsTableProps = {
   contentType: ApplicationContentType;
   content: ApplicationContent;
   getContentTypePath: (contentType: ApplicationContentType) => string;
+  installedApplicationId?: string;
 };
 
 export const SettingsApplicationContentItemsTable = ({
   contentType,
   content,
   getContentTypePath,
+  installedApplicationId,
 }: SettingsApplicationContentItemsTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -71,6 +83,9 @@ export const SettingsApplicationContentItemsTable = ({
   const { getItemLabel, getItemIcon } =
     useApplicationContentItemDisplay(content);
   const filters = useApplicationContentFilters(contentType, content);
+  const getItemSettingsPath = useApplicationContentItemSettingsPath(
+    installedApplicationId,
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -156,6 +171,19 @@ export const SettingsApplicationContentItemsTable = ({
       />
     ) : (
       <ItemIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+    );
+  };
+
+  const renderItemName = (item: ApplicationContentItem) => {
+    const name = (
+      <OverflowingTextWithTooltip text={getItemLabel(contentType, item)} />
+    );
+    const settingsPath = getItemSettingsPath(contentType, item);
+
+    return isDefined(settingsPath) ? (
+      <StyledNameLink to={settingsPath}>{name}</StyledNameLink>
+    ) : (
+      name
     );
   };
 
@@ -290,9 +318,7 @@ export const SettingsApplicationContentItemsTable = ({
           >
             <StyledNameTableCell minWidth="0" overflow="hidden">
               {renderItemIcon(item)}
-              <OverflowingTextWithTooltip
-                text={getItemLabel(contentType, item)}
-              />
+              {renderItemName(item)}
             </StyledNameTableCell>
             {columns.map((column) => (
               <TableCell

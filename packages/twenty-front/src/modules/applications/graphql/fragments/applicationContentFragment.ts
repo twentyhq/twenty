@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 export const APPLICATION_CONTENT_FRAGMENT = gql`
   fragment ApplicationContentItemFields on ApplicationContentItem {
+    id
     universalIdentifier
     label
     icon

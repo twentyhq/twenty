@@ -610,6 +610,7 @@ export type ApplicationContentItem = {
   description?: Maybe<Scalars['String']['output']>;
   fieldUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
   label: Scalars['String']['output'];
   objectUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   parentLabel?: Maybe<Scalars['String']['output']>;

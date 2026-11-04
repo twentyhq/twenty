@@ -163,6 +163,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
 
   return {
     objects: objects.map((object) => ({
+      id: object.id,
       universalIdentifier: object.universalIdentifier,
       label: object.labelPlural,
       icon: object.icon,
@@ -171,6 +172,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: fieldCountByObject.get(object.universalIdentifier) ?? 0,
     })),
     fields: fields.map((field) => ({
+      id: field.id,
       universalIdentifier: field.universalIdentifier,
       label: field.label,
       icon: field.icon,
@@ -180,6 +182,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: viewCountByField.get(field.universalIdentifier) ?? 0,
     })),
     indexes: indexes.map((index) => ({
+      id: index.id,
       universalIdentifier: index.universalIdentifier,
       label: index.universalFlatIndexFieldMetadatas
         .map(
@@ -193,6 +196,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: index.universalFlatIndexFieldMetadatas.length,
     })),
     views: views.map((view) => ({
+      id: view.id,
       universalIdentifier: view.universalIdentifier,
       label: view.name,
       icon: view.icon,
@@ -201,6 +205,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: viewFieldCountByView.get(view.universalIdentifier) ?? 0,
     })),
     viewFields: viewFields.map((viewField) => ({
+      id: viewField.id,
       universalIdentifier: viewField.universalIdentifier,
       label:
         findFieldLabel(viewField.fieldMetadataUniversalIdentifier) ??
@@ -214,6 +219,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: viewField.position,
     })),
     pageLayouts: pageLayouts.map((pageLayout) => ({
+      id: pageLayout.id,
       universalIdentifier: pageLayout.universalIdentifier,
       label: pageLayout.name,
       objectUniversalIdentifier: pageLayout.objectMetadataUniversalIdentifier,
@@ -221,6 +227,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: tabCountByPageLayout.get(pageLayout.universalIdentifier) ?? 0,
     })),
     pageLayoutTabs: pageLayoutTabs.map((tab) => ({
+      id: tab.id,
       universalIdentifier: tab.universalIdentifier,
       label: tab.title,
       icon: tab.icon,
@@ -232,6 +239,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
     })),
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
+      id: navigationMenuItem.id,
       universalIdentifier: navigationMenuItem.universalIdentifier,
       label:
         navigationMenuItem.name ??
@@ -266,6 +274,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: navigationMenuItem.position,
     })),
     commandMenuItems: commandMenuItems.map((commandMenuItem) => ({
+      id: commandMenuItem.id,
       universalIdentifier: commandMenuItem.universalIdentifier,
       label: commandMenuItem.label,
       icon: commandMenuItem.icon,
@@ -275,6 +284,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       tag: commandMenuItem.availabilityType,
     })),
     frontComponents: frontComponents.map((frontComponent) => ({
+      id: frontComponent.id,
       universalIdentifier: frontComponent.universalIdentifier,
       label: frontComponent.name,
       description: frontComponent.description,
@@ -288,6 +298,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         ) ?? 0,
     })),
     workflows: findOwned(flatEntityMaps.flatWorkflowMaps).map((workflow) => ({
+      id: workflow.id,
       universalIdentifier: workflow.universalIdentifier,
       label: workflow.name ?? workflow.universalIdentifier,
       tag: isDefined(workflow.lastPublishedCoreWorkflowVersionId)
@@ -296,6 +307,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     })),
     logicFunctions: findOwned(flatEntityMaps.flatLogicFunctionMaps).map(
       (logicFunction) => ({
+        id: logicFunction.id,
         universalIdentifier: logicFunction.universalIdentifier,
         label: logicFunction.name,
         description: logicFunction.description,
@@ -304,18 +316,21 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       }),
     ),
     agents: findOwned(flatEntityMaps.flatAgentMaps).map((agent) => ({
+      id: agent.id,
       universalIdentifier: agent.universalIdentifier,
       label: agent.label,
       icon: agent.icon,
       description: agent.description,
     })),
     skills: findOwned(flatEntityMaps.flatSkillMaps).map((skill) => ({
+      id: skill.id,
       universalIdentifier: skill.universalIdentifier,
       label: skill.label,
       icon: skill.icon,
       description: skill.description,
     })),
     roles: roles.map((role) => ({
+      id: role.id,
       universalIdentifier: role.universalIdentifier,
       label: role.label,
       icon: role.icon,
@@ -323,6 +338,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       count: memberCountByRole.get(role.universalIdentifier) ?? 0,
     })),
     permissionFlags: permissionFlags.map((permissionFlag) => ({
+      id: permissionFlag.id,
       universalIdentifier: permissionFlag.universalIdentifier,
       label: permissionFlag.label,
       icon: permissionFlag.icon,
@@ -334,6 +350,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     connectionProviders: findOwned(
       flatEntityMaps.flatConnectionProviderMaps,
     ).map((connectionProvider) => ({
+      id: connectionProvider.id,
       universalIdentifier: connectionProvider.universalIdentifier,
       label: connectionProvider.displayName,
       tag: connectionProvider.type,

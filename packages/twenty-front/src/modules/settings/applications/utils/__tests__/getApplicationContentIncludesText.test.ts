@@ -4,6 +4,7 @@ const buildItem = (label: string, objectUniversalIdentifier?: string) => ({
   __typename: 'ApplicationContentItem' as const,
   universalIdentifier: label,
   label,
+  id: null,
   icon: null,
   color: null,
   description: null,

@@ -5,6 +5,9 @@ export class ApplicationContentItemDTO {
   @Field()
   universalIdentifier: string;
 
+  @Field(() => String, { nullable: true })
+  id?: string | null;
+
   @Field()
   label: string;
 
