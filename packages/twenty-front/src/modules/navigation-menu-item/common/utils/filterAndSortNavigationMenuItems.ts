@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { isDefined, isNativePageKey } from 'twenty-shared/utils';
@@ -21,8 +21,8 @@ export const filterAndSortNavigationMenuItems = (
 
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
-    CoreObjectNameSingular.AgentChatThread,
-    CoreObjectNameSingular.Workflow,
+    StandardObjectNameSingular.AgentChatThread,
+    StandardObjectNameSingular.Workflow,
   ];
 
   const hiddenRecordObjectMetadataIds = new Set(

@@ -11,7 +11,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -76,9 +76,9 @@ export const RouteContextStoreProvider = () => {
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular =
     isCoreWorkflowIndexPage || isCoreWorkflowShowPage
-      ? CoreObjectNameSingular.Workflow
+      ? StandardObjectNameSingular.Workflow
       : isAiChatPage
-        ? CoreObjectNameSingular.AgentChatThread
+        ? StandardObjectNameSingular.AgentChatThread
         : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();

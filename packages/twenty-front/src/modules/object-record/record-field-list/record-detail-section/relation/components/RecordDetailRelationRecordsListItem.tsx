@@ -25,7 +25,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   CustomError,
   computeMorphRelationGqlFieldName,
@@ -123,7 +123,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isAccountOwnerRelation =
     relationObjectMetadataNameSingular ===
-    CoreObjectNameSingular.WorkspaceMember;
+    StandardObjectNameSingular.WorkspaceMember;
 
   const dropdownInstanceId = `record-field-card-menu:${scopeInstanceId}:${relationFieldMetadataId}:${relationRecord.id}`;
 

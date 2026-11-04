@@ -20318,11 +20318,6 @@ msgstr "doar în zilele lucrătoare"
 msgid "On which object(s) should this trigger be available"
 msgstr "Pe care obiect(e) ar trebui să fie disponibil acest declanșator"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Pachete de Introducere"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

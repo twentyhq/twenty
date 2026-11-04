@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useMutation } from '@apollo/client/react';
 import { RetryWorkflowRunDocument } from '~/generated/graphql';
@@ -12,7 +12,7 @@ export const useRetryWorkflowRun = () => {
   });
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
   });
 
   const retryWorkflowRun = async (workflowRunId: string) => {

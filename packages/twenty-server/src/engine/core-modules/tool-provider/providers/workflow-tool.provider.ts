@@ -11,7 +11,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -66,7 +66,7 @@ export class WorkflowToolProvider implements ToolProvider {
     const icon = await resolveObjectIcon(
       this.flatEntityMapsCacheService,
       context.workspaceId,
-      CoreObjectNameSingular.Workflow,
+      StandardObjectNameSingular.Workflow,
     );
 
     return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {

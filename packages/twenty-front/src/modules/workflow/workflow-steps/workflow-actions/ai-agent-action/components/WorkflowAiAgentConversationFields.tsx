@@ -4,7 +4,7 @@ import { type WorkflowAiAgentStepPanelProps } from '@/workflow/workflow-steps/wo
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
@@ -38,7 +38,7 @@ export const WorkflowAiAgentConversationFields = ({
         <>
           <FormSingleRecordPicker
             label={t`Recipient`}
-            objectNameSingulars={[CoreObjectNameSingular.WorkspaceMember]}
+            objectNameSingulars={[StandardObjectNameSingular.WorkspaceMember]}
             defaultValue={input.workspaceMemberId}
             onChange={(workspaceMemberId) =>
               onInputChange({

@@ -20318,11 +20318,6 @@ msgstr "solo nei giorni feriali"
 msgid "On which object(s) should this trigger be available"
 msgstr "Su quale(i) oggetto(i) dovrebbe essere disponibile questo trigger"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Pacchetti di Onboarding"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

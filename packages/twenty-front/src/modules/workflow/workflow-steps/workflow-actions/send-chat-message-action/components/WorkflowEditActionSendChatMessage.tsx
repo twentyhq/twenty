@@ -10,7 +10,7 @@ import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-a
 import { WorkflowSendChatMessageToolArguments } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect, useMemo, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
@@ -130,7 +130,7 @@ export const WorkflowEditActionSendChatMessage = ({
       <WorkflowStepBody>
         <FormSingleRecordPicker
           label={t`Recipient`}
-          objectNameSingulars={[CoreObjectNameSingular.WorkspaceMember]}
+          objectNameSingulars={[StandardObjectNameSingular.WorkspaceMember]}
           defaultValue={formData.workspaceMemberId}
           onChange={(workspaceMemberId) =>
             handleFieldChange('workspaceMemberId', workspaceMemberId ?? '')

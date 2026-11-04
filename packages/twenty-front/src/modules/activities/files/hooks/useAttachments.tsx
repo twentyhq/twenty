@@ -1,7 +1,7 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 export const useAttachments = (targetableObject: ActivityTargetableObject) => {
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
@@ -13,7 +13,7 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
     loading,
     totalCount,
   } = useFindManyRecords<Attachment>({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
     filter: {
       [targetableObjectFieldIdName]: {
         eq: targetableObject.id,

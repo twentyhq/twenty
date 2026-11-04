@@ -1,5 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
@@ -31,7 +31,8 @@ export const RecordShowPage = () => {
   }
 
   if (
-    parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
+    parameters.objectNameSingular ===
+      StandardObjectNameSingular.AgentChatThread &&
     isDefined(parameters.objectRecordId)
   ) {
     // A chat's record page is the chat page, on its own route

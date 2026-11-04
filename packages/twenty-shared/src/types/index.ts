@@ -75,7 +75,6 @@ export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { ContextStorePageType } from './ContextStorePageType';
-export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
 export type { EmailConnectionParameters } from './EmailConnectionParameters';
@@ -331,6 +330,7 @@ export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
+export { StandardObjectNameSingular } from './StandardObjectNameSingular';
 export type {
   StepFilterGroup,
   StepFilter,

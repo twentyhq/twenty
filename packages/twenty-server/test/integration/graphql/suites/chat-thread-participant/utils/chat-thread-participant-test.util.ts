@@ -18,6 +18,8 @@ import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-cha
 import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -70,18 +72,23 @@ export const readAssigneeId = async (
   return assigneeId;
 };
 
-export const addParticipants = (
-  threadId: string,
-  participantWorkspaceMemberIds: string[],
-  workspaceMemberId: string = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-) =>
-  getAppProviderByClassName<AgentChatThreadService>(
-    'AgentChatThreadService',
-  ).mentionParticipants({
+export const addParticipants = ({
+  threadId,
+  workspaceMemberIds,
+  workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+}: {
+  threadId: string;
+  workspaceMemberIds: string[];
+  workspaceMemberId?: string;
+}) =>
+  getAppProviderByClassName<AgentChatInboxDeliveryService>(
+    'AgentChatInboxDeliveryService',
+  ).deliverThreadToMemberInboxes({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     workspaceMemberId,
     threadId,
-    participantWorkspaceMemberIds,
+    workspaceMemberIds,
+    reason: AgentChatInboxDeliveryReason.MENTION,
   });
 
 type Participant = {

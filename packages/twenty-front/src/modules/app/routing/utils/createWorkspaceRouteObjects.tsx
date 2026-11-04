@@ -9,7 +9,7 @@ import {
   SettingsRouteOutlet,
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
 const GettingStartedPage = lazy(() =>
@@ -121,7 +121,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: getAppPath(AppPath.RecordIndexPage, {
-        objectNamePlural: CoreObjectNamePlural.Workflow,
+        objectNamePlural: StandardObjectNamePlural.Workflow,
       }),
       element: (
         <NavigatePreservingSearchAndHash
