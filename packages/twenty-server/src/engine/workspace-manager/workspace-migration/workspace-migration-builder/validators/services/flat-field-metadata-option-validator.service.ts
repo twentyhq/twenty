@@ -81,8 +81,7 @@ export class FlatFieldMetadataOptionValidatorService {
       ...validateMetadataOptionColor(universalFlatFieldMetadataOption),
     ];
 
-    // Checked against the migration's final state so swapping two values in one migration passes.
-    // Scans every option because the field does not aggregate its option identifiers yet.
+    // Final state, so a swap within one migration passes; scans all options until the field lists its own.
     const hasDuplicateValue = Object.values(
       finalFlatEntityMaps.byUniversalIdentifier,
     ).some(

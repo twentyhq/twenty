@@ -22,8 +22,7 @@ export type FieldMetadataOptionOverrides = {
   isActive?: boolean;
 };
 
-// Value and position uniqueness per field is left to the validator: a single
-// migration can swap two values or reorder options, which a unique index would reject.
+// No unique index on value or position: one migration may swap or reorder them, so the validator checks it.
 @Entity({ name: 'fieldMetadataOption', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_FIELD_METADATA_OPTION_TABLE_UPGRADE_COMMAND_NAME,
@@ -45,10 +44,10 @@ export class FieldMetadataOptionEntity
   fieldMetadata: Relation<FieldMetadataEntity>;
 
   // The Postgres enum label; it identifies stored records, so it is never overridable.
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   value: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   label: string;
 
   @Column({ nullable: true, type: 'varchar' })
