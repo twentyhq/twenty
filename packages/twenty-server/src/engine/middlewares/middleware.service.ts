@@ -170,7 +170,7 @@ export class MiddlewareService {
       throw error;
     }
 
-    // GraphQL record resolvers run no AuthPrincipalGuard, so agent tokens are refused here
+    // GraphQL record resolvers run no AccessPolicyGuard, so agent tokens are refused here
     if (isDefined(data.agentId)) {
       throw new AuthException(
         'This token is only accepted by MCP',

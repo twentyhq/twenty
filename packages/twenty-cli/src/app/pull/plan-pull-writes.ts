@@ -7,7 +7,7 @@ import {
 } from '@/app/pull/build-pull-entities';
 import { resolvePullFileNameCollisions } from '@/app/pull/resolve-pull-file-name-collisions';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
-import { writeDefineFile } from '@/app/pull/write-define-file';
+import { writePullEntityFile } from '@/app/pull/write-pull-entity-file';
 import { dirname, posix } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,6 +31,7 @@ export type PullWritePlan = {
   writes: PullWrite[];
   unchanged: PullEntity[];
   deletions: PullDeletion[];
+  codeStepFileDeletions: PullDeletion[];
   localOnlyRelativePaths: string[];
 };
 
@@ -123,12 +124,14 @@ export const planPullWrites = ({
   scannedFiles,
   workspaceUniversalIdentifiers,
   unreconciledUniversalIdentifiers,
+  localCodeStepFilesByWorkflowPath,
 }: {
   entities: PullEntity[];
   baseEntities: PullEntity[];
   scannedFiles: ScannedSourceFile[];
   workspaceUniversalIdentifiers: ReadonlySet<string>;
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  localCodeStepFilesByWorkflowPath?: ReadonlyMap<string, PullDeletion[]>;
 }): PullWritePlan => {
   const exportedUniversalIdentifiers = new Set(
     entities.map((entity) => entity.universalIdentifier.toLowerCase()),
@@ -159,11 +162,18 @@ export const planPullWrites = ({
   const writes: PullWrite[] = [];
   const unchanged: PullEntity[] = [];
   const usedRelativePaths = new Set<string>();
-  const takenRelativePaths = new Set(
+  const scannedRelativePaths = new Set(
     scannedFiles.map((scannedFile) =>
       toReservationKey(toPosixPath(scannedFile.relativePath)),
     ),
   );
+  const takenRelativePaths = new Set(scannedRelativePaths);
+  const staleCodeStepFiles: PullDeletion[] = [];
+
+  const plannedReservationKeys = new Set<string>();
+
+  const findLocalCodeStepFiles = (workflowPath: string): PullDeletion[] =>
+    localCodeStepFilesByWorkflowPath?.get(workflowPath) ?? [];
 
   for (const entity of entities) {
     const existingSourceFile = findExistingSourceFile({
@@ -195,6 +205,7 @@ export const planPullWrites = ({
 
     usedRelativePaths.add(relativePath);
     takenRelativePaths.add(toReservationKey(relativePath));
+    plannedReservationKeys.add(toReservationKey(relativePath));
 
     const baseConfig = baseConfigByUniversalIdentifier.get(
       entity.universalIdentifier,
@@ -231,17 +242,57 @@ export const planPullWrites = ({
       continue;
     }
 
+    const previousCodeStepFiles = isDefined(existingPath)
+      ? findLocalCodeStepFiles(existingPath)
+      : [];
+    const previousCodeStepReservationKeyByStep = new Map(
+      previousCodeStepFiles.map((codeStepFile) => [
+        codeStepFile.universalIdentifier.toLowerCase(),
+        toReservationKey(codeStepFile.relativePath),
+      ]),
+    );
+
+    const { codeStepFiles, ...definitionFile } = writePullEntityFile({
+      entity,
+      relativePath,
+      isCodeStepPathAvailable: ({ relativePath, stepUniversalIdentifier }) => {
+        const reservationKey = toReservationKey(relativePath);
+
+        return (
+          !takenRelativePaths.has(reservationKey) ||
+          (!plannedReservationKeys.has(reservationKey) &&
+            previousCodeStepReservationKeyByStep.get(
+              stepUniversalIdentifier.toLowerCase(),
+            ) === reservationKey)
+        );
+      },
+    });
+
     writes.push({
       kind: entity.kind,
       universalIdentifier: entity.universalIdentifier,
       relativePath,
-      ...writeDefineFile({
-        definer: entity.definer,
-        config: entity.config,
-        enumBindings: entity.enumBindings,
-      }),
+      ...definitionFile,
       isRegeneration: isDefined(existingPath),
     });
+
+    for (const codeStepFile of codeStepFiles) {
+      const codeStepReservationKey = toReservationKey(
+        codeStepFile.relativePath,
+      );
+
+      writes.push({
+        kind: entity.kind,
+        ...codeStepFile,
+        requiredSdkExports: [],
+        isRegeneration: scannedRelativePaths.has(codeStepReservationKey),
+      });
+      usedRelativePaths.add(codeStepFile.relativePath);
+      takenRelativePaths.add(codeStepReservationKey);
+      plannedReservationKeys.add(codeStepReservationKey);
+    }
+
+    staleCodeStepFiles.push(...previousCodeStepFiles);
   }
 
   const deletions: PullDeletion[] = [];
@@ -268,6 +319,10 @@ export const planPullWrites = ({
       universalIdentifier: baseUniversalIdentifier,
       relativePath,
     });
+
+    if (!workspaceUniversalIdentifiers.has(baseUniversalIdentifier)) {
+      staleCodeStepFiles.push(...findLocalCodeStepFiles(relativePath));
+    }
   }
 
   const localOnlyRelativePaths = scannedFiles
@@ -287,6 +342,9 @@ export const planPullWrites = ({
     writes,
     unchanged,
     deletions,
+    codeStepFileDeletions: staleCodeStepFiles.filter(
+      (codeStepFile) => !usedRelativePaths.has(codeStepFile.relativePath),
+    ),
     localOnlyRelativePaths,
   };
 };

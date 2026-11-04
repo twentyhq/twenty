@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
@@ -17,6 +16,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 
@@ -26,7 +26,7 @@ export type CommonApiContext = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: RoleRecordsPermissions;
 };
 
 @Injectable()
@@ -88,13 +88,13 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const objectsPermissions =
-      await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+    const recordsPermissions =
+      await this.recordAccessPolicyService.getRecordsPermissionsOrThrow(
         authContext,
       );
 
     const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
+      recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields ?? {};
 
     const selectedFields = buildFieldSelection({
       restrictedFields,
@@ -118,7 +118,7 @@ export class CommonApiContextBuilderService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectsPermissions,
+      recordsPermissions,
     };
   }
 }

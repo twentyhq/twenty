@@ -77,7 +77,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         flatObjectMetadata,
         flatFieldMetadataMaps,
         restrictedFields:
-          readRepository.objectRecordsPermissions?.[flatObjectMetadata.id]
+          readRepository.recordsPermissions.objects[flatObjectMetadata.id]
             ?.restrictedFields ?? {},
       });
 

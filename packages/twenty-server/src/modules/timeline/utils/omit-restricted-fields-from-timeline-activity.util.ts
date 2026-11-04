@@ -1,6 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ObjectsPermissions } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  canReachSomeRecords,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { filterFieldNamesInEventProperties } from 'src/engine/permissions/masking/utils/filter-field-names-in-event-properties.util';
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/masking/utils/get-field-names-in-event-properties.util';
@@ -8,6 +11,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 const objectByTargetColumnNameCache = new WeakMap<
@@ -85,21 +89,29 @@ const resolveTimelineActivityObject = ({
 const buildReadableFieldNames = ({
   flatObjectMetadata,
   isLinkedActivity,
-  objectsPermissions,
+  recordsPermissions,
   flatFieldMetadataMaps,
 }: {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
   isLinkedActivity: boolean;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Set<string> => {
-  const objectPermissions = objectsPermissions[flatObjectMetadata.id];
+  const objectRecordsPermissions =
+    recordsPermissions.objects[flatObjectMetadata.id];
 
-  if (isLinkedActivity && objectPermissions?.canReadObjectRecords === false) {
+  if (
+    isLinkedActivity &&
+    isDefined(objectRecordsPermissions) &&
+    !canReachSomeRecords({
+      objectRecordsPermissions,
+      operationType: 'select',
+    })
+  ) {
     return new Set();
   }
 
-  const restrictedFields = objectPermissions?.restrictedFields ?? {};
+  const restrictedFields = objectRecordsPermissions?.restrictedFields ?? {};
 
   return new Set(
     flatObjectMetadata.fieldIds.flatMap((fieldId) => {
@@ -123,13 +135,13 @@ const buildReadableFieldNames = ({
 export const omitRestrictedFieldsFromTimelineActivity = ({
   properties,
   timelineActivity,
-  objectsPermissions,
+  recordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   properties: unknown;
   timelineActivity: Record<string, unknown>;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Record<string, unknown> | null => {
@@ -148,7 +160,7 @@ export const omitRestrictedFieldsFromTimelineActivity = ({
         isLinkedActivity: isNonEmptyString(
           timelineActivity.linkedObjectMetadataId,
         ),
-        objectsPermissions,
+        recordsPermissions,
         flatFieldMetadataMaps,
       })
     : new Set<string>();

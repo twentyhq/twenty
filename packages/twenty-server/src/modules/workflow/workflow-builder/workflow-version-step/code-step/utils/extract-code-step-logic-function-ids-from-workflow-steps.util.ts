@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   WorkflowVersionStepException,
@@ -16,7 +17,7 @@ export type CodeStepForLogicFunctionIdExtraction = Pick<
   'id' | 'type'
 > & {
   settings: {
-    input: Pick<WorkflowCodeActionInput, 'logicFunctionId'>;
+    input: Pick<WorkflowCodeActionInput, 'code' | 'logicFunctionId'>;
   };
 };
 
@@ -29,16 +30,16 @@ type WorkflowStepForLogicFunctionIdExtraction =
   | CodeStepForLogicFunctionIdExtraction
   | NonCodeStepForLogicFunctionIdExtraction;
 
-const isCodeStepForLogicFunction = (
+const isLegacyCodeStep = (
   step: WorkflowStepForLogicFunctionIdExtraction,
 ): step is CodeStepForLogicFunctionIdExtraction =>
-  step.type === WorkflowActionType.CODE;
+  step.type === WorkflowActionType.CODE && !isDefined(step.settings.input.code);
 
 export const extractCodeStepLogicFunctionIdsFromWorkflowSteps = (
   steps: WorkflowStepForLogicFunctionIdExtraction[],
 ): string[] => [
   ...new Set(
-    steps.filter(isCodeStepForLogicFunction).map((step) => {
+    steps.filter(isLegacyCodeStep).map((step) => {
       const logicFunctionId = step.settings.input.logicFunctionId;
 
       if (!isNonEmptyString(logicFunctionId)) {

@@ -201,6 +201,13 @@ describe('workflow manifest step types', () => {
         },
       },
     },
+    {
+      type: 'CODE',
+      input: {
+        code: 'export const main = async (params: { name: string }) => ({ greeting: `Hi ${params.name}` });',
+        logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
@@ -377,9 +384,40 @@ describe('workflow manifest step types', () => {
     ]);
   });
 
+  it('requires the source of a code step, which never runs from a logic function', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'CODE',
+      input: {
+        logicFunctionId: '77777777-7777-4777-8777-777777777777',
+        logicFunctionInput: {},
+      },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.map(({ path }) => path.slice(3).join('.')),
+    ).toEqual(expect.arrayContaining(['input.code', 'input']));
+  });
+
+  it('rejects an empty code step source', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'CODE',
+      input: { code: '', logicFunctionInput: {} },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.map(({ path }) => path.slice(3).join('.')),
+    ).toContain('input.code');
+  });
+
   it('rejects a step type applications cannot use', () => {
     const invalid = structuredClone(workflow);
-    Object.assign(getStep(invalid, 2), { type: 'CODE' });
+    Object.assign(getStep(invalid, 2), { type: 'CHAT_WITH_AN_ORACLE' });
     const result = workflowManifestSchema.safeParse(invalid);
 
     expect(result.success).toBe(false);

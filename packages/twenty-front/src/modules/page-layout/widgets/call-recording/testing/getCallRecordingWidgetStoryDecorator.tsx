@@ -163,16 +163,14 @@ export const getCallRecordingWidgetStoryDecorator =
     jotaiStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: [],
       twoFactorAuthenticationMethodSummary: null,
-      objectsPermissions: [
+      objectRecordsPermissions: [
         {
           objectMetadataId: CALL_RECORDING_OBJECT_METADATA_ID,
-          canReadObjectRecords: !isDefined(context.args.restriction),
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
+          canReadAllRecords: !isDefined(context.args.restriction),
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
           restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
         },
       ],
     });
