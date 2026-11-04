@@ -1,3 +1,4 @@
+import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -35,10 +36,7 @@ export const initializeNewAiChatStory = ({
   );
   jotaiStore.set(
     agentChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
-    {
-      isAssistantParticipant: true,
-      recipientWorkspaceMemberIds: [],
-    },
+    AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   );
   jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
   jotaiStore.set(currentWorkspaceMembersState.atom, [
