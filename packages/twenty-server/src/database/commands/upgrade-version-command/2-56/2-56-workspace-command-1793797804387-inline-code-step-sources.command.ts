@@ -39,7 +39,7 @@ type StepSource = {
 };
 
 // expand only: steps keep logicFunctionId and no function is deleted, so a rollback still runs them
-@RegisteredWorkspaceCommand('2.56.0', 1793717835616)
+@RegisteredWorkspaceCommand('2.56.0', 1793797804387)
 @Command({
   name: 'upgrade:2-56:inline-code-step-sources',
   description:
