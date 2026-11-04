@@ -35,14 +35,15 @@ const narrowRecordsPermissionsToExplicitDenies = ({
 }): RoleRecordsPermissions => {
   const objects = { ...recordsPermissions.objects };
 
-  for (const { objectMetadataId, ...objectPermission } of objectPermissions) {
-    const grantedObjectRecordsPermissions = objects[objectMetadataId];
+  for (const objectPermission of objectPermissions) {
+    const grantedObjectRecordsPermissions =
+      objects[objectPermission.objectMetadataId];
 
     if (!isDefined(grantedObjectRecordsPermissions)) {
       continue;
     }
 
-    objects[objectMetadataId] = {
+    objects[objectPermission.objectMetadataId] = {
       canReadAllRecords:
         grantedObjectRecordsPermissions.canReadAllRecords &&
         objectPermission.canReadObjectRecords !== false,
@@ -118,9 +119,14 @@ export const resolveAiRunPermissionScope = ({
   });
 
   const objectPermissions = (scope.objectPermissions ?? []).map(
-    ({ objectUniversalIdentifier, ...objectPermission }) => ({
-      ...objectPermission,
-      objectMetadataId: findObjectMetadataIdOrThrow(objectUniversalIdentifier),
+    (objectPermission) => ({
+      objectMetadataId: findObjectMetadataIdOrThrow(
+        objectPermission.objectUniversalIdentifier,
+      ),
+      canReadObjectRecords: objectPermission.canReadObjectRecords,
+      canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
+      canSoftDeleteObjectRecords: objectPermission.canSoftDeleteObjectRecords,
+      canDestroyObjectRecords: objectPermission.canDestroyObjectRecords,
     }),
   );
 
@@ -139,22 +145,18 @@ export const resolveAiRunPermissionScope = ({
       areSystemObjectsReadOnlyByDefault: true,
       objectPermissions,
       fieldPermissions: (scope.fieldPermissions ?? []).flatMap(
-        ({
-          objectUniversalIdentifier,
-          fieldUniversalIdentifier,
-          ...fieldPermission
-        }) => {
+        (fieldPermission) => {
           const objectMetadataId = findObjectMetadataIdOrThrow(
-            objectUniversalIdentifier,
+            fieldPermission.objectUniversalIdentifier,
           );
           const flatFieldMetadata =
             flatFieldMetadataMaps.byUniversalIdentifier[
-              fieldUniversalIdentifier
+              fieldPermission.fieldUniversalIdentifier
             ];
 
           if (!isDefined(flatFieldMetadata)) {
             throw new PermissionsException(
-              `Field ${fieldUniversalIdentifier} in an AI run scope does not exist`,
+              `Field ${fieldPermission.fieldUniversalIdentifier} in an AI run scope does not exist`,
               PermissionsExceptionCode.INVALID_ARG,
             );
           }
@@ -162,16 +164,17 @@ export const resolveAiRunPermissionScope = ({
           // attached to the named object, the restriction would miss the field's own
           if (flatFieldMetadata.objectMetadataId !== objectMetadataId) {
             throw new PermissionsException(
-              `Field ${fieldUniversalIdentifier} does not belong to object ${objectUniversalIdentifier} in an AI run scope`,
+              `Field ${fieldPermission.fieldUniversalIdentifier} does not belong to object ${fieldPermission.objectUniversalIdentifier} in an AI run scope`,
               PermissionsExceptionCode.INVALID_ARG,
             );
           }
 
           return [
             {
-              ...fieldPermission,
               objectMetadataId,
               fieldMetadataId: flatFieldMetadata.id,
+              canReadFieldValue: fieldPermission.canReadFieldValue,
+              canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
             },
           ];
         },
