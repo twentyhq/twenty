@@ -4,15 +4,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
+type RoleRecordsPermissionsObjects = Pick<RoleRecordsPermissions, 'objects'>;
+
 const objectsPermissionsByRoleRecordsPermissions = new WeakMap<
-  RoleRecordsPermissions,
+  RoleRecordsPermissionsObjects,
   ObjectsPermissions
 >();
 
 export const fromRoleRecordsPermissionsToObjectsPermissions = ({
   roleRecordsPermissions,
 }: {
-  roleRecordsPermissions: RoleRecordsPermissions;
+  roleRecordsPermissions: RoleRecordsPermissionsObjects;
 }): ObjectsPermissions => {
   const cachedObjectsPermissions =
     objectsPermissionsByRoleRecordsPermissions.get(roleRecordsPermissions);
