@@ -5,6 +5,7 @@ export type AgentChatSubscriptionEvent =
   | { type: 'stream-chunk'; chunk: Record<string, unknown>; seq?: number }
   // turnId is set on the reply that ends a turn, not on a member's message
   | { type: 'message-persisted'; messageId: string; turnId?: string }
+  | { type: 'stream-ended' }
   // the end of a run without a thread, which saves no message
   | { type: 'run-finished'; turnId: string }
   // A message saved without a turn, which must not reset a reply in progress

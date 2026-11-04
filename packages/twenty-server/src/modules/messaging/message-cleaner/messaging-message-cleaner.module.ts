@@ -11,6 +11,7 @@ import { MessagingConnectedAccountDeletionCleanupJob } from 'src/modules/messagi
 import { MessagingMessageChannelDeletionCleanupJob } from 'src/modules/messaging/message-cleaner/jobs/messaging-message-channel-deletion-cleanup.job';
 import { MessagingMessageCleanerConnectedAccountListener } from 'src/modules/messaging/message-cleaner/listeners/messaging-message-cleaner-connected-account.listener';
 import { MessagingMessageCleanerMessageChannelListener } from 'src/modules/messaging/message-cleaner/listeners/messaging-message-cleaner-message-channel.listener';
+import { MessagingMessageCleanerMessageListener } from 'src/modules/messaging/message-cleaner/listeners/messaging-message-cleaner-message.listener';
 
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
@@ -26,6 +27,7 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
     MessagingMessageChannelDeletionCleanupJob,
     MessagingMessageCleanerConnectedAccountListener,
     MessagingMessageCleanerMessageChannelListener,
+    MessagingMessageCleanerMessageListener,
     MessagingMessageCleanerRemoveOrphansCommand,
     MessagingResetChannelCommand,
     MessagingMessageCleanerService,

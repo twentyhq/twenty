@@ -1,6 +1,5 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
@@ -9,8 +8,10 @@ import {
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsLayoutPageLayoutDetail = () => {
+  const { t } = useLingui();
   const { applicationId = '', pageLayoutUniversalIdentifier = '' } = useParams<{
     applicationId: string;
     pageLayoutUniversalIdentifier: string;

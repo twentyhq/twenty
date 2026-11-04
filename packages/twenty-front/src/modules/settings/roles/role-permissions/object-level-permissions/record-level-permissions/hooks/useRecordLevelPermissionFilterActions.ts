@@ -3,7 +3,7 @@
 import {
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
 } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -67,7 +67,7 @@ export const useRecordLevelPermissionFilterActions = ({
           ) ||
           (fieldMetadataItem.type === FieldMetadataType.RELATION &&
             fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-              CoreObjectNameSingular.WorkspaceMember)
+              StandardObjectNameSingular.WorkspaceMember)
         );
       });
 

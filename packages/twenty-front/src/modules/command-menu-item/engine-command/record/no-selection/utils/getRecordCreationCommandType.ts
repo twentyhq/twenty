@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getRecordCreationCommandType = ({
@@ -14,7 +14,7 @@ export const getRecordCreationCommandType = ({
   recordIndexId?: string | null;
   creationTargetObjectMetadataId?: string | null;
 }): 'workflow' | 'global' | 'index' => {
-  if (objectNameSingular === CoreObjectNameSingular.Workflow) {
+  if (objectNameSingular === StandardObjectNameSingular.Workflow) {
     return 'workflow';
   }
 

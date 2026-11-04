@@ -1,7 +1,7 @@
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectLevelTableHeaderProps = {
   showPermissionsLabel?: boolean;
@@ -9,13 +9,16 @@ type SettingsRolePermissionsObjectLevelTableHeaderProps = {
 
 export const SettingsRolePermissionsObjectLevelTableHeader = ({
   showPermissionsLabel = true,
-}: SettingsRolePermissionsObjectLevelTableHeaderProps) => (
-  <TableRow gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}>
-    <TableHeader>{t`Object-Level`}</TableHeader>
-    <TableHeader>{showPermissionsLabel ? t`Records` : ''}</TableHeader>
-    <TableHeader>{showPermissionsLabel ? t`See Fields` : ''}</TableHeader>
-    <TableHeader>{showPermissionsLabel ? t`Edit Fields` : ''}</TableHeader>
-    <TableHeader></TableHeader>
-    <TableHeader></TableHeader>
-  </TableRow>
-);
+}: SettingsRolePermissionsObjectLevelTableHeaderProps) => {
+  const { t } = useLingui();
+  return (
+    <TableRow gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}>
+      <TableHeader>{t`Object-Level`}</TableHeader>
+      <TableHeader>{showPermissionsLabel ? t`Records` : ''}</TableHeader>
+      <TableHeader>{showPermissionsLabel ? t`See Fields` : ''}</TableHeader>
+      <TableHeader>{showPermissionsLabel ? t`Edit Fields` : ''}</TableHeader>
+      <TableHeader></TableHeader>
+      <TableHeader></TableHeader>
+    </TableRow>
+  );
+};

@@ -74,7 +74,7 @@ describe('BullMQDriver queue ordering (integration)', () => {
     });
   });
 
-  it('orders jobs by priority within one queue and uses FIFO for equal default priorities', async () => {
+  it('runs urgent jobs first, then the jobs of one group in arrival order whatever their static priority', async () => {
     const jobs = [
       { name: 'application-job', priority: 10 },
       { name: 'ordinary-job-1', priority: undefined },
@@ -83,11 +83,11 @@ describe('BullMQDriver queue ordering (integration)', () => {
       { name: 'zero-priority-job', priority: 0 },
     ];
     const expectedOrder = [
-      'zero-priority-job',
       'urgent-job',
+      'application-job',
       'ordinary-job-1',
       'ordinary-job-2',
-      'application-job',
+      'zero-priority-job',
     ];
     const actualOrder: string[] = [];
     const done = createQueueOrderSignal();

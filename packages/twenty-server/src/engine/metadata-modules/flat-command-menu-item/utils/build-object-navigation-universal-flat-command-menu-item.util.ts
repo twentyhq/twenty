@@ -92,6 +92,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     workflowVersionId: null,
     coreWorkflowVersionId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    availabilityCoreObjectName: null,
     pageLayoutUniversalIdentifier: null,
     isActive: objectMetadata.isActive,
     isSystemSideEffect: true,

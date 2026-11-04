@@ -5,11 +5,12 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const MoveToTabDropdownContent = () => {
+  const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const pageLayoutDraft = useAtomComponentStateValue(

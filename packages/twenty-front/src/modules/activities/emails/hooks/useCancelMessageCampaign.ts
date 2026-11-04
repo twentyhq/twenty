@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -11,8 +11,10 @@ import {
   type CancelMessageCampaignMutation,
   type CancelMessageCampaignMutationVariables,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCancelMessageCampaign = () => {
+  const { t } = useLingui();
   const [cancelMessageCampaignMutation, { loading }] = useMutation<
     CancelMessageCampaignMutation,
     CancelMessageCampaignMutationVariables

@@ -26,8 +26,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -44,11 +42,11 @@ import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/u
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@CoreResolver()
-@UsePipes(ResolverValidationPipe)
-@UseGuards(
-  AuthPrincipalGuard({
+const WORKFLOW_VERSION_STEP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -58,9 +56,28 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-)
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+// Inline code runs with the workspace custom application's token, which no app or OAuth caller may borrow
+const WORKFLOW_CODE_STEP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+@CoreResolver()
+@UsePipes(ResolverValidationPipe)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -81,6 +98,7 @@ export class WorkflowVersionStepResolver {
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
   @Query(() => ConnectedAccountHandleDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
   async workflowStepConnectedAccountHandle(
     @Args('connectedAccountId', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -104,16 +122,19 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: false,
       },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: false,
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
     }),
   )
   async updateWorkflowRunStep(
@@ -149,6 +170,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
   async submitFormStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input') { workflowRunId, stepId, response }: SubmitFormStepInput,
@@ -173,6 +195,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => TestHttpRequestDTO)
+  @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
   async testHttpRequest(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
@@ -190,19 +213,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
   async workflowCodeStepAvailablePackages(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -219,20 +230,7 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  // the code runs with the workspace custom application's token, which no app or OAuth caller may borrow
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
   async testWorkflowCodeStep(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,

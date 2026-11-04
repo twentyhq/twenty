@@ -10,15 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isUndefined } from '@sniptt/guards';
-import { lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-
-const WorkflowCoreIndexPage = lazy(() =>
-  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
-    default: module.WorkflowCoreIndexPage,
-  })),
-);
 
 export const RecordIndexPage = () => {
   const workspaceSurface = useWorkspaceSurface();
@@ -72,14 +64,6 @@ export const RecordIndexPage = () => {
     })
   ) {
     return <WorkspaceRouteUnavailable />;
-  }
-
-  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow) {
-    return (
-      <Suspense fallback={<RecordIndexSkeletonLoader />}>
-        <WorkflowCoreIndexPage />
-      </Suspense>
-    );
   }
 
   if (workspaceSurface.type === 'side-panel') {

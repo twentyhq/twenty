@@ -1,5 +1,5 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { EmailsCardContent } from '@/activities/emails/components/EmailsCardContent';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
@@ -30,7 +30,8 @@ export const EmailsCard = () => {
 
   useSubscribeTimelineToParticipantChanges({
     queryId: `emails-${targetRecord.id}`,
-    participantObjectNameSingular: CoreObjectNameSingular.MessageParticipant,
+    participantObjectNameSingular:
+      StandardObjectNameSingular.MessageParticipant,
     relatedPersonIds:
       data?.getTimelineThreadsFromObjectRecord?.relatedPersonIds ?? [],
     refetch,

@@ -2,10 +2,11 @@ import { useRelatedRecordActions } from '@/activities/hooks/useRelatedRecordActi
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useOpenCreateRelatedRecordInSidePanel } from '@/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const WidgetActionTimelineCreateRelated = () => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const hasAnyRelatedRecordAction = useRelatedRecordActions({
     targetRecord,

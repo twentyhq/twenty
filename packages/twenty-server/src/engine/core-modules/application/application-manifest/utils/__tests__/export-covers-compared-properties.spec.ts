@@ -232,6 +232,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   color: 'green',
   position: 12,
   link: 'https://example.com/pets',
+  nativePageKey: 'workflows',
   folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
@@ -341,6 +342,9 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     predicateGroupUniversalIdentifier: ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
     position: 0,
   };
+
+const PREDICATE_GROUP_OPERATIONS_GAP =
+  'not in app manifests until the engine reads predicate group operations';
 
 const ROW_LEVEL_PERMISSION_KIND_GAPS = {
   deletedAt:
@@ -809,7 +813,13 @@ const EXPORTED_KINDS: ExportedKind[] = [
       positionInRowLevelPermissionPredicateGroup: 'position',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      canReadRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+    },
   },
   {
     metadataName: 'rowLevelPermissionPredicate',

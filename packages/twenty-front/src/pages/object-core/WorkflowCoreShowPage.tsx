@@ -5,7 +5,6 @@ import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIden
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -21,7 +20,6 @@ import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/use
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -30,6 +28,7 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -47,6 +46,7 @@ const CoreWorkflowShowContent = ({
 }: {
   coreWorkflowId: string;
 }) => {
+  const { t } = useLingui();
   const client = useApolloCoreClient();
   const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
@@ -143,9 +143,7 @@ const CoreWorkflowShowContent = ({
             links={[
               {
                 children: t`Workflows`,
-                href: getAppPath(AppPath.RecordIndexPage, {
-                  objectNamePlural: CoreObjectNamePlural.Workflow,
-                }),
+                href: getAppPath(AppPath.WorkflowIndexPage),
               },
               {
                 children: isNonEmptyString(record.name) ? (

@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
@@ -17,7 +17,7 @@ import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEvent
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const AGENT_CHAT_THREADS_OPERATION_SIGNATURE = {
-  objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+  objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   variables: {},
 };
 
@@ -35,7 +35,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: CoreObjectNameSingular.AgentChatThread,
+      objectName: StandardObjectNameSingular.AgentChatThread,
       objectNameType: 'singular',
     },
   );

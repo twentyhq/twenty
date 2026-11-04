@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -13,6 +11,7 @@ import {
   formatToHumanReadableDate,
 } from '~/utils/date-utils';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEmailThreadMessageSender = styled.div`
   display: flex;
@@ -41,6 +40,7 @@ export const EmailThreadMessageSender = ({
   sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
+  const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   let sentAtContent = null;
 

@@ -1,11 +1,11 @@
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { IconTrash } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowAiAgentPermissionsPermissionRowProps = {
   permission: {
@@ -29,6 +29,7 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsPermissionRowProps) => {
+  const { t } = useLingui();
   const isClickable = !readonly && !isEnabled && isDefined(onAdd);
   const isDisabled = isEnabled && !shouldShowDeleteButton;
   const shouldShowTrashButton = isEnabled && shouldShowDeleteButton;
