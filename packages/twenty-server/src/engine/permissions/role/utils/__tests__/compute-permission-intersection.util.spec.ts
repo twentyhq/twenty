@@ -313,7 +313,7 @@ describe('computePermissionIntersection', () => {
             canSoftDelete: false,
             canDestroy: false,
           }),
-          rls: {
+          rowLevelRecordsPermissions: {
             canReadRecords: grants.canRead,
             canUpdateRecords: grants.canUpdate,
             canSoftDeleteRecords: grants.canSoftDelete,
@@ -353,7 +353,9 @@ describe('computePermissionIntersection', () => {
     const constrainedFieldMetadataIdsOf = (
       permissions: RoleRecordsPermissions,
     ) =>
-      permissions.objects[objectMetadataId1]?.rls?.predicates.map(
+      permissions.objects[
+        objectMetadataId1
+      ]?.rowLevelRecordsPermissions?.predicates.map(
         (predicate) => predicate.fieldMetadataId,
       );
 
@@ -390,9 +392,10 @@ describe('computePermissionIntersection', () => {
         buildPermissions('application-role-id', ['field-1']),
       ]);
 
-      expect(result.objects[objectMetadataId1]?.rls?.predicateGroups).toEqual(
-        [],
-      );
+      expect(
+        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions
+          ?.predicateGroups,
+      ).toEqual([]);
     });
 
     it('should reach records through row-level permissions only when every role reaches some', () => {
@@ -411,7 +414,7 @@ describe('computePermissionIntersection', () => {
           canSoftDelete: false,
           canDestroy: false,
         }),
-        rls: {
+        rowLevelRecordsPermissions: {
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,
@@ -438,7 +441,9 @@ describe('computePermissionIntersection', () => {
           }),
         ]);
 
-        expect(result.objects[objectMetadataId1]?.rls).toMatchObject({
+        expect(
+          result.objects[objectMetadataId1]?.rowLevelRecordsPermissions,
+        ).toMatchObject({
           canReadRecords: deniedGrant !== 'canRead',
           canUpdateRecords: deniedGrant !== 'canUpdate',
           canSoftDeleteRecords: deniedGrant !== 'canSoftDelete',

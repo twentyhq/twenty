@@ -51,9 +51,10 @@ export const fromRoleRecordsPermissionsToObjectsPermissions = ({
       }),
       restrictedFields: objectRecordsPermissions.restrictedFields,
       rowLevelPermissionPredicates:
-        objectRecordsPermissions.rls?.predicates ?? [],
+        objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
       rowLevelPermissionPredicateGroups:
-        objectRecordsPermissions.rls?.predicateGroups ?? [],
+        objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ??
+        [],
     };
   }
 

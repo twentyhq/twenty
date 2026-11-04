@@ -22,7 +22,8 @@ export const restrictRecordsPermissionsToScope = ({
     objects: Object.fromEntries(
       Object.keys(recordsPermissions.objects).map((objectMetadataId) => {
         const roleRowLevelRecordsPermissions =
-          recordsPermissions.objects[objectMetadataId]?.rls;
+          recordsPermissions.objects[objectMetadataId]
+            ?.rowLevelRecordsPermissions;
         const intersectedObjectRecordsPermissions =
           intersectedRecordsPermissions.objects[objectMetadataId];
         const scopeRestrictedFields =
@@ -30,7 +31,9 @@ export const restrictRecordsPermissionsToScope = ({
             ?.restrictedFields ?? {};
 
         if (
-          !isDefined(intersectedObjectRecordsPermissions?.rls) ||
+          !isDefined(
+            intersectedObjectRecordsPermissions?.rowLevelRecordsPermissions,
+          ) ||
           !isDefined(roleRowLevelRecordsPermissions)
         ) {
           return [objectMetadataId, intersectedObjectRecordsPermissions];
@@ -40,8 +43,8 @@ export const restrictRecordsPermissionsToScope = ({
           objectMetadataId,
           {
             ...intersectedObjectRecordsPermissions,
-            rls: {
-              ...intersectedObjectRecordsPermissions.rls,
+            rowLevelRecordsPermissions: {
+              ...intersectedObjectRecordsPermissions.rowLevelRecordsPermissions,
               predicates: roleRowLevelRecordsPermissions.predicates.filter(
                 ({ fieldMetadataId }) =>
                   scopeRestrictedFields[fieldMetadataId]?.canUpdate !== false,

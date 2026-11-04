@@ -705,7 +705,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
         restrictedFields: {},
-        rls: {
+        rowLevelRecordsPermissions: {
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,
@@ -814,7 +814,9 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.rls?.predicates).toEqual([USER_PREDICATE]);
+    expect(invoicePermissions?.rowLevelRecordsPermissions?.predicates).toEqual([
+      USER_PREDICATE,
+    ]);
   });
 
   it('adds the field restrictions of the scope', () => {

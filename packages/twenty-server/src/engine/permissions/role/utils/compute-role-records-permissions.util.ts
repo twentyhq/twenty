@@ -205,7 +205,7 @@ const buildObjectRecordsPermissions = ({
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
     restrictedFields,
-    rls: {
+    rowLevelRecordsPermissions: {
       canReadRecords: objectRecordsAccess.canRead,
       canUpdateRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,

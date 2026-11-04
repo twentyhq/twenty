@@ -33,7 +33,7 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
 }): ObjectRecordsPermissions => {
   const isEnabled = (action: ObjectPermissionAction) =>
     !disabledObjectPermissionActions.includes(action);
-  const { rls } = objectRecordsPermissions;
+  const { rowLevelRecordsPermissions } = objectRecordsPermissions;
 
   return {
     ...objectRecordsPermissions,
@@ -49,16 +49,21 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
     canDestroyAllRecords:
       objectRecordsPermissions.canDestroyAllRecords &&
       isEnabled('canDestroyObjectRecords'),
-    ...(isDefined(rls) && {
-      rls: {
-        ...rls,
-        canReadRecords: rls.canReadRecords && isEnabled('canReadObjectRecords'),
+    ...(isDefined(rowLevelRecordsPermissions) && {
+      rowLevelRecordsPermissions: {
+        ...rowLevelRecordsPermissions,
+        canReadRecords:
+          rowLevelRecordsPermissions.canReadRecords &&
+          isEnabled('canReadObjectRecords'),
         canUpdateRecords:
-          rls.canUpdateRecords && isEnabled('canUpdateObjectRecords'),
+          rowLevelRecordsPermissions.canUpdateRecords &&
+          isEnabled('canUpdateObjectRecords'),
         canSoftDeleteRecords:
-          rls.canSoftDeleteRecords && isEnabled('canSoftDeleteObjectRecords'),
+          rowLevelRecordsPermissions.canSoftDeleteRecords &&
+          isEnabled('canSoftDeleteObjectRecords'),
         canDestroyRecords:
-          rls.canDestroyRecords && isEnabled('canDestroyObjectRecords'),
+          rowLevelRecordsPermissions.canDestroyRecords &&
+          isEnabled('canDestroyObjectRecords'),
       },
     }),
   };

@@ -94,7 +94,8 @@ const intersectObjectRecordsPermissions = (
   };
 
   const hasRowLevelPermissions = objectRecordsPermissionsPerRole.some(
-    (objectRecordsPermissions) => isDefined(objectRecordsPermissions?.rls),
+    (objectRecordsPermissions) =>
+      isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions),
   );
 
   if (!hasRowLevelPermissions) {
@@ -103,7 +104,7 @@ const intersectObjectRecordsPermissions = (
 
   return {
     ...intersectedObjectRecordsPermissions,
-    rls: {
+    rowLevelRecordsPermissions: {
       canReadRecords: isReachingSomeRecordsForEveryRole('select'),
       canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
       canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('soft-delete'),
@@ -111,7 +112,8 @@ const intersectObjectRecordsPermissions = (
       predicates: intersectRowLevelPermissionPredicates(
         objectRecordsPermissionsPerRole.map(
           (objectRecordsPermissions) =>
-            objectRecordsPermissions?.rls?.predicates ?? [],
+            objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates ??
+            [],
         ),
       ),
       predicateGroups: [],

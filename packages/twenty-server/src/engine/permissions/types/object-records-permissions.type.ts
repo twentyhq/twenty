@@ -8,5 +8,5 @@ export type ObjectRecordsPermissions = {
   canSoftDeleteAllRecords: boolean;
   canDestroyAllRecords: boolean;
   restrictedFields: RestrictedFieldsPermissions;
-  rls?: RowLevelRecordsPermissions;
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissions;
 };
