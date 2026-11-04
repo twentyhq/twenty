@@ -6,22 +6,15 @@ import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/e
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type SeatBillingArrangement } from 'src/engine/core-modules/billing/types/seat-billing-arrangement.type';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
-import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 
 export const isSeatLimitReached = ({
   memberCount,
   seatArrangements,
-  now,
 }: {
   memberCount: number;
   seatArrangements: SeatBillingArrangement[];
-  now: Date;
 }): boolean => {
-  const activeArrangements = seatArrangements.filter((arrangement) =>
-    isBillingArrangementActive({ arrangement, now }),
-  );
-
-  const hardCap = activeArrangements.find(
+  const hardCap = seatArrangements.find(
     (arrangement) =>
       arrangement.type === BillingArrangementType.COMMITTED_SEATS &&
       arrangement.seatCapMode === BillingArrangementSeatCapMode.HARD,
@@ -34,7 +27,7 @@ export const isSeatLimitReached = ({
   return (
     computeBilledSeats({
       memberCount: memberCount + 1,
-      seatArrangements: activeArrangements,
+      seatArrangements,
     }) > hardCap.seats
   );
 };

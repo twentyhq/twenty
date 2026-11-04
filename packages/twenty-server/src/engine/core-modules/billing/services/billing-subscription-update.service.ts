@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   assertIsDefinedOrThrow,
   assertUnreachable,
+  findOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
@@ -46,6 +47,7 @@ import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/b
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
@@ -291,10 +293,9 @@ export class BillingSubscriptionUpdateService {
       subscription.stripeSubscriptionId,
     );
 
-    const currentPrices =
-      await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
-        stripeSubscription.items.data,
-      );
+    const currentPrices = await this.getSubscriptionPricesFromItems(
+      stripeSubscription.items.data,
+    );
 
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
@@ -333,10 +334,9 @@ export class BillingSubscriptionUpdateService {
         assertIsDefinedOrThrow(nextPhase);
         assertIsDefinedOrThrow(currentPhase);
 
-        const nextPhasePrices =
-          await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
-            nextPhase.items,
-          );
+        const nextPhasePrices = await this.getSubscriptionPricesFromItems(
+          nextPhase.items,
+        );
 
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
           subscriptionUpdate,
@@ -378,10 +378,9 @@ export class BillingSubscriptionUpdateService {
 
         assertIsDefinedOrThrow(refreshedCurrentPhase);
 
-        const nextPhasePrices =
-          await this.billingPriceService.getSubscriptionPricesFromItemsOrThrow(
-            nextPhase.items,
-          );
+        const nextPhasePrices = await this.getSubscriptionPricesFromItems(
+          nextPhase.items,
+        );
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
           subscriptionUpdate,
           nextPhasePrices,
@@ -483,6 +482,48 @@ export class BillingSubscriptionUpdateService {
           : [];
       }),
     );
+  }
+
+  private async getSubscriptionPricesFromItems(
+    items: { price: string | { id: string }; quantity?: number }[],
+  ): Promise<SubscriptionStripePrices> {
+    const phaseItemPriceIds = items.map((item) =>
+      normalizePriceRef(item.price),
+    );
+
+    const phaseItemPrices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(phaseItemPriceIds) },
+      relations: ['billingProduct'],
+    });
+
+    const basePlanPrice = phaseItemPrices.find(
+      (price) =>
+        price.billingProduct?.metadata?.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+    );
+
+    assertIsDefinedOrThrow(basePlanPrice);
+
+    const basePlanPhaseItem = findOrThrow(
+      items,
+      (item) => normalizePriceRef(item.price) === basePlanPrice.stripePriceId,
+    );
+
+    assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
+
+    const resourceCreditPrice = phaseItemPrices.find(
+      (price) =>
+        price.billingProduct?.metadata?.productKey ===
+        BillingProductKey.RESOURCE_CREDIT,
+    );
+
+    assertIsDefinedOrThrow(resourceCreditPrice);
+
+    return {
+      baseProductPriceId: basePlanPrice.stripePriceId,
+      seats: basePlanPhaseItem.quantity,
+      resourceCreditPriceId: resourceCreditPrice.stripePriceId,
+    };
   }
 
   private async applyImmediateSubscriptionUpdate({

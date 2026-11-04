@@ -58,6 +58,16 @@ export class BillingSeatService {
     });
   }
 
+  async findActiveSeatArrangements(
+    workspaceId: string,
+  ): Promise<BillingArrangementEntity[]> {
+    const now = new Date();
+
+    return (await this.findSeatArrangements(workspaceId)).filter(
+      (arrangement) => isBillingArrangementActive({ arrangement, now }),
+    );
+  }
+
   async computeCurrentBilledSeats(workspaceId: string): Promise<number | null> {
     const memberCount = await this.countWorkspaceMembers(workspaceId);
 
@@ -65,13 +75,9 @@ export class BillingSeatService {
       return null;
     }
 
-    const now = new Date();
-
     return computeBilledSeats({
       memberCount,
-      seatArrangements: (await this.findSeatArrangements(workspaceId)).filter(
-        (arrangement) => isBillingArrangementActive({ arrangement, now }),
-      ),
+      seatArrangements: await this.findActiveSeatArrangements(workspaceId),
     });
   }
 
@@ -80,16 +86,9 @@ export class BillingSeatService {
       return false;
     }
 
-    const seatArrangements = await this.findSeatArrangements(workspaceId);
-
-    if (seatArrangements.length === 0) {
-      return false;
-    }
-
     return isSeatLimitReached({
       memberCount: await this.countWorkspaceMembers(workspaceId),
-      seatArrangements,
-      now: new Date(),
+      seatArrangements: await this.findActiveSeatArrangements(workspaceId),
     });
   }
 
@@ -104,19 +103,13 @@ export class BillingSeatService {
       return await addMember();
     }
 
-    const seatArrangements = await this.findSeatArrangements(workspaceId);
-
-    if (seatArrangements.length === 0) {
-      return await addMember();
-    }
-
     return await this.cacheLockService.withLock(
       async () => {
         if (
           isSeatLimitReached({
             memberCount: await this.countWorkspaceMembers(workspaceId),
-            seatArrangements,
-            now: new Date(),
+            seatArrangements:
+              await this.findActiveSeatArrangements(workspaceId),
           })
         ) {
           throw new BillingException(
