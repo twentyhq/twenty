@@ -1,9 +1,12 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const activateWorkflowVersionSchema = z.object({
   coreWorkflowVersionId: z
@@ -12,21 +15,34 @@ const activateWorkflowVersionSchema = z.object({
     .describe('The core workflow version UUID to activate'),
 });
 
-type ActivateWorkflowVersionInput = z.infer<
-  typeof activateWorkflowVersionSchema
->;
-
-export const createActivateWorkflowVersionTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowLifecycleService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'activate_workflow_version' as const,
+@DefineTool({
+  name: 'activate_workflow_version',
+  category: ToolCategory.WORKFLOW,
   description:
     'Activate a workflow version. This makes the workflow version active and available for execution.',
-  inputSchema: activateWorkflowVersionSchema,
-  execute: async (parameters: ActivateWorkflowVersionInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class ActivateWorkflowVersionTool extends BaseTool<
+  typeof activateWorkflowVersionSchema
+> {
+  readonly inputSchema = activateWorkflowVersionSchema;
+
+  constructor(
+    private readonly coreWorkflowLifecycleService: CoreWorkflowLifecycleWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof activateWorkflowVersionSchema
+  >): Promise<ToolOutput> {
     try {
-      await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+      await this.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
         workspaceId: context.workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         coreWorkflowVersionId: parameters.coreWorkflowVersionId,
@@ -40,5 +56,5 @@ export const createActivateWorkflowVersionTool = (
         message: `Failed to activate workflow version: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

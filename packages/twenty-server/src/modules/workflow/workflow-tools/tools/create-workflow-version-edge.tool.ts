@@ -1,10 +1,13 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const createWorkflowVersionEdgeSchema = z.object({
   coreWorkflowVersionId: z
@@ -18,24 +21,37 @@ const createWorkflowVersionEdgeSchema = z.object({
   sourceConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
 });
 
-type CreateWorkflowVersionEdgeInput = z.infer<
-  typeof createWorkflowVersionEdgeSchema
->;
-
-export const createCreateWorkflowVersionEdgeTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'create_workflow_version_edge' as const,
+@DefineTool({
+  name: 'create_workflow_version_edge',
+  category: ToolCategory.WORKFLOW,
   description:
     'Create a connection (edge) between two workflow steps. This defines the flow between steps.',
-  inputSchema: createWorkflowVersionEdgeSchema,
-  execute: async (parameters: CreateWorkflowVersionEdgeInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class CreateWorkflowVersionEdgeTool extends BaseTool<
+  typeof createWorkflowVersionEdgeSchema
+> {
+  readonly inputSchema = createWorkflowVersionEdgeSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof createWorkflowVersionEdgeSchema
+  >): Promise<ToolOutput> {
     try {
       return {
         success: true,
         message: 'Workflow version edge created',
-        result: await deps.coreWorkflowVersionMutationService.createEdge({
+        result: await this.coreWorkflowVersionMutationService.createEdge({
           source: parameters.source,
           target: parameters.target,
           coreWorkflowVersionId: parameters.coreWorkflowVersionId,
@@ -51,5 +67,5 @@ export const createCreateWorkflowVersionEdgeTool = (
         message: `Failed to create workflow version edge: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

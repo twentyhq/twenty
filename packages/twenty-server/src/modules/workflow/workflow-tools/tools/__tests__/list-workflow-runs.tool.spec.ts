@@ -1,8 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-import { createListWorkflowRunsTool } from '../list-workflow-runs.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { ListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const AUTH_CONTEXT = {
@@ -29,8 +28,8 @@ describe('list_workflow_runs tool', () => {
     const deps = buildDeps([]);
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new ListWorkflowRunsTool(deps.workspaceOrmManager as never),
       context,
     );
 
@@ -71,8 +70,8 @@ describe('list_workflow_runs tool', () => {
     const deps = buildDeps(workflowRuns);
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new ListWorkflowRunsTool(deps.workspaceOrmManager as never),
       context,
     );
 
@@ -105,8 +104,8 @@ describe('list_workflow_runs tool', () => {
     };
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new ListWorkflowRunsTool(deps.workspaceOrmManager as never),
       context,
     );
 

@@ -3,7 +3,8 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { CreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000002';
@@ -54,17 +55,18 @@ const buildTool = () => {
   const workflowAiAgentStepAgentService = {
     findAgentRunnableByNewStepOrThrow: jest.fn(),
   };
-  const dependencies: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
-    coreWorkflowMutationService,
-    coreWorkflowLifecycleService,
-    workflowAiAgentStepAgentService,
-  };
-
-  const tool = createCreateCompleteWorkflowTool(dependencies, {
-    workspaceId: 'workspace-id',
-    userWorkspaceId: 'user-workspace-id',
-    authContext: AUTH_CONTEXT,
-  });
+  const tool = buildWorkflowToolExecutor(
+    new CreateCompleteWorkflowTool(
+      coreWorkflowMutationService as never,
+      coreWorkflowLifecycleService as never,
+      workflowAiAgentStepAgentService as never,
+    ),
+    {
+      workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
+      authContext: AUTH_CONTEXT,
+    },
+  );
 
   return {
     tool,
@@ -74,9 +76,7 @@ const buildTool = () => {
   };
 };
 
-type ToolInput = Parameters<
-  ReturnType<typeof createCreateCompleteWorkflowTool>['execute']
->[0];
+type ToolInput = Parameters<CreateCompleteWorkflowTool['execute']>[0]['input'];
 
 const buildInput = (overrides: Partial<Record<string, unknown>> = {}) =>
   ({
@@ -87,7 +87,7 @@ const buildInput = (overrides: Partial<Record<string, unknown>> = {}) =>
     ...overrides,
   }) as unknown as ToolInput;
 
-describe('createCreateCompleteWorkflowTool', () => {
+describe('create_complete_workflow tool', () => {
   it('creates the workflow with its whole content in one server call', async () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 

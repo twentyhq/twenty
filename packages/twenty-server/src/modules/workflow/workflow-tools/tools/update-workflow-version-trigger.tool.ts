@@ -1,10 +1,13 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { workflowTriggerSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const updateWorkflowVersionTriggerSchema = z.object({
@@ -15,31 +18,45 @@ const updateWorkflowVersionTriggerSchema = z.object({
   trigger: workflowTriggerSchema.describe('The updated trigger configuration'),
 });
 
-export const createUpdateWorkflowVersionTriggerTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'update_workflow_version_trigger' as const,
+@DefineTool({
+  name: 'update_workflow_version_trigger',
+  category: ToolCategory.WORKFLOW,
   description:
     'Update the trigger of a workflow version. This modifies the trigger configuration (e.g., changing trigger type, settings, or conditions).',
-  inputSchema: updateWorkflowVersionTriggerSchema,
-  execute: async (parameters: {
-    coreWorkflowVersionId: string;
-    trigger: WorkflowTrigger;
-  }) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class UpdateWorkflowVersionTriggerTool extends BaseTool<
+  typeof updateWorkflowVersionTriggerSchema
+> {
+  readonly inputSchema = updateWorkflowVersionTriggerSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof updateWorkflowVersionTriggerSchema
+  >): Promise<ToolOutput> {
     try {
       const { trigger } =
-        await deps.coreWorkflowVersionMutationService.updateTrigger({
+        await this.coreWorkflowVersionMutationService.updateTrigger({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-          trigger: parameters.trigger,
+          trigger: parameters.trigger as WorkflowTrigger,
         });
 
       return {
         success: true,
         message: 'Workflow version trigger updated',
-        result: trigger,
+        result: { trigger },
       };
     } catch (error) {
       return {
@@ -48,5 +65,5 @@ export const createUpdateWorkflowVersionTriggerTool = (
         message: `Failed to update workflow version trigger: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

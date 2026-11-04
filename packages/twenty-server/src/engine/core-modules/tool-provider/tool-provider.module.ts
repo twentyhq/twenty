@@ -12,7 +12,6 @@ import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/provid
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
-import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
@@ -36,8 +35,8 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
-// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
+// The Dashboard tools module reaches AiAgentExecutionModule, which imports this module,
+// so its @Global() module provides a token consumed via @Optional() @Inject instead of being imported.
 
 @Module({
   imports: [
@@ -72,21 +71,18 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
-    WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
         databaseProvider: DatabaseToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
-        workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
         frontComponentProvider: FrontComponentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         logicFunctionProvider,
-        workflowProvider,
         dashboardProvider,
         frontComponentProvider,
       ],
@@ -94,7 +90,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         ActionToolProvider,
         DatabaseToolProvider,
         LogicFunctionToolProvider,
-        WorkflowToolProvider,
         DashboardToolProvider,
         FrontComponentToolProvider,
       ],

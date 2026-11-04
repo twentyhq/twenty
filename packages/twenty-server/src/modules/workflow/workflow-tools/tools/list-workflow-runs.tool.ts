@@ -1,15 +1,18 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere } from 'typeorm';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -36,22 +39,33 @@ const listWorkflowRunsSchema = z.object({
     .describe(`Maximum number of runs to return (default ${DEFAULT_LIMIT})`),
 });
 
-type ListWorkflowRunsInput = z.infer<typeof listWorkflowRunsSchema>;
-
-export const createListWorkflowRunsTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'list_workflow_runs' as const,
+@DefineTool({
+  name: 'list_workflow_runs',
+  category: ToolCategory.WORKFLOW,
   description:
     'List workflow runs, optionally filtered by core workflow and/or status, ordered from most to least recent. Use this to find the relevant run (for example the latest failed run of a workflow) before inspecting it in detail with get_workflow_run.',
-  inputSchema: listWorkflowRunsSchema,
-  execute: async (parameters: ListWorkflowRunsInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class ListWorkflowRunsTool extends BaseTool<
+  typeof listWorkflowRunsSchema
+> {
+  readonly inputSchema = listWorkflowRunsSchema;
+
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof listWorkflowRunsSchema>): Promise<ToolOutput> {
     try {
-      return await deps.workspaceOrmManager.executeInWorkspaceContext(
+      return await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
             );
 
@@ -97,5 +111,5 @@ export const createListWorkflowRunsTool = (
         message: `Failed to list workflow runs: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

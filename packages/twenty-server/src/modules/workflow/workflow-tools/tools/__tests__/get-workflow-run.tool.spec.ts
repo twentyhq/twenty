@@ -1,9 +1,8 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { StepStatus } from 'twenty-shared/workflow';
 
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-import { createGetWorkflowRunTool } from '../get-workflow-run.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { GetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const WORKFLOW_RUN_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
@@ -31,8 +30,8 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps({ id: WORKFLOW_RUN_ID, state: {}, stepLogs: {} });
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
       context,
     );
 
@@ -77,8 +76,8 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps(workflowRun);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
       context,
     );
 
@@ -99,8 +98,8 @@ describe('get_workflow_run tool', () => {
     const deps = buildDeps(null);
     const context = buildContext();
 
-    const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+    const tool = buildWorkflowToolExecutor(
+      new GetWorkflowRunTool(deps.workspaceOrmManager as never),
       context,
     );
 

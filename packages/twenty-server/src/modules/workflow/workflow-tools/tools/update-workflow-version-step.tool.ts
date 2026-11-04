@@ -1,11 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { workflowActionSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const updateWorkflowVersionStepSchema = z.object({
   coreWorkflowVersionId: z
@@ -17,27 +20,41 @@ const updateWorkflowVersionStepSchema = z.object({
     .describe('The updated step configuration'),
 });
 
-export const createUpdateWorkflowVersionStepTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'update_workflow_version_step' as const,
+@DefineTool({
+  name: 'update_workflow_version_step',
+  category: ToolCategory.WORKFLOW,
   description:
     'Update an existing step in a workflow version. This modifies the step configuration. Call validate_workflow once after your edits are done, not after every change.',
-  inputSchema: updateWorkflowVersionStepSchema,
-  execute: async (parameters: {
-    coreWorkflowVersionId: string;
-    step: WorkflowAction;
-  }) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class UpdateWorkflowVersionStepTool extends BaseTool<
+  typeof updateWorkflowVersionStepSchema
+> {
+  readonly inputSchema = updateWorkflowVersionStepSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof updateWorkflowVersionStepSchema
+  >): Promise<ToolOutput> {
     try {
       return {
         success: true,
         message: 'Workflow version step updated',
-        result: await deps.coreWorkflowVersionMutationService.updateStep({
+        result: await this.coreWorkflowVersionMutationService.updateStep({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-          step: parameters.step,
+          step: parameters.step as WorkflowAction,
         }),
       };
     } catch (error) {
@@ -47,5 +64,5 @@ export const createUpdateWorkflowVersionStepTool = (
         message: `Failed to update workflow version step: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

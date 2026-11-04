@@ -1,5 +1,6 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { createDeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { DeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
 const AUTH_CONTEXT = {
@@ -15,11 +16,11 @@ const buildTool = () => {
     deleteWorkflows: jest.fn().mockResolvedValue([]),
   };
 
-  const tool = createDeleteWorkflowTool(
-    {
-      coreWorkflowListService,
-      coreWorkflowMutationService,
-    } as never,
+  const tool = buildWorkflowToolExecutor(
+    new DeleteWorkflowTool(
+      coreWorkflowListService as never,
+      coreWorkflowMutationService as never,
+    ),
     {
       workspaceId: 'workspace-id',
       authContext: AUTH_CONTEXT,
@@ -31,7 +32,7 @@ const buildTool = () => {
 
 const baseInput = { coreWorkflowId: CORE_WORKFLOW_ID };
 
-describe('createDeleteWorkflowTool', () => {
+describe('delete_workflow tool', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

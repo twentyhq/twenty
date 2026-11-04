@@ -1,3 +1,4 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   isWorkflowAiAgentGenerateStep,
@@ -8,18 +9,24 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
+import {
+  type CreatedCoreWorkflow,
+  CoreWorkflowMutationWorkspaceService,
+} from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const createCompleteWorkflowSchema = z.object({
@@ -52,17 +59,13 @@ const createCompleteWorkflowSchema = z.object({
     .describe('Whether to activate the workflow immediately (default: false)'),
 });
 
-type CreateCompleteWorkflowToolDeps = {
+type CreateWorkflowDeps = {
   coreWorkflowMutationService: Pick<
-    WorkflowToolDependencies['coreWorkflowMutationService'],
+    CoreWorkflowMutationWorkspaceService,
     'createWorkflowWithContent'
   >;
-  coreWorkflowLifecycleService: Pick<
-    WorkflowToolDependencies['coreWorkflowLifecycleService'],
-    'activateCoreWorkflowVersion'
-  >;
   workflowAiAgentStepAgentService: Pick<
-    WorkflowToolDependencies['workflowAiAgentStepAgentService'],
+    WorkflowAiAgentStepAgentService,
     'findAgentRunnableByNewStepOrThrow'
   >;
 };
@@ -73,11 +76,9 @@ type CreateCompleteWorkflowFailure = {
   error: string;
 };
 
-export const createCreateCompleteWorkflowTool = (
-  deps: CreateCompleteWorkflowToolDeps,
-  context: WorkflowToolContext,
-) => ({
-  name: 'create_complete_workflow' as const,
+@DefineTool({
+  name: 'create_complete_workflow',
+  category: ToolCategory.WORKFLOW,
   description: `Create a complete workflow with trigger, steps, and connections in a single operation.
 
 CRITICAL SCHEMA REQUIREMENTS:
@@ -116,28 +117,39 @@ This is the most efficient way for AI to create workflows as it handles all the 
 Returns the core workflow ID and core workflow version ID, which every other workflow tool expects.
 
 Call validate_workflow once when the workflow is complete, before activating.`,
-  inputSchema: createCompleteWorkflowSchema,
-  execute: async (parameters: {
-    name: string;
-    description?: string;
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-    edges?: Array<{
-      source: string;
-      target: string;
-      sourceConnectionOptions?: z.infer<
-        typeof workflowStepConnectionOptionsSchema
-      >;
-    }>;
-    activate?: boolean;
-  }) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class CreateCompleteWorkflowTool extends BaseTool<
+  typeof createCompleteWorkflowSchema
+> {
+  readonly inputSchema = createCompleteWorkflowSchema;
+
+  constructor(
+    private readonly coreWorkflowMutationService: CoreWorkflowMutationWorkspaceService,
+    private readonly coreWorkflowLifecycleService: CoreWorkflowLifecycleWorkspaceService,
+    private readonly workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof createCompleteWorkflowSchema
+  >): Promise<ToolOutput> {
     const creation = await createWorkflowOrBuildFailure({
-      deps,
+      deps: {
+        coreWorkflowMutationService: this.coreWorkflowMutationService,
+        workflowAiAgentStepAgentService: this.workflowAiAgentStepAgentService,
+      },
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
       name: parameters.name,
-      trigger: parameters.trigger,
-      steps: parameters.steps,
+      trigger: parameters.trigger as WorkflowTrigger,
+      steps: parameters.steps as WorkflowAction[],
       edges: parameters.edges ?? [],
     });
 
@@ -166,7 +178,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
 
     if (parameters.activate) {
       try {
-        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+        await this.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId,
@@ -188,8 +200,8 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       result,
       recordReferences,
     };
-  },
-});
+  }
+}
 
 const createWorkflowOrBuildFailure = async ({
   deps,
@@ -200,7 +212,7 @@ const createWorkflowOrBuildFailure = async ({
   steps,
   edges,
 }: {
-  deps: CreateCompleteWorkflowToolDeps;
+  deps: CreateWorkflowDeps;
   workspaceId: string;
   userWorkspaceId: string | undefined;
   name: string;
@@ -266,7 +278,7 @@ const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
   workspaceId,
   steps,
 }: {
-  deps: Pick<CreateCompleteWorkflowToolDeps, 'workflowAiAgentStepAgentService'>;
+  deps: Pick<CreateWorkflowDeps, 'workflowAiAgentStepAgentService'>;
   workspaceId: string;
   steps: WorkflowAction[];
 }): Promise<void> => {

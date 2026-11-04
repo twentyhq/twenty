@@ -1,10 +1,12 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update.input';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const updateWorkflowVersionPositionsSchema = z.object({
   coreWorkflowVersionId: z
@@ -24,20 +26,34 @@ const updateWorkflowVersionPositionsSchema = z.object({
     .describe('Array of step positions to update'),
 });
 
-export const createUpdateWorkflowVersionPositionsTool = (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'update_workflow_version_positions' as const,
+@DefineTool({
+  name: 'update_workflow_version_positions',
+  category: ToolCategory.WORKFLOW,
   description:
     'Update the positions of multiple workflow steps. This is useful for reorganizing the workflow layout.',
-  inputSchema: updateWorkflowVersionPositionsSchema,
-  execute: async (parameters: {
-    coreWorkflowVersionId: string;
-    positions: WorkflowStepPositionUpdateInput[];
-  }) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class UpdateWorkflowVersionPositionsTool extends BaseTool<
+  typeof updateWorkflowVersionPositionsSchema
+> {
+  readonly inputSchema = updateWorkflowVersionPositionsSchema;
+
+  constructor(
+    private readonly coreWorkflowVersionMutationService: CoreWorkflowVersionMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof updateWorkflowVersionPositionsSchema
+  >): Promise<ToolOutput> {
     try {
-      await deps.coreWorkflowVersionMutationService.updatePositions({
+      await this.coreWorkflowVersionMutationService.updatePositions({
         coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         positions: parameters.positions,
         workspaceId: context.workspaceId,
@@ -55,5 +71,5 @@ export const createUpdateWorkflowVersionPositionsTool = (
         message: `Failed to update workflow version step positions: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

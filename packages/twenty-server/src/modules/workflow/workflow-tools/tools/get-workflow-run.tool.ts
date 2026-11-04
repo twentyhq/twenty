@@ -1,38 +1,50 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const getWorkflowRunSchema = z.object({
   workflowRunId: z.uuid().describe('The UUID of the workflow run to inspect'),
 });
-
-type GetWorkflowRunInput = z.infer<typeof getWorkflowRunSchema>;
 
 const FAILED_STEP_STATUSES: StepStatus[] = [
   StepStatus.FAILED,
   StepStatus.FAILED_SAFELY,
 ];
 
-export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-  context: WorkflowToolContext,
-) => ({
-  name: 'get_workflow_run' as const,
+@DefineTool({
+  name: 'get_workflow_run',
+  category: ToolCategory.WORKFLOW,
   description:
     'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
-  inputSchema: getWorkflowRunSchema,
-  execute: async (parameters: GetWorkflowRunInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class GetWorkflowRunTool extends BaseTool<typeof getWorkflowRunSchema> {
+  readonly inputSchema = getWorkflowRunSchema;
+
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof getWorkflowRunSchema>): Promise<ToolOutput> {
     try {
-      return await deps.workspaceOrmManager.executeInWorkspaceContext(
+      return await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
             );
 
@@ -101,5 +113,5 @@ export const createGetWorkflowRunTool = (
         message: `Failed to get workflow run: ${error.message}`,
       };
     }
-  },
-});
+  }
+}

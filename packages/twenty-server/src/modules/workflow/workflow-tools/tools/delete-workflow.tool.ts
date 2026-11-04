@@ -1,10 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
+import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const deleteWorkflowSchema = z.object({
   coreWorkflowId: z
@@ -13,25 +17,34 @@ const deleteWorkflowSchema = z.object({
     .describe('The core workflow UUID to delete'),
 });
 
-type DeleteWorkflowInput = z.infer<typeof deleteWorkflowSchema>;
-
-export const createDeleteWorkflowTool = (
-  deps: Pick<
-    WorkflowToolDependencies,
-    'coreWorkflowListService' | 'coreWorkflowMutationService'
-  >,
-  context: WorkflowToolContext,
-) => ({
-  name: 'delete_workflow' as const,
+@DefineTool({
+  name: 'delete_workflow',
+  category: ToolCategory.WORKFLOW,
   description:
     'Delete a workflow by its core workflow ID. This also removes its versions, runs and automated triggers, and deactivates any active version. Use list_workflows to find the coreWorkflowId.',
-  inputSchema: deleteWorkflowSchema,
-  execute: async (parameters: DeleteWorkflowInput) => {
+  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  requiredApplicationReach: 'trigger',
+  icon: 'IconSettingsAutomation',
+})
+export class DeleteWorkflowTool extends BaseTool<typeof deleteWorkflowSchema> {
+  readonly inputSchema = deleteWorkflowSchema;
+
+  constructor(
+    private readonly coreWorkflowListService: CoreWorkflowListService,
+    private readonly coreWorkflowMutationService: CoreWorkflowMutationWorkspaceService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof deleteWorkflowSchema>): Promise<ToolOutput> {
     try {
       const { coreWorkflowId } = parameters;
       const { workspaceId } = context;
 
-      const coreWorkflow = await deps.coreWorkflowListService.findOneById({
+      const coreWorkflow = await this.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         coreWorkflowId,
@@ -45,7 +58,7 @@ export const createDeleteWorkflowTool = (
         };
       }
 
-      await deps.coreWorkflowMutationService.deleteWorkflows({
+      await this.coreWorkflowMutationService.deleteWorkflows({
         workspaceId,
         userWorkspaceId: context.userWorkspaceId,
         coreWorkflowIds: [coreWorkflowId],
@@ -66,5 +79,5 @@ export const createDeleteWorkflowTool = (
         message: `Failed to delete workflow: ${errorMessage}`,
       };
     }
-  },
-});
+  }
+}

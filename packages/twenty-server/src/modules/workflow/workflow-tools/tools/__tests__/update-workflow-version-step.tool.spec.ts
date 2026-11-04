@@ -1,5 +1,6 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
+import { buildWorkflowToolExecutor } from 'src/modules/workflow/workflow-tools/tools/__tests__/workflow-tool-executor.test-util';
+import { UpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
 const AUTH_CONTEXT = {
@@ -20,8 +21,10 @@ const buildTool = () => {
     updateStep: jest.fn().mockResolvedValue(mockStep),
   };
 
-  const tool = createUpdateWorkflowVersionStepTool(
-    { coreWorkflowVersionMutationService } as never,
+  const tool = buildWorkflowToolExecutor(
+    new UpdateWorkflowVersionStepTool(
+      coreWorkflowVersionMutationService as never,
+    ),
     {
       workspaceId: 'workspace-id',
       authContext: AUTH_CONTEXT,
@@ -35,10 +38,10 @@ const baseInput = {
   coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
   step: mockStep,
 } as unknown as Parameters<
-  ReturnType<typeof createUpdateWorkflowVersionStepTool>['execute']
->[0];
+  UpdateWorkflowVersionStepTool['execute']
+>[0]['input'];
 
-describe('createUpdateWorkflowVersionStepTool', () => {
+describe('update_workflow_version_step tool', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
