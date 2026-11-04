@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getDeleteCoreAgentsConfirmationContent = (
   agentLabels: string[],
@@ -16,7 +17,7 @@ export const getDeleteCoreAgentsConfirmationContent = (
     };
   }
 
-  const confirmationValue = t`DELETE`;
+  const confirmationValue = doNotTranslate('DELETE');
 
   return {
     title: t`Delete ${numberOfAgents} agents?`,
