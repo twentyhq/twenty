@@ -149,6 +149,7 @@ export type AgentChatThread = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
+  isAssistantParticipant: Scalars['Boolean']['output'];
   title?: Maybe<Scalars['String']['output']>;
   totalCacheReadTokens: Scalars['Int']['output'];
   totalInputCredits: Scalars['Float']['output'];
@@ -1482,6 +1483,7 @@ export type CollectionHash = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  availabilityCoreObjectName?: Maybe<Scalars['String']['output']>;
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
@@ -1657,6 +1659,7 @@ export type CreateCalendarEventOutput = {
 };
 
 export type CreateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
@@ -1773,6 +1776,7 @@ export type CreateNavigationMenuItemInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  nativePageKey?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
@@ -3272,8 +3276,19 @@ export type McpServer = {
   isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  tools: Array<McpServerTool>;
+  toolsSyncError?: Maybe<Scalars['String']['output']>;
+  toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   url: Scalars['String']['output'];
+};
+
+export type McpServerTool = {
+  __typename?: 'McpServerTool';
+  annotations?: Maybe<Scalars['JSON']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  inputSchema: Scalars['JSON']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type MessageCampaignBodyConfiguration = {
@@ -3732,6 +3747,7 @@ export type Mutation = {
   syncAppMessageFolders: Array<MessageFolder>;
   syncApplication: WorkspaceMigration;
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
+  syncMcpServerTools: McpServer;
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult;
@@ -4758,9 +4774,12 @@ export type MutationSendChatMessageArgs = {
   browsingContext?: InputMaybe<Scalars['JSON']['input']>;
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
+  isAssistantMentioned?: InputMaybe<Scalars['Boolean']['input']>;
+  isAssistantParticipant?: InputMaybe<Scalars['Boolean']['input']>;
   mentionedWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   messageId: Scalars['UUID']['input'];
   modelId?: InputMaybe<Scalars['String']['input']>;
+  recipientWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   shouldAssistantReply?: InputMaybe<Scalars['Boolean']['input']>;
   text: Scalars['String']['input'];
   threadId: Scalars['UUID']['input'];
@@ -4902,6 +4921,11 @@ export type MutationSyncApplicationArgs = {
   dryRun?: InputMaybe<Scalars['Boolean']['input']>;
   inferDeletionFromMissingEntities?: InputMaybe<Scalars['Boolean']['input']>;
   manifest: Scalars['JSON']['input'];
+};
+
+
+export type MutationSyncMcpServerToolsArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -5353,6 +5377,7 @@ export type NavigationMenuItem = {
   id: Scalars['UUID']['output'];
   link?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  nativePageKey?: Maybe<Scalars['String']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -5368,6 +5393,7 @@ export enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
+  NATIVE_PAGE = 'NATIVE_PAGE',
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
@@ -6800,6 +6826,10 @@ export type RowLevelPermissionPredicate = {
 
 export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['String']['output'];
@@ -6809,6 +6839,10 @@ export type RowLevelPermissionPredicateGroup = {
 };
 
 export type RowLevelPermissionPredicateGroupInput = {
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   objectMetadataId: Scalars['UUID']['input'];
@@ -6952,6 +6986,7 @@ export type SendChatMessageResult = {
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];
+  recipientParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   streamId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7477,6 +7512,7 @@ export type UpdateCalendarChannelInputUpdates = {
 };
 
 export type UpdateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   engineComponentKey?: InputMaybe<EngineComponentKey>;

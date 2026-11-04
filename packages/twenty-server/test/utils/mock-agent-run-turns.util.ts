@@ -28,6 +28,8 @@ export const buildAgentExecutionResult = (
     stopReason: null,
     modelId: 'test-model',
     steps: [],
+    totalCostInDollars: 0,
+    creditsUsedMicro: 0,
     ...overrides,
   }) as AgentExecutionResult;
 

@@ -44,6 +44,7 @@ export { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from './constants/publish-front-com
 export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-name.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';

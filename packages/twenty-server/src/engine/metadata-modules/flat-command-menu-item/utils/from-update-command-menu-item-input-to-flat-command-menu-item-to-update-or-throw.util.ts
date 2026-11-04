@@ -45,7 +45,20 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
       );
     }
 
-    const { id: _id, ...updates } = updateCommandMenuItemInput;
+    const { id: _id, ...inputUpdates } = updateCommandMenuItemInput;
+
+    // An item has a single availability target; setting one clears the other, overrides included.
+    const updates = {
+      ...inputUpdates,
+      ...(isDefined(inputUpdates.availabilityObjectMetadataId) &&
+      inputUpdates.availabilityCoreObjectName === undefined
+        ? { availabilityCoreObjectName: null }
+        : {}),
+      ...(isDefined(inputUpdates.availabilityCoreObjectName) &&
+      inputUpdates.availabilityObjectMetadataId === undefined
+        ? { availabilityObjectMetadataId: null }
+        : {}),
+    };
 
     const shouldOverride = isCallerOverridingEntity({
       callerApplicationUniversalIdentifier,

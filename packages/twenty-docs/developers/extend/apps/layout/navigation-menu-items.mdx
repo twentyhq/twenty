@@ -38,8 +38,10 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | `NavigationMenuItemType.NATIVE_PAGE` | Opens a built-in page                | `nativePageKey`: `'workflows'` or `'agents'`                                  |
 
 - `position` controls ordering in the sidebar.
+- A `NATIVE_PAGE` item is hidden from members who lack the page's permission (Workflows for `'workflows'`, AI for `'agents'`).
 - The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites, and `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, used for chat channels pinned to favorites. Neither is usable from an app manifest (there is no field to reference a record or a channel).
 - `icon` and `color` are optional and customize how the entry looks.
 - `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.

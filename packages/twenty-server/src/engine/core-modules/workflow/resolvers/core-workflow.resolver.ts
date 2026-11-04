@@ -45,14 +45,27 @@ import { AuthWorkspaceMember } from 'src/engine/decorators/auth/auth-workspace-m
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@CoreResolver()
-@UsePipes(ResolverValidationPipe)
-@UseGuards(
-  AuthPrincipalGuard({
+const CORE_WORKFLOW_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+const CORE_WORKFLOW_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -62,9 +75,12 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/uti
     apiKey: false,
     oauthClient: true,
     application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-)
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+@CoreResolver()
+@UsePipes(ResolverValidationPipe)
 @UseFilters(
   WorkflowQueryValidationGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
@@ -94,19 +110,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async updateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -127,19 +131,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async updateCoreWorkflowVisibility(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -153,19 +145,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMember() workspaceMember:
@@ -192,19 +172,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMember() workspaceMember:
@@ -226,19 +194,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => [DeletedCoreWorkflowDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async deleteCoreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -253,19 +209,7 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async discardCoreWorkflowDraft(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -291,6 +235,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowConnectionDTO)
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -305,6 +250,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -319,6 +265,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowsWithCurrentVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -333,6 +280,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -347,6 +295,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => [CoreWorkflowVersionDTO])
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -361,6 +310,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -377,6 +327,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => [CoreWorkflowVersionDTO])
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersionsByCoreWorkflowId(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -391,6 +342,7 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersionById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })

@@ -1,3 +1,4 @@
+import { AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
@@ -29,7 +30,10 @@ export const classifyAgentChatTurnOutcome = ({
   }
 
   if (isAborted) {
-    return { kind: 'cancelled', reason: 'user_cancelled' };
+    return {
+      kind: 'cancelled',
+      reason: AgentChatTurnCancellationReason.USER_CANCELLED,
+    };
   }
 
   // a background run that ran out of credits fails, whatever it wrote before
@@ -65,4 +69,4 @@ export const resolveSupersededTurnOutcome = (
 ): AgentChatTurnOutcome =>
   outcome.kind === 'failed'
     ? outcome
-    : { kind: 'cancelled', reason: 'superseded' };
+    : { kind: 'cancelled', reason: AgentChatTurnCancellationReason.SUPERSEDED };

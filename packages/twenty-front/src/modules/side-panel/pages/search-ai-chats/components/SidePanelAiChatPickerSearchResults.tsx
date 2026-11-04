@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -28,7 +28,7 @@ export const SidePanelAiChatPickerSearchResults = ({
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
     useFindManyRecords<AgentChatThreadRecord>({
-      objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+      objectNameSingular: StandardObjectNameSingular.AgentChatThread,
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
       filter: { title: { ilike: `%${escapeForIlike(searchTerm)}%` } },
       orderBy: [{ lastActivityAt: 'DescNullsLast' }],

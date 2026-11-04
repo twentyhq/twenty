@@ -1,6 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const useWorkflowRunStepLog = ({
   workflowRunId,
@@ -14,7 +14,7 @@ export const useWorkflowRunStepLog = ({
   const { record } = useFindOneRecord<
     Pick<WorkflowRun, '__typename' | 'id' | 'stepLogs'>
   >({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
     objectRecordId: workflowRunId,
     recordGqlFields: { id: true, stepLogs: true, updatedAt: true },
     skip,

@@ -81,6 +81,7 @@ export class AgentChatEventPublisherService {
 
     if (
       event.type === 'message-persisted' ||
+      event.type === 'stream-ended' ||
       event.type === 'credits-exhausted'
     ) {
       await redis.del(key);

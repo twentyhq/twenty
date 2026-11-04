@@ -9,6 +9,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -554,6 +555,7 @@ export const setUpChatChannelTests = () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
+    await removeAgentChatSnoozeEndJobs({ threadIds: createdThreadIds });
 
     const orphanedThreadCount =
       await countThreadsInDeletedChannels(createdChannelIds);

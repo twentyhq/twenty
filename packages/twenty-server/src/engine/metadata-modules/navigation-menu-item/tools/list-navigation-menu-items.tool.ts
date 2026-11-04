@@ -25,7 +25,7 @@ const listNavigationMenuItemsInputSchema = z.object({
   type: navigationMenuItemTypeSchema
     .optional()
     .describe(
-      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).',
+      'Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT, NATIVE_PAGE).',
     ),
   limit: z
     .number()
@@ -89,6 +89,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
             agentChatChannelId: item.agentChatChannelId,
+            nativePageKey: item.nativePageKey,
           })),
           count: items.length,
         },

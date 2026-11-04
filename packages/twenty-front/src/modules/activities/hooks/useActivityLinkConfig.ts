@@ -5,7 +5,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -25,8 +25,8 @@ export const useActivityLinkConfig = ({
     'id' | 'targetObjectNameSingular'
   >;
   activityObjectNameSingular:
-    | CoreObjectNameSingular.MessageThread
-    | CoreObjectNameSingular.CalendarEvent;
+    | StandardObjectNameSingular.MessageThread
+    | StandardObjectNameSingular.CalendarEvent;
 }): ActivityLinkConfig | null => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -45,7 +45,7 @@ export const useActivityLinkConfig = ({
       field.isActive &&
       field.relation?.type === RelationType.MANY_TO_ONE &&
       field.relation.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.Company,
+        StandardObjectNameSingular.Company,
   );
 
   const targetJoinColumnName = isDefined(junctionConfig)

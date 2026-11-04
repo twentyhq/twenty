@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 
@@ -22,7 +22,7 @@ describe('getAiChatSuggestedPrompts', () => {
     expect(
       getPromptIds({
         browsingContextType: 'listView',
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
       }),
     ).toEqual(['summarize-view', 'filter-view', 'create-record-in-view']);
   });
@@ -31,7 +31,7 @@ describe('getAiChatSuggestedPrompts', () => {
     expect(
       getPromptIds({
         browsingContextType: 'recordPage',
-        objectNameSingular: CoreObjectNameSingular.Workflow,
+        objectNameSingular: StandardObjectNameSingular.Workflow,
       }),
     ).toEqual(['explain-workflow', 'add-workflow-step', 'check-workflow-runs']);
   });
@@ -40,7 +40,7 @@ describe('getAiChatSuggestedPrompts', () => {
     expect(
       getPromptIds({
         browsingContextType: 'recordPage',
-        objectNameSingular: CoreObjectNameSingular.Company,
+        objectNameSingular: StandardObjectNameSingular.Company,
       }),
     ).toContain('research-company');
   });

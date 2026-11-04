@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -6314,11 +6314,6 @@ msgstr "引导上手"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "用户引导 · 文档撰写 · 变更管理 · 一级/二级支持 · 托管服务"
 
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "上手包"
-
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -6735,7 +6730,7 @@ msgstr "请输入有效的电子邮箱地址。"
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "请输入您的主频道链接，例如 youtube.com/@yourname。"
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7962,10 +7957,10 @@ msgstr "侧边栏项"
 msgid "Sierra Leone 🇸🇱"
 msgstr "塞拉利昂 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "在一分钟内注册 Cloud 并开始你的 30 天试用。对于更大规模的部署，我们提供 4 小时上手包或经认证的合作伙伴，帮助你在 1–2 周内上线。"
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "不到一分钟即可注册 Cloud 并开始 30 天试用。对于更大规模的部署，我们的团队可以全程为您提供支持。联系我们，讨论您的需求。"
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10114,9 +10109,6 @@ msgstr "也门 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "是"
@@ -10314,7 +10306,7 @@ msgstr "YouTube、新闻简报、LinkedIn、TikTok：所有介绍 GTM 工具的�
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
