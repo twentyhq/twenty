@@ -4,7 +4,6 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type MouseEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +11,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type CallToActionButton = {
   text: string;
@@ -40,6 +40,7 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
   values,
   callToActionButton,
 }: MultiSelectAddressFieldsProps<TValue>) => {
+  const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
   const filteredOptions = isNonEmptyString(searchInputValue)
     ? options.filter(({ label }) =>

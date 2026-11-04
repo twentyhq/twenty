@@ -53,7 +53,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatFieldMetadataMaps,
       commonQueryParser,
       authContext,
-      rolePermissionConfig,
     } = queryRunnerContext;
 
     const readRepository = this.getReadRepository(queryRunnerContext);
@@ -178,7 +177,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
         ...this.getNestedRelationsReadPathOptions(),
       });

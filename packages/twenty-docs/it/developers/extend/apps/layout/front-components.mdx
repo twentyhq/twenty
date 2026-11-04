@@ -133,6 +133,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -152,8 +153,17 @@ Dichiarane quante te ne servono. La voce **Generale** di Twenty — aggiornament
 | `icon` *(facoltativo)*              | Nome dell'icona, risolto lato client; un nome sconosciuto usa un valore predefinito          |
 | `position` *(facoltativo)*          | Ordine di ordinamento, crescente. Il valore predefinito è `0`                                |
 | `scope` *(facoltativo)*             | `WORKSPACE` (predefinito) o `USER`                                                           |
+| `slug` *(facoltativo)*              | L'ID della scheda nell'URL della pagina, ad es. `#sync`. Vedi [URL delle schede](#tab-urls)  |
 
 `position` è un valore decimale, quindi una voce può essere inserita tra due voci esistenti senza rinumerarle. Le voci vengono ordinate per `position` crescente, con i pareggi risolti in base a `universalIdentifier`, così l'ordine è lo stesso in ogni workspace. Due voci della stessa app non possono condividere una posizione nello stesso ambito: la sincronizzazione lo rifiuta anziché lasciare che sia l'ordine di installazione a decidere quale venga visualizzata per prima.
+
+### URL delle schede
+
+La scheda di ciascun elemento è identificata da un hash nell'URL della pagina, quindi puoi collegarti direttamente a essa, ad esempio `/settings/applications/\<applicationId>#sync` o `/settings/app-preferences/\<applicationId>#sync`. Imposta `slug` per scegliere quell'hash; senza di esso, la scheda è identificata da `universalIdentifier` dell'elemento. L'aggiunta successiva di uno slug mantiene funzionanti i link che utilizzano `universalIdentifier`: aprono la stessa scheda.
+
+Uno slug è in kebab-case minuscolo (lettere, cifre e trattini singoli, ad esempio `sync` o `sync-settings`) e contiene al massimo 64 caratteri. `general` e `variables` sono riservati alle schede integrate, uno slug in formato UUID viene rifiutato perché potrebbe oscurare il link di un'altra scheda e due elementi della stessa app non possono condividere uno slug, nemmeno in ambiti diversi. Sia la build sia la sincronizzazione rifiutano uno slug che viola queste regole.
+
+Dopo che un membro collega o ricollega un account in **Impostazioni > Preferenze dell'app**, viene indirizzato alla prima scheda dell'elemento `USER` dell'app, in ordine di `position`, oppure a **Generali** quando l'app non ne dichiara alcuno.
 
 ### Ambito workspace e utente
 
@@ -1195,10 +1205,31 @@ Un punto arancione nell'intestazione dello spazio di lavoro indica un'acquisizio
 
 `getUserMedia()` e `MediaRecorder` vengono eseguiti tramite polyfill sandbox, pertanto il codice di registrazione standard e `MediaRecorder.isTypeSupported()` funzionano senza modifiche dopo l'approvazione. Gli oggetti di vincolo dettagliati sono accettati ma non inoltrati. L'host acquisisce usando le impostazioni predefinite per i tipi richiesti. Applicazioni diverse possono acquisire contemporaneamente e l'arresto di un'app influisce solo sulle proprie sessioni. Ogni componente front supporta un'acquisizione in sospeso o attiva alla volta. Archivia un `Blob` registrato con la funzione host `uploadFile`.
 
+### Siti web incorporati con accesso ai media
+
+Per incorporare uno strumento telefonico o video, dichiara la relativa origine HTTPS in [`requestedIframeMediaPermissions`](/it/developers/extend/apps/config/application#embedded-website-media-access) della tua applicazione, con l'accesso al microfono e alla fotocamera impostati separatamente. L'installazione dell'app concede questi siti web allo spazio di lavoro. Gli aggiornamenti alle app pubblicate mantengono le autorizzazioni esistenti e non concedono automaticamente ulteriore accesso ai media. Le app di sviluppo sincronizzate localmente ricevono automaticamente i siti web dichiarati nel relativo manifest. Un membro che può gestire le app può approvare nuove richieste dalla scheda **Generale** dell'app installata, in **Accesso ai media dei siti web incorporati** > **Esamina l'accesso ai media**. Questa approvazione utilizza una conferma nativa del browser che mostra l'app, le origini dei siti web e l'accesso richiesto al microfono o alla fotocamera. Twenty legge i siti web autorizzati al caricamento di una scheda, quindi ricarica le schede Twenty aperte dopo l'installazione o l'approvazione.
+
+Richiedi le funzionalità corrispondenti nell'iframe:
+
+```tsx
+<iframe
+  title="Aircall phone"
+  src="https://workspace.aircall.io?integration=generic"
+  allow="microphone"
+  width={376}
+  height={666}
+/>
+```
+
+Per il video, utilizza `allow="microphone; camera"` e dichiara entrambe per l'origine. Twenty delega solo i media concessi alla tua app per quell'origine. I membri devono selezionare il controllo **Abilita** dell'elemento incorporato e approvare una conferma nativa del browser che mostra l'app, l'origine del sito web e l'accesso richiesto al microfono o alla fotocamera prima che riceva l'accesso ai media. Le autorizzazioni del browser e del sistema operativo sono ancora applicabili. `srcDoc` e gli elementi incorporati all'origine di Twenty non possono ricevere questa delega. I widget di layout di pagina `IFRAME` definiti dall'app utilizzano le origini concesse all'app proprietaria e lo stesso flusso di conferma.
+
+Gli elementi incorporati abilitati appaiono nello stesso indicatore nell'intestazione dell'acquisizione nativa, con **Accesso al microfono abilitato** o **Accesso alla fotocamera abilitato** anziché indicare che la registrazione è attiva. L'indicatore rimane visibile finché l'accesso è abilitato, anche se l'elemento incorporato è nascosto. **Disabilita** scarica l'iframe e lo ricarica con i media bloccati. L'acquisizione dell'app tramite `getUserMedia()` continua a segnalare l'acquisizione effettiva e mantiene il proprio controllo **Arresta**.
+
+Il contenuto dell'iframe rimane in sandbox. Gli elementi incorporati di media esterni approvati mantengono la propria origine dopo che il membro abilita l'accesso, consentendo al sito web di utilizzare la propria sessione e richiedere le autorizzazioni del browser per i media. Gli altri iframe dei componenti front-end mantengono un'origine sandbox opaca.
+
 ### Altre lacune
 
 * **Payload di drag-and-drop.** Gli eventi di drag vengono attivati, ma `event.dataTransfer` è `undefined`.
 * **Built-in di Node.** `fs`, `path` e `node:crypto` fanno fallire la build, quindi sposta quel lavoro in una [logic function](/it/developers/extend/apps/logic/logic-functions). Web Crypto sostituisce `node:crypto` e sono disponibili anche `fetch`, `TextEncoder` e `URL`; consulta l'[ambito globale](#global-scope) — ma nulla sostituisce `fs`: il sandbox non dispone di un filesystem.
-* **`iframe`** viene sempre nuovamente messo in sandbox senza `allow-same-origin`, quindi un embed che dipende dalla propria sessione viene renderizzato come disconnesso. Non ha nemmeno `onLoad`.
 
 <PageBanner illustration="card-page-front-components" />

@@ -13,15 +13,16 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEyeOff } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useLingui } from '@lingui/react/macro';
 
 export const ViewFieldsVisibleDropdownSection = () => {
+  const { t } = useLingui();
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
     ObjectOptionsDropdownContext,
   );

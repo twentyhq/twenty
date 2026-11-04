@@ -1,2 +1,0 @@
-export const ADD_VISIBLE_ITEM_LIMIT_TO_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME =
-  '2.55.0_AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand_1793631595391';

@@ -5,7 +5,6 @@ import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -21,6 +20,7 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -87,6 +87,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   isNewRow,
   fieldIsNullable,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const colorLabels = useColorLabels();
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;

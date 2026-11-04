@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLego } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -23,10 +22,12 @@ import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppl
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 const getCoreAgentItemLink = (agent: CoreAgent) => getCoreAgentLink(agent.id);
 
 export const AgentCoreIndexPage = () => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const tableId =

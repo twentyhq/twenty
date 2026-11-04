@@ -3,13 +3,14 @@ import { useAccountToReconnect } from '@/information-banner/hooks/useAccountToRe
 import { useDismissReconnectAccountBanner } from '@/information-banner/hooks/useDismissReconnectAccountBanner';
 import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
-import { t } from '@lingui/core/macro';
 import { IconRefresh } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 const COMPONENT_INSTANCE_ID =
   'information-banner-reconnect-account-email-aliases';
 
 export const InformationBannerReconnectAccountEmailAliases = () => {
+  const { t } = useLingui();
   const { accountToReconnect } = useAccountToReconnect(
     InformationBannerKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
   );

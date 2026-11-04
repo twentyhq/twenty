@@ -2,7 +2,6 @@ import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -13,15 +12,16 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
-import { type SettingsAiAssistantMode } from '~/pages/settings/ai/types/SettingsAiAssistantMode';
+import { type AiChatAssistantMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
 type SettingsAiBehaviorSectionProps = {
-  directMessageMode: SettingsAiAssistantMode | null;
-  inboxMode: SettingsAiAssistantMode | null;
-  onDirectMessageModeChange: (value: SettingsAiAssistantMode) => void;
-  onInboxModeChange: (value: SettingsAiAssistantMode) => void;
+  directMessageMode: AiChatAssistantMode | null;
+  inboxMode: AiChatAssistantMode | null;
+  onDirectMessageModeChange: (value: AiChatAssistantMode) => void;
+  onInboxModeChange: (value: AiChatAssistantMode) => void;
   isLoading?: boolean;
   disabled?: boolean;
   errorMessage?: string;
@@ -43,6 +43,7 @@ export const SettingsAiBehaviorSection = ({
   disabled = false,
   errorMessage,
 }: SettingsAiBehaviorSectionProps) => {
+  const { t } = useLingui();
   const sectionId = useId();
   const directMessagesLabelId = `${sectionId}-direct-messages`;
   const inboxLabelId = `${sectionId}-inbox`;

@@ -4,7 +4,6 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
@@ -14,6 +13,8 @@ import { ListItemButton } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentOutputFieldTypeSelector } from '@/ai/components/AgentOutputFieldTypeSelector';
 import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
+import { useLingui } from '@lingui/react/macro';
+
 type AgentOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
@@ -72,6 +73,7 @@ export const AgentOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: AgentOutputSchemaBuilderProps) => {
+  const { t } = useLingui();
   const [expandedFieldIds, setExpandedFieldIds] = useState<Set<string>>(
     () => new Set(fields.map((field) => field.id)),
   );

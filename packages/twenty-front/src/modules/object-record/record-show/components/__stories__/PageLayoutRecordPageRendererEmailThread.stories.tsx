@@ -94,6 +94,17 @@ const threadMessage = {
   messageParticipants: buildConnection('MessageParticipant', [
     senderParticipant,
   ]),
+  messageChannelMessageAssociations: buildConnection(
+    'MessageChannelMessageAssociation',
+    [
+      {
+        __typename: 'MessageChannelMessageAssociation',
+        id: ASSOCIATION_ID,
+        messageChannelId: MESSAGE_CHANNEL_ID,
+        direction: 'INCOMING',
+      },
+    ],
+  ),
 };
 
 const emailThreadPageLayout = {
@@ -155,6 +166,18 @@ const emailThreadPageLayoutWidget = {
 };
 
 const threadContentHandlers = [
+  graphql.query('GetMessageThreadChannel', () =>
+    HttpResponse.json({
+      data: {
+        getMessageThreadChannel: {
+          __typename: 'TimelineThreadChannel',
+          type: 'EMAIL',
+          provider: 'google',
+          applicationId: null,
+        },
+      },
+    }),
+  ),
   graphql.query('FindOneMessageThread', () =>
     HttpResponse.json({
       data: { messageThread: { __typename: 'MessageThread', id: THREAD_ID } },

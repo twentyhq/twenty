@@ -51,7 +51,6 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -166,7 +165,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext: context.authContext,
-        rolePermissionConfig: context.rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
         ...this.getNestedRelationsReadPathOptions(),
       });
@@ -242,18 +240,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       .filter(([, fieldMetadataId]) => unreadableFieldIds.has(fieldMetadataId))
       .map(([recordKey]) => recordKey);
 
-    const bypassPermissionConfig = {
-      shouldBypassPermissionChecks: true,
-    } as const;
-
     const unrestrictedRepository = isDefined(transactionScope)
-      ? transactionScope.getRepository<ObjectRecord>(
+      ? transactionScope.getRepositoryWithoutPermissionChecks<ObjectRecord>(
           flatObjectMetadata.nameSingular,
-          bypassPermissionConfig,
         )
-      : this.workspaceOrmManager.getRepository<ObjectRecord>(
+      : this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectRecord>(
           flatObjectMetadata.nameSingular,
-          bypassPermissionConfig,
         );
 
     const fullRecords = await unrestrictedRepository.find({
@@ -472,7 +464,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     relationField,
     flatFieldMetadataMaps,
     flatIndexMaps,
-    rolePermissionConfig,
     idsToDelete,
     priorityRecordId,
   }: {
@@ -483,17 +474,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     };
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-    rolePermissionConfig: RolePermissionConfig;
     idsToDelete: string[];
     priorityRecordId: string;
   }): Promise<void> {
     const { joinColumnName } = relationField;
     const alias = relationField.objectMetadata.nameSingular;
 
-    const relatedRepository = transactionScope.getRepository(
-      alias,
-      rolePermissionConfig,
-    );
+    const relatedRepository = transactionScope.getRepository(alias);
 
     const duplicateKeyColumnGroups =
       computeDuplicateKeyColumnGroupsForJoinColumn({
@@ -573,7 +560,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
-      rolePermissionConfig,
     } = queryRunnerContext;
 
     if (!isDefined(flatIndexMaps)) {
@@ -610,16 +596,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
             relationField,
             flatFieldMetadataMaps,
             flatIndexMaps,
-            rolePermissionConfig,
             idsToDelete,
             priorityRecordId,
           });
         }
 
-        const objectRepository = transactionScope.getRepository(
-          alias,
-          rolePermissionConfig,
-        );
+        const objectRepository = transactionScope.getRepository(alias);
 
         const deletedRecords = await objectRepository.runMutation({
           selectQueryBuilder: objectRepository
@@ -684,7 +666,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps,
       flatObjectMetadata,
       authContext,
-      rolePermissionConfig,
     } = queryRunnerContext;
 
     if (args.selectedFieldsResult.relations) {
@@ -699,7 +680,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
         ...this.getNestedRelationsReadPathOptions(),
       });

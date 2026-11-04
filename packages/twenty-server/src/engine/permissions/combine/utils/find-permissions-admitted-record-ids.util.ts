@@ -9,7 +9,7 @@ import { findPermissionsCreatorAdmittedRecordIds } from 'src/engine/permissions/
 import { findPermissionsShareAdmittedRecordIds } from 'src/engine/permissions/record-share/utils/find-permissions-share-admitted-record-ids.util';
 import { findPermissionsRlsAdmittedRecordIds } from 'src/engine/permissions/rls/utils/find-permissions-rls-admitted-record-ids.util';
 import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/rls/utils/find-row-level-permission-matching-record-ids.util';
-import { findPermissionsObjectAdmittedRecordIds } from 'src/engine/permissions/role/utils/find-permissions-object-admitted-record-ids.util';
+import { findPermissionsAllRecordsAdmittedRecordIds } from 'src/engine/permissions/all-records/utils/find-permissions-all-records-admitted-record-ids.util';
 
 export const findPermissionsAdmittedRecordIds = async (
   request: PermissionsRowAccessEvaluationRequest,
@@ -26,7 +26,7 @@ export const findPermissionsAdmittedRecordIds = async (
   }
 
   const admittedRecordIds = new Set([
-    ...(await findPermissionsObjectAdmittedRecordIds(request)),
+    ...(await findPermissionsAllRecordsAdmittedRecordIds(request)),
     ...(await findPermissionsRlsAdmittedRecordIds(request)),
   ]);
   const rowLevelPermissionMatchingRecordIds =

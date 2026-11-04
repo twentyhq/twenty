@@ -7,7 +7,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
@@ -124,14 +124,15 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const rolePrincipal: PermissionsPrincipal = {
+      const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
         workspaceId,
-        roleIds: [roleId],
+        mainPrincipal: { type: 'role', roleId },
+        applicationPrincipal: { type: 'customApplication' },
       };
 
       if (
         !isRolePermittingOperation({
-          principal: rolePrincipal,
+          principals: rolePrincipals,
           metadataMaps,
           flatObjectMetadata,
           operationType: 'select',
@@ -153,8 +154,9 @@ export class RecordSharePrincipalService {
       }
 
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
-        principal: {
-          ...rolePrincipal,
+        authContext: {
+          type: 'user',
+          workspace: { id: workspaceId },
           workspaceMemberId: principal.principalId,
         },
         flatObjectMetadata,

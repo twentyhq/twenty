@@ -5,9 +5,9 @@ import { type SettingsRolePermissionsObjectLevelPermission } from '@/settings/ro
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -27,6 +27,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   roleId,
   objectMetadataItem,
 }: SettingsRolePermissionsObjectLevelObjectFormObjectLevelProps) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

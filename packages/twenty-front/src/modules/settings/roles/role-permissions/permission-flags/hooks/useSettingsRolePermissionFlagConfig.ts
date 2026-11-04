@@ -1,5 +1,4 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
   IconApps,
@@ -17,6 +16,7 @@ import {
   IconUsers,
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type UseSettingsRolePermissionFlagConfigParams = {
   assignmentCapabilities?: {
@@ -29,6 +29,7 @@ type UseSettingsRolePermissionFlagConfigParams = {
 export const useSettingsRolePermissionFlagConfig = ({
   assignmentCapabilities,
 }: UseSettingsRolePermissionFlagConfigParams = {}): SettingsRolePermissionsSettingPermission[] => {
+  const { t } = useLingui();
   const {
     canBeAssignedToAgents = false,
     canBeAssignedToUsers = false,
@@ -189,5 +190,6 @@ export const useSettingsRolePermissionFlagConfig = ({
     canBeAssignedToAgents,
     canBeAssignedToUsers,
     canBeAssignedToApiKeys,
+    t,
   ]);
 };

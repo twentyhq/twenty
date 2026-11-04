@@ -896,6 +896,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    canBeAssignedToApplications: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isEditable: {
       toCompare: false,
       toStringify: false,
@@ -932,6 +937,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'webhookUniversalIdentifier',
+    },
+    targetApplicationId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
     },
     agentId: {
       toCompare: true,
@@ -1687,6 +1697,26 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    canReadRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canUpdateRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canSoftDeleteRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canDestroyRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     parentRowLevelPermissionPredicateGroupId: {
       toCompare: true,
       toStringify: false,
@@ -1906,6 +1936,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     isActive: {
       toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    tools: {
+      toCompare: false,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolsSyncedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    toolsSyncError: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

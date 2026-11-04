@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { Section } from 'twenty-ui/components/layout';
 import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
@@ -47,6 +46,7 @@ export const SettingsRoleApplicability = ({
   onApplicabilityChange,
   isEditable,
 }: SettingsRoleApplicabilityProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const options = [
