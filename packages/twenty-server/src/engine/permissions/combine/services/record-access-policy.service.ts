@@ -349,8 +349,7 @@ export class RecordAccessPolicyService {
     });
   }
 
-  // Event snapshots go through the same grant paths as the principal's queries.
-  // Loaders are cached per batch so every principal asking shares one lookup
+  // Shared by every principal asking about the same batch
   private findEventBatchAccessLoaders(
     eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): EventBatchAccessLoaders {

@@ -123,7 +123,6 @@ export class PermissionsService {
     );
   }
 
-  // Masks unreadable fields too; events defaults to the whole batch
   public findReadableEvents<TEvent extends ObjectRecordEvent>(question: {
     authContext: PermissionsAuthContext;
     eventBatch: WorkspaceEventBatch<TEvent>;

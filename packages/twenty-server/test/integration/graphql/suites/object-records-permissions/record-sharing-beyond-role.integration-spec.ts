@@ -281,12 +281,27 @@ describe('Records shared beyond the role that can access their object', () => {
       }),
     ).toBe(true);
     expect(
+      await permissionsService.canAccessAllRecords({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        operationType: 'select',
+      }),
+    ).toBe(false);
+    expect(
       await permissionsService.canAccessSomeRecords({
         principals,
         objectMetadataId: flatObjectMetadata.id,
         operationType: 'update',
       }),
     ).toBe(false);
+    expect(
+      await permissionsService.findAccessibleRecordIds({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+        operationType: 'select',
+        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+      }),
+    ).toEqual([SHARED_RECORD_ID]);
     expect(
       await permissionsService.canAccessRecords({
         principals,
