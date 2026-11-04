@@ -10,6 +10,9 @@ const PROBED_REFERENCE_OPENING_REGEX = new RegExp(
   'g',
 );
 
+// Code, HTML, link targets and link definitions all need one of these, so without them every reference sits in text.
+const NON_TEXT_MARKDOWN_SYNTAX_REGEX = /`|~~~|<|\]\(|\]:|\t|(?:^|\n) {4}/;
+
 const isBackslashEscaped = ({
   text,
   index,
@@ -101,18 +104,23 @@ export const getChatReferencesInMarkdownText = ({
     (reference) => !hasEscapedBrackets({ text, reference }),
   );
 
-  if (unescapedReferences.length === 0) {
-    return [];
+  if (
+    unescapedReferences.length === 0 ||
+    !NON_TEXT_MARKDOWN_SYNTAX_REGEX.test(text)
+  ) {
+    return unescapedReferences;
   }
 
   const textTokenReferenceIndexes = new Set(
     getInlineTextRaws(
       Lexer.lex(insertProbeMarkers({ text, references: unescapedReferences })),
-    ).flatMap((raw) =>
-      [...raw.matchAll(PROBED_REFERENCE_OPENING_REGEX)].map((match) =>
-        Number(match[1]),
+    )
+      .filter((raw) => raw.includes(PROBE_MARKER))
+      .flatMap((raw) =>
+        [...raw.matchAll(PROBED_REFERENCE_OPENING_REGEX)].map((match) =>
+          Number(match[1]),
+        ),
       ),
-    ),
   );
 
   return unescapedReferences.filter((_, referenceIndex) =>

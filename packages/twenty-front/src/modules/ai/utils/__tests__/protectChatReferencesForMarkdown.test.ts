@@ -167,6 +167,13 @@ describe('protectChatReferencesForMarkdown', () => {
     ],
     ['a fenced code block', `\`\`\`\n${MIA_MENTION}\n\`\`\``],
     ['an indented code block', `    ${MIA_MENTION}`],
+    ['a tab indented code block', `\t${MIA_MENTION}`],
+    ['a tilde fenced code block', `~~~\n${MIA_MENTION}\n~~~`],
+    ['a link title', `[Docs](https://example.com "${MIA_MENTION}")`],
+    [
+      'a link definition',
+      `See [docs].\n\n[docs]: https://example.com "${MIA_MENTION}"`,
+    ],
     [
       'a fenced code block in a list item',
       `- Example:\n\n  \`\`\`\n  ${MIA_MENTION}\n  \`\`\``,
