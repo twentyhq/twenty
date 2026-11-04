@@ -17,6 +17,7 @@ import { In } from 'typeorm';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { JobTooLargeException } from 'src/engine/core-modules/message-queue/exceptions/job-too-large.exception';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -419,13 +420,19 @@ export class WorkflowDatabaseEventTriggerListener {
           action,
         });
 
-        if (shouldTriggerJob) {
+        if (!shouldTriggerJob) {
+          continue;
+        }
+
+        const workflowId =
+          eventListener.legacyWorkflowId ?? eventListener.workflowId;
+
+        try {
           await this.messageQueueService.add<WorkflowTriggerJobData>(
             WorkflowTriggerJob.name,
             {
               workspaceId,
-              workflowId:
-                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              workflowId,
               ...buildCoreDispatchIds(eventListener),
               payload: eventPayload,
             },
@@ -437,6 +444,14 @@ export class WorkflowDatabaseEventTriggerListener {
                 flatApplicationMaps,
               }),
             },
+          );
+        } catch (error) {
+          if (!(error instanceof JobTooLargeException)) {
+            throw error;
+          }
+
+          this.logger.warn(
+            `Workflow ${workflowId} not triggered in workspace ${workspaceId}: ${error.message}`,
           );
         }
       }
