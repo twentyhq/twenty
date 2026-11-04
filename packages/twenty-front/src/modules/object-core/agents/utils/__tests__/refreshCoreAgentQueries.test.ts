@@ -43,11 +43,11 @@ it('shares a trailing refresh across callers and permits another refresh after c
   const client = createAgentQueryClient();
 
   try {
-    const eventRefresh = refreshCoreAgentQueries(client);
+    const eventRefresh = refreshCoreAgentQueries(client.apolloClient);
     await waitFor(() => expect(client.completeRequests).toHaveLength(1));
 
-    const deletionRefresh = refreshCoreAgentQueries(client);
-    const reconnectRefresh = refreshCoreAgentQueries(client);
+    const deletionRefresh = refreshCoreAgentQueries(client.apolloClient);
+    const reconnectRefresh = refreshCoreAgentQueries(client.apolloClient);
     client.completeRequests[0]();
     await waitFor(() => expect(client.completeRequests).toHaveLength(2));
     client.completeRequests[1]();
@@ -57,7 +57,7 @@ it('shares a trailing refresh across callers and permits another refresh after c
       client.apolloClient.readQuery({ query: FindManyAgentsDocument }),
     ).toEqual({ findManyAgents: [] });
 
-    const subsequentRefresh = refreshCoreAgentQueries(client);
+    const subsequentRefresh = refreshCoreAgentQueries(client.apolloClient);
     await waitFor(() => expect(client.completeRequests).toHaveLength(3));
     client.completeRequests[2]();
     await subsequentRefresh;
@@ -71,8 +71,8 @@ it('keeps different Apollo clients independent while one refresh remains pending
   const secondClient = createAgentQueryClient();
 
   try {
-    const firstRefresh = refreshCoreAgentQueries(firstClient);
-    const secondRefresh = refreshCoreAgentQueries(secondClient);
+    const firstRefresh = refreshCoreAgentQueries(firstClient.apolloClient);
+    const secondRefresh = refreshCoreAgentQueries(secondClient.apolloClient);
     await waitFor(() => {
       expect(firstClient.completeRequests).toHaveLength(1);
       expect(secondClient.completeRequests).toHaveLength(1);

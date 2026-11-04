@@ -105,7 +105,7 @@ export const useDeleteCoreAgents = (tableId: string) => {
         },
       );
 
-      await refreshCoreAgentQueries({ apolloClient }).catch(logError);
+      await refreshCoreAgentQueries(apolloClient).catch(logError);
 
       if (isNonEmptyArray(deletionErrors)) {
         enqueueToast(getToastOptionsFromError({ error: deletionErrors[0] }));
