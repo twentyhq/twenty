@@ -179,6 +179,18 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        class TestController {
+          @Post()
+          @UseGuards(CaptchaGuard)
+          @UseGuards(${ACCEPT_USER_SESSIONS})
+          createMethod() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         @UseGuards(JwtAuthGuard, WorkspaceNotSuspendedGuard)
         class TestController {
           @Get()

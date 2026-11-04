@@ -238,6 +238,30 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        class TestResolver {
+          @UseGuards(CustomPermissionGuard)
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         @UseGuards(CustomPermissionGuard)
         class TestResolver {
           @Query()

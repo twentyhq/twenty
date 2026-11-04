@@ -144,6 +144,10 @@ export const typedTokenHelpers = {
       (arg: any) => !isAuthenticatingGuard(arg),
     ),
 
+  // Nest applies decorators bottom-up, so stacked lists run against their reading order
+  getStackedUseGuardsDecorators: (node: any): any[] =>
+    getUseGuardsDecorators(node).slice(1),
+
   nodeHasPermissionsGuard: (node: any): boolean => {
     if (!node.decorators) {
       return false;

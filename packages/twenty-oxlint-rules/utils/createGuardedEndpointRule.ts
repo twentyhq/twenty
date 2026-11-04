@@ -16,6 +16,7 @@ const ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID =
   'accessPolicyGuardOnClassAndMethod';
 const CLASS_GUARD_BEFORE_METHOD_ACCESS_POLICY_MESSAGE_ID =
   'classGuardBeforeMethodAccessPolicy';
+const STACKED_USE_GUARDS_MESSAGE_ID = 'stackedUseGuards';
 
 const findClassDeclaration = (node: any): any | null => {
   if (node.type === 'ClassDeclaration') return node;
@@ -64,6 +65,8 @@ export const createGuardedEndpointRule = ({
           'An endpoint takes one AccessPolicyGuard: on its class when every endpoint of the class shares the policy, otherwise on each method, never both.',
         [CLASS_GUARD_BEFORE_METHOD_ACCESS_POLICY_MESSAGE_ID]:
           'Class guards run before method guards, so this guard runs before the method-level AccessPolicyGuard. Move it after the policy on each method, or put the policy on the class.',
+        [STACKED_USE_GUARDS_MESSAGE_ID]:
+          'Use a single @UseGuards per class or method: Nest applies stacked ones bottom-up, so their guards run in the reverse of the order they are written in.',
       },
       schema: [],
       hasSuggestions: false,
@@ -104,6 +107,17 @@ export const createGuardedEndpointRule = ({
           context.report({
             node: guard,
             messageId: ACCESS_POLICY_GUARD_ON_CLASS_AND_METHOD_MESSAGE_ID,
+          });
+        }
+      };
+
+      const reportStackedUseGuards = (node: any): void => {
+        for (const decorator of typedTokenHelpers.getStackedUseGuardsDecorators(
+          node,
+        )) {
+          context.report({
+            node: decorator,
+            messageId: STACKED_USE_GUARDS_MESSAGE_ID,
           });
         }
       };
@@ -149,6 +163,7 @@ export const createGuardedEndpointRule = ({
           }
 
           reportAccessPolicyGuardUsage(node);
+          reportStackedUseGuards(node);
           reportClassGuardsBeforeMethodAccessPolicy(node, endpoints);
         },
         MethodDefinition: (node: any): void => {
@@ -159,6 +174,7 @@ export const createGuardedEndpointRule = ({
           }
 
           reportAccessPolicyGuardUsage(node);
+          reportStackedUseGuards(node);
           reportAccessPolicyGuardOnClassAndMethod(node);
 
           if (isMissingGuards(node, triggerDecorators)) {
