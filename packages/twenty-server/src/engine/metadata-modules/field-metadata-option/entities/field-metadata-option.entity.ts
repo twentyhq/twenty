@@ -22,13 +22,17 @@ export type FieldMetadataOptionOverrides = {
   isActive?: boolean;
 };
 
-// No unique index: one migration may swap values, so the validator checks value uniqueness; positions may tie across apps.
+// Positions may tie across apps; only values are unique per field.
 @Entity({ name: 'fieldMetadataOption', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_FIELD_METADATA_OPTION_TABLE_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_FIELD_METADATA_OPTION_APPLICATION_ID', ['applicationId'])
-@Index('IDX_FIELD_METADATA_OPTION_FIELD_METADATA_ID', ['fieldMetadataId'])
+@Index(
+  'IDX_FIELD_METADATA_OPTION_FIELD_METADATA_ID_VALUE_UNIQUE',
+  ['fieldMetadataId', 'value'],
+  { unique: true },
+)
 export class FieldMetadataOptionEntity
   extends OverridableEntity<FieldMetadataOptionOverrides>
   implements Required<FieldMetadataOptionEntity>
