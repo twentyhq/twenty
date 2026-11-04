@@ -30,13 +30,14 @@ export class UpdateViewFieldTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewFieldInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
       kind: 'viewField',
       entityId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
     });
 
     const viewField = await this.viewFieldService.updateOne({

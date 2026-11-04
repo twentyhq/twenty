@@ -196,7 +196,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof upsertCompleteViewInputSchema
   >): Promise<ToolOutput> {
@@ -205,9 +205,19 @@ export class UpsertCompleteViewTool extends BaseTool<
           viewId: input.id,
           workspaceId,
           userWorkspaceId,
+          authContext,
           operation: 'update',
+          nextVisibility: input.visibility,
         })
       : undefined;
+
+    if (!isDefined(existingView)) {
+      await this.viewToolAccessService.assertCanCreateViewOrThrow({
+        visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+        userWorkspaceId,
+        authContext,
+      });
+    }
 
     const {
       existingViewId,

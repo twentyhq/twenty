@@ -30,6 +30,7 @@ import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/se
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
 
 describe('View tools', () => {
@@ -142,6 +143,10 @@ describe('View tools', () => {
         ViewToolAccessService,
         ViewEntityLookupService,
         ViewToolIdentifierService,
+        {
+          provide: PermissionsService,
+          useValue: { hasPermissionFlag: jest.fn().mockResolvedValue(true) },
+        },
         {
           provide: ViewService,
           useValue: {

@@ -30,12 +30,13 @@ export class CreateViewFieldTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewFieldInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findViewEditableByUserOrThrow({
       viewId: input.viewId,
       workspaceId,
       userWorkspaceId,
+      authContext,
       operation: 'update',
     });
 

@@ -39,7 +39,7 @@ export class CreateManyViewFiltersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof createManyViewFiltersInputSchema
   >): Promise<ToolOutput> {
@@ -49,6 +49,7 @@ export class CreateManyViewFiltersTool extends BaseTool<
           viewId,
           workspaceId,
           userWorkspaceId,
+          authContext,
           operation: 'update',
         }),
       ),

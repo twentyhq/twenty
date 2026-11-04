@@ -34,13 +34,14 @@ export class DeleteViewSortTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof deleteViewSortInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
       kind: 'viewSort',
       entityId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
     });
 
     const sort = await this.viewSortService.deleteOne({

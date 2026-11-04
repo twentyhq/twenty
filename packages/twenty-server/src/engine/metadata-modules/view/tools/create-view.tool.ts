@@ -17,6 +17,7 @@ import { ViewFieldService } from 'src/engine/metadata-modules/view-field/service
 import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import {
   ViewException,
@@ -109,14 +110,21 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     private readonly viewService: ViewService,
     private readonly viewFieldService: ViewFieldService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
+    private readonly viewToolAccessService: ViewToolAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.assertCanCreateViewOrThrow({
+      visibility: input.visibility,
+      userWorkspaceId,
+      authContext,
+    });
+
     const objectMetadataId =
       await this.viewToolIdentifierService.resolveObjectMetadataIdOrThrow({
         workspaceId,

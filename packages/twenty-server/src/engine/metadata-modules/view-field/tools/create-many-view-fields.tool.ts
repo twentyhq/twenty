@@ -39,7 +39,7 @@ export class CreateManyViewFieldsTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<
     typeof createManyViewFieldsInputSchema
   >): Promise<ToolOutput> {
@@ -49,6 +49,7 @@ export class CreateManyViewFieldsTool extends BaseTool<
           viewId,
           workspaceId,
           userWorkspaceId,
+          authContext,
           operation: 'update',
         }),
       ),

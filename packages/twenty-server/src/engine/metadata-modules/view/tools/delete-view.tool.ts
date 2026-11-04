@@ -31,12 +31,13 @@ export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof deleteViewInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findViewEditableByUserOrThrow({
       viewId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
       operation: 'delete',
     });
 

@@ -33,12 +33,13 @@ export class UpdateViewTool extends BaseTool<typeof updateViewInputSchema> {
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findViewEditableByUserOrThrow({
       viewId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
       operation: 'update',
     });
 

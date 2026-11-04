@@ -29,6 +29,7 @@ import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tool
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
     ViewFilterModule,
     ViewSortModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    PermissionsModule,
   ],
   providers: [
     ViewToolAccessService,

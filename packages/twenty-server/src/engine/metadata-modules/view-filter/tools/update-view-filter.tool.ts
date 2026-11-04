@@ -52,13 +52,14 @@ export class UpdateViewFilterTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewFilterInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
       kind: 'viewFilter',
       entityId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
     });
 
     const filter = await this.viewFilterService.updateOne({

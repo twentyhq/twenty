@@ -39,13 +39,14 @@ export class UpdateViewSortTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof updateViewSortInputSchema>): Promise<ToolOutput> {
     await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
       kind: 'viewSort',
       entityId: input.id,
       workspaceId,
       userWorkspaceId,
+      authContext,
     });
 
     const sort = await this.viewSortService.updateOne({
