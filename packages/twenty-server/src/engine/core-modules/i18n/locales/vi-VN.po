@@ -3321,6 +3321,11 @@ msgstr "Mã gọi điện thoại bị xung đột."
 msgid "Conflicting phone country code."
 msgstr "Mã quốc gia điện thoại bị xung đột."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr ""
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "Không tìm thấy hàm logic cần chạy khi ngắt kết nối."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Các tham số yêu cầu MCP không hợp lệ."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr ""
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

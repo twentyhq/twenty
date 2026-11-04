@@ -3321,6 +3321,11 @@ msgstr "Конфліктний телефонний код."
 msgid "Conflicting phone country code."
 msgstr "Конфліктний код країни телефону."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr ""
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "Логічну функцію для запуску під час від
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Параметри запиту MCP недійсні."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr ""
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
