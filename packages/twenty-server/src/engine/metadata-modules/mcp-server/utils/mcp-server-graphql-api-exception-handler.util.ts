@@ -21,6 +21,8 @@ export const mcpServerGraphqlApiExceptionHandler = (error: Error) => {
       case McpServerExceptionCode.CONNECTION_PROVIDER_NOT_FOUND:
       case McpServerExceptionCode.CONNECTION_PROVIDER_NOT_IN_APPLICATION:
       case McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED:
+      case McpServerExceptionCode.MCP_SERVER_TOOL_LIST_TOO_LARGE:
+      case McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED:
         throw new UserInputError(error);
       case McpServerExceptionCode.MCP_SERVER_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);

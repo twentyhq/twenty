@@ -1,9 +1,9 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { type KeyboardEvent } from 'react';
 import { Key } from 'ts-key-enum';
+import { useLingui } from '@lingui/react/macro';
 
 type MultipleRecordPickerCreateTargetSelectProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -18,6 +18,7 @@ export const MultipleRecordPickerCreateTargetSelect = ({
   onBack,
   onSelect,
 }: MultipleRecordPickerCreateTargetSelectProps) => {
+  const { t } = useLingui();
   const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== Key.Escape || event.nativeEvent.isComposing) {
       return;

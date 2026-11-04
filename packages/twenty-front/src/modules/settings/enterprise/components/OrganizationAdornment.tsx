@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { css, cx } from '@linaria/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
@@ -11,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { billingState } from '@/client-config/states/billingState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 const pillClassName = css`
   align-items: center;
@@ -51,6 +51,7 @@ export const OrganizationAdornment = ({
   tooltipContent,
   iconOnly = false,
 }: OrganizationAdornmentProps) => {
+  const { t } = useLingui();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const label = t`Organization`;

@@ -1,15 +1,14 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-
-import { t } from '@lingui/core/macro';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateUserEmailDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useUpdateEmail = () => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
 
   const currentUser = useAtomStateValue(currentUserState);

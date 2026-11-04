@@ -9,10 +9,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const getInset = ({ $variant }: { $variant?: FormFieldInputVariant }) =>
   $variant === 'transparent' ? '0' : themeCssVariables.spacing[2];
@@ -68,6 +68,7 @@ export const FormSingleRecordFieldChip = ({
   disabled,
   variant,
 }: FormSingleRecordFieldChipProps) => {
+  const { t } = useLingui();
   if (
     draftValue.type === 'variable' &&
     isStandaloneVariableString(draftValue.value)

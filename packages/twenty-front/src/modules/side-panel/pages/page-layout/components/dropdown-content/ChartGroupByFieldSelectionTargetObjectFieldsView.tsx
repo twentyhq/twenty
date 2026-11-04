@@ -5,13 +5,13 @@ import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/com
 import { useChartGroupByFieldSelectionContextOrThrow } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelectionContextOrThrow';
 import { isFieldSupportedAsChartGroupBySubField } from '@/side-panel/pages/page-layout/utils/isFieldSupportedAsChartGroupBySubField';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useLingui } from '@lingui/react/macro';
 
 type ChartGroupByFieldSelectionTargetObjectFieldsViewProps = {
   pageId: string;
@@ -26,6 +26,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
   headerLabel,
   fieldMetadataId,
 }: ChartGroupByFieldSelectionTargetObjectFieldsViewProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { currentGroupByFieldMetadataId, currentSubFieldName, selectField } =
     useChartGroupByFieldSelectionContextOrThrow();

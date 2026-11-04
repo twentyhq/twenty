@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { styled } from '@linaria/react';
@@ -7,6 +6,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledPopup = styled(Dialog.Popup)`
   height: ${themeCssVariables.modal.size.xl.height};
@@ -44,6 +44,7 @@ export const SpreadSheetImportModalWrapper = ({
   children,
   onClose,
 }: SpreadSheetImportModalWrapperProps) => {
+  const { t } = useLingui();
   const { rtl } = useSpreadsheetImportInternal();
 
   return (

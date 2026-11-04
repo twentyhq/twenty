@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -17,6 +16,7 @@ import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalen
 import { IconArrowRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -75,6 +75,7 @@ export const CalendarEventRow = ({
   calendarEvent,
   className,
 }: CalendarEventRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();

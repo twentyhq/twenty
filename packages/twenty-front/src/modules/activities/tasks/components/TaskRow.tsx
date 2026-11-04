@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
@@ -23,6 +22,7 @@ import { IconCalendar } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTaskBody = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -96,6 +96,7 @@ export const TaskRow = ({
   task: Task;
   divider?: boolean;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 

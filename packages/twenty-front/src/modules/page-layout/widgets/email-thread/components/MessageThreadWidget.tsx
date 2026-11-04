@@ -13,8 +13,8 @@ import {
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type MessageThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -23,6 +23,7 @@ type MessageThreadWidgetProps = {
 export const MessageThreadWidget = ({
   widget: _widget,
 }: MessageThreadWidgetProps) => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
 
   const {
