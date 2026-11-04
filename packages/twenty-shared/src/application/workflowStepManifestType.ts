@@ -106,7 +106,9 @@ const workflowStepManifestOptions = [
     'CODE',
     workflowCodeActionInputSchema
       .omit({ logicFunctionId: true })
-      .extend({ code: workflowCodeActionInputSchema.shape.code.unwrap() })
+      .extend({
+        code: workflowCodeActionInputSchema.shape.code.unwrap().min(1),
+      })
       .strict(),
   ),
   stepSchema(

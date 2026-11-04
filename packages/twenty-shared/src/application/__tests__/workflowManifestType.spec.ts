@@ -401,6 +401,20 @@ describe('workflow manifest step types', () => {
     ).toEqual(expect.arrayContaining(['input.code', 'input']));
   });
 
+  it('rejects an empty code step source', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'CODE',
+      input: { code: '', logicFunctionInput: {} },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(
+      result.error?.issues.map(({ path }) => path.slice(3).join('.')),
+    ).toContain('input.code');
+  });
+
   it('rejects a step type applications cannot use', () => {
     const invalid = structuredClone(workflow);
     Object.assign(getStep(invalid, 2), { type: 'CHAT_WITH_AN_ORACLE' });
