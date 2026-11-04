@@ -5,6 +5,10 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
 
 const FLAT_APPLICATION = {
@@ -30,7 +34,17 @@ const buildService = async ({
 }) => {
   const logicFunctionExecutorService = {
     transpile: jest.fn().mockResolvedValue({ builtCode: 'built' }),
-    executeBuiltCode: jest.fn().mockResolvedValue(EXECUTE_RESULT),
+    executeBuiltCode: jest.fn(
+      async ({
+        getBuiltHandlerPath,
+      }: {
+        getBuiltHandlerPath: () => Promise<string>;
+      }) => {
+        await getBuiltHandlerPath();
+
+        return EXECUTE_RESULT;
+      },
+    ),
   };
   const logicFunctionResourceService = {
     builtFileExists: jest.fn().mockResolvedValue(builtFileExists),
@@ -90,7 +104,6 @@ describe('CodeStepRunnerService', () => {
       expect.objectContaining({
         workspaceId: 'workspace-id',
         flatApplication: FLAT_APPLICATION,
-        builtHandlerPath,
         payload: { name: 'Acme' },
       }),
     );
@@ -141,7 +154,10 @@ describe('CodeStepRunnerService', () => {
     });
 
     logicFunctionExecutorService.transpile.mockRejectedValue(
-      new Error('Unexpected token'),
+      new LogicFunctionException(
+        'Unexpected token',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+      ),
     );
 
     const result = await service.run({
@@ -151,9 +167,25 @@ describe('CodeStepRunnerService', () => {
     });
 
     expect(result.status).toBe(LogicFunctionExecutionStatus.ERROR);
+    expect(result.error?.errorType).toBe('BuildError');
     expect(result.error?.errorMessage).toBe('Unexpected token');
-    expect(
-      logicFunctionExecutorService.executeBuiltCode,
-    ).not.toHaveBeenCalled();
+  });
+
+  it('lets an infrastructure failure during the build throw', async () => {
+    const { service, logicFunctionExecutorService } = await buildService({
+      builtFileExists: false,
+    });
+
+    logicFunctionExecutorService.transpile.mockRejectedValue(
+      new Error('Storage unavailable'),
+    );
+
+    await expect(
+      service.run({
+        flatApplication: FLAT_APPLICATION,
+        code: CODE,
+        payload: {},
+      }),
+    ).rejects.toThrow('Storage unavailable');
   });
 });
