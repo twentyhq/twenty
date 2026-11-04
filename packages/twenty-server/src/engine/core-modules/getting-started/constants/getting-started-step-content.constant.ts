@@ -17,7 +17,7 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
   },
   [GettingStartedStepActionKey.IMPORT_DATA]: {
     title: msg`Import your data`,
-    doneTitle: msg`Spreadsheet uploaded`,
+    doneTitle: msg`Data imported`,
     description: msg`Bring your companies, contacts and deals from any CRM export.`,
     icon: 'IconFileImport',
     iconColor: 'gray',

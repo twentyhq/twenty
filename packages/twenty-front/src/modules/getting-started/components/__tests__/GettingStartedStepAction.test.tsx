@@ -71,18 +71,26 @@ describe('GettingStartedStepAction once done', () => {
     );
   });
 
-  it('opens People from a done import without a conversation', async () => {
-    renderDoneStepAction(
-      findStepDefinition(GettingStartedStepActionKey.IMPORT_DATA),
-    );
+  it('offers the import conversation of a done import instead of the upload', () => {
+    renderDoneStepAction({
+      ...findStepDefinition(GettingStartedStepActionKey.IMPORT_DATA),
+      doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+    });
 
     expect(
       screen.queryByRole('button', { name: 'Upload file' }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Open the conversation' }),
+    ).toBeVisible();
+  });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Open People' }));
+  it('shows no action on a done import without a conversation', () => {
+    renderDoneStepAction(
+      findStepDefinition(GettingStartedStepActionKey.IMPORT_DATA),
+    );
 
-    expect(screen.getByTestId('pathname')).toHaveTextContent('/objects/people');
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('offers the conversation of a done prompt step instead of the composer', () => {

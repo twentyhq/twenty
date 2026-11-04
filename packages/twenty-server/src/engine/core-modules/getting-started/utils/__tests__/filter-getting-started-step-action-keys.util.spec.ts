@@ -79,7 +79,7 @@ describe('filterGettingStartedStepActionKeys', () => {
     );
   });
 
-  it('should leave out the data model step without the AI permission', () => {
+  it('should leave out the steps that go through the AI chat without the AI permission', () => {
     expect(
       filterGettingStartedStepActionKeys({
         stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
@@ -90,7 +90,12 @@ describe('filterGettingStartedStepActionKeys', () => {
         hasSendingMailbox: true,
         hasFeaturedApp: true,
       }),
-    ).not.toContain(GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL);
+    ).toEqual([
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
+      GettingStartedStepActionKey.INSTALL_APP,
+    ]);
   });
 
   it('should leave out the handover step without a mailbox that can send', () => {

@@ -222,7 +222,10 @@ const createDoneStepsProgress =
   (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
     ...TRIAL_PROGRESS,
     steps: mockGettingStartedStepDefinitions.map((stepDefinition) =>
-      stepDefinition.actionKey === GettingStartedStepActionKey.FOLLOW_UP_DEALS
+      [
+        GettingStartedStepActionKey.IMPORT_DATA,
+        GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+      ].includes(stepDefinition.actionKey)
         ? {
             ...stepDefinition,
             doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',

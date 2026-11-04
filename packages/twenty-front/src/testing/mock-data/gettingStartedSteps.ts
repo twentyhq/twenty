@@ -25,7 +25,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       actionKey: GettingStartedStepActionKey.IMPORT_DATA,
       kind: GettingStartedStepKind.CUSTOM,
       title: 'Import your data',
-      doneTitle: 'Spreadsheet uploaded',
+      doneTitle: 'Data imported',
       description:
         'Bring your companies, contacts and deals from any CRM export.',
       icon: 'IconFileImport',
