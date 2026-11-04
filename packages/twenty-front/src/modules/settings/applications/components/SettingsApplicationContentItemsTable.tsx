@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { type NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
@@ -57,10 +57,6 @@ const StyledCountLink = styled(UndecoratedLink)`
 const StyledNameLink = styled(UndecoratedLink)`
   color: inherit;
   min-width: 0;
-
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 type SettingsApplicationContentItemsTableProps = {
@@ -88,6 +84,7 @@ export const SettingsApplicationContentItemsTable = ({
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const { label, description, columns } =
     APPLICATION_CONTENT_TYPE_CONFIGS[contentType];
@@ -174,6 +171,13 @@ export const SettingsApplicationContentItemsTable = ({
     );
   };
 
+  // Rows hold count links, so the row navigates on click instead of being a link
+  const getRowClickHandler = (item: ApplicationContentItem) => {
+    const settingsPath = getItemSettingsPath(contentType, item);
+
+    return isDefined(settingsPath) ? () => navigate(settingsPath) : undefined;
+  };
+
   const renderItemName = (item: ApplicationContentItem) => {
     const name = (
       <OverflowingTextWithTooltip text={getItemLabel(contentType, item)} />
@@ -181,7 +185,12 @@ export const SettingsApplicationContentItemsTable = ({
     const settingsPath = getItemSettingsPath(contentType, item);
 
     return isDefined(settingsPath) ? (
-      <StyledNameLink to={settingsPath}>{name}</StyledNameLink>
+      <StyledNameLink
+        to={settingsPath}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {name}
+      </StyledNameLink>
     ) : (
       name
     );
@@ -244,6 +253,7 @@ export const SettingsApplicationContentItemsTable = ({
 
         return (
           <StyledCountLink
+            onClick={(event) => event.stopPropagation()}
             to={`${getContentTypePath(link.contentType)}?${linkSearchParams.toString()}`}
           >
             {item.count}
@@ -315,6 +325,7 @@ export const SettingsApplicationContentItemsTable = ({
           <TableRow
             key={item.universalIdentifier}
             gridTemplateColumns={gridTemplateColumns}
+            onClick={getRowClickHandler(item)}
           >
             <StyledNameTableCell minWidth="0" overflow="hidden">
               {renderItemIcon(item)}
