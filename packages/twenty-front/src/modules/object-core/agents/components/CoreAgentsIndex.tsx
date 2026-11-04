@@ -66,6 +66,19 @@ export const CoreAgentsIndex = () => {
     filterFields: CORE_AGENT_FILTER_FIELDS,
   });
 
+  const getTableSelection = () => {
+    if (!canCreateCoreAgent) {
+      return undefined;
+    }
+
+    return {
+      selectedRowIds: selectedAgentIds,
+      onToggleRow: toggleRow,
+      onToggleAllRows: selectRows,
+      isItemSelectable: getIsMetadataItemCustom,
+    };
+  };
+
   return (
     <>
       <CoreAgentMetadataEventsEffect />
@@ -121,16 +134,7 @@ export const CoreAgentsIndex = () => {
           getItemKey={(agent) => agent.id}
           getItemLink={getCoreAgentItemLink}
           initialSort={CORE_AGENTS_INITIAL_SORT}
-          selection={
-            canCreateCoreAgent
-              ? {
-                  selectedRowIds: selectedAgentIds,
-                  onToggleRow: toggleRow,
-                  onToggleAllRows: selectRows,
-                  isItemSelectable: getIsMetadataItemCustom,
-                }
-              : undefined
-          }
+          selection={getTableSelection()}
         />
         {canCreateCoreAgent && (
           <CoreObjectTableAddNewRow

@@ -57,15 +57,24 @@ it('runs the queued post-deletion refresh even if the earlier event refresh fail
   expect(refresh).toHaveBeenCalledTimes(2);
 });
 
-it('allows retry after a synchronous refresh failure', async () => {
-  const refresh = jest
-    .fn()
-    .mockImplementationOnce(() => {
-      throw new Error('Connection lost');
-    })
-    .mockResolvedValue(undefined);
-  const requestRefresh = createCoreAgentRefreshQueue(refresh);
+it.each(['synchronous', 'asynchronous'])(
+  'allows retry after %s terminal refresh failure',
+  async (failureMode) => {
+    const refresh = jest
+      .fn()
+      .mockImplementationOnce(() => {
+        const error = new Error('Connection lost');
 
-  await expect(requestRefresh()).rejects.toThrow('Connection lost');
-  await expect(requestRefresh()).resolves.toBeUndefined();
-});
+        if (failureMode === 'synchronous') {
+          throw error;
+        }
+
+        return Promise.reject(error);
+      })
+      .mockResolvedValue(undefined);
+    const requestRefresh = createCoreAgentRefreshQueue(refresh);
+
+    await expect(requestRefresh()).rejects.toThrow('Connection lost');
+    await expect(requestRefresh()).resolves.toBeUndefined();
+  },
+);
