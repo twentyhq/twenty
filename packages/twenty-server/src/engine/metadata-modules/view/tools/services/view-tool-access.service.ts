@@ -52,8 +52,6 @@ export class ViewToolAccessService {
     await this.viewAccessService.assertCanModifyView({
       view,
       accessContext: caller,
-      // Holding VIEWS does not let an agent change another member's unlisted view
-      unlistedViewsOwnerOnly: true,
     });
 
     return view;

@@ -545,7 +545,7 @@ describe('MCP view tools (integration)', () => {
     },
   );
 
-  it('should only let the creator of an unlisted view update, upsert or delete it', async () => {
+  it('should only let the creator or a VIEWS holder change an unlisted view', async () => {
     const unlistedView = await runViewTool<ViewSummary>({
       toolName: 'create_view',
       toolArguments: {
@@ -566,39 +566,52 @@ describe('MCP view tools (integration)', () => {
       ).map(({ id }) => id),
     ).not.toContain(unlistedView.id);
 
-    for (const token of [
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      API_KEY_ACCESS_TOKEN,
+    for (const { toolName, toolArguments } of [
+      {
+        toolName: 'update_view',
+        toolArguments: {
+          id: unlistedView.id,
+          name: `${VIEW_NAME_PREFIX} renamed private companies`,
+        },
+      },
+      {
+        toolName: 'upsert_complete_view',
+        toolArguments: {
+          id: unlistedView.id,
+          name: `${VIEW_NAME_PREFIX} renamed private companies`,
+        },
+      },
+      {
+        toolName: 'delete_view',
+        toolArguments: { id: unlistedView.id },
+      },
     ]) {
-      for (const { toolName, toolArguments } of [
-        {
-          toolName: 'update_view',
-          toolArguments: {
-            id: unlistedView.id,
-            name: `${VIEW_NAME_PREFIX} renamed private companies`,
-          },
-        },
-        {
-          toolName: 'upsert_complete_view',
-          toolArguments: {
-            id: unlistedView.id,
-            name: `${VIEW_NAME_PREFIX} renamed private companies`,
-          },
-        },
-        {
-          toolName: 'delete_view',
-          toolArguments: { id: unlistedView.id },
-        },
-      ]) {
-        expect(
-          await runFailingViewTool({ toolName, toolArguments, token }),
-        ).toEqual({
-          success: false,
-          message: `Failed to execute ${toolName}`,
-          error: 'You do not have permission to modify this view',
-        });
-      }
+      expect(
+        await runFailingViewTool({
+          toolName,
+          toolArguments,
+          token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+        }),
+      ).toEqual({
+        success: false,
+        message: `Failed to execute ${toolName}`,
+        error: 'You do not have permission to modify this view',
+      });
     }
+
+    expect(
+      await runViewTool({
+        toolName: 'update_view',
+        toolArguments: {
+          id: unlistedView.id,
+          name: `${VIEW_NAME_PREFIX} renamed private companies`,
+        },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      }),
+    ).toMatchObject({
+      id: unlistedView.id,
+      name: `${VIEW_NAME_PREFIX} renamed private companies`,
+    });
 
     expect(
       await runViewTool({

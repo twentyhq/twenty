@@ -797,7 +797,35 @@ describe('View tools', () => {
         expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
-      it('should reject updating another users unlisted view', async () => {
+      it('should let a Views holder update another users unlisted view', async () => {
+        const existingView = {
+          ...mockView,
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: 'other-user-workspace-id',
+        };
+
+        viewService.findById.mockResolvedValue(existingView as any);
+        viewService.updateOne.mockResolvedValue({
+          ...existingView,
+          name: 'Updated Name',
+        } as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        const { result } = await tools.update_view.execute({
+          id: mockViewId,
+          name: 'Updated Name',
+        });
+
+        expect(result).toMatchObject({ name: 'Updated Name' });
+      });
+
+      it('should reject updating another users unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
@@ -1091,7 +1119,9 @@ describe('View tools', () => {
         ).not.toHaveBeenCalled();
       });
 
-      it('should reject updating another users unlisted view', async () => {
+      it('should reject updating another users unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
@@ -1165,7 +1195,9 @@ describe('View tools', () => {
         expect(viewService.deleteOne).not.toHaveBeenCalled();
       });
 
-      it('should reject deleting another users unlisted view', async () => {
+      it('should reject deleting another users unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
@@ -1226,7 +1258,9 @@ describe('View tools', () => {
         expect(result).toMatchObject({ direction: ViewSortDirection.DESC });
       });
 
-      it('should reject updating a sort on another users unlisted view', async () => {
+      it('should reject updating a sort on another users unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
         viewService.findById.mockResolvedValue({
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
@@ -1265,7 +1299,9 @@ describe('View tools', () => {
         expect(viewSortService.updateOne).not.toHaveBeenCalled();
       });
 
-      it('should add no sort when one of the views is another users unlisted view', async () => {
+      it('should add no sort when one of the views is another users unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
         viewService.findById.mockImplementation(async (viewId) =>
           viewId === mockViewId
             ? (mockView as any)
