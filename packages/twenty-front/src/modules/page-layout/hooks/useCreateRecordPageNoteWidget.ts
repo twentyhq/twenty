@@ -4,13 +4,14 @@ import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 import { v4 as uuidv4 } from 'uuid';
+import { useLingui } from '@lingui/react/macro';
 
 export const useCreateRecordPageNoteWidget = (pageLayoutId?: string) => {
+  const { t } = useLingui();
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(

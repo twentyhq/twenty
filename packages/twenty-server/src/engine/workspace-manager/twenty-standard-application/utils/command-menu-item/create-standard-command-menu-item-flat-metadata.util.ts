@@ -79,6 +79,10 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    availabilityCoreObjectName:
+      'availabilityCoreObjectName' in definition
+        ? definition.availabilityCoreObjectName
+        : null,
     navigationTargetObjectMetadataId: null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,

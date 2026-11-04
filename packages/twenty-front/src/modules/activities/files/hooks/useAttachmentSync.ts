@@ -8,22 +8,22 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
   });
 
   const { restoreManyRecords: restoreAttachments } = useRestoreManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
   });
 
   const { fetchAllRecords: findSoftDeletedAttachments } =
     useLazyFetchAllRecords({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
+      objectNameSingular: StandardObjectNameSingular.Attachment,
       filter: {
         deletedAt: {
           is: 'NOT_NULL',
@@ -86,7 +86,7 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     for (const attachmentToUpdate of attachmentsToUpdate) {
       if (!attachmentToUpdate.id || !attachmentToUpdate.name) continue;
       await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.Attachment,
+        objectNameSingular: StandardObjectNameSingular.Attachment,
         idToUpdate: attachmentToUpdate.id,
         updateOneRecordInput: { name: attachmentToUpdate.name },
       });

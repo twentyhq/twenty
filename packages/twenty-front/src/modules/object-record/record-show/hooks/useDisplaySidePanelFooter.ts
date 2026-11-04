@@ -2,7 +2,7 @@ import { useMessageThreadChannel } from '@/activities/emails/hooks/useMessageThr
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export const useDisplaySidePanelFooter = ({
   id,
@@ -10,7 +10,7 @@ export const useDisplaySidePanelFooter = ({
 }: TargetRecordIdentifier) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isMessageThread =
-    targetObjectNameSingular === CoreObjectNameSingular.MessageThread;
+    targetObjectNameSingular === StandardObjectNameSingular.MessageThread;
 
   const { messageThreadChannel, messageThreadChannelLoading } =
     useMessageThreadChannel(id, { skip: !isInSidePanel || !isMessageThread });

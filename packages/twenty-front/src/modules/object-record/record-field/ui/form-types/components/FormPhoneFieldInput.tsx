@@ -8,7 +8,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Field } from 'twenty-ui/primitives/input';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -27,6 +27,7 @@ export const FormPhoneFieldInput = ({
   VariablePicker,
   subFieldPlaceholders,
 }: FormPhoneFieldInputProps) => {
+  const { t } = useLingui();
   const handleCallingCodeChange = (
     newValue: FormCallingCodeSelectInputUpdatedValue,
   ) => {

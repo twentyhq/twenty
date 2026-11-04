@@ -20,6 +20,7 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
@@ -202,6 +203,14 @@ export class TimelineActivityService {
         payloads: payloadsByObjectSingularName[objectSingularName],
       });
     }
+  }
+
+  async deleteLinkedTimelineActivities(
+    linkedTimelineActivityDeletion: LinkedTimelineActivityDeletion,
+  ) {
+    await this.timelineActivityRepository.deleteLinkedTimelineActivities(
+      linkedTimelineActivityDeletion,
+    );
   }
 
   private ruleMatchesEvent({

@@ -8,10 +8,10 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { Field } from 'twenty-ui/primitives/input';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import { IconCircleOff } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type FormCurrencyFieldInputProps = {
   label?: string;
@@ -32,6 +32,7 @@ export const FormCurrencyFieldInput = ({
   amountUnit = 'micros',
   subFieldPlaceholders,
 }: FormCurrencyFieldInputProps) => {
+  const { t } = useLingui();
   const localizedCurrencies = useCurrencies();
 
   const currencies = useMemo(() => {
@@ -43,7 +44,7 @@ export const FormCurrencyFieldInput = ({
       },
       ...localizedCurrencies,
     ];
-  }, [localizedCurrencies]);
+  }, [localizedCurrencies, t]);
 
   const handleAmountMicrosChange = (
     newAmountMicros: string | number | null,

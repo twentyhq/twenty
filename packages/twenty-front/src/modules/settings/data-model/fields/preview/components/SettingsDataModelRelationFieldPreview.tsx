@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
@@ -76,7 +76,7 @@ export const SettingsDataModelRelationFieldPreview = ({
   const isRelation = fieldMetadataItem.type === FieldMetadataType.RELATION;
   const metadata = {
     fieldName,
-    objectMetadataNameSingular: CoreObjectNameSingular.Company,
+    objectMetadataNameSingular: StandardObjectNameSingular.Company,
     relationObjectMetadataNameSingular: relationTargetObjectNameSingular,
     options: [],
     settings: fieldMetadataItem.settings,

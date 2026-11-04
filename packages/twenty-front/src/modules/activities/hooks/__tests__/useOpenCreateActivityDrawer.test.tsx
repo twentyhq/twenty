@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -45,7 +45,7 @@ describe('useOpenCreateActivityDrawer', () => {
     const { result } = renderHook(
       () =>
         useOpenCreateActivityDrawer({
-          activityObjectNameSingular: CoreObjectNameSingular.Note,
+          activityObjectNameSingular: StandardObjectNameSingular.Note,
         }),
       { wrapper: Wrapper },
     );
@@ -64,7 +64,7 @@ describe('useOpenCreateActivityDrawer', () => {
 
     expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
       recordId: fakeNoteId,
-      objectNameSingular: CoreObjectNameSingular.Note,
+      objectNameSingular: StandardObjectNameSingular.Note,
       isNewRecord: true,
     });
 
@@ -76,18 +76,18 @@ describe('useOpenCreateActivityDrawer', () => {
     const targetableObjects = [
       {
         id: 'company-id',
-        targetObjectNameSingular: CoreObjectNameSingular.Company,
+        targetObjectNameSingular: StandardObjectNameSingular.Company,
       },
       {
         id: 'person-id',
-        targetObjectNameSingular: CoreObjectNameSingular.Person,
+        targetObjectNameSingular: StandardObjectNameSingular.Person,
       },
     ];
 
     const { result } = renderHook(
       () =>
         useOpenCreateActivityDrawer({
-          activityObjectNameSingular: CoreObjectNameSingular.Note,
+          activityObjectNameSingular: StandardObjectNameSingular.Note,
         }),
       { wrapper: Wrapper },
     );
@@ -130,7 +130,7 @@ describe('useOpenCreateActivityDrawer', () => {
     const { result } = renderHook(
       () =>
         useOpenCreateActivityDrawer({
-          activityObjectNameSingular: CoreObjectNameSingular.Note,
+          activityObjectNameSingular: StandardObjectNameSingular.Note,
         }),
       { wrapper: Wrapper },
     );
@@ -144,7 +144,7 @@ describe('useOpenCreateActivityDrawer', () => {
     expect(mockCreateManyNoteTargets).not.toHaveBeenCalled();
     expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
       recordId: fakeNoteId,
-      objectNameSingular: CoreObjectNameSingular.Note,
+      objectNameSingular: StandardObjectNameSingular.Note,
       isNewRecord: true,
     });
     expect(jotaiStore.get(activityTargetableEntityArrayState.atom)).toEqual([]);

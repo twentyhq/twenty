@@ -3,12 +3,12 @@ import { CallRecordingTranscriptEntryWords } from '@/page-layout/widgets/call-re
 import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptEntryPlaybackPhase';
 import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Ref } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledEntry = styled.li<{
   hasPlaybackControls: boolean;
@@ -90,6 +90,7 @@ export const CallRecordingTranscriptEntryListItem = ({
   entryElementRef,
   onSelect,
 }: CallRecordingTranscriptEntryListItemProps) => {
+  const { t } = useLingui();
   const speakerName = entry.speakerName ?? t`Unknown speaker`;
   const entryStartSeconds = entry.startSeconds;
   const isSelectable = isDefined(entryStartSeconds) && isDefined(onSelect);

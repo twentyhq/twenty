@@ -2,14 +2,15 @@ import { useComposeCalendarEventForTargetRecord } from '@/activities/calendar/ho
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useComposeCalendarEventRelatedRecordAction = (
   targetRecord: ActivityTargetableObject,
 ): RelatedRecordActionBinding => {
+  const { t } = useLingui();
   const { openComposer, disabled, loading } =
     useComposeCalendarEventForTargetRecord(targetRecord);
   const canCreateCalendarEvent = useHasPermissionFlag(
@@ -22,11 +23,11 @@ export const useComposeCalendarEventRelatedRecordAction = (
     }
 
     switch (targetRecord.targetObjectNameSingular) {
-      case CoreObjectNameSingular.Person:
+      case StandardObjectNameSingular.Person:
         return t`Add an email to this person first`;
-      case CoreObjectNameSingular.Company:
+      case StandardObjectNameSingular.Company:
         return t`Add a person with an email to this company first`;
-      case CoreObjectNameSingular.Opportunity:
+      case StandardObjectNameSingular.Opportunity:
         return t`Add an email to the point of contact first`;
       default:
         return t`Calendar events cannot be linked to this record type`;

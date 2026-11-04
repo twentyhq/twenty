@@ -48,7 +48,10 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier: 'application-of-agent-a',
       },
@@ -64,7 +67,10 @@ describe('AgentRunSuspensionService scheduleContinuation', () => {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: 'continue-agent-run-wake-up-id' },
+        deduplication: {
+          id: 'continue-agent-run-wake-up-id-message',
+          keepLastIfActive: true,
+        },
         workspaceId: WORKSPACE_ID,
         isWorkspaceJob: true,
       },

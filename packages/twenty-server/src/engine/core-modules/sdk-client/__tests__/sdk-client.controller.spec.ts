@@ -16,6 +16,7 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 jest.mock(
   'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util',
@@ -87,6 +88,7 @@ describe('SdkClientController', () => {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {},
         },
+        { provide: AccessPolicyService, useValue: {} },
       ],
     }).compile();
 

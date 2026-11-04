@@ -4,9 +4,9 @@ import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-reco
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableWidgetNestedRelationAddNewRowProps = {
   dropdownId: string;
@@ -18,19 +18,22 @@ export const RecordTableWidgetNestedRelationAddNewRow = ({
   dropdownId,
   nestedRelationCreateThrough,
   onRelationRecordSelected,
-}: RecordTableWidgetNestedRelationAddNewRowProps) => (
-  <DropdownRoot dropdownId={dropdownId} type="picker">
-    <Dropdown.Trigger render={<div />} nativeButton={false}>
-      <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
-    </Dropdown.Trigger>
-    <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>
-      <RecordTableWidgetRelationPickerDropdownContent
-        objectNameSingular={
-          nestedRelationCreateThrough.relationObjectMetadataNameSingular
-        }
-        recordsFilter={nestedRelationCreateThrough.relationRecordsFilter}
-        onRelationRecordSelected={onRelationRecordSelected}
-      />
-    </DropdownContent>
-  </DropdownRoot>
-);
+}: RecordTableWidgetNestedRelationAddNewRowProps) => {
+  const { t } = useLingui();
+  return (
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
+        <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
+      </Dropdown.Trigger>
+      <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>
+        <RecordTableWidgetRelationPickerDropdownContent
+          objectNameSingular={
+            nestedRelationCreateThrough.relationObjectMetadataNameSingular
+          }
+          recordsFilter={nestedRelationCreateThrough.relationRecordsFilter}
+          onRelationRecordSelected={onRelationRecordSelected}
+        />
+      </DropdownContent>
+    </DropdownRoot>
+  );
+};

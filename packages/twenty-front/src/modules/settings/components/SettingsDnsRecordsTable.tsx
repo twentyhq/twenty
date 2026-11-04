@@ -4,12 +4,12 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useLingui } from '@lingui/react/macro';
 
 type DnsRecord = {
   type: string;
@@ -52,6 +52,7 @@ const StyledCopyableCell = styled.div`
 export const SettingsDnsRecordsTable = ({
   records,
 }: SettingsDnsRecordsTableProps) => {
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
   if (records.length === 0) {

@@ -12,12 +12,12 @@ import { IconButton } from 'twenty-ui/components/input';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type MouseEvent, useId, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledClickableContainer = styled.div`
   align-items: center;
@@ -43,6 +43,7 @@ export const CalendarEventComposerTargetsInput = ({
   targets,
   onTargetChange,
 }: CalendarEventComposerTargetsInputProps) => {
+  const { t } = useLingui();
   const componentId = useId();
   const dropdownId = `calendar-event-composer-targets-${componentId}`;
 
