@@ -4,7 +4,7 @@ import { WidgetActionCallRecordingTranscript } from '@/page-layout/widgets/call-
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionCalendar } from '@/page-layout/widgets/calendar/components/WidgetActionCalendar';
-import { WidgetActionEmails } from '@/page-layout/widgets/emails/components/WidgetActionEmails';
+import { WidgetActionMessages } from '@/page-layout/widgets/messages/components/WidgetActionMessages';
 import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
 import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
 import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/WidgetActionTaskCreate';
@@ -33,7 +33,7 @@ const widgetHeaderActionComponentByWidgetType: Partial<
 > = {
   [WidgetType.FIELD]: WidgetFieldActions,
   [WidgetType.CALENDAR]: WidgetActionCalendar,
-  [WidgetType.EMAILS]: WidgetActionEmails,
+  [WidgetType.EMAILS]: WidgetActionMessages,
   [WidgetType.TASKS]: WidgetActionTaskCreate,
   [WidgetType.NOTES]: WidgetActionNoteCreate,
   [WidgetType.FILES]: WidgetActionFileAttach,

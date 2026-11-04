@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import {
   type ModelConfiguration,
   parseAiModelVariantId,
@@ -9,6 +8,7 @@ import { IconBrandX, IconWorld } from 'twenty-ui/icon';
 
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAgentModelCapabilitiesProps = {
   selectedModelId: string;
@@ -23,6 +23,7 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
+  const { t } = useLingui();
   const { modelId: baseModelId } = parseAiModelVariantId(selectedModelId);
   const selectedModel = useResolvedAiModel(baseModelId);
 

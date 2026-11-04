@@ -3,7 +3,7 @@ import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai
 import { type AgentChatMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message.type';
 import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
 
-export type AgentChatMemberMessageSendArgs = {
+export type AgentChatMemberMessageSendArguments = {
   actor: AgentChatMemberMessageActor;
   target: { threadId: string; channelId?: string };
   message: AgentChatMemberMessage;

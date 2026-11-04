@@ -1,11 +1,11 @@
 import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type ThemeColorPickerMenuProps = {
   selectedColor: ThemeColor;
@@ -16,6 +16,7 @@ export const ThemeColorPickerMenu = ({
   selectedColor,
   onSelectColor,
 }: ThemeColorPickerMenuProps) => {
+  const { t } = useLingui();
   const colorLabels = useColorLabels();
   const [searchValue, setSearchValue] = useState('');
   const query = searchValue.trim().toLowerCase();

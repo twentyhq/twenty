@@ -4,7 +4,6 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,6 +14,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
@@ -62,6 +62,7 @@ const StyledDescription = styled.div`
 export const SettingsAvailableApplicationCard = ({
   application,
 }: SettingsAvailableApplicationCardProps) => {
+  const { t } = useLingui();
   const descriptionSummary = getApplicationDescriptionSummary(
     application.description,
   );

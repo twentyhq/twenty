@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
@@ -15,6 +14,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledMcpEditorHeaderTitle = styled.div`
   align-items: center;
@@ -46,6 +46,7 @@ const StyledCardsGrid = styled.div`
 `;
 
 export const SettingsMcpSetup = () => {
+  const { t } = useLingui();
   const mcpServerUrl = buildMcpServerUrl(REACT_APP_SERVER_BASE_URL);
   const mcpConfig = buildMcpConfig(mcpServerUrl);
   const categories = buildMcpSetupCategories({

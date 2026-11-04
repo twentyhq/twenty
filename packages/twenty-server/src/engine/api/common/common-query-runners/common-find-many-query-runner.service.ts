@@ -23,6 +23,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
+import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
@@ -149,7 +150,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectMetadataNameSingular: flatObjectMetadata.nameSingular,
     });
 
-    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+    const limit = getFindManyPageSize(args);
 
     const columnsToSelect = {
       ...buildColumnsToSelect({
@@ -392,7 +393,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     } = queryRunnerContext;
 
     return (
-      (args.first ?? args.last ?? QUERY_MAX_RECORDS) *
+      getFindManyPageSize(args) *
       computeMaxFieldCountPerRecord({
         selectedFieldsResult,
         flatObjectMetadata,

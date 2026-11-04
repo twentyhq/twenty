@@ -5,12 +5,13 @@ import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/Key
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { KeyboardMenuDialog } from './KeyboardShortcutMenuDialog';
 import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
+import { useLingui } from '@lingui/react/macro';
 
 export const KeyboardShortcutMenuOpenContent = () => {
+  const { t } = useLingui();
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
   const isKeyboardShortcutMenuOpened = useAtomStateValue(
     isKeyboardShortcutMenuOpenedState,

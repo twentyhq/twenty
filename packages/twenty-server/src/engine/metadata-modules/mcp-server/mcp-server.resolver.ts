@@ -8,6 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
@@ -62,16 +63,42 @@ export class McpServerResolver {
   async createMcpServer(
     @Args('input') input: CreateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<McpServerDTO> {
-    return await this.mcpServerService.create(input, workspace.id);
+    return await this.mcpServerService.create(
+      input,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => McpServerDTO)
   async updateMcpServer(
     @Args('input') input: UpdateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<McpServerDTO> {
-    return await this.mcpServerService.update(input, workspace.id);
+    return await this.mcpServerService.update(
+      input,
+      workspace.id,
+      userWorkspaceId,
+    );
+  }
+
+  @Mutation(() => McpServerDTO)
+  async syncMcpServerTools(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+  ): Promise<McpServerDTO> {
+    return await this.mcpServerService.syncTools({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => McpServerDTO)
