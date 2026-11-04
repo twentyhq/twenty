@@ -84,9 +84,8 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
   },
   workflowsFolderAllWorkflows: {
     universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.views.allWorkflows.universalIdentifier,
+    type: NavigationMenuItemType.NATIVE_PAGE,
+    nativePageKey: 'workflows',
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 0,
   },
