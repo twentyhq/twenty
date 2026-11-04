@@ -6,9 +6,7 @@ import { IsNull } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
@@ -34,7 +32,6 @@ export class AgentChatDirectMessageIdentityService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
     private readonly directMessageRecordsService: AgentChatDirectMessageRecordsService,
   ) {}
 
@@ -134,20 +131,12 @@ export class AgentChatDirectMessageIdentityService {
       return existingThread.id;
     }
 
-    const { flatWorkspaceMemberMaps, flatObjectMetadataMaps } =
+    const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
       ]);
 
     this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
-
-    const threadObjectMetadata =
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThread',
-      ) ?? throwAgentChatThreadNotFound();
 
     const createdThreadId =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -169,16 +158,22 @@ export class AgentChatDirectMessageIdentityService {
                   { onConflictDoNothing: true },
                 );
 
+              const createdThreadId = identifiers[0]?.id;
+
+              if (!isDefined(createdThreadId)) {
+                return undefined;
+              }
+
               // TODO @bosiraphael let's make sure the sharing by a participant is not possible (if private, do not share with share permission), if RLS, nothing todo
-              await this.recordSharingWriteService.setRecordsPrivate({
+              await this.directMessageRecordsService.share({
                 workspaceId,
-                flatObjectMetadata: threadObjectMetadata,
-                recordIds: identifiers.map(({ id }) => id),
-                isPrivate: true,
                 transactionScope,
+                threadId: createdThreadId,
+                objectName: 'agentChatThread',
+                recordIds: [createdThreadId],
               });
 
-              return identifiers[0]?.id;
+              return createdThreadId;
             },
           ),
         buildSystemAuthContext(workspaceId),
