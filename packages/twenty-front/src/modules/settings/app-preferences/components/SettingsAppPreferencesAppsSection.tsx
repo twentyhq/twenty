@@ -68,7 +68,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       applications={applicationsWithPreferences.map(
         ({ application }) => application,
       )}
-      builtInAccountApps={enabledBuiltInAccountApps}
+      builtInApps={enabledBuiltInAccountApps}
       linkTarget="applicationPreferences"
       middleColumn="status"
       statusesById={statusesById}

@@ -51,7 +51,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
         ) : undefined
       }
       applications={installedApplications}
-      builtInAccountApps={installedBuiltInAccountApps}
+      builtInApps={installedBuiltInAccountApps}
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
       statusesById={statusesById}
