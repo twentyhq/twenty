@@ -16,9 +16,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @ArgsType()
 class GetTimelineCalendarEventsFromObjectRecordArgs {
@@ -89,16 +89,19 @@ class GetTimelineCalendarEventsFromOpportunityIdArgs {
 }
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
     },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
+    requiredPermissionFlags: [],
   }),
   CustomPermissionGuard,
 )
