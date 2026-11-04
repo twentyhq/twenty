@@ -8,6 +8,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
@@ -21,6 +22,7 @@ export const useAiChatFileUpload = () => {
     agentChatUploadedFilesState,
   );
   const store = useStore();
+  const isDirectMessage = useIsCurrentDirectMessage();
 
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
     const abortController = new AbortController();
@@ -70,6 +72,10 @@ export const useAiChatFileUpload = () => {
   };
 
   const uploadFiles = async (files: File[]) => {
+    if (isDirectMessage) {
+      return [];
+    }
+
     setAgentChatSelectedFiles((previousSelectedFiles) => [
       ...previousSelectedFiles,
       ...files,

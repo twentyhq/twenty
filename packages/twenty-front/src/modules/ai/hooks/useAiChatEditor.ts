@@ -8,6 +8,7 @@ import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -45,6 +46,7 @@ export const useAiChatEditor = () => {
   );
   const { searchSkills } = useSkillSuggestionSearch();
   const { uploadFiles } = useAiChatFileUpload();
+  const isDirectMessage = useIsCurrentDirectMessage();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -53,7 +55,9 @@ export const useAiChatEditor = () => {
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: t`Ask, search or make anything...`,
+    placeholder: isDirectMessage
+      ? t`Write a message...`
+      : t`Ask, search or make anything...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
@@ -134,24 +138,27 @@ export const useAiChatEditor = () => {
       searchMentionRecords: typeof searchMentionRecords;
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
-    mentionStorage.searchMentionRecords = searchMentionRecords;
-    mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
-      ? (query) => [
-          ...(aiModels.length > 0
-            ? getAgentChatAssistantMentionSearchResults({
-                query,
-                objectLabelSingular: t`Assistant`,
-                objectLabelPlural: t`Teammates`,
-              })
-            : []),
-          ...searchWorkspaceMembers(query),
-        ]
-      : () => [];
+    mentionStorage.searchMentionRecords = isDirectMessage
+      ? async () => []
+      : searchMentionRecords;
+    mentionStorage.searchWorkspaceMembers =
+      isAiChatInboxEnabled && !isDirectMessage
+        ? (query) => [
+            ...(aiModels.length > 0
+              ? getAgentChatAssistantMentionSearchResults({
+                  query,
+                  objectLabelSingular: t`Assistant`,
+                  objectLabelPlural: t`Teammates`,
+                })
+              : []),
+            ...searchWorkspaceMembers(query),
+          ]
+        : () => [];
 
     const skillStorage = storage['skill-suggestion'] as {
       searchSkills: typeof searchSkills;
     };
-    skillStorage.searchSkills = searchSkills;
+    skillStorage.searchSkills = isDirectMessage ? async () => [] : searchSkills;
   }
 
   const handleRestoreEditorContent = useCallback(

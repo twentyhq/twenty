@@ -9,6 +9,7 @@ import { Suspense, useEffect } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -26,6 +27,8 @@ import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -634,6 +637,30 @@ export const MultiplayerConversation: Story = {
     })[1];
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
+
+    const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+    assertIsDefinedOrThrow(threadId);
+    const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
+    const previousThread = jotaiStore.get(threadRecordAtom);
+
+    try {
+      jotaiStore.set(threadRecordAtom, {
+        ...previousThread,
+        id: threadId,
+        __typename: 'AgentChatThread',
+        conversationType: 'DIRECT_MESSAGE',
+      });
+      await waitFor(() =>
+        expect(
+          canvas.queryByRole('button', { name: 'Add reaction' }),
+        ).not.toBeInTheDocument(),
+      );
+      await expect(
+        canvas.queryByRole('button', { name: '👍 by You' }),
+      ).not.toBeInTheDocument();
+    } finally {
+      jotaiStore.set(threadRecordAtom, previousThread);
+    }
   },
 };
 

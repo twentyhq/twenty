@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
+import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -16,6 +17,8 @@ export const NavigationDrawerAiChatTriageSection = () => {
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
       label={t`Triage`}
+      rightIcon={<OpenDirectMessageButton />}
+      alwaysShowRightIcon
     >
       <NavigationDrawerAiChatTriageItem
         filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE}

@@ -3,6 +3,7 @@ import { type RecordGqlFields } from 'twenty-shared/types';
 export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   id: true,
   title: true,
+  conversationType: true,
   deletedAt: true,
   createdAt: true,
   updatedAt: true,
