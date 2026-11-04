@@ -9,7 +9,6 @@ import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-resu
 import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-matched-enrichments';
 import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
 import { isPdlAccountErrorOutcome } from 'src/logic-functions/utils/is-pdl-account-error-outcome';
-import { isPdlInvalidRequestOutcome } from 'src/logic-functions/utils/is-pdl-invalid-request-outcome';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { resolveUpdateFieldsMode } from 'src/logic-functions/utils/resolve-update-fields-mode';
 import { toPdlOutcomeErrorMessage } from 'src/logic-functions/utils/to-pdl-outcome-error-message';
@@ -292,7 +291,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     }
 
     return isPdlConfigError
-      ? { stopErrorMessage: enrichBatchErrorMessage }
+      ? { pdlAccessErrorMessage: enrichBatchErrorMessage }
       : {};
   }
 
@@ -383,17 +382,9 @@ export const enrichChunk = async <TNode, TData, TParams>({
     pdlEnrichmentOutcomes.length > 0 &&
     pdlEnrichmentOutcomes.every(isPdlAccountErrorOutcome);
 
-  if (hasOnlyPdlAccountErrorOutcomes) {
-    return { stopErrorMessage: PDL_ACCESS_ERROR_MESSAGE };
-  }
-
-  const hasOnlyPdlInvalidRequestOutcomes =
-    pdlEnrichmentOutcomes.length > 0 &&
-    pdlEnrichmentOutcomes.every(isPdlInvalidRequestOutcome);
-
   return {
-    stopErrorMessage: hasOnlyPdlInvalidRequestOutcomes
-      ? pdlEnrichmentOutcomes.find(isPdlInvalidRequestOutcome)?.message
+    pdlAccessErrorMessage: hasOnlyPdlAccountErrorOutcomes
+      ? PDL_ACCESS_ERROR_MESSAGE
       : undefined,
   };
 };

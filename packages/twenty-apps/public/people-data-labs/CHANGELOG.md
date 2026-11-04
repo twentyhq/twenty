@@ -11,8 +11,6 @@ All notable changes to this application are documented in this file.
   An empty selection uses the app setting. Refreshing a record that already has
   a PDL ID skips the requirements. Twenty versions without the multiselect
   show a text list that accepts field labels or PDL field names.
-- Stop an enrichment run when PDL rejects the parameters of a whole batch,
-  instead of sending the same request for every remaining batch.
 
 ## 1.3.0
 

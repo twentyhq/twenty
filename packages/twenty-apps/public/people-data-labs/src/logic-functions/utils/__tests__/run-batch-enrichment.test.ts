@@ -161,12 +161,6 @@ const INVALID_API_KEY_OUTCOME: PdlEnrichResult<FakeData> = {
   message: 'Invalid API key',
 };
 
-const INVALID_REQUEST_OUTCOME: PdlEnrichResult<FakeData> = {
-  outcome: 'error',
-  httpStatus: 400,
-  message: 'Invalid required field',
-};
-
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
     vi.mocked(chargeCredits).mockClear();
@@ -602,23 +596,6 @@ describe('runBatchEnrichment', () => {
     expect(result).toMatchObject({ total: 150, errored: 150 });
     expect(result.results[0].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
     expect(result.results[149].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
-  });
-
-  it('stops enriching the remaining chunks when PDL rejects the request parameters', async () => {
-    const ids = buildRecordIds(150);
-    const harness = buildHarness(
-      ids.map((id) => ({ id, outcome: INVALID_REQUEST_OUTCOME })),
-    );
-
-    const result = await runBatchEnrichment({
-      client: CLIENT,
-      input: { records: ids.map((id) => ({ id })) },
-      adapter: harness.adapter,
-    });
-
-    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
-    expect(result).toMatchObject({ total: 150, errored: 150 });
-    expect(result.results[149].error).toBe('Invalid required field');
   });
 
   it('keeps enriching the remaining chunks after a chunk fails for another reason', async () => {

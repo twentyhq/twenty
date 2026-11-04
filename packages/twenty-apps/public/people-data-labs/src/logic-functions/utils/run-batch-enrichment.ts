@@ -42,7 +42,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();
   const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
-  let stopErrorMessage: string | undefined;
+  let pdlAccessErrorMessage: string | undefined;
 
   for (const recordIdsChunk of chunk({ items: recordIds, size: PDL_BATCH_SIZE })) {
     const enrichChunkResult = await enrichChunk({
@@ -56,9 +56,9 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       companyIdByMatchKeyCache,
     });
 
-    stopErrorMessage = enrichChunkResult.stopErrorMessage;
+    pdlAccessErrorMessage = enrichChunkResult.pdlAccessErrorMessage;
 
-    if (isDefined(stopErrorMessage)) {
+    if (isDefined(pdlAccessErrorMessage)) {
       break;
     }
   }
@@ -68,7 +68,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       resultById.get(recordId) ??
       buildErrorResult({
         recordId,
-        error: stopErrorMessage ?? ENRICHMENT_FAILED_MESSAGE,
+        error: pdlAccessErrorMessage ?? ENRICHMENT_FAILED_MESSAGE,
       }),
   );
 
