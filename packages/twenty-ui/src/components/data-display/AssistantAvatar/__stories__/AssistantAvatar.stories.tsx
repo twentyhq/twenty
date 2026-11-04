@@ -143,8 +143,8 @@ export const PaletteAndSizes: CatalogStory<Story, typeof AssistantAvatar> = {
         await expect(
           style.getPropertyValue('--assistant-avatar-body-color').trim(),
         ).toBe(style.getPropertyValue(`--t-color-${color}4`).trim());
-        const usesBrightPalette = color === 'sky' || color === 'yellow';
-        const faceShade = usesBrightPalette ? 11 : 10;
+        const isBrightPalette = color === 'sky' || color === 'yellow';
+        const faceShade = isBrightPalette ? 11 : 10;
 
         await expect(
           style.getPropertyValue('--assistant-avatar-face-color').trim(),

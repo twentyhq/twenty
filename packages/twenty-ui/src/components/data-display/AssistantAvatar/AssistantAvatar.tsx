@@ -21,8 +21,8 @@ export const AssistantAvatar = ({
 }: AssistantAvatarProps) => {
   const hasAccessibleName =
     isNonEmptyString(ariaLabel) || isNonEmptyString(ariaLabelledBy);
-  const usesBrightPalette = color === 'sky' || color === 'yellow';
-  const faceShade = usesBrightPalette ? 11 : 10;
+  const isBrightPalette = color === 'sky' || color === 'yellow';
+  const faceShade = isBrightPalette ? 11 : 10;
   const avatarStyle: CSSProperties &
     Record<`--assistant-avatar-${string}`, string> = {
     '--assistant-avatar-body-color': themeCssVariables.color[`${color}4`],
@@ -35,6 +35,7 @@ export const AssistantAvatar = ({
 
   return (
     <span
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       className={clsx(styles.root, className)}
       style={avatarStyle}
