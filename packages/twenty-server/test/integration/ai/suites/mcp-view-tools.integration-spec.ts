@@ -117,7 +117,11 @@ const listViewFields = async (viewId: string): Promise<ViewFieldSummary[]> => {
 describe('MCP view tools (integration)', () => {
   // Unlisted views are only listed to their creator, so the admin cleans up its own
   afterAll(async () => {
-    for (const token of [API_KEY_ACCESS_TOKEN, APPLE_JANE_ADMIN_ACCESS_TOKEN]) {
+    for (const token of [
+      API_KEY_ACCESS_TOKEN,
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    ]) {
       for (const objectNameSingular of ['company', 'opportunity']) {
         const leakedViews = (
           await listViews({ objectNameSingular, token })
@@ -610,13 +614,31 @@ describe('MCP view tools (integration)', () => {
 
   // The seeded guest role cannot access tools, so it lacks VIEWS
   describe('for a guest without VIEWS', () => {
-    it('should list only the read tools of the view category', async () => {
+    const findWorkspaceViewId = async () => {
+      const result = await runViewTool<{
+        views: (ViewSummary & { visibility: string })[];
+      }>({
+        toolName: 'get_views',
+        toolArguments: { objectNameSingular: 'company', limit: 100 },
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      });
+
+      const workspaceView = result?.views.find(
+        ({ visibility }) => visibility === 'WORKSPACE',
+      );
+
+      jestExpectToBeDefined(workspaceView);
+
+      return workspaceView.id;
+    };
+
+    it('should list every tool of the view category', async () => {
       const catalog = await getMcpToolCatalog({
         token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
       });
 
       expect(catalog[ToolCategory.VIEW].map(({ name }) => name).sort()).toEqual(
-        [...VIEW_READ_TOOL_NAMES].sort(),
+        [...VIEW_READ_TOOL_NAMES, ...VIEW_WRITE_TOOL_NAMES].sort(),
       );
     });
 
@@ -629,17 +651,103 @@ describe('MCP view tools (integration)', () => {
       ).not.toHaveLength(0);
     });
 
-    it.each(VIEW_WRITE_TOOL_NAMES)('should refuse %s', async (toolName) => {
+    it('should refuse to create a workspace view', async () => {
       expect(
         await runFailingViewTool({
-          toolName,
-          toolArguments: {},
+          toolName: 'create_view',
+          toolArguments: {
+            name: `${VIEW_NAME_PREFIX} guest companies`,
+            objectNameSingular: 'company',
+          },
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
         }),
-      ).toMatchObject({
+      ).toEqual({
         success: false,
-        message: `Tool "${toolName}" not found`,
+        message: 'Failed to execute create_view',
+        error: 'You need the Views permission to create a workspace view',
       });
+    });
+
+    it('should refuse to change a workspace view or its sorts', async () => {
+      const workspaceViewId = await findWorkspaceViewId();
+
+      for (const { toolName, toolArguments, operation } of [
+        {
+          toolName: 'update_view',
+          toolArguments: { id: workspaceViewId, name: 'Renamed' },
+          operation: 'update',
+        },
+        {
+          toolName: 'delete_view',
+          toolArguments: { id: workspaceViewId },
+          operation: 'delete',
+        },
+        {
+          toolName: 'create_view_sort',
+          toolArguments: {
+            viewId: workspaceViewId,
+            fieldMetadataId: (await listViewFields(workspaceViewId))[0]
+              .fieldMetadataId,
+          },
+          operation: 'update',
+        },
+      ]) {
+        expect(
+          await runFailingViewTool({
+            toolName,
+            toolArguments,
+            token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+          }),
+        ).toEqual({
+          success: false,
+          message: `Failed to execute ${toolName}`,
+          error: `You need the Views permission to ${operation} a workspace view`,
+        });
+      }
+    });
+
+    it('should edit its own unlisted view but not publish it', async () => {
+      const unlistedView = await runViewTool<ViewSummary>({
+        toolName: 'create_view',
+        toolArguments: {
+          name: `${VIEW_NAME_PREFIX} guest private companies`,
+          objectNameSingular: 'company',
+          visibility: 'UNLISTED',
+        },
+        token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      });
+
+      jestExpectToBeDefined(unlistedView);
+
+      const renamedViewName = `${VIEW_NAME_PREFIX} guest renamed companies`;
+
+      expect(
+        await runViewTool({
+          toolName: 'update_view',
+          toolArguments: { id: unlistedView.id, name: renamedViewName },
+          token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+        }),
+      ).toMatchObject({ id: unlistedView.id, name: renamedViewName });
+
+      expect(
+        await runFailingViewTool({
+          toolName: 'upsert_complete_view',
+          toolArguments: { id: unlistedView.id, visibility: 'WORKSPACE' },
+          token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+        }),
+      ).toEqual({
+        success: false,
+        message: 'Failed to execute upsert_complete_view',
+        error: 'You need the Views permission to update a workspace view',
+      });
+
+      expect(
+        await runViewTool({
+          toolName: 'delete_view',
+          toolArguments: { id: unlistedView.id },
+          token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+        }),
+      ).toMatchObject({ id: unlistedView.id, deleted: true });
     });
   });
 });
