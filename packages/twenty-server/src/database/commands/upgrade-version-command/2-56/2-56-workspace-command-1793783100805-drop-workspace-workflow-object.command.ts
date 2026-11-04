@@ -102,13 +102,16 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     );
 
     // Field widgets keep their field id in their configuration, out of reach of foreign keys.
-    const pageLayoutWidgetsToDelete = Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier).filter(isDefined).filter((widget) => {
-      const fieldMetadataId = (
-        widget.configuration as { fieldMetadataId?: string } | null
-      )?.fieldMetadataId;
-
-      return isDefined(fieldMetadataId) && deletedFieldIds.has(fieldMetadataId);
-    });
+    const pageLayoutWidgetsToDelete = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (widget) =>
+          isDefined(widget.configuration) &&
+          'fieldMetadataId' in widget.configuration &&
+          deletedFieldIds.has(widget.configuration.fieldMetadataId),
+      );
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -174,18 +177,22 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
             universalIdentifier
           ];
 
-          return isDefined(commandMenuItem) &&
-            isDefined(standardCommandMenuItem) &&
-            commandMenuItem.conditionalAvailabilityExpression !==
+          if (
+            !isDefined(commandMenuItem) ||
+            !isDefined(standardCommandMenuItem) ||
+            commandMenuItem.conditionalAvailabilityExpression ===
               standardCommandMenuItem.conditionalAvailabilityExpression
-            ? [
-                {
-                  ...commandMenuItem,
-                  conditionalAvailabilityExpression:
-                    standardCommandMenuItem.conditionalAvailabilityExpression,
-                },
-              ]
-            : [];
+          ) {
+            return [];
+          }
+
+          return [
+            {
+              ...commandMenuItem,
+              conditionalAvailabilityExpression:
+                standardCommandMenuItem.conditionalAvailabilityExpression,
+            },
+          ];
         },
       );
 
@@ -334,7 +341,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
   }: {
     workspaceId: string;
     dataSource: RunOnWorkspaceArgs['dataSource'];
-    workflowObject: FlatObjectMetadata | undefined;
+    workflowObject: Pick<FlatObjectMetadata, 'id'> | undefined;
     hasWorkflowAutomatedTriggerObject: boolean;
     fieldsToDelete: FlatFieldMetadata[];
   }): Promise<string> {
