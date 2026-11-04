@@ -10387,7 +10387,7 @@ msgstr "Katılımcılar"
 #. js-lingui-id: kWRulr
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Partner codes only apply to new Twenty customers."
-msgstr ""
+msgstr "İş ortağı kodları yalnızca yeni Twenty müşterileri için geçerlidir."
 
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -14002,7 +14002,7 @@ msgstr "Paket kaydına, paketin kökenini doğrulamak için erişilemedi. Daha s
 #. js-lingui-id: /UF1cu
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "The partner code can no longer be added or changed. Please contact support."
-msgstr ""
+msgstr "İş ortağı kodu artık eklenemez veya değiştirilemez. Lütfen destek ekibiyle iletişime geçin."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -14877,7 +14877,7 @@ msgstr "Bu Kuruluş anahtarı zaten başka bir sunucu örneğinde kullanılıyor
 #. js-lingui-id: 4cfXTZ
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This partner code is not valid."
-msgstr ""
+msgstr "Bu iş ortağı kodu geçerli değil."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
