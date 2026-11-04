@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThan, type ObjectLiteral } from 'typeorm';
+import { Any, In, MoreThan, type ObjectLiteral } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -13,6 +13,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
+import { type LinkedTimelineActivityDeletion } from 'src/modules/timeline/types/linked-timeline-activity-deletion.type';
 import { type LinkedTimelineActivityHappensAtSyncUpdate } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import {
   buildTimelineActivityMergeKey,
@@ -80,6 +81,27 @@ export class TimelineActivityRepository {
           update,
         );
       }
+    }, authContext);
+  }
+
+  async deleteLinkedTimelineActivities({
+    workspaceId,
+    linkedObjectMetadataId,
+    linkedRecordIds,
+  }: LinkedTimelineActivityDeletion) {
+    if (linkedRecordIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks<ObjectLiteral>('timelineActivity')
+        .delete({
+          linkedObjectMetadataId,
+          linkedRecordId: Any(linkedRecordIds),
+        });
     }, authContext);
   }
 

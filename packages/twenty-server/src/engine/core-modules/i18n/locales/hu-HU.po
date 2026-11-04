@@ -3321,6 +3321,11 @@ msgstr "Ütköző telefonos hívókód."
 msgid "Conflicting phone country code."
 msgstr "Ütköző telefonos országkód."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Először csatlakoztasson egy fiókot ehhez az MCP-kiszolgálóhoz."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "A bontáskor futtatandó logikai függvény nem található."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Az MCP-kérés paraméterei érvénytelenek."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Az MCP-kiszolgáló túl sok eszközt tesz elérhetővé a szinkronizáláshoz."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

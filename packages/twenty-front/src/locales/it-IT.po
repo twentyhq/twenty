@@ -16564,7 +16564,7 @@ msgstr "Link copiato negli appunti"
 #. js-lingui-id: /RZu15
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessages.tsx
 msgid "Link email threads"
 msgstr "Collega thread email"
 
@@ -18551,6 +18551,11 @@ msgstr "Nuova chiave"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
 msgstr "Nuovo limite"
+
+#. js-lingui-id: mTBAsF
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "New message"
+msgstr "Nuovo messaggio"
 
 #. js-lingui-id: ROxeMs
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -25238,6 +25243,11 @@ msgstr "Invia email da account collegati"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Spedisci email tramite account collegati"
+
+#. js-lingui-id: l/ipRX
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Send from"
+msgstr "Invia da"
 
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx
