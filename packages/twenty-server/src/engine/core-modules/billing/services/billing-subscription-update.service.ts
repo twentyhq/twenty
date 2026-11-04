@@ -52,6 +52,8 @@ import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-ph
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildBillingSubscriptionUpdateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-update-lock-key.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
@@ -71,6 +73,7 @@ export class BillingSubscriptionUpdateService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingSeatService: BillingSeatService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async changeResourceCreditPrice(
@@ -240,7 +243,24 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
+  // Seat jobs and plan switches rewrite the same Stripe schedule, so they must not interleave
   async updateSubscription(
+    workspaceId: string,
+    subscriptionId: string,
+    subscriptionUpdate: SubscriptionUpdate,
+  ): Promise<void> {
+    await this.cacheLockService.withLock(
+      () =>
+        this.applySubscriptionUpdate(
+          workspaceId,
+          subscriptionId,
+          subscriptionUpdate,
+        ),
+      buildBillingSubscriptionUpdateLockKey(workspaceId),
+    );
+  }
+
+  private async applySubscriptionUpdate(
     workspaceId: string,
     subscriptionId: string,
     subscriptionUpdate: SubscriptionUpdate,
