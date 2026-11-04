@@ -10,7 +10,19 @@ const REFERENCE_PATTERN = new RegExp(
   'g',
 );
 
-const REFERENCE_PLACEHOLDER_PATTERN = /(\d+)/g;
+const REFERENCE_PLACEHOLDER_START = String.fromCodePoint(0xe000);
+
+const REFERENCE_PLACEHOLDER_END = String.fromCodePoint(0xe001);
+
+const REFERENCE_PLACEHOLDER_PATTERN = new RegExp(
+  `${REFERENCE_PLACEHOLDER_START}(\\d+)${REFERENCE_PLACEHOLDER_END}`,
+  'g',
+);
+
+const REFERENCE_PLACEHOLDER_DELIMITER_PATTERN = new RegExp(
+  `[${REFERENCE_PLACEHOLDER_START}${REFERENCE_PLACEHOLDER_END}]`,
+  'g',
+);
 
 const isListToken = (token: Token): token is Tokens.List =>
   token.type === 'list';
@@ -65,18 +77,23 @@ export const extractInboxMessageMentionedWorkspaceMemberIds = (
   text: string,
 ): string[] => {
   const references: string[] = [];
+  // Delimiters already in the text become spaces, so the text cannot forge a placeholder
+  const messageText = text.replace(
+    REFERENCE_PLACEHOLDER_DELIMITER_PATTERN,
+    ' ',
+  );
 
   // Set aside before Markdown is read, as the renderer does, so a label keeps any character
-  const textWithPlaceholders = text.replace(
+  const textWithPlaceholders = messageText.replace(
     REFERENCE_PATTERN,
     (reference: string, index: number) => {
-      if (isEscapedAt({ text, index })) {
+      if (isEscapedAt({ text: messageText, index })) {
         return reference;
       }
 
       references.push(reference);
 
-      return `${references.length - 1}`;
+      return `${REFERENCE_PLACEHOLDER_START}${references.length - 1}${REFERENCE_PLACEHOLDER_END}`;
     },
   );
   const mentionedReferences = [

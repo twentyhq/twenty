@@ -39,6 +39,10 @@ describe('extractInboxMessageMentionedWorkspaceMemberIds', () => {
       `\\[\\[record:workspaceMember:${MIA_ID}:Mia Lee\\]\\]`,
     ],
     ['an escaped opening bracket', `\\${MIA_MENTION}`],
+    [
+      'inline code next to a forged placeholder',
+      `\`${MIA_MENTION}\` ${String.fromCodePoint(0xe000)}0${String.fromCodePoint(0xe001)}`,
+    ],
     ['an HTML block', `<div>\n${MIA_MENTION}\n</div>`],
     ['two blocks', `# [[record:workspaceMember:${MIA_ID}:Mia\nLee]]`],
   ])('ignores a mention in %s', (_, text) => {
