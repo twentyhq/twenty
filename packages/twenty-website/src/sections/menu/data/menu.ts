@@ -105,7 +105,7 @@ export const MENU: {
         },
         {
           label: msg`Affiliate partners`,
-          description: msg`Earn 20% by referring Twenty`,
+          description: msg`Earn revenue by referring Twenty`,
           href: '/affiliate-partners',
           icon: IconCoin,
           preview: {
