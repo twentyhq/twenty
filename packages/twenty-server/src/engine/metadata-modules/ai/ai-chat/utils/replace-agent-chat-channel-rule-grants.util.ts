@@ -1,3 +1,4 @@
+import chunk from 'lodash.chunk';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   RecordShareAccessLevel,
@@ -35,6 +36,8 @@ type ChannelRuleGrantWrite = {
   threadObjectMetadataId: string;
   channelRuleGrantsQuery: SelectQueryBuilder<ObjectLiteral>;
 };
+
+const CHANNEL_RULE_GRANT_THREAD_BATCH_SIZE = 1000;
 
 const CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE = 1000;
 
@@ -113,39 +116,63 @@ const deleteObsoleteChannelRuleGrants = async ({
     .execute();
 };
 
-const insertChannelRuleGrants = async ({
+const findScopeThreadIds = async ({
+  manager,
+  schema,
+  scope,
+}: {
+  manager: QueryBuilderManager;
+  schema: string;
+  scope: AgentChatChannelGrantScope;
+}): Promise<string[]> => {
+  if ('threadIds' in scope) {
+    return scope.threadIds;
+  }
+
+  const channelThreads = await manager
+    .createQueryBuilder()
+    .select('thread.id', 'id')
+    .from(`${schema}.agentChatThread`, 'thread')
+    .where('thread."channelId" = :channelId', { channelId: scope.channelId })
+    .orderBy('thread.id')
+    .getRawMany<{ id: string }>();
+
+  return channelThreads.map(({ id }) => id);
+};
+
+const insertMissingChannelRuleGrants = async ({
   manager,
   schema,
   threadObjectMetadataId,
   channelRuleGrantsQuery,
-}: ChannelRuleGrantWrite): Promise<void> => {
-  let lastInsertedGrant: ChannelRuleGrant | undefined;
+  threadIds,
+}: ChannelRuleGrantWrite & { threadIds: string[] }): Promise<void> => {
+  const existingChannelRuleGrantQuery = manager
+    .createQueryBuilder()
+    .select('1')
+    .from(`${schema}.recordShare`, 'record_share')
+    .where('record_share."objectMetadataId" = :threadObjectMetadataId')
+    .andWhere('record_share."rowCause" = :rowCause')
+    .andWhere('record_share."recordId" = thread.id')
+    .andWhere('record_share."principalId" = role.id')
+    .andWhere('record_share."sourceId" = thread."channelId"')
+    .andWhere('record_share."deletedAt" IS NULL');
+  const missingChannelRuleGrants = await channelRuleGrantsQuery
+    .clone()
+    .andWhere('thread.id = ANY(:threadIds::uuid[])', { threadIds })
+    .andWhere(`NOT EXISTS (${existingChannelRuleGrantQuery.getQuery()})`)
+    .setParameters({
+      threadObjectMetadataId,
+      rowCause: RecordShareRowCause.RULE,
+    })
+    .orderBy('thread.id')
+    .setLock('for_key_share', undefined, ['thread'])
+    .getRawMany<ChannelRuleGrant>();
 
-  while (true) {
-    const batchQuery = channelRuleGrantsQuery
-      .clone()
-      .orderBy('thread.id')
-      .addOrderBy('role.id')
-      .limit(CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE)
-      .setLock('for_key_share', undefined, ['thread']);
-
-    if (isDefined(lastInsertedGrant)) {
-      batchQuery.andWhere(
-        '(thread.id, role.id) > (:lastThreadId::uuid, :lastRoleId::uuid)',
-        {
-          lastThreadId: lastInsertedGrant.recordId,
-          lastRoleId: lastInsertedGrant.principalId,
-        },
-      );
-    }
-
-    const channelRuleGrantBatch =
-      await batchQuery.getRawMany<ChannelRuleGrant>();
-
-    if (!isNonEmptyArray(channelRuleGrantBatch)) {
-      return;
-    }
-
+  for (const channelRuleGrantBatch of chunk(
+    missingChannelRuleGrants,
+    CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE,
+  )) {
     await manager
       .createQueryBuilder()
       .insert()
@@ -171,12 +198,6 @@ const insertChannelRuleGrants = async ({
       )
       .orIgnore()
       .execute();
-
-    if (channelRuleGrantBatch.length < CHANNEL_RULE_GRANT_INSERT_BATCH_SIZE) {
-      return;
-    }
-
-    lastInsertedGrant = channelRuleGrantBatch[channelRuleGrantBatch.length - 1];
   }
 };
 
@@ -221,8 +242,7 @@ export const replaceAgentChatChannelRuleGrants = async ({
       'channel_role',
       'channel_role."workspaceId" = :workspaceId AND channel_role."channelId" = thread."channelId" AND channel_role."roleId" = role.id',
     )
-    .where(scopeConditions.thread, scopeConditions.parameters)
-    .andWhere(ROLE_CAN_ACCESS_THREAD_CHANNEL)
+    .where(ROLE_CAN_ACCESS_THREAD_CHANNEL)
     .setParameter('workspaceId', workspaceId);
 
   await deleteObsoleteChannelRuleGrants({
@@ -230,13 +250,23 @@ export const replaceAgentChatChannelRuleGrants = async ({
     schema,
     threadObjectMetadataId,
     recordShareScopeCondition: scopeConditions.recordShare,
-    channelRuleGrantsQuery,
+    channelRuleGrantsQuery: channelRuleGrantsQuery
+      .clone()
+      .andWhere(scopeConditions.thread, scopeConditions.parameters),
   });
 
-  await insertChannelRuleGrants({
-    manager,
-    schema,
-    threadObjectMetadataId,
-    channelRuleGrantsQuery,
-  });
+  const scopeThreadIds = await findScopeThreadIds({ manager, schema, scope });
+
+  for (const threadIds of chunk(
+    scopeThreadIds,
+    CHANNEL_RULE_GRANT_THREAD_BATCH_SIZE,
+  )) {
+    await insertMissingChannelRuleGrants({
+      manager,
+      schema,
+      threadObjectMetadataId,
+      channelRuleGrantsQuery,
+      threadIds,
+    });
+  }
 };
