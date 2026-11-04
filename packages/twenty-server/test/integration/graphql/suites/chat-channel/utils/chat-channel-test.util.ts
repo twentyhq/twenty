@@ -3,8 +3,7 @@ import { parse } from 'graphql';
 import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { type DataSource, type QueryRunner } from 'typeorm';
-import { lockAgentChatChannelForThreadWriteInTestOrThrow } from 'test/integration/ai/utils/lock-agent-chat-channel-for-thread-write-in-test-or-throw.util';
+import { type QueryRunner } from 'typeorm';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
@@ -22,6 +21,7 @@ import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/a
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
+import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -474,8 +474,7 @@ export const setUpChatChannelTests = () => {
   };
 
   const startHeldTransaction = async (): Promise<QueryRunner> => {
-    const coreDataSource = getAppProviderByClassName<DataSource>('DataSource');
-    const queryRunner = coreDataSource.createQueryRunner();
+    const queryRunner = global.testDataSource.createQueryRunner();
 
     await queryRunner.connect();
     heldQueryRunners.push(queryRunner);
@@ -530,7 +529,7 @@ export const setUpChatChannelTests = () => {
   }): Promise<QueryRunner> => {
     const queryRunner = await startHeldTransaction();
 
-    await lockAgentChatChannelForThreadWriteInTestOrThrow({
+    await lockAgentChatChannelForThreadWriteOrThrow({
       manager: queryRunner.manager,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       channelId,

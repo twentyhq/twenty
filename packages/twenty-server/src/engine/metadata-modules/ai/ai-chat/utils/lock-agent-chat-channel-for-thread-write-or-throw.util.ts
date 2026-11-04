@@ -9,7 +9,7 @@ export const lockAgentChatChannelForThreadWriteOrThrow = async ({
   workspaceId,
   channelId,
 }: {
-  manager: Pick<EntityManager, 'query' | 'getRepository'>;
+  manager: Pick<EntityManager, 'query'>;
   workspaceId: string;
   channelId: string;
 }): Promise<void> => {

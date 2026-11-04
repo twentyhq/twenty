@@ -1,6 +1,6 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
-import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 
 export const assertAgentChatChannelExists = async ({
@@ -8,17 +8,16 @@ export const assertAgentChatChannelExists = async ({
   workspaceId,
   channelId,
 }: {
-  manager: Pick<EntityManager, 'getRepository'>;
+  manager: Pick<EntityManager, 'query'>;
   workspaceId: string;
   channelId: string;
 }): Promise<void> => {
-  const channelRepository = manager.getRepository(AgentChatChannelEntity);
-  const doesChannelExist = await channelRepository.existsBy({
-    id: channelId,
-    workspaceId,
-  });
+  const channels = await manager.query<{ id: string }[]>(
+    'SELECT id FROM core."agentChatChannel" WHERE id = $1 AND "workspaceId" = $2',
+    [channelId, workspaceId],
+  );
 
-  if (!doesChannelExist) {
+  if (!isNonEmptyArray(channels)) {
     throwAgentChatChannelNotFound();
   }
 };
