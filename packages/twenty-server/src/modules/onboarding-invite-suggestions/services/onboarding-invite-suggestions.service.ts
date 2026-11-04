@@ -11,11 +11,13 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-cache-ttl-ms.constant';
+import { ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-calendar-timeout-ms.constant';
 import { ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-max-count.constant';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
 import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/utils/get-onboarding-invite-suggestions-cache-key.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { withDeadline } from 'src/utils/with-deadline';
 
 @Injectable()
 export class OnboardingInviteSuggestionsService {
@@ -50,13 +52,34 @@ export class OnboardingInviteSuggestionsService {
       return cachedSuggestions;
     }
 
+    return this.computeAndCacheSuggestions({
+      workspaceId,
+      userId,
+      userWorkspaceId,
+    });
+  }
+
+  async computeAndCacheSuggestions({
+    workspaceId,
+    userId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userId: string;
+    userWorkspaceId: string;
+  }): Promise<CalendarAttendee[]> {
     const suggestions = await this.computeSuggestionsFromConnectedAccount({
       workspaceId,
       userWorkspaceId,
     });
 
+    // A failed calendar read is not cached, so the next read retries it.
+    if (!isDefined(suggestions)) {
+      return [];
+    }
+
     await this.cacheStorageService.set<CalendarAttendee[]>(
-      cacheKey,
+      getOnboardingInviteSuggestionsCacheKey(workspaceId, userId),
       suggestions,
       ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
     );
@@ -70,7 +93,7 @@ export class OnboardingInviteSuggestionsService {
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<CalendarAttendee[]> {
+  }): Promise<CalendarAttendee[] | null> {
     const mostRecentlyConnectedAccount =
       await this.connectedAccountRepository.findOne({
         where: { userWorkspaceId, workspaceId },
@@ -98,18 +121,27 @@ export class OnboardingInviteSuggestionsService {
       ),
     ]);
 
-    let attendees: CalendarAttendee[] = [];
+    let attendees: CalendarAttendee[];
 
     try {
-      attendees = await this.calendarAttendeesService.getRecentAttendees(
-        mostRecentlyConnectedAccount,
-      );
+      attendees = await withDeadline({
+        promise: this.calendarAttendeesService.getRecentAttendees(
+          mostRecentlyConnectedAccount,
+        ),
+        timeoutMs: ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS,
+        createTimeoutError: () =>
+          new Error(
+            `Calendar read timed out after ${ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS} ms`,
+          ),
+      });
     } catch (error) {
       this.logger.warn(
         `Could not compute invite suggestions for workspace ${workspaceId}: ${
           error instanceof Error ? error.message : 'unknown error'
         }`,
       );
+
+      return null;
     }
 
     const eventCountByColleagueEmail = new Map<

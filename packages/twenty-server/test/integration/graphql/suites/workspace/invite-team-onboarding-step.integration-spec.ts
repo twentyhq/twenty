@@ -37,26 +37,27 @@ const signUpInNewWorkspaceWithBilling = async ({
   }
 };
 
-const signUpOnNewWorkspace = async ({
-  email,
-  isBillingEnabled,
-}: {
-  email: string;
-  isBillingEnabled: boolean;
-}) => {
+const signUpWithVerifiedEmail = async (email: string) => {
   const { data } = await signUp({
     input: { email, password: 'Test123!@#' },
     expectToFail: false,
   });
-
-  const signUpAccessToken =
-    data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
   await globalThis.testDataSource.query(
     'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
     [email],
   );
 
+  return data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+};
+
+const createActiveWorkspace = async ({
+  signUpAccessToken,
+  isBillingEnabled,
+}: {
+  signUpAccessToken: string;
+  isBillingEnabled: boolean;
+}) => {
   const {
     data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
   } = await signUpInNewWorkspaceWithBilling({
@@ -80,7 +81,7 @@ const signUpOnNewWorkspace = async ({
     expectToFail: false,
   });
 
-  return { signUpAccessToken, workspaceAccessToken };
+  return workspaceAccessToken;
 };
 
 const findInviteTeamPendingUserVar = async (accessToken: string) => {
@@ -119,28 +120,30 @@ describe('Invite-team onboarding step on a new workspace (integration)', () => {
   });
 
   it('should not set up the invite step at creation when billing is enabled, even with a work email', async () => {
-    const newWorkspace = await signUpOnNewWorkspace({
-      email: `invite-team-${randomUUID()}@twenty-invite-test.dev`,
+    signUpAccessToken = await signUpWithVerifiedEmail(
+      `invite-team-${randomUUID()}@twenty-invite-test.dev`,
+    );
+
+    const workspaceAccessToken = await createActiveWorkspace({
+      signUpAccessToken,
       isBillingEnabled: true,
     });
 
-    signUpAccessToken = newWorkspace.signUpAccessToken;
-
     expect(
-      await findInviteTeamPendingUserVar(newWorkspace.workspaceAccessToken),
+      await findInviteTeamPendingUserVar(workspaceAccessToken),
     ).toBeUndefined();
   });
 
   it('should set up the invite step at creation when billing is disabled, even with a personal email', async () => {
-    const newWorkspace = await signUpOnNewWorkspace({
-      email: `invite-team-${randomUUID()}@example.com`,
+    signUpAccessToken = await signUpWithVerifiedEmail(
+      `invite-team-${randomUUID()}@example.com`,
+    );
+
+    const workspaceAccessToken = await createActiveWorkspace({
+      signUpAccessToken,
       isBillingEnabled: false,
     });
 
-    signUpAccessToken = newWorkspace.signUpAccessToken;
-
-    expect(
-      await findInviteTeamPendingUserVar(newWorkspace.workspaceAccessToken),
-    ).toBe(true);
+    expect(await findInviteTeamPendingUserVar(workspaceAccessToken)).toBe(true);
   });
 });
