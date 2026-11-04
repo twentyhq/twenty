@@ -18,7 +18,7 @@ export const replaceAgentChatChannelRuleGrants = async ({
   workspaceId,
   scope,
 }: {
-  manager: Pick<EntityManager, 'createQueryBuilder'>;
+  manager: Pick<EntityManager, 'createQueryBuilder' | 'getRepository'>;
   workspaceId: string;
   scope: AgentChatChannelGrantScope;
 }): Promise<void> => {
