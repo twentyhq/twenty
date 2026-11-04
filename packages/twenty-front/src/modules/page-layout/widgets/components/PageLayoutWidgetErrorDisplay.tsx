@@ -1,8 +1,8 @@
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledForbiddenContainer = styled.div`
   align-items: center;
@@ -19,6 +19,7 @@ export const PageLayoutWidgetErrorDisplay = ({
   widgetId,
   error,
 }: PageLayoutWidgetErrorDisplayProps) => {
+  const { t } = useLingui();
   if (isGraphqlErrorOfType(error, 'FORBIDDEN')) {
     return (
       <StyledForbiddenContainer>

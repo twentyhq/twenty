@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Suspense, lazy } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
+import { useLingui } from '@lingui/react/macro';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -56,6 +56,7 @@ export const SettingsApplicationFrontComponentPreviewTab = ({
   frontComponentId,
   isHeadless,
 }: SettingsApplicationFrontComponentPreviewTabProps) => {
+  const { t } = useLingui();
   return (
     <Section.Root>
       <StyledPreviewFrame>

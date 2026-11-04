@@ -3096,8 +3096,18 @@ type McpServer {
   isActive: Boolean!
   label: String!
   name: String!
+  tools: [McpServerTool!]!
+  toolsSyncError: String
+  toolsSyncedAt: DateTime
   updatedAt: DateTime!
   url: String!
+}
+
+type McpServerTool {
+  annotations: JSON
+  description: String
+  inputSchema: JSON!
+  name: String!
 }
 
 type MessageCampaignBodyConfiguration {
@@ -3543,6 +3553,7 @@ type Mutation {
   syncAppMessageFolders(input: SyncAppMessageFoldersInput!): [MessageFolder!]!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
+  syncMcpServerTools(id: UUID!): McpServer!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
@@ -4506,6 +4517,10 @@ type RowLevelPermissionPredicate {
 }
 
 type RowLevelPermissionPredicateGroup {
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
   id: String!
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   objectMetadataId: String!
@@ -4515,6 +4530,10 @@ type RowLevelPermissionPredicateGroup {
 }
 
 input RowLevelPermissionPredicateGroupInput {
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
   id: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   objectMetadataId: UUID!

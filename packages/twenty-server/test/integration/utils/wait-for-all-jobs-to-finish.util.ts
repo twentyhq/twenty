@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq';
+import { type Job, Queue } from 'bullmq';
 import IORedis from 'ioredis';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -219,6 +219,35 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
   }
 
   global.jobDrainState.lastStalledFingerprint = null;
+};
+
+export const removeDelayedJobs = async ({
+  queueName,
+  shouldRemove,
+}: {
+  queueName: MessageQueue;
+  shouldRemove: (job: Job) => boolean;
+}): Promise<void> => {
+  const queue = getQueues().find(({ name }) => name === queueName);
+
+  if (!queue) {
+    return;
+  }
+
+  const delayedJobs = await queue.getDelayed();
+
+  await Promise.all(
+    delayedJobs.filter(shouldRemove).map(async (job) => {
+      try {
+        await job.remove();
+      } catch (error) {
+        // Promoted or removed since it was listed
+        if (await job.isDelayed()) {
+          throw error;
+        }
+      }
+    }),
+  );
 };
 
 export const closeQueueConnections = async (): Promise<void> => {

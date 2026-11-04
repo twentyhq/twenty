@@ -22,7 +22,6 @@ import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
@@ -30,6 +29,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -54,6 +54,7 @@ export const WorkflowEditActionIfElseBody = ({
   action,
   actionOptions,
 }: WorkflowEditActionIfElseBodyProps) => {
+  const { t } = useLingui();
   const branches = action.settings.input.branches;
   const stepFilterGroups = action.settings.input.stepFilterGroups ?? [];
   const stepFilters = action.settings.input.stepFilters ?? [];

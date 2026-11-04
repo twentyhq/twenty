@@ -2,14 +2,15 @@ import { useComposeCalendarEventForTargetRecord } from '@/activities/calendar/ho
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 export const useComposeCalendarEventRelatedRecordAction = (
   targetRecord: ActivityTargetableObject,
 ): RelatedRecordActionBinding => {
+  const { t } = useLingui();
   const { openComposer, disabled, loading } =
     useComposeCalendarEventForTargetRecord(targetRecord);
   const canCreateCalendarEvent = useHasPermissionFlag(
