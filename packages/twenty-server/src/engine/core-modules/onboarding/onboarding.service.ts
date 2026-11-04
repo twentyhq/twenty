@@ -637,13 +637,11 @@ export class OnboardingService {
       }
 
       const inviteSuggestions =
-        await this.onboardingInviteSuggestionsService.computeAndCacheSuggestions(
-          {
-            workspaceId,
-            userId,
-            userWorkspaceId: userWorkspace.id,
-          },
-        );
+        await this.onboardingInviteSuggestionsService.getOrComputeSuggestions({
+          workspaceId,
+          userId,
+          userWorkspaceId: userWorkspace.id,
+        });
 
       if (!isNonEmptyArray(inviteSuggestions)) {
         return;

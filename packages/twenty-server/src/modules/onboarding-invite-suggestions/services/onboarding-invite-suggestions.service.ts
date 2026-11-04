@@ -52,38 +52,10 @@ export class OnboardingInviteSuggestionsService {
       return cachedSuggestions;
     }
 
-    return this.computeAndCacheSuggestions({
-      workspaceId,
-      userId,
-      userWorkspaceId,
-    });
-  }
-
-  async computeAndCacheSuggestions({
-    workspaceId,
-    userId,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    userId: string;
-    userWorkspaceId: string;
-  }): Promise<CalendarAttendee[]> {
-    const cacheKey = getOnboardingInviteSuggestionsCacheKey(
-      workspaceId,
-      userId,
-    );
-
     const suggestions = await this.computeSuggestionsFromConnectedAccount({
       workspaceId,
       userWorkspaceId,
     });
-
-    // A failed calendar read clears the cache instead of filling it, so the next read retries it.
-    if (!isDefined(suggestions)) {
-      await this.cacheStorageService.del(cacheKey);
-
-      return [];
-    }
 
     await this.cacheStorageService.set<CalendarAttendee[]>(
       cacheKey,
@@ -100,7 +72,7 @@ export class OnboardingInviteSuggestionsService {
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-  }): Promise<CalendarAttendee[] | null> {
+  }): Promise<CalendarAttendee[]> {
     const mostRecentlyConnectedAccount =
       await this.connectedAccountRepository.findOne({
         where: { userWorkspaceId, workspaceId },
@@ -128,7 +100,7 @@ export class OnboardingInviteSuggestionsService {
       ),
     ]);
 
-    let attendees: CalendarAttendee[];
+    let attendees: CalendarAttendee[] = [];
 
     try {
       attendees = await withDeadline({
@@ -147,8 +119,6 @@ export class OnboardingInviteSuggestionsService {
           error instanceof Error ? error.message : 'unknown error'
         }`,
       );
-
-      return null;
     }
 
     const eventCountByColleagueEmail = new Map<
