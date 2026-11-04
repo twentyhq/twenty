@@ -43,7 +43,6 @@ const narrowRecordsPermissionsToExplicitDenies = ({
     }
 
     objects[objectMetadataId] = {
-      ...grantedObjectRecordsPermissions,
       canReadAllRecords:
         grantedObjectRecordsPermissions.canReadAllRecords &&
         objectPermission.canReadObjectRecords !== false,
@@ -56,10 +55,19 @@ const narrowRecordsPermissionsToExplicitDenies = ({
       canDestroyAllRecords:
         grantedObjectRecordsPermissions.canDestroyAllRecords &&
         objectPermission.canDestroyObjectRecords !== false,
+      restrictedFields: grantedObjectRecordsPermissions.restrictedFields,
+      rowLevelRecordsPermissions:
+        grantedObjectRecordsPermissions.rowLevelRecordsPermissions,
     };
   }
 
-  return { ...recordsPermissions, objects };
+  return {
+    canReadAllRecords: recordsPermissions.canReadAllRecords,
+    canUpdateAllRecords: recordsPermissions.canUpdateAllRecords,
+    canSoftDeleteAllRecords: recordsPermissions.canSoftDeleteAllRecords,
+    canDestroyAllRecords: recordsPermissions.canDestroyAllRecords,
+    objects,
+  };
 };
 
 export const resolveAiRunPermissionScope = ({
