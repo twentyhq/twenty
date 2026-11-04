@@ -6,6 +6,7 @@ import {
   IconBrandX,
   IconBulb,
   IconCode,
+  IconCoin,
   IconTag,
   IconUsers,
 } from '@tabler/icons-react';
@@ -89,8 +90,8 @@ export const MENU: {
           },
         },
         {
-          label: msg`Partners`,
-          description: msg`Find a Twenty partner`,
+          label: msg`Integration partners`,
+          description: msg`Get experts to set up Twenty`,
           href: '/partners',
           icon: IconUsers,
           preview: {
@@ -100,6 +101,20 @@ export const MENU: {
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Team up with a Twenty expert`,
             description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
+          },
+        },
+        {
+          label: msg`Affiliate partners`,
+          description: msg`Earn 20% by referring Twenty`,
+          href: '/affiliate-partners',
+          icon: IconCoin,
+          preview: {
+            image: '/images/menu/affiliate-partners.webp',
+            imageAlt: msg`Blue coin illustration`,
+            imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
+            title: msg`Get paid to recommend Twenty`,
+            description: msg`Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud.`,
           },
         },
         {
