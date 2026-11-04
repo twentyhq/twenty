@@ -279,6 +279,7 @@ export const createChatParticipationTestContext = async () => {
     replyExecutionPolicyService,
     featureFlagService,
     setAssistantModes,
+    setStoredAssistantParticipation,
     setConversationType,
     registerThread,
     createThread,

@@ -18,13 +18,8 @@ const OPEN_DIRECT_MESSAGE = gql`
 
 const READ_DIRECT_MESSAGE = gql`
   query ReadDirectMessage($threadId: UUID!) {
-    chatThread(id: $threadId) {
-      id
-    }
     chatMessages(threadId: $threadId) {
-      id
       parts {
-        id
         textContent
       }
     }
@@ -159,12 +154,23 @@ describe('Private text direct messages', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
+    const sent = await sendChatParticipationMessage({
+      threadId,
+      text: 'Private pair message',
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(sent.body.errors).toBeUndefined();
+
     const response = await makeMetadataApiRequest({
       query: READ_DIRECT_MESSAGE,
       variables: { threadId },
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.NOT_FOUND,
+    );
+    expect(response.body.data?.chatMessages).toBeFalsy();
   });
 
   it.each([
