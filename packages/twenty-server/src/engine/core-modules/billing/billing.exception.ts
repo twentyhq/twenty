@@ -38,6 +38,7 @@ export enum BillingExceptionCode {
   BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
   BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
   BILLING_CREDIT_TOP_UP_NOT_GRANTED = 'BILLING_CREDIT_TOP_UP_NOT_GRANTED',
+  BILLING_ARRANGEMENT_INVALID = 'BILLING_ARRANGEMENT_INVALID',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -99,6 +100,7 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
       return msg`Your payment method was declined. Please update it and try again.`;
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
+    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
       return msg`An unexpected billing error occurred. Please contact support.`;
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return msg`Your purchased credits could not be added. Please contact support.`;
