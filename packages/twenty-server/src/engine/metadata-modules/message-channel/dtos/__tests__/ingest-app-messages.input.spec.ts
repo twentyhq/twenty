@@ -49,7 +49,9 @@ describe('IngestAppMessagesInput receivedAt', () => {
   });
 });
 
-const attachmentValidationErrors = (attachments: unknown) => {
+const attachmentValidationErrors = (
+  attachments: { fileId: string; label: string }[],
+) => {
   const input = anInput('2026-09-14T10:00:00.000Z');
 
   return validate(
