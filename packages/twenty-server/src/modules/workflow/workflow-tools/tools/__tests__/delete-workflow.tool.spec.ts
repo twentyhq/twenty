@@ -47,7 +47,7 @@ describe('createDeleteWorkflowTool', () => {
       coreWorkflowIds: [CORE_WORKFLOW_ID],
     });
     expect(result.success).toBe(true);
-    expect(result.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
+    expect(result.result).toEqual({ coreWorkflowId: CORE_WORKFLOW_ID });
   });
 
   it('should delete a workflow that has no workspace mirror', async () => {

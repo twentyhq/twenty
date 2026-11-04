@@ -65,7 +65,7 @@ Only code steps of a DRAFT workflow version can be edited. For an active or past
       return {
         success: true,
         message: `Successfully updated source code for logic function ${logicFunctionId}`,
-        logicFunctionId,
+        result: { logicFunctionId },
       };
     } catch (error) {
       return {

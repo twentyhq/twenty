@@ -73,16 +73,19 @@ export const createListWorkflowsTool = (
 
       return {
         success: true,
-        workflows: edges.map(({ node }) => ({
-          coreWorkflowId: node.id,
-          name: node.name,
-          statuses: node.statuses,
-          createdAt: node.createdAt,
-          updatedAt: node.updatedAt,
-        })),
-        totalCount,
-        endCursor: pageInfo.endCursor,
-        hasNextPage: pageInfo.hasNextPage,
+        message: `Found ${totalCount} workflow(s)`,
+        result: {
+          workflows: edges.map(({ node }) => ({
+            coreWorkflowId: node.id,
+            name: node.name,
+            statuses: node.statuses,
+            createdAt: node.createdAt,
+            updatedAt: node.updatedAt,
+          })),
+          totalCount,
+          endCursor: pageInfo.endCursor,
+          hasNextPage: pageInfo.hasNextPage,
+        },
       };
     } catch (error) {
       const errorMessage =

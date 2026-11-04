@@ -96,19 +96,13 @@ describe('get_workflow_current_version tool', () => {
       coreWorkflowId: CORE_WORKFLOW_ID,
     });
 
-    expect(result.success).toBe(true);
-
-    if (
-      !('workflowVersion' in result) ||
-      result.workflowVersion === undefined
-    ) {
-      throw new Error('Expected workflowVersion to be present in the result');
-    }
-
-    expect(result.workflowVersion.coreWorkflowVersionId).toBe(
-      CORE_DRAFT_VERSION_ID,
-    );
-    expect(result.workflowVersion.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
+    expect(result).toMatchObject({
+      success: true,
+      result: {
+        coreWorkflowVersionId: CORE_DRAFT_VERSION_ID,
+        coreWorkflowId: CORE_WORKFLOW_ID,
+      },
+    });
   });
 
   it('should return error when workflow is not found', async () => {

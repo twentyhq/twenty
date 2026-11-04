@@ -84,18 +84,14 @@ describe('get_workflow_run tool', () => {
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
-    expect(result.success).toBe(true);
-
-    if (!('workflowRun' in result) || result.workflowRun === undefined) {
-      throw new Error('Expected workflowRun to be present in the result');
-    }
-
-    expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
-    expect(result.workflowRun.error).toBe('Something went wrong');
-    expect(result.workflowRun.steps).toHaveLength(2);
-    expect(result.workflowRun.steps[1].error).toBe('Email failed');
-    expect(result.workflowRun.failedStepLogs).toEqual({
-      'step-2': [{ message: 'SMTP error' }],
+    expect(result).toMatchObject({
+      success: true,
+      result: {
+        id: WORKFLOW_RUN_ID,
+        error: 'Something went wrong',
+        steps: [expect.anything(), { error: 'Email failed' }],
+        failedStepLogs: { 'step-2': [{ message: 'SMTP error' }] },
+      },
     });
   });
 

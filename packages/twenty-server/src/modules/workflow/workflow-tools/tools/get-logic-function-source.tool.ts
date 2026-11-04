@@ -38,8 +38,8 @@ To find the logicFunctionId, look at the code step's settings.input.logicFunctio
 
       return {
         success: true,
-        logicFunctionId,
-        sourceHandlerCode,
+        message: `Read the source code of logic function ${logicFunctionId}`,
+        result: { logicFunctionId, sourceHandlerCode },
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

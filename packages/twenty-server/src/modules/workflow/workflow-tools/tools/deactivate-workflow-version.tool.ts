@@ -26,13 +26,13 @@ export const createDeactivateWorkflowVersionTool = (
   inputSchema: deactivateWorkflowVersionSchema,
   execute: async (parameters: DeactivateWorkflowVersionInput) => {
     try {
-      return await deps.coreWorkflowLifecycleService.deactivateCoreWorkflowVersion(
-        {
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        },
-      );
+      await deps.coreWorkflowLifecycleService.deactivateCoreWorkflowVersion({
+        workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+      });
+
+      return { success: true, message: 'Workflow version deactivated' };
     } catch (error) {
       return {
         success: false,

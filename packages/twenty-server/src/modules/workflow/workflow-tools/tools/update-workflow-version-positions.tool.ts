@@ -37,12 +37,17 @@ export const createUpdateWorkflowVersionPositionsTool = (
     positions: WorkflowStepPositionUpdateInput[];
   }) => {
     try {
-      return await deps.coreWorkflowVersionMutationService.updatePositions({
+      await deps.coreWorkflowVersionMutationService.updatePositions({
         coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         positions: parameters.positions,
         workspaceId: context.workspaceId,
         userWorkspaceId: context.userWorkspaceId,
       });
+
+      return {
+        success: true,
+        message: 'Workflow version step positions updated',
+      };
     } catch (error) {
       return {
         success: false,

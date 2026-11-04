@@ -37,8 +37,8 @@ describe('get_logic_function_source tool', () => {
     });
     expect(result).toEqual({
       success: true,
-      logicFunctionId: LOGIC_FUNCTION_ID,
-      sourceHandlerCode: source,
+      message: `Read the source code of logic function ${LOGIC_FUNCTION_ID}`,
+      result: { logicFunctionId: LOGIC_FUNCTION_ID, sourceHandlerCode: source },
     });
   });
 

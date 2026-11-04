@@ -40,11 +40,13 @@ export const createValidateWorkflowTool = (
         return {
           success: false,
           error: error.message,
-          issues: error.issues.map(({ code, message, stepId }) => ({
-            code,
-            message,
-            stepId,
-          })),
+          result: {
+            issues: error.issues.map(({ code, message, stepId }) => ({
+              code,
+              message,
+              stepId,
+            })),
+          },
           message: `The workflow version has ${error.issues.length} issue(s) to fix before it can be activated.`,
         };
       }

@@ -30,12 +30,16 @@ export const createUpdateWorkflowVersionStepTool = (
     step: WorkflowAction;
   }) => {
     try {
-      return await deps.coreWorkflowVersionMutationService.updateStep({
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        step: parameters.step,
-      });
+      return {
+        success: true,
+        message: 'Workflow version step updated',
+        result: await deps.coreWorkflowVersionMutationService.updateStep({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          step: parameters.step,
+        }),
+      };
     } catch (error) {
       return {
         success: false,

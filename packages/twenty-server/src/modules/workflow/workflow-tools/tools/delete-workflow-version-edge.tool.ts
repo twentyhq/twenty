@@ -31,14 +31,18 @@ export const createDeleteWorkflowVersionEdgeTool = (
   inputSchema: deleteWorkflowVersionEdgeSchema,
   execute: async (parameters: DeleteWorkflowVersionEdgeInput) => {
     try {
-      return await deps.coreWorkflowVersionMutationService.deleteEdge({
-        source: parameters.source,
-        target: parameters.target,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        sourceConnectionOptions: parameters.sourceConnectionOptions,
-      });
+      return {
+        success: true,
+        message: 'Workflow version edge deleted',
+        result: await deps.coreWorkflowVersionMutationService.deleteEdge({
+          source: parameters.source,
+          target: parameters.target,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          sourceConnectionOptions: parameters.sourceConnectionOptions,
+        }),
+      };
     } catch (error) {
       return {
         success: false,
