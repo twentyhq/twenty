@@ -18,8 +18,6 @@ import { type ApplicationTarget } from 'src/engine/core-modules/application/type
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
 import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
-import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
-import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
@@ -273,24 +271,14 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
       // Every class and method guard must pass, so an endpoint accepts what
       // all its principal guards accept and requires the union of their flags
       declarationsByEndpoint.set(endpoint, {
-        acceptedAuthPrincipals: toAcceptedAuthPrincipals([
-          ...readGuardConfigs<AuthPrincipalGuardConfig>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
-          }),
-          ...accessPolicies.map(({ authPrincipals }) => authPrincipals),
-        ]),
-        requiredPermissionFlags: toSortedUniqueValues([
-          ...readGuardConfigs<PermissionFlagType[]>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: SETTINGS_PERMISSION_GUARD_CONFIG_KEY,
-          }).flat(),
-          ...accessPolicies.flatMap(
+        acceptedAuthPrincipals: toAcceptedAuthPrincipals(
+          accessPolicies.map(({ authPrincipals }) => authPrincipals),
+        ),
+        requiredPermissionFlags: toSortedUniqueValues(
+          accessPolicies.flatMap(
             ({ requiredPermissionFlags }) => requiredPermissionFlags,
           ),
-        ]),
+        ),
         requiredFeatureFlags: toSortedUniqueValues(
           accessPolicies.flatMap(
             ({ requiredFeatureFlags = [] }) => requiredFeatureFlags,
