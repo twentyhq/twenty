@@ -38,12 +38,17 @@ export class GraphqlQueryOrderFieldParser {
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
 
-  parse(
-    orderBy: ObjectRecordOrderBy,
-    objectNameSingular: string,
+  parse({
+    orderBy,
+    objectNameSingular,
     isForwardPagination = true,
-    recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>,
-  ): ParseOrderByResult {
+    recordsPermissions,
+  }: {
+    orderBy: ObjectRecordOrderBy;
+    objectNameSingular: string;
+    isForwardPagination?: boolean;
+    recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>;
+  }): ParseOrderByResult {
     const orderByConditions: Record<string, OrderByClause> = {};
     const relationJoins: RelationJoinInfo[] = [];
     const addedJoinAliases = new Set<string>();

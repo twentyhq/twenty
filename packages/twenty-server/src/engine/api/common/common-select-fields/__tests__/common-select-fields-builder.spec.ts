@@ -9,6 +9,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
@@ -433,6 +434,34 @@ describe('CommonSelectFieldsBuilder', () => {
         name: true,
         email: true,
       });
+    });
+
+    it('should deny when the object has no permissions entry', () => {
+      const nameField = createMockField({
+        id: 'field-1',
+        name: 'name',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: 'person-id',
+      });
+      const personObject = createMockObjectMetadata({
+        id: 'person-id',
+        nameSingular: 'person',
+        fieldIds: ['field-1'],
+      });
+
+      expect(() =>
+        buildFromDepth({
+          recordsPermissions: { objects: {} },
+          flatObjectMetadataMaps: buildFlatObjectMetadataMaps([personObject]),
+          flatFieldMetadataMaps: buildFlatFieldMetadataMaps([nameField]),
+          flatObjectMetadata: personObject,
+          depth: undefined,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: PermissionsExceptionCode.PERMISSION_DENIED,
+        }),
+      );
     });
 
     it('should include relation fields when depth is 1', () => {
