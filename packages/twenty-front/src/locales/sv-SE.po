@@ -31230,7 +31230,7 @@ msgid "Welcome to Twenty"
 msgstr "Välkommen till Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/constants/WelcomeTitleMessage.ts
+#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Välkommen till ditt arbetsområde"
