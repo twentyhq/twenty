@@ -17,6 +17,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { addFieldMetadataOptionFromToFlatEntityMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/add-field-metadata-option-from-to-flat-entity-maps.util';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-modules/flat-entity/utils/transpile-flat-entity-operation-array-to-record.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
@@ -118,7 +119,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    if (!isDefined(args.fromToAllFlatEntityMaps.flatFieldMetadataMaps)) {
+    if (
+      !isDefined(args.fromToAllFlatEntityMaps.flatFieldMetadataMaps) ||
+      !isFieldMetadataOptionEntityAvailable()
+    ) {
       return await this.validateBuildAndRunFromToAllFlatEntityMaps(args);
     }
 

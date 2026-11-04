@@ -73,18 +73,27 @@ export class BackfillFieldMetadataOptionsCommand extends ProvisionedWorkspaceCom
           };
         }
 
-        for (const [
-          fieldMetadataId,
-          rewrittenOptions,
-        ] of optionsToRewriteByFieldMetadataId) {
+        if (optionsToRewriteByFieldMetadataId.size > 0) {
           await entityManager.query(
-            `UPDATE core."fieldMetadata" SET options = $1::jsonb WHERE id = $2 AND "workspaceId" = $3`,
-            [JSON.stringify(rewrittenOptions), fieldMetadataId, workspaceId],
+            `UPDATE core."fieldMetadata" AS field SET options = rewrite.options
+              FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, options jsonb)
+              WHERE field.id = rewrite.id AND field."workspaceId" = $2`,
+            [
+              JSON.stringify(
+                [...optionsToRewriteByFieldMetadataId].map(
+                  ([fieldMetadataId, rewrittenOptions]) => ({
+                    id: fieldMetadataId,
+                    options: rewrittenOptions,
+                  }),
+                ),
+              ),
+              workspaceId,
+            ],
           );
         }
 
         // Rows the new code already created for edited fields are kept as they are.
-        const insertedRows: unknown[] =
+        const insertedRows: { id: string }[] =
           optionRowsToInsert.length === 0
             ? []
             : await entityManager.query(

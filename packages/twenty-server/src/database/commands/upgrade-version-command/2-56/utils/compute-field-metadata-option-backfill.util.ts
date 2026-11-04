@@ -1,5 +1,5 @@
 import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
-import { isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type StoredOption = Record<string, unknown>;
@@ -20,8 +20,17 @@ export type FieldMetadataOptionRowToInsert = {
   position: number;
 };
 
-// Option ids become universal identifiers, so a missing, malformed or reused id is
-// regenerated and written back to the field; a repeated value keeps only its first row.
+const isOwnedByFieldOrUnused = ({
+  fieldMetadataId,
+  existingFieldMetadataId,
+}: {
+  fieldMetadataId: string;
+  existingFieldMetadataId: string | undefined;
+}) =>
+  !isDefined(existingFieldMetadataId) ||
+  existingFieldMetadataId === fieldMetadataId;
+
+// Option ids become universal identifiers, so unusable ids are regenerated and written back.
 export const computeFieldMetadataOptionBackfill = ({
   enumFields,
   existingFieldMetadataIdByUniversalIdentifier,
@@ -47,18 +56,20 @@ export const computeFieldMetadataOptionBackfill = ({
     const options = enumField.options
       .filter(isPlainObject)
       .map((option, index) => {
-        const existingFieldMetadataId = isString(option.id)
-          ? existingFieldMetadataIdByUniversalIdentifier.get(option.id)
-          : undefined;
-        const isIdReusable =
+        const reusableId =
           isString(option.id) &&
           isValidUuid(option.id) &&
           !claimedUniversalIdentifiers.has(option.id) &&
-          (existingFieldMetadataId === undefined ||
-            existingFieldMetadataId === enumField.id);
-        const id = isIdReusable ? (option.id as string) : v4();
+          isOwnedByFieldOrUnused({
+            fieldMetadataId: enumField.id,
+            existingFieldMetadataId:
+              existingFieldMetadataIdByUniversalIdentifier.get(option.id),
+          })
+            ? option.id
+            : undefined;
+        const id = reusableId ?? v4();
 
-        hasRegeneratedId ||= !isIdReusable;
+        hasRegeneratedId ||= !isDefined(reusableId);
         claimedUniversalIdentifiers.add(id);
 
         if (
@@ -78,7 +89,7 @@ export const computeFieldMetadataOptionBackfill = ({
           });
         }
 
-        return isIdReusable ? option : { ...option, id };
+        return isDefined(reusableId) ? option : { ...option, id };
       });
 
     if (hasRegeneratedId) {

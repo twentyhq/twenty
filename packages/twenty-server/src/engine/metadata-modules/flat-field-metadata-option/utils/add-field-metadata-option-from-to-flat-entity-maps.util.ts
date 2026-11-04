@@ -1,15 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import {
-  getTargetOptionColumnsByUniversalIdentifier,
-  isFieldMetadataOptionSyncSkipped,
-} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { getTargetOptionColumnsByUniversalIdentifier } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { isFieldMetadataOptionSyncSkipped } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-sync-skipped.util';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
+// Synced fields can belong to any application, so each existing row keeps its owner.
 export const addFieldMetadataOptionFromToFlatEntityMaps = ({
   fromToAllFlatEntityMaps,
   existingFlatFieldMetadataOptionMaps,
@@ -33,23 +33,36 @@ export const addFieldMetadataOptionFromToFlatEntityMaps = ({
 
   const from: MetadataUniversalFlatEntityMaps<'fieldMetadataOption'> =
     createEmptyFlatEntityMaps();
+  const existingOptionsByFieldMetadataUniversalIdentifier = new Map<
+    string,
+    FlatFieldMetadataOption[]
+  >();
 
   for (const existingOption of Object.values(
     existingFlatFieldMetadataOptionMaps.byUniversalIdentifier,
   )) {
     if (
-      isDefined(existingOption) &&
-      existingOption.applicationUniversalIdentifier ===
-        applicationUniversalIdentifier &&
-      syncedFieldMetadataUniversalIdentifiers.has(
+      !isDefined(existingOption) ||
+      !syncedFieldMetadataUniversalIdentifiers.has(
         existingOption.fieldMetadataUniversalIdentifier,
       )
     ) {
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: existingOption,
-        universalFlatEntityMapsToMutate: from,
-      });
+      continue;
     }
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: existingOption,
+      universalFlatEntityMapsToMutate: from,
+    });
+    existingOptionsByFieldMetadataUniversalIdentifier.set(
+      existingOption.fieldMetadataUniversalIdentifier,
+      [
+        ...(existingOptionsByFieldMetadataUniversalIdentifier.get(
+          existingOption.fieldMetadataUniversalIdentifier,
+        ) ?? []),
+        existingOption,
+      ],
+    );
   }
 
   const to: MetadataUniversalFlatEntityMaps<'fieldMetadataOption'> =
@@ -64,18 +77,13 @@ export const addFieldMetadataOptionFromToFlatEntityMaps = ({
     }
 
     if (isFieldMetadataOptionSyncSkipped(toFlatFieldMetadata)) {
-      for (const existingOption of Object.values(from.byUniversalIdentifier)) {
-        if (
-          existingOption?.fieldMetadataUniversalIdentifier ===
-          toFlatFieldMetadata.universalIdentifier
-        ) {
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: existingOption,
-              universalFlatEntityMapsToMutate: to,
-            },
-          );
-        }
+      for (const existingOption of existingOptionsByFieldMetadataUniversalIdentifier.get(
+        toFlatFieldMetadata.universalIdentifier,
+      ) ?? []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: existingOption,
+          universalFlatEntityMapsToMutate: to,
+        });
       }
       continue;
     }
@@ -89,7 +97,9 @@ export const addFieldMetadataOptionFromToFlatEntityMaps = ({
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: {
           universalIdentifier,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier:
+            existingOption?.applicationUniversalIdentifier ??
+            applicationUniversalIdentifier,
           fieldMetadataUniversalIdentifier:
             toFlatFieldMetadata.universalIdentifier,
           ...optionColumns,
