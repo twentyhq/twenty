@@ -9,10 +9,13 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatAssistantDecision } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-decision.type';
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { type AgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-execution-decision.enum';
 import { AgentChatAudience } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-audience.enum';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
 import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-decision.util';
+import { resolveAgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-execution-decision.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -78,6 +81,33 @@ export class AgentChatAssistantPolicyService {
     });
 
     return { isAssistantParticipant, replyDecision };
+  }
+
+  async resolveReplyExecutionDecision({
+    workspaceId,
+    thread,
+    context,
+  }: {
+    workspaceId: string;
+    thread: AssistantPolicyThread;
+    context?: AgentChatAssistantReplyContext;
+  }): Promise<AgentChatReplyExecutionDecision> {
+    const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
+      workspaceId,
+      thread,
+    });
+    const chatAudience = await this.resolveChatAudience({
+      workspaceId,
+      thread,
+      candidateWorkspaceMemberIds: [],
+    });
+
+    return resolveAgentChatReplyExecutionDecision({
+      mode: workspaceAssistantMode,
+      audience: chatAudience,
+      isAssistantParticipant: thread.isAssistantParticipant,
+      context,
+    });
   }
 
   private async resolveWorkspaceAssistantMode({

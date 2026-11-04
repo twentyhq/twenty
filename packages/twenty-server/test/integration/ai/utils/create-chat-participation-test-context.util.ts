@@ -17,6 +17,7 @@ import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/servic
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
+import { type AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { type AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
@@ -81,6 +82,10 @@ export const createChatParticipationTestContext = async () => {
   const replyPolicyService =
     getAppProviderByClassName<AgentChatReplyPolicyService>(
       'AgentChatReplyPolicyService',
+    );
+  const replyExecutionPolicyService =
+    getAppProviderByClassName<AgentChatReplyExecutionPolicyService>(
+      'AgentChatReplyExecutionPolicyService',
     );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
@@ -271,6 +276,7 @@ export const createChatParticipationTestContext = async () => {
     chatService,
     sharingService,
     replyPolicyService,
+    replyExecutionPolicyService,
     featureFlagService,
     setAssistantModes,
     setConversationType,

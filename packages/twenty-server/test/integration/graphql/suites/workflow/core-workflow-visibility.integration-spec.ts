@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkflowVisibility } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
@@ -681,7 +681,7 @@ describe('core workflow visibility (e2e)', () => {
           'AgentRunConversationService',
         );
 
-      const { turnId } = await runConversationService.openTurn({
+      const openedTurn = await runConversationService.openTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         agentId: null,
@@ -693,6 +693,10 @@ describe('core workflow visibility (e2e)', () => {
           workflowRunId,
         }),
       });
+
+      assertIsDefinedOrThrow(openedTurn);
+
+      const { turnId } = openedTurn;
 
       await getAppProviderByClassName<AgentConversationWriterService>(
         'AgentConversationWriterService',

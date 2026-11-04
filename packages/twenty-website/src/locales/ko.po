@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-04 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -6728,7 +6728,7 @@ msgstr "유효한 이메일 주소를 입력하세요."
 #. js-lingui-id: 8srGrM
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
-msgstr ""
+msgstr "기본 채널 링크를 입력하세요. 예: youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7958,7 +7958,7 @@ msgstr "Sierra Leone 🇸🇱"
 #. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
 msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
-msgstr ""
+msgstr "1분 이내에 Cloud에 가입하고 30일 평가판을 시작하세요. 대규모 도입의 경우, 저희 팀이 전 과정에서 지원해 드립니다. 필요한 사항을 논의하려면 문의하세요."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -10294,7 +10294,7 @@ msgstr "YouTube, 뉴스레터, LinkedIn, TikTok: GTM 도구를 다루는 모든 
 #. js-lingui-id: Lkub4e
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "youtube.com/@yourname"
-msgstr ""
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts
