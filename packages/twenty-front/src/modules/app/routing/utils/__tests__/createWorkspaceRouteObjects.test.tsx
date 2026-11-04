@@ -20,7 +20,13 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
-const getMatchedRoutePaths = (routeObjects: RouteObject[], pathname: string) =>
+const getMatchedRoutePaths = ({
+  routeObjects,
+  pathname,
+}: {
+  routeObjects: RouteObject[];
+  pathname: string;
+}) =>
   (matchRoutes(routeObjects, pathname) ?? []).map(({ route }) => route.path);
 
 describe('workspace route objects', () => {
@@ -185,7 +191,10 @@ describe('workspace route objects', () => {
 
 describe('admin console route objects', () => {
   const matchedPaths = (pathname: string) =>
-    getMatchedRoutePaths(createAdminConsoleRouteObjects(), pathname);
+    getMatchedRoutePaths({
+      routeObjects: createAdminConsoleRouteObjects(),
+      pathname,
+    });
 
   it('serves the admin pages under settings', () => {
     expect(matchedPaths(getSettingsPath(SettingsPath.AdminPanel))).toEqual([
@@ -208,13 +217,13 @@ describe('admin console route objects', () => {
 
 describe('workspace settings routes with an admin console', () => {
   const matchedPaths = (pathname: string) =>
-    getMatchedRoutePaths(
-      createWorkspaceRouteObjects({
+    getMatchedRoutePaths({
+      routeObjects: createWorkspaceRouteObjects({
         isAdminPageEnabled: true,
         isAdminConsoleEnabled: true,
       }),
       pathname,
-    );
+    });
 
   it.each([
     getSettingsPath(SettingsPath.AdminPanel),
