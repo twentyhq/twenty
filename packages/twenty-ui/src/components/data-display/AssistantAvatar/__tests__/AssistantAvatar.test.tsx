@@ -61,6 +61,23 @@ describe('AssistantAvatar', () => {
     expect(avatar).toHaveStyle({ opacity: '0.5', marginInlineEnd: '8px' });
   });
 
+  it('preserves explicit aria-hidden values for labeled artwork', () => {
+    const ref = createRef<HTMLSpanElement>();
+    const { rerender } = render(
+      <AssistantAvatar ref={ref} aria-label="Assistant" aria-hidden />,
+    );
+
+    expect(ref.current).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+
+    rerender(<AssistantAvatar aria-label="Assistant" aria-hidden={false} />);
+
+    expect(screen.getByRole('img', { name: 'Assistant' })).toHaveAttribute(
+      'aria-hidden',
+      'false',
+    );
+  });
+
   it('updates the controlled character without adding remote image sources', () => {
     const { rerender, container } = render(
       <AssistantAvatar

@@ -16,6 +16,7 @@ export const AssistantAvatar = ({
   style,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
+  'aria-hidden': ariaHidden,
   ...props
 }: AssistantAvatarProps) => {
   const hasAccessibleName =
@@ -43,7 +44,7 @@ export const AssistantAvatar = ({
       role={hasAccessibleName ? 'img' : undefined}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
-      aria-hidden={hasAccessibleName ? undefined : true}
+      aria-hidden={ariaHidden ?? (hasAccessibleName ? undefined : true)}
     >
       <span aria-hidden="true" className={styles.body} />
       <span aria-hidden="true" className={styles.face} />
