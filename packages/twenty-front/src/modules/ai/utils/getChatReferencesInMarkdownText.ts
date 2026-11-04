@@ -1,6 +1,6 @@
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
-import { Lexer, type Token, type Tokens } from 'marked';
-import { isDefined } from 'twenty-shared/utils';
+import { Lexer, type Token } from 'marked';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 // marked tokens carry no source offsets, so a numbered marker before each reference shows which token it opens in.
 const PROBE_MARKER = '\uFDD1';
@@ -10,8 +10,12 @@ const PROBED_REFERENCE_OPENING_REGEX = new RegExp(
   'g',
 );
 
-// Code, HTML, link targets and link definitions all need one of these, so without them every reference sits in text.
-const NON_TEXT_MARKDOWN_SYNTAX_REGEX = /`|~~~|<|\]\(|\]:|\t|(?:^|\n) {4}/;
+// Code blocks, HTML and links need one of these; a code span needs a backtick on each side of the reference.
+const NON_TEXT_BLOCK_SYNTAXES = ['```', '~~~', '<', '](', ']:', '\t', '    '];
+
+const LINK_OR_HTML_SYNTAX_REGEX = /<|\]\(/;
+
+const BACKTICK_RUN_OR_LINE_BREAK_REGEX = /`+|\n/g;
 
 const isBackslashEscaped = ({
   text,
@@ -42,35 +46,81 @@ const hasEscapedBrackets = ({
     index: reference.index + reference.fullMatch.length - 2,
   });
 
-const isListToken = (token: Token): token is Tokens.List =>
-  token.type === 'list';
+const getInlineTextRaws = (tokens: Token[]): string[] =>
+  tokens.flatMap((token) => {
+    if (token.type === 'text') {
+      return [token.raw];
+    }
 
-const isTableToken = (token: Token): token is Tokens.Table =>
-  token.type === 'table';
+    return 'tokens' in token && isDefined(token.tokens)
+      ? getInlineTextRaws(token.tokens)
+      : [];
+  });
 
-const isInlineTextToken = (token: Token): token is Tokens.Text =>
-  token.type === 'text' && !isDefined(token.tokens);
+const getProbedReferenceIndexes = (text: string): number[] =>
+  text.includes(PROBE_MARKER)
+    ? [...text.matchAll(PROBED_REFERENCE_OPENING_REGEX)].map((match) =>
+        Number(match[1]),
+      )
+    : [];
 
-const getChildTokens = (token: Token): Token[] => {
-  if (isListToken(token)) {
-    return token.items;
+const hasProbeMarkerBetweenBackticks = (text: string): boolean =>
+  text.slice(text.indexOf('`'), text.lastIndexOf('`')).includes(PROBE_MARKER);
+
+const isEveryBacktickRunClosedOnItsLine = (text: string): boolean => {
+  let openRunLength = 0;
+
+  for (const [match] of text.matchAll(BACKTICK_RUN_OR_LINE_BREAK_REGEX)) {
+    if (match === '\n') {
+      if (openRunLength > 0) {
+        return false;
+      }
+    } else if (openRunLength === 0) {
+      openRunLength = match.length;
+    } else if (match.length === openRunLength) {
+      openRunLength = 0;
+    }
   }
 
-  if (isTableToken(token)) {
-    return [...token.header, ...token.rows.flat()].flatMap(
-      (cell) => cell.tokens,
-    );
-  }
-
-  return 'tokens' in token && isDefined(token.tokens) ? token.tokens : [];
+  return openRunLength === 0;
 };
 
-const getInlineTextRaws = (tokens: Token[]): string[] =>
-  tokens.flatMap((token) =>
-    isInlineTextToken(token)
-      ? [token.raw]
-      : getInlineTextRaws(getChildTokens(token)),
+// When every backtick run closes on its own line, no code span crosses lines, so each line is checked alone.
+const mayHideProbedReferences = (probedText: string): boolean => {
+  if (NON_TEXT_BLOCK_SYNTAXES.some((syntax) => probedText.includes(syntax))) {
+    return true;
+  }
+
+  if (!probedText.includes('`')) {
+    return false;
+  }
+
+  return !probedText.includes('\\`') &&
+    isEveryBacktickRunClosedOnItsLine(probedText)
+    ? probedText.split('\n').some(hasProbeMarkerBetweenBackticks)
+    : hasProbeMarkerBetweenBackticks(probedText);
+};
+
+const getTextReferenceIndexes = (probedText: string): Set<number> => {
+  const lexer = new Lexer();
+
+  lexer.blockTokens(probedText, []);
+
+  const hasLinkDefinitions = !isEmptyObject(lexer.tokens.links);
+
+  return new Set(
+    lexer.inlineQueue
+      .filter(({ src }) => src.includes(PROBE_MARKER))
+      .flatMap(({ src }) =>
+        hasLinkDefinitions ||
+        LINK_OR_HTML_SYNTAX_REGEX.test(src) ||
+        hasProbeMarkerBetweenBackticks(src)
+          ? getInlineTextRaws(lexer.inlineTokens(src))
+          : [src],
+      )
+      .flatMap(getProbedReferenceIndexes),
   );
+};
 
 const removeProbeMarkers = (text: string): string =>
   text.replaceAll(PROBE_MARKER, '');
@@ -104,26 +154,22 @@ export const getChatReferencesInMarkdownText = ({
     (reference) => !hasEscapedBrackets({ text, reference }),
   );
 
-  if (
-    unescapedReferences.length === 0 ||
-    !NON_TEXT_MARKDOWN_SYNTAX_REGEX.test(text)
-  ) {
+  if (unescapedReferences.length === 0) {
+    return [];
+  }
+
+  const probedText = insertProbeMarkers({
+    text,
+    references: unescapedReferences,
+  });
+
+  if (!mayHideProbedReferences(probedText)) {
     return unescapedReferences;
   }
 
-  const textTokenReferenceIndexes = new Set(
-    getInlineTextRaws(
-      Lexer.lex(insertProbeMarkers({ text, references: unescapedReferences })),
-    )
-      .filter((raw) => raw.includes(PROBE_MARKER))
-      .flatMap((raw) =>
-        [...raw.matchAll(PROBED_REFERENCE_OPENING_REGEX)].map((match) =>
-          Number(match[1]),
-        ),
-      ),
-  );
+  const textReferenceIndexes = getTextReferenceIndexes(probedText);
 
   return unescapedReferences.filter((_, referenceIndex) =>
-    textTokenReferenceIndexes.has(referenceIndex),
+    textReferenceIndexes.has(referenceIndex),
   );
 };

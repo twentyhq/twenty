@@ -149,6 +149,15 @@ describe('protectChatReferencesForMarkdown', () => {
   it.each([
     ['a list item', `- ${MIA_MENTION} owns the follow-up`],
     ['a table cell', `| Owner |\n| --- |\n| ${MIA_MENTION} |`],
+    [
+      'a table cell next to inline code',
+      `| Owner | Field |\n| --- | --- |\n| ${MIA_MENTION} | \`stage\` |`,
+    ],
+    ['a list item after inline code', `- \`deal\` owned by ${MIA_MENTION}`],
+    [
+      'text between two code spans',
+      `Use \`a\` with ${MIA_MENTION} and \`b\` alone`,
+    ],
     ['a heading', `## For ${MIA_MENTION}`],
     ['a blockquote', `> ${MIA_MENTION} said yes`],
     ['emphasis', `**${MIA_MENTION}**, please review`],
@@ -169,10 +178,22 @@ describe('protectChatReferencesForMarkdown', () => {
     ['an indented code block', `    ${MIA_MENTION}`],
     ['a tab indented code block', `\t${MIA_MENTION}`],
     ['a tilde fenced code block', `~~~\n${MIA_MENTION}\n~~~`],
+    ['an unclosed fenced code block', `\`\`\`\n${MIA_MENTION}`],
+    ['a code span across lines', `Use \`a\n${MIA_MENTION}\nb\` here`],
+    [
+      'a code span opened after an escaped backtick',
+      `\\\`a \`b\n${MIA_MENTION} c\` d\``,
+    ],
+    ['indented code in a blockquote', `>     ${MIA_MENTION}`],
+    ['indented code in a list item', `-     ${MIA_MENTION}`],
     ['a link title', `[Docs](https://example.com "${MIA_MENTION}")`],
     [
       'a link definition',
       `See [docs].\n\n[docs]: https://example.com "${MIA_MENTION}"`,
+    ],
+    [
+      'a link label matching a definition',
+      `${MIA_MENTION}\n\n[${MIA_MENTION.slice(2, -2)}]: https://example.com`,
     ],
     [
       'a fenced code block in a list item',
