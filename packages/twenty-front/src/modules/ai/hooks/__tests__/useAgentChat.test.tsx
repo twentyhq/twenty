@@ -7,9 +7,9 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -107,10 +107,7 @@ const renderAgentChat = ({
   hasAiModels = true,
   isAiChatInboxEnabled = false,
   newThreadChannelId = null,
-  newThreadRecipients = {
-    isAssistantParticipant: true,
-    recipientWorkspaceMemberIds: [],
-  },
+  newThreadRecipients = AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   currentThreadId = null,
   objectMetadataItems,
 }: {
@@ -176,6 +173,22 @@ const renderAgentChat = ({
     },
     { wrapper: Wrapper },
   ).result;
+};
+
+const holdNextMutation = (apolloClient: ReturnType<typeof useApolloClient>) => {
+  let releaseMutation = () => {};
+  const mutationGate = new Promise<void>((resolve) => {
+    releaseMutation = resolve;
+  });
+  const originalMutate = apolloClient.mutate.bind(apolloClient);
+
+  jest.spyOn(apolloClient, 'mutate').mockImplementationOnce(async (options) => {
+    await mutationGate;
+
+    return originalMutate(options);
+  });
+
+  return releaseMutation;
 };
 
 const send = async (result: {
@@ -434,10 +447,7 @@ describe('useAgentChat', () => {
       jotaiStore.get(
         agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
-    ).toEqual({
-      isAssistantParticipant: true,
-      recipientWorkspaceMemberIds: [],
-    });
+    ).toEqual(AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
   });
 
   it('keeps the draft without sending when Ada is removed and no recipients remain', async () => {
@@ -578,21 +588,7 @@ describe('useAgentChat', () => {
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
     });
-    let releaseMutation: (() => void) | undefined;
-    const mutationGate = new Promise<void>((resolve) => {
-      releaseMutation = resolve;
-    });
-    const originalMutate = result.current.apolloClient.mutate.bind(
-      result.current.apolloClient,
-    );
-
-    jest
-      .spyOn(result.current.apolloClient, 'mutate')
-      .mockImplementationOnce(async (options) => {
-        await mutationGate;
-
-        return originalMutate(options);
-      });
+    const releaseMutation = holdNextMutation(result.current.apolloClient);
 
     let pendingSend: Promise<void> | undefined;
 
@@ -611,7 +607,6 @@ describe('useAgentChat', () => {
       false,
     );
     expect(jotaiStore.get(isSendingMessageAtom)).toBe(true);
-    assertIsDefinedOrThrow(releaseMutation);
     releaseMutation();
 
     await act(async () => {
@@ -672,21 +667,7 @@ describe('useAgentChat', () => {
       sendChatMessageOutcomes: ['sent', 'sent'],
       currentThreadId: EXISTING_THREAD_ID,
     });
-    let releaseFirstSend: (() => void) | undefined;
-    const firstSendGate = new Promise<void>((resolve) => {
-      releaseFirstSend = resolve;
-    });
-    const originalMutate = result.current.apolloClient.mutate.bind(
-      result.current.apolloClient,
-    );
-
-    jest
-      .spyOn(result.current.apolloClient, 'mutate')
-      .mockImplementationOnce(async (options) => {
-        await firstSendGate;
-
-        return originalMutate(options);
-      });
+    const releaseFirstSend = holdNextMutation(result.current.apolloClient);
 
     let firstSend: Promise<void> | undefined;
 
@@ -707,7 +688,6 @@ describe('useAgentChat', () => {
       expect.objectContaining({ text: 'Follow-up' }),
     );
 
-    assertIsDefinedOrThrow(releaseFirstSend);
     releaseFirstSend();
 
     await act(async () => {
