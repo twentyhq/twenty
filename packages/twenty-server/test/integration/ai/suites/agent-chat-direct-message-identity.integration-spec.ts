@@ -221,7 +221,7 @@ describe('Canonical direct message identity', () => {
                 WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               ].map((principalId) => ({
                 ...target,
-                sourceId: threadId,
+                sourceId: recordId,
                 principalId,
                 principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
                 accessLevel: RecordShareAccessLevel.FULL,

@@ -221,7 +221,8 @@ export class RecordSharingService {
 
             if (
               await this.isDirectMessageContent({
-                ...args,
+                authContext: args.authContext,
+                recordId: args.recordId,
                 flatObjectMetadata,
                 transactionScope,
               })
@@ -354,7 +355,8 @@ export class RecordSharingService {
         flatObjectMetadata,
       })) &&
       !(await this.isDirectMessageContent({
-        ...args,
+        authContext: args.authContext,
+        recordId: args.recordId,
         flatObjectMetadata,
       }));
     const grants = shares.filter(
@@ -601,8 +603,8 @@ export class RecordSharingService {
     flatObjectMetadata,
     recordId,
     transactionScope,
-  }: RecordSharingArgs & {
-    flatObjectMetadata: FlatObjectMetadata;
+  }: Pick<RecordSharingArgs, 'authContext' | 'recordId'> & {
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<boolean> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
