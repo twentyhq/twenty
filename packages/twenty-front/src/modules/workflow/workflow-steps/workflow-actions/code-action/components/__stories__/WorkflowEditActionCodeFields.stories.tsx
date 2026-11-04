@@ -59,6 +59,7 @@ export const EnumArrayWithUnknownValue: Story = {
     await userEvent.click(picker.getByRole('button', { name: 'email' }));
 
     await waitFor(() => {
+      expect(args.onInputChange).toHaveBeenCalledTimes(1);
       expect(args.onInputChange).toHaveBeenLastCalledWith(
         ['fax'],
         ['channels'],
