@@ -1,9 +1,11 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import {
   AiException,
   AiExceptionCode,
@@ -76,6 +78,25 @@ export class AgentChatThreadTargetService {
     });
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const thread = await this.workspaceOrmManager
+        .getRepository('agentChatThread')
+        .findOne({
+          where: { id: threadId },
+          select: { id: true, conversationType: true },
+          withDeleted: true,
+        });
+
+      if (!isDefined(thread)) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      if (thread.conversationType === 'DIRECT_MESSAGE') {
+        throw new AiException(
+          doNotTranslate('Direct messages do not support linked records'),
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
       // A record in the trash keeps its links, but nothing new is filed under it.
       await this.assertRecordIsReadableOrThrow({
         objectNameSingular,

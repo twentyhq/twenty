@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
@@ -26,6 +27,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -269,6 +271,52 @@ describe('Inbox thread mutations for members and applications', () => {
       data: { attachRecordToInboxThread: true },
     });
     expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+  });
+
+  it('rejects attaching and detaching records on a deleted direct message', async () => {
+    const context = await createChatParticipationTestContext();
+
+    try {
+      const threadId = context.registerThread(
+        await getAppProviderByClassName<AgentChatDirectMessageIdentityService>(
+          'AgentChatDirectMessageIdentityService',
+        ).getOrCreate({
+          workspaceId: context.workspaceId,
+          firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        }),
+      );
+
+      for (const workspaceMemberId of [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ]) {
+        await context.share({
+          threadId,
+          recipientWorkspaceMemberId: workspaceMemberId,
+          accessLevel: RecordShareAccessLevel.READ_WRITE,
+        });
+      }
+
+      await global.testDataSource.query(
+        `UPDATE ${SCHEMA}."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+        [threadId],
+      );
+
+      for (const response of [
+        await attachRecord({ threadId }),
+        await detachRecord({ threadId }),
+      ]) {
+        expect(response.body.errors?.[0]?.extensions).toMatchObject({
+          code: 'BAD_USER_INPUT',
+          subCode: AiExceptionCode.INVALID_AGENT_INPUT,
+        });
+      }
+
+      expect(await readCompanyLinks(threadId)).toEqual([]);
+    } finally {
+      await context.cleanup();
+    }
   });
 
   it('soft deletes the link on detach, changes nothing when detached again, and links again on attach', async () => {
