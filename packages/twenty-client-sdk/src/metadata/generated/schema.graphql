@@ -311,6 +311,7 @@ enum AllMetadataName {
   commandMenuItem
   connectionProvider
   fieldMetadata
+  fieldMetadataOption
   fieldPermission
   frontComponent
   index
