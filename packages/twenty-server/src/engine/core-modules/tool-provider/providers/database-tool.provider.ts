@@ -95,7 +95,6 @@ export class DatabaseToolProvider implements ToolProvider {
           authContext: context.authContext,
         })
       : undefined;
-    // restrictedFields drive the tool schemas until field questions exist
     const recordsPermissions = isDefined(context.authContext)
       ? await this.recordAccessPolicyService.findRecordsPermissions(
           context.authContext,
