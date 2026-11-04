@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-// Records permissions are memoized per principals, so converting once per instance keeps API callers off a per-query loop
 const objectsPermissionsByRoleRecordsPermissions = new WeakMap<
   RoleRecordsPermissions,
   ObjectsPermissions
