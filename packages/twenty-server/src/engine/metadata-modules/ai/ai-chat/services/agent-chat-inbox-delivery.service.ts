@@ -218,8 +218,7 @@ export class AgentChatInboxDeliveryService {
     };
   }
 
-  // Locks record shares, then participants, then the thread, in the order
-  // every other writer takes them
+  // Locks record shares, then participants, then the thread, in the order every other writer takes them
   async deliverMentionsInTransaction({
     scope,
     mentionDelivery: {

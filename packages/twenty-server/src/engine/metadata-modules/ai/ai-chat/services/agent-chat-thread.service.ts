@@ -604,7 +604,6 @@ export class AgentChatThreadService {
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
   }
 
-  // A conversation deleted since the send began is not written to
   async recordThreadActivityInTransactionOrThrow({
     scope,
     workspaceId,

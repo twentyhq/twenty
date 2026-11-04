@@ -86,8 +86,7 @@ export class AgentChatInboxParticipantWriterService {
     }
   }
 
-  // Joins the message's transaction, so nothing here is checked again: the
-  // shares it relies on are not committed yet, and no member authored the message
+  // Unchecked inside the message's transaction: its new shares are not committed yet, and no member wrote it
   async writeParticipantInboxStateInTransaction({
     scope,
     workspaceId,
