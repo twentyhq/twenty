@@ -7,8 +7,10 @@ import {
 import { type CurrentUserWorkspaceObjectRecordsPermissions } from '@/auth/types/CurrentUserWorkspaceObjectRecordsPermissions';
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
   type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
 } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -37,6 +39,20 @@ const PERSON_ROW_LEVEL_PERMISSION_PREDICATE: RowLevelPermissionPredicate = {
   roleId: 'role-id',
 };
 
+const PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP: RowLevelPermissionPredicateGroup =
+  {
+    id: 'person-predicate-group-id',
+    logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    objectMetadataId: 'person-object-metadata-id',
+    parentRowLevelPermissionPredicateGroupId: null,
+    positionInRowLevelPermissionPredicateGroup: null,
+    canReadRecords: true,
+    canUpdateRecords: true,
+    canSoftDeleteRecords: false,
+    canDestroyRecords: false,
+    roleId: 'role-id',
+  };
+
 const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorkspaceObjectRecordsPermissions =
   {
     objectMetadataId: 'person-object-metadata-id',
@@ -51,7 +67,7 @@ const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorksp
       canSoftDeleteRecords: false,
       canDestroyRecords: false,
       predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
-      predicateGroups: [],
+      predicateGroups: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP],
     },
   };
 
@@ -130,7 +146,9 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
       canDestroyObjectRecords: false,
       restrictedFields: {},
       rowLevelPermissionPredicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
-      rowLevelPermissionPredicateGroups: [],
+      rowLevelPermissionPredicateGroups: [
+        PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP,
+      ],
     });
   });
 
