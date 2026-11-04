@@ -32,6 +32,14 @@ type WorkspaceSettings = AiChatAssistantProfile & {
   aiChatInboxAssistantMode: AiChatAssistantMode;
 };
 
+const CUSTOM_AI_CHAT_ASSISTANT_PROFILE = {
+  aiChatAssistantDisplayName: 'Nimbus',
+  aiChatAssistantAvatarShape: 'cloud',
+  aiChatAssistantAvatarColor: 'purple',
+  aiChatAssistantAvatarFace: 'happy',
+  isAiChatAssistantAvatarAnimated: false,
+} as const satisfies AiChatAssistantProfile;
+
 const setInboxEnabled = (value: boolean) =>
   getAppProviderByClassName<FeatureFlagService>(
     'FeatureFlagService',
@@ -66,7 +74,7 @@ const updateWorkspace = ({
   data,
   token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 }: {
-  data: UpdateWorkspaceInput | Record<string, unknown>;
+  data: UpdateWorkspaceInput;
   token?: string;
 }) =>
   makeMetadataApiRequest(
@@ -328,23 +336,18 @@ describe('workspace assistant mode permissions and persistence', () => {
     const otherWorkspaceBefore = await workspaceRepository.findOneByOrFail({
       id: SEED_YCOMBINATOR_WORKSPACE_ID,
     });
-    const customProfile: AiChatAssistantProfile = {
-      aiChatAssistantDisplayName: 'Nimbus',
-      aiChatAssistantAvatarShape: 'cloud',
-      aiChatAssistantAvatarColor: 'purple',
-      aiChatAssistantAvatarFace: 'happy',
-      isAiChatAssistantAvatarAnimated: false,
-    };
     const response = await updateWorkspace({
       data: {
-        ...customProfile,
+        ...CUSTOM_AI_CHAT_ASSISTANT_PROFILE,
         aiChatAssistantDisplayName: '  Nimbus  ',
       },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace).toMatchObject(customProfile);
+    expect(response.body.data.updateWorkspace).toMatchObject(
+      CUSTOM_AI_CHAT_ASSISTANT_PROFILE,
+    );
 
     const partialResponse = await updateWorkspace({
       data: { aiChatAssistantAvatarFace: 'wink' },
@@ -357,7 +360,7 @@ describe('workspace assistant mode permissions and persistence', () => {
 
     expect(persisted.body.errors).toBeUndefined();
     expect(persisted.body.data.currentWorkspace).toMatchObject({
-      ...customProfile,
+      ...CUSTOM_AI_CHAT_ASSISTANT_PROFILE,
       aiChatAssistantAvatarFace: 'wink',
     });
 
@@ -379,14 +382,18 @@ describe('workspace assistant mode permissions and persistence', () => {
   });
 
   it.each(
-    Object.entries(DEFAULT_AI_CHAT_ASSISTANT_PROFILE).map(([field, value]) => ({
+    Object.entries(CUSTOM_AI_CHAT_ASSISTANT_PROFILE).map(([field, value]) => ({
       field,
       value,
     })),
   )(
     'requires AI_SETTINGS and enabled Inbox for $field',
     async ({ field, value }) => {
-      const data = { [field]: value };
+      const data: Partial<AiChatAssistantProfile> = { [field]: value };
+      const before = await readWorkspace();
+
+      expect(before.body.errors).toBeUndefined();
+      expect(value).not.toBe(before.body.data.currentWorkspace[field]);
 
       await assignMemberRole(workspaceSettingsRoleId);
 
@@ -396,6 +403,13 @@ describe('workspace assistant mode permissions and persistence', () => {
       });
 
       expect(denied.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+
+      const afterDenied = await readWorkspace();
+
+      expect(afterDenied.body.errors).toBeUndefined();
+      expect(afterDenied.body.data.currentWorkspace).toEqual(
+        before.body.data.currentWorkspace,
+      );
 
       await assignMemberRole(aiSettingsRoleId);
       await setInboxEnabled(false);
@@ -409,8 +423,9 @@ describe('workspace assistant mode permissions and persistence', () => {
 
       const persisted = await readWorkspace();
 
-      expect(persisted.body.data.currentWorkspace).toMatchObject(
-        DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+      expect(persisted.body.errors).toBeUndefined();
+      expect(persisted.body.data.currentWorkspace).toEqual(
+        before.body.data.currentWorkspace,
       );
     },
   );
@@ -430,10 +445,12 @@ describe('workspace assistant mode permissions and persistence', () => {
         data: Object.assign(
           { displayName: 'Rejected profile edit' },
           invalidInput,
-        ),
+        ) as UpdateWorkspaceInput,
       });
 
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].extensions.code).toBe(
+        ErrorCode.BAD_USER_INPUT,
+      );
 
       const after = await readWorkspace();
 
@@ -444,6 +461,12 @@ describe('workspace assistant mode permissions and persistence', () => {
   );
 
   it('rejects a complete profile reset mixed with an unauthorized workspace edit', async () => {
+    const customProfileResponse = await updateWorkspace({
+      data: CUSTOM_AI_CHAT_ASSISTANT_PROFILE,
+    });
+
+    expect(customProfileResponse.body.errors).toBeUndefined();
+
     const before = await readWorkspace();
     const response = await updateWorkspace({
       data: {
