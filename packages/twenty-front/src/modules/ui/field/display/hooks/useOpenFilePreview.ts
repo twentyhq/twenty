@@ -1,28 +1,29 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenFilePreview = () => {
-  const setFilePreview = useSetAtomState(filePreviewState);
-  const isAttachmentPreviewEnabled = useAtomStateValue(
-    isAttachmentPreviewEnabledState,
-  );
+  const store = useStore();
 
-  const openFilePreview = (file: FieldFilesValue) => {
-    if (!isAttachmentPreviewEnabled) {
-      if (isDefined(file.url)) {
-        downloadFile(file.url, file.label ?? 'file');
+  const openFilePreview = useCallback(
+    (file: FieldFilesValue) => {
+      if (!store.get(isAttachmentPreviewEnabledState.atom)) {
+        if (isNonEmptyString(file.url)) {
+          downloadFile(file.url, file.label ?? 'file');
+        }
+
+        return;
       }
 
-      return;
-    }
-
-    setFilePreview(file);
-  };
+      store.set(filePreviewState.atom, file);
+    },
+    [store],
+  );
 
   return { openFilePreview };
 };

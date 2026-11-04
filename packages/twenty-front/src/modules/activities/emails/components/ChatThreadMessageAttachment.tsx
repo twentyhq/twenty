@@ -8,6 +8,7 @@ import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/util
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { useOpenFilePreview } from '@/ui/field/display/hooks/useOpenFilePreview';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const CHAT_MESSAGE_MEDIA_MAX_HEIGHT = '240px';
@@ -55,9 +56,13 @@ export const ChatThreadMessageAttachment = ({
   file,
 }: ChatThreadMessageAttachmentProps) => {
   const { openFilePreview } = useOpenFilePreview();
-  const [hasMediaFailedToLoad, setHasMediaFailedToLoad] = useState(false);
+  // keyed on the url so a refreshed signed url gets another chance to load
+  const [failedMediaUrl, setFailedMediaUrl] = useState<string | undefined>();
 
-  const handleMediaError = () => setHasMediaFailedToLoad(true);
+  const hasMediaFailedToLoad =
+    isDefined(failedMediaUrl) && failedMediaUrl === file.url;
+
+  const handleMediaError = () => setFailedMediaUrl(file.url);
 
   if (!isNonEmptyString(file.url) || file.isDeleted || hasMediaFailedToLoad) {
     return <FileChip file={file} onClick={openFilePreview} />;

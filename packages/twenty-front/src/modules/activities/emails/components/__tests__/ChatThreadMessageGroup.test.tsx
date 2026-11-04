@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
@@ -173,6 +174,71 @@ describe('ChatThreadMessageGroup', () => {
     expect(
       screen.getByRole('button', { name: /clip\.wmv/ }),
     ).toBeInTheDocument();
+  });
+
+  it('plays a file again once it gets a new url after failing', () => {
+    const renderVideo = (url: string) => (
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              text: '',
+              attachments: [
+                {
+                  fileId: 'video-file-id',
+                  label: 'clip.mp4',
+                  extension: '.mp4',
+                  url,
+                },
+              ],
+            }),
+          ],
+        }}
+      />
+    );
+
+    const { rerender } = render(renderVideo('https://files.test/expired.mp4'));
+
+    fireEvent.error(screen.getByLabelText('clip.mp4'));
+    rerender(renderVideo('https://files.test/refreshed.mp4'));
+
+    expect(screen.getByLabelText('clip.mp4')).toHaveAttribute(
+      'src',
+      'https://files.test/refreshed.mp4',
+    );
+  });
+
+  it('downloads nothing when a file without a url is clicked', async () => {
+    const fetchSpy = jest.fn();
+
+    global.fetch = fetchSpy;
+
+    render(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              attachments: [
+                {
+                  fileId: 'document-file-id',
+                  label: 'offer.pdf',
+                  extension: '.pdf',
+                  url: '',
+                },
+              ],
+            }),
+          ],
+        }}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /offer\.pdf/ }));
+
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it('does not render a body masked by metadata visibility', () => {
