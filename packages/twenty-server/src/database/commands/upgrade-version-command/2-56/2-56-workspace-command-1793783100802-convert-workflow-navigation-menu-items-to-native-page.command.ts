@@ -25,7 +25,7 @@ const WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
     )
   )`;
 
-// One per member, since all open the same page: standard, then workspace-wide, then oldest.
+// One per member, since all open the same page.
 const DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
   WITH ranked AS (
     SELECT

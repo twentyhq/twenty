@@ -2,7 +2,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 describe('isNavigationMenuItemReadable', () => {
   it('keeps native page items, which do not depend on an object', () => {
@@ -13,7 +12,9 @@ describe('isNavigationMenuItemReadable', () => {
           type: NavigationMenuItemType.NATIVE_PAGE,
           nativePageKey: 'workflows',
           position: 0,
-        } as NavigationMenuItem,
+          createdAt: '',
+          updatedAt: '',
+        },
         permissionFlagMap: { [PermissionFlagType.WORKFLOWS]: true },
         objectMetadataItems: [],
         views: [],
@@ -30,7 +31,9 @@ describe('isNavigationMenuItemReadable', () => {
           type: NavigationMenuItemType.NATIVE_PAGE,
           nativePageKey: 'agents',
           position: 0,
-        } as NavigationMenuItem,
+          createdAt: '',
+          updatedAt: '',
+        },
         permissionFlagMap: { [PermissionFlagType.AI]: false },
         objectMetadataItems: [],
         views: [],
@@ -47,7 +50,9 @@ describe('isNavigationMenuItemReadable', () => {
           type: NavigationMenuItemType.NATIVE_PAGE,
           nativePageKey: 'agents',
           position: 0,
-        } as NavigationMenuItem,
+          createdAt: '',
+          updatedAt: '',
+        },
         permissionFlagMap: {},
         objectMetadataItems: [],
         views: [],
@@ -64,7 +69,9 @@ describe('isNavigationMenuItemReadable', () => {
           type: NavigationMenuItemType.OBJECT,
           targetObjectMetadataId: 'missing-object-id',
           position: 0,
-        } as NavigationMenuItem,
+          createdAt: '',
+          updatedAt: '',
+        },
         permissionFlagMap: {},
         objectMetadataItems: [],
         views: [],
