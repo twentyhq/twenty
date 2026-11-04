@@ -873,6 +873,19 @@ describe('BullMQDriver job size limit', () => {
     );
   });
 
+  it('refuses a job over the limit even when its id is already waiting', async () => {
+    mockGetRanges.mockResolvedValue(['enrich-abc-1']);
+
+    await expect(
+      driver.add(MessageQueue.logicFunctionQueue, 'job', largeData, {
+        ...APPLICATION_JOB,
+        id: 'enrich-abc',
+      }),
+    ).rejects.toMatchObject({ code: 'JOB_TOO_LARGE' });
+
+    expect(mockGetRanges).not.toHaveBeenCalled();
+  });
+
   it('refuses the whole batch and reports the index of the first job over the limit', async () => {
     await expect(
       driver.bulkAdd(MessageQueue.logicFunctionQueue, 'job', [

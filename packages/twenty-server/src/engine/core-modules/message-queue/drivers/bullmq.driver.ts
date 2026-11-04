@@ -530,6 +530,14 @@ export class BullMQDriver
       );
     }
 
+    const queueOptions = this.buildJobsOptions(options);
+
+    this.assertJobsWithinSizeLimitOrThrow({
+      queueName,
+      jobs: [{ data, options: queueOptions, scope: options }],
+      additionalGroupKeys: options.groupKeys,
+    });
+
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
@@ -539,14 +547,6 @@ export class BullMQDriver
         return;
       }
     }
-
-    const queueOptions = this.buildJobsOptions(options);
-
-    this.assertJobsWithinSizeLimitOrThrow({
-      queueName,
-      jobs: [{ data, options: queueOptions, scope: options }],
-      additionalGroupKeys: options.groupKeys,
-    });
 
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
