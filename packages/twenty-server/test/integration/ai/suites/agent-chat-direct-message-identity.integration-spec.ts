@@ -258,9 +258,27 @@ describe('Canonical direct message identity', () => {
     }, authContext);
   });
 
-  it.each(['agentChatThread', 'agentMessage'] as const)(
-    'prevents a full-access pair member from changing %s sharing',
-    async (objectName) => {
+  it.each([
+    {
+      objectName: 'agentChatThread',
+      expectedSharingResponse: {
+        data: {
+          recordSharing: {
+            isPrivate: true,
+            canManageSharing: false,
+          },
+        },
+      },
+    },
+    {
+      objectName: 'agentMessage',
+      expectedSharingResponse: {
+        errors: [{ extensions: { code: ErrorCode.NOT_FOUND } }],
+      },
+    },
+  ] as const)(
+    'prevents a full-access pair member from changing $objectName sharing',
+    async ({ objectName, expectedSharingResponse }) => {
       const threadId = await getOrCreate();
       const message = await context.saveMessage({ threadId });
       const recordId = objectName === 'agentChatThread' ? threadId : message.id;
@@ -330,18 +348,7 @@ describe('Canonical direct message identity', () => {
           variables: { target },
         });
 
-        expect(sharing.body).toMatchObject(
-          objectName === 'agentMessage'
-            ? { errors: [{ extensions: { code: ErrorCode.NOT_FOUND } }] }
-            : {
-                data: {
-                  recordSharing: {
-                    isPrivate: true,
-                    canManageSharing: false,
-                  },
-                },
-              },
-        );
+        expect(sharing.body).toMatchObject(expectedSharingResponse);
 
         const mutations = [
           {
