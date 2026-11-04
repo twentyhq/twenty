@@ -145,6 +145,10 @@ const inputs = {
     agentUniversalIdentifier: REFERENCE_ID,
     prompt: 'Summarize {{trigger.text}}',
   },
+  CODE: {
+    code: 'export const main = async (params: { text: string }) => ({ length: params.text.length });',
+    logicFunctionInput: { text: '{{trigger.text}}' },
+  },
   SEND_CHAT_MESSAGE: {
     workspaceMemberId: '{{trigger.assigneeId}}',
     title: 'Approve',
@@ -618,6 +622,12 @@ describe('application workflow actions', () => {
         }),
       ).toMatchObject({ connectedAccountId: 'shared-id' });
     });
+  });
+
+  it('keeps the source of a code step as written, with no logic function', () => {
+    expect(convert(WorkflowActionType.CODE).settings.input).toEqual(
+      inputs.CODE,
+    );
   });
 
   it('preserves branches, loop entries, outputs and error handling', () => {

@@ -120,7 +120,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
     const restrictedFields =
-      context.repository.objectRecordsPermissions?.[
+      context.repository.recordsPermissions.objects[
         context.flatObjectMetadata.id
       ]?.restrictedFields;
 
@@ -214,7 +214,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     } = queryRunnerContext;
 
     const restrictedFields =
-      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+      repository.recordsPermissions.objects[flatObjectMetadata.id]
         ?.restrictedFields ?? {};
 
     const unreadableFieldIds = new Set(
