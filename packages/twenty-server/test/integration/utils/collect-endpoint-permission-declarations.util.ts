@@ -15,14 +15,16 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
+import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
+import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
 import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
-import { FEATURE_FLAG_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/feature-flag-guard-config-key.constant';
 import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
+import { withAgentsAdmitted } from 'src/engine/permissions/access-policy/utils/with-agents-admitted.util';
 
 type UserSessionVariant = Extract<
   AuthPrincipalVariant,
@@ -179,6 +181,20 @@ const toAcceptedAuthPrincipals = (
   };
 };
 
+// Tools are checked by AccessPolicyService.isToolAccessPolicySatisfied, not the endpoint guards
+const toToolPermissionDeclarations = ({
+  authPrincipals,
+  requiredPermissionFlags,
+  requiredFeatureFlags = [],
+}: AccessPolicy): EndpointPermissionDeclarations => ({
+  acceptedAuthPrincipals: toAcceptedAuthPrincipals([
+    withAgentsAdmitted(authPrincipals),
+  ]),
+  requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
+  requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
+  applicationTarget: null,
+});
+
 const compareCodePoints = (left: string, right: string): number =>
   left < right ? -1 : left > right ? 1 : 0;
 
@@ -212,6 +228,24 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
   for (const { endpointClass, isController } of discoverClasses(
     discoveryService,
   )) {
+    const defineToolOptions = reflector.get<DefineToolOptions | undefined>(
+      DEFINE_TOOL_METADATA_KEY,
+      endpointClass,
+    );
+
+    if (isDefined(defineToolOptions)) {
+      const tool = `tool:${defineToolOptions.name}`;
+
+      if (declarationsByEndpoint.has(tool)) {
+        throw new Error(`${tool} is declared by two different classes`);
+      }
+
+      declarationsByEndpoint.set(
+        tool,
+        toToolPermissionDeclarations(defineToolOptions.accessPolicy),
+      );
+    }
+
     const prototype = endpointClass.prototype;
 
     for (const methodName of metadataScanner.getAllMethodNames(prototype)) {
@@ -257,16 +291,11 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
             ({ requiredPermissionFlags }) => requiredPermissionFlags,
           ),
         ]),
-        requiredFeatureFlags: toSortedUniqueValues([
-          ...readGuardConfigs<FeatureFlagKey>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: FEATURE_FLAG_GUARD_CONFIG_KEY,
-          }),
-          ...accessPolicies.flatMap(
+        requiredFeatureFlags: toSortedUniqueValues(
+          accessPolicies.flatMap(
             ({ requiredFeatureFlags = [] }) => requiredFeatureFlags,
           ),
-        ]),
+        ),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(
             APPLICATION_TARGET_METADATA_KEY,
