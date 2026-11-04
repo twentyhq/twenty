@@ -1037,7 +1037,6 @@ export class WorkspaceService {
       try {
         await logicFunctionDriver.deleteApplicationResources({
           workspaceId,
-          applicationId: application.id,
           applicationUniversalIdentifier: application.universalIdentifier,
         });
       } catch (error) {
