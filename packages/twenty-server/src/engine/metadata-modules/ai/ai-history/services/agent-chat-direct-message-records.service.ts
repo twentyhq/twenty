@@ -17,6 +17,8 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+type DirectMessagePair = readonly [string, string];
+
 @Injectable()
 export class AgentChatDirectMessageRecordsService {
   constructor(
@@ -44,41 +46,23 @@ export class AgentChatDirectMessageRecordsService {
     threadId,
     objectName,
     recordIds,
+    directMessagePairsByThreadId,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
     threadId: string;
     objectName: AgentHistoryObjectName;
     recordIds: string[];
+    directMessagePairsByThreadId?: Map<string, DirectMessagePair | null>;
   }): Promise<boolean> {
-    const thread = await transactionScope
-      .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
-      )
-      .findOne({
-        where: { id: threadId },
-        select: [
-          'id',
-          'conversationType',
-          'directMessageFirstWorkspaceMemberId',
-          'directMessageSecondWorkspaceMemberId',
-        ],
-      });
+    const pair = await this.findPair({
+      transactionScope,
+      threadId,
+      directMessagePairsByThreadId,
+    });
 
-    if (thread?.conversationType !== 'DIRECT_MESSAGE') {
+    if (!isDefined(pair)) {
       return false;
-    }
-
-    const {
-      directMessageFirstWorkspaceMemberId,
-      directMessageSecondWorkspaceMemberId,
-    } = thread;
-
-    if (
-      !isDefined(directMessageFirstWorkspaceMemberId) ||
-      !isDefined(directMessageSecondWorkspaceMemberId)
-    ) {
-      return throwAgentChatThreadNotFound();
     }
 
     const { flatObjectMetadataMaps } =
@@ -101,10 +85,7 @@ export class AgentChatDirectMessageRecordsService {
       workspaceId,
       transactionScope,
       recordShares: recordIds.flatMap((recordId) =>
-        [
-          directMessageFirstWorkspaceMemberId,
-          directMessageSecondWorkspaceMemberId,
-        ].map((principalId) => ({
+        pair.map((principalId) => ({
           objectMetadataId: flatObjectMetadata.id,
           recordId,
           principalId,
@@ -117,5 +98,64 @@ export class AgentChatDirectMessageRecordsService {
     });
 
     return true;
+  }
+
+  private async findPair({
+    transactionScope,
+    threadId,
+    directMessagePairsByThreadId,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    threadId: string;
+    directMessagePairsByThreadId?: Map<string, DirectMessagePair | null>;
+  }): Promise<DirectMessagePair | null> {
+    if (
+      isDefined(directMessagePairsByThreadId) &&
+      directMessagePairsByThreadId.has(threadId)
+    ) {
+      return directMessagePairsByThreadId.get(threadId) ?? null;
+    }
+
+    const thread = await transactionScope
+      .getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+        'agentChatThread',
+      )
+      .findOne({
+        where: { id: threadId },
+        withDeleted: true,
+        select: [
+          'id',
+          'conversationType',
+          'directMessageFirstWorkspaceMemberId',
+          'directMessageSecondWorkspaceMemberId',
+        ],
+      });
+
+    if (thread?.conversationType !== 'DIRECT_MESSAGE') {
+      directMessagePairsByThreadId?.set(threadId, null);
+
+      return null;
+    }
+
+    const {
+      directMessageFirstWorkspaceMemberId,
+      directMessageSecondWorkspaceMemberId,
+    } = thread;
+
+    if (
+      !isDefined(directMessageFirstWorkspaceMemberId) ||
+      !isDefined(directMessageSecondWorkspaceMemberId)
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    const pair: DirectMessagePair = [
+      directMessageFirstWorkspaceMemberId,
+      directMessageSecondWorkspaceMemberId,
+    ];
+
+    directMessagePairsByThreadId?.set(threadId, pair);
+
+    return pair;
   }
 }
