@@ -55,7 +55,7 @@ const DUPLICATE_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
       )
   )`;
 
-@RegisteredWorkspaceCommand('2.56.0', 1793746440802)
+@RegisteredWorkspaceCommand('2.56.0', 1793783100802)
 @Command({
   name: 'upgrade:2-56:convert-workflow-navigation-menu-items-to-native-page',
   description:

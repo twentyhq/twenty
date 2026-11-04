@@ -29,7 +29,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.56.0', 1793746440805)
+@RegisteredWorkspaceCommand('2.56.0', 1793783100805)
 @Command({
   name: 'upgrade:2-56:drop-workspace-workflow-object',
   description:

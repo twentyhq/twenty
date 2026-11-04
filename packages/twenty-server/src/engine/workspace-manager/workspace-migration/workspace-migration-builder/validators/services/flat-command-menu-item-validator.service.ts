@@ -14,6 +14,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
@@ -222,9 +223,11 @@ export class FlatCommandMenuItemValidatorService {
     availabilityObjectMetadataUniversalIdentifier,
     availabilityCoreObjectName,
     validationResult,
-  }: {
-    availabilityObjectMetadataUniversalIdentifier: string | null;
-    availabilityCoreObjectName: string | null;
+  }: Pick<
+    UniversalFlatCommandMenuItem,
+    | 'availabilityObjectMetadataUniversalIdentifier'
+    | 'availabilityCoreObjectName'
+  > & {
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
       'create' | 'update'
