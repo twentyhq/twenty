@@ -3,16 +3,31 @@ import {
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { TextWithProtectedChatReferences } from '@/ai/components/TextWithProtectedChatReferences';
 import { cloneElement, isValidElement } from 'react';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+
+const MarkdownCode = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) => <code className={className}>{children}</code>;
+
+const MarkdownPre = ({ children }: { children?: React.ReactNode }) => (
+  <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
+);
+
+const isMarkdownCodeElement = (element: React.ReactElement) =>
+  element.type === MarkdownCode || element.type === MarkdownPre;
 
 const processChildrenForChatReferences = (
   children: React.ReactNode,
 ): React.ReactNode => {
   if (typeof children === 'string') {
-    return <TextWithChatReferences text={children} />;
+    return <TextWithProtectedChatReferences text={children} />;
   }
 
   if (Array.isArray(children)) {
@@ -21,7 +36,10 @@ const processChildrenForChatReferences = (
     ));
   }
 
-  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+  if (
+    isValidElement<{ children?: React.ReactNode }>(children) &&
+    !isMarkdownCodeElement(children)
+  ) {
     const childProps = children.props;
 
     if (isDefined(childProps.children)) {
@@ -77,16 +95,8 @@ const MARKDOWN_COMPONENTS = {
       {processChildrenForChatReferences(children)}
     </a>
   ),
-  code: ({
-    className,
-    children,
-  }: {
-    className?: string;
-    children?: React.ReactNode;
-  }) => <code className={className}>{children}</code>,
-  pre: ({ children }: { children?: React.ReactNode }) => (
-    <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
-  ),
+  code: MarkdownCode,
+  pre: MarkdownPre,
   img: ({
     src,
     alt,
