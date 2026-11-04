@@ -368,6 +368,12 @@ const validateFieldMetadataDefaultValue = ({
   }
 };
 
+export const hasInvalidEnumFlatFieldMetadataOptions = (
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
+): boolean =>
+  validateFieldMetadataInputOptions(universalFlatFieldMetadata).length > 0 ||
+  validateSelectOptionColors(universalFlatFieldMetadata).length > 0;
+
 export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
   update,

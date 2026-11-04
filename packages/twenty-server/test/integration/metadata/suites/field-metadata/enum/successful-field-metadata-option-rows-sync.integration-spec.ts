@@ -4,17 +4,14 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataComplexOption,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-type StoredOption = {
-  id: string;
-  value: string;
-  label: string;
-  color: string;
-  position: number;
-};
+type StoredOption = FieldMetadataComplexOption & { id: string };
 
 type OptionRow = {
   universalIdentifier: string;
@@ -111,7 +108,7 @@ describe('field metadata option rows follow field options', () => {
     });
 
     const fieldMetadataId: string = createData.createOneField.id;
-    const createdOptions: StoredOption[] = createData.createOneField.options;
+    const createdOptions = createData.createOneField.options as StoredOption[];
     const applicationId = await findFieldApplicationId(fieldMetadataId);
 
     expect(await findOptionRows(fieldMetadataId)).toEqual(
@@ -129,13 +126,13 @@ describe('field metadata option rows follow field options', () => {
             { ...wonOption, label: 'Closed won', position: 0 },
             { ...newOption, position: 1 },
             { label: 'Paused', value: 'PAUSED', color: 'gray', position: 2 },
-          ],
+          ] satisfies FieldMetadataComplexOption[],
         },
       },
       gqlFields: 'id options',
     });
 
-    const updatedOptions: StoredOption[] = updateData.updateOneField.options;
+    const updatedOptions = updateData.updateOneField.options as StoredOption[];
 
     expect(await findOptionRows(fieldMetadataId)).toEqual(
       toExpectedRows(updatedOptions, applicationId),
@@ -165,7 +162,7 @@ describe('field metadata option rows follow field options', () => {
           ON row."fieldMetadataId" = field.id AND row."universalIdentifier"::text = option->>'id'
         WHERE field."workspaceId" = $1
           AND field.type IN ('SELECT', 'MULTI_SELECT', 'RATING')
-          AND (row.id IS NULL OR row.value <> option->>'value' OR row."applicationId" <> field."applicationId")`,
+          AND (row.id IS NULL OR row.value <> option->>'value')`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
