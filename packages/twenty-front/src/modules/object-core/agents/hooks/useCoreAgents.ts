@@ -3,21 +3,15 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
+import { CORE_AGENTS_INITIAL_SORT } from '@/object-core/agents/constants/CoreAgentsInitialSort';
+import { CORE_AGENTS_TABLE_ID } from '@/object-core/agents/constants/CoreAgentsTableId';
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
-import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
-
-export const CORE_AGENTS_TABLE_ID = 'coreAgents';
-
-export const CORE_AGENTS_INITIAL_SORT: TableSortValue = {
-  fieldName: 'updatedAt',
-  direction: 'desc',
-};
 
 const CORE_AGENTS_SORTABLE_FIELDS = CORE_AGENT_TABLE_COLUMNS.flatMap(
   ({ fieldName, fieldLabel, fieldType, align }) =>
@@ -34,19 +28,24 @@ export const useCoreAgents = ({
   );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
-  const { data, loading, error } = useQuery(FindManyAgentsDocument, {
-    fetchPolicy: 'cache-first',
-  });
+  const { data, previousData, loading, error } = useQuery(
+    FindManyAgentsDocument,
+    {
+      fetchPolicy: 'cache-first',
+    },
+  );
+
+  const availableData = data ?? previousData;
 
   const listedAgents = useMemo(
     () =>
-      (data?.findManyAgents ?? []).filter((agent) =>
+      (availableData?.findManyAgents ?? []).filter((agent) =>
         isCoreAgentMatchingFilterSettings({
           agent,
           filterSettings: coreAgentsFilterSettings,
         }),
       ),
-    [data?.findManyAgents, coreAgentsFilterSettings],
+    [availableData?.findManyAgents, coreAgentsFilterSettings],
   );
 
   const tableMetadata = useMemo(
@@ -62,7 +61,8 @@ export const useCoreAgents = ({
 
   return {
     coreAgents,
-    isInitialLoading: loading && !isDefined(data),
+    isInitialLoading: loading && !isDefined(availableData),
+    hasLoadedData: isDefined(availableData),
     error,
   };
 };
