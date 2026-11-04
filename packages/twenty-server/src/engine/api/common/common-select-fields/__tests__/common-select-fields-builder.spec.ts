@@ -118,13 +118,15 @@ describe('CommonSelectFieldsBuilder', () => {
     { canRead: boolean; canUpdate: boolean }
   >;
 
-  const createRecordsPermissions = (
-    objectIds: string[],
-    options: {
-      restrictedFields?: RestrictedFields;
-      restrictedFieldsByObjectId?: Record<string, RestrictedFields>;
-    } = {},
-  ): RoleRecordsPermissions => ({
+  const createRecordsPermissions = ({
+    objectIds,
+    restrictedFields,
+    restrictedFieldsByObjectId,
+  }: {
+    objectIds: string[];
+    restrictedFields?: RestrictedFields;
+    restrictedFieldsByObjectId?: Record<string, RestrictedFields>;
+  }): RoleRecordsPermissions => ({
     canReadAllRecords: true,
     canUpdateAllRecords: true,
     canSoftDeleteAllRecords: true,
@@ -138,9 +140,7 @@ describe('CommonSelectFieldsBuilder', () => {
           canSoftDeleteAllRecords: true,
           canDestroyAllRecords: true,
           restrictedFields:
-            options.restrictedFieldsByObjectId?.[objectId] ??
-            options.restrictedFields ??
-            {},
+            restrictedFieldsByObjectId?.[objectId] ?? restrictedFields ?? {},
         },
       ]),
     ),
@@ -233,7 +233,8 @@ describe('CommonSelectFieldsBuilder', () => {
         flatObjectMetadata: person,
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([person, company]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
-        recordsPermissions: createRecordsPermissions(['person', 'company'], {
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person', 'company'],
           restrictedFields: {
             'salary-field': { canRead: false, canUpdate: false },
           },
@@ -366,7 +367,7 @@ describe('CommonSelectFieldsBuilder', () => {
           flatObjectMetadata: object,
           flatObjectMetadataMaps: buildFlatObjectMetadataMaps([object]),
           flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
-          recordsPermissions: createRecordsPermissions(['wide']),
+          recordsPermissions: createRecordsPermissions({ objectIds: ['wide'] }),
           depth: 0 as const,
         };
         const capped = buildFromDepth({
@@ -423,7 +424,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions(['person-id']),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -511,10 +514,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions([
-          'person-id',
-          'company-id',
-        ]),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -575,16 +577,14 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const recordsPermissions = createRecordsPermissions(
-        ['person-id', 'company-id'],
-        {
-          restrictedFieldsByObjectId: {
-            'company-id': {
-              'field-3': { canRead: false, canUpdate: false },
-            },
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'company-id': {
+            'field-3': { canRead: false, canUpdate: false },
           },
         },
-      );
+      });
 
       const { selectedFields: result } = buildFromDepth({
         recordsPermissions,
@@ -640,16 +640,14 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const recordsPermissions = createRecordsPermissions(
-        ['person-id', 'company-id'],
-        {
-          restrictedFieldsByObjectId: {
-            'company-id': {
-              'field-2': { canRead: false, canUpdate: false },
-            },
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'company-id': {
+            'field-2': { canRead: false, canUpdate: false },
           },
         },
-      );
+      });
 
       const { selectedFields: result } = buildFromDepth({
         recordsPermissions,
@@ -703,16 +701,14 @@ describe('CommonSelectFieldsBuilder', () => {
         companyObject,
       ]);
 
-      const recordsPermissions = createRecordsPermissions(
-        ['person-id', 'company-id'],
-        {
-          restrictedFieldsByObjectId: {
-            'person-id': {
-              'field-1': { canRead: false, canUpdate: false },
-            },
+      const recordsPermissions = createRecordsPermissions({
+        objectIds: ['person-id', 'company-id'],
+        restrictedFieldsByObjectId: {
+          'person-id': {
+            'field-1': { canRead: false, canUpdate: false },
           },
         },
-      );
+      });
 
       const { selectedFields: result } = buildFromDepth({
         recordsPermissions,
@@ -782,10 +778,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions([
-          'person-id',
-          'company-id',
-        ]),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -842,7 +837,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions(['person-id']),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
@@ -921,11 +918,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions([
-          'noteTarget-id',
-          'note-id',
-          'company-id',
-        ]),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['noteTarget-id', 'note-id', 'company-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: noteTargetObject,
@@ -1021,11 +1016,9 @@ describe('CommonSelectFieldsBuilder', () => {
       ]);
 
       const { selectedFields: result } = buildFromDepth({
-        recordsPermissions: createRecordsPermissions([
-          'company-id',
-          'junction-id',
-          'person-id',
-        ]),
+        recordsPermissions: createRecordsPermissions({
+          objectIds: ['company-id', 'junction-id', 'person-id'],
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: companyObject,
