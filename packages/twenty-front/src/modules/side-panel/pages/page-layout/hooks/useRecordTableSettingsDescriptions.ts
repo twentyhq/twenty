@@ -6,8 +6,8 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const PLACEHOLDER_INSTANCE_ID =
   'record-table-settings-descriptions-placeholder';
@@ -21,6 +21,7 @@ export const useRecordTableSettingsDescriptions = ({
   objectMetadataId,
   viewId,
 }: UseRecordTableSettingsDescriptionsParams) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { view } = useViewById(viewId);
 

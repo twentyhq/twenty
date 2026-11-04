@@ -3,7 +3,6 @@ import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/util
 import { getPendingApplicationIframeMediaPermissions } from '@/settings/applications/utils/getPendingApplicationIframeMediaPermissions';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -16,6 +15,7 @@ import {
   ApproveApplicationIframeMediaPermissionsDocument,
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationIframeMediaPermissionsSectionProps = {
   applicationId: string;
@@ -36,6 +36,7 @@ export const SettingsApplicationIframeMediaPermissionsSection = ({
   requestedPermissions,
   grantedPermissions,
 }: SettingsApplicationIframeMediaPermissionsSectionProps) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const apolloClient = useApolloClient();
   const [hasSavedChanges, setHasSavedChanges] = useState(false);

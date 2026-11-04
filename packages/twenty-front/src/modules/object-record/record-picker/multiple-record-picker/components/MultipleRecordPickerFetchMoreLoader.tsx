@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useDropdownPage } from 'twenty-ui/components/navigation';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
@@ -20,6 +19,7 @@ import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useStore } from 'jotai';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledText = styled.div`
   align-items: center;
@@ -36,6 +36,7 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
+  const { t } = useLingui();
   const store = useStore();
   const { isActive } = useDropdownPage();
   const [

@@ -3,9 +3,9 @@ import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMe
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Key } from 'ts-key-enum';
-import { t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 type MergeRecordsFooterProps = {
   objectNameSingular: string;
@@ -14,6 +14,7 @@ type MergeRecordsFooterProps = {
 export const MergeRecordsFooter = ({
   objectNameSingular,
 }: MergeRecordsFooterProps) => {
+  const { t } = useLingui();
   const { handleMergeRecords, isMerging } = useMergeRecordsActions({
     objectNameSingular,
   });

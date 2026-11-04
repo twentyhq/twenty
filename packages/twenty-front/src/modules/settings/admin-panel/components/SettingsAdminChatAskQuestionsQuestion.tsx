@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -9,6 +8,7 @@ import { IconCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminChatAskQuestionsQuestionProps = {
   question: AskQuestionItem;
@@ -86,6 +86,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
   question,
   answer,
 }: SettingsAdminChatAskQuestionsQuestionProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const selectedOptionIndices = new Set(answer?.selectedOptionIndices ?? []);
   const freeText = answer?.freeText ?? '';

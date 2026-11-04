@@ -1,6 +1,5 @@
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -8,6 +7,7 @@ import {
   type ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
 import { applicationVariablesDraftFamilyState } from '@/settings/applications/states/applicationVariablesDraftFamilyState';
+import { useLingui } from '@lingui/react/macro';
 
 export const useApplicationVariablesDraft = <
   DraftableApplicationVariable extends Pick<
@@ -29,6 +29,7 @@ export const useApplicationVariablesDraft = <
   ) => Promise<unknown>;
   refetchApplicationVariables: () => Promise<unknown>;
 }) => {
+  const { t } = useLingui();
   const [draftValueByKey, setDraftValueByKey] = useAtomFamilyState(
     applicationVariablesDraftFamilyState,
     { applicationId, scope },
