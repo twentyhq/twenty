@@ -17,7 +17,6 @@ import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-module
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
-import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -250,7 +249,10 @@ export class AgentChatChannelService {
       ]);
 
     if (!doesSourceChannelExist) {
-      throwAgentChatChannelNotFound();
+      throw new AiException(
+        'Chat channel not found',
+        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+      );
     }
 
     if (!doesSourceChannelHaveThreads) {
