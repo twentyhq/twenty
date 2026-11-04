@@ -219,10 +219,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     label: msg`Roles`,
     description: msg`Permission bundles that apps can contribute`,
     Icon: IconLock,
-    columns: [
-      { label: msg`Description`, source: 'description' },
-      { label: msg`Members`, source: 'count' },
-    ],
+    columns: [{ label: msg`Description`, source: 'description' }],
   },
   permissionFlags: {
     label: msg`Permission flags`,

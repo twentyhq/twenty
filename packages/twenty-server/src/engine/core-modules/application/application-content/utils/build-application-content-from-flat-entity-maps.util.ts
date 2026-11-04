@@ -52,11 +52,6 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
   'flatConnectionProviderMaps',
 ] as const satisfies (keyof ApplicationContentFlatEntityMaps)[];
 
-const getAllFlatEntities = <TFlatEntity>(flatEntityMaps: {
-  byUniversalIdentifier: Partial<Record<string, TFlatEntity>>;
-}): TFlatEntity[] =>
-  Object.values(flatEntityMaps.byUniversalIdentifier).filter(isDefined);
-
 export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId,
   flatEntityMaps,
@@ -104,12 +99,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
   const permissionFlags = findOwned(flatEntityMaps.flatPermissionFlagMaps);
 
-  const allPageLayoutWidgets = getAllFlatEntities(
-    flatEntityMaps.flatPageLayoutWidgetMaps,
-  );
-  const allCommandMenuItems = getAllFlatEntities(
-    flatEntityMaps.flatCommandMenuItemMaps,
-  );
+  const pageLayoutWidgets = findOwned(flatEntityMaps.flatPageLayoutWidgetMaps);
 
   const fieldCountByObject = countByKey(
     fields,
@@ -128,15 +118,15 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     (tab) => tab.pageLayoutUniversalIdentifier,
   );
   const widgetCountByTab = countByKey(
-    allPageLayoutWidgets,
+    pageLayoutWidgets,
     (widget) => widget.pageLayoutTabUniversalIdentifier,
   );
   const placementCountByFrontComponent = countByKey(
     [
-      ...allCommandMenuItems.map(
+      ...commandMenuItems.map(
         (commandMenuItem) => commandMenuItem.frontComponentUniversalIdentifier,
       ),
-      ...allPageLayoutWidgets.map((widget) =>
+      ...pageLayoutWidgets.map((widget) =>
         'frontComponentUniversalIdentifier' in widget.universalConfiguration
           ? widget.universalConfiguration.frontComponentUniversalIdentifier
           : undefined,
@@ -144,12 +134,8 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     ],
     (frontComponentUniversalIdentifier) => frontComponentUniversalIdentifier,
   );
-  const memberCountByRole = countByKey(
-    getAllFlatEntities(flatEntityMaps.flatRoleTargetMaps),
-    (roleTarget) => roleTarget.roleUniversalIdentifier,
-  );
   const roleCountByPermissionFlag = countByKey(
-    getAllFlatEntities(flatEntityMaps.flatRolePermissionFlagMaps),
+    findOwned(flatEntityMaps.flatRolePermissionFlagMaps),
     (rolePermissionFlag) =>
       rolePermissionFlag.permissionFlagUniversalIdentifier,
   );
@@ -335,7 +321,6 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       label: role.label,
       icon: role.icon,
       description: role.description,
-      count: memberCountByRole.get(role.universalIdentifier) ?? 0,
     })),
     permissionFlags: permissionFlags.map((permissionFlag) => ({
       id: permissionFlag.id,
