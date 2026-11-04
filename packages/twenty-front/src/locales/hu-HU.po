@@ -20318,11 +20318,6 @@ msgstr "csak hétköznapokon"
 msgid "On which object(s) should this trigger be available"
 msgstr "Mely objektum(ok)on legyen elérhető ez a kiváltó"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Bevezetési csomagok"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

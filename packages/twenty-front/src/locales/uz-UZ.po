@@ -20318,11 +20318,6 @@ msgstr "faqat ish kunlarida"
 msgid "On which object(s) should this trigger be available"
 msgstr "Ushbu trigger qaysi obyekt(lar)da mavjud bo‘lishi kerak"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Onboarding to‘plamlari"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

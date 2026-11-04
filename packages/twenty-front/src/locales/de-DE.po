@@ -20318,11 +20318,6 @@ msgstr "nur an Wochentagen"
 msgid "On which object(s) should this trigger be available"
 msgstr "Auf welchem/n Objekt(en) soll dieser Auslöser verfügbar sein"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Einführungspakete"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"
