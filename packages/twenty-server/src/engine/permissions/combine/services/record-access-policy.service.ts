@@ -258,12 +258,16 @@ export class RecordAccessPolicyService {
       return [];
     }
 
-    return flatObjectMetadata.fieldIds.filter(
-      (fieldMetadataId) =>
-        objectRecordsPermissions.restrictedFields[fieldMetadataId]?.[
-          fieldPermission
-        ] !== false,
-    );
+    return flatObjectMetadata.fieldIds.filter((fieldMetadataId) => {
+      const restrictedField =
+        objectRecordsPermissions.restrictedFields[fieldMetadataId];
+
+      // a field the principal cannot read is never writable
+      return (
+        restrictedField?.canRead !== false &&
+        restrictedField?.[fieldPermission] !== false
+      );
+    });
   }
 
   async findAccessibleEventRecordIds({

@@ -7,7 +7,15 @@ export const canReachAllRecords = ({
   objectRecordsPermissions,
   operationType,
 }: {
-  objectRecordsPermissions: ObjectRecordsPermissions | undefined;
+  objectRecordsPermissions:
+    | Pick<
+        ObjectRecordsPermissions,
+        | 'canReadAllRecords'
+        | 'canUpdateAllRecords'
+        | 'canSoftDeleteAllRecords'
+        | 'canDestroyAllRecords'
+      >
+    | undefined;
   operationType: ObjectRecordsOperationType;
 }): boolean => {
   if (!isDefined(objectRecordsPermissions)) {
