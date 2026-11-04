@@ -5,7 +5,7 @@ import { messages } from '~/locales/generated/en';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -37,7 +37,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
             commandMenuContextApi: {
               ...EMPTY_COMMAND_MENU_CONTEXT_API,
               objectMetadataItem: {
-                nameSingular: CoreObjectNameSingular.Workflow,
+                nameSingular: StandardObjectNameSingular.Workflow,
               },
             },
           }}

@@ -15,8 +15,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -50,23 +49,25 @@ export class ToolIndexEntryDTO {
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
 )
 export class ToolIndexResolver {
   constructor(private readonly toolRegistryService: ToolRegistryService) {}
 
   @Query(() => [ToolIndexEntryDTO])
-  @UseGuards(NoPermissionGuard)
   async getToolIndex(
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -86,7 +87,6 @@ export class ToolIndexResolver {
 
   // On demand, so listing the tool index does not compute every tool's schema.
   @Query(() => graphqlTypeJson, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getToolInputSchema(
     @Args('toolName') toolName: string,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,

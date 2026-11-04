@@ -1,6 +1,6 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -20,7 +20,7 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   return (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
+      params={{ objectNamePlural: StandardObjectNamePlural.WorkflowRun }}
       queryParams={{
         filter: { coreWorkflowId: { [ViewFilterOperand.IS]: recordId } },
         filterDisplayValue: {

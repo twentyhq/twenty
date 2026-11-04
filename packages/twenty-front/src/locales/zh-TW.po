@@ -20318,11 +20318,6 @@ msgstr "僅限工作日"
 msgid "On which object(s) should this trigger be available"
 msgstr "在哪些對象上應該可用此觸發器"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "入門包"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

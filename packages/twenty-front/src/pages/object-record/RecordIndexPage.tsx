@@ -12,7 +12,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { isUndefined } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 const WorkflowCoreIndexPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
@@ -74,7 +74,7 @@ export const RecordIndexPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow) {
+  if (objectMetadataItem.nameSingular === StandardObjectNameSingular.Workflow) {
     return (
       <Suspense fallback={<RecordIndexSkeletonLoader />}>
         <WorkflowCoreIndexPage />

@@ -20320,11 +20320,6 @@ msgstr "endast på vardagar"
 msgid "On which object(s) should this trigger be available"
 msgstr "På vilken(a) objekt ska denna trigger vara tillgänglig"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Introduktionspaket"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

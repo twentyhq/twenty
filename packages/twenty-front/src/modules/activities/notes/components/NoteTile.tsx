@@ -3,7 +3,7 @@ import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActiv
 import { type Note } from '@/activities/types/Note';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -79,7 +79,7 @@ export const NoteTile = ({
   const body = getRichTextFieldTextLines(note?.bodyV2).join('\n');
 
   const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
-    objectNameSingular: CoreObjectNameSingular.Note,
+    objectNameSingular: StandardObjectNameSingular.Note,
   }).junctionField.name;
 
   const instanceIdPrefix =
@@ -96,7 +96,7 @@ export const NoteTile = ({
         onClick={() =>
           openRecordInSidePanel({
             recordId: note.id,
-            objectNameSingular: CoreObjectNameSingular.Note,
+            objectNameSingular: StandardObjectNameSingular.Note,
           })
         }
       >
@@ -105,7 +105,7 @@ export const NoteTile = ({
       </StyledCardDetailsContainer>
       <StyledFooter>
         <FieldContextProvider
-          objectNameSingular={CoreObjectNameSingular.Note}
+          objectNameSingular={StandardObjectNameSingular.Note}
           objectRecordId={note.id}
           fieldMetadataName={junctionFieldName}
           fieldPosition={0}

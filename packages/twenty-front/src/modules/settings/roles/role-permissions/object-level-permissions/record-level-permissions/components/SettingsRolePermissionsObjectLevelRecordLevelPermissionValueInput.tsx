@@ -2,7 +2,10 @@
 
 import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
-import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEraser } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -119,7 +122,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
     const { objectMetadataItem: workspaceMemberMetadataItem } =
       useObjectMetadataItem({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
       });
 
     const { upsertObjectFilterDropdownCurrentFilter } =

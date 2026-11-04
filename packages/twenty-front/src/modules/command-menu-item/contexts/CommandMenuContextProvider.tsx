@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -26,7 +26,7 @@ export const CommandMenuContextProvider = ({
     commandMenuContextApi.objectMetadataItem.nameSingular;
 
   const isWorkflow =
-    currentObjectNameSingular === CoreObjectNameSingular.Workflow;
+    currentObjectNameSingular === StandardObjectNameSingular.Workflow;
 
   const selectedWorkflowRecordIds = isWorkflow
     ? commandMenuContextApi.selectedRecords

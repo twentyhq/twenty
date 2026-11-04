@@ -16,6 +16,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 describe('McpCoreController', () => {
   let controller: McpCoreController;
@@ -56,6 +57,7 @@ describe('McpCoreController', () => {
           useValue: { get: jest.fn().mockReturnValue('http://localhost:3000') },
         },
         McpAuthGuard,
+        { provide: AccessPolicyService, useValue: {} },
       ],
     }).compile();
 

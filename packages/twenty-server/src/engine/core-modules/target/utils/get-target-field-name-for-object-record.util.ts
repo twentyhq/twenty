@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 export type TargetFieldName =
   | 'targetPersonId'
@@ -14,11 +14,11 @@ export const getTargetFieldNameForObjectRecord = (
   objectNameSingular: string,
 ): TargetFieldName | null => {
   switch (objectNameSingular) {
-    case CoreObjectNameSingular.Person:
+    case StandardObjectNameSingular.Person:
       return 'targetPersonId';
-    case CoreObjectNameSingular.Company:
+    case StandardObjectNameSingular.Company:
       return 'targetCompanyId';
-    case CoreObjectNameSingular.Opportunity:
+    case StandardObjectNameSingular.Opportunity:
       return 'targetOpportunityId';
     default:
       return null;

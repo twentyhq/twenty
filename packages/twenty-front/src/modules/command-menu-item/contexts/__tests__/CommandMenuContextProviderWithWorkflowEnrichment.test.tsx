@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { useContext } from 'react';
 import {
   ContextStorePageType,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
 } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -131,7 +131,9 @@ const renderWorkflowCommands = (applicationId: string) => {
         pageType: ContextStorePageType.Record,
         numberOfSelectedRecords: 1,
         selectedRecords: [{ id: 'workflow' }],
-        objectMetadataItem: { nameSingular: CoreObjectNameSingular.Workflow },
+        objectMetadataItem: {
+          nameSingular: StandardObjectNameSingular.Workflow,
+        },
       }}
     >
       <CommandButtons />
