@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -13,7 +13,7 @@ export const SidePanelSendCampaignPage = () => {
   );
 
   const { record: campaign } = useFindOneRecord<MessageCampaign>({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+    objectNameSingular: StandardObjectNameSingular.MessageCampaign,
     objectRecordId: sendCampaignCampaignId,
   });
 

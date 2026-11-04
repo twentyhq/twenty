@@ -1,7 +1,14 @@
+import { EventEmitter, once } from 'node:events';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { type AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -154,10 +161,13 @@ describe('Chat thread participant sharing, subscription and assignment through t
     ).toBeUndefined();
 
     expect(
-      await addParticipants(threadId, [
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ]),
+      await addParticipants({
+        threadId,
+        workspaceMemberIds: [
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        ],
+      }),
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -168,11 +178,11 @@ describe('Chat thread participant sharing, subscription and assignment through t
 
     // Editors can mention others too; the owner keeps following as owner
     expect(
-      await addParticipants(
+      await addParticipants({
         threadId,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JANE]);
     expect(await findMyParticipant(threadId)).toMatchObject({
       lastReadAt: null,
@@ -182,17 +192,92 @@ describe('Chat thread participant sharing, subscription and assignment through t
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
   });
 
+  it('retains both writers when inbox deliveries update the same thread concurrently', async () => {
+    const threadId = await createTestThread();
+    const workspaceMemberIds = [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    ];
+
+    for (const workspaceMemberId of workspaceMemberIds) {
+      await setShareWithMember({
+        threadId,
+        workspaceMemberId,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+        enabled: true,
+      });
+    }
+
+    const threadRepository = global.app.get<
+      string,
+      AgentHistoryRepository<AgentChatThreadWorkspaceEntity>
+    >(getAgentHistoryRepositoryToken('agentChatThread'), { strict: false });
+    const updateThread = threadRepository.update.bind(threadRepository);
+    const updateEvents = new EventEmitter();
+    const WRITER_UPDATES_READY = 'writer-updates-ready';
+    const concurrentUpdatesReady = once(updateEvents, WRITER_UPDATES_READY);
+    let initialUpdateCount = 0;
+
+    jest
+      .spyOn(threadRepository, 'update')
+      .mockImplementation(async (...args) => {
+        const [workspaceId, criteria, values] = args;
+        const isTargetWriterUpdate =
+          workspaceId === SEED_APPLE_WORKSPACE_ID &&
+          criteria.id === threadId &&
+          isDefined(values.writerWorkspaceMemberIds);
+
+        if (!isTargetWriterUpdate || initialUpdateCount >= 2) {
+          return updateThread(...args);
+        }
+
+        initialUpdateCount += 1;
+
+        if (initialUpdateCount === 2) {
+          updateEvents.emit(WRITER_UPDATES_READY);
+        }
+
+        await concurrentUpdatesReady;
+
+        return updateThread(...args);
+      });
+
+    await Promise.all(
+      workspaceMemberIds.map((workspaceMemberId) =>
+        getAppProviderByClassName<AgentChatInboxDeliveryService>(
+          'AgentChatInboxDeliveryService',
+        ).deliverThreadToMemberInboxes({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          threadId,
+          workspaceMemberIds: [workspaceMemberId],
+          reason: AgentChatInboxDeliveryReason.RECIPIENT,
+        }),
+      ),
+    );
+
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds?.sort(),
+    ).toEqual([...workspaceMemberIds].sort());
+  });
+
   it('brings the thread back unread for a participant who had read and archived it', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
     await runInboxAction('READ', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
     await runInboxAction('ARCHIVE', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -208,11 +293,11 @@ describe('Chat thread participant sharing, subscription and assignment through t
     await setShareWithJony(threadId, true);
 
     await expect(
-      addParticipants(
+      addParticipants({
         threadId,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
@@ -236,11 +321,11 @@ describe('Chat thread participant sharing, subscription and assignment through t
     });
 
     expect(
-      await addParticipants(
+      await addParticipants({
         threadId,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toEqual([]);
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
@@ -323,7 +408,10 @@ describe('Chat thread participant sharing, subscription and assignment through t
   it('follows the chat again and records the mention for a mentioned member who had unsubscribed', async () => {
     const threadId = await createTestThread();
 
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const firstMention = await findMyParticipant(
       threadId,
@@ -336,7 +424,10 @@ describe('Chat thread participant sharing, subscription and assignment through t
     await runInboxAction('UNSUBSCRIBE', threadId, {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants({
+      threadId,
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
 
     const secondMention = await findMyParticipant(
       threadId,

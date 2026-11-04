@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -35,7 +35,7 @@ export const useAiChatThreadRename = (thread: {
 
     try {
       await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+        objectNameSingular: StandardObjectNameSingular.AgentChatThread,
         idToUpdate: thread.id,
         updateOneRecordInput: { title: trimmed },
       });

@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -14,7 +14,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 const PARTICIPANT_OBJECT_METADATA_ITEM = {
   id: 'participant-object-metadata-id',
-  nameSingular: CoreObjectNameSingular.AgentChatThreadParticipant,
+  nameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
 };
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({

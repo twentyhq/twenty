@@ -1,10 +1,10 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
 
 describe('getEmptyStateSubTitle', () => {
   it('should return the correct sub title for workflow version', () => {
     const subTitle = getEmptyStateSubTitle(
-      CoreObjectNameSingular.WorkflowVersion,
+      StandardObjectNameSingular.WorkflowVersion,
       'Workflow Version',
     );
     expect(subTitle).toBe(
@@ -14,7 +14,7 @@ describe('getEmptyStateSubTitle', () => {
 
   it('should return the correct sub title for workflow run', () => {
     const subTitle = getEmptyStateSubTitle(
-      CoreObjectNameSingular.WorkflowRun,
+      StandardObjectNameSingular.WorkflowRun,
       'Workflow Run',
     );
     expect(subTitle).toBe(

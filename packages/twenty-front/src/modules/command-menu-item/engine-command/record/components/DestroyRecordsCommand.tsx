@@ -8,7 +8,7 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -83,7 +83,8 @@ export const DestroyRecordsCommand = () => {
     if (
       !isSingleRecord ||
       isInSidePanel ||
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+      objectMetadataItem.nameSingular ===
+        StandardObjectNameSingular.AgentChatThread
     ) {
       return;
     }

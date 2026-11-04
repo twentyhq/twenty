@@ -49,6 +49,7 @@ export class AgentHistoryTransactionService {
               delete: async (name, where) => {
                 await getRepository(name).delete(where);
               },
+              afterCommit: transactionScope.afterCommit,
             });
           },
         ),

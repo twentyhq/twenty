@@ -17,7 +17,7 @@ import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachme
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNavigationModifierPressed } from '@/ui/navigation/utils/isNavigationModifierPressed';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { IconCalendar } from 'twenty-ui/icon';
@@ -101,7 +101,7 @@ export const AttachmentRow = ({
   const safeFileUrl = getSafeUrl(fileUrl);
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
   });
 
   const handleDelete = () => {
@@ -120,7 +120,7 @@ export const AttachmentRow = ({
     const newFileName = `${attachmentFileName}${attachmentFileExtension}`;
 
     updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
+      objectNameSingular: StandardObjectNameSingular.Attachment,
       idToUpdate: attachment.id,
       updateOneRecordInput: {
         name: newFileName,

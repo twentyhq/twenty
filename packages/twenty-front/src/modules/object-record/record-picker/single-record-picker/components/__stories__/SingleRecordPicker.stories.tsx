@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -19,7 +19,7 @@ const meta: Meta<typeof SingleRecordPicker> = {
     ToastDecorator,
   ],
   args: {
-    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
+    objectNameSingulars: [StandardObjectNameSingular.WorkspaceMember],
     componentInstanceId: 'single-record-picker',
   },
   argTypes: {},

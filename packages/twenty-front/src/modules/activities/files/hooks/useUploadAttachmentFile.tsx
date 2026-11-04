@@ -3,7 +3,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, FileFolder } from '~/generated-metadata/graphql';
@@ -13,7 +13,7 @@ export const useUploadAttachmentFile = () => {
   const { t } = useLingui();
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { objectMetadataItem: attachmentMetadata } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectNameSingular: StandardObjectNameSingular.Attachment,
   });
 
   const filesFieldMetadataId = attachmentMetadata.fields.find(
@@ -22,7 +22,7 @@ export const useUploadAttachmentFile = () => {
 
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
+      objectNameSingular: StandardObjectNameSingular.Attachment,
       shouldMatchRootQueryFilter: true,
     });
 

@@ -12,7 +12,7 @@ import {
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   FeatureFlagKey,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -208,7 +208,7 @@ export class ChatExecutionService {
         threadId,
         additionalWorkspaceMemberIds: extractRecordReferenceIds({
           text: findLastMessageText(latestUserMessage?.parts ?? []) ?? '',
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
         }),
       })) > 1;
 

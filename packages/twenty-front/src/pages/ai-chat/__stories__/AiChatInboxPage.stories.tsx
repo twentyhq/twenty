@@ -11,7 +11,7 @@ import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
 import {
@@ -164,7 +164,7 @@ const InboxRouteDecorator: Decorator = (Story) => (
 const loadChatRecordMetadata = () => {
   const objectMetadataItems = jotaiStore.get(objectMetadataItemsSelector.atom);
   const objectMetadataTemplate = objectMetadataItems.find(
-    ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Note,
+    ({ nameSingular }) => nameSingular === StandardObjectNameSingular.Note,
   );
 
   assertIsDefinedOrThrow(objectMetadataTemplate);
@@ -172,7 +172,7 @@ const loadChatRecordMetadata = () => {
   const chatObjectDefinitions = [
     {
       id: CHAT_OBJECT_METADATA_ID,
-      nameSingular: CoreObjectNameSingular.AgentChatThread,
+      nameSingular: StandardObjectNameSingular.AgentChatThread,
       namePlural: 'agentChatThreads',
       labelSingular: 'Chat',
       labelPlural: 'Chats',
@@ -181,7 +181,7 @@ const loadChatRecordMetadata = () => {
     },
     {
       id: CHAT_TARGET_OBJECT_METADATA_ID,
-      nameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      nameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
       namePlural: 'agentChatThreadTargets',
       labelSingular: 'Chat target',
       labelPlural: 'Chat targets',

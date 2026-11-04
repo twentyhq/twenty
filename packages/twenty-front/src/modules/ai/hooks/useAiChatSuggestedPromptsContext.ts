@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatSuggestedPromptsContext } from '@/ai/types/AiChatSuggestedPromptsContext';
@@ -56,7 +56,8 @@ export const useAiChatSuggestedPromptsContext =
     if (
       !isDefined(objectMetadataItem) ||
       !isDefined(browsingContextType) ||
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+      objectMetadataItem.nameSingular ===
+        StandardObjectNameSingular.AgentChatThread
     ) {
       return null;
     }

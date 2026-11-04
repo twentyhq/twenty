@@ -1,17 +1,17 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 
 describe('findCoreObjectShowPage', () => {
   it('resolves a page for an object owned by core', () => {
     expect(
-      findCoreObjectShowPage(CoreObjectNameSingular.Workflow),
+      findCoreObjectShowPage(StandardObjectNameSingular.Workflow),
     ).toBeDefined();
   });
 
   it('resolves nothing for a workspace-owned object', () => {
     expect(
-      findCoreObjectShowPage(CoreObjectNameSingular.Person),
+      findCoreObjectShowPage(StandardObjectNameSingular.Person),
     ).toBeUndefined();
   });
 
