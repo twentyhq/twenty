@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -40,6 +41,7 @@ describe('View tools', () => {
   let viewFieldService: jest.Mocked<ViewFieldService>;
   let viewSortService: jest.Mocked<ViewSortService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
+  let permissionsService: jest.Mocked<PermissionsService>;
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
@@ -215,6 +217,7 @@ describe('View tools', () => {
     viewFieldService = module.get(ViewFieldService);
     viewSortService = module.get(ViewSortService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
+    permissionsService = module.get(PermissionsService);
   });
 
   // Parses like the registry does, so schema defaults reach execute
@@ -622,6 +625,71 @@ describe('View tools', () => {
           visibility: ViewVisibility.WORKSPACE,
         });
       });
+
+      it('should reject creating a workspace view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.create_view.execute({
+            name: 'New View',
+            objectNameSingular: mockObjectNameSingular,
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to create a workspace view',
+        );
+        expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+          authContext: expect.objectContaining({ type: 'user' }),
+          setting: PermissionFlagType.VIEWS,
+        });
+        expect(viewService.createOne).not.toHaveBeenCalled();
+      });
+
+      it('should create an unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        viewService.createOne.mockResolvedValue({
+          id: 'new-view-id',
+          name: 'My View',
+          objectMetadataId: mockObjectMetadataId,
+          type: ViewType.TABLE,
+          icon: 'IconList',
+          visibility: ViewVisibility.UNLISTED,
+        } as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await tools.create_view.execute({
+          name: 'My View',
+          objectNameSingular: mockObjectNameSingular,
+          visibility: ViewVisibility.UNLISTED,
+        });
+
+        expect(viewService.createOne).toHaveBeenCalledWith(
+          expect.objectContaining({
+            createdByUserWorkspaceId: mockUserWorkspaceId,
+          }),
+        );
+      });
+
+      it('should reject creating an unlisted view without a user', async () => {
+        const tools = buildViewTools({ workspaceId: mockWorkspaceId });
+
+        await expect(
+          tools.create_view.execute({
+            name: 'My View',
+            objectNameSingular: mockObjectNameSingular,
+            visibility: ViewVisibility.UNLISTED,
+          }),
+        ).rejects.toThrow('Only a workspace member can own an unlisted view');
+        expect(viewService.createOne).not.toHaveBeenCalled();
+      });
     });
 
     describe('update-view tool', () => {
@@ -665,6 +733,54 @@ describe('View tools', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.updateOne.mockResolvedValue(updatedView as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        const { result } = await tools.update_view.execute({
+          id: mockViewId,
+          name: 'Updated Name',
+        });
+
+        expect(result).toMatchObject({ name: 'Updated Name' });
+      });
+
+      it('should reject updating a workspace view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        viewService.findById.mockResolvedValue(mockView as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.update_view.execute({
+            id: mockViewId,
+            name: 'Updated Name',
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to update a workspace view',
+        );
+        expect(viewService.updateOne).not.toHaveBeenCalled();
+      });
+
+      it('should allow updating own unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
+        const existingView = {
+          ...mockView,
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: mockUserWorkspaceId,
+        };
+
+        viewService.findById.mockResolvedValue(existingView as any);
+        viewService.updateOne.mockResolvedValue({
+          ...existingView,
+          name: 'Updated Name',
+        } as any);
 
         const tools = buildViewTools({
           workspaceId: mockWorkspaceId,
@@ -952,6 +1068,53 @@ describe('View tools', () => {
         );
       });
 
+      it('should reject creating a workspace view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.upsert_complete_view.execute({
+            objectNameSingular: mockObjectNameSingular,
+            name: 'Pipeline',
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to create a workspace view',
+        );
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should reject publishing own unlisted view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        viewService.findById.mockResolvedValue({
+          ...mockView,
+          visibility: ViewVisibility.UNLISTED,
+          createdByUserWorkspaceId: mockUserWorkspaceId,
+        } as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.upsert_complete_view.execute({
+            id: mockViewId,
+            visibility: ViewVisibility.WORKSPACE,
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to update a workspace view',
+        );
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).not.toHaveBeenCalled();
+      });
+
       it('should reject updating another users unlisted view', async () => {
         const existingView = {
           ...mockView,
@@ -1007,6 +1170,25 @@ describe('View tools', () => {
           name: 'All Companies',
           deleted: true,
         });
+      });
+
+      it('should reject deleting a workspace view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        viewService.findById.mockResolvedValue(mockView as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.delete_view.execute({
+            id: mockViewId,
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to delete a workspace view',
+        );
+        expect(viewService.deleteOne).not.toHaveBeenCalled();
       });
 
       it('should reject deleting another users unlisted view', async () => {
@@ -1088,6 +1270,26 @@ describe('View tools', () => {
             direction: ViewSortDirection.DESC,
           }),
         ).rejects.toThrow('You can only update your own unlisted views');
+        expect(viewSortService.updateOne).not.toHaveBeenCalled();
+      });
+
+      it('should reject updating a sort on a workspace view without the Views permission', async () => {
+        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        viewService.findById.mockResolvedValue(mockView as any);
+
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
+
+        await expect(
+          tools.update_view_sort.execute({
+            id: mockViewSortId,
+            direction: ViewSortDirection.DESC,
+          }),
+        ).rejects.toThrow(
+          'You need the Views permission to update a workspace view',
+        );
         expect(viewSortService.updateOne).not.toHaveBeenCalled();
       });
 
