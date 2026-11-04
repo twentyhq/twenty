@@ -21,4 +21,4 @@ In the app settings, **Required fields for people matches** and **Required field
 
 All four enrichment workflow actions also have a **Required fields for a match** multiselect. An empty selection uses the app setting, and any selection replaces it for that action. Refreshing a record that already has a PDL ID skips the requirements.
 
-Fields sent as matching inputs, such as company name and website, can't be selected because PDL does not support requiring them in the same request.
+Company matches don't offer name and website: PDL ignores `required` when it names a field that is also sent as a matching input.

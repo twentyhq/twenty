@@ -14,7 +14,7 @@ const meta: Meta<typeof WorkflowEditActionCodeFields> = {
     WorkflowStepDecorator,
   ],
   args: {
-    functionInput: { requiredFields: ['legacy_field'] },
+    functionInput: { requiredFields: ['legacy_field', 'work_email'] },
     inputSchema: [
       {
         type: 'object',
@@ -59,7 +59,7 @@ export const EnumArrayWithUnknownValue: Story = {
 
     await waitFor(() => {
       expect(args.onInputChange).toHaveBeenLastCalledWith(
-        expect.arrayContaining(['work_email', 'legacy_field']),
+        ['legacy_field'],
         ['requiredFields'],
       );
     });
