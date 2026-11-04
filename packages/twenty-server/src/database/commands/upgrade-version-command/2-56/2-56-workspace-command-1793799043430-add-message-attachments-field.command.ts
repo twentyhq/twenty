@@ -20,7 +20,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const MESSAGE_ATTACHMENTS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.fields.attachments.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.56.0', 1793713303736)
+@RegisteredWorkspaceCommand('2.56.0', 1793799043430)
 @Command({
   name: 'upgrade:2-56:add-message-attachments-field',
   description: doNotTranslate(
