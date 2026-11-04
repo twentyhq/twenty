@@ -269,8 +269,10 @@ export const OpenMemberConversation: Story = {
                 ? variables.targets
                 : [variables.targets]
               ).map((target) => ({
+                __typename: 'RecordPermissionsResult',
                 ...target,
                 permissions: {
+                  __typename: 'RecordPermissionsDTO',
                   canRead: true,
                   canUpdate: true,
                   canDelete: false,
