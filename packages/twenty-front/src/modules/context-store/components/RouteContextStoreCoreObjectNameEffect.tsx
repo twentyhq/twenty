@@ -1,3 +1,4 @@
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useEffect } from 'react';
@@ -13,7 +14,10 @@ export const RouteContextStoreCoreObjectNameEffect = ({
   const [
     contextStoreCurrentCoreObjectName,
     setContextStoreCurrentCoreObjectName,
-  ] = useAtomComponentState(contextStoreCurrentCoreObjectNameComponentState);
+  ] = useAtomComponentState(
+    contextStoreCurrentCoreObjectNameComponentState,
+    useContextStoreInstanceId(),
+  );
 
   useEffect(() => {
     if (contextStoreCurrentCoreObjectName !== coreObjectName) {
