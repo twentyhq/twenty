@@ -113,6 +113,18 @@ describe('buildGettingStartedStepDefinition', () => {
     );
   });
 
+  it('should fall back to the description when a step has no done description', () => {
+    expect(
+      buildGettingStartedStepDefinition({
+        stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
+        companyEnrichment: null,
+        doneChatThreadId: null,
+        doneWorkflowId: null,
+        translate,
+      }).doneDescription,
+    ).toBe('Companies and people fill in from your emails and meetings.');
+  });
+
   it('should define any other step as a custom step', () => {
     expect(
       buildGettingStartedStepDefinition({

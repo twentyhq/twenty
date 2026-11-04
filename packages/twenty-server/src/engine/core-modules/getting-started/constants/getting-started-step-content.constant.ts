@@ -12,7 +12,6 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     title: msg`Connect your mailbox`,
     doneTitle: msg`Mailbox connected`,
     description: msg`Companies and people fill in from your emails and meetings.`,
-    doneDescription: msg`Companies and people fill in from your emails and meetings.`,
     icon: 'IconAt',
     iconColor: 'blue',
   },
