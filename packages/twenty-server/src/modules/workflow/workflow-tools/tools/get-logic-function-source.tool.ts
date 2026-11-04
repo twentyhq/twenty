@@ -5,8 +5,8 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY } from 'src/engine/metadata-modules/logic-function/constants/logic-function-workflows-access-policy.constant';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { WORKFLOW_TOOL_ACCESS_POLICY } from 'src/modules/workflow/workflow-tools/constants/workflow-tool-access-policy.constant';
 
 const getLogicFunctionSourceSchema = z.object({
   logicFunctionId: z
@@ -25,7 +25,7 @@ const getLogicFunctionSourceSchema = z.object({
 Use this to inspect the code that runs when a CODE step executes — for example, before editing an existing function with update_logic_function_source, so the edit is based on the real current source rather than a guess.
 
 To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
-  accessPolicy: WORKFLOW_TOOL_ACCESS_POLICY,
+  accessPolicy: LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY,
   requiredApplicationReach: 'trigger',
   icon: 'IconSettingsAutomation',
 })
