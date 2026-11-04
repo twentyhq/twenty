@@ -33,7 +33,9 @@ describe('BullMQDriver group rate limit', () => {
   beforeAll(silenceDriverLogs);
 
   it('delays the jobs of a limited key past its burst and runs them once due', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
     const labels = buildLabels({ prefix: 'H', count: 4 });
 
     await harness.enqueueBulk({
@@ -61,7 +63,9 @@ describe('BullMQDriver group rate limit', () => {
   });
 
   it('keeps the fair ticket of a paced job, so once due it is ordered by its ticket against the other tenants', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
 
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'H', count: 4 }),
@@ -85,7 +89,9 @@ describe('BullMQDriver group rate limit', () => {
   });
 
   it('leaves unlimited keys untouched', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
 
     await harness.enqueueMany({
       labels: buildLabels({ prefix: 'A', count: 4 }),
@@ -96,7 +102,9 @@ describe('BullMQDriver group rate limit', () => {
   });
 
   it('keeps the longer of the caller delay and the paced delay', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
     const labels = buildLabels({ prefix: 'H', count: 4 });
 
     await harness.enqueueBulk({
@@ -112,7 +120,9 @@ describe('BullMQDriver group rate limit', () => {
   });
 
   it('never paces the urgent lane', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
 
     await harness.enqueueMany({
       labels: buildLabels({ prefix: 'U', count: 4 }),
@@ -138,7 +148,9 @@ describe('BullMQDriver group rate limit', () => {
   });
 
   it('counts delayed jobs as already waiting when deduplicating by prefix', async () => {
-    const harness = await createFairnessHarness({ isGroupRateLimitEnabled: true });
+    const harness = await createFairnessHarness({
+      isGroupRateLimitEnabled: true,
+    });
 
     await harness.enqueue({ label: 'H1', workspaceId: 'A', id: 'sync-H1' });
 
