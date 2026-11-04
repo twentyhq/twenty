@@ -640,7 +640,7 @@ msgstr "{cardCount, plural, one {Έγκριση # ενέργειας;} other {Έ
 #. js-lingui-id: JdxLs0
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
-msgstr ""
+msgstr "Το {channelName} είναι αποσυνδεδεμένο."
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -856,6 +856,11 @@ msgstr "{jobCount, plural, one {Αυτό θα την αφαιρέσει ορισ
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Αυτό θα επαναλάβει την επιλεγμένη εργασία. Θα εκτελεστεί από την αρχή.} other {Αυτό θα επαναλάβει τις επιλεγμένες εργασίες. Θα εκτελεστούν από την αρχή.}}"
+
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr "{keepModelId} (μη διαθέσιμο)"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "Διαχειριστές"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -3969,7 +3973,7 @@ msgstr "Έγκριση όλων των {pendingCardCount}"
 #. js-lingui-id: B4OjOW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Approve media access for {applicationName}?"
-msgstr ""
+msgstr "Να εγκριθεί η πρόσβαση σε πολυμέσα για το {applicationName};"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "Αυτόματη αναβάθμιση"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "Αυτόματο"
@@ -7079,17 +7082,17 @@ msgstr "Συνδέστε βοηθούς ΤΝ όπως το Claude ή το Cursor
 #. js-lingui-id: Qfj2/j
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect an account"
-msgstr ""
+msgstr "Συνδέστε έναν λογαριασμό"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
-msgstr ""
+msgstr "Συνδέστε email, WhatsApp ή LinkedIn για να δείτε τις συνομιλίες σας εδώ."
 
 #. js-lingui-id: d/aeu3
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations with {recordName} here."
-msgstr ""
+msgstr "Συνδέστε email, WhatsApp ή LinkedIn για να δείτε τις συνομιλίες σας με τον/τη {recordName} εδώ."
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10987,7 +10990,7 @@ msgstr "Ενεργοποίηση μίμησης"
 #. js-lingui-id: lT1fOr
 #: src/modules/media-access/components/ManagedIframeSession.tsx
 msgid "Enable media access for {ownerName}?"
-msgstr ""
+msgstr "Να επιτραπεί η πρόσβαση σε πολυμέσα για τον/την {ownerName};"
 
 #. js-lingui-id: 4Jrl0H
 #: src/modules/media-access/components/ManagedIframeSession.tsx
@@ -12567,7 +12570,7 @@ msgstr "Αποτυχία ανάκλησης του κωδικού ανάκτησ
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
 msgid "Failed to save behavior settings. Try again."
-msgstr ""
+msgstr "Αποτυχία αποθήκευσης ρυθμίσεων συμπεριφοράς. Δοκιμάστε ξανά."
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -13339,11 +13342,6 @@ msgstr "Ακολουθήστε μας στο X"
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Ακολουθείτε"
-
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "Ακολουθεί την προεπιλογή του χώρου εργασίας για πράκτορες"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -16345,27 +16343,22 @@ msgstr "Μικρότερο από ή ίσο"
 #. js-lingui-id: 6W7LRT
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your camera"
-msgstr ""
+msgstr "Να επιτραπεί στο {host} να χρησιμοποιεί την κάμερά σας"
 
 #. js-lingui-id: k6BZVW
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone"
-msgstr ""
+msgstr "Να επιτραπεί στο {host} να χρησιμοποιεί το μικρόφωνό σας"
 
 #. js-lingui-id: kpTkNv
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone and camera"
-msgstr ""
+msgstr "Να επιτραπεί στο {host} να χρησιμοποιεί το μικρόφωνο και την κάμερά σας"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "Αφήστε κάθε μέλος να αποφασίσει μόνο του"
-
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "Να επιτρέπεται στους χρήστες να κάνουν μια εγγραφή ορατή μόνο στον δημιουργό της και στα άτομα με τα οποία κοινοποιείται."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17648,7 +17641,7 @@ msgstr "Μήνυμα"
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
-msgstr ""
+msgstr "Μήνυμα προς {recipientName}"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -17838,6 +17831,7 @@ msgid "Mode"
 msgstr "Λειτουργία"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19304,7 +19298,7 @@ msgstr "Δεν υπάρχουν μηνύματα για εμφάνιση"
 #. js-lingui-id: +52YnJ
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No messages yet"
-msgstr ""
+msgstr "Δεν υπάρχουν μηνύματα ακόμα"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -21022,11 +21016,6 @@ msgstr "Παράκαμψη"
 msgid "Override Draft"
 msgstr "Αντικατάσταση Προχείρου"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "Παρακάμπτει την παραπάνω λειτουργία μέχρι να επιστρέψετε στην αυτόματη επιλογή"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21548,11 +21537,6 @@ msgstr "Διάγραμμα πίτας"
 msgid "Pin"
 msgstr "Καρφίτσωμα"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "Καρφιτσώστε ένα συγκεκριμένο μοντέλο"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21575,11 +21559,6 @@ msgstr "Καρφιτσωμένο"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Καρφιτσωμένη καρτέλα, εμφανίζεται πάντα στα αριστερά"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "Καρφιτσωμένο σε συγκεκριμένο μοντέλο"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -21975,11 +21954,6 @@ msgstr "Πολιτική Απορρήτου"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Ιδιωτικό"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "Ιδιωτικές εγγραφές"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22512,7 +22486,7 @@ msgstr "Επανασύνδεση"
 #. js-lingui-id: i5U7bC
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Reconnect {channelName} to send messages"
-msgstr ""
+msgstr "Επανασυνδέστε το {channelName} για να στείλετε μηνύματα"
 
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -23669,12 +23643,12 @@ msgstr "Αντίστροφη αλφαβητική"
 #. js-lingui-id: FIYcTW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review additional microphone or camera access requested by this app. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Ελέγξτε την πρόσθετη πρόσβαση σε μικρόφωνο ή κάμερα που ζητά αυτή η εφαρμογή. Τα μέλη πρέπει ακόμη να ενεργοποιήσουν την πρόσβαση και να εγκρίνουν την άδεια του προγράμματος περιήγησης."
 
 #. js-lingui-id: Jlf4oD
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review media access"
-msgstr ""
+msgstr "Έλεγχος πρόσβασης σε πολυμέσα"
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25336,7 +25310,7 @@ msgstr "Γίνεται αποστολή email"
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
-msgstr ""
+msgstr "Η αποστολή απέτυχε"
 
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -25475,11 +25449,6 @@ msgstr "Ρυθμίστε την ορατότητα του email, διαχειρ�
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Ορίστε τα πεδία που θα δημιουργηθούν στο μέλλον ως \"ορατά\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "Ορισμός μόνο για αυτόν τον πράκτορα"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31690,6 +31659,11 @@ msgstr "Πιστώσεις χώρου εργασίας"
 msgid "Workspace default"
 msgstr "Προεπιλογή χώρου εργασίας"
 
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr "Προεπιλογή χώρου εργασίας · {workspaceTierLabel}"
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -31823,7 +31797,7 @@ msgstr "Γράψτε μια περιγραφή για αυτόν τον πράκ
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
-msgstr ""
+msgstr "Γράψτε ένα μήνυμα"
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32126,12 +32100,12 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των συνδέσεών
 #. js-lingui-id: 63X4AK
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations will show up here."
-msgstr ""
+msgstr "Οι συνομιλίες σας θα εμφανιστούν εδώ."
 
 #. js-lingui-id: TW/SJs
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations with {recordName} will show up here."
-msgstr ""
+msgstr "Οι συνομιλίες σας με το {recordName} θα εμφανιστούν εδώ."
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
