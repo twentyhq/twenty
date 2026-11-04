@@ -1,3 +1,6 @@
+import { type NativePageKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -47,6 +50,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   agentChatChannelUniversalIdentifier: null,
   name,
   link: null,
+  nativePageKey: null,
   icon: icon ?? null,
   color,
   position,
@@ -57,6 +61,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
 export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
+  nativePageKey,
   folderId,
   folderUniversalIdentifier,
   position,
@@ -67,7 +72,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   now,
 }: {
   universalIdentifier: string;
-  viewUniversalIdentifier: string;
+  viewUniversalIdentifier?: string;
+  nativePageKey?: NativePageKey;
   folderId: string;
   folderUniversalIdentifier: string;
   position: number;
@@ -79,12 +85,14 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   };
   now: string;
 }): FlatNavigationMenuItem => {
-  const flatView = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatViewMaps,
-    universalIdentifier: viewUniversalIdentifier,
-  });
+  const flatView = isDefined(viewUniversalIdentifier)
+    ? findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatViewMaps,
+        universalIdentifier: viewUniversalIdentifier,
+      })
+    : undefined;
 
-  if (!flatView) {
+  if (!isDefined(nativePageKey) && !isDefined(flatView)) {
     throw new Error(
       `View not found for universal identifier ${viewUniversalIdentifier}`,
     );
@@ -92,7 +100,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
-    type: NavigationMenuItemType.OBJECT,
+    type: isDefined(nativePageKey)
+      ? NavigationMenuItemType.NATIVE_PAGE
+      : NavigationMenuItemType.OBJECT,
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -100,9 +110,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,
-    targetObjectMetadataId: flatView.objectMetadataId,
+    targetObjectMetadataId: flatView?.objectMetadataId ?? null,
     targetObjectMetadataUniversalIdentifier:
-      flatView.objectMetadataUniversalIdentifier,
+      flatView?.objectMetadataUniversalIdentifier ?? null,
     viewId: null,
     viewUniversalIdentifier: null,
     folderId,
@@ -113,8 +123,9 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     agentChatChannelUniversalIdentifier: null,
     name: null,
     link: null,
+    nativePageKey: nativePageKey ?? null,
     icon: null,
-    color: 'gray',
+    color: isDefined(nativePageKey) ? null : 'gray',
     position,
     createdAt: now,
     updatedAt: now,

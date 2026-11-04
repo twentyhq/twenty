@@ -4,7 +4,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,7 @@ export const useCallRecordingsSeeAllHref = (): string | undefined => {
   const callRecordingObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: CoreObjectNameSingular.CallRecording,
+      objectName: StandardObjectNameSingular.CallRecording,
       objectNameType: 'singular',
     },
   );

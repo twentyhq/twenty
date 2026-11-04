@@ -12,7 +12,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 
@@ -24,7 +24,7 @@ export const useEmailThread = (threadId: string | null) => {
 
   const { record: thread, loading: threadRecordLoading } =
     useFindOneRecord<EmailThread>({
-      objectNameSingular: CoreObjectNameSingular.MessageThread,
+      objectNameSingular: StandardObjectNameSingular.MessageThread,
       objectRecordId: threadId ?? '',
       recordGqlFields: {
         id: true,
@@ -93,7 +93,7 @@ export const useEmailThread = (threadId: string | null) => {
           eq: MessageParticipantRole.FROM,
         },
       },
-      objectNameSingular: CoreObjectNameSingular.MessageParticipant,
+      objectNameSingular: StandardObjectNameSingular.MessageParticipant,
       recordGqlFields: {
         id: true,
         role: true,
@@ -115,7 +115,8 @@ export const useEmailThread = (threadId: string | null) => {
         eq: lastMessageId ?? '',
       },
     },
-    objectNameSingular: CoreObjectNameSingular.MessageChannelMessageAssociation,
+    objectNameSingular:
+      StandardObjectNameSingular.MessageChannelMessageAssociation,
     recordGqlFields: {
       id: true,
       messageId: true,

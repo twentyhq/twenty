@@ -1,12 +1,12 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationScreenshotLightboxProps = {
   modalInstanceId: string;
@@ -73,6 +73,7 @@ export const SettingsApplicationScreenshotLightbox = ({
   onSelectedIndexChange,
   onClose,
 }: SettingsApplicationScreenshotLightboxProps) => {
+  const { t } = useLingui();
   const screenshotCount = screenshots.length;
   const hasSeveralScreenshots = screenshotCount > 1;
   const screenshotNumber = selectedIndex + 1;

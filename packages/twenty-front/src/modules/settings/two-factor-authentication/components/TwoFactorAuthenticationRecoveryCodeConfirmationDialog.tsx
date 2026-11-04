@@ -2,10 +2,10 @@ import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-fact
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const OTP_LENGTH = 6;
 
@@ -32,6 +32,7 @@ export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
   memberName,
   onConfirm,
 }: TwoFactorAuthenticationRecoveryCodeConfirmationDialogProps) => {
+  const { t } = useLingui();
   const [otp, setOtp] = useState('');
 
   return (

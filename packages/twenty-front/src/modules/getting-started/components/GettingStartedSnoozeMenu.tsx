@@ -9,6 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
@@ -35,6 +36,10 @@ export const GettingStartedSnoozeMenu = () => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
+  const canHide = billingHasPaymentMethod !== false;
 
   const snoozeOptions: {
     option: GettingStartedSnoozeOption;
@@ -103,16 +108,20 @@ export const GettingStartedSnoozeMenu = () => {
             );
           })}
         </Dropdown.Section>
-        <Dropdown.Separator />
-        <Dropdown.Section>
-          <Dropdown.ActionItem
-            startIcon={<IconEyeOff />}
-            disabled={isSaving}
-            onClick={() => void updateAndNavigateHome({ isHidden: true })}
-          >
-            {t`Hide for good`}
-          </Dropdown.ActionItem>
-        </Dropdown.Section>
+        {canHide && (
+          <>
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                startIcon={<IconEyeOff />}
+                disabled={isSaving}
+                onClick={() => void updateAndNavigateHome({ isHidden: true })}
+              >
+                {t`Hide for good`}
+              </Dropdown.ActionItem>
+            </Dropdown.Section>
+          </>
+        )}
       </DropdownContent>
     </DropdownRoot>
   );

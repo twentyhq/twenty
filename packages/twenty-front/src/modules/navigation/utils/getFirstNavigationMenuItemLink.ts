@@ -27,7 +27,8 @@ export const getFirstNavigationMenuItemLink = ({
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
       item.type === NavigationMenuItemType.FOLDER ||
-      item.type === NavigationMenuItemType.LINK
+      item.type === NavigationMenuItemType.LINK ||
+      item.type === NavigationMenuItemType.NATIVE_PAGE
     ) {
       continue;
     }

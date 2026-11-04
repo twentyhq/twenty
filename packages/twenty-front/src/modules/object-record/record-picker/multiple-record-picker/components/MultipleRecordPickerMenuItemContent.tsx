@@ -8,11 +8,11 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SearchRecord } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useLingui } from '@lingui/react/macro';
 
 type MultipleRecordPickerMenuItemContentProps = {
   searchRecord: SearchRecord;
@@ -25,6 +25,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   objectMetadataItem,
   onChange,
 }: MultipleRecordPickerMenuItemContentProps) => {
+  const { t } = useLingui();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
