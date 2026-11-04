@@ -1,6 +1,6 @@
-import { getLambdaVpcConfig } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-vpc-config.util';
+import { getLambdaVpcConfigOrThrow } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-vpc-config-or-throw.util';
 
-describe('getLambdaVpcConfig', () => {
+describe('getLambdaVpcConfigOrThrow', () => {
   it.each<{
     subnetIds: string[] | undefined;
     securityGroupIds: string[] | undefined;
@@ -12,14 +12,14 @@ describe('getLambdaVpcConfig', () => {
     'runs outside any VPC when nothing is configured ($subnetIds, $securityGroupIds)',
     ({ subnetIds, securityGroupIds }) => {
       expect(
-        getLambdaVpcConfig({ subnetIds, securityGroupIds }),
+        getLambdaVpcConfigOrThrow({ subnetIds, securityGroupIds }),
       ).toBeUndefined();
     },
   );
 
   it('returns the configured subnets and security groups without empty entries', () => {
     expect(
-      getLambdaVpcConfig({
+      getLambdaVpcConfigOrThrow({
         subnetIds: ['subnet-a', '', 'subnet-b'],
         securityGroupIds: ['sg-a'],
       }),
@@ -35,7 +35,9 @@ describe('getLambdaVpcConfig', () => {
   ])(
     'refuses a VPC setup missing subnets or security groups ($subnetIds, $securityGroupIds)',
     ({ subnetIds, securityGroupIds }) => {
-      expect(() => getLambdaVpcConfig({ subnetIds, securityGroupIds })).toThrow(
+      expect(() =>
+        getLambdaVpcConfigOrThrow({ subnetIds, securityGroupIds }),
+      ).toThrow(
         'LOGIC_FUNCTION_LAMBDA_SUBNET_IDS and LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS must be set together',
       );
     },

@@ -486,14 +486,14 @@ LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 
 The Lambda driver uploads each app's dependency layer to `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, a bucket you own in the same region as your functions. When it is not set, the driver uses your storage bucket (`STORAGE_S3_NAME`). If neither is set, logic functions fail with a configuration error.
 
-By default the Lambdas run outside any VPC and reach Twenty through `SERVER_URL`. To run them inside a VPC, for example to give them a fixed outbound IP, set both:
+By default the Lambdas run outside any VPC and reach Twenty through `SERVER_URL`. To run them inside a VPC, for example to give them a fixed outbound IP, set both (setting only one is a configuration error):
 
 ```bash
 LOGIC_FUNCTION_LAMBDA_SUBNET_IDS=subnet-0abc,subnet-0def
 LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS=sg-0abc
 ```
 
-The subnets need a route to the internet (usually a NAT gateway) for functions that call outside services. The Lambda role needs the `AWSLambdaVPCAccessExecutionRole` policy, and the credentials Twenty uses need `ec2:DescribeSubnets`, `ec2:DescribeSecurityGroups` and `ec2:DescribeVpcs`. Existing functions move into or out of the VPC the next time they run.
+The subnets need a route to the internet (usually a NAT gateway) for functions that call outside services. The Lambda role needs the `AWSLambdaVPCAccessExecutionRole` policy, and the credentials Twenty uses need `ec2:DescribeSubnets`, `ec2:DescribeSecurityGroups`, `ec2:DescribeVpcs` and `ec2:GetSecurityGroupsForVpc`. Existing functions move into or out of the VPC the next time they run. AWS can take a few minutes to set up the network for the first function on a subnet and security group pair, and that run waits for it.
 
 **To disable logic functions:**
 ```bash
