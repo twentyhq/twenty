@@ -7,6 +7,7 @@ import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -49,6 +50,10 @@ export const GettingStartedImportAction = () => {
       mode: 'SEND',
       files,
     });
+
+    if (!isDefined(chatThreadId)) {
+      return;
+    }
 
     void updateGettingStarted({
       completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,

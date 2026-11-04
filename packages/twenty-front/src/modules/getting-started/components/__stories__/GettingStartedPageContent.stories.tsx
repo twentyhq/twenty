@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
@@ -43,10 +42,7 @@ import {
 } from '~/testing/mock-data/gettingStartedSteps';
 import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import {
-  mockCurrentWorkspace,
-  mockedWorkspaceMemberData,
-} from '~/testing/mock-data/users';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
   ...mockCurrentWorkspace,
@@ -320,15 +316,6 @@ export const DoneSteps: Story = {
         lastActivityAt: TWO_HOURS_BEFORE_MOCKED_DATE,
       }),
     );
-    jotaiStore.set(currentWorkspaceMembersState.atom, [
-      mockedWorkspaceMemberData,
-      {
-        ...mockedWorkspaceMemberData,
-        id: '20202020-0000-4000-8000-000000000002',
-        name: { firstName: 'Julia', lastName: 'Martin' },
-        avatarUrl: null,
-      },
-    ]);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...TRIALING_WORKSPACE,
       installedApplications: [
@@ -372,7 +359,7 @@ export const DoneSteps: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('button', { name: /3 teammates invited/ }),
+      await canvas.findByRole('button', { name: '2 invitations sent' }),
     ).toBeVisible();
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),

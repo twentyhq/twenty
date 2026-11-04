@@ -1,6 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { GettingStartedConnectedAccountRow } from '@/getting-started/components/GettingStartedConnectedAccountRow';
+import { GettingStartedConnectedAccountSettingsButton } from '@/getting-started/components/GettingStartedConnectedAccountSettingsButton';
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
+import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 
 type GettingStartedConnectedAccountsTableProps = {
@@ -13,7 +14,13 @@ export const GettingStartedConnectedAccountsTable = ({
   <Table>
     <SettingsConnectedAccountsTableHeader />
     {accounts.map((account) => (
-      <GettingStartedConnectedAccountRow key={account.id} account={account} />
+      <SettingsConnectedAccountsTableRow
+        key={account.id}
+        account={account}
+        action={
+          <GettingStartedConnectedAccountSettingsButton account={account} />
+        }
+      />
     ))}
   </Table>
 );
