@@ -461,7 +461,6 @@ export class ApplicationSyncService {
 
     await this.cleanupApplicationRuntimeResources({
       workspaceId,
-      applicationId: application.id,
       applicationUniversalIdentifier,
     });
 
@@ -472,11 +471,9 @@ export class ApplicationSyncService {
 
   private async cleanupApplicationRuntimeResources({
     workspaceId,
-    applicationId,
     applicationUniversalIdentifier,
   }: {
     workspaceId: string;
-    applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
     try {
@@ -484,7 +481,6 @@ export class ApplicationSyncService {
 
       await driver.deleteApplicationResources({
         workspaceId,
-        applicationId,
         applicationUniversalIdentifier,
       });
     } catch (error) {
