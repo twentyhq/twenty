@@ -360,14 +360,15 @@ describe('resolveOrderByLeaves', () => {
       fieldMetadataId: string,
       objectId: string,
     ) => ({
-      [objectId]: {
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: { [fieldMetadataId]: { canRead: false } },
-        // oxlint-disable-next-line typescript/no-explicit-any
-      } as any,
+      objects: {
+        [objectId]: {
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
+          restrictedFields: { [fieldMetadataId]: { canRead: false } },
+        },
+      },
     });
 
     it('should reject ordering by a role-restricted root field', () => {
@@ -376,7 +377,7 @@ describe('resolveOrderByLeaves', () => {
           orderBy: [{ closeDate: OrderByDirection.AscNullsLast }],
           flatObjectMetadata,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
+          recordsPermissions: permissionsRestricting(
             'closedate-id',
             objectMetadataId,
           ),
@@ -391,7 +392,7 @@ describe('resolveOrderByLeaves', () => {
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          objectsPermissions: permissionsRestricting(
+          recordsPermissions: permissionsRestricting(
             'company-name-id',
             'company-object-id',
           ),
@@ -459,7 +460,7 @@ describe('resolveOrderByLeaves', () => {
               ]),
             ),
           },
-          objectsPermissions: permissionsRestricting(
+          recordsPermissions: permissionsRestricting(
             'company-name-id',
             'company-object-id',
           ),

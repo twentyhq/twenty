@@ -16,15 +16,18 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
+import { BillingPartnerCodeDTO } from 'src/engine/core-modules/billing/dtos/billing-partner-code.dto';
 import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/billing-payment-intent.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
+import { BillingSetPartnerCodeInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-set-partner-code.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/services/billing-partner-code.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -111,6 +114,7 @@ export class BillingResolver {
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
+    private readonly billingPartnerCodeService: BillingPartnerCodeService,
     private readonly billingUsageService: BillingUsageService,
     private readonly permissionsService: PermissionsService,
   ) {}
@@ -128,6 +132,44 @@ export class BillingResolver {
         forPaymentMethodUpdate,
       ),
     };
+  }
+
+  @Query(() => BillingPartnerCodeDTO)
+  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  async billingPartnerCode(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+  ): Promise<BillingPartnerCodeDTO> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      applicationId: application?.id,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    return this.billingPartnerCodeService.getPartnerCode(workspace.id);
+  }
+
+  @Mutation(() => BillingPartnerCodeDTO)
+  @UseGuards(AccessPolicyGuard(BILLING_CHECKOUT_ACCESS_POLICY))
+  async setBillingPartnerCode(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { partnerCode }: BillingSetPartnerCodeInput,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+  ): Promise<BillingPartnerCodeDTO> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      applicationId: application?.id,
+      workspaceActivationStatus: workspace.activationStatus,
+    });
+
+    return this.billingPartnerCodeService.setPartnerCode({
+      workspaceId: workspace.id,
+      partnerCode,
+    });
   }
 
   @Mutation(() => BillingSessionDTO)

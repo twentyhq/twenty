@@ -2,7 +2,6 @@ import { type ObjectLiteral } from 'typeorm';
 
 import {
   type FeatureFlagKey,
-  type ObjectsPermissionsByRoleId,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
@@ -17,6 +16,7 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
@@ -24,7 +24,7 @@ export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-  rolesPermissions: ObjectsPermissionsByRoleId;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;

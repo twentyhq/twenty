@@ -1066,6 +1066,12 @@ export type BillingMeteredProduct = BillingProductDto & {
   prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
+export type BillingPartnerCode = {
+  __typename?: 'BillingPartnerCode';
+  isEditable: Scalars['Boolean']['output'];
+  partnerCode?: Maybe<Scalars['String']['output']>;
+};
+
 export type BillingPaymentIntent = {
   __typename?: 'BillingPaymentIntent';
   clientSecret: Scalars['String']['output'];
@@ -3734,6 +3740,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
@@ -4824,6 +4831,11 @@ export type MutationSetAppKeyValueArgs = {
 };
 
 
+export type MutationSetBillingPartnerCodeArgs = {
+  partnerCode: Scalars['String']['input'];
+};
+
+
 export type MutationSetEnterpriseKeyArgs = {
   enterpriseKey: Scalars['String']['input'];
 };
@@ -5582,6 +5594,17 @@ export enum ObjectRecordGroupByDateGranularity {
   YEAR = 'YEAR'
 }
 
+export type ObjectRecordsPermissions = {
+  __typename?: 'ObjectRecordsPermissions';
+  canDestroyAllRecords: Scalars['Boolean']['output'];
+  canReadAllRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllRecords: Scalars['Boolean']['output'];
+  canUpdateAllRecords: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  restrictedFields: Scalars['JSON']['output'];
+  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+};
+
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_CALL = 'BOOK_CALL',
@@ -5935,6 +5958,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
+  billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -6893,6 +6917,16 @@ export enum RowLevelPermissionPredicateOperand {
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
+
+export type RowLevelRecordsPermissions = {
+  __typename?: 'RowLevelRecordsPermissions';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  predicateGroups: Array<RowLevelPermissionPredicateGroup>;
+  predicates: Array<RowLevelPermissionPredicate>;
+};
 
 export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
@@ -8343,8 +8377,7 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
-  objectsPermissions?: Maybe<Array<ObjectPermission>>;
+  objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];

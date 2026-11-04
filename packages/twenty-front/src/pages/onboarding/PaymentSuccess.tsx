@@ -2,7 +2,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
+import { useEnterWorkspaceAfterOnboardingCheckout } from '@/onboarding/hooks/useEnterWorkspaceAfterOnboardingCheckout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -24,8 +24,8 @@ const StyledRetryButtonContainer = styled.div`
 export const PaymentSuccess = () => {
   const { t } = useLingui();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const showWelcomeAnimationAfterOnboardingCheckout =
-    useShowWelcomeAnimationAfterOnboardingCheckout();
+  const enterWorkspaceAfterOnboardingCheckout =
+    useEnterWorkspaceAfterOnboardingCheckout();
   const { enqueueToast } = useToast();
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
@@ -52,7 +52,7 @@ export const PaymentSuccess = () => {
         refreshedWorkspace?.currentBillingSubscription?.status;
 
       if (isDefined(refreshedSubscriptionStatus)) {
-        showWelcomeAnimationAfterOnboardingCheckout();
+        enterWorkspaceAfterOnboardingCheckout();
         return;
       }
 

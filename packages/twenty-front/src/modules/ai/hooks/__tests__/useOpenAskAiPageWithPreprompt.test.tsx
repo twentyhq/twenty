@@ -2,11 +2,14 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -105,5 +108,31 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     expect(jotaiStore.get(agentChatDraftsByThreadIdState.atom)).toEqual({});
     expect(jotaiStore.get(agentChatPrepromptState.atom)).toBeNull();
     expect(jotaiStore.get(agentChatUploadedFilesState.atom)).toEqual([]);
+  });
+
+  it('addresses the prompt to the default recipients instead of a leftover draft', async () => {
+    const newChatRecipientsAtom =
+      agentChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID);
+
+    jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
+    jotaiStore.set(newChatRecipientsAtom, {
+      isAssistantParticipant: false,
+      recipientWorkspaceMemberIds: ['20202020-0000-4000-8000-0000000000bb'],
+    });
+
+    const { result } = renderHook(() => useOpenAskAiPageWithPreprompt(), {
+      wrapper: Wrapper,
+    });
+
+    await act(async () => {
+      await result.current.openAskAiPageWithPreprompt({
+        serializedDocument: 'Summarize my open deals',
+        mode: 'SEND',
+      });
+    });
+
+    expect(jotaiStore.get(newChatRecipientsAtom)).toEqual(
+      AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+    );
   });
 });

@@ -17,6 +17,7 @@ export const enrichCompany = (
           profile: entry.profile,
           name: entry.name,
           min_likelihood: entry.minLikelihood,
+          required: entry.required,
         }),
       }),
     ),

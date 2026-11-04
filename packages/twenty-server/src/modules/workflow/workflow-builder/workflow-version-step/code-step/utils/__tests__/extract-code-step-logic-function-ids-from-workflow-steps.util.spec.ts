@@ -49,6 +49,21 @@ describe('extractCodeStepLogicFunctionIdsFromWorkflowSteps', () => {
     ]);
   });
 
+  it('should ignore CODE steps carrying their code inline', () => {
+    const inlineCodeStep: CodeStepForLogicFunctionIdExtraction = {
+      id: 'inline-step-id',
+      type: WorkflowActionType.CODE,
+      settings: { input: { code: 'export const main = async () => ({});' } },
+    };
+
+    expect(
+      extractCodeStepLogicFunctionIdsFromWorkflowSteps([
+        inlineCodeStep,
+        buildCodeStep('logic-function-1'),
+      ]),
+    ).toEqual(['logic-function-1']);
+  });
+
   it('should throw when a CODE step has an empty logic function id', () => {
     const steps = [buildCodeStep(''), buildCodeStep('logic-function-1')];
 
