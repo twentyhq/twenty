@@ -5,6 +5,10 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
 
 const FLAT_APPLICATION = {
@@ -141,7 +145,10 @@ describe('CodeStepRunnerService', () => {
     });
 
     logicFunctionExecutorService.transpile.mockRejectedValue(
-      new Error('Unexpected token'),
+      new LogicFunctionException(
+        'Unexpected token',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+      ),
     );
 
     const result = await service.run({
@@ -155,5 +162,23 @@ describe('CodeStepRunnerService', () => {
     expect(
       logicFunctionExecutorService.executeBuiltCode,
     ).not.toHaveBeenCalled();
+  });
+
+  it('lets an infrastructure failure during the build throw', async () => {
+    const { service, logicFunctionExecutorService } = await buildService({
+      builtFileExists: false,
+    });
+
+    logicFunctionExecutorService.transpile.mockRejectedValue(
+      new Error('Storage unavailable'),
+    );
+
+    await expect(
+      service.run({
+        flatApplication: FLAT_APPLICATION,
+        code: CODE,
+        payload: {},
+      }),
+    ).rejects.toThrow('Storage unavailable');
   });
 });

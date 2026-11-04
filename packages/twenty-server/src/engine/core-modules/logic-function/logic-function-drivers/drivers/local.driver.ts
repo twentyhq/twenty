@@ -111,6 +111,11 @@ export class LocalDriver implements LogicFunctionDriver {
         sourcemap: true,
         packages: 'external',
         banner: NODE_ESM_CJS_BANNER,
+      }).catch((error: unknown) => {
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${error instanceof Error ? error.message : String(error)}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
       });
 
       const builtCode = await fs.readFile(builtBundleFilePath, 'utf-8');
