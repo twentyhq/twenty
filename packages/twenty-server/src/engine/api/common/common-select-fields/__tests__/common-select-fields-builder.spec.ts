@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -149,7 +149,7 @@ describe('CommonSelectFieldsBuilder', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommonSelectFieldsBuilder,
-        { provide: RecordAccessPolicyService, useValue: {} },
+        { provide: PermissionsService, useValue: {} },
       ],
     }).compile();
 

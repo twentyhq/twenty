@@ -17,6 +17,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const workspaceId = 'workspace-id';
@@ -122,11 +123,22 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
-    const scopedRecordAccessPolicy = {
+    const recordAccessPolicyService = {
       findRecordsPermissions: jest
         .fn()
         .mockResolvedValue(composedRecordsPermissions),
-      hasAccessToSomeRecords: jest.fn(
+    } as unknown as RecordAccessPolicyService;
+    const permissionsService = {
+      buildPermissionsPrincipals: jest.fn().mockResolvedValue({
+        workspaceId,
+        mainPrincipal: {
+          type: 'apiKey',
+          apiKeyId: 'api-key-id',
+          roleId: 'role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      }),
+      canAccessSomeRecords: jest.fn(
         async ({
           operationType,
         }: {
@@ -142,12 +154,10 @@ describe('DatabaseToolProvider', () => {
           );
         },
       ),
-    };
-    const recordAccessPolicyService = {
-      forAuthContext: jest.fn(() => scopedRecordAccessPolicy),
-    } as unknown as RecordAccessPolicyService;
+    } as unknown as PermissionsService;
 
     const provider = new DatabaseToolProvider(
+      permissionsService,
       recordAccessPolicyService,
       flatEntityMapsCacheService,
       i18nService,

@@ -13,20 +13,18 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
-  constructor(
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
-  ) {}
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
   async findReadableObjectMetadataIds({
@@ -40,12 +38,14 @@ export class CommonSelectFieldsBuilder {
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    const recordAccessPolicy =
-      this.recordAccessPolicyService.forAuthContext(authContext);
+    const principals = await this.permissionsService.buildPermissionsPrincipals(
+      { authContext },
+    );
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((flatObjectMetadata) =>
-        recordAccessPolicy.hasAccessToSomeRecords({
-          flatObjectMetadata,
+        this.permissionsService.canAccessSomeRecords({
+          principals,
+          objectMetadataId: flatObjectMetadata.id,
           operationType: 'select',
         }),
       ),

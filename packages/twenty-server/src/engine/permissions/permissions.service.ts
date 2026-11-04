@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordsOperationType,
+  type RecordShareAccessLevel,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
@@ -30,7 +35,26 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principals-role-ids.util';
 import { PermissionsPrincipalsService } from 'src/engine/permissions/principal/services/permissions-principals.service';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-role-permissions-principals.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+
+type RecordsAccessQuestion = {
+  principals: PermissionsPrincipalsWithRolesContext | undefined;
+  objectMetadataId: string;
+  operationType: ObjectRecordsOperationType;
+};
+
+type RecordIdsAccessQuestion = RecordsAccessQuestion & {
+  recordIds: string[];
+  // answers as if the caller had granted this share, before it is written
+  hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  transactionScope?: WorkspaceTransactionScope;
+};
 
 @Injectable()
 export class PermissionsService {
@@ -38,7 +62,75 @@ export class PermissionsService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly permissionsPrincipalsService: PermissionsPrincipalsService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
+
+  // Undefined when the auth context holds no role, which every question denies
+  public buildPermissionsPrincipals({
+    authContext,
+  }: {
+    authContext: PermissionsAuthContext;
+  }): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    return this.permissionsPrincipalsService.findPrincipalsWithRoles(
+      authContext,
+    );
+  }
+
+  public canAccessAllRecords(
+    question: RecordsAccessQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToAllRecords(question);
+  }
+
+  public canAccessSomeRecords(
+    question: RecordsAccessQuestion,
+  ): Promise<boolean> {
+    return this.recordAccessPolicyService.hasAccessToSomeRecords(question);
+  }
+
+  public async canAccessRecords(
+    question: RecordIdsAccessQuestion,
+  ): Promise<boolean> {
+    const admittedRecordIds =
+      await this.recordAccessPolicyService.findAdmittedRecordIds(question);
+
+    return (
+      question.recordIds.length > 0 &&
+      question.recordIds.every((recordId) =>
+        admittedRecordIds.has(recordId.toLowerCase()),
+      )
+    );
+  }
+
+  public async findAccessibleRecordIds(
+    question: RecordIdsAccessQuestion,
+  ): Promise<string[]> {
+    const admittedRecordIds =
+      await this.recordAccessPolicyService.findAdmittedRecordIds(question);
+
+    return [...new Set(question.recordIds)].filter((recordId) =>
+      admittedRecordIds.has(recordId.toLowerCase()),
+    );
+  }
+
+  // Pass the same batch object on every call: lookups are shared per batch
+  public findAccessibleEventRecordIds(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+  }): Promise<Set<string>> {
+    return this.recordAccessPolicyService.findAccessibleEventRecordIds(
+      question,
+    );
+  }
+
+  // Masks unreadable fields too; events defaults to the whole batch
+  public findReadableEvents<TEvent extends ObjectRecordEvent>(question: {
+    authContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<TEvent>;
+    events?: TEvent[];
+  }): Promise<TEvent[]> {
+    return this.recordAccessPolicyService.findReadableEvents(question);
+  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
@@ -85,10 +177,10 @@ export class PermissionsService {
     return {
       permissionFlags,
       recordsPermissions: computePrincipalsRecordsPermissions({
-        principals: {
-          mainPrincipal: { type: 'role', roleId: flatRole.id },
-          applicationPrincipal: { type: 'customApplication' },
-        },
+        principals: buildRolePermissionsPrincipals({
+          workspaceId,
+          roleId: flatRole.id,
+        }),
         rolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

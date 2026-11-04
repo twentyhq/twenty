@@ -12,17 +12,17 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-describe('RecordAccessPolicyService', () => {
+describe('PermissionsService', () => {
   const recordId = randomUUID();
   let adminAuthContext: PermissionsAuthContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
-  let recordAccessPolicyService: RecordAccessPolicyService;
+  let permissionsService: PermissionsService;
   const missingRoleAuthContext: PermissionsAuthContext = {
     type: 'apiKey',
     workspace: { id: SEED_APPLE_WORKSPACE_ID },
@@ -57,10 +57,8 @@ describe('RecordAccessPolicyService', () => {
     }
 
     personFlatObjectMetadata = person;
-    recordAccessPolicyService =
-      getAppProviderByClassName<RecordAccessPolicyService>(
-        'RecordAccessPolicyService',
-      );
+    permissionsService =
+      getAppProviderByClassName<PermissionsService>('PermissionsService');
 
     adminAuthContext = await resolveWorkspaceMemberAuthContext({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -78,7 +76,22 @@ describe('RecordAccessPolicyService', () => {
     );
   });
 
-  const hasAccessToRecords = ({
+  const askObjectQuestion = async ({
+    question,
+    authContext,
+  }: {
+    question: 'canAccessAllRecords' | 'canAccessSomeRecords';
+    authContext: PermissionsAuthContext;
+  }): Promise<boolean> =>
+    permissionsService[question]({
+      principals: await permissionsService.buildPermissionsPrincipals({
+        authContext,
+      }),
+      objectMetadataId: personFlatObjectMetadata.id,
+      operationType: 'select',
+    });
+
+  const canAccessRecords = async ({
     authContext,
     recordIds,
     operationType = 'select',
@@ -87,23 +100,25 @@ describe('RecordAccessPolicyService', () => {
     recordIds: string[];
     operationType?: ObjectRecordsOperationType;
   }): Promise<boolean> =>
-    recordAccessPolicyService.hasAccessToRecords({
-      authContext,
-      flatObjectMetadata: personFlatObjectMetadata,
+    permissionsService.canAccessRecords({
+      principals: await permissionsService.buildPermissionsPrincipals({
+        authContext,
+      }),
+      objectMetadataId: personFlatObjectMetadata.id,
       operationType,
       recordIds,
     });
 
-  describe('hasAccessToRecords', () => {
+  describe('canAccessRecords', () => {
     it('grants a role reading and updating an existing record it permits', async () => {
       expect(
-        await hasAccessToRecords({
+        await canAccessRecords({
           authContext: adminAuthContext,
           recordIds: [recordId],
         }),
       ).toBe(true);
       expect(
-        await hasAccessToRecords({
+        await canAccessRecords({
           authContext: adminAuthContext,
           recordIds: [recordId],
           operationType: 'update',
@@ -113,7 +128,7 @@ describe('RecordAccessPolicyService', () => {
 
     it('denies an API key without a role', async () => {
       expect(
-        await hasAccessToRecords({
+        await canAccessRecords({
           authContext: missingRoleAuthContext,
           recordIds: [recordId],
         }),
@@ -122,7 +137,7 @@ describe('RecordAccessPolicyService', () => {
 
     it('denies when one of the records does not exist', async () => {
       expect(
-        await hasAccessToRecords({
+        await canAccessRecords({
           authContext: adminAuthContext,
           recordIds: [recordId, randomUUID()],
         }),
@@ -130,25 +145,38 @@ describe('RecordAccessPolicyService', () => {
     });
   });
 
-  describe('hasAccessToSomeRecords', () => {
-    it('follows the role when it permits the operation', async () => {
+  describe('findAccessibleRecordIds', () => {
+    it('keeps only the records the principal is admitted to', async () => {
       expect(
-        await recordAccessPolicyService.hasAccessToSomeRecords({
-          authContext: adminAuthContext,
-          flatObjectMetadata: personFlatObjectMetadata,
+        await permissionsService.findAccessibleRecordIds({
+          principals: await permissionsService.buildPermissionsPrincipals({
+            authContext: adminAuthContext,
+          }),
+          objectMetadataId: personFlatObjectMetadata.id,
           operationType: 'select',
+          recordIds: [recordId, randomUUID()],
         }),
-      ).toBe(true);
-    });
-
-    it('denies an API key with no role and no share on the object', async () => {
-      expect(
-        await recordAccessPolicyService.hasAccessToSomeRecords({
-          authContext: missingRoleAuthContext,
-          flatObjectMetadata: personFlatObjectMetadata,
-          operationType: 'select',
-        }),
-      ).toBe(false);
+      ).toEqual([recordId]);
     });
   });
+
+  describe.each(['canAccessAllRecords', 'canAccessSomeRecords'] as const)(
+    '%s',
+    (question) => {
+      it('follows the role when it permits the operation', async () => {
+        expect(
+          await askObjectQuestion({ question, authContext: adminAuthContext }),
+        ).toBe(true);
+      });
+
+      it('denies an API key with no role', async () => {
+        expect(
+          await askObjectQuestion({
+            question,
+            authContext: missingRoleAuthContext,
+          }),
+        ).toBe(false);
+      });
+    },
+  );
 });

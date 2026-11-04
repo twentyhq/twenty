@@ -24,7 +24,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -61,6 +61,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
+    private readonly permissionsService: PermissionsService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
@@ -90,9 +91,6 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate(eventBatch);
-
     const streamIdsToRemove: string[] = [];
     const subscriberAuthContexts = new Map<
       string,
@@ -115,7 +113,6 @@ export class ObjectRecordEventPublisher {
         workspaceEventBatch: eventBatch,
         permissionsContext,
         workspaceMemberIdByUserId,
-        eventRecordAccessGate,
         subscriberAuthContexts,
       });
     }
@@ -142,7 +139,6 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch,
     permissionsContext,
     workspaceMemberIdByUserId,
-    eventRecordAccessGate,
     subscriberAuthContexts,
   }: {
     streamChannelId: string;
@@ -150,7 +146,6 @@ export class ObjectRecordEventPublisher {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
     workspaceMemberIdByUserId: Map<string, string>;
-    eventRecordAccessGate: EventRecordAccessGate;
     subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
   }): Promise<void> {
     const subscriberAuthContext: SerializableAuthContext = {
@@ -203,9 +198,10 @@ export class ObjectRecordEventPublisher {
     }[] = [];
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(
-        permissionsAuthContext,
-      );
+      await this.permissionsService.findAccessibleEventRecordIds({
+        authContext: permissionsAuthContext,
+        eventBatch: workspaceEventBatch,
+      });
 
     if (admittedRecordIds.size === 0) {
       return;

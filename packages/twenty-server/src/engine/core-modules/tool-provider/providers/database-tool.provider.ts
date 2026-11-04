@@ -41,6 +41,7 @@ import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -51,6 +52,7 @@ export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
 
   constructor(
+    private readonly permissionsService: PermissionsService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
@@ -88,14 +90,20 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const recordAccessPolicy = isDefined(context.authContext)
-      ? this.recordAccessPolicyService.forAuthContext(context.authContext)
+    const principals = isDefined(context.authContext)
+      ? await this.permissionsService.buildPermissionsPrincipals({
+          authContext: context.authContext,
+        })
       : undefined;
-    const recordsPermissions =
-      await recordAccessPolicy?.findRecordsPermissions();
+    // restrictedFields drive the tool schemas until field questions exist
+    const recordsPermissions = isDefined(context.authContext)
+      ? await this.recordAccessPolicyService.findRecordsPermissions(
+          context.authContext,
+        )
+      : undefined;
 
     if (
-      !isDefined(recordAccessPolicy) ||
+      !isDefined(principals) ||
       !isDefined(recordsPermissions) ||
       Object.keys(recordsPermissions.objects).length === 0
     ) {
@@ -154,8 +162,9 @@ export class DatabaseToolProvider implements ToolProvider {
       const hasAccessToSomeRecords = async (
         operationType: ObjectRecordsOperationType,
       ) =>
-        recordAccessPolicy.hasAccessToSomeRecords({
-          flatObjectMetadata: flatObject,
+        this.permissionsService.canAccessSomeRecords({
+          principals,
+          objectMetadataId: flatObject.id,
           operationType,
         });
 

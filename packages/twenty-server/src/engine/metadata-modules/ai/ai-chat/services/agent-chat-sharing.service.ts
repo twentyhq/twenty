@@ -24,7 +24,6 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -76,7 +75,6 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -320,15 +318,19 @@ export class AgentChatSharingService {
       (
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
+            const principals =
+              await this.permissionsService.buildPermissionsPrincipals({
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: memberId,
+                },
+              });
             const grants = await Promise.all(
               AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                this.recordAccessPolicyService.hasAccessToRecords({
-                  authContext: {
-                    type: 'user',
-                    workspace: { id: workspaceId },
-                    workspaceMemberId: memberId,
-                  },
-                  flatObjectMetadata: threadFlatObjectMetadata,
+                this.permissionsService.canAccessRecords({
+                  principals,
+                  objectMetadataId: threadFlatObjectMetadata.id,
                   recordIds: [threadId],
                   operationType,
                   hypotheticalRecordShareAccessLevel,
