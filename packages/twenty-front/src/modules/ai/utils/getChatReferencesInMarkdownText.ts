@@ -95,10 +95,14 @@ const mayHideProbedReferences = (probedText: string): boolean => {
     return false;
   }
 
-  return !probedText.includes('\\`') &&
-    isEveryBacktickRunClosedOnItsLine(probedText)
-    ? probedText.split('\n').some(hasProbeMarkerBetweenBackticks)
-    : hasProbeMarkerBetweenBackticks(probedText);
+  if (
+    probedText.includes('\\`') ||
+    !isEveryBacktickRunClosedOnItsLine(probedText)
+  ) {
+    return hasProbeMarkerBetweenBackticks(probedText);
+  }
+
+  return probedText.split('\n').some(hasProbeMarkerBetweenBackticks);
 };
 
 const getTextReferenceIndexes = (probedText: string): Set<number> => {
