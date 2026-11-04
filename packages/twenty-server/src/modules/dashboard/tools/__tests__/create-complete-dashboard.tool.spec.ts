@@ -1,6 +1,6 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const AUTH_CONTEXT = {
@@ -31,7 +31,7 @@ const buildDeps = ({ insert }: { insert: jest.Mock }) => {
           .mockImplementation(async (fn) => fn()),
         getRepository: jest.fn().mockReturnValue({ insert }),
       },
-    } as unknown as DashboardToolDependencies,
+    } as unknown as PageLayoutToolDependencies,
   };
 };
 

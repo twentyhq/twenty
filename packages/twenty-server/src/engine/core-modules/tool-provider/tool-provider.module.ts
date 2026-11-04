@@ -9,7 +9,7 @@ import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
-import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
+import { PageLayoutToolProvider } from 'src/engine/core-modules/tool-provider/providers/page-layout-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -36,7 +36,7 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
+// Workflow and Page Layout tools modules reach AiAgentExecutionModule, which imports this module,
 // so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
 
 @Module({
@@ -68,7 +68,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
-    DashboardToolProvider,
+    PageLayoutToolProvider,
     FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
@@ -80,14 +80,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         workflowProvider: WorkflowToolProvider,
-        dashboardProvider: DashboardToolProvider,
+        pageLayoutProvider: PageLayoutToolProvider,
         frontComponentProvider: FrontComponentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         logicFunctionProvider,
         workflowProvider,
-        dashboardProvider,
+        pageLayoutProvider,
         frontComponentProvider,
       ],
       inject: [
@@ -95,7 +95,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         LogicFunctionToolProvider,
         WorkflowToolProvider,
-        DashboardToolProvider,
+        PageLayoutToolProvider,
         FrontComponentToolProvider,
       ],
     },

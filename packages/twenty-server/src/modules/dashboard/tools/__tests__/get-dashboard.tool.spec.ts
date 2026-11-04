@@ -6,7 +6,7 @@ import {
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const AUTH_CONTEXT = {
@@ -72,6 +72,7 @@ describe('get_dashboard tool', () => {
         {
           id: 'tab-1',
           title: 'Tab',
+          isActive: true,
           position: 0,
           widgets: [
             {
@@ -141,7 +142,7 @@ describe('get_dashboard tool', () => {
 
     const tool = createGetDashboardTool(
       deps as unknown as Pick<
-        DashboardToolDependencies,
+        PageLayoutToolDependencies,
         | 'pageLayoutService'
         | 'workspaceOrmManager'
         | 'flatEntityMapsCacheService'
@@ -154,6 +155,9 @@ describe('get_dashboard tool', () => {
 
     const result = await tool.execute({ dashboardId: dashboard.id });
 
+    expect(result).toMatchObject({
+      result: { layout: { tabs: [{ isActive: true }] } },
+    });
     expect(result.success).toBe(true);
     const widgets = result.result?.layout?.tabs?.[0]?.widgets ?? [];
 

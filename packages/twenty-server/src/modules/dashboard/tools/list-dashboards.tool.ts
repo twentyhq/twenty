@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 import {
-  type DashboardToolContextWithPermissions,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+  type PageLayoutToolContextWithPermissions,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const listDashboardsSchema = z.object({
   limit: z
@@ -16,8 +16,8 @@ const listDashboardsSchema = z.object({
 });
 
 export const createListDashboardsTool = (
-  deps: Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
-  context: DashboardToolContextWithPermissions,
+  deps: Pick<PageLayoutToolDependencies, 'workspaceOrmManager'>,
+  context: PageLayoutToolContextWithPermissions,
 ) => ({
   name: 'list_dashboards' as const,
   description: `List all dashboards in the workspace. Use get_dashboard to retrieve full layout structure.`,
