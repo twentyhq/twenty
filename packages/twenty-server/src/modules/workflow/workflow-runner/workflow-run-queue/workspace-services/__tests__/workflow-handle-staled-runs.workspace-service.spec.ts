@@ -1,19 +1,31 @@
+import { In } from 'typeorm';
+
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 
+type StaledRun = { id: string; coreWorkflowId: string | null };
+
 const buildService = ({
   staledRuns,
   inFlightJobs,
+  claimedRuns,
 }: {
-  staledRuns: { id: string; coreWorkflowId: string | null }[];
+  staledRuns: StaledRun[];
   inFlightJobs: { id?: string; data: { workflowRunId?: string } }[];
+  claimedRuns?: StaledRun[];
 }) => {
   const workflowRunRepository = {
     find: jest.fn().mockResolvedValueOnce(staledRuns).mockResolvedValue([]),
-    update: jest.fn(),
+    update: jest.fn().mockImplementation(async (criteria) => ({
+      generatedMaps: (claimedRuns ?? staledRuns).filter(({ id }) =>
+        criteria.some((where: { id: { value: string[] } }) =>
+          where.id.value.includes(id),
+        ),
+      ),
+    })),
   };
   const messageQueueService = {
     add: jest.fn(),
@@ -71,8 +83,19 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
     expect(workflowRunRepository.update).toHaveBeenCalledTimes(1);
     expect(workflowRunRepository.update).toHaveBeenCalledWith(
-      ['lost-run', 'never-enqueued-run'],
+      [
+        {
+          status: WorkflowRunStatus.NOT_STARTED,
+          id: In(['lost-run', 'never-enqueued-run']),
+        },
+        {
+          status: WorkflowRunStatus.ENQUEUED,
+          enqueuedAt: expect.anything(),
+          id: In(['lost-run', 'never-enqueued-run']),
+        },
+      ],
       { status: WorkflowRunStatus.ENQUEUED, enqueuedAt: expect.any(String) },
+      { columnsToReturn: ['id', 'coreWorkflowId'] },
     );
     expect(messageQueueService.add.mock.calls).toEqual([
       [
@@ -96,6 +119,25 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
         },
       ],
     ]);
+  });
+
+  it('leaves a lost run to the overlapping sweep that claimed it first', async () => {
+    const { service, messageQueueService } = buildService({
+      staledRuns: [
+        { id: 'lost-run', coreWorkflowId: null },
+        { id: 'run-claimed-elsewhere', coreWorkflowId: null },
+      ],
+      inFlightJobs: [],
+      claimedRuns: [{ id: 'lost-run', coreWorkflowId: null }],
+    });
+
+    await service.handleStaledRunsForWorkspace(WORKSPACE_ID);
+
+    expect(
+      messageQueueService.add.mock.calls.map(
+        ([, { workflowRunId }]) => workflowRunId,
+      ),
+    ).toEqual(['lost-run']);
   });
 
   it('touches nothing when every staled run still has a job', async () => {

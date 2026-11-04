@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { type FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -78,24 +78,41 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         workspaceId,
       );
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository =
-        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-          WorkflowRunWorkspaceEntity,
-        );
+    // Overlapping sweeps see the same lost runs, so each run is enqueued only by the sweep whose
+    // conditional update claims it first: once claimed, the run no longer matches the stale criteria
+    const claimedRuns =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRunRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            WorkflowRunWorkspaceEntity,
+          );
+        const claimedRuns: WorkflowRunReference[] = [];
 
-      for (const lostRunsBatch of chunk(lostRuns, QUERY_MAX_RECORDS)) {
-        await workflowRunRepository.update(
-          lostRunsBatch.map(({ id }) => id),
-          {
-            status: WorkflowRunStatus.ENQUEUED,
-            enqueuedAt: new Date().toISOString(),
-          },
-        );
-      }
-    }, buildSystemAuthContext(workspaceId));
+        for (const lostRunsBatch of chunk(lostRuns, QUERY_MAX_RECORDS)) {
+          const { generatedMaps } = await workflowRunRepository.update(
+            getStaledRunsFindOptions().map((staledRunsWhere) => ({
+              ...staledRunsWhere,
+              id: In(lostRunsBatch.map(({ id }) => id)),
+            })),
+            {
+              status: WorkflowRunStatus.ENQUEUED,
+              enqueuedAt: new Date().toISOString(),
+            },
+            { columnsToReturn: ['id', 'coreWorkflowId'] },
+          );
 
-    for (const { id: workflowRunId, coreWorkflowId } of lostRuns) {
+          claimedRuns.push(
+            ...generatedMaps.map(({ id, coreWorkflowId }) => ({
+              id,
+              coreWorkflowId,
+            })),
+          );
+        }
+
+        return claimedRuns;
+      }, buildSystemAuthContext(workspaceId));
+
+    for (const { id: workflowRunId, coreWorkflowId } of claimedRuns) {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RUN_WORKFLOW_JOB_NAME,
         { workflowRunId, workspaceId },
