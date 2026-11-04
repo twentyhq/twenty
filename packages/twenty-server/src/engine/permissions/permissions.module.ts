@@ -32,7 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     PermissionsService,
     PermissionsPrincipalsService,
-    // field-level reads only, until PermissionsService answers field questions
+    // TODO(@charlesBochet): stop exporting once PermissionsService answers field questions
     RecordAccessPolicyService,
     ApiKeyRoleService,
   ],
