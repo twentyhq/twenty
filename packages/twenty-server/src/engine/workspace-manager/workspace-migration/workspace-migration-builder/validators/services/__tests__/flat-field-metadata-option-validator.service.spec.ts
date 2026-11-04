@@ -7,6 +7,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { FlatFieldMetadataOptionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service';
@@ -94,6 +95,21 @@ const buildCommonValidationArgs = ({
   };
 };
 
+const buildOptionMaps = (
+  options: UniversalFlatFieldMetadataOption[],
+): MetadataUniversalFlatEntityMaps<'fieldMetadataOption'> => {
+  const optionMaps = createEmptyFlatEntityMaps();
+
+  for (const option of options) {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: option,
+      universalFlatEntityMapsToMutate: optionMaps,
+    });
+  }
+
+  return optionMaps;
+};
+
 const errorCodes = (result: { errors: { code: string }[] }) =>
   result.errors.map(({ code }) => code);
 
@@ -104,7 +120,7 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
     const validate = ({
       option,
       fields,
-      existingOptions,
+      existingOptions = [],
     }: {
       option: UniversalFlatFieldMetadataOption;
       fields?: FlatFieldMetadata[];
@@ -113,6 +129,7 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       validator.validateFlatFieldMetadataOptionCreation({
         ...buildCommonValidationArgs({ fields, existingOptions }),
         flatEntityToValidate: option,
+        finalFlatEntityMaps: buildOptionMaps([option, ...existingOptions]),
         remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
       });
 
@@ -204,16 +221,22 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       existingOptions,
       universalIdentifier,
       flatEntityUpdate,
+      finalOptions = existingOptions.map((option) =>
+        option.universalIdentifier === universalIdentifier
+          ? { ...option, ...flatEntityUpdate }
+          : option,
+      ),
     }: {
       existingOptions: UniversalFlatFieldMetadataOption[];
       universalIdentifier: string;
       flatEntityUpdate: Partial<UniversalFlatFieldMetadataOption>;
+      finalOptions?: UniversalFlatFieldMetadataOption[];
     }) =>
       validator.validateFlatFieldMetadataOptionUpdate({
         ...buildCommonValidationArgs({ existingOptions }),
         universalIdentifier,
         flatEntityUpdate,
-        finalFlatEntityMaps: createEmptyFlatEntityMaps(),
+        finalFlatEntityMaps: buildOptionMaps(finalOptions),
       });
 
     it('accepts a new value that no other option uses', () => {
@@ -243,6 +266,23 @@ describe('FlatFieldMetadataOptionValidatorService', () => {
       ).toEqual([
         FieldMetadataOptionExceptionCode.INVALID_FIELD_METADATA_OPTION_INPUT,
       ]);
+    });
+
+    it('accepts swapping values between two options in one migration', () => {
+      const option = buildOption();
+      const siblingOption = buildOption({ value: 'OPTION_B', position: 1 });
+
+      expect(
+        validate({
+          existingOptions: [option, siblingOption],
+          universalIdentifier: option.universalIdentifier,
+          flatEntityUpdate: { value: 'OPTION_B' },
+          finalOptions: [
+            { ...option, value: 'OPTION_B' },
+            { ...siblingOption, value: 'OPTION_A' },
+          ],
+        }).errors,
+      ).toEqual([]);
     });
 
     it('rejects moving an option to another field', () => {

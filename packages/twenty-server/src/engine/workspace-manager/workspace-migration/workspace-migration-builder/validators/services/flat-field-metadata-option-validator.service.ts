@@ -12,12 +12,14 @@ import {
   validateMetadataOptionValue,
 } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
 import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 import {
   type FailedFlatEntityValidation,
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
@@ -25,7 +27,7 @@ type FieldMetadataOptionRelatedMaps = Pick<
   UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadataOption
   >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'],
-  'flatFieldMetadataMaps' | 'flatFieldMetadataOptionMaps'
+  'flatFieldMetadataMaps'
 >;
 
 const buildNotFoundError = (): FlatEntityValidationError => ({
@@ -38,13 +40,12 @@ const buildNotFoundError = (): FlatEntityValidationError => ({
 export class FlatFieldMetadataOptionValidatorService {
   private collectOptionErrors({
     universalFlatFieldMetadataOption,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatFieldMetadataMaps,
-      flatFieldMetadataOptionMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
+    finalFlatEntityMaps,
   }: {
     universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: FieldMetadataOptionRelatedMaps;
+    finalFlatEntityMaps: MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>;
   }): FlatEntityValidationError[] {
     const { fieldMetadataUniversalIdentifier, value, label } =
       universalFlatFieldMetadataOption;
@@ -80,9 +81,10 @@ export class FlatFieldMetadataOptionValidatorService {
       ...validateMetadataOptionColor(universalFlatFieldMetadataOption),
     ];
 
+    // Checked against the migration's final state so swapping two values in one migration passes.
     // Scans every option because the field does not aggregate its option identifiers yet.
     const hasDuplicateValue = Object.values(
-      flatFieldMetadataOptionMaps.byUniversalIdentifier,
+      finalFlatEntityMaps.byUniversalIdentifier,
     ).some(
       (otherFlatFieldMetadataOption) =>
         isDefined(otherFlatFieldMetadataOption) &&
@@ -108,7 +110,8 @@ export class FlatFieldMetadataOptionValidatorService {
   public validateFlatFieldMetadataOptionCreation({
     flatEntityToValidate: universalFlatFieldMetadataOption,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-  }: UniversalFlatEntityValidationArgs<
+    finalFlatEntityMaps,
+  }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadataOption
   >): FailedFlatEntityValidation<'fieldMetadataOption', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -124,6 +127,7 @@ export class FlatFieldMetadataOptionValidatorService {
       ...this.collectOptionErrors({
         universalFlatFieldMetadataOption,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        finalFlatEntityMaps,
       }),
     );
 
@@ -164,6 +168,7 @@ export class FlatFieldMetadataOptionValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    finalFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadataOption
   >): FailedFlatEntityValidation<'fieldMetadataOption', 'update'> {
@@ -210,6 +215,7 @@ export class FlatFieldMetadataOptionValidatorService {
           ...flatEntityUpdate,
         },
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        finalFlatEntityMaps,
       }),
     );
 
