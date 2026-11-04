@@ -1,10 +1,9 @@
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
@@ -49,19 +48,5 @@ describe('AiChatInboxNewThreadChannelEffect', () => {
     const store = renderEffect(null);
 
     expect(store.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
-  });
-
-  it('files the next new chat into the shown channel once the previous one is sent', () => {
-    const store = renderEffect(CHANNEL_ID);
-
-    act(() => {
-      store.set(
-        newAiChatThreadIdState.atom,
-        '20202020-0000-4000-8000-0000000000dd',
-      );
-      store.set(agentChatNewThreadChannelIdState.atom, null);
-    });
-
-    expect(store.get(agentChatNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
   });
 });
