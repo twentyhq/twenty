@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
@@ -20,12 +21,13 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatNewThreadRecipientPicker = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
-  const normalizedSearch = search.trim().toLowerCase();
+  const trimmedSearch = search.trim();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const agentChatIsSendingMessage = useAtomFamilyStateValue(
     agentChatIsSendingMessageFamilyState,
@@ -44,18 +46,24 @@ export const AiChatNewThreadRecipientPicker = () => {
   const agentChatAccessibleChannels = useAtomStateValue(
     agentChatAccessibleChannelsSelector,
   );
-  const shouldShowAssistant =
-    AGENT_CHAT_ASSISTANT_NAME.toLowerCase().includes(normalizedSearch);
-  const matchingWorkspaceMembers = currentWorkspaceMembers.filter(
-    (workspaceMember) =>
-      workspaceMember.id !== currentWorkspaceMember?.id &&
-      `${getWorkspaceMemberNameOrEmail(workspaceMember)} ${workspaceMember.userEmail}`
-        .toLowerCase()
-        .includes(normalizedSearch),
-  );
-  const matchingChannels = agentChatAccessibleChannels.filter(({ name }) =>
-    name.toLowerCase().includes(normalizedSearch),
-  );
+  const shouldShowAssistant = normalizeSearchText(
+    AGENT_CHAT_ASSISTANT_NAME,
+  ).includes(normalizeSearchText(trimmedSearch));
+  const matchingWorkspaceMembers = filterBySearchQuery({
+    items: currentWorkspaceMembers.filter(
+      ({ id }) => id !== currentWorkspaceMember?.id,
+    ),
+    searchQuery: trimmedSearch,
+    getSearchableValues: (workspaceMember) => [
+      getWorkspaceMemberNameOrEmail(workspaceMember),
+      workspaceMember.userEmail,
+    ],
+  });
+  const matchingChannels = filterBySearchQuery({
+    items: agentChatAccessibleChannels,
+    searchQuery: trimmedSearch,
+    getSearchableValues: ({ name }) => [name],
+  });
   const hasMatches =
     shouldShowAssistant ||
     isNonEmptyArray(matchingWorkspaceMembers) ||
@@ -127,6 +135,7 @@ export const AiChatNewThreadRecipientPicker = () => {
           <Dropdown.OptionItem
             key={channel.id}
             disabled={agentChatIsSendingMessage}
+            indicator="check"
             selected={channel.id === agentChatNewThreadChannelId}
             startIcon={<AgentChatChannelIcon channel={channel} />}
             description={t`Channel`}

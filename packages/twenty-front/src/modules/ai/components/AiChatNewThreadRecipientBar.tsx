@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
+import { useId, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -36,6 +36,8 @@ export const AiChatNewThreadRecipientBar = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const dropdownInstanceId = useId();
+  const recipientRowRef = useRef<HTMLDivElement>(null);
+  const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
@@ -69,8 +71,13 @@ export const AiChatNewThreadRecipientBar = () => {
     return null;
   }
 
+  const focusAddRecipientsButton = () => {
+    addRecipientsButtonRef.current?.focus();
+  };
+
   return (
     <FormFieldRow
+      ref={recipientRowRef}
       aria-label={t`Recipients`}
       aria-busy={agentChatIsSendingMessage}
       contentPaddingInline={0}
@@ -80,12 +87,13 @@ export const AiChatNewThreadRecipientBar = () => {
           label={AGENT_CHAT_ASSISTANT_NAME}
           avatar={<AiChatAssistantAvatar />}
           disabled={agentChatIsSendingMessage}
-          onRemove={() =>
+          onRemove={() => {
+            focusAddRecipientsButton();
             setRecipients((current) => ({
               ...current,
               isAssistantParticipant: false,
-            }))
-          }
+            }));
+          }}
         />
       )}
       {recipientWorkspaceMembers.map((workspaceMember) => {
@@ -105,15 +113,16 @@ export const AiChatNewThreadRecipientBar = () => {
                 shape="circle"
               />
             }
-            onRemove={() =>
+            onRemove={() => {
+              focusAddRecipientsButton();
               setRecipients((current) => ({
                 ...current,
                 recipientWorkspaceMemberIds:
                   current.recipientWorkspaceMemberIds.filter(
                     (recipientId) => recipientId !== workspaceMember.id,
                   ),
-              }))
-            }
+              }));
+            }}
           />
         );
       })}
@@ -124,7 +133,10 @@ export const AiChatNewThreadRecipientBar = () => {
           avatar={
             <AgentChatChannelIcon channel={channel} size={theme.icon.size.sm} />
           }
-          onRemove={() => setAgentChatNewThreadChannelId(null)}
+          onRemove={() => {
+            focusAddRecipientsButton();
+            setAgentChatNewThreadChannelId(null);
+          }}
         />
       )}
       <DropdownRoot
@@ -135,12 +147,17 @@ export const AiChatNewThreadRecipientBar = () => {
         <Dropdown.Trigger
           disabled={agentChatIsSendingMessage}
           render={
-            <LightButton emphasis="subtle" size="sm">
+            <LightButton
+              ref={addRecipientsButtonRef}
+              emphasis="subtle"
+              size="sm"
+            >
               {t`Add people or a channel`}
             </LightButton>
           }
         />
         <DropdownContent
+          anchor={recipientRowRef}
           width={GenericDropdownContentWidth.ExtraLarge}
           aria-label={t`Select recipients`}
         >
