@@ -13,6 +13,7 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -45,22 +46,29 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async saveMessagesAndEnqueueContactCreation({
+  async saveMessagesAndEnqueueContactCreation<TWithinTransactionResult = void>({
     messagesToSave,
     messageChannel,
     connectedAccount,
     workspaceId,
     personHandleField,
+    withinTransaction,
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
     personHandleField?: PersonHandleField;
+    // runs before the batch commits, so a failure here saves none of the batch
+    withinTransaction?: (args: {
+      transactionScope: WorkspaceTransactionScope;
+      messageExternalIdsAndIdsMap: Map<string, string>;
+    }) => Promise<TWithinTransactionResult>;
   }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
         messageExternalIdToMessageThreadIdMap: Map<string, string>;
+        withinTransactionResult: TWithinTransactionResult | undefined;
       }
     | undefined
   > {
@@ -177,11 +185,17 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 transactionScope,
               );
 
+              const withinTransactionResult = await withinTransaction?.({
+                transactionScope,
+                messageExternalIdsAndIdsMap,
+              });
+
               return {
                 participantsWithMessageId,
                 savedMessageParticipants,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageThreadIdMap,
+                withinTransactionResult,
               };
             },
           );
@@ -243,6 +257,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         savedMessagesResult.messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap:
         savedMessagesResult.messageExternalIdToMessageThreadIdMap,
+      withinTransactionResult: savedMessagesResult.withinTransactionResult,
     };
   }
 
