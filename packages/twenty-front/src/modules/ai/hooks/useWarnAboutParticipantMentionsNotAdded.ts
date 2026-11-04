@@ -29,29 +29,21 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         participantMentions,
         addedWorkspaceMemberIds,
       };
-      const initialStatus = getAgentChatParticipantAdditionStatus(
-        requestedParticipants,
-      );
+      const { hasUnverifiedInitialRecipients: shouldVerifyInitialRecipients } =
+        getAgentChatParticipantAdditionStatus(requestedParticipants);
+      const verificationPage = shouldVerifyInitialRecipients
+        ? await fetchAgentChatThreadsPage({
+            lastCursor: null,
+            threadIdFilter: { id: { eq: threadId } },
+          }).catch((error) => {
+            logError(error);
 
-      const getVerifiedWriterWorkspaceMemberIds = async () => {
-        if (!initialStatus.hasUnverifiedInitialRecipients) {
-          return undefined;
-        }
-
-        const page = await fetchAgentChatThreadsPage({
-          lastCursor: null,
-          threadIdFilter: { id: { eq: threadId } },
-        }).catch((error) => {
-          logError(error);
-
-          return undefined;
-        });
-
-        return page?.threads.find(({ id }) => id === threadId)
-          ?.writerWorkspaceMemberIds;
-      };
-      const writerWorkspaceMemberIds =
-        await getVerifiedWriterWorkspaceMemberIds();
+            return undefined;
+          })
+        : undefined;
+      const writerWorkspaceMemberIds = verificationPage?.threads.find(
+        ({ id }) => id === threadId,
+      )?.writerWorkspaceMemberIds;
       const { hasUnverifiedInitialRecipients, notAddedLabels } =
         getAgentChatParticipantAdditionStatus({
           ...requestedParticipants,

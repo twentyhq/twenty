@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
+import uniqBy from 'lodash.uniqby';
 
 import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { getAgentChatRequestedParticipants } from '@/ai/utils/getAgentChatRequestedParticipants';
 
 export const getAgentChatParticipantAdditionStatus = ({
   initialRecipients,
@@ -28,10 +28,10 @@ export const getAgentChatParticipantAdditionStatus = ({
         ({ workspaceMemberId }) =>
           !writerWorkspaceMemberIds?.includes(workspaceMemberId),
       );
-  const notAddedLabels = getAgentChatRequestedParticipants({
-    participantMentions,
-    initialRecipients: initialRecipientsToCheck,
-  })
+  const notAddedLabels = uniqBy(
+    [...initialRecipientsToCheck, ...participantMentions],
+    'workspaceMemberId',
+  )
     .filter(isParticipantNotAdded)
     .map(({ label }) => label)
     .join(', ');
