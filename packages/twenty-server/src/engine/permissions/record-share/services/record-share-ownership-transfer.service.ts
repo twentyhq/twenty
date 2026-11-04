@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,12 +12,7 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const NON_TRANSFERABLE_CONVERSATION_CONTENT_OBJECT_IDENTIFIERS: string[] = [
-  STANDARD_OBJECTS.agentTurn.universalIdentifier,
-  STANDARD_OBJECTS.agentMessage.universalIdentifier,
-  STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-];
+import { NON_TRANSFERABLE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/record-share/constants/non-transferable-object-universal-identifiers.constant';
 
 @Injectable()
 export class RecordShareOwnershipTransferService {
@@ -94,7 +88,7 @@ export class RecordShareOwnershipTransferService {
           return (
             isShareable &&
             !isPrivateByDefault &&
-            !NON_TRANSFERABLE_CONVERSATION_CONTENT_OBJECT_IDENTIFIERS.includes(
+            !NON_TRANSFERABLE_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
               flatObjectMetadata.universalIdentifier,
             )
           );
