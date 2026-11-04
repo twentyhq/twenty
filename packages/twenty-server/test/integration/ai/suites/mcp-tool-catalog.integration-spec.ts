@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
@@ -341,13 +342,31 @@ describe('MCP tool catalog (integration)', () => {
       const tools = await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH);
 
       const toolsWithoutTitle = tools
-        .filter((tool) => !tool.title || tool.annotations?.title !== tool.title)
+        .filter(
+          (tool) =>
+            !isNonEmptyString(tool.title) ||
+            tool.annotations?.title !== tool.title,
+        )
         .map((tool) => tool.name);
 
       expect(toolsWithoutTitle).toEqual([]);
       expect(tools.find((tool) => tool.name === 'load_skills')?.title).toBe(
         'Load Skills',
       );
+    });
+
+    it('should mark every read-named tool read-only', async () => {
+      const readNamedToolsNotReadOnly = (
+        await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)
+      )
+        .filter(
+          (tool) =>
+            READ_ONLY_TOOL_NAME_PATTERN.test(tool.name) &&
+            tool.annotations?.readOnlyHint !== true,
+        )
+        .map((tool) => tool.name);
+
+      expect(readNamedToolsNotReadOnly).toEqual([]);
     });
 
     it('should call a listed tool by name', async () => {
