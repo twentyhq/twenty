@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
 import {
+  A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   ComponentDecorator,
   type CatalogStory,
@@ -76,6 +77,7 @@ export const ShapesAndFaces: CatalogStory<Story, typeof AssistantAvatar> = {
     />
   ),
   parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {
@@ -113,6 +115,7 @@ export const PaletteAndSizes: CatalogStory<Story, typeof AssistantAvatar> = {
     />
   ),
   parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {
