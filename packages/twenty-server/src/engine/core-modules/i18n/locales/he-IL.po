@@ -9841,7 +9841,7 @@ msgstr "ניתן לשלוח רק קמפיין טיוטה או קמפיין מת�
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
-msgstr ""
+msgstr "רק קבוצת תנאי הרשאה ברמת שורת השורש יכולה להעניק פעולות"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9902,7 +9902,7 @@ msgstr "רק האדם שיצר זרימת עבודה זו יכול לשנות מ
 #. js-lingui-id: xdnQgZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only the top-level group of a record-level rule can grant operations"
-msgstr ""
+msgstr "רק הקבוצה ברמה העליונה של כלל ברמת הרשומה יכולה להעניק פעולות"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

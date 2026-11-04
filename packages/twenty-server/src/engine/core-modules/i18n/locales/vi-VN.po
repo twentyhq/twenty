@@ -9841,7 +9841,7 @@ msgstr "Chỉ có thể gửi chiến dịch ở trạng thái bản nháp hoặ
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
-msgstr ""
+msgstr "Chỉ nhóm mệnh đề phân quyền cấp hàng gốc mới có thể cấp các thao tác"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9902,7 +9902,7 @@ msgstr "Chỉ người đã tạo quy trình làm việc này mới có thể th
 #. js-lingui-id: xdnQgZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only the top-level group of a record-level rule can grant operations"
-msgstr ""
+msgstr "Chỉ nhóm cấp cao nhất của quy tắc cấp bản ghi mới có thể cấp các thao tác"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

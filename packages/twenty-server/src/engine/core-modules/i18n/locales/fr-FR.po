@@ -9841,7 +9841,7 @@ msgstr "Seule une campagne à l'état de brouillon ou planifiée peut être envo
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
-msgstr ""
+msgstr "Seul un groupe racine de prédicats d'autorisation au niveau des lignes peut accorder des opérations"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9902,7 +9902,7 @@ msgstr "Seule la personne qui a créé ce workflow peut modifier qui peut le voi
 #. js-lingui-id: xdnQgZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only the top-level group of a record-level rule can grant operations"
-msgstr ""
+msgstr "Seul le groupe de niveau supérieur d'une règle au niveau des enregistrements peut accorder des opérations"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

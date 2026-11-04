@@ -9841,7 +9841,7 @@ msgstr "يمكن إرسال حملة مسودة أو مجدولة فقط."
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
-msgstr ""
+msgstr "لا يمكن منح العمليات إلا من خلال مجموعة شروط الإذن على مستوى الصف الجذرية"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9902,7 +9902,7 @@ msgstr "لا يمكن تغيير من يمكنه رؤية سير العمل هذ
 #. js-lingui-id: xdnQgZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only the top-level group of a record-level rule can grant operations"
-msgstr ""
+msgstr "لا يمكن منح العمليات إلا من خلال المجموعة ذات المستوى الأعلى لقاعدة على مستوى السجل"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts

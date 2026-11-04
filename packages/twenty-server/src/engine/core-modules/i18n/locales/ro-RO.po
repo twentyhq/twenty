@@ -9841,7 +9841,7 @@ msgstr "Doar o campanie în schiță sau programată poate fi trimisă."
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
-msgstr ""
+msgstr "Doar un grup rădăcină de predicate de permisiune la nivel de rând poate acorda operațiuni"
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9902,7 +9902,7 @@ msgstr "Doar persoana care a creat acest flux de lucru poate schimba cine îl ve
 #. js-lingui-id: xdnQgZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only the top-level group of a record-level rule can grant operations"
-msgstr ""
+msgstr "Doar grupul de nivel superior al unei reguli la nivel de înregistrare poate acorda operațiuni"
 
 #. js-lingui-id: E3ezWc
 #: src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts
