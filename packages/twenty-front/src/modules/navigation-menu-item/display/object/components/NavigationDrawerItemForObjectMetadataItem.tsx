@@ -24,7 +24,7 @@ import {
   StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -64,10 +64,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
-  const canReadObjectRecords = getObjectPermissionsForObject(
-    objectPermissionsByObjectMetadataId,
-    objectMetadataItem.id,
-  ).canReadObjectRecords;
+  const canReadSomeRecords = canReachSomeRecords({
+    objectRecordsPermissions: getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    ),
+    operationType: 'select',
+  });
 
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
@@ -124,7 +127,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const needsInaccessibleRecordPlaceholder =
     isLayoutCustomizationModeEnabled &&
     isRecord &&
-    !canReadObjectRecords &&
+    !canReadSomeRecords &&
     !isNonEmptyString(primaryLabel.trim());
 
   const label = needsInaccessibleRecordPlaceholder ? t`Record` : primaryLabel;
@@ -168,7 +171,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       : undefined;
 
   const showInaccessibleLock =
-    isLayoutCustomizationModeEnabled && !canReadObjectRecords;
+    isLayoutCustomizationModeEnabled && !canReadSomeRecords;
 
   return (
     <NavigationDrawerItem

@@ -286,6 +286,8 @@ import { AddToolsToMcpServerFastInstanceCommand } from 'src/database/commands/up
 import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793777543826-create-billing-arrangement-table';
 import { AddNativePageNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100801-add-native-page-navigation-menu-item';
 import { AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100803-add-command-menu-item-availability-core-object-name';
+import { AddWorkspaceAssistantProfileSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-slow-1793810534548-add-workspace-assistant-profile';
+import { AddFieldMetadataOptionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793814954654-add-field-metadata-option-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -574,4 +576,6 @@ export const INSTANCE_COMMANDS = [
   CreateBillingArrangementTableFastInstanceCommand,
   AddNativePageNavigationMenuItemFastInstanceCommand,
   AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand,
+  AddWorkspaceAssistantProfileSlowInstanceCommand,
+  AddFieldMetadataOptionTableFastInstanceCommand,
 ];
