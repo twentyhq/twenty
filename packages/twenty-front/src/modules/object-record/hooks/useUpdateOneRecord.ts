@@ -282,7 +282,14 @@ export const useUpdateOneRecord = () => {
         });
 
         // Views that lay records out by field value, like board columns, only re-sync on update events
-        dispatchUpdateOneRecordOperation(optimisticallyUpdatedFieldsToRestore);
+        dispatchUpdateOneRecordOperation(
+          Object.fromEntries(
+            Object.keys(updateOneRecordInput).map((fieldName) => [
+              fieldName,
+              cachedRecord?.[fieldName] ?? null,
+            ]),
+          ),
+        );
 
         throw error;
       });

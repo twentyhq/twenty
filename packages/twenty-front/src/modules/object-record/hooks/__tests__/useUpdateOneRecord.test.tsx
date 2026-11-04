@@ -110,6 +110,7 @@ describe('useUpdateOneRecord', () => {
       ).rejects.toThrow('Rejected');
     });
 
+    expect(dispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledTimes(1);
     expect(dispatchObjectRecordOperationBrowserEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         operation: {
