@@ -22,6 +22,7 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
+import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -354,6 +355,11 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
 };
 
 const MEMBER_MENTION = `[[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]]`;
+const ESCAPED_MEMBER_MENTION = MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(
+  ']',
+  '\\]',
+);
+const ENCODED_PROTECTED_CHAT_REFERENCE_MARKER = `&#x${PROTECTED_CHAT_REFERENCE_MARKER.charCodeAt(0).toString(16)};`;
 
 const mockMentionMessage: ExtendedUIMessage = {
   id: 'msg-mentions',
@@ -371,7 +377,9 @@ Write \`${MEMBER_MENTION}\` to mention a member:
   ${MEMBER_MENTION}
   \`\`\`
 
-${MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(']', '\\]')}`,
+${ESCAPED_MEMBER_MENTION}
+
+${ENCODED_PROTECTED_CHAT_REFERENCE_MARKER}${ESCAPED_MEMBER_MENTION}`,
     },
   ],
   metadata: {
@@ -554,7 +562,7 @@ export const MessageWithMentions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('Charles Test')).toBeVisible();
+    await expect(await canvas.findAllByText('Charles Test')).toHaveLength(1);
     await expect(canvas.getAllByText(MEMBER_MENTION)).toHaveLength(3);
   },
 };

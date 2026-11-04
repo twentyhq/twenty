@@ -3,7 +3,7 @@ import { Lexer, type Token, type Tokens } from 'marked';
 import { isDefined } from 'twenty-shared/utils';
 
 // marked tokens carry no source offsets, so a numbered marker before each reference shows which token it opens in.
-const PROBE_MARKER = '\uE001';
+const PROBE_MARKER = '\uFDD1';
 
 const PROBED_REFERENCE_OPENING_REGEX = new RegExp(
   `${PROBE_MARKER}(\\d+)\\[\\[`,
