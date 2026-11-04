@@ -14,6 +14,7 @@ import {
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
+import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
@@ -330,6 +331,13 @@ export const useAgentChat = () => {
         await refreshAgentChatThreadPermissions([threadId]);
         store.set(newAiChatThreadIdState.atom, v4());
         store.set(agentChatNewThreadChannelIdState.atom, null);
+
+        if (isDefined(newInboxChatRecipients)) {
+          store.set(
+            agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
+            AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          );
+        }
 
         if (store.get(currentAiChatThreadState.atom) === threadId) {
           projectAiChatThreadToUrl(threadId);

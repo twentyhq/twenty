@@ -403,7 +403,7 @@ describe('useAgentChat', () => {
     );
   });
 
-  it('sends only selected workspace members, without turning them into mentions', async () => {
+  it('sends only selected workspace members without mentioning them, then clears them', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -432,9 +432,7 @@ describe('useAgentChat', () => {
     );
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(
-          result.current.newAiChatThreadId,
-        ),
+        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual({
       isAssistantParticipant: true,
