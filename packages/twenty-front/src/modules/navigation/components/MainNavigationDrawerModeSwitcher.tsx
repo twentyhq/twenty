@@ -212,7 +212,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
                     render={<StyledUnreadBadge />}
                     aria-hidden="true"
                     size="xs"
-                    color="primary"
+                    color="red"
                     shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
                   >
                     {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT

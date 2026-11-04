@@ -6,7 +6,7 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import groupBy from 'lodash.groupby';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { IconPlus } from 'twenty-ui/icon';
@@ -32,7 +32,7 @@ export const TaskGroupsContent = ({
 }: TaskGroupsContentProps) => {
   const { t } = useLingui();
   const { objectMetadataItem: taskObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    objectNameSingular: StandardObjectNameSingular.Task,
   });
 
   const taskStatusOptions = taskObjectMetadataItem.fields.find(

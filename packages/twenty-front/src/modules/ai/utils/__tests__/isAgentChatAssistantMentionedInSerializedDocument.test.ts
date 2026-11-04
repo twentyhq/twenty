@@ -1,5 +1,5 @@
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
@@ -35,7 +35,7 @@ describe('isAgentChatAssistantMentionedInSerializedDocument', () => {
         serializeParagraph(
           getMentionTagContent({
             recordId: '20202020-463f-435b-828c-107e007a2711',
-            objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+            objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
             label: 'Jane Austen',
             imageUrl: '',
             shouldAddAsParticipant: true,

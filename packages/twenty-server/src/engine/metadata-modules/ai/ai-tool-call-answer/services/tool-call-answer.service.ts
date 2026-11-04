@@ -1,3 +1,4 @@
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -305,7 +306,17 @@ export class ToolCallAnswerService {
             : AgentTurnStatus.RUNNING,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: answerText }],
+          parts: [
+            {
+              type: 'text',
+              text: answerText,
+              providerMetadata: buildAgentChatAssistantReplyProviderMetadata({
+                isAssistantMentioned: false,
+                isDirectAssistantChat: false,
+                isStructuredRequestContinuation: true,
+              }),
+            },
+          ],
         },
         workspaceId,
       });

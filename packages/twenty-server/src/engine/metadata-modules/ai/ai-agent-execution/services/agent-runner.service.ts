@@ -1,12 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { randomUUID } from 'node:crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { generateId } from 'ai';
-import { type AgentRunSummary, type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type AgentChatSubscriptionEvent,
+  type AgentRunSummary,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -18,6 +26,7 @@ import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
 import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -28,6 +37,9 @@ import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -35,18 +47,29 @@ import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 import { type InRequestAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/in-request-agent-run.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
+import { type AgentRunContinuationCompletion } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-continuation-completion.type';
+import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
+import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
+import { buildAgentRunContinuationTurnId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-turn-id.util';
+import { canRecoverAgentRunContinuationCompletion } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/can-recover-agent-run-continuation-completion.util';
+import { readAgentRunSuspensionOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-agent-run-suspension-or-throw.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatReplyContinuationPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-continuation-policy.service';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import {
   type AgentChatStreamClaim,
   AgentChatStreamRecoveryService,
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
-import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import {
+  type AgentTurnStreamResult,
+  AgentTurnStreamService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -56,6 +79,21 @@ import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/u
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
 
 const CONVERSATION_BUSY = Symbol('conversation-busy');
+const CONTINUATION_INPUT_REJECTED = Symbol('continuation-input-rejected');
+
+type RunContinuation = {
+  turnId: string;
+  wakeUpId: string;
+  queuedMessageIds: string[];
+  requiresQueuedMessages: boolean;
+};
+
+type PreparedRunContinuation = {
+  turnId: string;
+  wakeUpId: string;
+  persona: ResolvedAgentRunPersona;
+  executionContext: AgentRunExecutionContext;
+};
 
 type AgentRunStream = {
   claim: AgentChatStreamClaim;
@@ -66,6 +104,7 @@ type AgentRunnerResult = {
   outcome: AgentRunnerOutcome;
   // the run so far, across every segment of a continued run
   summary: AgentRunSummary;
+  continuationCompletion?: AgentRunContinuationCompletion;
 };
 
 type OpenedAgentRunTurn = {
@@ -76,6 +115,12 @@ type OpenedAgentRunTurn = {
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
+
+  @Inject(AgentChatReplyContinuationPolicyService)
+  private readonly replyContinuationPolicyService: AgentChatReplyContinuationPolicyService;
+
+  @Inject(getAgentHistoryRepositoryToken('agentChatThread'))
+  private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
 
   constructor(
     private readonly agentRunTurnService: AgentRunTurnService,
@@ -367,7 +412,7 @@ export class AgentRunnerService {
       return;
     }
 
-    const suspension = wakeUp.payload as AgentRunSuspension;
+    const suspension = readAgentRunSuspensionOrThrow(wakeUp.payload);
 
     const continued = await this.withClaimedConversation({
       workspaceId,
@@ -375,22 +420,59 @@ export class AgentRunnerService {
       title: suspension.runSpec.title,
       work: async (stream) => {
         // a duplicate job waited for the conversation while the first one went on and claimed the wake-up
-        if (
-          !isDefined(
-            await this.pendingWakeUpService.find({ workspaceId, wakeUpId }),
-          )
-        ) {
+        const currentWakeUp = await this.pendingWakeUpService.find({
+          workspaceId,
+          wakeUpId,
+        });
+
+        if (!isDefined(currentWakeUp)) {
           return null;
         }
 
+        const currentSuspension = readAgentRunSuspensionOrThrow(
+          currentWakeUp.payload,
+        );
+        const turnId = buildAgentRunContinuationTurnId(wakeUpId);
+        const recoveredContinuation = await this.recoverContinuation({
+          workspaceId,
+          threadId,
+          turnId,
+          wakeUpId,
+          suspension: currentSuspension,
+          isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
+          stream,
+        });
+
+        if (!isUndefined(recoveredContinuation)) {
+          return recoveredContinuation;
+        }
+
+        const continuation = await this.findContinuation({
+          workspaceId,
+          threadId,
+          turnId,
+          wakeUpId,
+          outcomeType: outcome.type,
+        });
         const result = await this.continueSuspendedRun({
           workspaceId,
           threadId,
-          suspension,
-          isAwaitingAnswer: wakeUp.condition.type === 'ANSWER',
+          suspension: currentSuspension,
+          isAwaitingAnswer: currentWakeUp.condition.type === 'ANSWER',
           outcome,
           stream,
+          continuation,
         });
+
+        if (result === CONTINUATION_INPUT_REJECTED) {
+          await this.publishContinuationEvent({
+            workspaceId,
+            threadId,
+            event: { type: 'stream-ended' },
+          });
+
+          return null;
+        }
 
         await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
 
@@ -423,6 +505,228 @@ export class AgentRunnerService {
         summary: continued.summary,
       });
     }
+  }
+
+  private async findContinuation({
+    workspaceId,
+    threadId,
+    turnId,
+    wakeUpId,
+    outcomeType,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    wakeUpId: string;
+    outcomeType: ContinueAgentRunJobData['outcome']['type'];
+  }): Promise<RunContinuation | typeof CONTINUATION_INPUT_REJECTED> {
+    const queuedMessageIds =
+      await this.replyContinuationPolicyService.findAllowedQueuedMessageIds({
+        workspaceId,
+        threadId,
+      });
+
+    const requiresQueuedMessages = outcomeType === 'MESSAGE_RECEIVED';
+
+    if (requiresQueuedMessages && !isNonEmptyArray(queuedMessageIds)) {
+      return CONTINUATION_INPUT_REJECTED;
+    }
+
+    return { turnId, wakeUpId, queuedMessageIds, requiresQueuedMessages };
+  }
+
+  private async recoverContinuation({
+    workspaceId,
+    threadId,
+    turnId,
+    wakeUpId,
+    suspension,
+    isAwaitingAnswer,
+    stream,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    wakeUpId: string;
+    suspension: AgentRunSuspension;
+    isAwaitingAnswer: boolean;
+    stream: AgentRunStream;
+  }): Promise<AgentRunnerResult | null | undefined> {
+    const turn = await this.turnRecorderService.findTurn({
+      workspaceId,
+      turnId,
+    });
+
+    if (!isDefined(turn)) {
+      return undefined;
+    }
+
+    const completion = suspension.continuationCompletion;
+    const canRecoverCompletion = canRecoverAgentRunContinuationCompletion({
+      turn,
+      completion,
+    });
+    const result =
+      canRecoverCompletion && isDefined(completion)
+        ? await this.recoverCompletedContinuation({
+            workspaceId,
+            threadId,
+            wakeUpId,
+            suspension,
+            completion,
+            stream,
+          })
+        : null;
+
+    if (!canRecoverCompletion) {
+      await this.settleInterruptedContinuation({
+        workspaceId,
+        threadId,
+        turnId,
+        turnStatus: turn.status,
+        suspension,
+        isAwaitingAnswer,
+        stream,
+      });
+    }
+
+    await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
+    await this.publishContinuationEvent({
+      workspaceId,
+      threadId,
+      event: { type: 'stream-ended' },
+    });
+
+    return result;
+  }
+
+  private async settleInterruptedContinuation({
+    workspaceId,
+    threadId,
+    turnId,
+    turnStatus,
+    suspension,
+    isAwaitingAnswer,
+    stream,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    turnStatus: AgentTurnStatus;
+    suspension: AgentRunSuspension;
+    isAwaitingAnswer: boolean;
+    stream: AgentRunStream;
+  }): Promise<void> {
+    if (turnStatus === AgentTurnStatus.RUNNING) {
+      await this.turnRecorderService.finish({
+        workspaceId,
+        turnId,
+        status: AgentTurnStatus.FAILED,
+        error: AGENT_TURN_INTERRUPTED_ERROR,
+      });
+    }
+
+    await this.agentRunSuspensionService.settle({
+      workspaceId,
+      threadId,
+      suspension,
+      outcome: {
+        status: 'FAILED',
+        error: AGENT_TURN_INTERRUPTED_ERROR.message,
+      },
+      isAwaitingAnswer,
+      streamId: stream.claim.streamId,
+    });
+  }
+
+  private async recoverCompletedContinuation({
+    workspaceId,
+    threadId,
+    wakeUpId,
+    suspension,
+    completion,
+    stream,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    wakeUpId: string;
+    suspension: AgentRunSuspension;
+    completion: AgentRunContinuationCompletion;
+    stream: AgentRunStream;
+  }): Promise<AgentRunnerResult> {
+    const hasAnsweredQuestion =
+      completion.isAwaitingAnswer &&
+      (!isDefined(completion.questionMessageId) ||
+        !(await this.threadRepository.existsBy(workspaceId, {
+          id: threadId,
+          pendingQuestionMessageId: completion.questionMessageId,
+        })));
+    const answeredQuestionOutcome: AgentRunnerOutcome | undefined =
+      hasAnsweredQuestion && !isDefined(completion.execution.stopReason)
+        ? { status: 'FAILED', error: AGENT_TURN_INTERRUPTED_ERROR.message }
+        : undefined;
+    const abortedOutcome: AgentRunnerOutcome | undefined = completion.isAborted
+      ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
+      : undefined;
+    const outcome =
+      completion.settledOutcome ??
+      abortedOutcome ??
+      answeredQuestionOutcome ??
+      (await this.settleTurn({
+        input: {
+          workspaceId,
+          caller: suspension.caller,
+          spec: suspension.runSpec,
+        },
+        execution: completion.execution,
+        wait: isDefined(completion.waitCondition)
+          ? { condition: completion.waitCondition }
+          : undefined,
+        isAwaitingAnswer: completion.isAwaitingAnswer && !hasAnsweredQuestion,
+        summary: completion.summary,
+        suspension,
+        stream,
+      }));
+
+    await this.pendingWakeUpService.updatePayload({
+      workspaceId,
+      wakeUpId,
+      payload: {
+        ...suspension,
+        continuationCompletion: { ...completion, settledOutcome: outcome },
+      },
+    });
+
+    if (outcome.status !== 'SUSPENDED') {
+      await this.agentRunSuspensionService.settle({
+        workspaceId,
+        threadId,
+        suspension,
+        outcome,
+        summary: completion.summary,
+        isAwaitingAnswer: completion.isAwaitingAnswer && !hasAnsweredQuestion,
+        streamId: stream.claim.streamId,
+      });
+    }
+
+    return { outcome, summary: completion.summary };
+  }
+  private async publishContinuationEvent({
+    workspaceId,
+    threadId,
+    event,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    event: AgentChatSubscriptionEvent;
+  }): Promise<void> {
+    await this.eventPublisherService
+      .publish({ workspaceId, threadId, event })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish ${event.type} for workspace ${workspaceId}, thread ${threadId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
   }
 
   // shown once the run let go of its conversation, so a caller that sees it waiting can answer it
@@ -484,11 +788,17 @@ export class AgentRunnerService {
     isAwaitingAnswer,
     outcome,
     stream,
+    continuation,
   }: Omit<ContinueAgentRunJobData, 'wakeUpId'> & {
     suspension: AgentRunSuspension;
     isAwaitingAnswer: boolean;
     stream: AgentRunStream;
-  }): Promise<AgentRunnerResult | null> {
+    continuation: RunContinuation | typeof CONTINUATION_INPUT_REJECTED;
+  }): Promise<AgentRunnerResult | typeof CONTINUATION_INPUT_REJECTED | null> {
+    if (continuation === CONTINUATION_INPUT_REJECTED) {
+      return CONTINUATION_INPUT_REJECTED;
+    }
+
     const { caller, runSpec } = suspension;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -511,6 +821,18 @@ export class AgentRunnerService {
         throw new Error(outcome.answer.error);
       }
 
+      const preparedContinuation = await this.prepareContinuation({
+        workspaceId,
+        threadId,
+        caller,
+        runSpec,
+        continuation,
+      });
+
+      if (preparedContinuation === CONTINUATION_INPUT_REJECTED) {
+        return CONTINUATION_INPUT_REJECTED;
+      }
+
       // a wait the run called alongside a question is over once the question is answered
       await this.agentRunSuspensionService.recordWaitOutcome({
         workspaceId,
@@ -528,13 +850,7 @@ export class AgentRunnerService {
         });
       }
 
-      const [persona, executionContext] = await Promise.all([
-        this.agentRunPersonaService.resolveOrThrow({
-          workspaceId,
-          spec: runSpec,
-        }),
-        handler.buildExecutionContext({ workspaceId, caller }),
-      ]);
+      const { persona, executionContext } = preparedContinuation;
 
       result = await workspaceAuthContextStorage.run(
         executionContext.authContext,
@@ -551,9 +867,21 @@ export class AgentRunnerService {
             },
             suspension,
             stream,
+            openedTurnId: preparedContinuation.turnId,
+            continuationWakeUpId: preparedContinuation.wakeUpId,
           }),
       );
     } catch (error) {
+      if (
+        await this.hasRecoverableContinuationCompletion({
+          workspaceId,
+          wakeUpId: continuation.wakeUpId,
+          turnId: continuation.turnId,
+        })
+      ) {
+        throw error;
+      }
+
       await this.agentRunSuspensionService.settle({
         workspaceId,
         threadId,
@@ -575,6 +903,20 @@ export class AgentRunnerService {
       return null;
     }
 
+    if (isDefined(result.continuationCompletion)) {
+      await this.pendingWakeUpService.updatePayload({
+        workspaceId,
+        wakeUpId: continuation.wakeUpId,
+        payload: {
+          ...suspension,
+          continuationCompletion: {
+            ...result.continuationCompletion,
+            settledOutcome: result.outcome,
+          },
+        },
+      });
+    }
+
     if (result.outcome.status !== 'SUSPENDED') {
       await this.agentRunSuspensionService.settle({
         workspaceId,
@@ -589,17 +931,142 @@ export class AgentRunnerService {
     return result;
   }
 
+  private async hasRecoverableContinuationCompletion({
+    workspaceId,
+    wakeUpId,
+    turnId,
+  }: {
+    workspaceId: string;
+    wakeUpId: string;
+    turnId: string;
+  }): Promise<boolean> {
+    const wakeUp = await this.pendingWakeUpService.find({
+      workspaceId,
+      wakeUpId,
+    });
+
+    if (!isDefined(wakeUp)) {
+      return true;
+    }
+
+    const turn = await this.turnRecorderService.findTurn({
+      workspaceId,
+      turnId,
+    });
+
+    return (
+      isDefined(turn) &&
+      canRecoverAgentRunContinuationCompletion({
+        turn,
+        completion: readAgentRunSuspensionOrThrow(wakeUp.payload)
+          .continuationCompletion,
+      })
+    );
+  }
+
+  private async prepareContinuation({
+    workspaceId,
+    threadId,
+    caller,
+    runSpec,
+    continuation: {
+      turnId,
+      wakeUpId,
+      queuedMessageIds,
+      requiresQueuedMessages,
+    },
+  }: Pick<AgentRunSuspension, 'caller' | 'runSpec'> & {
+    workspaceId: string;
+    threadId: string;
+    continuation: RunContinuation;
+  }): Promise<PreparedRunContinuation | typeof CONTINUATION_INPUT_REJECTED> {
+    const execution = await this.resolveContinuationExecution({
+      workspaceId,
+      caller,
+      runSpec,
+    });
+    const openedTurn = await this.agentRunConversationService.openTurn({
+      workspaceId,
+      threadId,
+      turnId,
+      queuedMessageIds,
+      requiresQueuedMessages,
+      agentId: execution.persona.agentId,
+      createdBy: execution.executionContext.turnCreatedBy,
+      senderUserWorkspaceId: null,
+      senderApplicationId: null,
+      messages: [],
+    });
+
+    if (!isDefined(openedTurn)) {
+      return CONTINUATION_INPUT_REJECTED;
+    }
+
+    if (openedTurn.hasTakenQueuedMessages) {
+      await this.publishContinuationEvent({
+        workspaceId,
+        threadId,
+        event: { type: 'queue-updated' },
+      });
+    }
+
+    return { ...execution, turnId: openedTurn.turnId, wakeUpId };
+  }
+
+  private async resolveContinuationExecution({
+    workspaceId,
+    caller,
+    runSpec,
+  }: Pick<AgentRunSuspension, 'caller' | 'runSpec'> & {
+    workspaceId: string;
+  }): Promise<Pick<PreparedRunContinuation, 'persona' | 'executionContext'>> {
+    const [persona, executionContext] = await Promise.all([
+      this.agentRunPersonaService.resolveOrThrow({
+        workspaceId,
+        spec: runSpec,
+      }),
+      this.callerHandlerRegistry
+        .getHandlerOrThrow(caller.type)
+        .buildExecutionContext({ workspaceId, caller }),
+    ]);
+
+    return { persona, executionContext };
+  }
+
   private async runTurn({
     input,
     suspension,
     stream,
+    openedTurnId,
+    continuationWakeUpId,
   }: {
     input: AgentRunnerRunInput;
     // what a continued run resumes from
     suspension: AgentRunSuspension | null;
     // null for a run without a conversation, which streams to no one
     stream: AgentRunStream | null;
+    openedTurnId?: string;
+    continuationWakeUpId?: string;
   }): Promise<AgentRunnerResult> {
+    if (isDefined(openedTurnId)) {
+      assertIsDefinedOrThrow(stream);
+
+      return this.runOpenedTurn({
+        input,
+        suspension,
+        stream,
+        continuationWakeUpId,
+        openedTurn: {
+          turnId: openedTurnId,
+          priorMessages: await this.conversationReaderService.loadMessages({
+            workspaceId: input.workspaceId,
+            threadId: stream.claim.threadId,
+            viewer: input.executionContext.conversationViewer,
+          }),
+        },
+      });
+    }
+
     return this.runOpenedTurn({
       input,
       suspension,
@@ -613,12 +1080,14 @@ export class AgentRunnerService {
     suspension,
     stream,
     streamChannelId,
+    continuationWakeUpId,
     openedTurn: { turnId, priorMessages },
   }: {
     input: AgentRunnerRunInput;
     suspension: AgentRunSuspension | null;
     stream: AgentRunStream | null;
     streamChannelId?: string;
+    continuationWakeUpId?: string;
     openedTurn: OpenedAgentRunTurn;
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
@@ -650,7 +1119,7 @@ export class AgentRunnerService {
 
     // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
     const {
-      completion: { execution, wait, isAborted },
+      completion: { execution, wait, isAborted, continuationCompletion },
       finish,
     } = await withDedicatedAiTrace(() =>
       this.turnStreamService.streamTurn({
@@ -676,11 +1145,24 @@ export class AgentRunnerService {
             : undefined;
           // a stop can land after the stream ended; read once so the turn and its caller agree
           const isAborted = streamed.isAborted || abortSignal?.aborted === true;
+          const continuationCompletion =
+            await this.recordContinuationCompletion({
+              workspaceId,
+              wakeUpId: continuationWakeUpId,
+              suspension,
+              turnId,
+              execution,
+              startedAtMs,
+              streamed,
+              waitCondition: wait?.condition ?? null,
+              isAborted,
+            });
 
           return {
             execution,
             wait,
             isAborted,
+            continuationCompletion,
             modelId: execution.modelId,
             stopReason: execution.stopReason,
             isWaiting: isDefined(wait),
@@ -701,28 +1183,92 @@ export class AgentRunnerService {
       }),
     );
 
-    const summary = sumAgentRunSummaries({
-      previousSummary: suspension?.summary ?? null,
-      nextSummary: buildAgentRunSummary({
-        execution,
-        durationMs: Date.now() - startedAtMs,
-      }),
+    const summary =
+      continuationCompletion?.summary ??
+      sumAgentRunSummaries({
+        previousSummary: suspension?.summary ?? null,
+        nextSummary: buildAgentRunSummary({
+          execution,
+          durationMs: Date.now() - startedAtMs,
+        }),
+      });
+    if (isAborted) {
+      return {
+        summary,
+        outcome: { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR },
+        continuationCompletion,
+      };
+    }
+
+    const outcome = await this.settleTurn({
+      input,
+      execution,
+      wait,
+      isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
+      summary,
+      suspension,
+      stream,
     });
 
-    return {
-      summary,
-      outcome: isAborted
-        ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
-        : await this.settleTurn({
-            input,
-            execution,
-            wait,
-            isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
-            summary,
-            suspension,
-            stream,
-          }),
+    return { summary, outcome, continuationCompletion };
+  }
+
+  private async recordContinuationCompletion({
+    workspaceId,
+    wakeUpId,
+    suspension,
+    turnId,
+    execution,
+    startedAtMs,
+    streamed,
+    waitCondition,
+    isAborted,
+  }: {
+    workspaceId: string;
+    wakeUpId?: string;
+    suspension: AgentRunSuspension | null;
+    turnId: string;
+    execution: AgentExecutionResult;
+    startedAtMs: number;
+    streamed: Pick<AgentTurnStreamResult, 'assistantMessageId' | 'replyParts'>;
+    waitCondition: PendingWakeUpCondition | null;
+    isAborted: boolean;
+  }): Promise<AgentRunContinuationCompletion | undefined> {
+    if (!isDefined(wakeUpId) || !isDefined(suspension)) {
+      return undefined;
+    }
+
+    const awaitingParts = findAwaitingPausingToolParts(streamed.replyParts);
+    const isAwaitingAnswer =
+      isNonEmptyArray(awaitingParts) &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
+    const continuationCompletion: AgentRunContinuationCompletion = {
+      turnId,
+      execution: {
+        result: execution.result,
+        stopReason: execution.stopReason,
+        isPaused: execution.isPaused,
+      },
+      summary: sumAgentRunSummaries({
+        previousSummary: suspension.summary,
+        nextSummary: buildAgentRunSummary({
+          execution,
+          durationMs: Date.now() - startedAtMs,
+        }),
+      }),
+      waitCondition,
+      isAborted,
+      isAwaitingAnswer,
+      questionMessageId: isAwaitingAnswer ? streamed.assistantMessageId : null,
     };
+
+    await this.pendingWakeUpService.updatePayload({
+      workspaceId,
+      wakeUpId,
+      payload: { ...suspension, continuationCompletion },
+    });
+
+    return continuationCompletion;
   }
 
   private async openTurn({
@@ -770,11 +1316,7 @@ export class AgentRunnerService {
       });
     }
 
-    const {
-      turnId: openedTurnId,
-      promptMessageIds,
-      hasTakenQueuedMessages,
-    } = await this.agentRunConversationService.openTurn({
+    const openedTurn = await this.agentRunConversationService.openTurn({
       workspaceId,
       threadId,
       agentId: persona.agentId,
@@ -784,6 +1326,14 @@ export class AgentRunnerService {
       createdBy: executionContext.turnCreatedBy,
       messages: prompt?.messages ?? [],
     });
+
+    assertIsDefinedOrThrow(openedTurn);
+
+    const {
+      turnId: openedTurnId,
+      promptMessageIds,
+      hasTakenQueuedMessages,
+    } = openedTurn;
 
     if (hasTakenQueuedMessages) {
       await this.eventPublisherService.publish({
@@ -818,9 +1368,11 @@ export class AgentRunnerService {
     suspension,
     stream,
   }: {
-    input: AgentRunnerRunInput;
-    execution: AgentExecutionResult;
-    wait: ReturnType<typeof findAgentRunWait>;
+    input: Pick<AgentRunnerRunInput, 'workspaceId' | 'caller' | 'spec'>;
+    execution: Pick<AgentExecutionResult, 'result' | 'stopReason' | 'isPaused'>;
+    wait:
+      | Pick<NonNullable<ReturnType<typeof findAgentRunWait>>, 'condition'>
+      | undefined;
     isAwaitingAnswer: boolean;
     summary: AgentRunSummary;
     suspension: AgentRunSuspension | null;

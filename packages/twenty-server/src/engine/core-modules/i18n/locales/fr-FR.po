@@ -3321,6 +3321,11 @@ msgstr "Le code d'appel téléphonique est en conflit."
 msgid "Conflicting phone country code."
 msgstr "L'indicatif de pays est en conflit."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Connectez d'abord un compte pour ce serveur MCP."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "La fonction logique à exécuter lors de la déconnexion est introuvable
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Les paramètres de la requête MCP ne sont pas valides."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "Le serveur MCP expose trop d'outils pour être synchronisé."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

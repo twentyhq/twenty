@@ -3321,6 +3321,11 @@ msgstr "電話の国番号が競合しています。"
 msgid "Conflicting phone country code."
 msgstr "電話の国コードが競合しています。"
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "まず、このMCPサーバーのアカウントを接続してください。"
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13896,6 +13901,11 @@ msgstr "切断時に実行するロジック関数が見つかりませんでし
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "MCP リクエストのパラメーターが無効です。"
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "このMCPサーバーでは、同期するツールが多すぎます。"
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts

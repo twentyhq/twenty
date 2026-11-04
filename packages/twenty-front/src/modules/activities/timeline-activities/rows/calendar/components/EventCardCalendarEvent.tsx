@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
   isDefined,
   isFieldValueRestricted,
@@ -102,7 +102,7 @@ export const EventCardCalendarEvent = ({
     loading,
     error,
   } = useFindOneRecord<CalendarEvent>({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    objectNameSingular: StandardObjectNameSingular.CalendarEvent,
     objectRecordId: calendarEventId,
     recordGqlFields: {
       id: true,

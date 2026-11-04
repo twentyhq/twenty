@@ -283,6 +283,9 @@ import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/comman
 import { AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793700975254-add-application-granted-iframe-media-permissions';
 import { AddRlsGrantOperationsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793726601132-add-rls-grant-operations';
 import { AddToolsToMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793760000000-add-tools-to-mcp-server';
+import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793777543826-create-billing-arrangement-table';
+import { AddNativePageNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100801-add-native-page-navigation-menu-item';
+import { AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793783100803-add-command-menu-item-availability-core-object-name';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -568,4 +571,7 @@ export const INSTANCE_COMMANDS = [
   AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand,
   AddRlsGrantOperationsFastInstanceCommand,
   AddToolsToMcpServerFastInstanceCommand,
+  CreateBillingArrangementTableFastInstanceCommand,
+  AddNativePageNavigationMenuItemFastInstanceCommand,
+  AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand,
 ];

@@ -25,6 +25,7 @@ import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-ag
 import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { buildAgentRunContinuationDeduplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-continuation-deduplication.util';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -150,7 +151,10 @@ export class AgentRunSuspensionService {
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: `continue-agent-run-${jobData.wakeUpId}` },
+        deduplication: buildAgentRunContinuationDeduplication({
+          wakeUpId: jobData.wakeUpId,
+          outcomeType: jobData.outcome.type,
+        }),
         ...(await this.resolveContinuationJobScope(jobData)),
       },
     );

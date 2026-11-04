@@ -385,6 +385,9 @@ export default {
             "id": [
                 19
             ],
+            "isAssistantParticipant": [
+                5
+            ],
             "title": [
                 1
             ],
@@ -2970,6 +2973,9 @@ export default {
             "applicationId": [
                 540
             ],
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],
@@ -3372,6 +3378,9 @@ export default {
             ]
         },
         "CreateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],
@@ -3671,6 +3680,9 @@ export default {
                 1
             ],
             "name": [
+                1
+            ],
+            "nativePageKey": [
                 1
             ],
             "pageLayoutId": [
@@ -8665,6 +8677,12 @@ export default {
                         281,
                         "[FileAttachmentInput!]"
                     ],
+                    "isAssistantMentioned": [
+                        5
+                    ],
+                    "isAssistantParticipant": [
+                        5
+                    ],
                     "mentionedWorkspaceMemberIds": [
                         540,
                         "[UUID!]"
@@ -8675,6 +8693,10 @@ export default {
                     ],
                     "modelId": [
                         1
+                    ],
+                    "recipientWorkspaceMemberIds": [
+                        540,
+                        "[UUID!]"
                     ],
                     "shouldAssistantReply": [
                         5
@@ -9870,6 +9892,9 @@ export default {
                 1
             ],
             "name": [
+                1
+            ],
+            "nativePageKey": [
                 1
             ],
             "pageLayoutId": [
@@ -12733,6 +12758,9 @@ export default {
             "queued": [
                 5
             ],
+            "recipientParticipantWorkspaceMemberIds": [
+                540
+            ],
             "streamId": [
                 1
             ],
@@ -13789,6 +13817,9 @@ export default {
             ]
         },
         "UpdateCommandMenuItemInput": {
+            "availabilityCoreObjectName": [
+                1
+            ],
             "availabilityObjectMetadataId": [
                 540
             ],
