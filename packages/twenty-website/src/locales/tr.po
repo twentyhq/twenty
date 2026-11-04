@@ -651,10 +651,10 @@ msgstr "3 ürün hattı"
 msgid "30 days"
 msgstr "30 gün"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "Tıklamadan sonraki 30 gün. Ziyaretçi bu süre içinde çalışma alanını oluşturur ve daha sonra ücretli bir Cloud Organization veya Enterprise müşterisi olursa komisyon sizin olur. Çalışma alanını oluşturmadan önce başka bir iş ortağının bağlantısına tıklarsa krediyi o iş ortağı alır."
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr ""
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4723,10 +4723,10 @@ msgstr "HubSpot, özel nesneleri koltuk başına 150 $’lık Enterprise kademes
 msgid "Hungary 🇭🇺"
 msgstr "Macaristan 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
-msgstr "<0>iştirak programı koşullarını</0> kabul ediyorum"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr ""
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4748,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Kimlik"
+
+#. js-lingui-id: 02Xy0V
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr ""
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -6096,6 +6101,7 @@ msgstr "Şu anda hiçbir uygulama mevcut değil. Yakında tekrar kontrol edin."
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Eşleşen ülke yok."
 
@@ -7614,6 +7620,7 @@ msgstr "Ön Eleme"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Bir ülke arayın…"
 
@@ -7735,6 +7742,7 @@ msgstr "Kayıtları Cmd ve Shift ile seçin"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Ülkenizi seçin"
 
@@ -9749,6 +9757,11 @@ msgstr "Sertifikasyon neleri içerir?"
 #: src/sections/faq/faq.data.ts
 msgid "What does Twenty cost?"
 msgstr "Twenty'nin maliyeti nedir?"
+
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr ""
 
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts

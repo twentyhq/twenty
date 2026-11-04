@@ -20,6 +20,7 @@ import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
+import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 
@@ -76,7 +77,7 @@ export class MessageListDuplicationService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+    const [{ recordsPermissions }, { flatObjectMetadataMaps }] =
       await Promise.all([
         this.permissionsService.getUserWorkspacePermissions({
           workspaceId,
@@ -90,13 +91,19 @@ export class MessageListDuplicationService {
     for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
       const objectMetadata =
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
-      const objectPermissions = isDefined(objectMetadata)
-        ? objectsPermissions[objectMetadata.id]
+      const objectRecordsPermissions = isDefined(objectMetadata)
+        ? recordsPermissions.objects[objectMetadata.id]
         : undefined;
 
       if (
-        !objectPermissions?.canReadObjectRecords ||
-        !objectPermissions.canUpdateObjectRecords
+        !canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'select',
+        }) ||
+        !canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'update',
+        })
       ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,

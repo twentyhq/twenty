@@ -101,18 +101,20 @@ Pídele a tu asistente de IA que interactúe con tu CRM:
 
 ## Herramientas disponibles
 
-Una vez conectado, el servidor MCP expone herramientas que reflejan la API de Twenty. El flujo de trabajo recomendado es:
+Una vez conectado, el servidor MCP enumera las herramientas que puede usar tu conexión, con sus esquemas de entrada: `find_many_companies`, `create_one_person`, `list_workflows` y varios cientos más. Tu asistente las llama por su nombre. Las herramientas para objetos o funciones de la aplicación creadas mientras estás conectado aparecen después de volver a conectarte.
+
+Esto necesita un cliente que cargue herramientas bajo demanda, como hacen Claude, Claude Code, Codex y OpenCode de forma predeterminada. Un cliente que carga por adelantado todas las definiciones de herramientas, incluido Claude Code con la búsqueda de herramientas desactivada, puede quedarse sin contexto.
+
+### Modo meta
+
+Para los clientes que cargan todas las herramientas por adelantado, conéctate a `/mcp?mode=meta`. En su lugar, enumera algunas metaherramientas:
 
 1. **`learn_tools`** — obtener el esquema de entrada para herramientas específicas
 2. **`execute_tool`** — ejecutar una herramienta
 
-No necesitas recordar los nombres de las herramientas. Pregúntale a tu asistente de IA qué puede hacer y llamará a `learn_tools` automáticamente.
-
 Los nombres de las operaciones de registros siguen una gramática, por lo que un asistente puede crearlos sin una llamada de descubrimiento: `find_many_companies`, `find_one_person`, `update_one_opportunity`. Si un nombre es incorrecto, `learn_tools` lo informa en `notFound` junto con los nombres más parecidos.
 
 Para cualquier otra cosa, `get_tool_catalog` explora las herramientas restantes, una categoría a la vez. Es una alternativa: una llamada sin filtrar devuelve cientos de operaciones y la mayoría de los asistentes truncarán la respuesta.
-
-`/mcp?mode=direct` enumera cada herramienta directamente y necesita un cliente que cargue herramientas bajo demanda.
 
 ## Permisos
 

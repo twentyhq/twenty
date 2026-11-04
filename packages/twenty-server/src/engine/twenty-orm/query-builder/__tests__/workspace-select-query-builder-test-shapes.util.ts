@@ -4,6 +4,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 
 export const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -118,7 +119,7 @@ export const buildQueryBuilder = ({
         return rows;
       },
     },
-    objectRecordsPermissions: {},
+    recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute,
     formatResult: (records) => records as never,

@@ -177,6 +177,19 @@ export class LogicFunctionResourceService {
     });
   }
 
+  async builtFileExists({
+    workspaceId,
+    applicationUniversalIdentifier,
+    builtHandlerPath,
+  }: GetBuiltCodeParams): Promise<boolean> {
+    return this.fileStorageService.checkFileExists({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtHandlerPath,
+    });
+  }
+
   async getSourceFile({
     sourceHandlerPath,
     workspaceId,
