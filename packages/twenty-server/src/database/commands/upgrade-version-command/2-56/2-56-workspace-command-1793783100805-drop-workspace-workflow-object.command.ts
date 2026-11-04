@@ -50,6 +50,14 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     options,
     dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
+    if (!isDefined(dataSource)) {
+      this.logger.warn(
+        `No data source for workspace ${workspaceId}, skipping the workflow object drop`,
+      );
+
+      return;
+    }
+
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -283,7 +291,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
 
     // isSystem is not updatable through a metadata migration
     for (const field of fieldsToUpdate) {
-      await dataSource?.query(
+      await dataSource.query(
         `UPDATE core."fieldMetadata"
          SET "isSystem" = $1, label = $2, description = $3, "updatedAt" = NOW()
          WHERE "workspaceId" = $4 AND id = $5`,
@@ -340,12 +348,12 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     fieldsToDelete,
   }: {
     workspaceId: string;
-    dataSource: RunOnWorkspaceArgs['dataSource'];
+    dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
     workflowObject: Pick<FlatObjectMetadata, 'id'> | undefined;
     hasWorkflowAutomatedTriggerObject: boolean;
-    fieldsToDelete: FlatFieldMetadata[];
+    fieldsToDelete: Pick<FlatFieldMetadata, 'name' | 'objectMetadataId'>[];
   }): Promise<string> {
-    if (!isDefined(dataSource) || !isDefined(workflowObject)) {
+    if (!isDefined(workflowObject)) {
       return 'no legacy records';
     }
 
