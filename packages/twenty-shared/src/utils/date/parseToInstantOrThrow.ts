@@ -19,7 +19,13 @@ const getIsoInstant = (stringDateTime: string): Temporal.Instant | null => {
   }
 };
 
-const isYearWrittenInFull = (stringDateTime: string, parsedDate: Date) =>
+const isYearWrittenInFull = ({
+  stringDateTime,
+  parsedDate,
+}: {
+  stringDateTime: string;
+  parsedDate: Date;
+}) =>
   stringDateTime.includes(parsedDate.getFullYear().toString().padStart(4, '0'));
 
 export const parseToInstantOrThrow = (
@@ -36,7 +42,7 @@ export const parseToInstantOrThrow = (
 
     if (
       isValid(parsedDate) &&
-      isYearWrittenInFull(stringDateTime, parsedDate)
+      isYearWrittenInFull({ stringDateTime, parsedDate })
     ) {
       return turnJSDateToPlainDate(parsedDate)
         .toZonedDateTime('UTC')

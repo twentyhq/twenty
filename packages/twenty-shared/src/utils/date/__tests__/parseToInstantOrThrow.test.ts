@@ -27,6 +27,7 @@ describe('parseToInstantOrThrow', () => {
     ['01-15-24'],
     ['Jan 15, 24'],
     ['15 January 24'],
+    ['24/01/15'],
   ])('should throw for the unparseable value %s', (input) => {
     expect(() => parseToInstantOrThrow(input)).toThrow();
   });
