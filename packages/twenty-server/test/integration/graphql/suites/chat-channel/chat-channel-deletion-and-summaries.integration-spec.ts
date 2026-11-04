@@ -379,7 +379,12 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
       { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
     expect(await isChannelInCore(channelId)).toBe(true);
-    expect(findEmittedThreadEvent(threadId)).toBeDefined();
+    expect(findEmittedThreadEvent(threadId)).toMatchObject({
+      properties: {
+        updatedFields: ['channelId'],
+        diff: { channelId: { before: channelId, after: destinationChannelId } },
+      },
+    });
 
     await createThreadInChannel(channelId);
   });
