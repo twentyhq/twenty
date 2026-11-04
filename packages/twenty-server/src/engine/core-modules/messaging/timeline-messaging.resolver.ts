@@ -3,7 +3,7 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -186,7 +186,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       recordId: personId,
       workspaceId: workspace.id,
       page,
@@ -204,7 +204,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: companyId,
       workspaceId: workspace.id,
       page,
@@ -223,7 +223,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNameSingular: StandardObjectNameSingular.Opportunity,
       recordId: opportunityId,
       workspaceId: workspace.id,
       page,

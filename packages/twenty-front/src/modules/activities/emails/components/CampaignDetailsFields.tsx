@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,7 +51,7 @@ export const CampaignDetailsFields = ({
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.MessageList,
+    objectNameSingular: StandardObjectNameSingular.MessageList,
   });
 
   const handleCreateList = async (searchInput?: string) => {
@@ -144,7 +144,7 @@ export const CampaignDetailsFields = ({
           key={`list-${detailsState.draftResyncKey}`}
           dropdownId={listDropdownId}
           variant="transparent"
-          objectNameSingulars={[CoreObjectNameSingular.MessageList]}
+          objectNameSingulars={[StandardObjectNameSingular.MessageList]}
           defaultValue={detailsState.listId}
           onChange={detailsState.setListId}
           onCreate={handleCreateList}

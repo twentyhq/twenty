@@ -2,7 +2,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { workflowRunSchema } from 'twenty-shared/workflow';
 
@@ -13,7 +13,7 @@ export const useWorkflowRun = ({
 }): WorkflowRun | undefined => {
   const { recordGqlFields: defaultRecordGqlFields } =
     useGenerateDepthRecordGqlFieldsFromObject({
-      objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+      objectNameSingular: StandardObjectNameSingular.WorkflowRun,
       depth: 1,
     });
 
@@ -24,7 +24,7 @@ export const useWorkflowRun = ({
   }, [defaultRecordGqlFields]);
 
   const { record: rawRecord } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    objectNameSingular: StandardObjectNameSingular.WorkflowRun,
     objectRecordId: workflowRunId,
     recordGqlFields,
   });

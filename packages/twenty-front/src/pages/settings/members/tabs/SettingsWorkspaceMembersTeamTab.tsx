@@ -16,7 +16,7 @@ import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
@@ -115,7 +115,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
     hasNextPage,
     loading,
   } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     filter: searchServerFilter,
   });
 

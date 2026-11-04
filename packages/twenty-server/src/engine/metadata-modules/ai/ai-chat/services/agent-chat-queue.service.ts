@@ -1,17 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
-import { FileFolder } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { In, Like } from 'typeorm';
-
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -19,8 +7,6 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class AgentChatQueueService {
@@ -29,97 +15,8 @@ export class AgentChatQueueService {
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectWorkspaceScopedRepository(FileEntity)
-    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly threadService: AgentChatThreadService,
-    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
-
-  async queueMessage({
-    threadId,
-    text,
-    id,
-    fileAttachments,
-    workspaceId,
-    userWorkspaceId,
-    workspaceMemberId,
-  }: {
-    threadId: string;
-    text: string;
-    id?: string;
-    fileAttachments?: AiChatFileAttachment[];
-    workspaceId: string;
-    userWorkspaceId: string;
-    workspaceMemberId: string;
-  }) {
-    const messageValues = {
-      id: id ?? randomUUID(),
-      threadId,
-      turnId: null,
-      role: AgentMessageRole.USER,
-      agentId: null,
-      status: AgentMessageStatus.QUEUED,
-      senderWorkspaceMemberId: workspaceMemberId,
-      senderApplicationId: resolveMessageSenderApplicationId({
-        workspaceId,
-        userWorkspaceId,
-      }),
-    };
-
-    const validFiles = isNonEmptyArray(fileAttachments)
-      ? await this.fileRepository.find(workspaceId, {
-          where: {
-            id: In(fileAttachments.map((attachment) => attachment.id)),
-            path: Like(`${FileFolder.AgentChat}/%`),
-          },
-          select: ['id'],
-        })
-      : [];
-
-    const validFileIds = new Set(validFiles.map((file) => file.id));
-
-    const parts = [
-      {
-        messageId: messageValues.id,
-        orderIndex: 0,
-        type: 'text',
-        textContent: text,
-      },
-      ...(fileAttachments ?? [])
-        .filter((attachment) => validFileIds.has(attachment.id))
-        .map((attachment, index) => ({
-          messageId: messageValues.id,
-          orderIndex: index + 1,
-          type: 'file',
-          fileId: attachment.id,
-          fileFilename: attachment.filename,
-        })),
-    ];
-
-    await this.conversationWriterService.runInTransaction(
-      workspaceId,
-      async (scope) => {
-        await this.participantService.resolveMentionInTransaction({
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-          scope,
-        });
-        await scope.insert('agentMessage', messageValues);
-        await scope.insert('agentMessagePart', parts);
-      },
-    );
-
-    await this.threadService.notifyThreadActivityUpdated({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-      text,
-    });
-
-    return messageValues;
-  }
 
   async hasQueuedMessages({
     threadId,

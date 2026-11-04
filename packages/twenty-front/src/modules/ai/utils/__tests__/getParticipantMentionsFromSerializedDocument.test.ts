@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
@@ -24,7 +24,7 @@ const mentionWorkspaceMember = ({
 }) =>
   getMentionTagContent({
     recordId,
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     label,
     imageUrl: '',
     shouldAddAsParticipant,
@@ -67,7 +67,7 @@ describe('getParticipantMentionsFromSerializedDocument', () => {
       }),
       ...getMentionTagContent({
         recordId: JONY_ID,
-        objectNameSingular: CoreObjectNameSingular.Person,
+        objectNameSingular: StandardObjectNameSingular.Person,
         label: 'Jony Ive',
         imageUrl: '',
         shouldAddAsParticipant: true,

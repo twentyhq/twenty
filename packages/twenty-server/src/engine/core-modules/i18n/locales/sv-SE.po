@@ -3321,6 +3321,11 @@ msgstr "Motstridig uppringningskod."
 msgid "Conflicting phone country code."
 msgstr "Motstridig landskod."
 
+#. js-lingui-id: Pfaq60
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "Connect an account for this MCP server first."
+msgstr "Anslut först ett konto för denna MCP-server."
+
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
@@ -13902,6 +13907,11 @@ msgstr "Logikfunktionen som ska köras vid frånkoppling hittades inte."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
 msgstr "Parametrarna för MCP-begäran är ogiltiga."
+
+#. js-lingui-id: gSAxal
+#: src/engine/metadata-modules/mcp-server/mcp-server.exception.ts
+msgid "The MCP server exposes too many tools to be synced."
+msgstr "MCP-servern exponerar för många verktyg för att kunna synkroniseras."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/permissions/permissions.exception.ts
