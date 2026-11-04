@@ -265,8 +265,9 @@ export class AgentChatChannelService {
     }
 
     const threadTable = `${getWorkspaceSchemaName(workspaceId)}.agentChatThread`;
-    const threadsAfter = await this.coreDataSource.transaction(
-      async (manager) => {
+    const threadsAfter = await this.threadRepository.query(
+      workspaceId,
+      async ({ manager }) => {
         await lockAgentChatChannelForThreadWriteOrThrow({
           manager,
           workspaceId,
