@@ -5,6 +5,7 @@ import {
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
@@ -326,8 +327,9 @@ const buildHttpContext = (request: unknown): ExecutionContext =>
 
 const buildAccessPolicyService = (
   permissionsService = {} as PermissionsService,
+  featureFlagService = {} as FeatureFlagService,
 ): AccessPolicyService =>
-  new AccessPolicyService(permissionsService, {} as FeatureFlagService);
+  new AccessPolicyService(permissionsService, featureFlagService);
 
 const buildPrincipalOnlyPolicy = (
   authPrincipals: AuthPrincipalGuardConfig,
@@ -765,13 +767,34 @@ describe('AccessPolicyGuard', () => {
         ),
       );
 
-    it('should bypass the permission check while the workspace is being created', async () => {
-      sessionRequest.workspace = {
-        ...activeWorkspace,
-        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      };
+    it.each([
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+    ])(
+      'should bypass the permission check while the workspace is %s',
+      async (activationStatus) => {
+        sessionRequest.workspace = { ...activeWorkspace, activationStatus };
 
-      await expect(canActivateSession()).resolves.toBe(true);
+        await expect(canActivateSession()).resolves.toBe(true);
+        expect(
+          mockPermissionsService.userHasWorkspaceSettingPermission,
+        ).not.toHaveBeenCalled();
+      },
+    );
+
+    it('should refuse a caller the policy does not accept before looking up its permissions', async () => {
+      await expect(
+        canActivateOverHttp(
+          {
+            authPrincipals: { ...REFUSE_EVERY_PRINCIPAL, userSession: true },
+            requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+          },
+          REQUEST_BY_PRINCIPAL_VARIANT.apiKey,
+          buildAccessPolicyService(
+            mockPermissionsService as unknown as PermissionsService,
+          ),
+        ),
+      ).rejects.toThrow(AUTH_PRINCIPAL_REFUSED_MESSAGE);
       expect(
         mockPermissionsService.userHasWorkspaceSettingPermission,
       ).not.toHaveBeenCalled();
@@ -799,6 +822,79 @@ describe('AccessPolicyGuard', () => {
       );
 
       await expect(canActivateSession()).rejects.toThrow(PermissionsException);
+    });
+  });
+
+  describe('feature flags', () => {
+    let mockPermissionsService: {
+      userHasWorkspaceSettingPermission: jest.Mock;
+    };
+    let mockFeatureFlagService: { getWorkspaceFeatureFlagsMap: jest.Mock };
+
+    beforeEach(() => {
+      mockPermissionsService = {
+        userHasWorkspaceSettingPermission: jest.fn().mockResolvedValue(true),
+      };
+      mockFeatureFlagService = { getWorkspaceFeatureFlagsMap: jest.fn() };
+    });
+
+    const canActivateWithPolicy = (accessPolicy: AccessPolicy) =>
+      canActivateOverHttp(
+        accessPolicy,
+        {
+          user,
+          workspace: activeWorkspace,
+          userWorkspaceId: 'user-workspace-id',
+          tokenType: JwtTokenTypeEnum.ACCESS,
+        },
+        buildAccessPolicyService(
+          mockPermissionsService as unknown as PermissionsService,
+          mockFeatureFlagService as unknown as FeatureFlagService,
+        ),
+      );
+
+    const FLAGGED_POLICY: AccessPolicy = {
+      authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+      requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED],
+    };
+
+    it('should let the caller through when the workspace has the feature flag', async () => {
+      mockFeatureFlagService.getWorkspaceFeatureFlagsMap.mockResolvedValue({
+        [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: true,
+      });
+
+      await expect(canActivateWithPolicy(FLAGGED_POLICY)).resolves.toBe(true);
+      expect(
+        mockFeatureFlagService.getWorkspaceFeatureFlagsMap,
+      ).toHaveBeenCalledWith('workspace-id');
+    });
+
+    it('should refuse before looking up permissions when the workspace lacks the feature flag', async () => {
+      mockFeatureFlagService.getWorkspaceFeatureFlagsMap.mockResolvedValue({
+        [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: false,
+      });
+
+      await expect(canActivateWithPolicy(FLAGGED_POLICY)).rejects.toThrow(
+        new ForbiddenException(
+          `Feature flag "${FeatureFlagKey.IS_GETTING_STARTED_ENABLED}" is not enabled for this workspace`,
+        ),
+      );
+      expect(
+        mockPermissionsService.userHasWorkspaceSettingPermission,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should not load feature flags for a policy that requires none', async () => {
+      await expect(
+        canActivateWithPolicy({
+          authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+          requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+        }),
+      ).resolves.toBe(true);
+      expect(
+        mockFeatureFlagService.getWorkspaceFeatureFlagsMap,
+      ).not.toHaveBeenCalled();
     });
   });
 
