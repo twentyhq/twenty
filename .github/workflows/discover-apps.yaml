@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   discover:
-    timeout-minutes: 10
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -39,8 +39,6 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: ${{ inputs.changed-only && '0' || '1' }}
-          # full history only to diff paths, so skip downloading file contents
-          filter: blob:none
 
       - name: Ensure no .github folder inside app folders
         run: |
