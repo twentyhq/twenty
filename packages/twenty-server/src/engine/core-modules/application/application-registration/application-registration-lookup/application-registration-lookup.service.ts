@@ -44,6 +44,15 @@ export class ApplicationRegistrationLookupService {
     return registration;
   }
 
+  async findOneByIdGlobal(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    return this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+      where: { id: applicationRegistrationId },
+    });
+  }
+
   async findOneByUniversalIdentifierGlobal(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
