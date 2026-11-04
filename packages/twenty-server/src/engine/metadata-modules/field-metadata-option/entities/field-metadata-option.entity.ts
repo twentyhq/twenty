@@ -22,7 +22,7 @@ export type FieldMetadataOptionOverrides = {
   isActive?: boolean;
 };
 
-// No unique index on value or position: one migration may swap or reorder them, so the validator checks it.
+// No unique index: one migration may swap values, so the validator checks value uniqueness; positions may tie across apps.
 @Entity({ name: 'fieldMetadataOption', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_FIELD_METADATA_OPTION_TABLE_UPGRADE_COMMAND_NAME,
