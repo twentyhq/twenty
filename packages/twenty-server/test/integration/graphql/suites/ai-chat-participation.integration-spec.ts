@@ -368,10 +368,13 @@ describe('Chat participation through the authenticated API', () => {
 
   it('allows revised initial choices after a failed send leaves an empty thread', async () => {
     const threadId = context.registerThread();
+    const generalChannelId = await context.findGeneralChannelId();
     const failed = await sendChatParticipationMessage({
       threadId,
+      channelId: generalChannelId,
       modelId: 'missing-provider/missing-model',
       isAssistantParticipant: true,
+      isAssistantMentioned: true,
     });
 
     expect(failed.body.errors).toBeDefined();
@@ -381,6 +384,9 @@ describe('Chat participation through the authenticated API', () => {
         threadId,
       }),
     ).toBe(false);
+    expect((await context.readThread(threadId)).channelId).toBe(
+      generalChannelId,
+    );
 
     const retried = await sendChatParticipationMessage({
       threadId,
@@ -390,9 +396,10 @@ describe('Chat participation through the authenticated API', () => {
 
     expect(retried.body.errors).toBeUndefined();
     expect(retried.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
-    );
+    expect(await context.readThread(threadId)).toMatchObject({
+      isAssistantParticipant: false,
+      channelId: null,
+    });
   });
 
   it('keeps Ada excluded for a cached client that omits the mention signal', async () => {

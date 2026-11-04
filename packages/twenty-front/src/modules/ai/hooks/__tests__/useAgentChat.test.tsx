@@ -28,6 +28,7 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 const attachChatThreadToRecord = jest.fn();
 const sentShouldAssistantReply = jest.fn();
 const sentChannelId = jest.fn();
+const sentMessageVariables = jest.fn();
 
 jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
   useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
@@ -60,6 +61,7 @@ const buildSendChatMessageMock = (
     variables: (variables) => {
       sentShouldAssistantReply(variables.shouldAssistantReply);
       sentChannelId(variables.channelId);
+      sentMessageVariables(variables);
 
       return true;
     },
@@ -171,7 +173,7 @@ describe('useAgentChat', () => {
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
-  it('keeps the new chat until its first message is sent', async () => {
+  it('keeps the new chat and its first message id until that message is sent', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -188,6 +190,10 @@ describe('useAgentChat', () => {
 
     expect(result.current.currentAiChatThread).toBe(THREAD_ID);
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
   });
 
   it('files the chat when the retry of a failed first send goes through', async () => {
@@ -211,6 +217,32 @@ describe('useAgentChat', () => {
       threadId: THREAD_ID,
       ...COMPANY_TARGET,
     });
+  });
+
+  it('gives a first message edited after a failed send a new id', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
+    });
+
+    await send(result);
+
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello again'),
+      }));
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).not.toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
   });
 
   it('does not file a chat under a record it only mentions', async () => {

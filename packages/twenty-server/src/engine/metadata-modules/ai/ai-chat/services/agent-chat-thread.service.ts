@@ -564,6 +564,26 @@ export class AgentChatThreadService {
     });
   }
 
+  async moveOwnThreadToChannel({
+    channelId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    channelId: string | null;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    const thread = await this.getWritableThread(args);
+
+    if (
+      thread.workspaceMemberId !== args.workspaceMemberId ||
+      (thread.channelId ?? null) === channelId
+    ) {
+      return thread;
+    }
+
+    await this.moveToChannel({ ...args, channelId });
+
+    return this.getWritableThread(args);
+  }
+
   // Activity no member wrote, such as an agent turn or an application's
   // message, leaves the chat unread for everyone
   async recordThreadActivity({

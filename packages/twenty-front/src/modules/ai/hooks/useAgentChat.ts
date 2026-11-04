@@ -26,6 +26,7 @@ import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentCh
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/agentChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
@@ -48,6 +49,7 @@ import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
@@ -141,7 +143,17 @@ export const useAgentChat = () => {
     const browsingContextToSend = isBrowsingContextChanged
       ? browsingContext
       : null;
-    const messageId = v4();
+    const fileIds = agentChatUploadedFiles.map(({ fileId }) => fileId);
+    const unconfirmedFirstMessageAtom =
+      agentChatUnconfirmedFirstMessageFamilyState.atomFamily(threadId);
+    const unconfirmedFirstMessage = isNewChat
+      ? store.get(unconfirmedFirstMessageAtom)
+      : null;
+    const messageId =
+      unconfirmedFirstMessage?.serializedContent === serializedContentToSend &&
+      isDeeplyEqual(unconfirmedFirstMessage.fileIds, fileIds)
+        ? unconfirmedFirstMessage.messageId
+        : v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticRestore = applyOptimisticRestore({
       threadId,
@@ -279,6 +291,14 @@ export const useAgentChat = () => {
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (error) {
       rollbackOptimisticRestore();
+
+      if (isNewChat) {
+        store.set(unconfirmedFirstMessageAtom, {
+          messageId,
+          serializedContent: serializedContentToSend,
+          fileIds,
+        });
+      }
 
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,

@@ -3,6 +3,7 @@ import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -22,13 +23,18 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
+import { type AgentChatMessageAddressing } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-addressing.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
@@ -53,6 +59,7 @@ export class AgentChatMemberMessageSenderService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly replyPolicyService: AgentChatReplyPolicyService,
+    private readonly agentChatService: AgentChatService,
   ) {}
 
   async sendMemberMessage({
@@ -91,15 +98,49 @@ export class AgentChatMemberMessageSenderService {
       shouldApplyAssistantParticipation: false,
     });
 
-    const thread = await this.chatThreadService.getWritableThread(threadAccess);
+    const storedMessage = isDefined(message.id)
+      ? await this.agentChatService.findMemberMessage({
+          ...threadAccess,
+          messageId: message.id,
+        })
+      : null;
+    const isInitialMessage =
+      await this.assistantParticipationService.isInitialMessage({
+        workspaceId: actor.workspaceId,
+        threadId: target.threadId,
+        messageTurnId: storedMessage?.turnId,
+      });
+    const thread = isInitialMessage
+      ? await this.chatThreadService.moveOwnThreadToChannel({
+          ...threadAccess,
+          channelId: target.channelId ?? null,
+        })
+      : await this.chatThreadService.getWritableThread(threadAccess);
     const participation =
       await this.assistantParticipationService.resolveAssistantParticipation({
         workspaceId: actor.workspaceId,
         workspaceMemberId: actor.workspaceMemberId,
         thread,
+        isInitialMessage,
         ...assistantParticipationInput,
         isReplyRequested: assistant.isReplyRequested,
       });
+
+    if (isDefined(storedMessage)) {
+      return this.replayStoredMessage({
+        threadAccess,
+        thread,
+        storedMessage,
+        participation,
+        addressing: {
+          mentionedWorkspaceMemberIds: addressing.mentionedWorkspaceMemberIds,
+          initialRecipientWorkspaceMemberIds:
+            isInboxEnabled && isInitialMessage
+              ? addressing.initialRecipientWorkspaceMemberIds
+              : [],
+        },
+      });
+    }
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
@@ -196,6 +237,45 @@ export class AgentChatMemberMessageSenderService {
     }
 
     return result;
+  }
+
+  private async replayStoredMessage({
+    threadAccess,
+    thread,
+    storedMessage,
+    participation,
+    addressing,
+  }: {
+    threadAccess: AgentChatThreadAccessArgs;
+    thread: AgentChatThreadWorkspaceEntity;
+    storedMessage: AgentMessageWorkspaceEntity;
+    participation: AgentChatAssistantParticipation;
+    addressing: AgentChatMessageAddressing;
+  }): Promise<AgentChatMemberMessageResult> {
+    await this.assistantParticipationService.persistAssistantParticipation({
+      workspaceId: threadAccess.workspaceId,
+      thread,
+      participation,
+    });
+
+    const delivery = await this.inboxDeliveryService.deliverMessageToInboxes({
+      ...threadAccess,
+      messageId: storedMessage.id,
+      ...addressing,
+    });
+
+    if (storedMessage.status === AgentMessageStatus.QUEUED) {
+      return { messageId: storedMessage.id, isQueued: true, delivery };
+    }
+
+    return {
+      messageId: storedMessage.id,
+      isQueued: false,
+      streamId: isNonEmptyString(thread.activeStreamId)
+        ? thread.activeStreamId
+        : undefined,
+      delivery,
+    };
   }
 
   private async sendMessageWithAssistantReply({

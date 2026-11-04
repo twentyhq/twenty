@@ -128,7 +128,7 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
-    // The channel a new chat is created in; ignored for an existing chat
+    // The channel a chat's first message files it in; ignored afterwards
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
     channelId: string | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,

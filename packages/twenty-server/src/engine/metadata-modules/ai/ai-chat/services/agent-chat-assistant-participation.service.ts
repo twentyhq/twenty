@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Not } from 'typeorm';
+import { IsNull, Not, Or } from 'typeorm';
 
 import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -48,10 +48,7 @@ export class AgentChatAssistantParticipationService {
 
     const isInitialMessage =
       providedIsInitialMessage ??
-      !(await this.messageRepository.existsBy(workspaceId, {
-        threadId: thread.id,
-        role: Not(AgentMessageRole.SYSTEM),
-      }));
+      (await this.isInitialMessage({ workspaceId, threadId: thread.id }));
     const eligibleWorkspaceMemberIds =
       await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
         workspaceId,
@@ -77,6 +74,24 @@ export class AgentChatAssistantParticipationService {
       });
 
     return { ...assistantMessageDecision, isInitialMessage };
+  }
+
+  async isInitialMessage({
+    workspaceId,
+    threadId,
+    messageTurnId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageTurnId?: string | null;
+  }): Promise<boolean> {
+    return !(await this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      role: Not(AgentMessageRole.SYSTEM),
+      ...(isDefined(messageTurnId)
+        ? { turnId: Or(IsNull(), Not(messageTurnId)) }
+        : {}),
+    }));
   }
 
   async persistAssistantParticipation({

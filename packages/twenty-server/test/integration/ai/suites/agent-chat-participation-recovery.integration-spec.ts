@@ -12,6 +12,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -157,6 +158,56 @@ describe('Chat message participation with real storage', () => {
       }),
     ).toContainEqual(expect.objectContaining({ id: messageId }));
     expect(await context.readParticipants(threadId)).not.toContainEqual(
+      expect.objectContaining({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    );
+  });
+
+  it('replays a first message stored before its send failed with the revised choices', async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    const retried = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+      isAssistantParticipant: false,
+      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: null,
+      recipientParticipantWorkspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ],
+    });
+    expect(
+      await context.chatService.getMessagesForThread({
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        threadId,
+      }),
+    ).toEqual([expect.objectContaining({ id: messageId })]);
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      false,
+    );
+    expect(await context.readParticipants(threadId)).toContainEqual(
       expect.objectContaining({
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       }),
