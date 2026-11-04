@@ -20,6 +20,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const IN_FLIGHT_WORKFLOW_RUN_STATUSES = [
   'NOT_STARTED',
@@ -380,13 +381,11 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
         },
       );
 
-    // the steps no longer reference them, so a function that cannot be deleted is only left over
     if (result.status === 'fail') {
-      this.logger.error(
-        `Workspace ${workspaceId}: could not delete ${flatLogicFunctionsToDelete.length} code step function(s): ${JSON.stringify(result)}`,
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to delete code step functions for workspace ${workspaceId}`,
       );
-
-      return 0;
     }
 
     return flatLogicFunctionsToDelete.length;
