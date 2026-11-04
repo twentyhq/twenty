@@ -27,8 +27,9 @@ import { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
-  CustomError,
+  canReachSomeRecords,
   computeMorphRelationGqlFieldName,
+  CustomError,
 } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -242,7 +243,10 @@ export const RecordDetailRelationRecordsListItem = ({
                   onClick={handleDetach}
                 >{t`Detach`}</Dropdown.ActionItem>
                 {!isAccountOwnerRelation &&
-                  relationObjectPermissions.canSoftDeleteObjectRecords && (
+                  canReachSomeRecords({
+                    objectRecordsPermissions: relationObjectPermissions,
+                    operationType: 'soft-delete',
+                  }) && (
                     <Dropdown.ActionItem
                       startIcon={<IconTrash />}
                       color="danger"

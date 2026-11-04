@@ -6,7 +6,6 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
   Nullable,
   ObjectRecord,
-  type ObjectsPermissions,
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
@@ -39,6 +38,7 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permi
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
@@ -188,12 +188,12 @@ export class ObjectRecordEventPublisher {
         : {}),
     };
 
-    const objectsPermissions =
-      await this.recordAccessPolicyService.findObjectsPermissions(
+    const recordsPermissions =
+      await this.recordAccessPolicyService.findRecordsPermissions(
         permissionsAuthContext,
       );
 
-    if (!isDefined(objectsPermissions)) {
+    if (!isDefined(recordsPermissions)) {
       return;
     }
 
@@ -223,7 +223,7 @@ export class ObjectRecordEventPublisher {
       const filteredEvent = omitRestrictedFieldsFromEvent({
         event: eventWithObjectName,
         objectMetadata: workspaceEventBatch.objectMetadata,
-        objectsPermissions,
+        recordsPermissions,
         flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
@@ -275,7 +275,7 @@ export class ObjectRecordEventPublisher {
             applicationId: subscriberAuthContext.applicationId,
           }),
           permissionsAuthContext,
-          objectsPermissions,
+          recordsPermissions,
         });
       } catch (error) {
         this.logger.warn(
@@ -305,14 +305,14 @@ export class ObjectRecordEventPublisher {
     workspaceId,
     subscriberAuthContext,
     permissionsAuthContext,
-    objectsPermissions,
+    recordsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
     subscriberAuthContext: Promise<WorkspaceAuthContext>;
     permissionsAuthContext: PermissionsAuthContext;
-    objectsPermissions: ObjectsPermissions;
+    recordsPermissions: RoleRecordsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -352,7 +352,7 @@ export class ObjectRecordEventPublisher {
       flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectsPermissions,
+      recordsPermissions,
       onlyUseLabelIdentifierFieldsInRelations: true,
       recurseIntoJunctionTableRelations: true,
     });

@@ -34,5 +34,6 @@ export const Default: Story = {
     await expect(
       await canvas.findByRole('button', { name: 'View billing details' }),
     ).toBeVisible();
+    await expect(canvas.queryByText('Partner code')).not.toBeInTheDocument();
   },
 };

@@ -25,19 +25,39 @@ const getCodes = (
 };
 
 describe('validateWorkflowVariableReferences', () => {
-  it('should return no issues for a valid upstream reference that resolves', () => {
+  it('should only check the inputs of a CODE step, not its source', () => {
     const workflow: ValidatableWorkflow = {
       trigger: { type: 'MANUAL', nextStepIds: ['s1'] },
       steps: [
         {
           id: 's1',
           type: 'CODE',
+          settings: {
+            input: {
+              code: 'export const main = () => ({ text: "{{customer.name}}" });',
+              logicFunctionInput: { value: '{{unknown.name}}' },
+            },
+          },
+        },
+      ],
+    };
+
+    expect(getCodes(workflow)).toEqual(['VARIABLE_UNKNOWN_STEP']);
+  });
+
+  it('should return no issues for a valid upstream reference that resolves', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['s1'] },
+      steps: [
+        {
+          id: 's1',
+          type: 'HTTP_REQUEST',
           nextStepIds: ['s2'],
           settings: { outputSchema: OUTPUT_SCHEMA },
         },
         {
           id: 's2',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{s1.name}}' } },
         },
       ],
@@ -50,7 +70,11 @@ describe('validateWorkflowVariableReferences', () => {
     const workflow: ValidatableWorkflow = {
       trigger: { type: 'MANUAL', nextStepIds: ['s1'] },
       steps: [
-        { id: 's1', type: 'CODE', settings: { input: { value: '{{.}}' } } },
+        {
+          id: 's1',
+          type: 'HTTP_REQUEST',
+          settings: { input: { value: '{{.}}' } },
+        },
       ],
     };
 
@@ -63,7 +87,7 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{ghost.name}}' } },
         },
       ],
@@ -78,10 +102,14 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{s2.name}}' } },
         },
-        { id: 's2', type: 'CODE', settings: { outputSchema: OUTPUT_SCHEMA } },
+        {
+          id: 's2',
+          type: 'HTTP_REQUEST',
+          settings: { outputSchema: OUTPUT_SCHEMA },
+        },
       ],
     };
 
@@ -94,13 +122,13 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           nextStepIds: ['s2'],
           settings: { outputSchema: OUTPUT_SCHEMA },
         },
         {
           id: 's2',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{s1.unknownField}}' } },
         },
       ],
@@ -119,7 +147,7 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{trigger.name}}' } },
         },
       ],
@@ -138,7 +166,7 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{trigger.unknownField}}' } },
         },
       ],
@@ -153,7 +181,7 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: {
             input: { value: '{{s1.name}}' },
             outputSchema: OUTPUT_SCHEMA,
@@ -173,7 +201,7 @@ describe('validateWorkflowVariableReferences', () => {
       steps: [
         {
           id: 's1',
-          type: 'CODE',
+          type: 'HTTP_REQUEST',
           settings: { input: { value: '{{trigger.foo}}' } },
         },
       ],

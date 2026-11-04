@@ -20,7 +20,7 @@ export const useCreateActivityForTargetRecord = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
-  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
+  const { canUpdateSomeRecords } = useCanUpdateObjectRecords(
     targetRecord.targetObjectNameSingular,
   );
 
@@ -33,8 +33,7 @@ export const useCreateActivityForTargetRecord = ({
 
   return {
     canCreateActivity:
-      canUpdateObjectRecords &&
-      !isObjectMetadataReadOnly({ objectMetadataItem }),
+      canUpdateSomeRecords && !isObjectMetadataReadOnly({ objectMetadataItem }),
     createActivity,
   };
 };

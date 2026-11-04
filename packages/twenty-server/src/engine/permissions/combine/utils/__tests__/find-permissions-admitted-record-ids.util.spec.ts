@@ -4,6 +4,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
+  type ObjectRecordsPermissions,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
@@ -22,6 +23,7 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -89,14 +91,12 @@ const privateRecordStates = new Map<string, PrivateRecordState>([
   ],
 ]);
 
-const fullAccess = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+const fullAccess: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -155,7 +155,10 @@ const findAdmitted = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
-        [MEMBER_ROLE_ID]: { [flatObjectMetadata.id]: fullAccess },
+        [MEMBER_ROLE_ID]: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: { [flatObjectMetadata.id]: fullAccess },
+        },
       },
       flatApplicationMaps: { byId: {} },
       flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
