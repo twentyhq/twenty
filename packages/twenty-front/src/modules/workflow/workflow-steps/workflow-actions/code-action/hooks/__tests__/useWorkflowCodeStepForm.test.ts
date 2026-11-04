@@ -26,6 +26,14 @@ const ACTION: WorkflowCodeAction = {
 };
 
 describe('useWorkflowCodeStepForm', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('keeps an input removed from the code when another input is edited right after', async () => {
     const onActionUpdate = jest.fn();
 
@@ -39,19 +47,25 @@ describe('useWorkflowCodeStepForm', () => {
     );
 
     act(() => result.current.handleCodeChange(CODE_WITH_ONE_INPUT));
-
-    await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
-
+    act(() => jest.advanceTimersByTime(300));
     act(() => result.current.handleFunctionInputChange('new b', ['b']));
 
-    await act(() => new Promise((resolve) => setTimeout(resolve, 1000)));
-
-    const lastSavedInput = onActionUpdate.mock.lastCall[0].settings.input;
-
-    expect(lastSavedInput).toEqual({
+    const expectedInput = {
       code: CODE_WITH_ONE_INPUT,
       logicFunctionInput: { b: 'new b' },
-    });
+    };
+
+    await waitFor(() =>
+      expect(onActionUpdate.mock.lastCall?.[0].settings.input).toEqual(
+        expectedInput,
+      ),
+    );
+
+    act(() => jest.runAllTimers());
+
+    expect(onActionUpdate.mock.lastCall[0].settings.input).toEqual(
+      expectedInput,
+    );
   });
 
   it('saves settings with the latest code and inputs', async () => {
