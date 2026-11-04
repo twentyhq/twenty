@@ -3,10 +3,10 @@ import { RuleTester } from 'oxlint/plugins-dev';
 import { rule, RULE_NAME } from './graphql-resolvers-should-be-guarded';
 
 const ACCEPT_EVERY_PRINCIPAL =
-  'AuthPrincipalGuard({ userSession: true, apiKey: true, oauthClient: true, application: true })';
+  'AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: true, oauthClient: true, application: true }, requiredPermissionFlags: [] })';
 
 const ACCEPT_USER_SESSIONS =
-  'AuthPrincipalGuard({ userSession: true, apiKey: false, oauthClient: false, application: false })';
+  'AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [PermissionFlagType.WORKSPACE] })';
 
 const ruleTester = new RuleTester();
 
@@ -36,7 +36,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Mutation()
-          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [PermissionFlagType.WORKSPACE] }))
+          @UseGuards(${ACCEPT_USER_SESSIONS})
           testMutation() {}
         }
       `,
@@ -46,7 +46,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
+          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: { standard: true, impersonated: false, playground: true, workspaceAgnostic: false }, apiKey: false, oauthClient: { withUser: true, withoutUser: false }, application: { withUser: true, withoutUser: false } }, requiredPermissionFlags: [], requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED] }))
           testQuery() {}
         }
       `,
@@ -64,29 +64,20 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(CustomPermissionGuard)
+          async duplicateSomething() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         class TestResolver {
           @Query()
           @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, CustomPermissionGuard)
-        class TestResolver {
-          @Query()
           testQuery() {}
         }
       `,
@@ -106,7 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Subscription()
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
+          @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
           testSubscription() {}
         }
       `,
@@ -114,7 +105,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
+        @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
         class TestResolver {
           @Subscription()
           testSubscription() {}
@@ -138,212 +129,18 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       filename: 'test.tsx',
     },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
-        class TestResolver {
-          @Mutation(() => String)
-          async createSomething() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Mutation(() => String)
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
-          async createSomething() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Mutation(() => String)
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, CustomPermissionGuard)
-          async createSomething() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, CustomPermissionGuard)
-        class TestResolver {
-          @Mutation(() => String)
-          async createSomething() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(
-            AuthPrincipalGuard({
-              userSession: {
-                standard: true,
-                impersonated: false,
-                playground: true,
-                workspaceAgnostic: false,
-              },
-              apiKey: false,
-              oauthClient: { withUser: true, withoutUser: false },
-              application: { withUser: true, withoutUser: false },
-            }),
-            NoPermissionGuard,
-          )
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
-        class TestResolver {
-          @Mutation(() => String)
-          @UseGuards(
-            AuthPrincipalGuard({
-              userSession: {
-                standard: true,
-                impersonated: true,
-                playground: false,
-                workspaceAgnostic: false,
-              },
-              apiKey: false,
-              oauthClient: false,
-              application: false,
-            }),
-          )
-          async createSomething() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          @UseGuards(${ACCEPT_USER_SESSIONS})
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(
-          AuthPrincipalGuard({
-            userSession: {
-              standard: true,
-              impersonated: true,
-              playground: true,
-              workspaceAgnostic: false,
-            },
-            apiKey: false,
-            oauthClient: { withUser: true, withoutUser: false },
-            application: true,
-          }),
-          NoPermissionGuard,
-        )
-        class TestResolver {
-          @Query()
-          @UseGuards(
-            AuthPrincipalGuard({
-              userSession: {
-                standard: true,
-                impersonated: false,
-                playground: true,
-                workspaceAgnostic: false,
-              },
-              apiKey: false,
-              oauthClient: { withUser: true, withoutUser: false },
-              application: { withUser: true, withoutUser: false },
-            }),
-          )
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(
-            ${ACCEPT_EVERY_PRINCIPAL},
-            FeatureFlagGuard,
-            SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-          )
-          testQuery() {}
-        }
-      `,
-      filename: 'test.tsx',
-    },
   ],
   invalid: [
-    {
+    ...['Query', 'Mutation', 'Subscription'].map((operationDecorator) => ({
       code: `
         class TestResolver {
-          @Query()
-          testQuery() {}
+          @${operationDecorator}()
+          testOperation() {}
         }
       `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
+      errors: [{ messageId: 'graphqlResolversShouldBeGuarded' }],
       filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Mutation()
-          testMutation() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Subscription()
-          testSubscription() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${ACCEPT_USER_SESSIONS})
-          testQuery() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
+    })),
     {
       code: `
         class TestResolver {
@@ -352,11 +149,7 @@ ruleTester.run(RULE_NAME, rule, {
           testQuery() {}
         }
       `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
+      errors: [{ messageId: 'graphqlResolversShouldBeGuarded' }],
       filename: 'test.tsx',
     },
     {
@@ -367,213 +160,31 @@ ruleTester.run(RULE_NAME, rule, {
           testQuery() {}
         }
       `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
+      errors: [{ messageId: 'graphqlResolversShouldBeGuarded' }],
       filename: 'test.tsx',
     },
-    {
-      code: `
-        class TestResolver {
-          @Subscription()
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
-          testSubscription() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
-        class TestResolver {
-          @Subscription()
-          testSubscription() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Mutation(() => String)
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
-          async createSomething() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
-        class TestResolver {
-          @Mutation(() => String)
-          async createSomething() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'graphqlResolversShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    ...[
-      'AuthPrincipalGuard(AUTH_PRINCIPAL_GUARD_CONFIG)',
-      'AuthPrincipalGuard({ ...USER_SESSIONS_ONLY, apiKey: true })',
-      'AuthPrincipalGuard({ userSession: USER_SESSION_VARIANTS, apiKey: false, oauthClient: false, application: false })',
-      'AuthPrincipalGuard({ userSession, apiKey: false, oauthClient: false, application: false })',
-      'AuthPrincipalGuard()',
-    ].map((authPrincipalGuard) => ({
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${authPrincipalGuard}, NoPermissionGuard)
-          testQuery() {}
-        }
-      `,
-      errors: [
-        { messageId: 'graphqlResolversShouldBeGuarded' },
-        { messageId: 'authPrincipalGuardConfigNotInline' },
-      ],
-      filename: 'test.tsx',
-    })),
-    {
-      code: `
-        @UseGuards(AuthPrincipalGuard(AUTH_PRINCIPAL_GUARD_CONFIG), NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          testQuery() {}
-        }
-      `,
-      errors: [
-        { messageId: 'authPrincipalGuardConfigNotInline' },
-        { messageId: 'graphqlResolversShouldBeGuarded' },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(
-          AuthPrincipalGuard({
-            userSession: {
-              standard: true,
-              impersonated: true,
-              playground: true,
-              workspaceAgnostic: false,
-            },
-            apiKey: false,
-            oauthClient: false,
-            application: false,
-          }),
-          NoPermissionGuard,
-        )
-        class TestResolver {
-          @Query()
-          @UseGuards(${ACCEPT_USER_SESSIONS})
-          testQuery() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'authPrincipalGuardWiderThanClass',
-          data: { principalVariants: 'userSession.workspaceAgnostic' },
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(
-          AuthPrincipalGuard({
-            userSession: false,
-            apiKey: true,
-            oauthClient: false,
-            application: { withUser: true, withoutUser: false },
-          }),
-          NoPermissionGuard,
-        )
+    ...['NoPermissionGuard', 'CustomPermissionGuard'].map(
+      (permissionGuard) => ({
+        code: `
         class TestResolver {
           @Mutation()
-          @UseGuards(
-            AuthPrincipalGuard({
-              userSession: {
-                standard: true,
-                impersonated: false,
-                playground: false,
-                workspaceAgnostic: false,
-              },
-              apiKey: true,
-              oauthClient: false,
-              application: true,
-            }),
-          )
+          @UseGuards(${permissionGuard})
           testMutation() {}
         }
       `,
-      errors: [
-        {
-          messageId: 'authPrincipalGuardWiderThanClass',
-          data: {
-            principalVariants: 'userSession.standard, application.withoutUser',
-          },
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
-          testQuery() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'authPrincipalGuardWiderThanClass',
-          data: { principalVariants: 'apiKey, oauthClient, application' },
-        },
-      ],
-      filename: 'test.tsx',
-    },
+        errors: [{ messageId: 'graphqlResolversShouldBeGuarded' }],
+        filename: 'test.tsx',
+      }),
+    ),
     {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(NoPermissionGuard, ${ACCEPT_USER_SESSIONS})
+          @UseGuards(AuthPrincipalGuard({ userSession: true, apiKey: true, oauthClient: true, application: true }), NoPermissionGuard)
           testQuery() {}
         }
       `,
-      errors: [{ messageId: 'authPrincipalGuardNotFirst' }],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(FeatureFlagGuard, ${ACCEPT_EVERY_PRINCIPAL}, NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          testQuery() {}
-        }
-      `,
-      errors: [{ messageId: 'authPrincipalGuardNotFirst' }],
+      errors: [{ messageId: 'graphqlResolversShouldBeGuarded' }],
       filename: 'test.tsx',
     },
     ...[
@@ -586,6 +197,8 @@ ruleTester.run(RULE_NAME, rule, {
       'AccessPolicyGuard({ authPrincipals: { userSession: USER_SESSION_VARIANTS, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [] })',
       'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: [...VIEW_FLAGS] })',
       'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: VIEW_FLAGS })',
+      'AccessPolicyGuard(VIEW_POLICY)',
+      'AccessPolicyGuard()',
     ].map((accessPolicyGuard) => ({
       code: `
         class TestResolver {
@@ -620,7 +233,58 @@ ruleTester.run(RULE_NAME, rule, {
           testQuery() {}
         }
       `,
-      errors: [{ messageId: 'authPrincipalGuardNotFirst' }],
+      errors: [{ messageId: 'accessPolicyGuardNotFirst' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @UseGuards(CustomPermissionGuard)
+          @Mutation()
+          @UseGuards(AccessPolicyGuard(VIEW_WRITE_ACCESS_POLICY))
+          testMutation() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @Query()
+          @UseGuards(AccessPolicyGuard(TIMELINE_READ_ACCESS_POLICY))
+          testQuery() {}
+
+          @Query()
+          @UseGuards(AccessPolicyGuard(TIMELINE_READ_ACCESS_POLICY))
+          otherQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'classGuardBeforeMethodAccessPolicy' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(CustomPermissionGuard, ${ACCEPT_EVERY_PRINCIPAL})
+        class TestResolver {
+          @Query()
+          testQuery() {}
+        }
+      `,
+      errors: [{ messageId: 'accessPolicyGuardNotFirst' }],
       filename: 'test.tsx',
     },
   ],

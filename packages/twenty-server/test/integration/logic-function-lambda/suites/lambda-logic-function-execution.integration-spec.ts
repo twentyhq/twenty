@@ -27,6 +27,7 @@ import {
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const LAMBDA_TEST_TIMEOUT_MS = 300_000;
@@ -50,6 +51,11 @@ const SLOW_SOURCE = `export const main = async (): Promise<object> => {
   await new Promise((resolve) => setTimeout(resolve, 30_000));
   return { finished: true };
 };`;
+
+const GREETING_CODE_STEP_SOURCE = `export const main = async (params: { name: string }): Promise<object> => ({
+  greeting: \`Hi \${params.name}\`,
+  literal: '{{trigger.name}}',
+});`;
 
 const buildVersionedSource = (version: number) =>
   `export const main = async (): Promise<object> => ({ version: ${version} });`;
@@ -116,6 +122,23 @@ describe('Logic functions on the Lambda driver (integration)', () => {
       applicationUniversalIdentifier: customFlatApplication.universalIdentifier,
     });
   };
+
+  const runCodeStep = async ({
+    code,
+    payload = {},
+  }: {
+    code: string;
+    payload?: object;
+  }) =>
+    getAppProviderByClassName<CodeStepRunnerService>(
+      'CodeStepRunnerService',
+    ).run({
+      flatApplication: await getWorkspaceCustomFlatApplication(
+        SEED_APPLE_WORKSPACE_ID,
+      ),
+      code,
+      payload,
+    });
 
   beforeAll(async () => {
     flociLambdaDriver = await switchToFlociLambdaDriver();
@@ -385,6 +408,72 @@ describe('Logic functions on the Lambda driver (integration)', () => {
           FunctionName: logicFunctionId,
         }),
       ).rejects.toThrow(ResourceNotFoundException);
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'runs inline code steps on the shared code step Lambda, switching between their builds',
+    async () => {
+      expect(
+        await runCodeStep({
+          code: GREETING_CODE_STEP_SOURCE,
+          payload: { name: 'Acme' },
+        }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { greeting: 'Hi Acme', literal: '{{trigger.name}}' },
+      });
+      expect(
+        await runCodeStep({ code: buildVersionedSource(2) }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { version: 2 },
+      });
+      expect(
+        await runCodeStep({
+          code: GREETING_CODE_STEP_SOURCE,
+          payload: { name: 'Bob' },
+        }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: { greeting: 'Hi Bob' },
+      });
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'runs an inline code step with the dependency and SDK layers mounted',
+    async () => {
+      const result = await runCodeStep({ code: LAYER_PROBE_SOURCE });
+
+      expect(result).toMatchObject({
+        status: LogicFunctionExecutionStatus.SUCCESS,
+        data: {
+          greeting: DEPENDENCY_LAYER_FIXTURE.greeting,
+          sdkClientCoreChecksum: await getCurrentSdkClientCoreChecksum(),
+        },
+      });
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    'reports an inline code step that throws or does not compile',
+    async () => {
+      expect(await runCodeStep({ code: THROWING_SOURCE })).toMatchObject({
+        status: LogicFunctionExecutionStatus.ERROR,
+        error: {
+          errorMessage: expect.stringContaining('Lambda handler failure'),
+        },
+      });
+      expect(
+        await runCodeStep({ code: 'export const main = (' }),
+      ).toMatchObject({
+        status: LogicFunctionExecutionStatus.ERROR,
+        error: { errorType: 'BuildError' },
+      });
     },
     LAMBDA_TEST_TIMEOUT_MS,
   );

@@ -148,6 +148,7 @@ export class WorkflowExecutionContextService {
       initiator: workflowRun.createdBy,
       authContext,
       application,
+      workflowId: workflowRun.coreWorkflowId ?? undefined,
     };
   }
 

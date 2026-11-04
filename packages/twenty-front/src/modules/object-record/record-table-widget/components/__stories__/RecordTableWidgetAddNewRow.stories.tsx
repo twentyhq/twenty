@@ -187,14 +187,14 @@ export const ReadOnlyJunction: Story = {
   parameters: {
     currentUserWorkspace: {
       ...mockedUserData.currentUserWorkspace,
-      objectsPermissions:
-        mockedUserData.currentUserWorkspace.objectsPermissions.map(
+      objectRecordsPermissions:
+        mockedUserData.currentUserWorkspace.objectRecordsPermissions.map(
           (permission) => ({
             ...permission,
-            canUpdateObjectRecords:
+            canUpdateAllRecords:
               permission.objectMetadataId === junctionObject.id
                 ? false
-                : permission.canUpdateObjectRecords,
+                : permission.canUpdateAllRecords,
           }),
         ),
     },

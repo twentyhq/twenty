@@ -126,7 +126,7 @@ describe('Viewer-scoped record permissions', () => {
         store.set(currentWorkspaceMemberState.atom, { id: 'other' } as never);
       if (change === 'role')
         store.set(currentUserWorkspaceState.atom, {
-          objectsPermissions: [],
+          objectRecordsPermissions: [],
         } as never);
       await act(async () => {
         pending.resolve(response());
@@ -163,7 +163,7 @@ describe('Viewer-scoped record permissions', () => {
     expect(read()).toBeUndefined();
     store.set(currentWorkspaceMemberState.atom, { id: 'member' } as never);
     store.set(currentUserWorkspaceState.atom, {
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
     } as never);
     expect(read()).toBeUndefined();
   });

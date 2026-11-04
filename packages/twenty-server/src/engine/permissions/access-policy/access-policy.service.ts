@@ -26,11 +26,6 @@ const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
   WorkspaceActivationStatus.ONGOING_CREATION,
 ];
 
-type SettingsPermissionRequest = Pick<
-  Request,
-  'workspace' | 'userWorkspaceId' | 'apiKey' | 'application' | 'agentId'
->;
-
 @Injectable()
 export class AccessPolicyService {
   constructor(
@@ -38,7 +33,6 @@ export class AccessPolicyService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // Throws what the legacy principal, feature flag and permission guards threw
   async assertRequestAccessPolicySatisfiedOrThrow({
     accessPolicy,
     request,
@@ -118,11 +112,11 @@ export class AccessPolicyService {
     return true;
   }
 
-  async isSettingsPermissionGranted({
+  private async isSettingsPermissionGranted({
     request,
     permissionFlag,
   }: {
-    request: SettingsPermissionRequest;
+    request: Request;
     permissionFlag: PermissionFlagType;
   }): Promise<boolean> {
     const { workspace } = request;
