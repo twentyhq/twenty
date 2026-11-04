@@ -1,34 +1,40 @@
 import { isDefined } from 'twenty-shared/utils';
 
 export const createCoreAgentRefreshQueue = (refresh: () => Promise<void>) => {
-  let pendingRefresh: Promise<void> | undefined;
-  let hasPendingRefresh = false;
+  let runningRefresh: Promise<void> | undefined;
+  let queuedRefresh: Promise<void> | undefined;
+
+  const startRefresh = () => {
+    const startedRefresh = Promise.resolve()
+      .then(refresh)
+      .finally(() => {
+        if (runningRefresh === startedRefresh) {
+          runningRefresh = undefined;
+        }
+      });
+
+    runningRefresh = startedRefresh;
+
+    return startedRefresh;
+  };
 
   return () => {
-    hasPendingRefresh = true;
-
-    if (isDefined(pendingRefresh)) {
-      return pendingRefresh;
+    if (isDefined(queuedRefresh)) {
+      return queuedRefresh;
     }
 
-    pendingRefresh = Promise.resolve().then(async () => {
-      try {
-        while (hasPendingRefresh) {
-          hasPendingRefresh = false;
+    if (!isDefined(runningRefresh)) {
+      return startRefresh();
+    }
 
-          try {
-            await refresh();
-          } catch (error) {
-            if (!hasPendingRefresh) {
-              throw error;
-            }
-          }
-        }
-      } finally {
-        pendingRefresh = undefined;
-      }
-    });
+    queuedRefresh = runningRefresh
+      .catch(() => undefined)
+      .then(() => {
+        queuedRefresh = undefined;
 
-    return pendingRefresh;
+        return startRefresh();
+      });
+
+    return queuedRefresh;
   };
 };

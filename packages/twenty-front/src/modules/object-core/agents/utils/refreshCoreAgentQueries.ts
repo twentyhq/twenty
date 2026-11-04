@@ -6,39 +6,26 @@ import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 
 const refreshQueuesByClient = new WeakMap<
   ApolloClient,
-  {
-    refresh: ReturnType<typeof createCoreAgentRefreshQueue>;
-    pendingRefresh?: Promise<void>;
-  }
+  ReturnType<typeof createCoreAgentRefreshQueue>
 >();
 
-export const refreshCoreAgentQueries = async (
+export const refreshCoreAgentQueries = (
   apolloClient: ApolloClient,
 ): Promise<void> => {
-  let refreshQueue = refreshQueuesByClient.get(apolloClient);
+  const existingRefreshQueue = refreshQueuesByClient.get(apolloClient);
 
-  if (!isDefined(refreshQueue)) {
-    refreshQueue = {
-      refresh: createCoreAgentRefreshQueue(async () => {
-        await apolloClient.refetchQueries({
-          include: [FindManyAgentsDocument],
-          onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
-        });
-      }),
-    };
-    refreshQueuesByClient.set(apolloClient, refreshQueue);
+  if (isDefined(existingRefreshQueue)) {
+    return existingRefreshQueue();
   }
 
-  const pendingRefresh = refreshQueue.refresh();
-  refreshQueue.pendingRefresh = pendingRefresh;
+  const refreshQueue = createCoreAgentRefreshQueue(async () => {
+    await apolloClient.refetchQueries({
+      include: [FindManyAgentsDocument],
+      onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
+    });
+  });
 
-  try {
-    await pendingRefresh;
-  } finally {
-    if (
-      refreshQueuesByClient.get(apolloClient)?.pendingRefresh === pendingRefresh
-    ) {
-      refreshQueuesByClient.delete(apolloClient);
-    }
-  }
+  refreshQueuesByClient.set(apolloClient, refreshQueue);
+
+  return refreshQueue();
 };

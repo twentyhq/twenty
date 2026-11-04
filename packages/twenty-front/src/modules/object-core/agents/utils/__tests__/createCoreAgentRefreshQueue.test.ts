@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/react';
+
 import { createCoreAgentRefreshQueue } from '@/object-core/agents/utils/createCoreAgentRefreshQueue';
 
 const createRefreshGate = () => {
@@ -11,70 +13,96 @@ const createRefreshGate = () => {
   return { promise, release, reject };
 };
 
-it('coalesces overlapping invalidations into a fresh trailing request before settling callers', async () => {
-  const firstRequest = createRefreshGate();
-  const finalRequest = createRefreshGate();
-  const refresh = jest
-    .fn()
-    .mockReturnValueOnce(firstRequest.promise)
-    .mockReturnValueOnce(finalRequest.promise);
-  const requestRefresh = createCoreAgentRefreshQueue(refresh);
-
-  const firstRefresh = requestRefresh();
-  await Promise.resolve();
-  const deletionRefresh = requestRefresh();
-  const metadataRefresh = requestRefresh();
-  const finished = jest.fn();
-  void deletionRefresh.then(finished);
-
-  firstRequest.release();
-  await Promise.resolve();
-  expect(refresh).toHaveBeenCalledTimes(2);
-  expect(finished).not.toHaveBeenCalled();
-
-  finalRequest.release();
-  await Promise.all([firstRefresh, deletionRefresh, metadataRefresh]);
-  expect(finished).toHaveBeenCalledTimes(1);
-});
-
-it('runs the queued post-deletion refresh even if the earlier event refresh fails', async () => {
-  const firstRequest = createRefreshGate();
-  const refresh = jest
-    .fn()
-    .mockReturnValueOnce(firstRequest.promise)
-    .mockResolvedValue(undefined);
-  const requestRefresh = createCoreAgentRefreshQueue(refresh);
-
-  const firstRefresh = requestRefresh();
-  await Promise.resolve();
-  const deletionRefresh = requestRefresh();
-  firstRequest.reject(new Error('Connection lost'));
-
-  await expect(Promise.all([firstRefresh, deletionRefresh])).resolves.toEqual([
-    undefined,
-    undefined,
-  ]);
-  expect(refresh).toHaveBeenCalledTimes(2);
-});
-
-it.each(['synchronous', 'asynchronous'])(
-  'allows retry after %s terminal refresh failure',
-  async (failureMode) => {
+describe('createCoreAgentRefreshQueue', () => {
+  it('joins overlapping requests into one fresh refresh started after the running one', async () => {
+    const runningRequest = createRefreshGate();
+    const trailingRequest = createRefreshGate();
     const refresh = jest
       .fn()
-      .mockImplementationOnce(() => {
-        const error = new Error('Connection lost');
+      .mockReturnValueOnce(runningRequest.promise)
+      .mockReturnValueOnce(trailingRequest.promise);
+    const requestRefresh = createCoreAgentRefreshQueue(refresh);
 
-        if (failureMode === 'synchronous') {
-          throw error;
-        }
+    const eventRefresh = requestRefresh();
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    const deletionRefresh = requestRefresh();
+    const reconnectRefresh = requestRefresh();
+    const onDeletionRefreshed = jest.fn();
+    void deletionRefresh.then(onDeletionRefreshed);
 
-        return Promise.reject(error);
-      })
+    runningRequest.release();
+    await eventRefresh;
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(2));
+    expect(onDeletionRefreshed).not.toHaveBeenCalled();
+
+    trailingRequest.release();
+    await Promise.all([deletionRefresh, reconnectRefresh]);
+    expect(refresh).toHaveBeenCalledTimes(2);
+  });
+
+  it('settles a request when its refresh finishes even if newer requests arrive meanwhile', async () => {
+    const runningRequest = createRefreshGate();
+    const deletionRequest = createRefreshGate();
+    const laterRequest = createRefreshGate();
+    const refresh = jest
+      .fn()
+      .mockReturnValueOnce(runningRequest.promise)
+      .mockReturnValueOnce(deletionRequest.promise)
+      .mockReturnValueOnce(laterRequest.promise);
+    const requestRefresh = createCoreAgentRefreshQueue(refresh);
+
+    void requestRefresh();
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    const deletionRefresh = requestRefresh();
+    runningRequest.release();
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(2));
+    const laterRefresh = requestRefresh();
+
+    deletionRequest.release();
+    await expect(deletionRefresh).resolves.toBeUndefined();
+
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(3));
+    laterRequest.release();
+    await expect(laterRefresh).resolves.toBeUndefined();
+  });
+
+  it('runs the queued refresh even if the running refresh fails', async () => {
+    const runningRequest = createRefreshGate();
+    const refresh = jest
+      .fn()
+      .mockReturnValueOnce(runningRequest.promise)
       .mockResolvedValue(undefined);
     const requestRefresh = createCoreAgentRefreshQueue(refresh);
 
-    await expect(requestRefresh()).rejects.toThrow('Connection lost');
-    await expect(requestRefresh()).resolves.toBeUndefined();
-  },
-);
+    const eventRefresh = requestRefresh();
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    const deletionRefresh = requestRefresh();
+    runningRequest.reject(new Error('Connection lost'));
+
+    await expect(eventRefresh).rejects.toThrow('Connection lost');
+    await expect(deletionRefresh).resolves.toBeUndefined();
+    expect(refresh).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['synchronous', 'asynchronous'])(
+    'allows retry after %s terminal refresh failure',
+    async (failureMode) => {
+      const refresh = jest
+        .fn()
+        .mockImplementationOnce(() => {
+          const error = new Error('Connection lost');
+
+          if (failureMode === 'synchronous') {
+            throw error;
+          }
+
+          return Promise.reject(error);
+        })
+        .mockResolvedValue(undefined);
+      const requestRefresh = createCoreAgentRefreshQueue(refresh);
+
+      await expect(requestRefresh()).rejects.toThrow('Connection lost');
+      await expect(requestRefresh()).resolves.toBeUndefined();
+    },
+  );
+});
