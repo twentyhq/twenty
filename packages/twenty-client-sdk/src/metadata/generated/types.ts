@@ -5490,6 +5490,9 @@ export default {
             "doneTitle": [
                 1
             ],
+            "doneWorkflowId": [
+                1
+            ],
             "icon": [
                 1
             ],

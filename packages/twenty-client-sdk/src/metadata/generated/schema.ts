@@ -1757,6 +1757,7 @@ export interface GettingStartedStepDefinition {
     doneChatThreadId?: Scalars['String']
     doneDescription: Scalars['String']
     doneTitle: Scalars['String']
+    doneWorkflowId?: Scalars['String']
     icon: Scalars['String']
     iconColor: Scalars['String']
     kind: GettingStartedStepKind
@@ -6372,6 +6373,7 @@ export interface GettingStartedStepDefinitionGenqlSelection{
     doneChatThreadId?: boolean | number
     doneDescription?: boolean | number
     doneTitle?: boolean | number
+    doneWorkflowId?: boolean | number
     icon?: boolean | number
     iconColor?: boolean | number
     kind?: boolean | number

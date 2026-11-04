@@ -96,6 +96,7 @@ export class GettingStartedResolver {
       companyEnrichment,
       stepActionKeys,
       chatThreadIdByStepActionKey,
+      workflowIdByStepActionKey,
       ...progressFields
     } = progress;
 
@@ -106,6 +107,7 @@ export class GettingStartedResolver {
           stepActionKey,
           companyEnrichment,
           doneChatThreadId: chatThreadIdByStepActionKey[stepActionKey] ?? null,
+          doneWorkflowId: workflowIdByStepActionKey[stepActionKey] ?? null,
           translate: (descriptor) => i18nInstance._(descriptor),
         }),
       ),

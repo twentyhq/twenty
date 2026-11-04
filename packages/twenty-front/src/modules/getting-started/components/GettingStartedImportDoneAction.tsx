@@ -1,12 +1,15 @@
-import { GettingStartedOpenChatThreadButton } from '@/getting-started/components/GettingStartedOpenChatThreadButton';
+import { GettingStartedChatThreadDoneCard } from '@/getting-started/components/GettingStartedChatThreadDoneCard';
 import { type GettingStartedStepDoneActionProps } from '@/getting-started/types/GettingStartedStepDoneActionProps';
 import { isDefined } from 'twenty-shared/utils';
 
 type GettingStartedImportDoneActionProps = GettingStartedStepDoneActionProps;
 
 export const GettingStartedImportDoneAction = ({
-  doneChatThreadId,
+  stepDefinition: { doneChatThreadId, title },
 }: GettingStartedImportDoneActionProps) =>
   isDefined(doneChatThreadId) ? (
-    <GettingStartedOpenChatThreadButton chatThreadId={doneChatThreadId} />
+    <GettingStartedChatThreadDoneCard
+      chatThreadId={doneChatThreadId}
+      fallbackTitle={title}
+    />
   ) : null;

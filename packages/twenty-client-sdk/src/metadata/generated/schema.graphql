@@ -2646,6 +2646,7 @@ type GettingStartedStepDefinition {
   doneChatThreadId: String
   doneDescription: String!
   doneTitle: String!
+  doneWorkflowId: String
   icon: String!
   iconColor: String!
   kind: GettingStartedStepKind!

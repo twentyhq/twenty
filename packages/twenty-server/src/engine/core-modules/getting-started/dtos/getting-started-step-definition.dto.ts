@@ -37,4 +37,7 @@ export class GettingStartedStepDefinitionDTO {
 
   @Field(() => String, { nullable: true })
   doneChatThreadId: string | null;
+
+  @Field(() => String, { nullable: true })
+  doneWorkflowId: string | null;
 }

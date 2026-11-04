@@ -12,11 +12,13 @@ export const buildGettingStartedStepDefinition = ({
   stepActionKey,
   companyEnrichment,
   doneChatThreadId,
+  doneWorkflowId,
   translate,
 }: {
   stepActionKey: GettingStartedStepActionKey;
   companyEnrichment: WorkspaceCompanyEnrichment | null;
   doneChatThreadId: string | null;
+  doneWorkflowId: string | null;
   translate: (descriptor: MessageDescriptor) => string;
 }): GettingStartedStepDefinitionDTO => {
   const {
@@ -47,5 +49,6 @@ export const buildGettingStartedStepDefinition = ({
       ? translate(prompt.getText(companyEnrichment))
       : null,
     doneChatThreadId,
+    doneWorkflowId,
   };
 };

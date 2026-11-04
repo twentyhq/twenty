@@ -21,6 +21,7 @@ describe('buildGettingStartedStepDefinition', () => {
         stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
         companyEnrichment: null,
         doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toEqual({
@@ -36,6 +37,7 @@ describe('buildGettingStartedStepDefinition', () => {
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
+      doneWorkflowId: null,
     });
   });
 
@@ -45,6 +47,7 @@ describe('buildGettingStartedStepDefinition', () => {
         stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         companyEnrichment: null,
         doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+        doneWorkflowId: null,
         translate,
       }).doneChatThreadId,
     ).toBe('20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90');
@@ -56,6 +59,7 @@ describe('buildGettingStartedStepDefinition', () => {
         stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         companyEnrichment: null,
         doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toMatchObject({
@@ -87,6 +91,7 @@ describe('buildGettingStartedStepDefinition', () => {
           country: null,
         },
         doneChatThreadId: null,
+        doneWorkflowId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -100,6 +105,7 @@ describe('buildGettingStartedStepDefinition', () => {
         stepActionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         companyEnrichment: null,
         doneChatThreadId: null,
+        doneWorkflowId: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
     ).toBe(
@@ -113,6 +119,7 @@ describe('buildGettingStartedStepDefinition', () => {
         stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         companyEnrichment: null,
         doneChatThreadId: null,
+        doneWorkflowId: null,
         translate,
       }),
     ).toMatchObject({

@@ -31,6 +31,7 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
       steps {
         actionKey
         doneChatThreadId
+        doneWorkflowId
       }
       completedStepActionKeys
       selectedStepActionKey
@@ -381,10 +382,12 @@ describe('gettingStarted (e2e)', () => {
       expect(response.body.data.updateGettingStarted.steps).toContainEqual({
         actionKey: 'CUSTOMIZE_DATA_MODEL',
         doneChatThreadId: chatThreadId,
+        doneWorkflowId: null,
       });
       expect(response.body.data.updateGettingStarted.steps).toContainEqual({
         actionKey: 'INVITE_TEAM',
         doneChatThreadId: null,
+        doneWorkflowId: null,
       });
     });
 
@@ -473,6 +476,25 @@ describe('gettingStarted (e2e)', () => {
       expect(await findCompletedStepActionKeys()).not.toContain(
         'HANDOVER_DEALS',
       );
+    });
+
+    it('returns the prepared workflow on the step once it is completed', async () => {
+      const prepareResponse =
+        await prepareGettingStartedWorkflow('HANDOVER_DEALS');
+
+      handoverWorkflowId =
+        prepareResponse.body.data.prepareGettingStartedWorkflow.workflowId;
+
+      const response = await updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateGettingStarted.steps).toContainEqual({
+        actionKey: 'HANDOVER_DEALS',
+        doneChatThreadId: null,
+        doneWorkflowId: handoverWorkflowId,
+      });
     });
   });
 });

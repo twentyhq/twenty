@@ -1,3 +1,5 @@
+import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
+
 export type GettingStartedStepDoneActionProps = {
-  doneChatThreadId: string | null;
+  stepDefinition: GettingStartedStepDefinition;
 };

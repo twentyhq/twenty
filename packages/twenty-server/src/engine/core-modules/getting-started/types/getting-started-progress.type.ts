@@ -12,4 +12,7 @@ export type GettingStartedProgress = Omit<
   chatThreadIdByStepActionKey: Partial<
     Record<GettingStartedStepActionKey, string>
   >;
+  workflowIdByStepActionKey: Partial<
+    Record<GettingStartedStepActionKey, string>
+  >;
 };

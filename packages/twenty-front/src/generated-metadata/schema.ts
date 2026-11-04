@@ -2800,6 +2800,7 @@ export type GettingStartedStepDefinition = {
   doneChatThreadId?: Maybe<Scalars['String']['output']>;
   doneDescription: Scalars['String']['output'];
   doneTitle: Scalars['String']['output'];
+  doneWorkflowId?: Maybe<Scalars['String']['output']>;
   icon: Scalars['String']['output'];
   iconColor: Scalars['String']['output'];
   kind: GettingStartedStepKind;

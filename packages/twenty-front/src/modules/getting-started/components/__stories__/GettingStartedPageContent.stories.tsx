@@ -5,10 +5,12 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -25,6 +27,7 @@ import {
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
+  GetWorkspaceInvitationsDocument,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
   type UpdateGettingStartedMutationVariables,
@@ -38,8 +41,12 @@ import {
   mockGettingStartedStepDefinitions,
   mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
   ...mockCurrentWorkspace,
@@ -215,23 +222,54 @@ export const AllDone: Story = {
   },
 };
 
+const TWO_HOURS_BEFORE_MOCKED_DATE = new Date(
+  new Date(MOCKED_DATE).getTime() - 2 * 60 * 60 * 1000,
+).toISOString();
+
+const DONE_STEP_CHAT_THREADS = [
+  {
+    actionKey: GettingStartedStepActionKey.IMPORT_DATA,
+    chatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+    title: 'Import HubSpot contacts',
+  },
+  {
+    actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    chatThreadId: '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47',
+    title: 'Weekly deal follow-ups',
+  },
+];
+
+const WORKSPACE_INVITATIONS_MOCK: MockedResponse = {
+  request: { query: GetWorkspaceInvitationsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      findWorkspaceInvitations: ['marc@acme.com', 'sam@acme.com'].map(
+        (email, index) => ({
+          __typename: 'WorkspaceInvitation',
+          id: `20202020-0000-4000-8000-00000000010${index}`,
+          email,
+          roleId: null,
+          expiresAt: '2024-03-20T12:00:00.000Z',
+        }),
+      ),
+    },
+  },
+};
+
 let doneStepsProgress: GettingStartedProgressQuery['gettingStartedProgress'] =
   TRIAL_PROGRESS;
 
 const createDoneStepsProgress =
   (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
     ...TRIAL_PROGRESS,
-    steps: mockGettingStartedStepDefinitions.map((stepDefinition) =>
-      [
-        GettingStartedStepActionKey.IMPORT_DATA,
-        GettingStartedStepActionKey.FOLLOW_UP_DEALS,
-      ].includes(stepDefinition.actionKey)
-        ? {
-            ...stepDefinition,
-            doneChatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
-          }
-        : stepDefinition,
-    ),
+    steps: mockGettingStartedStepDefinitions.map((stepDefinition) => ({
+      ...stepDefinition,
+      doneChatThreadId:
+        DONE_STEP_CHAT_THREADS.find(
+          ({ actionKey }) => actionKey === stepDefinition.actionKey,
+        )?.chatThreadId ?? null,
+    })),
     completedStepActionKeys: [
       GettingStartedStepActionKey.CONNECT_MAILBOX,
       GettingStartedStepActionKey.IMPORT_DATA,
@@ -274,6 +312,23 @@ const FEATURED_MARKETPLACE_APPS_MOCK: MockedResponse = {
 export const DoneSteps: Story = {
   beforeEach: () => {
     doneStepsProgress = createDoneStepsProgress();
+    DONE_STEP_CHAT_THREADS.forEach(({ chatThreadId, title }) =>
+      jotaiStore.set(recordStoreFamilyState.atomFamily(chatThreadId), {
+        __typename: 'AgentChatThread',
+        id: chatThreadId,
+        title,
+        lastActivityAt: TWO_HOURS_BEFORE_MOCKED_DATE,
+      }),
+    );
+    jotaiStore.set(currentWorkspaceMembersState.atom, [
+      mockedWorkspaceMemberData,
+      {
+        ...mockedWorkspaceMemberData,
+        id: '20202020-0000-4000-8000-000000000002',
+        name: { firstName: 'Julia', lastName: 'Martin' },
+        avatarUrl: null,
+      },
+    ]);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...TRIALING_WORKSPACE,
       installedApplications: [
@@ -289,6 +344,7 @@ export const DoneSteps: Story = {
     apolloMocks: [
       WORKFLOW_PREVIEWS_MOCK,
       FEATURED_MARKETPLACE_APPS_MOCK,
+      WORKSPACE_INVITATIONS_MOCK,
       {
         request: { query: GettingStartedProgressDocument },
         maxUsageCount: Infinity,
@@ -316,7 +372,7 @@ export const DoneSteps: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('button', { name: 'Invite more' }),
+      await canvas.findByRole('button', { name: /3 teammates invited/ }),
     ).toBeVisible();
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
@@ -327,7 +383,7 @@ export const DoneSteps: Story = {
     );
 
     const openThreadButton = await canvas.findByRole('button', {
-      name: 'Open the thread',
+      name: /Weekly deal follow-ups/,
     });
 
     await waitFor(() => expect(openThreadButton).toBeVisible());
