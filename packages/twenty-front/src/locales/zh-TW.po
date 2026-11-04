@@ -640,7 +640,7 @@ msgstr "{cardCount, plural, other {核准 # 項動作？}}"
 #. js-lingui-id: JdxLs0
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
-msgstr ""
+msgstr "{channelName} 已中斷連線。"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -856,6 +856,11 @@ msgstr "{jobCount, plural, other {這將從隊列中永久移除它們。此操�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, other {這將重試選定的工作。它們將從頭開始重新執行。}}"
+
+#. js-lingui-id: U/izIz
+#: src/modules/ai/utils/getAiModelPinOptions.ts
+msgid "{keepModelId} (unavailable)"
+msgstr "{keepModelId}（無法使用）"
 
 #. js-lingui-id: Xs84Pv
 #: src/modules/ai/utils/getAiModelModeDescription.ts
@@ -2796,7 +2801,6 @@ msgid "Administrators"
 msgstr "管理員"
 
 #. js-lingui-id: sxkWRg
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -3969,7 +3973,7 @@ msgstr "全部核准 {pendingCardCount} 項"
 #. js-lingui-id: B4OjOW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Approve media access for {applicationName}?"
-msgstr ""
+msgstr "要允許 {applicationName} 存取媒體嗎？"
 
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -4586,7 +4590,6 @@ msgid "Auto-upgrade"
 msgstr "自動升級"
 
 #. js-lingui-id: Dnn2XG
-#: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
 msgstr "自動"
@@ -7079,17 +7082,17 @@ msgstr "透過 Model Context Protocol，將 Claude 或 Cursor 等 AI 助理連�
 #. js-lingui-id: Qfj2/j
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect an account"
-msgstr ""
+msgstr "連接帳戶"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
-msgstr ""
+msgstr "連接電子郵件、WhatsApp 或 LinkedIn，即可在此查看您的對話。"
 
 #. js-lingui-id: d/aeu3
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect email, WhatsApp or LinkedIn to see your conversations with {recordName} here."
-msgstr ""
+msgstr "連接電子郵件、WhatsApp 或 LinkedIn，即可在此查看您與 {recordName} 的對話。"
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10987,7 +10990,7 @@ msgstr "啟用模擬"
 #. js-lingui-id: lT1fOr
 #: src/modules/media-access/components/ManagedIframeSession.tsx
 msgid "Enable media access for {ownerName}?"
-msgstr ""
+msgstr "要為 {ownerName} 啟用媒體存取權嗎？"
 
 #. js-lingui-id: 4Jrl0H
 #: src/modules/media-access/components/ManagedIframeSession.tsx
@@ -12567,7 +12570,7 @@ msgstr "撤銷復原碼失敗。"
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
 msgid "Failed to save behavior settings. Try again."
-msgstr ""
+msgstr "儲存行為設定失敗。請再試一次。"
 
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
@@ -13339,11 +13342,6 @@ msgstr "在 X 上追蹤我們"
 #: src/modules/ai/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "追蹤中"
-
-#. js-lingui-id: M0vOQ6
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Follows the workspace default for agents"
-msgstr "遵循工作區的代理預設值"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings.ts
@@ -16345,27 +16343,22 @@ msgstr "小於或等於"
 #. js-lingui-id: 6W7LRT
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your camera"
-msgstr ""
+msgstr "允許 {host} 使用您的相機"
 
 #. js-lingui-id: k6BZVW
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone"
-msgstr ""
+msgstr "允許 {host} 使用您的麥克風"
 
 #. js-lingui-id: kpTkNv
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
 msgid "Let {host} use your microphone and camera"
-msgstr ""
+msgstr "允許 {host} 使用您的麥克風和相機"
 
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "讓每位成員自行決定"
-
-#. js-lingui-id: bM+k1O
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr "讓使用者將記錄設為僅建立者及與其共用的使用者可見。"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17648,7 +17641,7 @@ msgstr "訊息"
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
-msgstr ""
+msgstr "傳送訊息給 {recipientName}"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -17838,6 +17831,7 @@ msgid "Mode"
 msgstr "模式"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -19304,7 +19298,7 @@ msgstr "沒有可顯示的訊息"
 #. js-lingui-id: +52YnJ
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No messages yet"
-msgstr ""
+msgstr "尚無訊息"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -21022,11 +21016,6 @@ msgstr "覆寫"
 msgid "Override Draft"
 msgstr "覆寫草稿"
 
-#. js-lingui-id: RQCK56
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Overrides the mode above until you switch back to automatic"
-msgstr "覆寫上方模式，直到您切回自動模式"
-
 #. js-lingui-id: 6/dCYd
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -21548,11 +21537,6 @@ msgstr "餅圖"
 msgid "Pin"
 msgstr "釘選"
 
-#. js-lingui-id: 6U8nJN
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pin a specific model"
-msgstr "釘選特定模型"
-
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -21575,11 +21559,6 @@ msgstr "已釘選"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "釘選分頁，一律顯示於左側"
-
-#. js-lingui-id: Iaw5/y
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Pinned to a specific model"
-msgstr "已釘選至特定模型"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -21975,11 +21954,6 @@ msgstr "隱私政策"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "私有"
-
-#. js-lingui-id: MAkP8e
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Private records"
-msgstr "私人記錄"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22512,7 +22486,7 @@ msgstr "重新連接"
 #. js-lingui-id: i5U7bC
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Reconnect {channelName} to send messages"
-msgstr ""
+msgstr "重新連線 {channelName} 以傳送訊息"
 
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -23669,12 +23643,12 @@ msgstr "反向依字母順序"
 #. js-lingui-id: FIYcTW
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review additional microphone or camera access requested by this app. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "檢視此應用程式要求的額外麥克風或相機存取權。成員仍需啟用存取權並核准瀏覽器權限。"
 
 #. js-lingui-id: Jlf4oD
 #: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "Review media access"
-msgstr ""
+msgstr "檢視媒體存取權"
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25336,7 +25310,7 @@ msgstr "正在發送電子郵件"
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
-msgstr ""
+msgstr "傳送失敗"
 
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -25475,11 +25449,6 @@ msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "將未來建立的欄位設為 \"可見\""
-
-#. js-lingui-id: u5nAtE
-#: src/modules/ai/components/AiModelPicker.tsx
-msgid "Set for this agent only"
-msgstr "僅為此代理設定"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -31688,6 +31657,11 @@ msgstr "工作區積分"
 msgid "Workspace default"
 msgstr "工作區預設值"
 
+#. js-lingui-id: bnc50Z
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Workspace default · {workspaceTierLabel}"
+msgstr "工作區預設值 · {workspaceTierLabel}"
+
 #. js-lingui-id: VicISP
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
@@ -31821,7 +31795,7 @@ msgstr "為此代理撰寫描述"
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
-msgstr ""
+msgstr "撰寫訊息"
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32124,12 +32098,12 @@ msgstr "無法載入您的連線。請檢查您的連線並再試一次。"
 #. js-lingui-id: 63X4AK
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations will show up here."
-msgstr ""
+msgstr "您的對話將顯示在這裡。"
 
 #. js-lingui-id: TW/SJs
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Your conversations with {recordName} will show up here."
-msgstr ""
+msgstr "您與 {recordName} 的對話將顯示在這裡。"
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
