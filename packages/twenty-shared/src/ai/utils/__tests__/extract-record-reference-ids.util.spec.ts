@@ -71,6 +71,10 @@ describe('extractRecordReferenceIds', () => {
       'a line break in the label',
       `[[record:workspaceMember:${JONY_ID}:Jo\nny]]`,
     ],
+    [
+      'a carriage return in the label',
+      `[[record:workspaceMember:${JONY_ID}:Jo\rny]]`,
+    ],
     ['an unbalanced bracket', `[[record:workspaceMember:${JONY_ID}:Jo]ny]]`],
   ])('ignores %s', (_, text) => {
     expect(

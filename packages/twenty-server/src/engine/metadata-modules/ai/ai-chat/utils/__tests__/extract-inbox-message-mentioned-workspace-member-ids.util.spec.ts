@@ -15,6 +15,15 @@ describe('extractInboxMessageMentionedWorkspaceMemberIds', () => {
       'emphasis inside its label',
       `[[record:workspaceMember:${MIA_ID}:Mia *the* Lee]]`,
     ],
+    [
+      'code inside its label',
+      `[[record:workspaceMember:${MIA_ID}:Mia \`QA\` Lee]]`,
+    ],
+    [
+      'an escape inside its label',
+      `[[record:workspaceMember:${MIA_ID}:Mia \\*CEO\\*]]`,
+    ],
+    ['an escaped backslash before it', `\\\\${MIA_MENTION}`],
   ])('reads a mention in %s', (_, text) => {
     expect(extractInboxMessageMentionedWorkspaceMemberIds(text)).toEqual([
       MIA_ID,
@@ -29,6 +38,7 @@ describe('extractInboxMessageMentionedWorkspaceMemberIds', () => {
       'escaped brackets',
       `\\[\\[record:workspaceMember:${MIA_ID}:Mia Lee\\]\\]`,
     ],
+    ['an escaped opening bracket', `\\${MIA_MENTION}`],
     ['an HTML block', `<div>\n${MIA_MENTION}\n</div>`],
     ['two blocks', `# [[record:workspaceMember:${MIA_ID}:Mia\nLee]]`],
   ])('ignores a mention in %s', (_, text) => {
