@@ -1,3 +1,4 @@
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -17,7 +18,6 @@ import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/res
 import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
 import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
-import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
@@ -60,12 +60,9 @@ const restApiCoreResolvers = [
     CoreCommonApiModule,
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
+    RecordShareModule,
   ],
   controllers: [RestApiCoreController],
-  providers: [
-    RestApiCoreService,
-    ...restApiCoreResolvers,
-    CommonSelectFieldsBuilder,
-  ],
+  providers: [RestApiCoreService, ...restApiCoreResolvers],
 })
 export class RestApiCoreModule {}

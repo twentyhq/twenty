@@ -144,7 +144,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: true,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -158,7 +157,6 @@ export class ToolExecutorService {
           select: select as string[],
           shouldBuildEffectiveSelectFields: isDefined(select),
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
@@ -174,7 +172,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -194,7 +191,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -220,7 +216,6 @@ export class ToolExecutorService {
           objectRecordId: id as string,
           objectRecord: records[0],
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -233,7 +228,6 @@ export class ToolExecutorService {
           filter: args.filter as Record<string, unknown>,
           data: args.data as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
 
@@ -249,7 +243,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
@@ -262,7 +255,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecordId: args.id as string,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
         });
 
@@ -271,7 +263,6 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           filter: args.filter as Record<string, unknown>,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
 
       case 'merge_many':
@@ -281,7 +272,6 @@ export class ToolExecutorService {
           conflictPriorityIndex: args.conflictPriorityIndex as number,
           dryRun: args.dryRun as boolean | undefined,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
 
       case 'group_by': {
@@ -305,7 +295,6 @@ export class ToolExecutorService {
           orderBy: groupByOrderBy as 'ASC' | 'DESC' | undefined,
           filter: groupByFilter,
           authContext,
-          rolePermissionConfig: context.rolePermissionConfig,
         });
       }
     }

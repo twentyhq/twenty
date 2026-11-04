@@ -8,5 +8,9 @@ export type RowLevelPermissionPredicateGroup = {
   objectMetadataId: string;
   parentRowLevelPermissionPredicateGroupId: string | null;
   positionInRowLevelPermissionPredicateGroup: number | null;
+  canReadRecords: boolean;
+  canUpdateRecords: boolean;
+  canSoftDeleteRecords: boolean;
+  canDestroyRecords: boolean;
   roleId: string;
 };

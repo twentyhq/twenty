@@ -169,6 +169,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     objectMetadataId: tableShape.objectMetadataId,
     flatObjectMetadataMaps: repository.internalContext.flatObjectMetadataMaps,
     flatFieldMetadataMaps: repository.internalContext.flatFieldMetadataMaps,
+    shouldIncludeInactiveFields: true,
   });
   const fieldNames = [
     ...new Set(

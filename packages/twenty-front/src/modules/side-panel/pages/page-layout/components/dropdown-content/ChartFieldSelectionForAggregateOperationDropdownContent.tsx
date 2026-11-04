@@ -9,15 +9,17 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { getChartAggregateDropdownPageId } from '@/side-panel/pages/page-layout/utils/getChartAggregateDropdownPageId';
-import { t } from '@lingui/core/macro';
 import { Fragment, useState } from 'react';
-import { IconCheck, useIcons } from 'twenty-ui/icon';
+import { IconCheck } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useLingui } from '@lingui/react/macro';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
+  const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();

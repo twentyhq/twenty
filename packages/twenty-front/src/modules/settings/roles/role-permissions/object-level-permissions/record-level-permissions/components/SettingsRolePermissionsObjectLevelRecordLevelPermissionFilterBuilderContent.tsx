@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -25,6 +24,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -62,6 +62,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     roleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
+    const { t } = useLingui();
     const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
       roleId,

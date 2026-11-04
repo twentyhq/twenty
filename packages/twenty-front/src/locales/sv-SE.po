@@ -564,11 +564,6 @@ msgstr "{AGENT_CHAT_ASSISTANT_NAME} svarar"
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
 msgstr "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agenter}}"
 
-#. js-lingui-id: WGnqk6
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{agentDisplayName} role ({agentIdPrefix})"
-msgstr "{agentDisplayName} roll ({agentIdPrefix})"
-
 #. js-lingui-id: lhr2m3
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 msgid "{agentLabel} Agent Role"
@@ -588,6 +583,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} API-nyckel} other {{apiKeyCount
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} vill göra följande:"
+
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr "{applicationName}: {settingsMenuItemTitle}"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -636,6 +636,11 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} timme} o
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Godkänna # åtgärd?} other {Godkänna # åtgärder?}}"
+
+#. js-lingui-id: JdxLs0
+#: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
+msgid "{channelName} is disconnected."
+msgstr ""
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -696,6 +701,16 @@ msgstr "{currentStepCredits, plural, one {gratiskredit} other {gratiskrediter}}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dag} other {{days} dagar}}"
+
+#. js-lingui-id: Irx6Dx
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
+msgid "{daysLeft, plural, one {# day left} other {# days left}}"
+msgstr "{daysLeft, plural, one {# dag kvar} other {# dagar kvar}}"
+
+#. js-lingui-id: omamQu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
+msgstr "{daysLeft, plural, one {dag kvar i din provperiod} other {dagar kvar i din provperiod}}"
 
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -948,15 +963,15 @@ msgstr "{participantNames} skriver…"
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} skriver…"
 
-#. js-lingui-id: FaQB54
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{permissionLabel} permission removed"
-msgstr ""
+#. js-lingui-id: v5nX2L
+#: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
+msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} personer}} och {companyCount, plural, one {{formattedCompanyCount} företag} other {{formattedCompanyCount} företag}} i din arbetsyta"
 
-#. js-lingui-id: VsXMnq
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "{permissionLabel} Permission removed"
-msgstr ""
+#. js-lingui-id: fbTMCq
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "{permissionLabel} (denied)"
+msgstr "{permissionLabel} (nekad)"
 
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -999,6 +1014,16 @@ msgstr "{remainingCount} till"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Inga fler utkast efter detta} one {# ytterligare utkast efter detta} other {# ytterligare utkast efter detta}}"
+
+#. js-lingui-id: mqfjQO
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
+msgstr "{remainingStepCount, plural, one {Slutför # steg senast {formattedTrialEnd}} other {Slutför # steg senast {formattedTrialEnd}}}"
+
+#. js-lingui-id: yICp8R
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
+msgstr "{remainingStepCount, plural, one {Slutför # steg} other {Slutför # steg}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1539,6 +1564,11 @@ msgstr "500 Fel - {duration}ms"
 msgid "90 days"
 msgstr "90 dagar"
 
+#. js-lingui-id: 81nnG3
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "A CSV or Excel export from any tool"
+msgstr "En CSV- eller Excel-export från valfritt verktyg"
+
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1795,6 +1825,7 @@ msgid "action"
 msgstr "åtgärd"
 
 #. js-lingui-id: bwRvnp
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -2186,6 +2217,12 @@ msgstr "Lägg till anpassad leverantör"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
 msgstr "Lägg till information för gäster"
+
+#. Abbreviation of add direct message, sidebar button
+#. js-lingui-id: An/Fke
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "Add DM"
+msgstr "Lägg till DM"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -2828,8 +2865,7 @@ msgstr "agent"
 
 #. js-lingui-id: iEQQyu
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-#: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
 msgid "Agent"
 msgstr "Agent"
@@ -2868,6 +2904,7 @@ msgstr "Agent-webbsökning"
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Agents"
@@ -2893,6 +2930,8 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/ai/components/SettingsAiOverview.tsx
+#: src/pages/settings/ai/components/SettingsAiOverview.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -3226,6 +3265,11 @@ msgstr "Alla meddelanden"
 msgid "All Metadata"
 msgstr "All metadata"
 
+#. js-lingui-id: vKmC3w
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
+msgid "all objects"
+msgstr "alla objekt"
+
 #. js-lingui-id: zIk4M6
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
@@ -3259,10 +3303,20 @@ msgstr "alla poster"
 msgid "All roles"
 msgstr "Alla roller"
 
+#. js-lingui-id: 2ls1gc
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "All settings"
+msgstr "Alla inställningar"
+
 #. js-lingui-id: shNsiv
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
 msgid "All Sources"
 msgstr "Alla källor"
+
+#. js-lingui-id: wiGHxh
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "All steps done"
+msgstr "Alla steg är klara"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
@@ -3288,6 +3342,11 @@ msgstr "Alla layoutobjekt som är definierade på din arbetsyta"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
 msgstr "Alla standardobjekt"
+
+#. js-lingui-id: 35148H
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "All tools"
+msgstr "Alla verktyg"
 
 #. js-lingui-id: xYbZZH
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -3907,6 +3966,11 @@ msgstr "Godkänn"
 msgid "Approve all {pendingCardCount}"
 msgstr "Godkänn alla {pendingCardCount}"
 
+#. js-lingui-id: B4OjOW
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
+msgid "Approve media access for {applicationName}?"
+msgstr ""
+
 #. js-lingui-id: 7kb4LU
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
@@ -3957,11 +4021,6 @@ msgstr "Appinställningar"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "Appinställningar - Inställningar"
-
-#. js-lingui-id: aDW39c
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Apps recording"
-msgstr "Appinspelning"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4161,7 +4220,7 @@ msgid "Ask an admin to raise the limit."
 msgstr "Be en administratör att höja gränsen."
 
 #. js-lingui-id: g8Yo6T
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
 msgstr "Be om mänsklig inmatning"
 
@@ -4501,6 +4560,11 @@ msgstr "Auktoriserad URL kopierad till urklipp"
 msgid "Authorizing..."
 msgstr "Auktoriserar..."
 
+#. js-lingui-id: R9Khdg
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Auto"
+msgstr "Auto"
+
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
@@ -4515,11 +4579,6 @@ msgstr "Automatisk uppdatering aktiverad"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Auto-creation"
 msgstr "Automatisk skapelse"
-
-#. js-lingui-id: HX/jD4
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
-msgid "Auto-generated role for {agentDisplayName}"
-msgstr ""
 
 #. js-lingui-id: /nv0ml
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -4631,6 +4690,11 @@ msgstr "Tillbaka till {text}"
 msgid "Back to content"
 msgstr "Tillbaka till innehåll"
 
+#. js-lingui-id: +cSNzs
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Back to current step"
+msgstr "Tillbaka till aktuellt steg"
+
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
@@ -4714,6 +4778,11 @@ msgstr "Bcc"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
 msgstr "BCC"
+
+#. js-lingui-id: tK9OCv
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Behavior"
+msgstr "Beteende"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -5321,11 +5390,16 @@ msgid "Calls"
 msgstr "Samtal"
 
 #. js-lingui-id: rT2cV+
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "Kamera"
+
+#. js-lingui-id: QIPLcC
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Camera access enabled"
+msgstr "Kameraåtkomst aktiverad"
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5360,7 +5434,7 @@ msgstr "Kanada"
 #. js-lingui-id: dEgA5A
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5418,6 +5492,11 @@ msgstr "Avbryt intervallbyte"
 msgid "Cancel interval switching?"
 msgstr "Avbryt intervallbyte?"
 
+#. js-lingui-id: ujldpy
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Cancel media request for {ownerName}"
+msgstr "Avbryt medieförfrågan för {ownerName}"
+
 #. js-lingui-id: rRK/Lf
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5434,11 +5513,6 @@ msgstr "Avbryt planbyte"
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Cancel plan switching?"
 msgstr "Avbryt planbyte?"
-
-#. js-lingui-id: BfJPwg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Cancel recording for {applicationName}"
-msgstr "Avbryt inspelning för {applicationName}"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -5693,6 +5767,7 @@ msgid "Changes"
 msgstr "Ändringar"
 
 #. js-lingui-id: OhVo1W
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
 msgstr "Ändringarna har sparats. Ladda om öppna Twenty-flikar för att tillämpa de uppdaterade behörigheterna. Omladdning avslutar aktiva samtal och inspelningar."
@@ -5972,6 +6047,11 @@ msgstr "Välj valfri användning, vem den gäller och hur ofta den återställs.
 msgid "Choose automatically"
 msgstr "Välj automatiskt"
 
+#. js-lingui-id: smH+1Z
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Choose behavior"
+msgstr "Välj beteende"
+
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -6048,6 +6128,11 @@ msgstr "Välj vad som händer när du klickar på ett telefonnummer"
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Välj vad som händer när du klickar på en e-postadress"
+
+#. js-lingui-id: T3tKFK
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
+msgstr "Välj när {AGENT_CHAT_ASSISTANT_NAME} deltar i konversationer i hela din arbetsyta"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6986,6 +7071,26 @@ msgstr "Anslut ett nytt konto till din arbetsyta"
 msgid "Connect additional MCP clients using install links or client docs."
 msgstr "Anslut ytterligare MCP-klienter med installationslänkar eller klientdokumentation."
 
+#. js-lingui-id: vPCRNy
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
+msgstr "Anslut AI-assistenter som Claude eller Cursor till din arbetsyta via Model Context Protocol"
+
+#. js-lingui-id: Qfj2/j
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "Connect an account"
+msgstr ""
+
+#. js-lingui-id: B+ajzf
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "Connect email, WhatsApp or LinkedIn to see your conversations here."
+msgstr ""
+
+#. js-lingui-id: d/aeu3
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "Connect email, WhatsApp or LinkedIn to see your conversations with {recordName} here."
+msgstr ""
+
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
@@ -6998,6 +7103,7 @@ msgstr "Anslut till den här arbetsytan"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect via IMAP/SMTP"
 msgstr "Anslut via IMAP/SMTP"
 
@@ -7008,18 +7114,19 @@ msgid "Connect with {0}"
 msgstr "Anslut med {0}"
 
 #. js-lingui-id: vPwoq6
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
 msgstr "Anslut med {appName}"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect with Google"
 msgstr "Anslut med Google"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Connect with Microsoft"
 msgstr "Anslut med Microsoft"
 
@@ -7188,6 +7295,11 @@ msgstr "Fortsätt vid fel"
 msgid "Continue on iteration failure"
 msgstr "Fortsätt vid iterationsfel"
 
+#. js-lingui-id: uxdS61
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Continue setup"
+msgstr "Fortsätt konfigurationen"
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7195,12 +7307,14 @@ msgstr "Fortsätt med e-post"
 
 #. js-lingui-id: oZyG4C
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithGoogle.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Google"
 msgstr "Fortsätt med Google"
 
 #. js-lingui-id: ztoybH
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Microsoft"
 msgstr "Fortsätt med Microsoft"
@@ -7228,6 +7342,7 @@ msgid "Control which types of entities this role can be assigned to"
 msgstr "Kontrollera vilka typer av enheter den här rollen kan tilldelas"
 
 #. js-lingui-id: YyNOE7
+#: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
 #: src/modules/ai/components/AiChatInboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
@@ -7513,6 +7628,11 @@ msgstr "Det gick inte att generera den signerade PUB:en. Försök igen."
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "Det gick inte att bevilja medieåtkomst. Försök igen."
+
+#. js-lingui-id: rLrhvg
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Could not load Getting started."
+msgstr "Det gick inte att läsa in Kom igång."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -8908,8 +9028,14 @@ msgstr "Dagar mellan triggers"
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate"
 msgstr "Inaktivera"
+
+#. js-lingui-id: ILJMvx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Deactivate {fieldLabel} field?"
+msgstr "Inaktivera fältet {fieldLabel}?"
 
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -9079,6 +9205,7 @@ msgid "delete"
 msgstr "ta bort"
 
 #. js-lingui-id: cnGeoo
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -9524,8 +9651,13 @@ msgstr "fallande"
 msgid "Descending"
 msgstr "Fallande"
 
+#. js-lingui-id: 3QTkmB
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
+msgid "Describe the role of the AI and how it should do the task..."
+msgstr "Beskriv AI:ns roll och hur den ska utföra uppgiften..."
+
 #. js-lingui-id: g+5exC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
 msgid "Describe what you want the AI to do..."
 msgstr "Beskriv vad du vill att AI:n ska göra..."
 
@@ -9695,6 +9827,11 @@ msgstr "Diktering misslyckades. Försök igen."
 msgid "Dictation is not supported in this browser."
 msgstr "Diktering stöds inte i den här webbläsaren."
 
+#. js-lingui-id: DVB659
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Direct message pair identity"
+msgstr "Identitet för direktmeddelandepar"
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -9707,6 +9844,7 @@ msgid "Direction"
 msgstr "Riktning"
 
 #. js-lingui-id: cO9+2L
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
 msgstr "Inaktivera"
@@ -9715,6 +9853,11 @@ msgstr "Inaktivera"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Disable impersonation"
 msgstr "Inaktivera användarimitation"
+
+#. js-lingui-id: QRe0KA
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Disable media access for {ownerName}"
+msgstr "Inaktivera medieåtkomst för {ownerName}"
 
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -9832,6 +9975,13 @@ msgstr "Avdelare"
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
 msgstr "DMARC-policy"
+
+#. Abbreviation of direct messages, sidebar section title
+#. js-lingui-id: TdAWxF
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "DMs"
+msgstr "Direktmeddelanden"
 
 #. js-lingui-id: naBq2D
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -10488,6 +10638,7 @@ msgid "else if"
 msgstr "annars om"
 
 #. js-lingui-id: O3oNi5
+#: src/modules/activities/emails/components/MessageChannelLogo.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -10515,6 +10666,7 @@ msgid "Email accounts"
 msgstr "E-postkonton"
 
 #. js-lingui-id: ATGYL1
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email address"
 msgstr "E-postadress"
@@ -10737,6 +10889,7 @@ msgid "embed"
 msgstr "bädda in"
 
 #. js-lingui-id: cjPnTO
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
 msgstr "Medieåtkomst för inbäddad webbplats"
@@ -10782,11 +10935,6 @@ msgstr "Tom"
 msgid "Empty Array"
 msgstr "Tom Array"
 
-#. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
-msgid "Empty Inbox"
-msgstr "Tom inkorg"
-
 #. js-lingui-id: 3hSGoJ
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
@@ -10826,10 +10974,30 @@ msgstr "Aktivera"
 msgid "Enable bypass options"
 msgstr "Aktivera förbikopplingsalternativ"
 
+#. js-lingui-id: +EDob0
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable camera"
+msgstr "Aktivera kamera"
+
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Enable impersonation"
 msgstr "Aktivera användarimitation"
+
+#. js-lingui-id: lT1fOr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable media access for {ownerName}?"
+msgstr ""
+
+#. js-lingui-id: 4Jrl0H
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone"
+msgstr "Aktivera mikrofon"
+
+#. js-lingui-id: /RSrNr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone and camera"
+msgstr "Aktivera mikrofon och kamera"
 
 #. js-lingui-id: gZo0V9
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -11948,6 +12116,11 @@ msgstr "Exportera ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Exportera ({percentageValue}%)"
 
+#. js-lingui-id: YkvQVd
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Export a CSV from"
+msgstr "Exportera en CSV från"
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12391,6 +12564,11 @@ msgstr "Misslyckades med att återkalla signeringsnyckel. Försök igen senare."
 msgid "Failed to revoke the recovery code."
 msgstr "Det gick inte att återkalla återställningskoden."
 
+#. js-lingui-id: /CvX5S
+#: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
+msgid "Failed to save behavior settings. Try again."
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -12410,11 +12588,6 @@ msgstr "Det gick inte att spara appinställningarna."
 #: src/modules/activities/emails/hooks/usePersistedCampaignDraft.ts
 msgid "Failed to save the campaign"
 msgstr "Det gick inte att spara kampanjen"
-
-#. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
-msgid "Failed to save workspace instructions"
-msgstr "Det gick inte att spara instruktionerna för arbetsytan"
 
 #. js-lingui-id: GpNLad
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -12705,6 +12878,11 @@ msgstr "Fält på destinationen"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
 msgstr "fältbehörighet"
+
+#. js-lingui-id: XmkV4U
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
+msgid "Field permissions on {objectLabel}"
+msgstr "Fältbehörigheter för {objectLabel}"
 
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -13029,6 +13207,11 @@ msgstr "Avsluta flödet med fel"
 msgid "Finish Setup"
 msgstr "Slutför konfigurationen"
 
+#. js-lingui-id: 97Hg0Y
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Finish your setup"
+msgstr "Slutför konfigurationen"
+
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Finished"
@@ -13265,6 +13448,11 @@ msgstr "Hittade {objectLabel}"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Found connected accounts"
 msgstr "Hittade anslutna konton"
+
+#. js-lingui-id: Vc8HGN
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Found in your emails"
+msgstr "Finns i dina e-postmeddelanden"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13511,6 +13699,7 @@ msgid "General settings"
 msgstr "Allmänna inställningar"
 
 #. js-lingui-id: ziAjHi
+#: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction.ts
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate"
 msgstr "Generera"
@@ -13594,6 +13783,25 @@ msgstr "Få ut det mesta av din arbetsyta genom att bjuda in ditt team."
 msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Får endast denna post: deras roll kan inte komma åt {objectLabelPlural}"
 
+#. js-lingui-id: 7hktsm
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/pages/getting-started/GettingStartedPage.tsx
+#: src/pages/getting-started/GettingStartedPage.tsx
+msgid "Getting started"
+msgstr "Kom igång"
+
+#. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Getting started progress"
+msgstr "Kom igång-status"
+
+#. js-lingui-id: dV3VgV
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Getting started steps"
+msgstr "Kom igång-steg"
+
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "GIN (full-text search and JSONB)"
@@ -13609,6 +13817,11 @@ msgstr "GitHub-auktoriseringen misslyckades eller nekades. Anslut ditt GitHub-ko
 #: src/modules/workflow/workflow-trigger/constants/ManualTriggerAvailabilityTypeOptions.ts
 msgid "Global"
 msgstr "Global"
+
+#. js-lingui-id: BFSjnt
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Global inbox"
+msgstr "Global inkorg"
 
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -14130,6 +14343,11 @@ msgstr "Dölj fält"
 msgid "Hide fields"
 msgstr "Dölj fält"
 
+#. js-lingui-id: 3CeQ1O
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Hide for good"
+msgstr "Dölj permanent"
+
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
 #: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
@@ -14627,6 +14845,11 @@ msgstr "Importera endast valda mappar/etiketter"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importera eller lägg till MCP-konfigurationen från JetBrains-inställningarna."
 
+#. js-lingui-id: e2aT+Z
+#: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
+msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
+msgstr "Importera de bifogade filerna till Twenty. Ta reda på vilka poster de innehåller, skapa dem och länka ihop dem."
+
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Import your contacts"
@@ -14667,6 +14890,11 @@ msgstr "Inom {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "Inom {listName}"
+
+#. js-lingui-id: jS5U2e
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "In an hour"
+msgstr "Om en timme"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -14831,11 +15059,6 @@ msgstr "Ursprungliga värden"
 msgid "Input"
 msgstr "Inmatning"
 
-#. js-lingui-id: /OdOC/
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
-msgid "Input (Prompt)"
-msgstr "Indata (prompt)"
-
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -14925,6 +15148,11 @@ msgstr "Installera"
 msgid "Install {appDisplayName} on your workspace"
 msgstr "Installera {appDisplayName} i din arbetsyta"
 
+#. js-lingui-id: rQN3ie
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "Install {appLabel}"
+msgstr "Installera {appLabel}"
+
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15010,6 +15238,7 @@ msgstr "Instruktion för AI"
 
 #. js-lingui-id: NxHkkp
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions"
@@ -15110,6 +15339,7 @@ msgstr "Ogiltig domän. Inkludera minst en underdomän (t.ex. sub.example.com)."
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Invalid email"
 msgstr "Ogiltig e-post"
 
@@ -15212,6 +15442,7 @@ msgid "Invitations"
 msgstr "Inbjudningar"
 
 #. js-lingui-id: MFKlMB
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
@@ -15252,6 +15483,7 @@ msgid "Invite by Link"
 msgstr "Bjud in via länk"
 
 #. js-lingui-id: 5IfmKA
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "Inbjudningslänk skickad till e-postadresser"
@@ -15544,6 +15776,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanbanwidget"
 
+#. js-lingui-id: uW9WOr
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep {planLabel}"
+msgstr "Behåll {planLabel}"
+
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -15563,6 +15800,11 @@ msgstr "Fortsätt spåra mina öppningar"
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
 msgstr "Fortsätt spåra mina öppningar och klick"
+
+#. js-lingui-id: 9l8cs3
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep your plan"
+msgstr "Behåll din plan"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16100,6 +16342,21 @@ msgstr "Mindre"
 msgid "Less than or equal"
 msgstr "Mindre än eller lika med"
 
+#. js-lingui-id: 6W7LRT
+#: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
+msgid "Let {host} use your camera"
+msgstr ""
+
+#. js-lingui-id: k6BZVW
+#: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
+msgid "Let {host} use your microphone"
+msgstr ""
+
+#. js-lingui-id: kpTkNv
+#: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
+msgid "Let {host} use your microphone and camera"
+msgstr ""
+
 #. js-lingui-id: aTNzjg
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
@@ -16483,6 +16740,11 @@ msgstr "Laddar {formattedNames}"
 msgid "Loading apps..."
 msgstr "Laddar appar..."
 
+#. js-lingui-id: 3Zpgky
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Loading behavior settings..."
+msgstr "Läser in beteendeinställningar..."
+
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "Loading chats..."
@@ -16529,6 +16791,11 @@ msgstr "Laddar händelser"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Loading jobs..."
 msgstr "Laddar jobb..."
+
+#. js-lingui-id: YyMToN
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "Loading members"
+msgstr "Laddar medlemmar"
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -16584,9 +16851,15 @@ msgid "Loading skills..."
 msgstr "Laddar färdigheter..."
 
 #. js-lingui-id: 7YK6ap
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+#: src/modules/activities/emails/components/ChatThreadMessages.tsx
+#: src/modules/page-layout/widgets/email-thread/components/MessageThreadWidget.tsx
 msgid "Loading thread"
 msgstr "Laddar tråd"
+
+#. js-lingui-id: KOolcu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Loading your progress"
+msgstr "Läser in dina framsteg"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -16597,6 +16870,7 @@ msgstr "Laddar tråd"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/views/hooks/useComputeRecordRelationFilterDisplayValue.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Loading..."
 msgstr "Laddar..."
 
@@ -17154,7 +17428,7 @@ msgid "Maximum values"
 msgstr "Maximalt antal värden"
 
 #. js-lingui-id: nA8kxD
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -17168,6 +17442,11 @@ msgstr "MCP-klientkonfiguration"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "MCP server"
 msgstr "MCP-server"
+
+#. js-lingui-id: 8CWirf
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "MCP Server"
+msgstr "MCP Server"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17200,6 +17479,16 @@ msgstr "Jag / {workspaceMemberFieldLabel}"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Measure engagement on the campaigns this workspace sends"
 msgstr "Mät engagemanget för kampanjerna som denna arbetsyta skickar"
+
+#. js-lingui-id: 62uGRa
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access enabled"
+msgstr "Medieåtkomst aktiverad"
+
+#. js-lingui-id: rH8KbL
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access requests"
+msgstr "Begäranden om medieåtkomst"
 
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17245,6 +17534,7 @@ msgid "Member removed from workspace"
 msgstr ""
 
 #. js-lingui-id: wlQNTg
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -17346,6 +17636,7 @@ msgid "Merging..."
 msgstr "Slår samman..."
 
 #. js-lingui-id: xDAtGP
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
@@ -17353,6 +17644,11 @@ msgstr "Slår samman..."
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Message"
 msgstr "Meddelande"
+
+#. js-lingui-id: bCYjwr
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "Message {recipientName}"
+msgstr ""
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -17419,11 +17715,16 @@ msgid "Method"
 msgstr "Metod"
 
 #. js-lingui-id: 1iY5xv
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "Mikrofon"
+
+#. js-lingui-id: eiGwrP
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone access enabled"
+msgstr "Mikrofonåtkomst aktiverad"
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -17431,9 +17732,19 @@ msgid "Microphone access is blocked. Allow it in your browser settings to dictat
 msgstr "Mikrofonåtkomst är blockerad. Tillåt den i webbläsarens inställningar för att diktera."
 
 #. js-lingui-id: /XArxJ
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Microphone and camera"
 msgstr "Mikrofon och kamera"
+
+#. js-lingui-id: 0Cq1++
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone and camera access enabled"
+msgstr "Mikrofon- och kameraåtkomst aktiverad"
+
+#. js-lingui-id: yGBwBp
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Microphone or camera in use"
+msgstr "Mikrofon eller kamera används"
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -17579,9 +17890,9 @@ msgid "Model used when you chat with Twenty"
 msgstr "Modell som används när du chattar med Twenty"
 
 #. js-lingui-id: //nm2/
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Modeller"
 
@@ -18023,6 +18334,11 @@ msgstr "Namnet måste börja med en bokstav."
 msgid "Name: {0}"
 msgstr "Namn: {0}"
 
+#. js-lingui-id: fZT56Z
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "name@{emailDomain}"
+msgstr "namn@{emailDomain}"
+
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Navbar"
@@ -18077,6 +18393,7 @@ msgstr "Nätverksfel"
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Never"
 msgstr "Aldrig"
 
@@ -18085,6 +18402,11 @@ msgstr "Aldrig"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow.tsx
 msgid "Never expires"
 msgstr "Förfaller aldrig"
+
+#. js-lingui-id: cHEgp5
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
+msgstr "Aldrig håller {AGENT_CHAT_ASSISTANT_NAME} utanför. Endast när nämnd ber {AGENT_CHAT_ASSISTANT_NAME} att svara när den taggas. Automatiskt låter {AGENT_CHAT_ASSISTANT_NAME} avgöra när den ska svara. Chattar med endast dig och {AGENT_CHAT_ASSISTANT_NAME} får alltid svar."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -18784,11 +19106,6 @@ msgstr "Inga raderade poster som matchar filterkriterierna hittades."
 msgid "No description available for this application"
 msgstr "Ingen beskrivning finns tillgänglig för den här appen"
 
-#. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
-msgid "No email exchange has occurred with this record yet."
-msgstr "Ingen e-postkommunikation har ännu skett med den här posten."
-
 #. js-lingui-id: dtnAuN
 #: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
 msgid "No email threads found"
@@ -18965,6 +19282,11 @@ msgstr "Inga medlemmar"
 msgid "No members assigned"
 msgstr "Inga medlemmar tilldelade"
 
+#. js-lingui-id: FK5/sf
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "No members found"
+msgstr "Inga medlemmar hittades"
+
 #. js-lingui-id: /nLvVj
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -18977,9 +19299,14 @@ msgid "No messages found."
 msgstr "Inga meddelanden hittades."
 
 #. js-lingui-id: KPWxKD
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+#: src/modules/page-layout/widgets/email-thread/components/MessageThreadWidget.tsx
 msgid "No messages to show"
 msgstr "Inga meddelanden att visa"
+
+#. js-lingui-id: +52YnJ
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "No messages yet"
+msgstr ""
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -20024,10 +20351,20 @@ msgstr "En per körning"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "Ett abonnemang ger en Organization-nyckel som driver en produktionsinstans och en möjlig staging- eller testinstans. Om du vill köra en staging- eller testmiljö installerar du Twenty på en andra server, aktiverar den med samma Organization-nyckel och registrerar sedan den servern som en utvecklingsinstans. Utvecklingsinstanser låser upp premiumfunktioner utan extra fakturering och räknas inte mot dina produktionsplatser."
 
+#. js-lingui-id: ghcoqW
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "One-to-one conversations between people"
+msgstr "Enskilda konversationer mellan personer"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Endast applikationer som har publicerats på npm kan göras anspråk på så här."
+
+#. js-lingui-id: dD26o4
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Only CSV and Excel files are supported"
+msgstr "Endast CSV- och Excel-filer stöds"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -20102,6 +20439,11 @@ msgstr "Endast skaparen av denna post, personer med fullständig åtkomst till d
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "Endast ämnet delas"
+
+#. js-lingui-id: gYj1mG
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Only when mentioned"
+msgstr "Endast när nämnd"
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20186,6 +20528,11 @@ msgstr "Öppna konversationen"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Öppna Cursors MCP-installationsprogram med Twenty:s fjärrserverkonfiguration."
+
+#. js-lingui-id: JvSHIq
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Open Getting started"
+msgstr "Öppna Kom igång"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -20293,6 +20640,11 @@ msgstr "Öppna inställningar"
 msgid "Open side panel"
 msgstr "Öppna sidopanelen"
 
+#. js-lingui-id: Cq4Ta5
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Open the workflow"
+msgstr "Öppna arbetsflödet"
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20304,6 +20656,7 @@ msgid "Open webhook settings"
 msgstr "Öppna webhook-inställningar"
 
 #. js-lingui-id: OV5wZZ
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Öppnad"
@@ -20557,10 +20910,20 @@ msgstr "Annat"
 msgid "Other clients"
 msgstr "Andra klienter"
 
+#. js-lingui-id: Pquq4V
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Other inbox conversations"
+msgstr "Andra inkorgskonversationer"
+
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx
 msgid "Other objects"
 msgstr "Andra objekt"
+
+#. js-lingui-id: lP+P1l
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+msgid "Other permissions"
+msgstr "Andra behörigheter"
 
 #. js-lingui-id: 9LV44m
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -20667,6 +21030,7 @@ msgid "Overrides the mode above until you switch back to automatic"
 msgstr "Åsidosätter läget ovan tills du växlar tillbaka till automatiskt"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Overview"
@@ -21681,6 +22045,7 @@ msgid "Profile Picture"
 msgstr ""
 
 #. js-lingui-id: W9uQXX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Prompt"
 msgstr ""
@@ -22101,7 +22466,7 @@ msgstr "Senaste användare"
 
 #. js-lingui-id: I3QpvQ
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Recipient"
 msgstr "Mottagare"
@@ -22136,6 +22501,7 @@ msgstr "Rekommenderad"
 
 #. js-lingui-id: gcoiFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -22144,6 +22510,11 @@ msgstr "Rekommenderad"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Återanslut"
+
+#. js-lingui-id: i5U7bC
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "Reconnect {channelName} to send messages"
+msgstr ""
 
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -22203,11 +22574,6 @@ msgstr "Poständringar"
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Poständringar och apploggar är tillgängliga i din nuvarande plan. Andra loggtyper kräver ett Organization-abonnemang."
-
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Formulär för att skapa poster"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -22341,11 +22707,6 @@ msgstr "Inspelning"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Failed"
 msgstr "Inspelning misslyckades"
-
-#. js-lingui-id: kDQf8q
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Recording requests"
-msgstr "Inspelningsbegäranden"
 
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -22582,6 +22943,7 @@ msgid "Reload"
 msgstr "Ladda om"
 
 #. js-lingui-id: tF5Smn
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
 msgstr "Ladda om sidan"
@@ -23245,6 +23607,7 @@ msgid "Retention"
 msgstr "Bevarandetid"
 
 #. js-lingui-id: 6gRgw8
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/ai/components/AiChatErrorMessage.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
@@ -23289,6 +23652,11 @@ msgstr "Återvänd värde"
 msgid "Returns an array of records"
 msgstr "Returnerar en array med poster"
 
+#. js-lingui-id: dMc2/b
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes."
+msgstr "Återanvänd samma konversation när samma två medlemmar i arbetsytan startar ett direktmeddelande. Aktiveras när uppgraderingen av arbetsytan är klar."
+
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -23299,6 +23667,16 @@ msgstr "omvänd alfabetisk ordning"
 #: src/modules/object-record/record-group/constants/RecordGroupSortLabels.ts
 msgid "Reverse Alphabetical"
 msgstr "Omvänd alfabetisk ordning"
+
+#. js-lingui-id: FIYcTW
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
+msgid "Review additional microphone or camera access requested by this app. Members still need to enable access and approve the browser permission."
+msgstr ""
+
+#. js-lingui-id: Jlf4oD
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
+msgid "Review media access"
+msgstr ""
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -24117,6 +24495,8 @@ msgid "Search icon"
 msgstr "Sökikon"
 
 #. js-lingui-id: AaDUlx
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Sök medlemmar"
@@ -24829,6 +25209,7 @@ msgid "Selection"
 msgstr "Markering"
 
 #. js-lingui-id: JlFcis
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -24887,6 +25268,11 @@ msgstr "Skicka e-post från anslutna konton"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Tillåt att skicka e-post via anslutna konton"
+
+#. js-lingui-id: lPcA5V
+#: src/modules/getting-started/components/GettingStartedPromptAction.tsx
+msgid "Send instructions"
+msgstr "Skicka instruktioner"
 
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24950,6 +25336,11 @@ msgstr "Sändande domän"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Sending email"
 msgstr "Skickar e-post"
+
+#. js-lingui-id: G+UdVg
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+msgid "Sending failed"
+msgstr ""
 
 #. js-lingui-id: asU5VT
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -25156,10 +25547,20 @@ msgstr "Konfigurera vidarebefordran och DNS"
 msgid "Set up forwarding from the source address to this destination."
 msgstr "Ställ in vidarebefordran från källadressen till den här destinationen."
 
+#. js-lingui-id: dq5Wx1
+#: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
+msgid "Set up MCP"
+msgstr "Konfigurera MCP"
+
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
 msgstr "Konfigurera följande DNS-poster för {domain} i Cloudflare-kontot som redan är öppet i min webbläsare."
+
+#. js-lingui-id: uB2UEQ
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Set up the workflow"
+msgstr "Konfigurera arbetsflödet"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25184,6 +25585,7 @@ msgstr "Konfigurerar din <0>databas</0>..."
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -25430,6 +25832,11 @@ msgstr "Visa på"
 msgid "Show only rows with errors"
 msgstr "Visa endast rader med fel"
 
+#. js-lingui-id: 9u2I/P
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
+msgstr "Visa sidan Kom igång och sidofältskortet, och öppna den vid landning under provperioden."
+
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Show this activity type in record timelines"
@@ -25627,8 +26034,8 @@ msgstr "Färdighet hittades inte"
 #. js-lingui-id: PCSkw2
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Skills"
 msgstr "Färdigheter"
 
@@ -25638,6 +26045,7 @@ msgstr "Färdigheter"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Hoppa över"
@@ -25756,6 +26164,13 @@ msgstr "Snoozning avslutad"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snoozning avslutad {eventTime}"
+
+#. js-lingui-id: oIDreL
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Snooze Getting started"
+msgstr "Skjut upp Kom igång"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -25995,6 +26410,11 @@ msgstr "Dela upp flera värden"
 msgid "Split view"
 msgstr "Delad vy"
 
+#. js-lingui-id: jAoGz1
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Spreadsheet"
+msgstr "Kalkylblad"
+
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -26210,9 +26630,14 @@ msgid "Steps of this workflow sharing a key write to the same conversation"
 msgstr "Steg i detta arbetsflöde som delar en nyckel skriver till samma konversation"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Stop"
 msgstr "Stopp"
+
+#. js-lingui-id: gGTNKw
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Stop capture for {ownerName}"
+msgstr "Stoppa inspelning för {ownerName}"
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -26223,11 +26648,6 @@ msgstr "Stoppa diktering"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Sluta imitera"
-
-#. js-lingui-id: 5e5VJg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Stop recording for {applicationName}"
-msgstr "Stoppa inspelning för {applicationName}"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
@@ -26909,6 +27329,11 @@ msgstr "Team"
 msgid "Team member"
 msgstr "Teammedlem"
 
+#. js-lingui-id: IVUOhR
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Teammate email {emailNumber}"
+msgstr "E-postadress till teammedlem {emailNumber}"
+
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
 #: src/pages/onboarding/InviteTeam.tsx
@@ -26920,6 +27345,11 @@ msgstr "Teammedlemmens e-postadress {0}"
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Teammedlemmar"
+
+#. js-lingui-id: Dqvkhs
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
+msgid "Teammates see who you talk to, not what you write."
+msgstr "Teammedlemmar ser vem du pratar med, inte vad du skriver."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -27042,6 +27472,16 @@ msgstr "Det motsvarar ungefär {formattedNewlyEarnedAiActions} AI-åtgärder. Kr
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Adressen som din arbetsyta kommer att skicka och ta emot e-post från (t.ex. support@mycompany.com). För att skicka utgående e-post krävs att domänen verifieras i Outbound Domains."
+
+#. js-lingui-id: VzRxGM
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
+msgid "The agent sets the instructions, model and permissions."
+msgstr "Agenten anger instruktionerna, modellen och behörigheterna."
+
+#. js-lingui-id: QKWHCt
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "The agent this step runs could not be loaded. It may have been deleted."
+msgstr "Agenten som det här steget kör kunde inte läsas in. Den kan ha tagits bort."
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -27179,7 +27619,7 @@ msgid "The Member role cannot be deleted"
 msgstr "Medlemsrollen kan inte raderas"
 
 #. js-lingui-id: JNopdb
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
+#: src/modules/page-layout/widgets/email-thread/components/MessageThreadWidget.tsx
 msgid "The messages in this thread are missing or incomplete."
 msgstr "Meddelandena i den här tråden saknas eller är ofullständiga."
 
@@ -27662,6 +28102,7 @@ msgstr "Den här funktionen har ingen utlösare konfigurerad, så den kan bara a
 
 #. js-lingui-id: uH29XK
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection.tsx
 msgid "This grants access to this app for everyone in your workspace."
 msgstr "Detta ger alla i din arbetsyta åtkomst till den här appen."
 
@@ -27901,6 +28342,16 @@ msgstr "Den här vyn använder {usageLabel} på objektet \"{0}\" som inte är å
 msgid "This week"
 msgstr "Denna vecka"
 
+#. js-lingui-id: S9wb8X
+#: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
+msgid "This will also deactivate the validation rule {validationRuleNames}."
+msgstr "Detta kommer också att inaktivera valideringsregeln {validationRuleNames}."
+
+#. js-lingui-id: nEFDDt
+#: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
+msgid "This will also deactivate these validation rules: {validationRuleNames}."
+msgstr "Detta kommer också att inaktivera dessa valideringsregler: {validationRuleNames}."
+
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -27928,10 +28379,10 @@ msgstr "Detta kommer att bevilja {0} till {userLabel}."
 msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
 msgstr "Detta kommer att ändra {contextStoreNumberOfSelectedRecords} poster. Denna åtgärd går inte att ångra."
 
-#. js-lingui-id: XGDxrH
-#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
-msgstr "Detta kommer att radera fältet och all dess data från {objectLabel} permanent. Skriv \"yes\" för att bekräfta."
+#. js-lingui-id: j4VddB
+#: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
+msgid "This will permanently delete the field and all its data from {objectLabel}."
+msgstr "Detta kommer att radera fältet och all dess data från {objectLabel} permanent."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -28196,6 +28647,7 @@ msgstr "Tomat"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "I morgon"
@@ -28253,8 +28705,8 @@ msgstr "Verktygsinformation: {displayMessage}"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "Verktyg"
 
@@ -28399,6 +28851,7 @@ msgid "Triage"
 msgstr "Sortering"
 
 #. js-lingui-id: lhkaAC
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -28452,6 +28905,7 @@ msgid "Trialing"
 msgstr "Provperiod pågår"
 
 #. js-lingui-id: H2Sfhg
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -28565,6 +29019,7 @@ msgstr "Sant/falskt"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
@@ -28723,6 +29178,11 @@ msgstr "Typ"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Type '/' for commands, '@' for mentions"
 msgstr "Skriv '/' för kommandon, '@' för omnämnanden"
+
+#. js-lingui-id: uerxa/
+#: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
+msgid "Type \"yes\" to confirm."
+msgstr "Skriv \"yes\" för att bekräfta."
 
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
@@ -29228,6 +29688,11 @@ msgstr "Bildformatet stöds inte"
 msgid "Until {snoozedUntilDay}"
 msgstr "Till {snoozedUntilDay}"
 
+#. js-lingui-id: LRU2W5
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Until the last 3 days"
+msgstr "Tills det återstår 3 dagar"
+
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -29607,6 +30072,7 @@ msgid "Upload a file or an image"
 msgstr "Ladda upp en fil eller en bild"
 
 #. js-lingui-id: 2IXDgU
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -29729,12 +30195,12 @@ msgstr "us-east-1"
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29798,11 +30264,6 @@ msgstr "Användningsperiod"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Använd ‘{trimmedSidePanelSearch}’ med..."
 
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Använd ett särskilt formulär när du skapar poster och aktivera valideringsregler."
-
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a recovery code"
@@ -29852,6 +30313,11 @@ msgstr "Använd endast bokstäver, siffror, understreck, punkter eller bindestre
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Använd vår API eller lägg till ditt första {objectLabel} manuellt"
+
+#. js-lingui-id: zwL0lf
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Use the import wizard instead"
+msgstr "Använd importguiden i stället"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -30240,11 +30706,6 @@ msgstr "vy"
 msgid "View"
 msgstr "Vy"
 
-#. js-lingui-id: 8qPdO7
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
-msgid "View Agent"
-msgstr ""
-
 #. js-lingui-id: noHthC
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "View AI usage breakdown"
@@ -30332,16 +30793,6 @@ msgstr "Endast visning — Du kan läsa den här konversationen."
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "View original message"
 msgstr "Visa ursprungligt meddelande"
-
-#. js-lingui-id: hAAsm/
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "View role"
-msgstr ""
-
-#. js-lingui-id: mzftV9
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
-msgid "View Role"
-msgstr ""
 
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -30494,7 +30945,7 @@ msgid "Waiting for output..."
 msgstr "Väntar på utdata..."
 
 #. js-lingui-id: FZKt6U
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Waiting for permission"
 msgstr "Väntar på behörighet"
 
@@ -30593,6 +31044,11 @@ msgstr "Vi kunde inte läsa in dina {labelPlural}. Försök igen senare."
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
 msgstr "Vi kunde inte nå paketregistret för att verifiera paketets proveniens. Försök igen om några minuter."
+
+#. js-lingui-id: LCtrdC
+#: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
+msgid "We couldn't check which validation rules use this field. This may also deactivate them."
+msgstr "Vi kunde inte kontrollera vilka valideringsregler som använder det här fältet. Detta kan också inaktivera dem."
 
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -30885,7 +31341,7 @@ msgid "When off, the event is created with no attendees and nobody is notified."
 msgstr "När det är avstängt skapas händelsen utan deltagare och ingen aviseras."
 
 #. js-lingui-id: E2I4La
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
 msgstr "När ska agenten stanna och fråga dig? Till exempel innan den skickar e-post eller ändrar beloppet för en affär. Lämna tomt för att den aldrig ska stanna."
 
@@ -30991,7 +31447,7 @@ msgid "With no other channel to move its chats to, only an empty channel can be 
 msgstr "Eftersom det inte finns någon annan kanal att flytta chattarna till kan endast en tom kanal tas bort. Detta kan inte ångras."
 
 #. js-lingui-id: tVV1AC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them."
 msgstr "Med mottagaren, eller skaparen av arbetsflödet om det lämnas tomt. Den hålls utanför deras inkorg tills agenten behöver dem."
 
@@ -31150,6 +31606,7 @@ msgstr "Arbetstider börjar"
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
+#: src/pages/settings/ai/components/SettingsAiOverview.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -31267,6 +31724,7 @@ msgstr "Arbetsytans info"
 #. js-lingui-id: BYrMT0
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
+#: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 msgid "Workspace Instructions"
 msgstr "Instruktioner för arbetsytan"
 
@@ -31367,6 +31825,11 @@ msgstr "Skriv en beskrivning"
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "Write a description for this agent"
 msgstr "Skriv en beskrivning för denna agent"
+
+#. js-lingui-id: eWlz27
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "Write a message"
+msgstr ""
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -31619,6 +32082,11 @@ msgstr "Du debiteras ${priceDisplay} per användare i dag och sedan varje månad
 msgid "You'll be charged ${priceDisplay} per user today, then every year."
 msgstr "Du debiteras ${priceDisplay} per användare i dag och sedan varje år."
 
+#. js-lingui-id: He3wTg
+#: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
+msgid "You'll need to edit any deactivated rule before turning it back on."
+msgstr "Du måste redigera alla inaktiverade regler innan du aktiverar dem igen."
+
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
@@ -31660,6 +32128,16 @@ msgstr "Ditt kort har sparats, men betalningen kräver fortfarande åtgärd."
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Dina anslutningar kunde inte läsas in. Kontrollera din anslutning och försök igen."
+
+#. js-lingui-id: 63X4AK
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "Your conversations will show up here."
+msgstr ""
+
+#. js-lingui-id: TW/SJs
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+msgid "Your conversations with {recordName} will show up here."
+msgstr ""
 
 #. js-lingui-id: mmGBWT
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -31824,6 +32302,16 @@ msgstr "Konfigurationen av ditt abonnemang slutfördes inte."
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "Din abonnemangsstatus är: {statusLabel}"
+
+#. js-lingui-id: RMyx+h
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
+msgstr "Din provperiod slutar den {formattedTrialEnd}. Lägg till ett kort nu för att behålla din plan efter det. Du debiteras inte före dess."
+
+#. js-lingui-id: 0p2q58
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
+msgstr "Din provperiod slutar den {formattedTrialEnd}. Lägg till ett kort nu för att behålla planen {planLabel} efter det. Du debiteras inte före dess."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

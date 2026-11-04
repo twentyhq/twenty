@@ -104,6 +104,14 @@ Mostra in evidenza singoli valori chiave.
 
 Incorpora strumenti e contenuti esterni direttamente nella tua dashboard.
 
+Per i widget iframe aggiunti nello spazio di lavoro, un membro con l'autorizzazione a gestire la sicurezza può configurare **Impostazioni → Generali → Sicurezza → Accesso ai contenuti multimediali dei siti web incorporati**. Aggiungi l'origine HTTPS esatta del sito web, ad esempio `https://workspace.aircall.io`, e abilita **Microfono**, **Fotocamera** o entrambi. I percorsi e i caratteri jolly non sono accettati. Approva solo i siti web di cui ti fidi.
+
+Gli incorporamenti multimediali forniti da un'app installata utilizzano un'approvazione separata: l'app dichiara il sito web in [`requestedIframeMediaPermissions`](/it/developers/extend/apps/config/application#embedded-website-media-access) e un membro che può gestire le app lo approva durante l'installazione. Queste autorizzazioni si applicano ai componenti front-end e ai widget iframe dell'app stessa. Le approvazioni di sicurezza dello spazio di lavoro e le autorizzazioni di altre app non si applicano ai widget definiti dall'app.
+
+Ricarica le schede di Twenty aperte dopo aver modificato queste autorizzazioni. La ricarica termina le chiamate e le registrazioni attive. Ogni volta che un membro seleziona **Abilita microfono**, **Abilita fotocamera** o **Abilita microfono e fotocamera** in un incorporamento, viene visualizzata una conferma nativa del browser che mostra il widget o l'app proprietaria, l'origine del sito web e l'accesso richiesto al microfono o alla fotocamera. Dopo aver confermato, approva l'autorizzazione del browser per i contenuti multimediali quando richiesto. Questa conferma si applica sia ai widget dello spazio di lavoro sia agli incorporamenti forniti dall'app.
+
+L'indicatore nell'intestazione mostra **Accesso ai contenuti multimediali abilitato** quando un incorporamento dispone dell'accesso, anche quando è nascosto. Ciò non significa che il sito web stia registrando al momento: Twenty non può ispezionare l'attività del microfono o della videocamera all'interno di un altro sito web. Seleziona l'indicatore e scegli **Disabilita** per scaricare l'incorporamento e ricaricarlo con l'accesso ai contenuti multimediali bloccato. Seleziona nuovamente **Abilita** per ripristinare l'accesso.
+
 <Frame>
 <img src="/images/user-guide/dashboard/dashboard-widget-table.png" alt="Grafico tabella" />
 </Frame>

@@ -19,7 +19,7 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 
@@ -99,15 +99,10 @@ const buildCondition = (
     recordShareTableExpression: '"workspace"."recordShare"',
   });
 
-const privateRecordMetadataMaps = {
-  ...metadataMaps,
-  featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true },
-};
 const sharingMetadataMaps = {
   ...metadataMaps,
   featureFlagsMap: {
     [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-    [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
   },
 };
 
@@ -123,33 +118,51 @@ const buildConditionOutcome = (
   return { kind: 'gated', condition };
 };
 
-const readEverything: PermissionsPrincipal = {
+const readEverything: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  intersectionOf: { userWorkspaceRoleId: FULL_ACCESS_ROLE_ID },
-  workspaceMember: { id: 'member-1' },
+  mainPrincipal: {
+    type: 'workspaceMember',
+    roleId: FULL_ACCESS_ROLE_ID,
+    workspaceMemberId: 'member-1',
+  },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
-const owningApplication: PermissionsPrincipal = {
+const owningApplication: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
+  mainPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
+  applicationPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
 };
 
-const withoutObjectPermission: PermissionsPrincipal = {
+const withoutObjectPermission: PermissionsPrincipalsWithRolesContext = {
   ...readEverything,
-  intersectionOf: { userWorkspaceRoleId: ROLE_WITHOUT_PERMISSION_ID },
+  mainPrincipal: {
+    type: 'workspaceMember',
+    roleId: ROLE_WITHOUT_PERMISSION_ID,
+    workspaceMemberId: 'member-1',
+  },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
 const build = ({
-  principal,
+  principals,
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipal;
+  principals: PermissionsPrincipalsWithRolesContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }) =>
   buildConditionOutcome({
-    principal,
+    principals,
     metadataMaps: policyMetadataMaps,
     tableAlias: flatObjectMetadata.nameSingular,
     flatObjectMetadata,
@@ -157,15 +170,15 @@ const build = ({
   });
 
 const gatedSql = ({
-  principal,
+  principals,
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipal;
+  principals: PermissionsPrincipalsWithRolesContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }): string => {
-  const policy = build({ principal, flatObjectMetadata, policyMetadataMaps });
+  const policy = build({ principals, flatObjectMetadata, policyMetadataMaps });
 
   expect(policy.kind).toBe('gated');
 
@@ -189,26 +202,20 @@ describe('buildPermissionsCondition', () => {
       disabledObjectPermissionActions: ['canReadObjectRecords' as const],
     };
     expect(
-      build({ principal: readEverything, flatObjectMetadata: object }),
+      build({ principals: readEverything, flatObjectMetadata: object }),
     ).toEqual({ kind: 'denied' });
     expect(
       build({
-        principal: owningApplication,
+        principals: owningApplication,
         flatObjectMetadata: object,
       }),
-    ).toEqual({ kind: 'open' });
-  });
-
-  it('opens an object to a principal without predicate', () => {
-    expect(
-      build({ principal: readEverything, flatObjectMetadata: note }),
-    ).toEqual({ kind: 'open' });
+    ).toMatchObject({ kind: 'gated' });
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
     const company = buildObject({ id: 'company' });
     const policy = buildConditionOutcome({
-      principal: readEverything,
+      principals: readEverything,
       metadataMaps: sharingMetadataMaps,
       tableAlias: 'company',
       flatObjectMetadata: company,
@@ -225,29 +232,11 @@ describe('buildPermissionsCondition', () => {
     expect(policy.condition.sql).toContain('"workspace"."recordShare"');
   });
 
-  it('leaves records open to their role until private records are enabled', () => {
-    expect(
-      buildConditionOutcome({
-        principal: readEverything,
-        metadataMaps: {
-          ...metadataMaps,
-          featureFlagsMap: {
-            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-          },
-        },
-        tableAlias: 'company',
-        flatObjectMetadata: buildObject({ id: 'company' }),
-        operationType: 'select',
-      }),
-    ).toEqual({ kind: 'open' });
-  });
-
   it('gates every object on private records once they are enabled, without record sharing', () => {
     expect(
       gatedSql({
-        principal: readEverything,
+        principals: readEverything,
         flatObjectMetadata: person,
-        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('recordShare');
   });
@@ -255,7 +244,7 @@ describe('buildPermissionsCondition', () => {
   it('gates a system object on private records too', () => {
     expect(
       buildConditionOutcome({
-        principal: readEverything,
+        principals: readEverything,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: { ...note, isSystem: true },
@@ -267,7 +256,7 @@ describe('buildPermissionsCondition', () => {
   it('leaves an object open to inserts when record sharing is enabled', () => {
     expect(
       buildConditionOutcome({
-        principal: readEverything,
+        principals: readEverything,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: note,
@@ -279,19 +268,29 @@ describe('buildPermissionsCondition', () => {
   describe('with a record shared beyond the role', () => {
     const company = buildObject({ id: 'company' });
     const buildForCompany = (
-      principal: PermissionsPrincipal,
+      principals: PermissionsPrincipalsWithRolesContext,
       operationType: 'select' | 'update' | 'delete' = 'select',
     ) =>
       buildConditionOutcome({
-        principal,
+        principals,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'company',
         flatObjectMetadata: company,
         operationType,
       });
-    const withoutCompanyPermission: PermissionsPrincipal = {
+    const withoutCompanyPermission: PermissionsPrincipalsWithRolesContext = {
       ...readEverything,
-      intersectionOf: { userWorkspaceRoleId: 'role-2', apiKeyRoleId: 'role-3' },
+      limitingPrincipal: {
+        type: 'agent',
+        roleId: 'role-2',
+        agentId: 'agent-1',
+      },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: 'role-3',
+        workspaceMemberId: 'member-1',
+      },
+      applicationPrincipal: { type: 'customApplication' },
     };
 
     it('narrows a principal without object permission to the records named for them', () => {
@@ -340,15 +339,6 @@ describe('buildPermissionsCondition', () => {
       });
     });
 
-    it('denies a principal named nowhere', () => {
-      expect(
-        buildForCompany({
-          workspaceId: 'workspace-id',
-          intersectionOf: { userWorkspaceRoleId: null },
-        }),
-      ).toEqual({ kind: 'denied' });
-    });
-
     it('lets a named grant bypass the row filter of the role', () => {
       (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
         NOTE_FILTER,
@@ -365,7 +355,7 @@ describe('buildPermissionsCondition', () => {
   it('denies an object the principal has no permission on', () => {
     expect(
       build({
-        principal: withoutObjectPermission,
+        principals: withoutObjectPermission,
         flatObjectMetadata: note,
       }),
     ).toEqual({
@@ -373,32 +363,19 @@ describe('buildPermissionsCondition', () => {
     });
   });
 
-  it('gates an object on the role predicate alone', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
-    const sql = gatedSql({
-      principal: readEverything,
-      flatObjectMetadata: note,
-    });
-
-    expect(sql).toBe('"note"."title" = :restricted');
-  });
-
   it('gates records on their share rows', () => {
     expect(
       gatedSql({
-        principal: readEverything,
+        principals: readEverything,
         flatObjectMetadata: person,
-        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('"person_recordShare"."recordId" = "person"."id"');
   });
 
   it('opens private records only to shares naming the member or their roles', () => {
     const condition = buildCondition({
-      principal: readEverything,
-      metadataMaps: privateRecordMetadataMaps,
+      principals: readEverything,
+      metadataMaps,
       flatObjectMetadata: person,
       operationType: 'select',
     });
@@ -420,9 +397,8 @@ describe('buildPermissionsCondition', () => {
       NOTE_FILTER,
     );
     const sql = gatedSql({
-      principal: readEverything,
+      principals: readEverything,
       flatObjectMetadata: person,
-      policyMetadataMaps: privateRecordMetadataMaps,
     });
 
     expect(sql).toMatch(
@@ -432,8 +408,8 @@ describe('buildPermissionsCondition', () => {
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildConditionOutcome({
-      principal: readEverything,
-      metadataMaps: privateRecordMetadataMaps,
+      principals: readEverything,
+      metadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'select',
@@ -445,7 +421,7 @@ describe('buildPermissionsCondition', () => {
   });
   describe('with a prospective named share', () => {
     const prospectiveShareArguments = {
-      principal: readEverything,
+      principals: readEverything,
       metadataMaps: sharingMetadataMaps,
       tableAlias: person.nameSingular,
       flatObjectMetadata: person,
@@ -472,17 +448,21 @@ describe('buildPermissionsCondition', () => {
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
         metadataMaps,
+        tableAlias: note.nameSingular,
+        flatObjectMetadata: note,
       });
 
       expect(policy).toMatchObject({
         kind: 'gated',
         condition: {
-          sql: expect.stringContaining('"person"."title" = :restricted'),
+          sql: expect.stringContaining('"note"."title" = :restricted'),
         },
       });
-      expect(policy).toMatchObject({
-        condition: { sql: expect.not.stringContaining('recordShare') },
-      });
+      expect(
+        policy.kind === 'gated'
+          ? policy.condition.sql.match(/"note"\."title" = :restricted/g)
+          : [],
+      ).toHaveLength(2);
     });
 
     it('preserves a disabled edit action', () => {
@@ -503,7 +483,7 @@ describe('buildPermissionsCondition', () => {
       expect(
         buildConditionOutcome({
           ...prospectiveShareArguments,
-          principal: owningApplication,
+          principals: owningApplication,
           flatObjectMetadata: {
             ...person,
             disabledObjectPermissionActions: [
@@ -532,13 +512,13 @@ describe('buildPermissionsCondition', () => {
         buildConditionOutcome({
           ...prospectiveShareArguments,
           metadataMaps,
-          principal: withoutObjectPermission,
+          principals: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'denied' });
       expect(
         buildConditionOutcome({
           ...prospectiveShareArguments,
-          principal: withoutObjectPermission,
+          principals: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'open' });
     });
@@ -564,9 +544,11 @@ describe('buildPermissionsCondition', () => {
         flatEntityMaps: emptyFlatFieldMetadataMaps,
       }),
     };
-    const buildForCreator = (principal: PermissionsPrincipal) =>
+    const buildForCreator = (
+      principals: PermissionsPrincipalsWithRolesContext,
+    ) =>
       buildConditionOutcome({
-        principal,
+        principals,
         metadataMaps: creatorMetadataMaps,
         tableAlias: 'company',
         flatObjectMetadata: company,

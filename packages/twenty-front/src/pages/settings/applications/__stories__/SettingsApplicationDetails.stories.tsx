@@ -72,6 +72,7 @@ const buildSettingsMenuItem = ({
   icon: null,
   position: 0,
   scope,
+  slug: null,
 });
 
 const savedValueByKey = new Map<string, string>();
@@ -130,6 +131,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     installCount: 12,
     defaultRoleUniversalIdentifier: null,
     requestedCapabilities: [],
+    requestedIframeMediaPermissions: [],
     billsCredits: false,
     objects: [],
     roles: [],
@@ -162,6 +164,8 @@ const buildApplicationHandlers = ({
           settingsCustomTabFrontComponentId: null,
           healthCheckLogicFunctionId: null,
           availablePackages: {},
+          requestedIframeMediaPermissions: [],
+          grantedIframeMediaPermissions: [],
           applicationVariables: [USER_VARIABLE, buildWorkspaceVariable()],
           agents: [],
           frontComponents: [],

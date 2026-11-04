@@ -29635,12 +29635,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.16.0":
-  version: 1.16.1
-  resolution: "follow-redirects@npm:1.16.1"
+  version: 1.16.2
+  resolution: "follow-redirects@npm:1.16.2"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/544e24ccb93b7afb5dd5a2199bd556e167b84de2af7c13b2ced08494239677359d7883bae56ae43a9ca98ac5451e75cf4834a5fadd6fa79053b9248fac5447a4
+  checksum: 10c0/ff38c8ceb904e505021057f58d395ea5f2e7c34257032960a76b21df1726395ce753f5678b6ee3b15210a557277c00b2607c67b682ee4dec1f33cb5147e08e90
   languageName: node
   linkType: hard
 
@@ -30839,23 +30839,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^20.0.10":
-  version: 20.8.9
-  resolution: "happy-dom@npm:20.8.9"
-  dependencies:
-    "@types/node": "npm:>=20.0.0"
-    "@types/whatwg-mimetype": "npm:^3.0.2"
-    "@types/ws": "npm:^8.18.1"
-    entities: "npm:^7.0.1"
-    whatwg-mimetype: "npm:^3.0.0"
-    ws: "npm:^8.18.3"
-  checksum: 10c0/12fe9b85891b1289935b2a4f726e2839e7c92e3f55401bd20cb5500763dd994364645acaab20a754fd90d5e1b2ffdf734b39a32ea02704c3e3ee0c4d30cf958e
-  languageName: node
-  linkType: hard
-
-"happy-dom@npm:^20.1.0":
-  version: 20.10.3
-  resolution: "happy-dom@npm:20.10.3"
+"happy-dom@npm:^20.0.10, happy-dom@npm:^20.1.0":
+  version: 20.14.6
+  resolution: "happy-dom@npm:20.14.6"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -30864,7 +30850,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10c0/d3d1766645ee802f012982d4ddcb6e3817548b40466c91b4216a241bcaf80b18e3417d08503d59ebc10be2a3299f5f3dcf327081bc47b13895c3c22c6dbb00fa
+  checksum: 10c0/47bdcb7ec7f22c7270b5c1e8b25bb9cd847aa35ee84d6e0870123463db63ad335fa2eb9e6d15a6e3b2ad843586139a0e2fbc6d6dfc120ff0f91f693efea74e4d
   languageName: node
   linkType: hard
 
@@ -48853,7 +48839,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.21.0, ws@npm:^8.18.0, ws@npm:^8.18.3, ws@npm:^8.19.0, ws@npm:^8.21.0, ws@npm:~8.21.0":
+"ws@npm:8.21.0, ws@npm:^8.18.0, ws@npm:^8.19.0, ws@npm:^8.21.0, ws@npm:~8.21.0":
   version: 8.21.0
   resolution: "ws@npm:8.21.0"
   peerDependencies:

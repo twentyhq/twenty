@@ -108,6 +108,10 @@ const buildGroup = ({
   parentRowLevelPermissionPredicateGroupId,
   logicalOperator,
   positionInRowLevelPermissionPredicateGroup,
+  canReadRecords: false,
+  canUpdateRecords: false,
+  canSoftDeleteRecords: false,
+  canDestroyRecords: false,
   roleId: ROLE_ID,
   objectMetadataId: OBJECT_METADATA_ITEM.id,
 });

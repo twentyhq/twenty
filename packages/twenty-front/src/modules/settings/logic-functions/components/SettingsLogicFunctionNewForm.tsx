@@ -3,11 +3,11 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { IconClockHour8 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -26,6 +26,7 @@ export const SettingsLogicFunctionNewForm = ({
   ) => (value: LogicFunctionFormValues[TKey]) => void;
   readonly?: boolean;
 }) => {
+  const { t } = useLingui();
   const descriptionTextAreaId = `${formValues.name}-description`;
   const nameTextInputId = `${formValues.name}-name`;
 

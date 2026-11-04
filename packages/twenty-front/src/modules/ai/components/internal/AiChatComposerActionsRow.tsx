@@ -3,7 +3,6 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -41,10 +40,7 @@ export const AiChatComposerActionsRow = ({
 
   return (
     <StyledActionsRow>
-      <StyledLeftActions>
-        {leftActions}
-        <AiChatContextUsageButton />
-      </StyledLeftActions>
+      <StyledLeftActions>{leftActions}</StyledLeftActions>
       <StyledRightActions>
         <AiModelTierDropdown
           dropdownId={modelTierDropdownId}

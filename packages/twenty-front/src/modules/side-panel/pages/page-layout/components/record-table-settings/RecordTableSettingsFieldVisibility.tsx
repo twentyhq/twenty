@@ -7,11 +7,12 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFieldListContainer = styled.div`
   display: flex;
@@ -39,6 +40,7 @@ export const RecordTableSettingsFieldVisibility = ({
   widgetId,
   pageLayoutId,
 }: RecordTableSettingsFieldVisibilityProps) => {
+  const { t } = useLingui();
   const { recordTableWidgetViewFieldItems } =
     useRecordTableWidgetViewFieldItems({ viewId, widgetId, pageLayoutId });
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -35,7 +36,7 @@ export class SystemPromptBuilderService {
     userWorkspaceId: string,
     workspaceInstructions?: string,
   ): Promise<SystemPromptPreview> {
-    const { roleId, userId, userContext } =
+    const { userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspaceId,
@@ -44,9 +45,7 @@ export class SystemPromptBuilderService {
     const [toolCatalog, skillCatalog, canAttachConversationToRecords] =
       await Promise.all([
         this.toolRegistry.buildToolIndex(workspaceId, {
-          rolePermissionConfig: {
-            intersectionOf: { userWorkspaceRoleId: roleId },
-          },
+          authContext: getWorkspaceAuthContext(),
           userId,
           userWorkspaceId,
           excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,

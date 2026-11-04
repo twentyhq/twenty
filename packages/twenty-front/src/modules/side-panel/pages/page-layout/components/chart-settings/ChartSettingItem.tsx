@@ -20,9 +20,9 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 const CHART_SETTINGS_DROPDOWN_SIDE_OFFSET = 4;
 
@@ -37,6 +37,7 @@ export const ChartSettingItem = ({
   objectMetadataId,
   configuration,
 }: ChartSettingItemProps) => {
+  const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { openDropdown } = useOpenDropdown();
   const { setSelectedItemId } = useSelectableList(

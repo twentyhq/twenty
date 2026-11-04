@@ -20,10 +20,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
-    label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
@@ -35,6 +31,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,
     description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages.`,
+  },
+  [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: {
+    label: msg`Direct message pair identity`,
+    description: msg`Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
@@ -48,12 +48,12 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
-  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: {
-    label: msg`Private records`,
-    description: msg`Let people make a record visible only to its creator and the people it is shared with.`,
-  },
   [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: {
     label: msg`Record rules through relations`,
     description: msg`Let record-level permission rules compare a field of a related record.`,
+  },
+  [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
+    label: msg`Getting started`,
+    description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
 };

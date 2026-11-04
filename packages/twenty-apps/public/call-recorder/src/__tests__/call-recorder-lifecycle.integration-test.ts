@@ -932,7 +932,7 @@ describe('call recorder app lifecycle (integration)', () => {
     );
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
-    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
     // Logic functions normally run with an app access token; the workspace
     // API key is a token with the same workspaceId claim.
     vi.stubEnv(

@@ -105,9 +105,6 @@ export const ObjectSettings = ({
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
-  const isRecordCreationFormEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-  );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRelatedRecordPathsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
@@ -192,29 +189,27 @@ export const ObjectSettings = ({
             />
           </Section.Root>
         )}
-      {isRecordCreationFormEnabled &&
-        !objectMetadataItem.isRemote &&
-        !objectMetadataItem.isSystem && (
-          <Section.Root>
-            <Section.Header
-              title={t`Validation rules`}
-              description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
-              actions={<OrganizationAdornment />}
+      {!objectMetadataItem.isRemote && !objectMetadataItem.isSystem && (
+        <Section.Root>
+          <Section.Header
+            title={t`Validation rules`}
+            description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
+            actions={<OrganizationAdornment />}
+          />
+          {hasValidationRulesEntitlement ? (
+            <SettingsObjectValidationRulesSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
             />
-            {hasValidationRulesEntitlement ? (
-              <SettingsObjectValidationRulesSection
-                objectMetadataItem={objectMetadataItem}
-                isReadOnly={isReadOnly}
-              />
-            ) : (
-              <SettingsEnterpriseFeatureGateCard
-                title={t`Organization feature`}
-                description={t`Upgrade to Organization to set validation rules.`}
-                buttonTitle={t`Activate`}
-              />
-            )}
-          </Section.Root>
-        )}
+          ) : (
+            <SettingsEnterpriseFeatureGateCard
+              title={t`Organization feature`}
+              description={t`Upgrade to Organization to set validation rules.`}
+              buttonTitle={t`Activate`}
+            />
+          )}
+        </Section.Root>
+      )}
       <Section.Root>
         <Section.Header
           title={t`Advanced`}

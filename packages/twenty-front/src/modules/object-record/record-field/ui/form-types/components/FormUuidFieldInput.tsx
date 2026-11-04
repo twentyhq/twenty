@@ -6,9 +6,9 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type FormUuidFieldInputProps = {
   label?: string;
@@ -27,6 +27,7 @@ export const FormUuidFieldInput = ({
   readonly,
   VariablePicker,
 }: FormUuidFieldInputProps) => {
+  const { t } = useLingui();
   const instanceId = useId();
 
   const [draftValue, setDraftValue] = useState<

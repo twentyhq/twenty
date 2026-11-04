@@ -12,8 +12,8 @@ import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
   recordFilterGroupId: string;
@@ -22,6 +22,7 @@ type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
 export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
   recordFilterGroupId,
 }: AdvancedFilterRecordFilterGroupOptionsDropdownProps) => {
+  const { t } = useLingui();
   const dropdownId = `advanced-filter-record-filter-group-options-${recordFilterGroupId}`;
 
   const { removeRecordFilter } = useRemoveRecordFilter();

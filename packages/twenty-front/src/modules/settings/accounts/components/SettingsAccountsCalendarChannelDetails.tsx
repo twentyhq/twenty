@@ -4,12 +4,12 @@ import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { IconEyeOff, IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -31,6 +31,7 @@ type SettingsAccountsCalendarChannelDetailsProps = {
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
+  const { t } = useLingui();
   const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
 
   const updateChannel = (update: Record<string, unknown>) => {

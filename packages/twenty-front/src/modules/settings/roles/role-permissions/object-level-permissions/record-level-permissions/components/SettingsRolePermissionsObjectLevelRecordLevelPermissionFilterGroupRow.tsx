@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -48,6 +48,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupR
     index,
     children,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterGroupRowProps) => {
+    const { t } = useLingui();
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const { handleAddFilter } = useRecordLevelPermissionFilterActions({

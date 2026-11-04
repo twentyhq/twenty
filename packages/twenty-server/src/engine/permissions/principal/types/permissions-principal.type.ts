@@ -1,16 +1,49 @@
 /* @license Enterprise */
 
-import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-export type PermissionsPrincipalWorkspaceMember = Pick<
-  WorkspaceMemberWorkspaceEntity,
-  'id'
-> &
-  Partial<WorkspaceMemberWorkspaceEntity>;
-
-export type PermissionsPrincipal = {
-  workspaceId: string;
-  intersectionOf: RoleIdsBySource;
-  workspaceMember?: PermissionsPrincipalWorkspaceMember;
+export type PermissionsRolePrincipal = {
+  type: 'role';
+  roleId: string;
 };
+
+export type PermissionsWorkspaceMemberPrincipal = {
+  type: 'workspaceMember';
+  workspaceMemberId: string;
+};
+
+export type PermissionsApiKeyPrincipal = {
+  type: 'apiKey';
+  apiKeyId: string;
+};
+
+export type PermissionsAgentPrincipal = {
+  type: 'agent';
+  agentId: string;
+};
+
+export type PermissionsWebhookPrincipal = {
+  type: 'webhook';
+  webhookId: string;
+};
+
+export type PermissionsApplicationIdPrincipal = {
+  type: 'application';
+  applicationId: string;
+};
+
+export type PermissionsCustomApplicationPrincipal = {
+  type: 'customApplication';
+};
+
+export type PermissionsMainPrincipal =
+  | PermissionsWorkspaceMemberPrincipal
+  | PermissionsApiKeyPrincipal
+  | PermissionsAgentPrincipal
+  | PermissionsWebhookPrincipal
+  | PermissionsApplicationIdPrincipal
+  | PermissionsRolePrincipal;
+
+export type PermissionsLimitingPrincipal = PermissionsAgentPrincipal;
+
+export type PermissionsApplicationPrincipal =
+  | PermissionsApplicationIdPrincipal
+  | PermissionsCustomApplicationPrincipal;

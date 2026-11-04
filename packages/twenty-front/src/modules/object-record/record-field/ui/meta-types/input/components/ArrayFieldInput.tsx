@@ -14,16 +14,17 @@ import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/i
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
-import { t } from '@lingui/core/macro';
 import { useContext, useMemo, useRef } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useLingui } from '@lingui/react/macro';
 
 const getArrayItemText = (item: string) => item;
 
 export const ArrayFieldInput = () => {
+  const { t } = useLingui();
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
   const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(

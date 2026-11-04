@@ -6,6 +6,9 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -14,7 +17,6 @@ import { type RecordShareInput } from 'src/engine/permissions/record-share/types
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type RecordSharePrincipal = Pick<
   RecordShareInput,
@@ -23,7 +25,10 @@ type RecordSharePrincipal = Pick<
 
 @Injectable()
 export class RecordSharePrincipalService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+  ) {}
 
   // Undefined for everyone, and for a member who left or whose membership is gone
   async resolveRoleIds({
@@ -104,30 +109,34 @@ export class RecordSharePrincipalService {
       workspaceId,
       principals: namedPrincipals,
     });
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-    const repository = transactionScope.getRepository(
-      flatObjectMetadata.nameSingular,
-      { shouldBypassPermissionChecks: true },
-    );
+    const metadataMaps =
+      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+        workspaceId,
+      );
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
 
-      if (!isDefined(roleId)) {
+      if (
+        !isDefined(roleId) ||
+        !isDefined(metadataMaps.rolesPermissions[roleId])
+      ) {
         continue;
       }
 
-      const roleObjectsPermissions = rolesPermissions[roleId];
+      const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
+        workspaceId,
+        mainPrincipal: { type: 'role', roleId },
+        applicationPrincipal: { type: 'customApplication' },
+      };
 
       if (
-        isDefined(roleObjectsPermissions) &&
-        !(
-          roleObjectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords ??
-          false
-        )
+        !isRolePermittingOperation({
+          principals: rolePrincipals,
+          metadataMaps,
+          flatObjectMetadata,
+          operationType: 'select',
+        })
       ) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot access ${flatObjectMetadata.nameSingular} records through its role`,
@@ -144,18 +153,16 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const workspaceMember = await transactionScope
-        .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-          shouldBypassPermissionChecks: true,
-        })
-        .findOne({ where: { id: principal.principalId } });
-      const hasGrant = await repository.hasPrincipalGrantOnRecords({
-        principal: {
-          workspaceId,
-          intersectionOf: { userWorkspaceRoleId: roleId },
-          workspaceMember: workspaceMember ?? undefined,
+      const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
+        authContext: {
+          type: 'user',
+          workspace: { id: workspaceId },
+          workspaceMemberId: principal.principalId,
         },
+        flatObjectMetadata,
+        operationType: 'select',
         recordIds,
+        transactionScope,
       });
 
       if (!hasGrant) {

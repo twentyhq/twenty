@@ -40,16 +40,14 @@ export const agentChatFirstUnreadMessageIdSelector = createAtomSelector<
       ? new Date(visit.lastReadAt).getTime()
       : null;
 
-    const messages = get(agentChatDisplayedThreadMessagesSelector);
+    const messages = get(agentChatDisplayedThreadMessagesSelector).filter(
+      (message) => !isSilentAgentChatMessage(message),
+    );
 
-    const firstUnreadMessage = messages.find((message) => {
+    const firstUnreadMessageIndex = messages.findIndex((message) => {
       const createdAt = message.metadata?.createdAt;
 
-      if (
-        message.role === AGENT_MESSAGE_ROLE.SYSTEM ||
-        isSilentAgentChatMessage(message) ||
-        !isDefined(createdAt)
-      ) {
+      if (message.role === AGENT_MESSAGE_ROLE.SYSTEM || !isDefined(createdAt)) {
         return false;
       }
 
@@ -70,6 +68,8 @@ export const agentChatFirstUnreadMessageIdSelector = createAtomSelector<
       );
     });
 
-    return firstUnreadMessage?.id ?? null;
+    return firstUnreadMessageIndex > 0
+      ? messages[firstUnreadMessageIndex].id
+      : null;
   },
 });

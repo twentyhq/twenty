@@ -21,7 +21,7 @@ Local app development revolves around **syncing**: the CLI rebuilds your manifes
 | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Iterate locally with live sync             | `twenty app dev`               | Watches your files and syncs on every change.                                                                                            |
 | Sync once and exit (CI, scripts, hooks)    | `twenty app apply`             | One build + sync, then exits. Add `--yes` to skip the destructive-change confirmation.                                                   |
-| Preview changes **without applying them**  | `twenty app plan`              | Computes and prints the diff; writes nothing.                                                                                            |
+| Preview changes **without applying them**  | `twenty app plan`              | Builds locally and prints the diff; does not change the workspace.                                                                       |
 | Sync without deleting anything             | `twenty app apply --no-prune`  | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
 | Prune the workspace Custom application     | `twenty app apply --prune`     | That app keeps entities missing from source unless you pass `--prune`. Also accepted by `plan` and `dev`.                                |
 | Regenerate local source from the workspace | `twenty app pull`              | **Experimental.** Restores define files, translations and stored dependencies. See below.                                                              |
@@ -88,7 +88,7 @@ Plan: 1 to add, 1 to change, 0 to destroy.
 
 A plan:
 
-- **Writes nothing** — no metadata migration, no application record update, no default role/tab changes, and no API client generation.
+- **Does not change the workspace**, no metadata migration, application record update, or default role/tab changes. It builds a local snapshot but does not regenerate the API client.
 - Returns the **same diff** a real sync would apply, so you can review created/updated/deleted entities up front.
 - Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
 
@@ -140,13 +140,14 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 - workflows, as `defineWorkflow()` files, when their stored version is the one the last sync wrote. For the workspace Custom application, it is the active version, whether a sync or the workflow builder published it, and apply publishes a changed definition as a new version, as described in [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application);
 - skills, as `defineSkill()` files;
 - agents, as `defineAgent()` files, with their triggers and the role your app binds them to;
+- validation rules, as `defineValidationRule()` files with their expression as a string;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 
 **Dependency files.** When the stored `package.json` or `yarn.lock` changes, pull replaces the local file and reports any overwritten local edits. If the remote file has not changed since the previous pull, local edits are kept. A missing remote file does not delete its local counterpart. When the exported package omits `twenty-sdk`, as the workspace Custom application does, pull retains your local SDK dependency so CLI commands can still load the project. Dependency files, metadata and the baseline are written together and rolled back together if a write fails.
 
-Run `yarn install` after pulling dependency changes. Pull does not install packages, run package scripts or regenerate the typed client.
+Run `yarn install` after pulling dependency changes. Pull installs dependencies only when creating a new project, before restoring the remote files; it does not reinstall them after replacing `package.json` or `yarn.lock`. Pull does not regenerate the typed client. Run `twenty app generate-client` when you need updated workspace types.
 
 **What it does not write:**
 
@@ -157,6 +158,7 @@ Run `yarn install` after pulling dependency changes. Pull does not install packa
 - **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
 - **Workflows the export cannot carry yet** — a workflow changed in the workflow builder since the last sync, a system or private workflow, one with a Code or chat message step, which application workflows don't support, and one calling another app's workflow action are reported and left in place. The workspace custom application is the exception for the first and last cases: the builder publishes its workflows too, and they may call any app's actions, so they are pulled. One of its workflows is reported instead when it has no active version, or when its active version uses settings a definition can't express. Email and calendar steps are pulled: an account shared with the workspace is written as its `connectedAccountHandle`, while a member's private account and variables are kept as they are. The workflow is reported instead when a step's account is archived, can no longer run the step, or shares its address with an older account, since applying the handle would pick another account.
 - **Agents the export cannot carry yet** — an agent on more than one role, or bound to a role pull does not write, is reported and left in place.
+- **Validation rules the export cannot carry yet** — a rule with no expression or message, such as an unfinished draft from Settings, or one that reads a field deleted from the workspace, is reported and left in place.
 - **Workspace runtime state**, record attachments, email attachments, member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design, including for the workspace Custom application.
 - **Owned by another application** — reported, never pulled.
 
@@ -174,12 +176,12 @@ When local metadata looks wrong, escalate in this order and stop as soon as you'
 2. **Preview the plan.** Run `twenty app plan` to see exactly what the next sync intends to change, without applying it.
 3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
 4. **Uninstall and reinstall.** `twenty app uninstall`, then sync again (`twenty app dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
-5. **Full reset (last resort).** resetting your Docker or repository development database, then re-seed and re-sync.
+5. **Full reset (last resort).** For a CLI-managed local environment, run `twenty local reset`, then `twenty local start` and reconnect before syncing again. For a source checkout, reset and re-seed its development database instead.
 
 <Warning>
-  resetting your Docker or repository development database deletes **all** data
-  in your local instance — every workspace, record, and app. Only use it once
-  the earlier steps have failed.
+  Resetting your local environment or repository development database deletes
+  **all** data in your local instance, every workspace, record, and app. Only
+  use it once the earlier steps have failed.
 </Warning>
 
 <Note>
