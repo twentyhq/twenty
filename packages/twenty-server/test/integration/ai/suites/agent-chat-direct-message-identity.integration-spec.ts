@@ -6,6 +6,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   RecordShareAccessLevel,
@@ -19,6 +20,7 @@ import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { type PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { type DirectMessageContentService } from 'src/engine/permissions/record-share/services/direct-message-content.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -167,6 +169,93 @@ describe('Canonical direct message identity', () => {
       .getRawOne<{ isPrivate: boolean }>();
 
     expect(identity).toEqual({ isPrivate: true });
+  });
+
+  it('classifies stored content through deleted rows and transaction-local ancestry', async () => {
+    const directMessageThreadId = await getOrCreate();
+    const ordinaryThreadId = await context.createThread();
+    const message = await context.saveMessage({ threadId: ordinaryThreadId });
+    const authContext = await resolveWorkspaceMemberAuthContext({
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+    });
+    const contentService =
+      getAppProviderByClassName<DirectMessageContentService>(
+        'DirectMessageContentService',
+      );
+    const manager = getAppProviderByClassName<WorkspaceOrmManager>(
+      'WorkspaceOrmManager',
+    );
+
+    await manager.executeInWorkspaceContext(async () => {
+      const messagePart = await manager
+        .getRepositoryWithoutPermissionChecks('agentMessagePart')
+        .findOneOrFail({ where: { messageId: message.id }, select: ['id'] });
+      const messagePartTarget = {
+        authContext,
+        objectUniversalIdentifier:
+          STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+        recordId: messagePart.id,
+      };
+
+      expect(
+        await contentService.isDirectMessageContent(messagePartTarget),
+      ).toBe(false);
+
+      await manager.runInWorkspaceTransaction(async (transactionScope) => {
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+          [messagePart.id],
+        );
+
+        expect(
+          await contentService.isDirectMessageContent({
+            ...messagePartTarget,
+            transactionScope,
+          }),
+        ).toBe(false);
+
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
+          [message.id, directMessageThreadId],
+        );
+
+        expect(
+          await contentService.isDirectMessageContent({
+            ...messagePartTarget,
+            transactionScope,
+          }),
+        ).toBe(true);
+
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentTurn" SET "threadId" = NULL WHERE id = $1`,
+          [message.turnId],
+        );
+
+        expect(
+          await contentService.isDirectMessageContent({
+            authContext,
+            objectUniversalIdentifier:
+              STANDARD_OBJECTS.agentTurn.universalIdentifier,
+            recordId: message.turnId,
+            transactionScope,
+          }),
+        ).toBe(true);
+
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentMessage" SET "threadId" = $2 WHERE id = $1`,
+          [message.id, ordinaryThreadId],
+        );
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentTurn" SET "threadId" = $2 WHERE id = $1`,
+          [message.turnId, ordinaryThreadId],
+        );
+        await transactionScope.executeRawQuery(
+          `UPDATE "${context.schema}"."agentMessagePart" SET "deletedAt" = NULL WHERE id = $1`,
+          [messagePart.id],
+        );
+      });
+    }, authContext);
   });
 
   it.each(['agentChatThread', 'agentMessage'] as const)(
