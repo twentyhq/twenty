@@ -871,6 +871,12 @@ export interface BillingMeteredProduct {
     __typename: 'BillingMeteredProduct'
 }
 
+export interface BillingPartnerCode {
+    isEditable: Scalars['Boolean']
+    partnerCode?: Scalars['String']
+    __typename: 'BillingPartnerCode'
+}
+
 export interface BillingPaymentIntent {
     clientSecret: Scalars['String']
     paymentIntentType: Scalars['String']
@@ -2517,6 +2523,7 @@ export interface Mutation {
     sendMessageCampaign: SendMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
+    setBillingPartnerCode: BillingPartnerCode
     setEnterpriseKey: EnterpriseLicenseInfoDTO
     setRecordPrivate: RecordSharingDTO
     setRecordShare: RecordSharingDTO
@@ -3085,6 +3092,7 @@ export interface Query {
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
     barChartData: BarChartData
+    billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
     callRecordingIdForCalendarEvent?: Scalars['UUID']
@@ -5269,6 +5277,13 @@ export interface BillingMeteredProductGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface BillingPartnerCodeGenqlSelection{
+    isEditable?: boolean | number
+    partnerCode?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingPaymentIntentGenqlSelection{
     clientSecret?: boolean | number
     paymentIntentType?: boolean | number
@@ -7174,6 +7189,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
+    setBillingPartnerCode?: (BillingPartnerCodeGenqlSelection & { __args: {partnerCode: Scalars['String']} })
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
     setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, principal: RecordSharePrincipalInput, target: RecordTargetInput} })
@@ -7783,6 +7799,7 @@ export interface QueryGenqlSelection{
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
+    billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
@@ -10022,6 +10039,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isBillingMeteredProduct = (obj?: { __typename?: any } | null): obj is BillingMeteredProduct => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
       return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPartnerCode_possibleTypes: string[] = ['BillingPartnerCode']
+    export const isBillingPartnerCode = (obj?: { __typename?: any } | null): obj is BillingPartnerCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPartnerCode"')
+      return BillingPartnerCode_possibleTypes.includes(obj.__typename)
     }
     
 

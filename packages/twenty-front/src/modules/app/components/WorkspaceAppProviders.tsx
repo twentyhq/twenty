@@ -27,7 +27,6 @@ import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflo
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
-import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
@@ -96,7 +95,6 @@ export const WorkspaceAppProviders = () => {
                   <TrackPageViewEffect />
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
-                  <WelcomeOverlay />
                   <CompanyEnrichmentOnboardingEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
