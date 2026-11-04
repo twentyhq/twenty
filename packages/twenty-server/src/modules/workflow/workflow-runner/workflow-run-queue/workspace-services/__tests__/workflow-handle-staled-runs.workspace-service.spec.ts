@@ -73,7 +73,7 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
         inFlightJobs: [
           {
             id: 'waiting-run-123e4567-e89b-12d3-a456-426614174000',
-            data: { workflowRunId: 'waiting-run' },
+            data: {},
           },
           { id: 'delayed-job', data: { workflowRunId: 'resuming-run' } },
         ],

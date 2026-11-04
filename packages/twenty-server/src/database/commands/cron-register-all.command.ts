@@ -10,6 +10,9 @@ import { BillingReminderCronCommand } from 'src/engine/core-modules/billing/remi
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
 import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
@@ -38,6 +41,9 @@ import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/m
 import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
+
+// Schedulers of deleted cron jobs stay in Redis and keep emitting jobs nobody handles
+const OBSOLETE_CRON_JOB_NAMES = ['WorkflowRunEnqueueCronJob'];
 
 @Command({
   name: 'cron:register:all',
@@ -87,6 +93,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {
     super();
   }
@@ -270,6 +278,17 @@ export class CronRegisterAllCommand extends CommandRunner {
         this.logger.error(`Failed to register ${name} cron job:`, error);
         failureCount++;
         failures.push(name);
+      }
+    }
+
+    for (const jobName of OBSOLETE_CRON_JOB_NAMES) {
+      try {
+        await this.messageQueueService.removeCron({ jobName });
+      } catch (error) {
+        this.logger.error(
+          `Failed to remove obsolete ${jobName} cron job:`,
+          error,
+        );
       }
     }
 
