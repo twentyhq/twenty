@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { type NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -27,7 +26,10 @@ import { type ApplicationContentColumn } from '@/settings/applications/types/App
 import { type ApplicationContentColumnSource } from '@/settings/applications/types/ApplicationContentColumnSource';
 import { type ApplicationContentFilterKey } from '@/settings/applications/types/ApplicationContentFilterKey';
 import { type ApplicationContentItem } from '@/settings/applications/types/ApplicationContentItem';
+import { type ApplicationContentLocation } from '@/settings/applications/types/ApplicationContentLocation';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
+import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
+import { isNavigationMenuItemType } from '@/settings/applications/utils/isNavigationMenuItemType';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -69,14 +71,14 @@ const StyledNameLink = styled(UndecoratedLink)`
 type SettingsApplicationContentItemsTableProps = {
   contentType: ApplicationContentType;
   content: ApplicationContent;
-  getContentTypePath: (contentType: ApplicationContentType) => string;
+  location: ApplicationContentLocation;
   installedApplicationId?: string;
 };
 
 export const SettingsApplicationContentItemsTable = ({
   contentType,
   content,
-  getContentTypePath,
+  location,
   installedApplicationId,
 }: SettingsApplicationContentItemsTableProps) => {
   const { t } = useLingui();
@@ -137,7 +139,7 @@ export const SettingsApplicationContentItemsTable = ({
       activeFilters.every(({ getItemKeys, selectedOption }) =>
         getItemKeys(item).includes(selectedOption?.universalIdentifier),
       ) &&
-      normalizeSearchText(getItemLabel(contentType, item)).includes(
+      normalizeSearchText(getItemLabel({ contentType, item })).includes(
         normalizedSearchTerm,
       ),
   );
@@ -151,9 +153,13 @@ export const SettingsApplicationContentItemsTable = ({
       return resolveObject(item.objectUniversalIdentifier)?.color;
     }
 
-    if (contentType === 'navigationMenuItems' && isDefined(item.tag)) {
+    if (
+      contentType === 'navigationMenuItems' &&
+      isDefined(item.tag) &&
+      isNavigationMenuItemType(item.tag)
+    ) {
       return getNavigationMenuItemColor(
-        { type: item.tag as NavigationMenuItemType, color: item.color },
+        { type: item.tag, color: item.color },
         resolveObject(item.objectUniversalIdentifier)?.colorSource,
       );
     }
@@ -162,7 +168,7 @@ export const SettingsApplicationContentItemsTable = ({
   };
 
   const renderItemIcon = (item: ApplicationContentItem) => {
-    const itemIcon = getItemIcon(contentType, item);
+    const itemIcon = getItemIcon({ contentType, item });
 
     if (!isNonEmptyString(itemIcon)) {
       return <SettingsApplicationContentTypeIcon contentType={contentType} />;
@@ -184,16 +190,16 @@ export const SettingsApplicationContentItemsTable = ({
 
   // Rows hold count links, so the row navigates on click instead of being a link
   const getRowClickHandler = (item: ApplicationContentItem) => {
-    const settingsPath = getItemSettingsPath(contentType, item);
+    const settingsPath = getItemSettingsPath({ contentType, item });
 
     return isDefined(settingsPath) ? () => navigate(settingsPath) : undefined;
   };
 
   const renderItemName = (item: ApplicationContentItem) => {
     const name = (
-      <OverflowingTextWithTooltip text={getItemLabel(contentType, item)} />
+      <OverflowingTextWithTooltip text={getItemLabel({ contentType, item })} />
     );
-    const settingsPath = getItemSettingsPath(contentType, item);
+    const settingsPath = getItemSettingsPath({ contentType, item });
 
     return isDefined(settingsPath) ? (
       <StyledNameLink
@@ -248,7 +254,9 @@ export const SettingsApplicationContentItemsTable = ({
         ) : null;
       }
       case 'duration':
-        return isDefined(item.count) ? formatDuration(item.count) : null;
+        return isDefined(item.timeoutSeconds)
+          ? formatDuration(item.timeoutSeconds)
+          : null;
       case 'position':
         return item.position;
       case 'count': {
@@ -267,7 +275,7 @@ export const SettingsApplicationContentItemsTable = ({
         return (
           <StyledCountLink
             onClick={(event) => event.stopPropagation()}
-            to={`${getContentTypePath(link.contentType)}?${linkSearchParams.toString()}`}
+            to={`${getApplicationContentPath({ location, contentType: link.contentType })}?${linkSearchParams.toString()}`}
           >
             {item.count}
           </StyledCountLink>

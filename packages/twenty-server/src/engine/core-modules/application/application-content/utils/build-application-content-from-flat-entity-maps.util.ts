@@ -1,3 +1,4 @@
+import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -19,6 +20,7 @@ export type ApplicationContentFlatEntityMaps = Pick<
   | 'flatCommandMenuItemMaps'
   | 'flatFrontComponentMaps'
   | 'flatWorkflowMaps'
+  | 'flatWorkflowVersionMaps'
   | 'flatLogicFunctionMaps'
   | 'flatAgentMaps'
   | 'flatSkillMaps'
@@ -42,6 +44,7 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
   'flatCommandMenuItemMaps',
   'flatFrontComponentMaps',
   'flatWorkflowMaps',
+  'flatWorkflowVersionMaps',
   'flatLogicFunctionMaps',
   'flatAgentMaps',
   'flatSkillMaps',
@@ -51,6 +54,10 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
   'flatRolePermissionFlagMaps',
   'flatConnectionProviderMaps',
 ] as const satisfies (keyof ApplicationContentFlatEntityMaps)[];
+
+// Workspace caches load soft-deleted rows too
+const isSoftDeletedFlatEntity = (flatEntity: object) =>
+  'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
 export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId,
@@ -68,7 +75,8 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         (universalIdentifier) =>
           maps.byUniversalIdentifier[universalIdentifier],
       )
-      .filter(isDefined);
+      .filter(isDefined)
+      .filter((flatEntity) => !isSoftDeletedFlatEntity(flatEntity));
 
   const objects = findOwned(flatEntityMaps.flatObjectMetadataMaps).filter(
     (object) => !object.isSystem,
@@ -91,38 +99,46 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const pageLayoutTabs = findOwned(flatEntityMaps.flatPageLayoutTabMaps).filter(
     (tab) => !tab.isSystemSideEffect,
   );
+  // Personal navigation items belong to the workspace app but only to one member
   const navigationMenuItems = findOwned(
     flatEntityMaps.flatNavigationMenuItemMaps,
+  ).filter(
+    (navigationMenuItem) => !isDefined(navigationMenuItem.userWorkspaceId),
   );
-  const commandMenuItems = findOwned(flatEntityMaps.flatCommandMenuItemMaps);
+  const commandMenuItems = findOwned(
+    flatEntityMaps.flatCommandMenuItemMaps,
+  ).filter((commandMenuItem) => !commandMenuItem.isSystemSideEffect);
+  const workflows = findOwned(flatEntityMaps.flatWorkflowMaps).filter(
+    (workflow) => workflow.visibility === WorkflowVisibility.WORKSPACE,
+  );
   const frontComponents = findOwned(flatEntityMaps.flatFrontComponentMaps);
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
   const permissionFlags = findOwned(flatEntityMaps.flatPermissionFlagMaps);
 
   const pageLayoutWidgets = findOwned(flatEntityMaps.flatPageLayoutWidgetMaps);
 
-  const fieldCountByObject = countByKey(
-    fields,
-    (field) => field.objectMetadataUniversalIdentifier,
-  );
-  const viewCountByField = countByKey(
-    viewFields,
-    (viewField) => viewField.fieldMetadataUniversalIdentifier,
-  );
-  const viewFieldCountByView = countByKey(
-    viewFields,
-    (viewField) => viewField.viewUniversalIdentifier,
-  );
-  const tabCountByPageLayout = countByKey(
-    pageLayoutTabs,
-    (tab) => tab.pageLayoutUniversalIdentifier,
-  );
-  const widgetCountByTab = countByKey(
-    pageLayoutWidgets,
-    (widget) => widget.pageLayoutTabUniversalIdentifier,
-  );
-  const placementCountByFrontComponent = countByKey(
-    [
+  const fieldCountByObject = countByKey({
+    items: fields,
+    getKey: (field) => field.objectMetadataUniversalIdentifier,
+  });
+  const viewCountByField = countByKey({
+    items: viewFields,
+    getKey: (viewField) => viewField.fieldMetadataUniversalIdentifier,
+  });
+  const viewFieldCountByView = countByKey({
+    items: viewFields,
+    getKey: (viewField) => viewField.viewUniversalIdentifier,
+  });
+  const tabCountByPageLayout = countByKey({
+    items: pageLayoutTabs,
+    getKey: (tab) => tab.pageLayoutUniversalIdentifier,
+  });
+  const widgetCountByTab = countByKey({
+    items: pageLayoutWidgets,
+    getKey: (widget) => widget.pageLayoutTabUniversalIdentifier,
+  });
+  const placementCountByFrontComponent = countByKey({
+    items: [
       ...commandMenuItems.map(
         (commandMenuItem) => commandMenuItem.frontComponentUniversalIdentifier,
       ),
@@ -132,13 +148,30 @@ export const buildApplicationContentFromFlatEntityMaps = ({
           : undefined,
       ),
     ],
-    (frontComponentUniversalIdentifier) => frontComponentUniversalIdentifier,
-  );
-  const roleCountByPermissionFlag = countByKey(
-    findOwned(flatEntityMaps.flatRolePermissionFlagMaps),
-    (rolePermissionFlag) =>
+    getKey: (frontComponentUniversalIdentifier) =>
+      frontComponentUniversalIdentifier,
+  });
+  const roleCountByPermissionFlag = countByKey({
+    items: findOwned(flatEntityMaps.flatRolePermissionFlagMaps),
+    getKey: (rolePermissionFlag) =>
       rolePermissionFlag.permissionFlagUniversalIdentifier,
-  );
+  });
+
+  const findPublishedWorkflowVersionStatus = (
+    workflowVersionId: string | null,
+  ) => {
+    const workflowVersionUniversalIdentifier = isDefined(workflowVersionId)
+      ? flatEntityMaps.flatWorkflowVersionMaps.universalIdentifierById[
+          workflowVersionId
+        ]
+      : undefined;
+
+    return isDefined(workflowVersionUniversalIdentifier)
+      ? (flatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
+          workflowVersionUniversalIdentifier
+        ]?.status ?? 'DRAFT')
+      : 'DRAFT';
+  };
 
   const findFieldLabel = (fieldUniversalIdentifier: string | null) =>
     isDefined(fieldUniversalIdentifier)
@@ -283,13 +316,13 @@ export const buildApplicationContentFromFlatEntityMaps = ({
           frontComponent.universalIdentifier,
         ) ?? 0,
     })),
-    workflows: findOwned(flatEntityMaps.flatWorkflowMaps).map((workflow) => ({
+    workflows: workflows.map((workflow) => ({
       id: workflow.id,
       universalIdentifier: workflow.universalIdentifier,
       label: workflow.name ?? workflow.universalIdentifier,
-      tag: isDefined(workflow.lastPublishedCoreWorkflowVersionId)
-        ? 'ACTIVE'
-        : 'DRAFT',
+      tag: findPublishedWorkflowVersionStatus(
+        workflow.lastPublishedCoreWorkflowVersionId,
+      ),
     })),
     logicFunctions: findOwned(flatEntityMaps.flatLogicFunctionMaps).map(
       (logicFunction) => ({
@@ -298,7 +331,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         label: logicFunction.name,
         description: logicFunction.description,
         tag: getLogicFunctionTriggerTag(logicFunction),
-        count: logicFunction.timeoutSeconds,
+        timeoutSeconds: logicFunction.timeoutSeconds,
       }),
     ),
     agents: findOwned(flatEntityMaps.flatAgentMaps).map((agent) => ({

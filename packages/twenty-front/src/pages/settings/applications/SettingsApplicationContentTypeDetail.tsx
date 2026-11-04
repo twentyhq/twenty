@@ -20,7 +20,7 @@ export const SettingsApplicationContentTypeDetail = () => {
     content,
     applicationPath,
     contentPath,
-    getContentTypePath,
+    location,
     installedApplicationId,
   } = useApplicationContentRoute();
 
@@ -56,7 +56,7 @@ export const SettingsApplicationContentTypeDetail = () => {
           <SettingsApplicationContentItemsTable
             contentType={contentType}
             content={content}
-            getContentTypePath={getContentTypePath}
+            location={location}
             installedApplicationId={installedApplicationId}
           />
         ) : (

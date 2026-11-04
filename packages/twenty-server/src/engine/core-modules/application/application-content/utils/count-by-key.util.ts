@@ -1,9 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const countByKey = <TItem>(
-  items: TItem[],
-  getKey: (item: TItem) => string | null | undefined,
-): Map<string, number> => {
+export const countByKey = <TItem>({
+  items,
+  getKey,
+}: {
+  items: TItem[];
+  getKey: (item: TItem) => string | null | undefined;
+}): Map<string, number> => {
   const counts = new Map<string, number>();
 
   for (const item of items) {

@@ -1297,6 +1297,9 @@ export default {
             "tag": [
                 1
             ],
+            "timeoutSeconds": [
+                10
+            ],
             "universalIdentifier": [
                 1
             ],

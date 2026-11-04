@@ -6,16 +6,16 @@ import { FindOneApplicationContentDocument } from '~/generated-metadata/graphql'
 export const useInstalledApplicationContent = ({
   applicationId,
   universalIdentifier,
-  skip = false,
+  shouldSkip = false,
 }: {
   applicationId?: string;
   universalIdentifier?: string;
-  skip?: boolean;
+  shouldSkip?: boolean;
 }) => {
   const { data, loading } = useQuery(FindOneApplicationContentDocument, {
     variables: { id: applicationId, universalIdentifier },
     skip:
-      skip ||
+      shouldSkip ||
       (!isNonEmptyString(applicationId) &&
         !isNonEmptyString(universalIdentifier)),
   });

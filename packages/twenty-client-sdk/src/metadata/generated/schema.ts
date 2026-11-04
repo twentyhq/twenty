@@ -477,6 +477,7 @@ export interface ApplicationContentItem {
     parentUniversalIdentifier?: Scalars['String']
     position?: Scalars['Float']
     tag?: Scalars['String']
+    timeoutSeconds?: Scalars['Int']
     universalIdentifier: Scalars['String']
     __typename: 'ApplicationContentItem'
 }
@@ -4873,6 +4874,7 @@ export interface ApplicationContentItemGenqlSelection{
     parentUniversalIdentifier?: boolean | number
     position?: boolean | number
     tag?: boolean | number
+    timeoutSeconds?: boolean | number
     universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

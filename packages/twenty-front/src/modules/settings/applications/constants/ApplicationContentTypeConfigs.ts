@@ -183,6 +183,8 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     tags: {
       ACTIVE: { label: msg`Active`, color: 'green' },
       DRAFT: { label: msg`Draft`, color: 'gray' },
+      DEACTIVATED: { label: msg`Deactivated`, color: 'orange' },
+      ARCHIVED: { label: msg`Archived`, color: 'gray' },
     },
   },
   logicFunctions: {

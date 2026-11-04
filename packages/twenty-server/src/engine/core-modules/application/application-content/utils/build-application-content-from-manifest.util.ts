@@ -3,13 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentItemDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content-item.dto';
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
-import { DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/core-modules/application/application-content/constants/default-logic-function-timeout-seconds.constant';
+import { DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
 
 export const buildApplicationContentFromManifest = (
-  manifest: Manifest,
+  manifest: Partial<Omit<Manifest, 'application'>>,
 ): ApplicationContentDTO => {
   const objects = manifest.objects ?? [];
 
@@ -60,28 +60,28 @@ export const buildApplicationContentFromManifest = (
   const navigationMenuItems = manifest.navigationMenuItems ?? [];
   const commandMenuItems = manifest.commandMenuItems ?? [];
 
-  const fieldCountByObject = countByKey(
-    fields,
-    (field) => field.objectUniversalIdentifier,
-  );
-  const viewFieldCountByView = countByKey(
-    viewFields,
-    (viewField) => viewField.viewUniversalIdentifier,
-  );
-  const viewCountByField = countByKey(
-    viewFields,
-    (viewField) => viewField.fieldMetadataUniversalIdentifier,
-  );
-  const tabCountByPageLayout = countByKey(
-    pageLayoutTabs,
-    (tab) => tab.pageLayoutUniversalIdentifier,
-  );
-  const widgetCountByTab = countByKey(
-    pageLayoutWidgets,
-    (widget) => widget.pageLayoutTabUniversalIdentifier,
-  );
-  const placementCountByFrontComponent = countByKey(
-    [
+  const fieldCountByObject = countByKey({
+    items: fields,
+    getKey: (field) => field.objectUniversalIdentifier,
+  });
+  const viewFieldCountByView = countByKey({
+    items: viewFields,
+    getKey: (viewField) => viewField.viewUniversalIdentifier,
+  });
+  const viewCountByField = countByKey({
+    items: viewFields,
+    getKey: (viewField) => viewField.fieldMetadataUniversalIdentifier,
+  });
+  const tabCountByPageLayout = countByKey({
+    items: pageLayoutTabs,
+    getKey: (tab) => tab.pageLayoutUniversalIdentifier,
+  });
+  const widgetCountByTab = countByKey({
+    items: pageLayoutWidgets,
+    getKey: (widget) => widget.pageLayoutTabUniversalIdentifier,
+  });
+  const placementCountByFrontComponent = countByKey({
+    items: [
       ...commandMenuItems.map(
         (commandMenuItem) => commandMenuItem.frontComponentUniversalIdentifier,
       ),
@@ -91,8 +91,9 @@ export const buildApplicationContentFromManifest = (
           : undefined,
       ),
     ],
-    (frontComponentUniversalIdentifier) => frontComponentUniversalIdentifier,
-  );
+    getKey: (frontComponentUniversalIdentifier) =>
+      frontComponentUniversalIdentifier,
+  });
 
   const viewNameByUniversalIdentifier = new Map(
     views.map((view) => [view.universalIdentifier, view.name]),
@@ -123,10 +124,12 @@ export const buildApplicationContentFromManifest = (
   );
 
   const roles = manifest.roles ?? [];
-  const roleCountByPermissionFlag = countByKey(
-    roles.flatMap((role) => role.permissionFlagUniversalIdentifiers ?? []),
-    (permissionFlag) => permissionFlag,
-  );
+  const roleCountByPermissionFlag = countByKey({
+    items: roles.flatMap(
+      (role) => role.permissionFlagUniversalIdentifiers ?? [],
+    ),
+    getKey: (permissionFlag) => permissionFlag,
+  });
 
   return {
     objects: objects.map((object) => ({
@@ -157,7 +160,7 @@ export const buildApplicationContentFromManifest = (
         )
         .join(', '),
       objectUniversalIdentifier: index.objectUniversalIdentifier,
-      tag: index.isUnique === true ? 'UNIQUE' : null,
+      tag: index.isUnique ? 'UNIQUE' : null,
       count: index.fields.length,
     })),
     views: views.map((view) => ({
@@ -264,7 +267,7 @@ export const buildApplicationContentFromManifest = (
       label: logicFunction.name ?? logicFunction.handlerName,
       description: logicFunction.description,
       tag: getLogicFunctionTriggerTag(logicFunction),
-      count:
+      timeoutSeconds:
         logicFunction.timeoutSeconds ?? DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS,
     })),
     agents: (manifest.agents ?? []).map((agent) => ({

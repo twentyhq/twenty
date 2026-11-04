@@ -7,11 +7,7 @@ import { SettingsApplicationIframeMediaPermissionsSection } from '@/settings/app
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconArrowUp, IconInfoCircle, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -164,17 +160,9 @@ export const SettingsApplicationDetailGeneralTab = ({
       </Section.Root>
       {isDefined(content) && (
         <SettingsApplicationContentSummarySection
+          applicationId={application.id}
           applicationName={displayName}
           content={content}
-          contentPath={getSettingsPath(SettingsPath.ApplicationContent, {
-            applicationId: application.id,
-          })}
-          getContentTypePath={(contentType) =>
-            getSettingsPath(SettingsPath.ApplicationContentTypeDetail, {
-              applicationId: application.id,
-              contentType,
-            })
-          }
         />
       )}
       {isUpgradable && (

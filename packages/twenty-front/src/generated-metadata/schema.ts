@@ -617,6 +617,7 @@ export type ApplicationContentItem = {
   parentUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   position?: Maybe<Scalars['Float']['output']>;
   tag?: Maybe<Scalars['String']['output']>;
+  timeoutSeconds?: Maybe<Scalars['Int']['output']>;
   universalIdentifier: Scalars['String']['output'];
 };
 

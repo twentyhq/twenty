@@ -40,4 +40,7 @@ export class ApplicationContentItemDTO {
 
   @Field(() => Float, { nullable: true })
   position?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  timeoutSeconds?: number | null;
 }

@@ -17,7 +17,7 @@ export const SettingsApplicationContent = () => {
     installedApplicationId,
     content,
     applicationPath,
-    getContentTypePath,
+    location,
   } = useApplicationContentRoute();
 
   const displayName = name ?? t`Application`;
@@ -51,7 +51,7 @@ export const SettingsApplicationContent = () => {
         {isDefined(content) ? (
           <SettingsApplicationContentOverview
             content={content}
-            getContentTypePath={getContentTypePath}
+            location={location}
           />
         ) : (
           <SettingsSectionSkeletonLoader />

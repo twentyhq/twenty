@@ -26,7 +26,7 @@ export const useMarketplaceApplicationContent = (
 
   const installed = useInstalledApplicationContent({
     universalIdentifier,
-    skip: !isInstalled,
+    shouldSkip: !isInstalled,
   });
 
   const marketplaceApplication = data?.findMarketplaceAppDetail;

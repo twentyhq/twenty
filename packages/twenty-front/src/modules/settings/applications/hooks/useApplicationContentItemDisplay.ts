@@ -34,18 +34,24 @@ export const useApplicationContentItemDisplay = (
     });
   };
 
-  const getItemLabel = (
-    contentType: ApplicationContentType,
-    item: ApplicationContentDisplayItem,
-  ) =>
+  const getItemLabel = ({
+    contentType,
+    item,
+  }: {
+    contentType: ApplicationContentType;
+    item: ApplicationContentDisplayItem;
+  }) =>
     contentType === 'commandMenuItems'
       ? interpolateMessagePlaceholders(item.label, getPlaceholderValues(item))
       : item.label;
 
-  const getItemIcon = (
-    contentType: ApplicationContentType,
-    item: ApplicationContentDisplayItem,
-  ) =>
+  const getItemIcon = ({
+    contentType,
+    item,
+  }: {
+    contentType: ApplicationContentType;
+    item: ApplicationContentDisplayItem;
+  }) =>
     contentType === 'commandMenuItems' && isDefined(item.icon)
       ? interpolateMessagePlaceholders(item.icon, getPlaceholderValues(item))
       : item.icon;

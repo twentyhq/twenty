@@ -5,7 +5,8 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { useMarketplaceApplicationContent } from '@/settings/applications/hooks/useMarketplaceApplicationContent';
-import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
+import { type ApplicationContentLocation } from '@/settings/applications/types/ApplicationContentLocation';
+import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 
 export const useApplicationContentRoute = () => {
   const {
@@ -22,54 +23,35 @@ export const useApplicationContentRoute = () => {
 
   const installed = useInstalledApplicationContent({
     applicationId,
-    skip: isMarketplaceRoute,
+    shouldSkip: isMarketplaceRoute,
   });
   const marketplace = useMarketplaceApplicationContent(
     isMarketplaceRoute ? availableApplicationId : undefined,
   );
 
-  if (isMarketplaceRoute) {
-    return {
-      contentType,
-      name: marketplace.name,
-      logoUrl: marketplace.logoUrl,
-      installedApplicationId: marketplace.installedApplicationId,
-      content: marketplace.content,
-      isLoading: marketplace.isLoading,
-      applicationPath: getSettingsPath(
-        SettingsPath.AvailableApplicationDetail,
-        {
-          availableApplicationId,
-        },
-      ),
-      contentPath: getSettingsPath(SettingsPath.AvailableApplicationContent, {
-        availableApplicationId,
-      }),
-      getContentTypePath: (type: ApplicationContentType) =>
-        getSettingsPath(SettingsPath.AvailableApplicationContentTypeDetail, {
-          availableApplicationId,
-          contentType: type,
-        }),
-    };
-  }
+  const location: ApplicationContentLocation = isMarketplaceRoute
+    ? { kind: 'marketplace', availableApplicationId }
+    : { kind: 'installed', applicationId };
+
+  const source = isMarketplaceRoute
+    ? marketplace
+    : {
+        name: installed.application?.name,
+        logoUrl: installed.application?.logoUrl,
+        installedApplicationId: installed.application?.id,
+        content: installed.content,
+        isLoading: installed.isLoading,
+      };
 
   return {
+    ...source,
     contentType,
-    name: installed.application?.name,
-    logoUrl: installed.application?.logoUrl,
-    installedApplicationId: installed.application?.id,
-    content: installed.content,
-    isLoading: installed.isLoading,
-    applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
-      applicationId,
-    }),
-    contentPath: getSettingsPath(SettingsPath.ApplicationContent, {
-      applicationId,
-    }),
-    getContentTypePath: (type: ApplicationContentType) =>
-      getSettingsPath(SettingsPath.ApplicationContentTypeDetail, {
-        applicationId,
-        contentType: type,
-      }),
+    location,
+    applicationPath: isMarketplaceRoute
+      ? getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+          availableApplicationId,
+        })
+      : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
+    contentPath: getApplicationContentPath({ location }),
   };
 };

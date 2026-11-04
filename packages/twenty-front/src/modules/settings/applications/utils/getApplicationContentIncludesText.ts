@@ -6,13 +6,20 @@ export const getApplicationContentIncludesText = ({
   items,
   getItemLabel,
   getObjectLabel,
+  unknownObjectLabel,
   formatFieldCountOnObject,
 }: {
   contentType: ApplicationContentType;
   items: ApplicationContentItem[];
   getItemLabel: (item: ApplicationContentItem) => string;
-  getObjectLabel: (objectUniversalIdentifier: string) => string | undefined;
-  formatFieldCountOnObject: (count: number, objectLabel: string) => string;
+  getObjectLabel: (
+    objectUniversalIdentifier: string | null | undefined,
+  ) => string | undefined;
+  unknownObjectLabel: string;
+  formatFieldCountOnObject: (fieldCountOnObject: {
+    count: number;
+    objectLabel: string;
+  }) => string;
 }) => {
   if (contentType !== 'fields') {
     return items.map(getItemLabel).join(', ');
@@ -22,7 +29,7 @@ export const getApplicationContentIncludesText = ({
 
   for (const item of items) {
     const objectLabel =
-      getObjectLabel(item.objectUniversalIdentifier ?? '') ?? '';
+      getObjectLabel(item.objectUniversalIdentifier) ?? unknownObjectLabel;
 
     fieldCountByObjectLabel.set(
       objectLabel,
@@ -31,6 +38,8 @@ export const getApplicationContentIncludesText = ({
   }
 
   return [...fieldCountByObjectLabel.entries()]
-    .map(([objectLabel, count]) => formatFieldCountOnObject(count, objectLabel))
+    .map(([objectLabel, count]) =>
+      formatFieldCountOnObject({ count, objectLabel }),
+    )
     .join(', ');
 };

@@ -15,6 +15,7 @@ export const APPLICATION_CONTENT_FRAGMENT = gql`
     tag
     count
     position
+    timeoutSeconds
   }
 
   fragment ApplicationContentFields on ApplicationContent {

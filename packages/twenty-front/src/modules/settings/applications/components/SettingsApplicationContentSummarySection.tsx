@@ -12,7 +12,8 @@ import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/consta
 import { useApplicationContentItemDisplay } from '@/settings/applications/hooks/useApplicationContentItemDisplay';
 import { useApplicationContentObjectResolver } from '@/settings/applications/hooks/useApplicationContentObjectResolver';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
-import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
+import { type ApplicationContentLocation } from '@/settings/applications/types/ApplicationContentLocation';
+import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 import { getApplicationContentIncludesText } from '@/settings/applications/utils/getApplicationContentIncludesText';
 import { getNonEmptyApplicationContentTypes } from '@/settings/applications/utils/getNonEmptyApplicationContentTypes';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -33,18 +34,20 @@ const StyledFooter = styled.div`
 `;
 
 type SettingsApplicationContentSummarySectionProps = {
+  applicationId: string;
   applicationName: string;
   content: ApplicationContent;
-  contentPath: string;
-  getContentTypePath: (contentType: ApplicationContentType) => string;
 };
 
 export const SettingsApplicationContentSummarySection = ({
+  applicationId,
   applicationName,
   content,
-  contentPath,
-  getContentTypePath,
 }: SettingsApplicationContentSummarySectionProps) => {
+  const location: ApplicationContentLocation = {
+    kind: 'installed',
+    applicationId,
+  };
   const { t } = useLingui();
   const resolveObject = useApplicationContentObjectResolver(content);
   const { getItemLabel } = useApplicationContentItemDisplay(content);
@@ -74,7 +77,7 @@ export const SettingsApplicationContentSummarySection = ({
             <TableRow
               key={contentType}
               gridTemplateColumns={SUMMARY_TABLE_GRID_TEMPLATE_COLUMNS}
-              to={getContentTypePath(contentType)}
+              to={getApplicationContentPath({ location, contentType })}
             >
               <StyledNameTableCell minWidth="0" overflow="hidden">
                 <SettingsApplicationContentTypeIcon contentType={contentType} />
@@ -91,10 +94,11 @@ export const SettingsApplicationContentSummarySection = ({
                   text={getApplicationContentIncludesText({
                     contentType,
                     items: content[contentType],
-                    getItemLabel: (item) => getItemLabel(contentType, item),
+                    getItemLabel: (item) => getItemLabel({ contentType, item }),
                     getObjectLabel: (objectUniversalIdentifier) =>
                       resolveObject(objectUniversalIdentifier)?.label,
-                    formatFieldCountOnObject: (count, objectLabel) =>
+                    unknownObjectLabel: t`Unknown object`,
+                    formatFieldCountOnObject: ({ count, objectLabel }) =>
                       t`${count} on ${objectLabel}`,
                   })}
                 />
@@ -120,7 +124,7 @@ export const SettingsApplicationContentSummarySection = ({
           size="sm"
           nativeButton={false}
           role="link"
-          render={<Link to={contentPath} />}
+          render={<Link to={getApplicationContentPath({ location })} />}
         >
           {t`See more`}
         </Button>

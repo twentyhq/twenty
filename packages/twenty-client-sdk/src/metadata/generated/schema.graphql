@@ -564,6 +564,7 @@ type ApplicationContentItem {
   parentUniversalIdentifier: String
   position: Float
   tag: String
+  timeoutSeconds: Int
   universalIdentifier: String!
 }
 

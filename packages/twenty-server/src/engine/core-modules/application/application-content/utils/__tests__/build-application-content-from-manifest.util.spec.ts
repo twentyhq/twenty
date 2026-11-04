@@ -1,73 +1,76 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type FieldManifest,
+  type LogicFunctionManifest,
+  type ObjectManifest,
+  type PageLayoutManifest,
+  type ViewManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType, PageLayoutType } from 'twenty-shared/types';
 
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 
-const buildManifest = (overrides: Partial<Manifest>): Manifest =>
-  ({
-    application: {},
-    objects: [],
-    fields: [],
-    logicFunctions: [],
-    frontComponents: [],
-    permissionFlags: [],
-    roles: [],
-    skills: [],
-    agents: [],
-    publicAssets: [],
-    views: [],
-    viewFields: [],
-    navigationMenuItems: [],
-    pageLayouts: [],
-    pageLayoutTabs: [],
-    pageLayoutWidgets: [],
-    commandMenuItems: [],
-    timelineActivityTypes: [],
-    settingsMenuItems: [],
-    ...overrides,
-  }) as Manifest;
+const INVOICE_OBJECT: ObjectManifest = {
+  universalIdentifier: 'invoice',
+  nameSingular: 'invoice',
+  namePlural: 'invoices',
+  labelSingular: 'Invoice',
+  labelPlural: 'Invoices',
+  labelIdentifierFieldMetadataUniversalIdentifier: 'amount',
+  fields: [
+    {
+      universalIdentifier: 'amount',
+      name: 'amount',
+      label: 'Amount',
+      type: FieldMetadataType.NUMBER,
+    },
+  ],
+};
+
+const TIER_FIELD: FieldManifest = {
+  universalIdentifier: 'tier',
+  name: 'tier',
+  label: 'Tier',
+  type: FieldMetadataType.TEXT,
+  objectUniversalIdentifier: 'company',
+};
+
+const ALL_INVOICES_VIEW: ViewManifest = {
+  universalIdentifier: 'all-invoices',
+  name: 'All invoices',
+  objectUniversalIdentifier: 'invoice',
+  fields: [
+    {
+      universalIdentifier: 'view-amount',
+      fieldMetadataUniversalIdentifier: 'amount',
+      position: 0.5,
+    },
+  ],
+};
+
+const INVOICE_PAGE_LAYOUT: PageLayoutManifest = {
+  universalIdentifier: 'invoice-page',
+  name: 'Invoice page',
+  type: PageLayoutType.RECORD_PAGE,
+  tabs: [{ universalIdentifier: 'overview', title: 'Overview', position: 0 }],
+};
+
+const NIGHTLY_LOGIC_FUNCTION: LogicFunctionManifest = {
+  universalIdentifier: 'nightly',
+  name: 'Nightly cleanup',
+  cronTriggerSettings: { pattern: '0 0 * * *' },
+  sourceHandlerPath: 'src/nightly.ts',
+  builtHandlerPath: 'nightly.js',
+  builtHandlerChecksum: 'checksum',
+  handlerName: 'main',
+};
 
 describe('buildApplicationContentFromManifest', () => {
   it('should merge nested and standalone fields and count them per object', () => {
-    const content = buildApplicationContentFromManifest(
-      buildManifest({
-        objects: [
-          {
-            universalIdentifier: 'invoice',
-            labelPlural: 'Invoices',
-            fields: [
-              {
-                universalIdentifier: 'amount',
-                label: 'Amount',
-                type: FieldMetadataType.NUMBER,
-              },
-            ],
-          },
-        ] as unknown as Manifest['objects'],
-        fields: [
-          {
-            universalIdentifier: 'tier',
-            label: 'Tier',
-            type: FieldMetadataType.TEXT,
-            objectUniversalIdentifier: 'company',
-          },
-        ] as unknown as Manifest['fields'],
-        views: [
-          {
-            universalIdentifier: 'all-invoices',
-            name: 'All invoices',
-            objectUniversalIdentifier: 'invoice',
-            fields: [
-              {
-                universalIdentifier: 'view-amount',
-                position: 0,
-                fieldMetadataUniversalIdentifier: 'amount',
-              },
-            ],
-          },
-        ] as unknown as Manifest['views'],
-      }),
-    );
+    const content = buildApplicationContentFromManifest({
+      objects: [INVOICE_OBJECT],
+      fields: [TIER_FIELD],
+      views: [ALL_INVOICES_VIEW],
+    });
 
     expect(content.objects).toEqual([
       expect.objectContaining({ label: 'Invoices', count: 1 }),
@@ -88,51 +91,35 @@ describe('buildApplicationContentFromManifest', () => {
       expect.objectContaining({ label: 'All invoices', count: 1 }),
     ]);
     expect(content.viewFields).toEqual([
-      expect.objectContaining({ label: 'Amount', parentLabel: 'All invoices' }),
+      expect.objectContaining({
+        label: 'Amount',
+        parentLabel: 'All invoices',
+        parentUniversalIdentifier: 'all-invoices',
+        position: 0.5,
+      }),
     ]);
   });
 
   it('should tag page layouts, logic functions and public assets', () => {
-    const content = buildApplicationContentFromManifest(
-      buildManifest({
-        pageLayouts: [
-          {
-            universalIdentifier: 'invoice-page',
-            name: 'Invoice page',
-            type: PageLayoutType.RECORD_PAGE,
-            tabs: [
-              {
-                universalIdentifier: 'overview',
-                title: 'Overview',
-                position: 0,
-              },
-            ],
-          },
-        ] as unknown as Manifest['pageLayouts'],
-        logicFunctions: [
-          {
-            universalIdentifier: 'nightly',
-            name: 'Nightly cleanup',
-            cronTriggerSettings: { pattern: '0 0 * * *' },
-          },
-        ] as unknown as Manifest['logicFunctions'],
-        publicAssets: [
-          {
-            filePath: 'logo.png',
-            fileName: 'logo.png',
-            fileType: 'png',
-            checksum: null,
-          },
-          {
-            filePath: 'terms.pdf',
-            fileName: 'terms.pdf',
-            fileType: 'pdf',
-            checksum: null,
-          },
-        ],
-        translations: { 'fr-FR': { hello: 'bonjour', bye: 'au revoir' } },
-      }),
-    );
+    const content = buildApplicationContentFromManifest({
+      pageLayouts: [INVOICE_PAGE_LAYOUT],
+      logicFunctions: [NIGHTLY_LOGIC_FUNCTION],
+      publicAssets: [
+        {
+          filePath: 'logo.png',
+          fileName: 'logo.png',
+          fileType: 'png',
+          checksum: null,
+        },
+        {
+          filePath: 'terms.pdf',
+          fileName: 'terms.pdf',
+          fileType: 'pdf',
+          checksum: null,
+        },
+      ],
+      translations: { 'fr-FR': { hello: 'bonjour', bye: 'au revoir' } },
+    });
 
     expect(content.pageLayouts).toEqual([
       expect.objectContaining({ tag: PageLayoutType.RECORD_PAGE, count: 1 }),
@@ -144,7 +131,11 @@ describe('buildApplicationContentFromManifest', () => {
       }),
     ]);
     expect(content.logicFunctions).toEqual([
-      expect.objectContaining({ label: 'Nightly cleanup', tag: 'CRON' }),
+      expect.objectContaining({
+        label: 'Nightly cleanup',
+        tag: 'CRON',
+        timeoutSeconds: 300,
+      }),
     ]);
     expect(content.publicAssets.map(({ tag }) => tag)).toEqual([
       'IMAGE',

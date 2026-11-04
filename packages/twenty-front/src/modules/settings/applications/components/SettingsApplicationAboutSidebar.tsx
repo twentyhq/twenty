@@ -1,6 +1,7 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
 import { plural } from '@lingui/core/macro';
@@ -133,23 +134,7 @@ const StyledRow = styled.div`
   min-height: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledResourceLink = styled.a`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  line-height: 1.4;
-  min-height: ${themeCssVariables.spacing[6]};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const StyledContentLink = styled(Link)`
+const sidebarLinkClassName = css`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
@@ -324,12 +309,12 @@ export const SettingsApplicationAboutSidebar = ({
             </StyledRow>
           ))}
           {isDefined(contentPath) && (
-            <StyledContentLink to={contentPath}>
+            <Link className={sidebarLinkClassName} to={contentPath}>
               <StyledRowIcon>
                 <IconListDetails size={theme.icon.size.sm} />
               </StyledRowIcon>
               {t`See content`}
-            </StyledContentLink>
+            </Link>
           )}
         </StyledSection>
       )}
@@ -338,7 +323,8 @@ export const SettingsApplicationAboutSidebar = ({
         <StyledSection>
           <StyledSectionLabel>{t`Resources`}</StyledSectionLabel>
           {resourceLinks.map(({ Icon, label, href }) => (
-            <StyledResourceLink
+            <a
+              className={sidebarLinkClassName}
               key={label}
               href={href}
               target="_blank"
@@ -348,7 +334,7 @@ export const SettingsApplicationAboutSidebar = ({
                 <Icon size={theme.icon.size.sm} />
               </StyledRowIcon>
               <OverflowingTextWithTooltip text={label} />
-            </StyledResourceLink>
+            </a>
           ))}
         </StyledSection>
       )}

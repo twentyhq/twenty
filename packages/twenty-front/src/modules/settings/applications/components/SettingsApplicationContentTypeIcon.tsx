@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/constants/ApplicationContentTypeConfigs';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
 import { getApplicationContentSection } from '@/settings/applications/utils/getApplicationContentSection';
@@ -17,7 +18,7 @@ export const SettingsApplicationContentTypeIcon = ({
       size={theme.icon.size.md}
       stroke={theme.icon.stroke.sm}
       color={
-        sectionColor !== undefined
+        isDefined(sectionColor)
           ? themeCssVariables.color[sectionColor]
           : theme.font.color.tertiary
       }

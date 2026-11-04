@@ -12,7 +12,9 @@ import { APPLICATION_CONTENT_SECTIONS } from '@/settings/applications/constants/
 import { APPLICATION_CONTENT_TYPE_CONFIGS } from '@/settings/applications/constants/ApplicationContentTypeConfigs';
 import { useApplicationContentItemDisplay } from '@/settings/applications/hooks/useApplicationContentItemDisplay';
 import { type ApplicationContent } from '@/settings/applications/types/ApplicationContent';
+import { type ApplicationContentLocation } from '@/settings/applications/types/ApplicationContentLocation';
 import { type ApplicationContentType } from '@/settings/applications/types/ApplicationContentType';
+import { getApplicationContentPath } from '@/settings/applications/utils/getApplicationContentPath';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -24,12 +26,12 @@ const OVERVIEW_TABLE_GRID_TEMPLATE_COLUMNS =
 
 type SettingsApplicationContentOverviewProps = {
   content: ApplicationContent;
-  getContentTypePath: (contentType: ApplicationContentType) => string;
+  location: ApplicationContentLocation;
 };
 
 export const SettingsApplicationContentOverview = ({
   content,
-  getContentTypePath,
+  location,
 }: SettingsApplicationContentOverviewProps) => {
   const { t } = useLingui();
   const { getItemLabel } = useApplicationContentItemDisplay(content);
@@ -45,7 +47,7 @@ export const SettingsApplicationContentOverview = ({
     }
 
     return items.filter((item) =>
-      normalizeSearchText(getItemLabel(contentType, item)).includes(
+      normalizeSearchText(getItemLabel({ contentType, item })).includes(
         normalizedSearchTerm,
       ),
     ).length;
@@ -89,7 +91,7 @@ export const SettingsApplicationContentOverview = ({
               <TableRow
                 key={contentType}
                 gridTemplateColumns={OVERVIEW_TABLE_GRID_TEMPLATE_COLUMNS}
-                to={getContentTypePath(contentType)}
+                to={getApplicationContentPath({ location, contentType })}
               >
                 <StyledNameTableCell minWidth="0" overflow="hidden">
                   <SettingsApplicationContentTypeIcon
