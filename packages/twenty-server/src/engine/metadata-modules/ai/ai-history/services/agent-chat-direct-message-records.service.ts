@@ -33,11 +33,9 @@ export class AgentChatDirectMessageRecordsService {
       ['featureFlagsMap'],
     );
 
-    return (
-      featureFlagsMap[
-        FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
-      ] === true
-    );
+    return !!featureFlagsMap[
+      FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
+    ];
   }
 
   async share({
