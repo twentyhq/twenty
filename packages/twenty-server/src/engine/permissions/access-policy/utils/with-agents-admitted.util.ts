@@ -1,7 +1,6 @@
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 
-// Temporary hack: tools admit agents wherever the policy admits the application, which
-// `application: true` leaves out. Remove once AuthPrincipalGuardConfig makes withAgent explicit
+// Tools are available to agents: any policy that admits the application admits agents too
 export const withAgentsAdmitted = (
   authPrincipals: AuthPrincipalGuardConfig,
 ): AuthPrincipalGuardConfig => {
