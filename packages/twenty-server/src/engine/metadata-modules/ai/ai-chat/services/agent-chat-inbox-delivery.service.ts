@@ -7,13 +7,17 @@ import { Equal, IsNull, Or } from 'typeorm';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentChatInboxDeliveryResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-inbox-delivery-result.type';
+import { type AgentChatMentionDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-mention-delivery.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatInboxDeliveryService {
@@ -25,6 +29,7 @@ export class AgentChatInboxDeliveryService {
     private readonly sharingService: AgentChatSharingService,
     private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   async deliverMessageToInboxes({
@@ -150,6 +155,113 @@ export class AgentChatInboxDeliveryService {
     });
 
     return deliveredWorkspaceMemberIds;
+  }
+
+  // Checked as the owner, who shares the conversation and can be mentioned too
+  async prepareMentionDeliveryOrThrow({
+    workspaceId,
+    thread,
+    mentionedWorkspaceMemberIds,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    mentionedWorkspaceMemberIds: string[];
+  }): Promise<AgentChatMentionDelivery | undefined> {
+    if (!isNonEmptyArray(mentionedWorkspaceMemberIds)) {
+      return undefined;
+    }
+
+    const access = {
+      workspaceId,
+      workspaceMemberId:
+        thread.workspaceMemberId ?? throwAgentChatThreadNotFound(),
+      threadId: thread.id,
+    };
+    const participantObjectMetadata =
+      await this.inboxParticipantWriterService.getParticipantObjectMetadata(
+        workspaceId,
+      );
+
+    await this.sharingService.getThreadWithAccess({
+      ...access,
+      operationType: 'update',
+    });
+
+    const uniqueMentionedWorkspaceMemberIds = [
+      ...new Set(mentionedWorkspaceMemberIds),
+    ];
+    const addedWorkspaceMemberIds = uniqueMentionedWorkspaceMemberIds.filter(
+      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
+    );
+    const eligibleWorkspaceMemberIds =
+      await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
+        ...access,
+        memberIds: addedWorkspaceMemberIds,
+      });
+
+    if (eligibleWorkspaceMemberIds.length !== addedWorkspaceMemberIds.length) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    return {
+      ...access,
+      mentionedWorkspaceMemberIds: uniqueMentionedWorkspaceMemberIds,
+      addedWorkspaceMemberIds,
+      canManageSharing:
+        isNonEmptyArray(addedWorkspaceMemberIds) &&
+        (await this.sharingService.canManageThreadSharing({
+          workspaceId,
+          threadId: thread.id,
+          authContext: await this.sharingService.getAuthContext(access),
+        })),
+      participantObjectMetadata,
+    };
+  }
+
+  // Locks record shares, then participants, then the thread, in the order
+  // every other writer takes them
+  async deliverMentionsInTransaction({
+    scope,
+    mentionDelivery: {
+      mentionedWorkspaceMemberIds,
+      addedWorkspaceMemberIds,
+      canManageSharing,
+      participantObjectMetadata,
+      ...access
+    },
+    writeMessage,
+  }: {
+    scope: WorkspaceTransactionScope;
+    mentionDelivery: AgentChatMentionDelivery;
+    writeMessage: () => Promise<void>;
+  }): Promise<void> {
+    if (canManageSharing) {
+      await this.sharingService.shareThreadWithMembersInTransactionOrThrow({
+        ...access,
+        scope,
+        memberIds: addedWorkspaceMemberIds,
+      });
+    }
+
+    await this.participantService.lockParticipantsInTransaction({
+      scope,
+      workspaceId: access.workspaceId,
+      threadId: access.threadId,
+      workspaceMemberIds: mentionedWorkspaceMemberIds,
+    });
+
+    await writeMessage();
+
+    await this.inboxParticipantWriterService.writeParticipantInboxStateInTransaction(
+      {
+        scope,
+        workspaceId: access.workspaceId,
+        threadId: access.threadId,
+        workspaceMemberIds: mentionedWorkspaceMemberIds,
+        reason: AgentChatInboxDeliveryReason.MENTION,
+        participantObjectMetadata,
+      },
+    );
   }
 
   private async appendDeliveredWriterWorkspaceMemberIds({

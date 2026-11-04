@@ -26,6 +26,8 @@ export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conv
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
+export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';

@@ -17,11 +17,13 @@ import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-mo
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { getAgentChatThreadTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-table.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -600,6 +602,61 @@ export class AgentChatThreadService {
     }
 
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
+  }
+
+  // A conversation deleted since the send began is not written to
+  async recordThreadActivityInTransactionOrThrow({
+    scope,
+    workspaceId,
+    threadBefore,
+    text,
+    addedWriterWorkspaceMemberIds,
+  }: {
+    scope: Pick<
+      AgentHistoryTransactionScope,
+      'executeRawQuery' | 'afterCommit'
+    >;
+    workspaceId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+    text: string;
+    addedWriterWorkspaceMemberIds: string[];
+  }): Promise<void> {
+    const hasAddedWriters = isNonEmptyArray(addedWriterWorkspaceMemberIds);
+    const writerAssignment = hasAddedWriters
+      ? `,
+           "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
+             SELECT added.id FROM unnest($3::text[]) WITH ORDINALITY AS added(id, position)
+             WHERE added.id <> ALL(COALESCE("writerWorkspaceMemberIds", '{}'))
+             ORDER BY added.position
+           )`
+      : '';
+    const [activity] = (await scope.executeRawQuery(
+      `WITH thread AS (
+         UPDATE ${getAgentChatThreadTable(workspaceId)}
+         SET "updatedAt" = clock_timestamp(),
+           ${buildAgentChatThreadActivitySetClause({ textParameter: '$2' })}${writerAssignment}
+         WHERE id = $1 AND "deletedAt" IS NULL
+         RETURNING ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS}
+       )
+       SELECT ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS} FROM thread`,
+      [
+        threadBefore.id,
+        text,
+        ...(hasAddedWriters ? [addedWriterWorkspaceMemberIds] : []),
+      ],
+    )) as AgentChatThreadActivity[];
+
+    if (!isDefined(activity)) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    scope.afterCommit(() =>
+      this.emitThreadActivityUpdated({
+        workspaceId,
+        thread: threadBefore,
+        activity,
+      }),
+    );
   }
 
   private async recordAgentActivity({

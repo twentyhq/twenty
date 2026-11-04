@@ -278,6 +278,27 @@ export class AgentChatThreadParticipantService {
     );
   }
 
+  // Sorted, so two writes reaching the same members lock them in one order
+  async lockParticipantsInTransaction({
+    scope,
+    workspaceId,
+    threadId,
+    workspaceMemberIds,
+  }: Omit<AgentChatThreadAccessArgs, 'workspaceMemberId'> & {
+    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    for (const workspaceMemberId of [...new Set(workspaceMemberIds)].sort()) {
+      await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
+        buildAgentChatThreadParticipantLockKey({
+          workspaceId,
+          threadId,
+          workspaceMemberId,
+        }),
+      ]);
+    }
+  }
+
   // An assignee follows the chat and finds it in their inbox, unread unless
   // they assigned it to themselves
   // The assignment is written by writeAssignment in the same transaction, so

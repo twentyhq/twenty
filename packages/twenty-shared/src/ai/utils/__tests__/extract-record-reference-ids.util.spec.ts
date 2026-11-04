@@ -47,4 +47,37 @@ describe('extractRecordReferenceIds', () => {
       }),
     ).toEqual([TIM_ID]);
   });
+
+  it('reads labels holding colons, balanced brackets or nothing, whatever the uuid version', () => {
+    const unversionedId = '20202020-0000-0000-0000-000000000004';
+
+    expect(
+      extractRecordReferenceIds({
+        text: `[[record:workspaceMember:${JONY_ID}:Jony: Design [EMEA]]], [[record:workspaceMember:${TIM_ID}:]] and [[record:workspaceMember:${unversionedId}:Phil]]`,
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([JONY_ID, TIM_ID, unversionedId]);
+  });
+
+  it.each([
+    ['an unclosed reference', `[[record:workspaceMember:${JONY_ID}:Jony`],
+    ['a reference without a label', `[[record:workspaceMember:${JONY_ID}]]`],
+    ['an unprefixed reference', `[[workspaceMember:${JONY_ID}:Jony]]`],
+    [
+      'an uppercase id',
+      '[[record:workspaceMember:2020ABCD-0000-4000-8000-000000000001:Jony]]',
+    ],
+    [
+      'a line break in the label',
+      `[[record:workspaceMember:${JONY_ID}:Jo\nny]]`,
+    ],
+    ['an unbalanced bracket', `[[record:workspaceMember:${JONY_ID}:Jo]ny]]`],
+  ])('ignores %s', (_, text) => {
+    expect(
+      extractRecordReferenceIds({
+        text,
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([]);
+  });
 });

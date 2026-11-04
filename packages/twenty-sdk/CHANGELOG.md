@@ -103,6 +103,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- **A member mentioned in an inbox message is now notified.** `sendInboxMessage` and the Send to Inbox workflow step read the mentions `inboxMention` writes in `text`: each mentioned member gets the conversation in their inbox, unread, with a mention to resolve, without being listed in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A mentioned member who cannot have the conversation fails the call with `THREAD_NOT_FOUND`, and nothing is written. Mentions are read when the message is first written, so sending it again with the same keys notifies no one; mentions in code or with escaped brackets never notify.
+
+  ```ts
+  await sendInboxMessage({
+    workspaceMemberIds: [owner.id],
+    threadKey: `article:${article.id}`,
+    idempotencyKey: `comment:${comment.id}`,
+    title: article.title,
+    text: `${await inboxMention({ workspaceMemberId: reviewer.id })}, can you review it?`,
+  });
+  ```
+
 - **`sendInboxMessage` runs like the default API clients.** It now sends through `MetadataApiClient`, so in a logic function it acts as the person who triggered the run, who then needs the AI permission, and as your application only when nobody did; it used to always use the application's access. A GraphQL error now rejects with the server's message instead of `sendInboxMessage() failed: ...`. Its input and result are unchanged.
 - **`twenty app deploy` sends the tarball straight to file storage.** The CLI reserves an upload with `createFileUpload`, PUTs the archive to storage and registers it with `completeAppTarballUpload`, so the tarball no longer transits through the API process. Deploying to a server that predates these mutations fails instead of falling back to the multipart `uploadAppTarball` mutation.
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:

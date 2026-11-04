@@ -48,6 +48,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -271,6 +272,73 @@ export class AgentChatSharingService {
         operationType: 'update',
       }).then(() => true),
     );
+  }
+
+  // Under the lock generic sharing takes first, so a share changed since the
+  // members were checked is neither missed nor downgraded
+  async shareThreadWithMembersInTransactionOrThrow({
+    scope,
+    memberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    scope: WorkspaceTransactionScope;
+    memberIds: string[];
+  }): Promise<void> {
+    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+
+    await scope.executeRawQuery(
+      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      [
+        buildRecordShareLockKey({
+          workspaceId: args.workspaceId,
+          objectMetadataId: objectMetadata.id,
+          recordId: args.threadId,
+        }),
+      ],
+    );
+
+    const threadShares = await this.recordShareStorageService.findByRecordIds({
+      workspaceId: args.workspaceId,
+      objectMetadataId: objectMetadata.id,
+      recordIds: [args.threadId],
+      transactionScope: scope,
+    });
+    const hasMemberShare = (
+      memberId: string,
+      accessLevels: (RecordShareAccessLevel | null | undefined)[],
+    ) =>
+      threadShares.some(
+        ({ principalType, principalId, accessLevel }) =>
+          principalType === RecordSharePrincipalType.WORKSPACE_MEMBER &&
+          principalId === memberId &&
+          accessLevels.includes(accessLevel),
+      );
+
+    if (
+      !hasMemberShare(args.workspaceMemberId, [RecordShareAccessLevel.FULL])
+    ) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    for (const memberId of memberIds) {
+      if (hasMemberShare(memberId, EDIT_ACCESS_LEVELS)) {
+        continue;
+      }
+
+      await this.recordShareStorageService.setManualShare({
+        workspaceId: args.workspaceId,
+        transactionScope: scope,
+        enabled: true,
+        share: {
+          objectMetadataId: objectMetadata.id,
+          recordId: args.threadId,
+          sourceId: args.threadId,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          principalId: memberId,
+          accessLevel: RecordShareAccessLevel.READ_WRITE,
+        },
+      });
+    }
   }
 
   async findEligibleParticipantWorkspaceMemberIds({
@@ -782,7 +850,7 @@ export class AgentChatSharingService {
     );
   }
 
-  private async canManageThreadSharing({
+  async canManageThreadSharing({
     workspaceId,
     threadId,
     authContext,

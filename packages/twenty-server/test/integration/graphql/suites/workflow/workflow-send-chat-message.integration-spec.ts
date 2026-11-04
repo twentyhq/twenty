@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { findMyParticipant } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
   createCoreWorkflow,
@@ -10,6 +11,7 @@ import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/wo
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { formatRecordReference } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,6 +32,13 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const setAiChatInboxEnabled = (value: boolean) =>
   updateFeatureFlag({
     featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
     value,
     expectToFail: false,
   });
@@ -91,6 +100,53 @@ describe('Send chat message workflow step', () => {
         },
       ]);
     } finally {
+      if (threadId !== undefined) {
+        await destroyAgentChatThread({ threadId });
+      }
+    }
+  }, 120000);
+
+  it('mentions a member its text names through a variable', async () => {
+    await setAiChatInboxEnabled(true);
+    await setRecordSharingEnabled(true);
+
+    let threadId: string | undefined;
+
+    try {
+      const { status, stepStatus, stepResult, stepError } =
+        await runWorkflowActionStep({
+          name: 'Ask for a review',
+          stepType: 'SEND_CHAT_MESSAGE',
+          input: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            title: `Review requested ${uuidv4()}`,
+            text: '{{trigger.comment}}',
+          },
+          payload: {
+            comment: `${formatRecordReference({
+              objectNameSingular: 'workspaceMember',
+              recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              displayName: 'Jony',
+            })}, can you review the deck?`,
+          },
+        });
+
+      threadId = stepResult?.threadId as string | undefined;
+
+      expect({ status, stepStatus, stepError }).toEqual({
+        status: 'COMPLETED',
+        stepStatus: 'SUCCESS',
+        stepError: undefined,
+      });
+      expect(
+        await findMyParticipant(threadId!, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toMatchObject({
+        lastMentionedAt: expect.any(String),
+        mentionsResolvedAt: null,
+      });
+    } finally {
+      await setRecordSharingEnabled(false);
+
       if (threadId !== undefined) {
         await destroyAgentChatThread({ threadId });
       }

@@ -40,13 +40,13 @@ Key points:
 - `workspaceMemberIds` lists the members who receive the conversation, at least one. The first member of a new conversation owns it, and the others follow it as participants. A later send under the same key that lists new members adds them; members it leaves out keep the conversation.
 - `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation.
 - `idempotencyKey` identifies the message within the conversation. Sending again with the same keys writes nothing new, so retries and concurrent runs never duplicate a message.
-- `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references).
+- `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references). A member it mentions is notified, even when they are not in `workspaceMemberIds`.
 - `toolCall` (optional) ends the message on one of:
   - a call the member answers, which pauses the conversation: `ask_question` (one multiple-choice question), `request_form` (fields to fill in) or `propose_tool_call` (a call to approve). Its `input` takes the `toolName`, the `arguments` you would call the tool with and a one-sentence `summary`. The tool must be one your app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with the record `id`); an email (`send_email` or `draft_email`, with `recipients`, `subject` and a `body` in HTML) needs no permission of your app. The member reviews the call in the same card as a call the assistant proposes, edits it if they want, and the approved call runs with their own access;
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered by its front component with the `input` and `output` you pass. It does not pause the conversation.
 - Only one call the member answers can wait in a conversation at a time: sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain messages and app tool calls are still accepted.
 - Only the member who owns a conversation can delete it, and a deleted conversation is gone for every member: it is not recreated, and nothing is added to it. The other members can unsubscribe to take it out of their own inbox.
-- Every member must have the `AI` permission, and the call fails without writing the message when one of them cannot have the conversation. Your app's [default role](/developers/extend/apps/config/roles) must grant `SystemPermissionFlag.AI`.
+- Every member, listed or mentioned, must have the `AI` permission, and the call fails without writing the message when one of them cannot have the conversation. Your app's [default role](/developers/extend/apps/config/roles) must grant `SystemPermissionFlag.AI`.
 
 ### Who sends the message
 
@@ -61,7 +61,7 @@ To post from a front component, import the same helpers from `twenty-sdk/front-c
 
 ## Mentions and record references
 
-The inbox renders reference tokens in `text` as chips. Write them with these helpers rather than by hand:
+The inbox renders reference tokens in `text` as chips, and notifies the members a message mentions. Write the tokens with these helpers rather than by hand:
 
 ```ts src/logic-functions/flag-idle-deal.ts
 import {
@@ -71,6 +71,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+const managerMention = await inboxMention({ workspaceMemberId: manager.id });
 
 const dealReference = await inboxReferenceRecord({
   objectNameSingular: 'opportunity',
@@ -78,19 +79,63 @@ const dealReference = await inboxReferenceRecord({
 });
 
 await sendInboxMessage({
-  workspaceMemberIds: [owner.id],
+  workspaceMemberIds: [owner.id, salesOps.id],
   threadKey: `idle-deal-${opportunity.id}`,
   idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
   title: `${opportunity.name} is idle`,
-  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks. ${managerMention}, can you help?`,
 });
 ```
+
+The owner and the manager are mentioned, so each has a mention to resolve; the sales ops member only receives the conversation.
 
 - `inboxMention({ workspaceMemberId })` writes a mention of a workspace member, and `inboxReferenceRecord({ objectNameSingular, recordId })` a chip that links to any record.
 - Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
-- A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
+- A mentioned member gets the conversation in their inbox, unread, with a mention to resolve, as when a teammate mentions them. They don't need to be in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A member who is both listed and mentioned gets the mention.
+- A mentioned member must be able to have the conversation, like a listed one: otherwise the call fails with `THREAD_NOT_FOUND` and writes neither the message nor any mention.
+- Mentions are read when the message is first written. Sending it again with the same keys notifies no one, even with a different `text`; a new `idempotencyKey` mentions again.
+- Only a complete mention notifies. One in inline code or a code block, one whose brackets are escaped (`\[\[`), and a typed `@name` notify no one. A record reference never notifies, and never shares the record.
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
+
+### Relaying a comment's mentions
+
+To bring the mentions of a comment into the inbox, send its body as markdown. When a comment is saved, Twenty writes its `markdown` from the editor's content: each mention becomes a mention token, and brackets someone typed are escaped, so they notify no one. Skip a comment whose body is empty rather than assuming `markdown` is set:
+
+```ts src/logic-functions/relay-article-comment.ts
+import {
+  type DatabaseEventPayload,
+  type ObjectRecordCreateEvent,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+type ArticleComment = {
+  id: string;
+  articleId: string;
+  body: { markdown: string | null };
+};
+
+const handler = async (
+  event: DatabaseEventPayload<ObjectRecordCreateEvent<ArticleComment>>,
+) => {
+  const comment = event.properties.after;
+  const body = comment.body.markdown?.trim();
+
+  if (!body) {
+    return;
+  }
+
+  await sendInboxMessage({
+    workspaceMemberIds: [article.ownerId],
+    threadKey: `article:${comment.articleId}`,
+    idempotencyKey: `comment:${comment.id}`,
+    title: article.title,
+    text: body,
+  });
+};
+```
+
+Each article keeps one conversation, and each comment is one message in it, so a retried run never notifies twice. Add an `inboxMention` for anyone else your app wants to notify.
 
 ## Attaching records to a conversation
 
