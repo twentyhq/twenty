@@ -7,15 +7,13 @@ const CUSTOMER_EMAIL = 'tim@apple.dev';
 
 const buildService = ({
   existingPartnerCode = null,
-  isPreviousPayingCustomer = false,
+  isPreviousCustomer = false,
 }: {
   existingPartnerCode?: string | null;
-  isPreviousPayingCustomer?: boolean;
+  isPreviousCustomer?: boolean;
 } = {}) => {
   const updateCustomerPartner = jest.fn();
-  const isPreviousPayingCustomerMock = jest.fn(
-    async () => isPreviousPayingCustomer,
-  );
+  const isPreviousCustomerMock = jest.fn(async () => isPreviousCustomer);
 
   const service = new BillingPartnerCodeService(
     {
@@ -23,7 +21,7 @@ const buildService = ({
         partner: existingPartnerCode,
         email: CUSTOMER_EMAIL,
       }),
-      isPreviousPayingCustomer: isPreviousPayingCustomerMock,
+      isPreviousCustomer: isPreviousCustomerMock,
       updateCustomerPartner,
     } as never,
     {
@@ -34,7 +32,7 @@ const buildService = ({
   return {
     service,
     updateCustomerPartner,
-    isPreviousPayingCustomer: isPreviousPayingCustomerMock,
+    isPreviousCustomer: isPreviousCustomerMock,
   };
 };
 
@@ -48,18 +46,18 @@ describe('BillingPartnerCodeService', () => {
     });
   });
 
-  it('should let a code be added while none is set, without checking past payments', async () => {
-    const { service, isPreviousPayingCustomer } = buildService();
+  it('should let a code be added while none is set, without checking previous customers', async () => {
+    const { service, isPreviousCustomer } = buildService();
 
     await expect(service.getPartnerCode(WORKSPACE_ID)).resolves.toEqual({
       partnerCode: null,
       isEditable: true,
     });
-    expect(isPreviousPayingCustomer).not.toHaveBeenCalled();
+    expect(isPreviousCustomer).not.toHaveBeenCalled();
   });
 
   it('should store the normalized code on the Stripe customer', async () => {
-    const { service, updateCustomerPartner, isPreviousPayingCustomer } =
+    const { service, updateCustomerPartner, isPreviousCustomer } =
       buildService();
 
     await expect(
@@ -68,8 +66,11 @@ describe('BillingPartnerCodeService', () => {
         partnerCode: ' Acme ',
       }),
     ).resolves.toEqual({ partnerCode: 'acme', isEditable: false });
-    expect(isPreviousPayingCustomer).toHaveBeenCalledTimes(1);
-    expect(isPreviousPayingCustomer).toHaveBeenCalledWith(CUSTOMER_EMAIL);
+    expect(isPreviousCustomer).toHaveBeenCalledTimes(1);
+    expect(isPreviousCustomer).toHaveBeenCalledWith({
+      email: CUSTOMER_EMAIL,
+      currentStripeCustomerId: STRIPE_CUSTOMER_ID,
+    });
     expect(updateCustomerPartner).toHaveBeenCalledTimes(1);
     expect(updateCustomerPartner).toHaveBeenCalledWith(
       STRIPE_CUSTOMER_ID,
@@ -93,9 +94,9 @@ describe('BillingPartnerCodeService', () => {
     expect(updateCustomerPartner).not.toHaveBeenCalled();
   });
 
-  it('should refuse a code for a previous paying customer', async () => {
+  it('should refuse a code for a previous customer', async () => {
     const { service, updateCustomerPartner } = buildService({
-      isPreviousPayingCustomer: true,
+      isPreviousCustomer: true,
     });
 
     await expect(

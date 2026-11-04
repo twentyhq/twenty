@@ -67,10 +67,13 @@ export class BillingPartnerCodeService {
 
     if (
       isNonEmptyString(email) &&
-      (await this.stripeCustomerService.isPreviousPayingCustomer(email))
+      (await this.stripeCustomerService.isPreviousCustomer({
+        email,
+        currentStripeCustomerId: stripeCustomerId,
+      }))
     ) {
       throw new BillingException(
-        `Partner code refused for workspace ${workspaceId}: previous paying customer`,
+        `Partner code refused for workspace ${workspaceId}: previous customer`,
         BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE,
       );
     }

@@ -978,7 +978,6 @@ type BillingMeteredProduct implements BillingProductDTO {
 }
 
 type BillingPartnerCode {
-  """True while no partner code is set"""
   isEditable: Boolean!
   partnerCode: String
 }

@@ -1062,7 +1062,6 @@ export type BillingMeteredProduct = BillingProductDto & {
 
 export type BillingPartnerCode = {
   __typename?: 'BillingPartnerCode';
-  /** True while no partner code is set */
   isEditable: Scalars['Boolean']['output'];
   partnerCode?: Maybe<Scalars['String']['output']>;
 };

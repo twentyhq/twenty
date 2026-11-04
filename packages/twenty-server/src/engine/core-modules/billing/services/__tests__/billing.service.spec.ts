@@ -4,14 +4,12 @@ const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const USER_EMAIL = 'tim@apple.dev';
 
 const buildService = ({
-  isPreviousPayingCustomer,
+  isPreviousCustomer,
 }: {
-  isPreviousPayingCustomer: boolean;
+  isPreviousCustomer: boolean;
 }) => {
   const createStripeCustomer = jest.fn();
-  const isPreviousPayingCustomerMock = jest.fn(
-    async () => isPreviousPayingCustomer,
-  );
+  const isPreviousCustomerMock = jest.fn(async () => isPreviousCustomer);
 
   const service = new BillingService(
     {} as never,
@@ -19,7 +17,7 @@ const buildService = ({
     {} as never,
     {
       createStripeCustomer,
-      isPreviousPayingCustomer: isPreviousPayingCustomerMock,
+      isPreviousCustomer: isPreviousCustomerMock,
     } as never,
     {} as never,
     {} as never,
@@ -29,14 +27,14 @@ const buildService = ({
   return {
     service,
     createStripeCustomer,
-    isPreviousPayingCustomer: isPreviousPayingCustomerMock,
+    isPreviousCustomer: isPreviousCustomerMock,
   };
 };
 
 describe('BillingService.ensureBillingCustomer', () => {
   it('should save the partner from the link for a new customer', async () => {
     const { service, createStripeCustomer } = buildService({
-      isPreviousPayingCustomer: false,
+      isPreviousCustomer: false,
     });
 
     await service.ensureBillingCustomer({
@@ -52,9 +50,10 @@ describe('BillingService.ensureBillingCustomer', () => {
     );
   });
 
-  it('should drop the partner from the link for a previous paying customer', async () => {
-    const { service, createStripeCustomer, isPreviousPayingCustomer } =
-      buildService({ isPreviousPayingCustomer: true });
+  it('should drop the partner from the link for a previous customer', async () => {
+    const { service, createStripeCustomer, isPreviousCustomer } = buildService({
+      isPreviousCustomer: true,
+    });
 
     await service.ensureBillingCustomer({
       userEmail: USER_EMAIL,
@@ -63,16 +62,16 @@ describe('BillingService.ensureBillingCustomer', () => {
       partner: 'northwind',
     });
 
-    expect(isPreviousPayingCustomer).toHaveBeenCalledWith(USER_EMAIL);
+    expect(isPreviousCustomer).toHaveBeenCalledWith({ email: USER_EMAIL });
     expect(createStripeCustomer).toHaveBeenCalledTimes(1);
     expect(createStripeCustomer).toHaveBeenCalledWith(
       expect.objectContaining({ partner: undefined }),
     );
   });
 
-  it('should not check past payments when there is no partner', async () => {
-    const { service, isPreviousPayingCustomer } = buildService({
-      isPreviousPayingCustomer: true,
+  it('should not check previous customers when there is no partner', async () => {
+    const { service, isPreviousCustomer } = buildService({
+      isPreviousCustomer: true,
     });
 
     await service.ensureBillingCustomer({
@@ -81,6 +80,6 @@ describe('BillingService.ensureBillingCustomer', () => {
       workspaceDisplayName: 'Apple',
     });
 
-    expect(isPreviousPayingCustomer).not.toHaveBeenCalled();
+    expect(isPreviousCustomer).not.toHaveBeenCalled();
   });
 });

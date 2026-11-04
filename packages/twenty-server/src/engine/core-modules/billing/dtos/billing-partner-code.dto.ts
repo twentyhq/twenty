@@ -7,8 +7,6 @@ export class BillingPartnerCodeDTO {
   @Field(() => String, { nullable: true })
   partnerCode: string | null;
 
-  @Field(() => Boolean, {
-    description: 'True while no partner code is set',
-  })
+  @Field(() => Boolean)
   isEditable: boolean;
 }

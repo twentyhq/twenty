@@ -112,7 +112,7 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_PARTNER_CODE_LOCKED:
       return msg`The partner code can no longer be added or changed. Please contact support.`;
     case BillingExceptionCode.BILLING_PARTNER_CODE_NOT_ELIGIBLE:
-      return msg`Partner codes only apply to customers who have never paid Twenty.`;
+      return msg`Partner codes only apply to new Twenty customers.`;
     default:
       assertUnreachable(code);
   }
