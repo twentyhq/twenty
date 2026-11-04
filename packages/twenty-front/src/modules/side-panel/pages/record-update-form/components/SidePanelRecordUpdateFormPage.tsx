@@ -139,7 +139,19 @@ const SidePanelRecordUpdateForm = ({
     gqlFieldName: string,
     value: JsonValue,
   ) => {
-    const nextDraftRecord = { ...completedDraftRecord, [gqlFieldName]: value };
+    // A new join column value makes the loaded related record stale, so rules reading it are left to the server
+    const relationFieldNameWithChangedJoinColumn =
+      objectMetadataItem.fields.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.name !== gqlFieldName &&
+          getFieldMetadataItemGqlFieldName(fieldMetadataItem) === gqlFieldName,
+      )?.name;
+
+    const nextDraftRecord = Object.fromEntries(
+      Object.entries({ ...completedDraftRecord, [gqlFieldName]: value }).filter(
+        ([fieldName]) => fieldName !== relationFieldNameWithChangedJoinColumn,
+      ),
+    );
 
     setCompletedDraftRecord(nextDraftRecord);
     checkDraftRecord(nextDraftRecord);
