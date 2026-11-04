@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
+import {
+  createCoreWorkflow,
+  deleteCoreWorkflows,
+  linkCoreWorkflowToLegacyWorkspaceIds,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -272,27 +277,134 @@ const UPDATE_WORKFLOW_RUN_STEP = `
   }
 `;
 
+const CORE_WORKFLOWS = `
+  query CoreWorkflows($filter: CoreWorkflowFilterInput) {
+    coreWorkflows(first: 200, filter: $filter) {
+      edges {
+        node {
+          id
+        }
+      }
+      totalCount
+    }
+  }
+`;
+
+const CORE_WORKFLOW_READS = `
+  query CoreWorkflowReads($coreWorkflowId: UUID!, $coreWorkflowVersionId: UUID!) {
+    coreWorkflowById(coreWorkflowId: $coreWorkflowId) {
+      id
+    }
+    coreWorkflowsWithCurrentVersions(input: { coreWorkflowIds: [$coreWorkflowId] }) {
+      workflow {
+        id
+      }
+    }
+    coreWorkflowVersionsByCoreWorkflowId(coreWorkflowId: $coreWorkflowId) {
+      id
+    }
+    coreWorkflowVersionById(coreWorkflowVersionId: $coreWorkflowVersionId) {
+      id
+      steps
+    }
+  }
+`;
+
+const LEGACY_CORE_WORKFLOW_READS = `
+  query LegacyCoreWorkflowReads(
+    $workspaceWorkflowId: UUID!
+    $workspaceWorkflowVersionId: UUID!
+  ) {
+    coreWorkflow(workspaceWorkflowId: $workspaceWorkflowId) {
+      id
+    }
+    coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+      id
+    }
+    coreWorkflowVersion(workspaceWorkflowVersionId: $workspaceWorkflowVersionId) {
+      id
+      steps
+    }
+  }
+`;
+
+const COMPUTE_STEP_OUTPUT_SCHEMA = `
+  mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+    computeStepOutputSchema(input: $input)
+  }
+`;
+
+const RUN_PREFIX_FILTER = {
+  logicalOperator: 'AND',
+  rules: [{ fieldKey: 'NAME', operand: 'CONTAINS', value: RUN_PREFIX }],
+};
+
 const graphqlAs = (token: string, query: string, variables?: object) =>
   request(`http://localhost:${APP_PORT}`)
     .post('/graphql')
     .set('Authorization', `Bearer ${token}`)
     .send({ query, variables });
 
-const buildJaneTokenThroughApplication = async (
+const findApplicationId = async (
   applicationUniversalIdentifier: string,
 ): Promise<string> => {
-  const [{ id: applicationId }] = await globalThis.testDataSource.query(
+  const [{ id }] = await globalThis.testDataSource.query(
     `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
     [applicationUniversalIdentifier, SEED_APPLE_WORKSPACE_ID],
   );
+
+  return id;
+};
+
+const buildJaneTokenThroughApplication = async (
+  applicationUniversalIdentifier: string,
+): Promise<string> => {
   const { applicationAccessToken } = await generateApplicationTokenPair({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    applicationId,
+    applicationId: await findApplicationId(applicationUniversalIdentifier),
     userId: USER_DATA_SEED_IDS.JANE,
     userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
   });
 
   return applicationAccessToken.token;
+};
+
+const buildApplicationTokenWithoutUser = async (
+  applicationUniversalIdentifier: string,
+): Promise<string> => {
+  const { applicationAccessToken } = await generateApplicationTokenPair({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    applicationId: await findApplicationId(applicationUniversalIdentifier),
+  });
+
+  return applicationAccessToken.token;
+};
+
+const listCoreWorkflowIds = async (
+  token: string,
+  filter?: object,
+): Promise<{ totalCount: number; coreWorkflowIds: string[] }> => {
+  const response = await graphqlAs(token, CORE_WORKFLOWS, { filter });
+
+  expect(response.body.errors).toBeUndefined();
+
+  const { edges, totalCount } = response.body.data.coreWorkflows;
+
+  return {
+    totalCount,
+    coreWorkflowIds: edges.map(({ node }: { node: { id: string } }) => node.id),
+  };
+};
+
+const readCoreWorkflow = async (
+  token: string,
+  variables: { coreWorkflowId: string; coreWorkflowVersionId: string },
+) => {
+  const response = await graphqlAs(token, CORE_WORKFLOW_READS, variables);
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data;
 };
 
 const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
@@ -309,6 +421,21 @@ const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
   );
 
   return version.id;
+};
+
+const findApplicationWorkflow = async (
+  workflow: TestWorkflow,
+): Promise<{ coreWorkflowId: string; coreWorkflowVersionId: string }> => {
+  const [{ id }] = await globalThis.testDataSource.query(
+    `SELECT id FROM core.workflow
+     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+    [SEED_APPLE_WORKSPACE_ID, workflow.universalIdentifier],
+  );
+
+  return {
+    coreWorkflowId: id,
+    coreWorkflowVersionId: await findVersionId(workflow),
+  };
 };
 
 const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
@@ -729,4 +856,235 @@ describe('application workflow execution permissions', () => {
     ).toBe('FAILED');
     expect(await countRecordsByName('company', DELAYED_COMPANY_NAME)).toBe(0);
   }, 150000);
+
+  describe('core workflow reads through an application', () => {
+    const APPLICATION_CALLERS = [
+      ['a member through the application', buildJaneTokenThroughApplication],
+      ['the application alone', buildApplicationTokenWithoutUser],
+    ] as const;
+
+    const UNREADABLE_WORKFLOW = {
+      coreWorkflowById: null,
+      coreWorkflowsWithCurrentVersions: [],
+      coreWorkflowVersionsByCoreWorkflowId: [],
+      coreWorkflowVersionById: null,
+    };
+
+    let applicationWorkflowIds: string[];
+    let applicationWorkflow: {
+      coreWorkflowId: string;
+      coreWorkflowVersionId: string;
+    };
+    let workspaceWorkflow: {
+      coreWorkflowId: string;
+      coreWorkflowVersionId: string;
+      workspaceWorkflowId: string;
+      workspaceWorkflowVersionId: string;
+    };
+
+    const readWorkspaceWorkflowByLegacyIds = async (token: string) => {
+      const response = await graphqlAs(token, LEGACY_CORE_WORKFLOW_READS, {
+        workspaceWorkflowId: workspaceWorkflow.workspaceWorkflowId,
+        workspaceWorkflowVersionId:
+          workspaceWorkflow.workspaceWorkflowVersionId,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data;
+    };
+
+    beforeAll(async () => {
+      const applicationWorkflowRows: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT id FROM core.workflow WHERE "workspaceId" = $1 AND "applicationId" = $2`,
+          [SEED_APPLE_WORKSPACE_ID, await findApplicationId(APP_ID)],
+        );
+
+      applicationWorkflowIds = applicationWorkflowRows.map(({ id }) => id);
+      applicationWorkflow = await findApplicationWorkflow(
+        CREATE_COMPANY_WORKFLOW,
+      );
+
+      const { coreWorkflowId, coreWorkflowVersionId } =
+        await createCoreWorkflow({
+          name: `${RUN_PREFIX} workspace workflow read through applications`,
+        });
+      const {
+        workspaceWorkflowId,
+        workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+      } = await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId });
+
+      workspaceWorkflow = {
+        coreWorkflowId,
+        coreWorkflowVersionId,
+        workspaceWorkflowId,
+        workspaceWorkflowVersionId,
+      };
+    });
+
+    afterAll(async () => {
+      await deleteCoreWorkflows({
+        coreWorkflowIds: [workspaceWorkflow.coreWorkflowId],
+      });
+    });
+
+    it.each(APPLICATION_CALLERS)(
+      'lists no workflow to an application that owns none, called by %s',
+      async (_, buildToken) => {
+        const { totalCount, coreWorkflowIds } = await listCoreWorkflowIds(
+          await buildToken(OTHER_APP_ID),
+        );
+
+        expect(totalCount).toBe(0);
+        expect(coreWorkflowIds).toEqual([]);
+      },
+    );
+
+    it.each(APPLICATION_CALLERS)(
+      'lists only its own workflows to an application, called by %s',
+      async (_, buildToken) => {
+        const token = await buildToken(APP_ID);
+        const everyWorkflow = await listCoreWorkflowIds(token);
+        const workflowsOfThisRun = await listCoreWorkflowIds(
+          token,
+          RUN_PREFIX_FILTER,
+        );
+
+        expect(everyWorkflow.totalCount).toBe(applicationWorkflowIds.length);
+        expect(workflowsOfThisRun.totalCount).toBe(
+          applicationWorkflowIds.length,
+        );
+        expect(everyWorkflow.coreWorkflowIds.sort()).toEqual(
+          [...applicationWorkflowIds].sort(),
+        );
+        expect(workflowsOfThisRun.coreWorkflowIds.sort()).toEqual(
+          [...applicationWorkflowIds].sort(),
+        );
+      },
+    );
+
+    it.each(APPLICATION_CALLERS)(
+      'reads nothing of another application workflow, called by %s',
+      async (_, buildToken) => {
+        expect(
+          await readCoreWorkflow(
+            await buildToken(OTHER_APP_ID),
+            applicationWorkflow,
+          ),
+        ).toEqual(UNREADABLE_WORKFLOW);
+      },
+    );
+
+    it.each(APPLICATION_CALLERS)(
+      'reads nothing of a workspace workflow, called by %s',
+      async (_, buildToken) => {
+        const token = await buildToken(APP_ID);
+
+        expect(
+          await readCoreWorkflow(token, {
+            coreWorkflowId: workspaceWorkflow.coreWorkflowId,
+            coreWorkflowVersionId: workspaceWorkflow.coreWorkflowVersionId,
+          }),
+        ).toEqual(UNREADABLE_WORKFLOW);
+        expect(await readWorkspaceWorkflowByLegacyIds(token)).toEqual({
+          coreWorkflow: null,
+          coreWorkflowVersions: [],
+          coreWorkflowVersion: null,
+        });
+      },
+    );
+
+    it.each(APPLICATION_CALLERS)(
+      'reads its own workflow, called by %s',
+      async (_, buildToken) => {
+        const reads = await readCoreWorkflow(
+          await buildToken(APP_ID),
+          applicationWorkflow,
+        );
+
+        expect(reads.coreWorkflowById).toEqual({
+          id: applicationWorkflow.coreWorkflowId,
+        });
+        expect(reads.coreWorkflowsWithCurrentVersions).toEqual([
+          { workflow: { id: applicationWorkflow.coreWorkflowId } },
+        ]);
+        expect(reads.coreWorkflowVersionsByCoreWorkflowId).toContainEqual({
+          id: applicationWorkflow.coreWorkflowVersionId,
+        });
+        expect(reads.coreWorkflowVersionById?.steps).toHaveLength(
+          CREATE_COMPANY_WORKFLOW.steps.length,
+        );
+      },
+    );
+
+    it('computes a step output schema only from a version of the calling application', async () => {
+      const computeStepOutputSchemaThrough = async (
+        applicationUniversalIdentifier: string,
+      ) =>
+        graphqlAs(
+          await buildJaneTokenThroughApplication(
+            applicationUniversalIdentifier,
+          ),
+          COMPUTE_STEP_OUTPUT_SCHEMA,
+          {
+            input: {
+              step: { type: 'MANUAL', settings: { outputSchema: {} } },
+              coreWorkflowVersionId: applicationWorkflow.coreWorkflowVersionId,
+            },
+          },
+        );
+
+      const crossApplication =
+        await computeStepOutputSchemaThrough(OTHER_APP_ID);
+
+      expect(crossApplication.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
+      expect(
+        crossApplication.body.data?.computeStepOutputSchema ?? null,
+      ).toBeNull();
+
+      const ownApplication = await computeStepOutputSchemaThrough(APP_ID);
+
+      expect(ownApplication.body.errors).toBeUndefined();
+    });
+
+    it('keeps listing and reading every workflow for a member session', async () => {
+      const { coreWorkflowIds } = await listCoreWorkflowIds(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        RUN_PREFIX_FILTER,
+      );
+
+      expect(coreWorkflowIds).toEqual(
+        expect.arrayContaining([
+          ...applicationWorkflowIds,
+          workspaceWorkflow.coreWorkflowId,
+        ]),
+      );
+
+      const applicationWorkflowReads = await readCoreWorkflow(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        applicationWorkflow,
+      );
+
+      expect(applicationWorkflowReads.coreWorkflowById).toEqual({
+        id: applicationWorkflow.coreWorkflowId,
+      });
+      expect(applicationWorkflowReads.coreWorkflowVersionById?.id).toBe(
+        applicationWorkflow.coreWorkflowVersionId,
+      );
+
+      const legacyReads = await readWorkspaceWorkflowByLegacyIds(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(legacyReads.coreWorkflow).toEqual({
+        id: workspaceWorkflow.coreWorkflowId,
+      });
+      expect(legacyReads.coreWorkflowVersion?.id).toBe(
+        workspaceWorkflow.coreWorkflowVersionId,
+      );
+    });
+  });
 });

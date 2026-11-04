@@ -237,14 +237,19 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowConnectionDTO)
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflows(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() coreWorkflowsArgs: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     return this.coreWorkflowListService.findManyByWorkspaceId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       ...coreWorkflowsArgs,
     });
   }
@@ -252,14 +257,19 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowDTO, { nullable: true })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowById(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowByIdArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       coreWorkflowId,
     });
   }
@@ -267,14 +277,19 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowsWithCurrentVersions(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
   ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
     return this.coreWorkflowListService.findManyWithCurrentVersions({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       coreWorkflowIds,
     });
   }
@@ -282,14 +297,19 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowDTO, { nullable: true })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflow(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneByWorkspaceWorkflowId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       workspaceWorkflowId,
     });
   }
@@ -297,14 +317,19 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersions(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowVersionsArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       workspaceWorkflowId,
     });
   }
@@ -312,15 +337,20 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersion(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { workspaceWorkflowVersionId }: CoreWorkflowVersionArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByWorkspaceWorkflowVersionId(
       {
         workspaceId,
         userWorkspaceId,
+        callerApplication,
+        workspaceCustomApplicationId,
         workspaceWorkflowVersionId,
       },
     );
@@ -329,14 +359,19 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersionsByCoreWorkflowId(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowVersionsByCoreWorkflowIdArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       coreWorkflowId,
     });
   }
@@ -344,14 +379,19 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
   async coreWorkflowVersionById(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args() { coreWorkflowVersionId }: CoreWorkflowVersionByIdArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
       workspaceId,
       userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
       coreWorkflowVersionId,
     });
   }
