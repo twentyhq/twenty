@@ -386,6 +386,8 @@ export interface ApplicationAuthorization {
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -2515,6 +2517,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -3234,6 +3237,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -4774,6 +4778,8 @@ export interface ApplicationAuthorizationGenqlSelection{
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7193,6 +7199,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationMemberAccess?: { __args: {applicationId: Scalars['UUID'], userId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -7965,6 +7972,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: (ApplicationAuthorizationGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }

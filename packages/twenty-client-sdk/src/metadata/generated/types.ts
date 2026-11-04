@@ -1073,6 +1073,12 @@ export default {
             "scopes": [
                 1
             ],
+            "userId": [
+                542
+            ],
+            "wellKnownOAuthClient": [
+                671
+            ],
             "workspaceId": [
                 542
             ],
@@ -8613,6 +8619,19 @@ export default {
                     ]
                 }
             ],
+            "revokeWorkspaceApplicationMemberAccess": [
+                4,
+                {
+                    "applicationId": [
+                        542,
+                        "UUID!"
+                    ],
+                    "userId": [
+                        542,
+                        "UUID!"
+                    ]
+                }
+            ],
             "rotateApplicationRegistrationClientSecret": [
                 466,
                 {
@@ -12072,6 +12091,15 @@ export default {
             ],
             "webhooks": [
                 670
+            ],
+            "workspaceApplicationAuthorizations": [
+                49,
+                {
+                    "applicationId": [
+                        542,
+                        "UUID!"
+                    ]
+                }
             ],
             "__typename": [
                 1
