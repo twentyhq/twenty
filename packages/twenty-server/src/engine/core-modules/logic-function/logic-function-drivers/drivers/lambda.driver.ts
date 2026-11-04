@@ -111,21 +111,14 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   async deleteApplicationResources({
     workspaceId,
-    applicationId,
     applicationUniversalIdentifier,
   }: LogicFunctionDeleteApplicationResourcesParams): Promise<void> {
-    const codeStepExecutorId =
-      getWorkflowCodeStepLogicFunctionId(applicationId);
-
-    // Best effort, so the SDK layer below is still cleaned up.
-    await this.executorManager
-      .delete({ id: codeStepExecutorId })
-      .catch((error) =>
-        this.logger.error(
-          `Failed to delete code-step executor ${codeStepExecutorId}: ${error instanceof Error ? error.message : String(error)}`,
-          error instanceof Error ? error.stack : undefined,
-        ),
-      );
+    await this.executorManager.delete({
+      id: getWorkflowCodeStepLogicFunctionId({
+        workspaceId,
+        applicationUniversalIdentifier,
+      }),
+    });
 
     await this.layerManager.deleteSdkLayer({
       workspaceId,

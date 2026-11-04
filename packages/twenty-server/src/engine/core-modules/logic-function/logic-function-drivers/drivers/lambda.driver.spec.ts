@@ -3,14 +3,11 @@ import {
   type State,
   waitUntilFunctionActiveV2,
 } from '@aws-sdk/client-lambda';
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
-import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
-import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 jest.mock(
@@ -227,28 +224,6 @@ describe('LambdaDriver', () => {
 
     await expect(driver.buildDependencies(REQUEST)).rejects.toBe(updateError);
     expect(payloads).toHaveLength(0);
-  });
-
-  it('still deletes the SDK layer when deleting the code-step executor fails', async () => {
-    jest
-      .spyOn(LambdaExecutorManagerService.prototype, 'delete')
-      .mockRejectedValue(new Error('Access denied'));
-    const deleteSdkLayer = jest
-      .spyOn(LambdaLayerManagerService.prototype, 'deleteSdkLayer')
-      .mockResolvedValue(undefined);
-    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
-
-    await expect(
-      driver.deleteApplicationResources({
-        workspaceId: 'workspace',
-        applicationId: 'application',
-        applicationUniversalIdentifier: 'application-universal-identifier',
-      }),
-    ).resolves.toBeUndefined();
-    expect(deleteSdkLayer).toHaveBeenCalledWith({
-      workspaceId: 'workspace',
-      applicationUniversalIdentifier: 'application-universal-identifier',
-    });
   });
 
   it('does not invoke or update a failed builder', async () => {
