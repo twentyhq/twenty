@@ -130,7 +130,7 @@ export const AiChatThreadDetailsDropdown = ({
     });
   };
 
-  if (!isAiChatInboxEnabled) {
+  if (!isAiChatInboxEnabled || thread?.conversationType === 'DIRECT_MESSAGE') {
     return null;
   }
 

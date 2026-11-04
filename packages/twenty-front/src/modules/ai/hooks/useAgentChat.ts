@@ -22,6 +22,7 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { useIsCurrentDirectMessage } from '@/ai/hooks/useIsCurrentDirectMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -71,6 +72,7 @@ export const useAgentChat = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const isDirectMessage = useIsCurrentDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -125,11 +127,14 @@ export const useAgentChat = () => {
     const currentWorkspaceMemberId = store.get(
       currentWorkspaceMemberState.atom,
     )?.id;
-    const participantMentions = getParticipantMentionsFromSerializedDocument(
-      serializedContentToSend,
-    ).filter(
-      ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
-    );
+    const participantMentions = isDirectMessage
+      ? []
+      : getParticipantMentionsFromSerializedDocument(
+          serializedContentToSend,
+        ).filter(
+          ({ workspaceMemberId }) =>
+            workspaceMemberId !== currentWorkspaceMemberId,
+        );
     const isAssistantMentioned =
       isAgentChatAssistantMentionedInSerializedDocument(
         serializedContentToSend,
@@ -169,7 +174,7 @@ export const useAgentChat = () => {
 
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
-    if (agentChatSelectedFiles.length > 0) {
+    if (!isDirectMessage && agentChatSelectedFiles.length > 0) {
       enqueueToast({
         status: 'error',
         children: t`Wait for the attachments to finish uploading.`,
@@ -178,7 +183,9 @@ export const useAgentChat = () => {
       return;
     }
 
-    const agentChatUploadedFiles = store.get(agentChatUploadedFilesState.atom);
+    const agentChatUploadedFiles = isDirectMessage
+      ? []
+      : store.get(agentChatUploadedFilesState.atom);
 
     // Selects the new chat when the composer wrote to it before the chat list loaded
     setCurrentAiChatThread(threadId);
@@ -251,7 +258,9 @@ export const useAgentChat = () => {
       filename: file.filename,
     }));
 
-    setAgentChatUploadedFiles([]);
+    if (!isDirectMessage) {
+      setAgentChatUploadedFiles([]);
+    }
 
     store.set(isSendingMessageAtom, true);
 
@@ -262,8 +271,8 @@ export const useAgentChat = () => {
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContextToSend,
-          modelId: modelIdForRequest,
+          browsingContext: isDirectMessage ? null : browsingContextToSend,
+          modelId: isDirectMessage ? undefined : modelIdForRequest,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
           mentionedWorkspaceMemberIds:
@@ -273,7 +282,7 @@ export const useAgentChat = () => {
                 )
               : undefined,
           channelId,
-          shouldAssistantReply: isNonEmptyArray(aiModels),
+          shouldAssistantReply: !isDirectMessage && isNonEmptyArray(aiModels),
           isAssistantParticipant:
             newInboxChatRecipients?.isAssistantParticipant,
           isAssistantMentioned,
@@ -304,11 +313,13 @@ export const useAgentChat = () => {
       }
 
       // Filed after the send: a failed send restores the draft, so the retry files it.
-      getConversationTargetsFromSerializedDocument(
-        serializedContentToSend,
-      ).forEach((conversationTarget) => {
-        void attachChatThreadToRecord({ threadId, ...conversationTarget });
-      });
+      if (!isDirectMessage) {
+        for (const conversationTarget of getConversationTargetsFromSerializedDocument(
+          serializedContentToSend,
+        )) {
+          void attachChatThreadToRecord({ threadId, ...conversationTarget });
+        }
+      }
       void warnAboutParticipantMentionsNotAdded({
         threadId,
         participantMentions,
@@ -379,6 +390,7 @@ export const useAgentChat = () => {
     aiModels,
     canSendAgentChatMessage,
     isAiChatInboxEnabled,
+    isDirectMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,

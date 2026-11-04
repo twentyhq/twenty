@@ -2,6 +2,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export type AgentChatThreadRecord = ObjectRecord & {
   title: string | null;
+  conversationType?: 'STANDARD' | 'DIRECT_MESSAGE';
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
