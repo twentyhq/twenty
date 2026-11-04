@@ -642,6 +642,7 @@ describe('View tools', () => {
         ).rejects.toThrow(
           'You do not have permission to create workspace-level views',
         );
+        expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
         expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
           authContext: expect.objectContaining({ type: 'user' }),
           setting: PermissionFlagType.VIEWS,
@@ -671,6 +672,7 @@ describe('View tools', () => {
           visibility: ViewVisibility.UNLISTED,
         });
 
+        expect(viewService.createOne).toHaveBeenCalledTimes(1);
         expect(viewService.createOne).toHaveBeenCalledWith(
           expect.objectContaining({
             createdByUserWorkspaceId: mockUserWorkspaceId,
