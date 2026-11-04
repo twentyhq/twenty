@@ -20318,11 +20318,6 @@ msgstr "sadece hafta içi"
 msgid "On which object(s) should this trigger be available"
 msgstr "Bu tetiğin hangi nesnelerde kullanılabilir olması gerekiyor"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Başlangıç Paketleri"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

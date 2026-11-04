@@ -20318,11 +20318,6 @@ msgstr "فقط در روزهای کاری"
 msgid "On which object(s) should this trigger be available"
 msgstr "این راه‌انداز باید برای کدام شیء یا اشیا در دسترس باشد"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "بسته‌های راه‌اندازی"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"

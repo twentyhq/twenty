@@ -20318,11 +20318,6 @@ msgstr "samo na radne dane"
 msgid "On which object(s) should this trigger be available"
 msgstr "Na kojim objektima bi ovaj okidač trebalo da bude dostupan"
 
-#. js-lingui-id: pbmZ7R
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-msgid "Onboarding Packs"
-msgstr "Uvodni paketi"
-
 #. js-lingui-id: wxvgdv
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Onboarding reward"
