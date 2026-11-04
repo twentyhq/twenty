@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLego, IconPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
@@ -58,7 +58,8 @@ export const CoreAgentsIndex = () => {
 
   const hasError = isDefined(error);
 
-  const isEmpty = !isInitialLoading && !hasError && coreAgents.length === 0;
+  const isEmpty =
+    !isInitialLoading && !hasError && !isNonEmptyArray(coreAgents);
 
   const hasAppliedFilters = hasAppliedCoreObjectFilters({
     filterSettings: coreAgentsFilterSettings,
@@ -91,7 +92,7 @@ export const CoreAgentsIndex = () => {
         numberOfSelectedRecords={selectedAgentIds.length}
         actionButton={
           <>
-            {canCreateCoreAgent && selectedAgentIds.length === 0 && (
+            {canCreateCoreAgent && !isNonEmptyArray(selectedAgentIds) && (
               <CommandMenuButton
                 command={{
                   key: CORE_AGENTS_CREATE_COMMAND_ID,
