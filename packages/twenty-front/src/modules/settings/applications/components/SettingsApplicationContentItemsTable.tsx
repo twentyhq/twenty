@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
@@ -59,15 +59,6 @@ const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCountLink = styled(UndecoratedLink)`
-  color: inherit;
-`;
-
-const StyledNameLink = styled(UndecoratedLink)`
-  color: inherit;
-  min-width: 0;
-`;
-
 type SettingsApplicationContentItemsTableProps = {
   contentType: ApplicationContentType;
   content: ApplicationContent;
@@ -106,14 +97,13 @@ export const SettingsApplicationContentItemsTable = ({
   const normalizedSearchTerm = normalizeSearchText(searchTerm);
   const lowerCaseTypeLabel = t(label).toLowerCase();
 
-  const activeFilters = filters
-    .map((filter) => ({
-      ...filter,
-      selectedOption: filter.options.find(
-        (option) => option.universalIdentifier === searchParams.get(filter.key),
-      ),
-    }))
-    .filter((filter) => isDefined(filter.selectedOption));
+  const activeFilters = filters.flatMap((filter) => {
+    const selectedOption = filter.options.find(
+      (option) => option.universalIdentifier === searchParams.get(filter.key),
+    );
+
+    return isDefined(selectedOption) ? [{ ...filter, selectedOption }] : [];
+  });
 
   const selectableFilter = filters.find(
     (filter) => filter.isSelectable && filter.options.length > 0,
@@ -137,7 +127,7 @@ export const SettingsApplicationContentItemsTable = ({
   const items = content[contentType].filter(
     (item) =>
       activeFilters.every(({ getItemKeys, selectedOption }) =>
-        getItemKeys(item).includes(selectedOption?.universalIdentifier),
+        getItemKeys(item).includes(selectedOption.universalIdentifier),
       ) &&
       normalizeSearchText(getItemLabel({ contentType, item })).includes(
         normalizedSearchTerm,
@@ -195,21 +185,28 @@ export const SettingsApplicationContentItemsTable = ({
     return isDefined(settingsPath) ? () => navigate(settingsPath) : undefined;
   };
 
-  const renderItemName = (item: ApplicationContentItem) => {
-    const name = (
-      <OverflowingTextWithTooltip text={getItemLabel({ contentType, item })} />
+  const renderNameCell = (item: ApplicationContentItem) => {
+    const nameCell = (
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        {renderItemIcon(item)}
+        <OverflowingTextWithTooltip
+          text={getItemLabel({ contentType, item })}
+        />
+      </StyledNameTableCell>
     );
     const settingsPath = getItemSettingsPath({ contentType, item });
 
-    return isDefined(settingsPath) ? (
-      <StyledNameLink
+    if (!isDefined(settingsPath)) {
+      return nameCell;
+    }
+
+    return (
+      <UndecoratedLink
         to={settingsPath}
         onClick={(event) => event.stopPropagation()}
       >
-        {name}
-      </StyledNameLink>
-    ) : (
-      name
+        {nameCell}
+      </UndecoratedLink>
     );
   };
 
@@ -219,10 +216,13 @@ export const SettingsApplicationContentItemsTable = ({
     return Number.isInteger(minutes) ? t`${minutes} min` : t`${seconds} s`;
   };
 
-  const renderCell = (
-    item: ApplicationContentItem,
-    { source, link }: ApplicationContentColumn,
-  ) => {
+  const renderCell = ({
+    item,
+    column: { source },
+  }: {
+    item: ApplicationContentItem;
+    column: ApplicationContentColumn;
+  }) => {
     switch (source) {
       case 'description':
         return isNonEmptyString(item.description) ? (
@@ -259,33 +259,95 @@ export const SettingsApplicationContentItemsTable = ({
           : null;
       case 'position':
         return item.position;
-      case 'count': {
-        if (!isDefined(item.count)) {
-          return null;
-        }
-
-        if (!isDefined(link) || item.count === 0) {
-          return item.count;
-        }
-
-        const linkSearchParams = new URLSearchParams({
-          [link.filter]: item.universalIdentifier,
-        });
-
-        return (
-          <StyledCountLink
-            onClick={(event) => event.stopPropagation()}
-            to={`${getApplicationContentPath({ location, contentType: link.contentType })}?${linkSearchParams.toString()}`}
-          >
-            {item.count}
-          </StyledCountLink>
-        );
-      }
+      case 'count':
+        return item.count;
     }
   };
 
-  const hasFilterActions =
-    activeFilters.length > 0 || isDefined(selectableFilter);
+  const getCountLinkPath = ({
+    item,
+    column: { link },
+  }: {
+    item: ApplicationContentItem;
+    column: ApplicationContentColumn;
+  }) => {
+    if (!isDefined(link) || !isDefined(item.count) || item.count === 0) {
+      return undefined;
+    }
+
+    const linkSearchParams = new URLSearchParams({
+      [link.filter]: item.universalIdentifier,
+    });
+
+    return `${getApplicationContentPath({ location, contentType: link.contentType })}?${linkSearchParams.toString()}`;
+  };
+
+  const renderColumnCell = ({
+    item,
+    column,
+  }: {
+    item: ApplicationContentItem;
+    column: ApplicationContentColumn;
+  }) => {
+    const cell = (
+      <TableCell
+        align={
+          RIGHT_ALIGNED_COLUMN_SOURCES.has(column.source) ? 'right' : undefined
+        }
+        color={themeCssVariables.font.color.secondary}
+        gap={themeCssVariables.spacing[1]}
+        minWidth="0"
+        overflow="hidden"
+      >
+        {renderCell({ item, column })}
+      </TableCell>
+    );
+    const countLinkPath = getCountLinkPath({ item, column });
+
+    if (!isDefined(countLinkPath)) {
+      return <Fragment key={column.label.id}>{cell}</Fragment>;
+    }
+
+    return (
+      <UndecoratedLink
+        key={column.label.id}
+        to={countLinkPath}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {cell}
+      </UndecoratedLink>
+    );
+  };
+
+  const renderFilterActions = () => {
+    if (activeFilters.length === 0 && !isDefined(selectableFilter)) {
+      return undefined;
+    }
+
+    return (
+      <>
+        {activeFilters.map(({ key, selectedOption }) => (
+          <SortOrFilterChip
+            key={key}
+            type="filter"
+            labelKey={t(APPLICATION_CONTENT_FILTER_LABELS[key])}
+            labelValue={`: ${selectedOption.label}`}
+            Icon={getIcon(selectedOption.icon)}
+            onRemove={() => setFilterValue(key, null)}
+          />
+        ))}
+        {isDefined(selectableFilter) && (
+          <SettingsApplicationContentFilterDropdown
+            options={selectableFilter.options}
+            selectedUniversalIdentifier={searchParams.get(selectableFilter.key)}
+            onChange={(universalIdentifier) =>
+              setFilterValue(selectableFilter.key, universalIdentifier)
+            }
+          />
+        )}
+      </>
+    );
+  };
 
   return (
     <Section.Root>
@@ -295,35 +357,7 @@ export const SettingsApplicationContentItemsTable = ({
           placeholder={t`Search ${lowerCaseTypeLabel}...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          actions={
-            hasFilterActions ? (
-              <>
-                {activeFilters.map(({ key, selectedOption }) =>
-                  isDefined(selectedOption) ? (
-                    <SortOrFilterChip
-                      key={key}
-                      type="filter"
-                      labelKey={t(APPLICATION_CONTENT_FILTER_LABELS[key])}
-                      labelValue={`: ${selectedOption.label}`}
-                      Icon={getIcon(selectedOption.icon)}
-                      onRemove={() => setFilterValue(key, null)}
-                    />
-                  ) : null,
-                )}
-                {isDefined(selectableFilter) && (
-                  <SettingsApplicationContentFilterDropdown
-                    options={selectableFilter.options}
-                    selectedUniversalIdentifier={searchParams.get(
-                      selectableFilter.key,
-                    )}
-                    onChange={(universalIdentifier) =>
-                      setFilterValue(selectableFilter.key, universalIdentifier)
-                    }
-                  />
-                )}
-              </>
-            ) : undefined
-          }
+          actions={renderFilterActions()}
         />
       </StyledSearchInputContainer>
       <Table>
@@ -348,26 +382,8 @@ export const SettingsApplicationContentItemsTable = ({
             gridTemplateColumns={gridTemplateColumns}
             onClick={getRowClickHandler(item)}
           >
-            <StyledNameTableCell minWidth="0" overflow="hidden">
-              {renderItemIcon(item)}
-              {renderItemName(item)}
-            </StyledNameTableCell>
-            {columns.map((column) => (
-              <TableCell
-                key={column.label.id}
-                align={
-                  RIGHT_ALIGNED_COLUMN_SOURCES.has(column.source)
-                    ? 'right'
-                    : undefined
-                }
-                color={themeCssVariables.font.color.secondary}
-                gap={themeCssVariables.spacing[1]}
-                minWidth="0"
-                overflow="hidden"
-              >
-                {renderCell(item, column)}
-              </TableCell>
-            ))}
+            {renderNameCell(item)}
+            {columns.map((column) => renderColumnCell({ item, column }))}
           </TableRow>
         ))}
       </Table>

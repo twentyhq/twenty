@@ -5,8 +5,20 @@ import { type ApplicationContentItemDTO } from 'src/engine/core-modules/applicat
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
+import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 import { getPublicAssetTag } from 'src/engine/core-modules/application/application-content/utils/get-public-asset-tag.util';
+
+const findByUniversalIdentifier = <TValue>({
+  valueByUniversalIdentifier,
+  universalIdentifier,
+}: {
+  valueByUniversalIdentifier: Map<string, TValue>;
+  universalIdentifier: string | undefined;
+}) =>
+  isDefined(universalIdentifier)
+    ? valueByUniversalIdentifier.get(universalIdentifier)
+    : undefined;
 
 export const buildApplicationContentFromManifest = (
   manifest: Partial<Omit<Manifest, 'application'>>,
@@ -205,34 +217,32 @@ export const buildApplicationContentFromManifest = (
     })),
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
       universalIdentifier: navigationMenuItem.universalIdentifier,
-      label:
-        navigationMenuItem.name ??
-        (isDefined(navigationMenuItem.viewUniversalIdentifier)
-          ? viewNameByUniversalIdentifier.get(
-              navigationMenuItem.viewUniversalIdentifier,
-            )
-          : undefined) ??
-        (isDefined(navigationMenuItem.targetObjectUniversalIdentifier)
-          ? objectLabelByUniversalIdentifier.get(
-              navigationMenuItem.targetObjectUniversalIdentifier,
-            )
-          : undefined) ??
-        navigationMenuItem.link ??
-        navigationMenuItem.type,
+      label: getNavigationMenuItemContentLabel({
+        name: navigationMenuItem.name,
+        viewName: findByUniversalIdentifier({
+          valueByUniversalIdentifier: viewNameByUniversalIdentifier,
+          universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
+        }),
+        objectLabel: findByUniversalIdentifier({
+          valueByUniversalIdentifier: objectLabelByUniversalIdentifier,
+          universalIdentifier:
+            navigationMenuItem.targetObjectUniversalIdentifier,
+        }),
+        link: navigationMenuItem.link,
+        type: navigationMenuItem.type,
+      }),
       icon: navigationMenuItem.icon,
       color: navigationMenuItem.color,
       objectUniversalIdentifier:
         navigationMenuItem.targetObjectUniversalIdentifier ??
-        (isDefined(navigationMenuItem.viewUniversalIdentifier)
-          ? viewObjectByUniversalIdentifier.get(
-              navigationMenuItem.viewUniversalIdentifier,
-            )
-          : undefined),
-      parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)
-        ? navigationMenuItemNameByUniversalIdentifier.get(
-            navigationMenuItem.folderUniversalIdentifier,
-          )
-        : null,
+        findByUniversalIdentifier({
+          valueByUniversalIdentifier: viewObjectByUniversalIdentifier,
+          universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
+        }),
+      parentLabel: findByUniversalIdentifier({
+        valueByUniversalIdentifier: navigationMenuItemNameByUniversalIdentifier,
+        universalIdentifier: navigationMenuItem.folderUniversalIdentifier,
+      }),
       parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
       position: navigationMenuItem.position,

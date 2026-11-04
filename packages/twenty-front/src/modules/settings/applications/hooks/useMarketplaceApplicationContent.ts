@@ -32,9 +32,11 @@ export const useMarketplaceApplicationContent = (
   const marketplaceApplication = data?.findMarketplaceAppDetail;
   const manifestContent = marketplaceApplication?.content;
 
-  // The manifest describes the listing; installed ids only add settings links
   const content = isDefined(manifestContent)
-    ? addInstalledIdsToApplicationContent(manifestContent, installed.content)
+    ? addInstalledIdsToApplicationContent({
+        manifestContent,
+        installedContent: installed.content,
+      })
     : installed.content;
 
   return {

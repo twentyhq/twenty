@@ -318,7 +318,10 @@ export class ApplicationResolver {
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
     @AuthWorkspace()
-    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    {
+      id: workspaceId,
+      workspaceCustomApplicationId,
+    }: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<ApplicationContentDTO> {

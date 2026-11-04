@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { countByKey } from 'src/engine/core-modules/application/application-content/utils/count-by-key.util';
+import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
@@ -173,6 +174,23 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       : 'DRAFT';
   };
 
+  const findView = (universalIdentifier: string | null) =>
+    isDefined(universalIdentifier)
+      ? flatEntityMaps.flatViewMaps.byUniversalIdentifier[universalIdentifier]
+      : undefined;
+  const findObject = (universalIdentifier: string | null) =>
+    isDefined(universalIdentifier)
+      ? flatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          universalIdentifier
+        ]
+      : undefined;
+  const findNavigationMenuItem = (universalIdentifier: string | null) =>
+    isDefined(universalIdentifier)
+      ? flatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
+          universalIdentifier
+        ]
+      : undefined;
+
   const findFieldLabel = (fieldUniversalIdentifier: string | null) =>
     isDefined(fieldUniversalIdentifier)
       ? flatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
@@ -260,34 +278,24 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
       id: navigationMenuItem.id,
       universalIdentifier: navigationMenuItem.universalIdentifier,
-      label:
-        navigationMenuItem.name ??
-        (isDefined(navigationMenuItem.viewUniversalIdentifier)
-          ? flatEntityMaps.flatViewMaps.byUniversalIdentifier[
-              navigationMenuItem.viewUniversalIdentifier
-            ]?.name
-          : undefined) ??
-        (isDefined(navigationMenuItem.targetObjectMetadataUniversalIdentifier)
-          ? flatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-              navigationMenuItem.targetObjectMetadataUniversalIdentifier
-            ]?.labelPlural
-          : undefined) ??
-        navigationMenuItem.link ??
-        navigationMenuItem.type,
+      label: getNavigationMenuItemContentLabel({
+        name: navigationMenuItem.name,
+        viewName: findView(navigationMenuItem.viewUniversalIdentifier)?.name,
+        objectLabel: findObject(
+          navigationMenuItem.targetObjectMetadataUniversalIdentifier,
+        )?.labelPlural,
+        link: navigationMenuItem.link,
+        type: navigationMenuItem.type,
+      }),
       icon: navigationMenuItem.icon,
       color: navigationMenuItem.color,
       objectUniversalIdentifier:
         navigationMenuItem.targetObjectMetadataUniversalIdentifier ??
-        (isDefined(navigationMenuItem.viewUniversalIdentifier)
-          ? flatEntityMaps.flatViewMaps.byUniversalIdentifier[
-              navigationMenuItem.viewUniversalIdentifier
-            ]?.objectMetadataUniversalIdentifier
-          : undefined),
-      parentLabel: isDefined(navigationMenuItem.folderUniversalIdentifier)
-        ? flatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
-            navigationMenuItem.folderUniversalIdentifier
-          ]?.name
-        : null,
+        findView(navigationMenuItem.viewUniversalIdentifier)
+          ?.objectMetadataUniversalIdentifier,
+      parentLabel: findNavigationMenuItem(
+        navigationMenuItem.folderUniversalIdentifier,
+      )?.name,
       parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
       tag: navigationMenuItem.type,
       position: navigationMenuItem.position,
