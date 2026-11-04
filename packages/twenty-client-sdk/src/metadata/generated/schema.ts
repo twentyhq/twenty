@@ -385,6 +385,8 @@ export interface ApplicationAuthorization {
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -630,6 +632,7 @@ export interface ApplicationRegistrationSummary {
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -2087,6 +2090,7 @@ export interface MarketplaceAppDetail {
     termsUrl?: Scalars['String']
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'MarketplaceAppDetail'
 }
 
@@ -2502,6 +2506,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -2991,6 +2996,7 @@ export interface PublicApplicationRegistration {
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
     websiteUrl?: Scalars['String']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'PublicApplicationRegistration'
 }
 
@@ -3206,6 +3212,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -4143,6 +4150,8 @@ export interface Webhook {
     __typename: 'Webhook'
 }
 
+export type WellKnownOAuthClient = 'CHATGPT' | 'CLAUDE'
+
 export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
@@ -4729,6 +4738,8 @@ export interface ApplicationAuthorizationGenqlSelection{
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4994,6 +5005,7 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
     sourceType?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6729,6 +6741,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7135,6 +7148,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationMemberAccess?: { __args: {applicationId: Scalars['UUID'], userId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -7656,6 +7670,7 @@ export interface PublicApplicationRegistrationGenqlSelection{
     name?: boolean | number
     oAuthScopes?: boolean | number
     websiteUrl?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7891,6 +7906,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: (ApplicationAuthorizationGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -13167,6 +13183,11 @@ export const enumViewType = {
 export const enumViewVisibility = {
    UNLISTED: 'UNLISTED' as const,
    WORKSPACE: 'WORKSPACE' as const
+}
+
+export const enumWellKnownOAuthClient = {
+   CHATGPT: 'CHATGPT' as const,
+   CLAUDE: 'CLAUDE' as const
 }
 
 export const enumWidgetConfigurationType = {

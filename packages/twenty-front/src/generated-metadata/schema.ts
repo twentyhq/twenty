@@ -525,6 +525,8 @@ export type ApplicationAuthorization = {
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -795,6 +797,7 @@ export type ApplicationRegistrationSummary = {
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type ApplicationRegistrationVariable = {
@@ -3217,6 +3220,7 @@ export type MarketplaceAppDetail = {
   termsUrl?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type MarketplaceAppObject = {
@@ -3709,6 +3713,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4730,6 +4735,12 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationMemberAccessArgs = {
+  applicationId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -5838,6 +5849,7 @@ export type PublicApplicationRegistration = {
   name: Scalars['String']['output'];
   oAuthScopes: Array<Scalars['String']['output']>;
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type PublicConnectionParametersOutput = {
@@ -6053,6 +6065,7 @@ export type Query = {
   validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
@@ -6599,6 +6612,11 @@ export type QueryValidationRulesReadingFieldArgs = {
 
 export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId: Scalars['UUID']['input'];
 };
 
 export type RatioAggregateConfig = {
@@ -8601,6 +8619,11 @@ export type Webhook = {
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum WellKnownOAuthClient {
+  CHATGPT = 'CHATGPT',
+  CLAUDE = 'CLAUDE'
+}
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 
