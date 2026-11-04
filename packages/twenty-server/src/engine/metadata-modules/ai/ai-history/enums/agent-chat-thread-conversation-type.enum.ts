@@ -1,4 +1,1 @@
-export enum AgentChatThreadConversationType {
-  STANDARD = 'STANDARD',
-  DIRECT_MESSAGE = 'DIRECT_MESSAGE',
-}
+export { AgentChatThreadConversationType } from 'twenty-shared/ai';

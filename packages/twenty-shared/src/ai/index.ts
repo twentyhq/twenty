@@ -54,6 +54,7 @@ export { getAiChatAssistantProfileSchema } from './schemas/get-ai-chat-assistant
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
 export type {
   AgentResponseFormatType,

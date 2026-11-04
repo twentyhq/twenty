@@ -1,8 +1,9 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 export type AgentChatThreadRecord = ObjectRecord & {
   title: string | null;
-  conversationType?: 'STANDARD' | 'DIRECT_MESSAGE';
+  conversationType?: AgentChatThreadConversationType;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
