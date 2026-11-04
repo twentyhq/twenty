@@ -11,7 +11,8 @@ export type CurrentUserWorkspace = Pick<
 
 export const currentUserWorkspaceState =
   createAtomState<CurrentUserWorkspace | null>({
-    key: 'currentUserWorkspaceState',
+    // versioned so a value cached with the legacy permissions shape is never restored
+    key: 'currentUserWorkspaceState:v2',
     defaultValue: null,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
