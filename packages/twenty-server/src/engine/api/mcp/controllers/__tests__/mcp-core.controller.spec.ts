@@ -136,7 +136,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
-          isDirectMode: false,
+          isDirectMode: true,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -144,6 +144,38 @@ describe('McpCoreController', () => {
         mcpMethod: 'tools/call',
         mcpToolName: 'testTool',
       });
+    });
+
+    it('should fall back to meta mode with ?mode=meta', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'tools/list',
+        id: '124',
+      };
+
+      mcpProtocolService.handleMCPCoreQuery.mockResolvedValue({
+        id: '124',
+        jsonrpc: '2.0',
+        result: { tools: [] },
+      });
+
+      await controller.handleMcpCore(
+        mockRequest,
+        mockWorkspace,
+        mockApiKey,
+        mockUser,
+        mockUserWorkspaceId,
+        undefined,
+        undefined,
+        mockHttpRequest,
+        mockRes,
+        'meta',
+      );
+
+      expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
+        mockRequest,
+        expect.objectContaining({ isDirectMode: false }),
+      );
     });
 
     it('should handle initialize method', async () => {
@@ -191,7 +223,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
-          isDirectMode: false,
+          isDirectMode: true,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -241,7 +273,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
-          isDirectMode: false,
+          isDirectMode: true,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -310,7 +342,7 @@ describe('McpCoreController', () => {
           userId: undefined,
           userWorkspaceId: undefined,
           apiKey: mockApiKey,
-          isDirectMode: false,
+          isDirectMode: true,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -377,7 +409,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
-          isDirectMode: false,
+          isDirectMode: true,
         },
         expect.any(Function),
       );
