@@ -261,6 +261,7 @@ const AiChatInboxPageContent = () => {
   return (
     <StyledInbox>
       <AgentChatChannelThreadsLoadEffect />
+      <AiChatInboxNewThreadChannelEffect />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
         key={selectedThreadId}
@@ -347,7 +348,6 @@ const AiChatInboxPageContent = () => {
               {isNewThreadShown && (
                 <>
                   <AiChatPageEffects />
-                  <AiChatInboxNewThreadChannelEffect />
                   <AiChatNewThreadPageContent
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}
