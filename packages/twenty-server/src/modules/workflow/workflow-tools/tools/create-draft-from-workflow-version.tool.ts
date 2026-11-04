@@ -39,10 +39,13 @@ export const createCreateDraftFromWorkflowVersionTool = (
 
       return {
         success: true,
-        coreWorkflowVersionId: coreWorkflowVersion.id,
-        coreWorkflowId: parameters.coreWorkflowId,
-        status: coreWorkflowVersion.status,
-        name: coreWorkflowVersion.label,
+        message: `Draft created from workflow version ${parameters.coreWorkflowVersionIdToCopy}`,
+        result: {
+          coreWorkflowVersionId: coreWorkflowVersion.id,
+          coreWorkflowId: parameters.coreWorkflowId,
+          status: coreWorkflowVersion.status,
+          name: coreWorkflowVersion.label,
+        },
       };
     } catch (error) {
       return {

@@ -55,7 +55,7 @@ export const createDeleteWorkflowTool = (
       return {
         success: true,
         message: `Successfully deleted workflow ${coreWorkflowId}`,
-        coreWorkflowId,
+        result: { coreWorkflowId },
       };
     } catch (error) {
       const errorMessage =

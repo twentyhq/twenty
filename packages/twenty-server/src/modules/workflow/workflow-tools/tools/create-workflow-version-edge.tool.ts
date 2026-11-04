@@ -32,14 +32,18 @@ export const createCreateWorkflowVersionEdgeTool = (
   inputSchema: createWorkflowVersionEdgeSchema,
   execute: async (parameters: CreateWorkflowVersionEdgeInput) => {
     try {
-      return await deps.coreWorkflowVersionMutationService.createEdge({
-        source: parameters.source,
-        target: parameters.target,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        sourceConnectionOptions: parameters.sourceConnectionOptions,
-      });
+      return {
+        success: true,
+        message: 'Workflow version edge created',
+        result: await deps.coreWorkflowVersionMutationService.createEdge({
+          source: parameters.source,
+          target: parameters.target,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          sourceConnectionOptions: parameters.sourceConnectionOptions,
+        }),
+      };
     } catch (error) {
       return {
         success: false,

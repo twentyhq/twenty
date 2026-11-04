@@ -78,16 +78,19 @@ export const createListWorkflowRunsTool = (
 
           return {
             success: true,
-            workflowRuns: workflowRuns.map((workflowRun) => ({
-              id: workflowRun.id,
-              name: workflowRun.name,
-              status: workflowRun.status,
-              error: workflowRun.state?.workflowRunError,
-              startedAt: workflowRun.startedAt,
-              endedAt: workflowRun.endedAt,
-              coreWorkflowId: workflowRun.coreWorkflowId,
-              coreWorkflowVersionId: workflowRun.coreWorkflowVersionId,
-            })),
+            message: `Found ${workflowRuns.length} workflow run(s)`,
+            result: {
+              workflowRuns: workflowRuns.map((workflowRun) => ({
+                id: workflowRun.id,
+                name: workflowRun.name,
+                status: workflowRun.status,
+                error: workflowRun.state?.workflowRunError,
+                startedAt: workflowRun.startedAt,
+                endedAt: workflowRun.endedAt,
+                coreWorkflowId: workflowRun.coreWorkflowId,
+                coreWorkflowVersionId: workflowRun.coreWorkflowVersionId,
+              })),
+            },
           };
         },
         context.authContext,

@@ -49,7 +49,11 @@ describe('createUpdateWorkflowVersionStepTool', () => {
       coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
       step: mockStep,
     });
-    expect(result).toEqual(mockStep);
+    expect(result).toEqual({
+      success: true,
+      message: 'Workflow version step updated',
+      result: mockStep,
+    });
   });
 
   it('returns a failure when the update throws', async () => {

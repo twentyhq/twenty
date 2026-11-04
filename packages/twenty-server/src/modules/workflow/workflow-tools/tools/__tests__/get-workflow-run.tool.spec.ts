@@ -76,19 +76,14 @@ describe('get_workflow_run tool', () => {
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
-    expect(result.success).toBe(true);
-
-    if (!('workflowRun' in result) || result.workflowRun === undefined) {
-      throw new Error('Expected workflowRun to be present in the result');
-    }
-
-    expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
-    expect(result.workflowRun.error).toBe('Something went wrong');
-    expect(result.workflowRun.steps).toHaveLength(2);
-    expect(result.workflowRun.steps[0].output).toEqual({ total: 3 });
-    expect(result.workflowRun.steps[1].error).toBe('Email failed');
-    expect(result.workflowRun.failedStepLogs).toEqual({
-      'step-2': [{ message: 'SMTP error' }],
+    expect(result).toMatchObject({
+      success: true,
+      result: {
+        id: WORKFLOW_RUN_ID,
+        error: 'Something went wrong',
+        steps: [{ output: { total: 3 } }, { error: 'Email failed' }],
+        failedStepLogs: { 'step-2': [{ message: 'SMTP error' }] },
+      },
     });
   });
 
@@ -118,14 +113,11 @@ describe('get_workflow_run tool', () => {
 
     const result = await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
-    if (!('workflowRun' in result) || result.workflowRun === undefined) {
-      throw new Error('Expected workflowRun to be present in the result');
-    }
-
-    const [step] = result.workflowRun.steps;
-
-    expect(step.isOutputTruncated).toBe(true);
-    expect(JSON.stringify(step.output).length).toBeLessThan(
+    expect(result).toMatchObject({
+      success: true,
+      result: { steps: [{ isOutputTruncated: true }] },
+    });
+    expect(JSON.stringify(result).length).toBeLessThan(
       JSON.stringify(largeOutput).length,
     );
   });

@@ -36,7 +36,11 @@ export const createUpdateWorkflowVersionTriggerTool = (
           trigger: parameters.trigger,
         });
 
-      return trigger;
+      return {
+        success: true,
+        message: 'Workflow version trigger updated',
+        result: trigger,
+      };
     } catch (error) {
       return {
         success: false,

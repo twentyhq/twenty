@@ -89,9 +89,9 @@ const channelTestCases: EachTestingContext<ChannelTestContext>[] = [
         });
 
         expect(output.success).toBe(true);
-        jestExpectToBeDefined(output.workflowRunId);
+        jestExpectToBeDefined(output.result);
 
-        return output.workflowRunId;
+        return output.result.workflowRunId;
       },
     },
   },

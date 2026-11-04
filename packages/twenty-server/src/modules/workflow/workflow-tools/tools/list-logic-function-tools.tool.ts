@@ -37,12 +37,15 @@ export const createListLogicFunctionToolsTool = (
 
     return {
       success: true,
-      logicFunctions: workflowActionFunctions.map((fn) => ({
-        id: fn.id,
-        name: fn.name,
-        displayName: fn.workflowActionTriggerSettings?.label ?? fn.name,
-        description: fn.description,
-      })),
+      message: `Found ${workflowActionFunctions.length} logic function(s) usable as workflow steps`,
+      result: {
+        logicFunctions: workflowActionFunctions.map((fn) => ({
+          id: fn.id,
+          name: fn.name,
+          displayName: fn.workflowActionTriggerSettings?.label ?? fn.name,
+          description: fn.description,
+        })),
+      },
     };
   },
 });

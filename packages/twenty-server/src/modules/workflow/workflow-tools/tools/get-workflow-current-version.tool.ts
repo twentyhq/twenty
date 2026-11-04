@@ -53,6 +53,7 @@ export const createGetWorkflowCurrentVersionTool = (
         return {
           success: false,
           error: `Workflow ${coreWorkflowId} not found`,
+          message: `Workflow ${coreWorkflowId} not found`,
         };
       }
 
@@ -79,6 +80,7 @@ export const createGetWorkflowCurrentVersionTool = (
         return {
           success: false,
           error: `Workflow ${coreWorkflowId} has no draft, active or deactivated version`,
+          message: `Workflow ${coreWorkflowId} has no draft, active or deactivated version`,
         };
       }
 
@@ -96,12 +98,14 @@ export const createGetWorkflowCurrentVersionTool = (
         return {
           success: false,
           error: `Workflow version ${currentVersion.id} not found`,
+          message: `Workflow version ${currentVersion.id} not found`,
         };
       }
 
       return {
         success: true,
-        workflowVersion: {
+        message: `Current version of workflow ${coreWorkflowId}`,
+        result: {
           coreWorkflowVersionId: coreWorkflowVersion.id,
           name: coreWorkflowVersion.label,
           status: coreWorkflowVersion.status,

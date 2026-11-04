@@ -2,9 +2,9 @@ import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-th
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
-export type RunWorkflowVersionToolOutput = ToolOutput & {
-  workflowRunId?: string;
-};
+export type RunWorkflowVersionToolOutput = ToolOutput<{
+  workflowRunId: string;
+}>;
 
 export const runWorkflowVersionThroughMcp = async ({
   coreWorkflowVersionId,

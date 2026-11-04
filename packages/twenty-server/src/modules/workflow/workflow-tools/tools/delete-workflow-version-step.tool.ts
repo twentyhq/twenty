@@ -27,12 +27,16 @@ export const createDeleteWorkflowVersionStepTool = (
   inputSchema: deleteWorkflowVersionStepSchema,
   execute: async (parameters: DeleteWorkflowVersionStepInput) => {
     try {
-      return await deps.coreWorkflowVersionMutationService.deleteStep({
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        stepIdToDelete: parameters.stepId,
-      });
+      return {
+        success: true,
+        message: 'Workflow version step deleted',
+        result: await deps.coreWorkflowVersionMutationService.deleteStep({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          stepIdToDelete: parameters.stepId,
+        }),
+      };
     } catch (error) {
       return {
         success: false,

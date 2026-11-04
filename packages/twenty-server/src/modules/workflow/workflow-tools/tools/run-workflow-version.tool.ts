@@ -52,8 +52,8 @@ export const createRunWorkflowVersionTool = (
 
       return {
         success: true,
-        workflowRunId,
         message: `Workflow run ${workflowRunId} started. Call get_workflow_run with this id to follow it.`,
+        result: { workflowRunId },
       };
     } catch (error) {
       return {

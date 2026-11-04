@@ -152,10 +152,14 @@ export const createCreateWorkflowVersionStepTool = (
         },
       );
 
-      return enrichResultWithNextStep({
-        result,
-        stepType: parameters.stepType,
-      });
+      return {
+        success: true,
+        message: 'Workflow version step created',
+        result: enrichResultWithNextStep({
+          result,
+          stepType: parameters.stepType,
+        }),
+      };
     } catch (error) {
       return {
         success: false,

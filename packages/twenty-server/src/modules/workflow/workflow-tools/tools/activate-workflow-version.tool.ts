@@ -26,13 +26,13 @@ export const createActivateWorkflowVersionTool = (
   inputSchema: activateWorkflowVersionSchema,
   execute: async (parameters: ActivateWorkflowVersionInput) => {
     try {
-      return await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion(
-        {
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        },
-      );
+      await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+        workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+      });
+
+      return { success: true, message: 'Workflow version activated' };
     } catch (error) {
       return {
         success: false,

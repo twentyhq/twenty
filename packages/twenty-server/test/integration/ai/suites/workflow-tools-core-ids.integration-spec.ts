@@ -225,7 +225,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should read the current version back by core workflow id', async () => {
       const current = await callWorkflowTool<{
         success: boolean;
-        workflowVersion: {
+        result: {
           coreWorkflowVersionId: string;
           coreWorkflowId: string;
           steps: { id: string }[];
@@ -233,11 +233,9 @@ describe('workflow MCP tools on core identities (integration)', () => {
       }>('get_workflow_current_version', { coreWorkflowId });
 
       expect(current.success).toBe(true);
-      expect(current.workflowVersion.coreWorkflowVersionId).toBe(
-        coreWorkflowVersionId,
-      );
-      expect(current.workflowVersion.coreWorkflowId).toBe(coreWorkflowId);
-      expect(current.workflowVersion.steps.map(({ id }) => id)).toEqual(
+      expect(current.result.coreWorkflowVersionId).toBe(coreWorkflowVersionId);
+      expect(current.result.coreWorkflowId).toBe(coreWorkflowId);
+      expect(current.result.steps.map(({ id }) => id)).toEqual(
         expect.arrayContaining([iteratorStepId, loopBodyStepId]),
       );
     });
@@ -245,12 +243,12 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should list the workflow by its core id', async () => {
       const listed = await callWorkflowTool<{
         success: boolean;
-        workflows: { coreWorkflowId: string; name: string }[];
+        result: { workflows: { coreWorkflowId: string; name: string }[] };
       }>('list_workflows', { limit: 100 });
 
       expect(listed.success).toBe(true);
       expect(
-        listed.workflows.some(
+        listed.result.workflows.some(
           (workflow) => workflow.coreWorkflowId === coreWorkflowId,
         ),
       ).toBe(true);
@@ -259,12 +257,12 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should list the workflow when filtering by status', async () => {
       const listed = await callWorkflowTool<{
         success: boolean;
-        workflows: { coreWorkflowId: string }[];
+        result: { workflows: { coreWorkflowId: string }[] };
       }>('list_workflows', { limit: 100, status: 'DRAFT' });
 
       expect(listed.success).toBe(true);
       expect(
-        listed.workflows.some(
+        listed.result.workflows.some(
           (workflow) => workflow.coreWorkflowId === coreWorkflowId,
         ),
       ).toBe(true);
@@ -273,11 +271,11 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should list the workflow when no limit is passed', async () => {
       const listed = await callWorkflowTool<{
         success: boolean;
-        workflows: { coreWorkflowId: string }[];
+        result: { workflows: { coreWorkflowId: string }[] };
       }>('list_workflows', {});
 
       expect(listed.success).toBe(true);
-      expect(listed.workflows.length).toBeGreaterThan(0);
+      expect(listed.result.workflows.length).toBeGreaterThan(0);
     });
 
     it('should write an edit through the shared writer', async () => {
@@ -306,7 +304,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should validate and activate using the core version id', async () => {
       const validated = await callWorkflowTool<{
         success: boolean;
-        issues?: unknown[];
+        result?: { issues: unknown[] };
       }>('validate_workflow', { coreWorkflowVersionId });
 
       expect(validated).toMatchObject({ success: true });
@@ -325,12 +323,14 @@ describe('workflow MCP tools on core identities (integration)', () => {
     it('should filter runs by core workflow id', async () => {
       const runs = await callWorkflowTool<{
         success: boolean;
-        workflowRuns: { coreWorkflowId: string }[];
+        result: { workflowRuns: { coreWorkflowId: string }[] };
       }>('list_workflow_runs', { coreWorkflowId });
 
       expect(runs.success).toBe(true);
       expect(
-        runs.workflowRuns.every((run) => run.coreWorkflowId === coreWorkflowId),
+        runs.result.workflowRuns.every(
+          (run) => run.coreWorkflowId === coreWorkflowId,
+        ),
       ).toBe(true);
     });
   });
@@ -358,7 +358,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
 
       const result = await callWorkflowTool<{
         success: boolean;
-        coreWorkflowId: string;
+        result: { coreWorkflowId: string };
       }>('delete_workflow', {
         coreWorkflowId: created.result.coreWorkflowId,
       });

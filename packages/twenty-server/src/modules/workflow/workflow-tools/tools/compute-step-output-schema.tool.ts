@@ -52,17 +52,22 @@ export const createComputeStepOutputSchemaTool = (
         return {
           success: false,
           error: `Workflow version ${parameters.coreWorkflowVersionId} not found`,
+          message: `Workflow version ${parameters.coreWorkflowVersionId} not found`,
         };
       }
 
-      return await deps.workflowSchemaService.computeStepOutputSchema({
-        step: parameters.step,
-        workspaceId: context.workspaceId,
-        workflowVersionContent: {
-          trigger: coreWorkflowVersion.trigger,
-          steps: coreWorkflowVersion.steps,
-        },
-      });
+      return {
+        success: true,
+        message: 'Step output schema computed',
+        result: await deps.workflowSchemaService.computeStepOutputSchema({
+          step: parameters.step,
+          workspaceId: context.workspaceId,
+          workflowVersionContent: {
+            trigger: coreWorkflowVersion.trigger,
+            steps: coreWorkflowVersion.steps,
+          },
+        }),
+      };
     } catch (error) {
       return {
         success: false,

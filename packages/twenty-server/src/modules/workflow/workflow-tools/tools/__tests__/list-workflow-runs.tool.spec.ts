@@ -71,17 +71,19 @@ describe('list_workflow_runs tool', () => {
 
     const result = await tool.execute({});
 
-    expect(result.success).toBe(true);
-
-    if (!('workflowRuns' in result)) {
-      throw new Error('Expected workflowRuns to be present in the result');
-    }
-
-    expect(result.workflowRuns).toHaveLength(2);
-    expect(result.workflowRuns[0].id).toBe('run-1');
-    expect(result.workflowRuns[0].coreWorkflowId).toBe('core-wf-1');
-    expect(result.workflowRuns[0].coreWorkflowVersionId).toBe('core-wfv-1');
-    expect(result.workflowRuns[1].error).toBe('Timeout');
+    expect(result).toMatchObject({
+      success: true,
+      result: {
+        workflowRuns: [
+          {
+            id: 'run-1',
+            coreWorkflowId: 'core-wf-1',
+            coreWorkflowVersionId: 'core-wfv-1',
+          },
+          { error: 'Timeout' },
+        ],
+      },
+    });
   });
 
   it('should apply filters when provided', async () => {

@@ -56,6 +56,7 @@ export const createGetWorkflowRunTool = (
             return {
               success: false,
               error: `Workflow run ${parameters.workflowRunId} not found`,
+              message: `Workflow run ${parameters.workflowRunId} not found`,
             };
           }
 
@@ -88,7 +89,8 @@ export const createGetWorkflowRunTool = (
 
           return {
             success: true,
-            workflowRun: {
+            message: `Workflow run ${workflowRun.id} is ${workflowRun.status}`,
+            result: {
               id: workflowRun.id,
               name: workflowRun.name,
               status: workflowRun.status,

@@ -41,8 +41,8 @@ Only for CODE steps that have settings.input.logicFunctionId and no settings.inp
 
       return {
         success: true,
-        logicFunctionId,
-        sourceHandlerCode,
+        message: `Read the source code of logic function ${logicFunctionId}`,
+        result: { logicFunctionId, sourceHandlerCode },
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
