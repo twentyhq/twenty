@@ -1,19 +1,28 @@
 import crypto from 'crypto';
 
+import { Queue } from 'bullmq';
 import gql from 'graphql-tag';
 import IORedis from 'ioredis';
 import request from 'supertest';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { triggerUninstallApplication } from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application.util';
+import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
@@ -320,6 +329,83 @@ describe('OAuth well-known clients (integration)', () => {
     });
   });
 
+  describe('Shared installation', () => {
+    it('should give two members connecting at once one Claude application', async () => {
+      const [janeCode, jonyCode] = await Promise.all([
+        authorizeAsMember({
+          clientId: claudeClientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        }),
+        authorizeAsMember({
+          clientId: claudeClientId,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        }),
+      ]);
+
+      const [janeExchange, jonyExchange] = await Promise.all([
+        exchangeCode({ clientId: claudeClientId, code: janeCode }),
+        exchangeCode({ clientId: claudeClientId, code: jonyCode }),
+      ]);
+
+      expect(janeExchange.status).toBe(200);
+      expect(jonyExchange.status).toBe(200);
+
+      const claudeApplications = await ds.query(
+        `SELECT application.id FROM core."application" application
+         JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
+         WHERE registration."universalIdentifier" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
+        [
+          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          SEED_APPLE_WORKSPACE_ID,
+        ],
+      );
+
+      expect(claudeApplications).toHaveLength(1);
+    });
+
+    it('should show the registration logo on its install, which has no bundle of its own', async () => {
+      const [{ logo: previousLogo }] = await ds.query(
+        `SELECT logo FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+      );
+      const logoUrl = 'https://claude.ai/logo.png';
+
+      await ds.query(
+        `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
+        [logoUrl, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+      );
+
+      try {
+        const response = await makeMetadataApiRequest(
+          {
+            query: gql`
+              query FindManyApplications {
+                findManyApplications {
+                  universalIdentifier
+                  logoUrl
+                }
+              }
+            `,
+          },
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        );
+
+        const claudeApplication = response.body.data.findManyApplications.find(
+          ({ universalIdentifier }: { universalIdentifier: string }) =>
+            universalIdentifier ===
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        );
+
+        expect(claudeApplication.logoUrl).toBe(logoUrl);
+      } finally {
+        await ds.query(
+          `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
+          [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+        );
+      }
+    });
+  });
+
   describe('Client ID metadata document of a well-known client', () => {
     let findDocumentSpy: jest.SpyInstance;
     let isFetchDueSpy: jest.SpyInstance;
@@ -515,6 +601,248 @@ describe('OAuth well-known clients (integration)', () => {
 
         expect(registeredClientResponse.status).toBe(200);
       });
+    });
+  });
+
+  describe('Uninstall', () => {
+    let redisConnection: IORedis;
+    let workspaceQueue: Queue;
+
+    const setAppPreferencesEnabled = (value: boolean) =>
+      updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+        value,
+        expectToFail: false,
+      });
+
+    beforeAll(async () => {
+      redisConnection = new IORedis(
+        process.env.REDIS_QUEUE_URL ??
+          process.env.REDIS_URL ??
+          'redis://localhost:6379',
+        { maxRetriesPerRequest: null },
+      );
+      workspaceQueue = new Queue(MessageQueue.workspaceQueue, {
+        connection: redisConnection,
+      });
+
+      await setAppPreferencesEnabled(true);
+    });
+
+    afterAll(async () => {
+      await setAppPreferencesEnabled(false);
+      await workspaceQueue.close();
+      await redisConnection.quit();
+    });
+
+    const registerLegacyClaudeClient = async (): Promise<string> => {
+      const legacyClaudeClientId = crypto.randomUUID();
+
+      await ds.query(
+        `INSERT INTO core."applicationRegistration"
+          ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")
+         VALUES ($1, 'claudeai', $2, $3, $4, 'oauth-only')`,
+        [
+          crypto.randomUUID(),
+          legacyClaudeClientId,
+          [CLAUDE_CALLBACK],
+          [...ALL_OAUTH_SCOPES],
+        ],
+      );
+      createdRegistrationClientIds.push(legacyClaudeClientId);
+
+      return legacyClaudeClientId;
+    };
+
+    const connect = async ({
+      clientId,
+      token,
+    }: {
+      clientId: string;
+      token: string;
+    }): Promise<string> => {
+      const exchange = await exchangeCode({
+        clientId,
+        code: await authorizeAsMember({ clientId, token }),
+      }).expect(200);
+
+      const refreshed = await refresh({
+        clientId,
+        refreshToken: exchange.body.refresh_token,
+      }).expect(200);
+
+      return refreshed.body.refresh_token;
+    };
+
+    const connectLegacyAndSharedClaudeMembers = async () => {
+      const legacyClaudeClientId = await registerLegacyClaudeClient();
+
+      return {
+        legacyClaudeClientId,
+        legacyRefreshToken: await connect({
+          clientId: legacyClaudeClientId,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        }),
+        sharedRefreshToken: await connect({
+          clientId: claudeClientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        }),
+      };
+    };
+
+    const expectBothMembersDisconnected = async ({
+      legacyClaudeClientId,
+      legacyRefreshToken,
+      sharedRefreshToken,
+    }: {
+      legacyClaudeClientId: string;
+      legacyRefreshToken: string;
+      sharedRefreshToken: string;
+    }) => {
+      const [legacyRefresh, sharedRefresh] = await Promise.all([
+        refresh({
+          clientId: legacyClaudeClientId,
+          refreshToken: legacyRefreshToken,
+        }),
+        refresh({ clientId: claudeClientId, refreshToken: sharedRefreshToken }),
+      ]);
+
+      expect(legacyRefresh.body.error).toBe('invalid_grant');
+      expect(sharedRefresh.body.error).toBe('invalid_grant');
+    };
+
+    const findInstalls = (
+      clientId: string,
+    ): Promise<{ id: string; universalIdentifier: string }[]> =>
+      ds.query(
+        `SELECT application.id, application."universalIdentifier" FROM core."application" application
+         JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
+         WHERE registration."oAuthClientId" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
+        [clientId, SEED_APPLE_WORKSPACE_ID],
+      );
+
+    const isInstalled = async (clientId: string): Promise<boolean> =>
+      (await findInstalls(clientId)).length > 0;
+
+    it('should disconnect the members of older per-connection Claude installs too', async () => {
+      const connections = await connectLegacyAndSharedClaudeMembers();
+
+      const { errors } = await uninstallApplication({
+        universalIdentifier:
+          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      });
+
+      expect(errors).toBeUndefined();
+
+      await expectBothMembersDisconnected(connections);
+    });
+
+    it('should disconnect them in the uninstall job, not in the requests that queue it', async () => {
+      const connections = await connectLegacyAndSharedClaudeMembers();
+
+      await workspaceQueue.pause();
+
+      try {
+        const triggerClaudeUninstall = () =>
+          triggerUninstallApplication({
+            input: {
+              universalIdentifier:
+                WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            },
+          });
+
+        const [firstTrigger, doubleSubmittedTrigger] = await Promise.all([
+          triggerClaudeUninstall(),
+          triggerClaudeUninstall(),
+        ]);
+
+        expect(firstTrigger.errors).toBeUndefined();
+        expect(doubleSubmittedTrigger.errors).toBeUndefined();
+        expect(
+          doubleSubmittedTrigger.data.triggerUninstallApplication.jobId,
+        ).toBe(firstTrigger.data.triggerUninstallApplication.jobId);
+        expect(await isInstalled(connections.legacyClaudeClientId)).toBe(true);
+      } finally {
+        await workspaceQueue.resume();
+      }
+
+      await waitForAllJobsToFinish();
+
+      expect(await isInstalled(connections.legacyClaudeClientId)).toBe(false);
+      await expectBothMembersDisconnected(connections);
+    });
+
+    it('should only uninstall an older per-connection Claude install while the shared one exists', async () => {
+      const { legacyClaudeClientId, legacyRefreshToken, sharedRefreshToken } =
+        await connectLegacyAndSharedClaudeMembers();
+      const otherLegacyClaudeClientId = await registerLegacyClaudeClient();
+      const otherLegacyRefreshToken = await connect({
+        clientId: otherLegacyClaudeClientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+      const [legacyInstall] = await findInstalls(legacyClaudeClientId);
+
+      const { errors } = await uninstallApplication({
+        universalIdentifier: legacyInstall.universalIdentifier,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(await isInstalled(legacyClaudeClientId)).toBe(false);
+      expect(await isInstalled(otherLegacyClaudeClientId)).toBe(true);
+      expect(await isInstalled(claudeClientId)).toBe(true);
+
+      const [legacyRefresh, otherLegacyRefresh, sharedRefresh] =
+        await Promise.all([
+          refresh({
+            clientId: legacyClaudeClientId,
+            refreshToken: legacyRefreshToken,
+          }),
+          refresh({
+            clientId: otherLegacyClaudeClientId,
+            refreshToken: otherLegacyRefreshToken,
+          }),
+          refresh({
+            clientId: claudeClientId,
+            refreshToken: sharedRefreshToken,
+          }),
+        ]);
+
+      expect(legacyRefresh.body.error).toBe('invalid_grant');
+      expect(otherLegacyRefresh.status).toBe(200);
+      expect(sharedRefresh.status).toBe(200);
+    });
+
+    it('should only uninstall the shared Claude install while app preferences are off', async () => {
+      await setAppPreferencesEnabled(false);
+
+      try {
+        const { legacyClaudeClientId, legacyRefreshToken, sharedRefreshToken } =
+          await connectLegacyAndSharedClaudeMembers();
+
+        const { errors } = await uninstallApplication({
+          universalIdentifier:
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        });
+
+        expect(errors).toBeUndefined();
+        expect(await isInstalled(legacyClaudeClientId)).toBe(true);
+
+        const [legacyRefresh, sharedRefresh] = await Promise.all([
+          refresh({
+            clientId: legacyClaudeClientId,
+            refreshToken: legacyRefreshToken,
+          }),
+          refresh({
+            clientId: claudeClientId,
+            refreshToken: sharedRefreshToken,
+          }),
+        ]);
+
+        expect(legacyRefresh.status).toBe(200);
+        expect(sharedRefresh.body.error).toBe('invalid_grant');
+      } finally {
+        await setAppPreferencesEnabled(true);
+      }
     });
   });
 });
