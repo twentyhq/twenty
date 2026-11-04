@@ -10384,6 +10384,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Participants"
 msgstr "Deelnemers"
 
+#. js-lingui-id: kWRulr
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Partner codes only apply to new Twenty customers."
+msgstr ""
+
 #. js-lingui-id: mZg7qC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13994,6 +13999,11 @@ msgstr "De naam van de kans"
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
 msgstr "Het was niet mogelijk om het pakketregister te bereiken om de herkomst van het pakket te verifiëren. Probeer het later opnieuw."
 
+#. js-lingui-id: /UF1cu
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "The partner code can no longer be added or changed. Please contact support."
+msgstr ""
+
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14863,6 +14873,11 @@ msgstr "Deze bewerking verwijst naar een record dat niet bestaat of niet kan wor
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
 msgstr "Deze organisatiesleutel is al in gebruik op een andere serverinstantie. Maak deze op die server vrij of draag hem over naar deze server."
+
+#. js-lingui-id: 4cfXTZ
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This partner code is not valid."
+msgstr ""
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts

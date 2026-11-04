@@ -66,4 +66,25 @@ describe('extractPersonMatchParams', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('requires the fields for new matches but not for pdlId refreshes', () => {
+    expect(
+      extractPersonMatchParams({
+        node: PERSON_NODE_MOCK,
+        minLikelihoods: MIN_LIKELIHOODS,
+        required: 'work_email',
+      }),
+    ).toEqual({
+      profile: 'https://linkedin.com/in/existing',
+      minLikelihood: 3,
+      required: 'work_email',
+    });
+    expect(
+      extractPersonMatchParams({
+        node: { ...PERSON_NODE_MOCK, pdlId: 'pdl-1' },
+        minLikelihoods: MIN_LIKELIHOODS,
+        required: 'work_email',
+      }),
+    ).toStrictEqual({ pdlId: 'pdl-1', minLikelihood: 3 });
+  });
 });
