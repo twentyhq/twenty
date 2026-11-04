@@ -66,22 +66,22 @@ export class BillingSeatArrangementSyncCronJob {
       changedSeatArrangements.map(({ workspaceId }) => workspaceId),
     );
 
-    for (const workspaceId of workspaceIds) {
-      try {
-        await this.messageQueueService.add<UpdateSubscriptionQuantityJobData>(
-          UpdateSubscriptionQuantityJob.name,
-          { workspaceId },
-          {
-            ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
-            workspaceId,
-            isWorkspaceJob: true,
-          },
-        );
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
-        });
-      }
+    if (workspaceIds.size === 0) {
+      return;
+    }
+
+    try {
+      await this.messageQueueService.bulkAdd<UpdateSubscriptionQuantityJobData>(
+        UpdateSubscriptionQuantityJob.name,
+        [...workspaceIds].map((workspaceId) => ({
+          data: { workspaceId },
+          workspaceId,
+          isWorkspaceJob: true,
+        })),
+        UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+      );
+    } catch (error) {
+      this.exceptionHandlerService.captureExceptions([error]);
     }
   }
 }
