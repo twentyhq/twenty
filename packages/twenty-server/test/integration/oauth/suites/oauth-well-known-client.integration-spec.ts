@@ -10,6 +10,8 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
+import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
@@ -20,6 +22,12 @@ const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
 const CHATGPT_PLATFORM_CALLBACK =
   'https://chatgpt.com/connector_platform_oauth_redirect';
+const CHATGPT_DOCUMENT = {
+  clientId: 'https://chatgpt.com/oauth/integration-test-client.json',
+  clientName: 'ChatGPT',
+  logoUri: null,
+  redirectUris: [CHATGPT_PLATFORM_CALLBACK],
+};
 
 const clearTokenBuckets = async (keyPattern: string) => {
   const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
@@ -53,6 +61,15 @@ const authorizeAppMutation = gql`
   }
 `;
 
+const findApplicationRegistrationByClientIdQuery = gql`
+  query FindApplicationRegistrationByClientId($clientId: String!) {
+    findApplicationRegistrationByClientId(clientId: $clientId) {
+      name
+      wellKnownOAuthClient
+    }
+  }
+`;
+
 describe('OAuth well-known clients (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
@@ -66,6 +83,65 @@ describe('OAuth well-known clients (integration)', () => {
 
   const register = (body: Record<string, unknown>) =>
     request(baseUrl).post('/oauth/register').send(body);
+
+  const requestAuthorization = ({
+    clientId,
+    token,
+    redirectUrl = CLAUDE_CALLBACK,
+  }: {
+    clientId: string;
+    token: string;
+    redirectUrl?: string;
+  }) =>
+    makeMetadataApiRequest(
+      {
+        query: authorizeAppMutation,
+        variables: { clientId, redirectUrl, codeChallenge },
+      },
+      token,
+    );
+
+  const authorizeAsMember = async (params: {
+    clientId: string;
+    token: string;
+    redirectUrl?: string;
+  }) => {
+    const response = await requestAuthorization(params);
+
+    return new URL(
+      response.body.data.authorizeApp.redirectUrl,
+    ).searchParams.get('code');
+  };
+
+  const exchangeCode = ({
+    clientId,
+    code,
+    redirectUri = CLAUDE_CALLBACK,
+  }: {
+    clientId: string;
+    code: string | null;
+    redirectUri?: string;
+  }) =>
+    request(baseUrl).post('/oauth/token').send({
+      grant_type: 'authorization_code',
+      code,
+      client_id: clientId,
+      code_verifier: CODE_VERIFIER,
+      redirect_uri: redirectUri,
+    });
+
+  const refresh = ({
+    clientId,
+    refreshToken,
+  }: {
+    clientId: string;
+    refreshToken: string;
+  }) =>
+    request(baseUrl).post('/oauth/token').send({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientId,
+    });
 
   beforeAll(async () => {
     ds = global.testDataSource;
@@ -211,6 +287,204 @@ describe('OAuth well-known clients (integration)', () => {
         name: 'Claude',
         sourceType: 'OAUTH_ONLY',
         wellKnownOAuthClient: 'CLAUDE',
+      });
+    });
+  });
+
+  describe('Client ID metadata document of a well-known client', () => {
+    let findDocumentSpy: jest.SpyInstance;
+    let isFetchDueSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      const clientIdMetadataDocumentService =
+        getAppProviderByClassName<ClientIdMetadataDocumentService>(
+          'ClientIdMetadataDocumentService',
+        );
+
+      findDocumentSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'findDocument')
+        .mockResolvedValue(CHATGPT_DOCUMENT);
+      isFetchDueSpy = jest
+        .spyOn(clientIdMetadataDocumentService, 'isFetchDue')
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      findDocumentSpy.mockRestore();
+      isFetchDueSpy.mockRestore();
+    });
+
+    it('should exchange and refresh with the document URL it authorized with', async () => {
+      const code = await authorizeAsMember({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      const exchangeResponse = await exchangeCode({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        code,
+        redirectUri: CHATGPT_PLATFORM_CALLBACK,
+      });
+
+      expect(exchangeResponse.status).toBe(200);
+
+      const refreshResponse = await refresh({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        refreshToken: exchangeResponse.body.refresh_token,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+    });
+
+    it('should reject a vendor callback that the document does not list', async () => {
+      const response = await requestAuthorization({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        redirectUrl: CHATGPT_CONNECTION_CALLBACK,
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain(
+        'redirectUrl mismatch',
+      );
+    });
+  });
+
+  describe('Consent screen', () => {
+    it('should identify the seeded client by the server, not by its name', async () => {
+      const response = await makeMetadataApiRequest({
+        query: findApplicationRegistrationByClientIdQuery,
+        variables: { clientId: claudeClientId },
+      });
+
+      expect(response.body.data.findApplicationRegistrationByClientId).toEqual({
+        name: 'Claude',
+        wellKnownOAuthClient: 'CLAUDE',
+      });
+    });
+
+    it('should not identify a client that only borrows the name', async () => {
+      const registration = await register({
+        client_name: 'Claude',
+        redirect_uris: ['https://example.com/claude-callback'],
+      }).expect(201);
+
+      createdRegistrationClientIds.push(registration.body.client_id);
+
+      const response = await makeMetadataApiRequest({
+        query: findApplicationRegistrationByClientIdQuery,
+        variables: { clientId: registration.body.client_id },
+      });
+
+      expect(
+        response.body.data.findApplicationRegistrationByClientId
+          .wellKnownOAuthClient,
+      ).toBeNull();
+    });
+
+    describe('Client ID metadata document lookups', () => {
+      const clearFetchRateLimit = () =>
+        clearTokenBuckets('oauth-client-metadata-document-fetch:*');
+
+      const buildUnreachableDocumentUrl = () =>
+        `https://10.255.255.1/${crypto.randomUUID()}`;
+
+      const lookUp = (clientId: string) =>
+        makeMetadataApiRequest(
+          {
+            query: findApplicationRegistrationByClientIdQuery,
+            variables: { clientId },
+          },
+          null,
+        );
+
+      const exhaustFetchRateLimitWithLookups = async (): Promise<string> => {
+        const cachedDocumentUrl = buildUnreachableDocumentUrl();
+
+        for (
+          let lookup = 0;
+          lookup < CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX;
+          lookup++
+        ) {
+          const response = await lookUp(
+            lookup === 0 ? cachedDocumentUrl : buildUnreachableDocumentUrl(),
+          );
+
+          expect(response.body.errors).toBeUndefined();
+          expect(
+            response.body.data.findApplicationRegistrationByClientId,
+          ).toBeNull();
+        }
+
+        return cachedDocumentUrl;
+      };
+
+      beforeEach(clearFetchRateLimit);
+      afterAll(clearFetchRateLimit);
+
+      it('should rate limit the lookups that fetch a document, not the cached or registered ones', async () => {
+        const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
+        const throttledResponse = await lookUp(buildUnreachableDocumentUrl());
+
+        expect(throttledResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+          'LIMIT_REACHED',
+        );
+
+        const cachedResponse = await lookUp(cachedDocumentUrl);
+
+        expect(cachedResponse.body.errors).toBeUndefined();
+
+        const registeredClientResponse = await lookUp(claudeClientId);
+
+        expect(registeredClientResponse.body.errors).toBeUndefined();
+        expect(
+          registeredClientResponse.body.data
+            .findApplicationRegistrationByClientId,
+        ).toEqual({ name: 'Claude', wellKnownOAuthClient: 'CLAUDE' });
+      });
+
+      it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {
+        const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
+        const throttledResponses = await Promise.all([
+          request(baseUrl).post('/oauth/token').send({
+            grant_type: 'refresh_token',
+            refresh_token: 'not-a-refresh-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+          request(baseUrl).post('/oauth/revoke').send({
+            token: 'not-a-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+          request(baseUrl).post('/oauth/introspect').send({
+            token: 'not-a-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+        ]);
+
+        for (const throttledResponse of throttledResponses) {
+          expect(throttledResponse.status).toBe(429);
+          expect(throttledResponse.body.error).toBe('rate_limit_exceeded');
+        }
+
+        const cachedDocumentResponse = await refresh({
+          clientId: cachedDocumentUrl,
+          refreshToken: 'not-a-refresh-token',
+        });
+
+        expect(cachedDocumentResponse.status).toBe(401);
+        expect(cachedDocumentResponse.body.error).toBe('invalid_client');
+
+        const registeredClientResponse = await exchangeCode({
+          clientId: claudeClientId,
+          code: await authorizeAsMember({
+            clientId: claudeClientId,
+            token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          }),
+        });
+
+        expect(registeredClientResponse.status).toBe(200);
       });
     });
   });

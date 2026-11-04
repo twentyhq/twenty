@@ -10785,6 +10785,9 @@ export default {
             "websiteUrl": [
                 1
             ],
+            "wellKnownOAuthClient": [
+                671
+            ],
             "__typename": [
                 1
             ]

@@ -5876,6 +5876,7 @@ export type PublicApplicationRegistration = {
   name: Scalars['String']['output'];
   oAuthScopes: Array<Scalars['String']['output']>;
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type PublicConnectionParametersOutput = {
