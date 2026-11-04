@@ -158,7 +158,11 @@ const StyledContentLink = styled(Link)`
   gap: ${themeCssVariables.spacing[1]};
   line-height: 1.4;
   min-height: ${themeCssVariables.spacing[6]};
-  text-decoration: underline;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const StyledRowIcon = styled.div`
