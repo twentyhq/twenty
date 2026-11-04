@@ -25,7 +25,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { fromRoleRecordsPermissionsToObjectsPermissions } from 'src/engine/permissions/role/utils/from-role-records-permissions-to-objects-permissions.util';
 
 export class GraphqlQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -123,14 +122,12 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): Record<string, OrderByClause> {
-    const parseResult = this.orderFieldParser.parse(
-      orderBy as ObjectRecordOrderBy,
+    const parseResult = this.orderFieldParser.parse({
+      orderBy: orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
-      fromRoleRecordsPermissionsToObjectsPermissions({
-        roleRecordsPermissions: queryBuilder.recordsPermissions,
-      }),
-    );
+      recordsPermissions: queryBuilder.recordsPermissions,
+    });
 
     for (const joinInfo of parseResult.relationJoins) {
       addRelationJoinAliasToQueryBuilder({
@@ -178,11 +175,11 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
-    const parseResult = this.orderFieldParser.parse(
+    const parseResult = this.orderFieldParser.parse({
       orderBy,
       objectNameSingular,
       isForwardPagination,
-    );
+    });
 
     const orderByRawSQLClauseArray = Object.entries(parseResult.orderBy).map(
       ([orderByField, orderByCondition]) => {

@@ -36,6 +36,7 @@ import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { canReachSomeRecords } from 'src/engine/permissions/role/utils/can-reach-some-records.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -87,13 +88,13 @@ export class DatabaseToolProvider implements ToolProvider {
     const recordAccessPolicy = isDefined(context.authContext)
       ? this.recordAccessPolicyService.forAuthContext(context.authContext)
       : undefined;
-    const objectPermissions =
-      await recordAccessPolicy?.findObjectsPermissions();
+    const recordsPermissions =
+      await recordAccessPolicy?.findRecordsPermissions();
 
     if (
       !isDefined(recordAccessPolicy) ||
-      !isDefined(objectPermissions) ||
-      Object.keys(objectPermissions).length === 0
+      !isDefined(recordsPermissions) ||
+      Object.keys(recordsPermissions.objects).length === 0
     ) {
       return descriptors;
     }
@@ -131,13 +132,14 @@ export class DatabaseToolProvider implements ToolProvider {
       : () => [];
 
     for (const flatObject of allFlatObjects) {
-      const permission = objectPermissions[flatObject.id];
+      const objectRecordsPermissions =
+        recordsPermissions.objects[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
         flatObject.id,
       );
 
       if (
-        !permission ||
+        !isDefined(objectRecordsPermissions) ||
         (requireExplicitObjectGrants && !isDefined(explicitPermission))
       ) {
         continue;
@@ -153,8 +155,10 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
       const canCreateRecords =
-        permission.canUpdateObjectRecords &&
-        isExplicitlyGranted('canUpdateObjectRecords');
+        canReachSomeRecords({
+          objectRecordsPermissions,
+          operationType: 'update',
+        }) && isExplicitlyGranted('canUpdateObjectRecords');
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
         (await hasAccessToSomeRecords('select'));
@@ -182,7 +186,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const restrictedFields = permission.restrictedFields;
+      const restrictedFields = objectRecordsPermissions.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });

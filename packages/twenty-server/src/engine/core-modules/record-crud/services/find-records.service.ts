@@ -58,7 +58,7 @@ export class FindRecordsService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
+        recordsPermissions,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
@@ -75,7 +75,7 @@ export class FindRecordsService {
               flatFieldMetadataMaps,
               flatObjectMetadataMaps,
               selectedFields: allSelectableFields,
-              objectsPermissions,
+              recordsPermissions,
               selectableRelationFields: buildRelationSelectionFromDepth({
                 flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
                   flatEntityIds: flatObjectMetadata.fieldIds,
@@ -84,7 +84,7 @@ export class FindRecordsService {
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
                 flatObjectMetadata,
-                objectsPermissions,
+                recordsPermissions,
                 readableObjectMetadataIds:
                   await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds(
                     { authContext, flatObjectMetadataMaps },
