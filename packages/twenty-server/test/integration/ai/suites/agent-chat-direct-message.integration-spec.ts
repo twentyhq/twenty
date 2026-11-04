@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { type GraphQLFormattedError } from 'graphql';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { randomUUID } from 'node:crypto';
 
@@ -61,18 +61,19 @@ describe('Private text direct messages', () => {
     workspaceMemberId?: string;
     token?: string;
   } = {}) => {
-    const response = await makeMetadataApiRequest(
+    const response: {
+      body: {
+        data: { openDirectMessage: string };
+        errors?: readonly GraphQLFormattedError[];
+      };
+    } = await makeMetadataApiRequest(
       { query: OPEN_DIRECT_MESSAGE, variables: { workspaceMemberId } },
       token,
     );
 
     expect(response.body.errors).toBeUndefined();
 
-    const threadId: unknown = response.body.data.openDirectMessage;
-
-    if (!isString(threadId)) {
-      throw new Error('Expected a direct-message thread ID');
-    }
+    const threadId = response.body.data.openDirectMessage;
 
     context.registerThread(threadId);
 

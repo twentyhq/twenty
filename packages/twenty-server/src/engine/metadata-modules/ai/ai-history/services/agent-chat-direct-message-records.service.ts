@@ -1,3 +1,5 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -70,7 +72,13 @@ export class AgentChatDirectMessageRecordsService {
     const flatObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS[objectName].universalIdentifier
-      ] ?? throwAgentChatThreadNotFound();
+      ];
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new InternalServerError(
+        doNotTranslate(`Object metadata for ${objectName} was not found`),
+      );
+    }
 
     await this.privateRecordStorageService.setPrivate({
       workspaceId,
@@ -129,7 +137,11 @@ export class AgentChatDirectMessageRecordsService {
         ],
       });
 
-    if (thread?.conversationType !== 'DIRECT_MESSAGE') {
+    if (!isDefined(thread)) {
+      return throwAgentChatThreadNotFound();
+    }
+
+    if (thread.conversationType !== 'DIRECT_MESSAGE') {
       directMessagePairsByThreadId?.set(threadId, null);
 
       return null;
