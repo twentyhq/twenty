@@ -152,13 +152,13 @@ export const validateEnumSelectFlatFieldMetadata = ({
     universalFlatFieldMetadataToValidate,
   );
 
-  const areOptionsWritten = !isDefined(update) || isDefined(update.options);
+  const isWritingOptions = !isDefined(update) || isDefined(update.options);
 
-  const optionColorValidationErrors = areOptionsWritten
+  const optionColorValidationErrors = isWritingOptions
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
     : [];
 
-  const optionIdValidationErrors = areOptionsWritten
+  const optionIdValidationErrors = isWritingOptions
     ? validateOptionIdsNotUsedByOtherFields({
         universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
         flatFieldMetadataMaps:
