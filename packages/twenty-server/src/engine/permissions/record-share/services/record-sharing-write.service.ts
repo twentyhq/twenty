@@ -226,9 +226,7 @@ export class RecordSharingWriteService {
     });
   }
 
-  // Records a departing member could manage would otherwise only stay
-  // manageable through roles with access to all records. Every path that
-  // removes a member from a workspace that stays active must call this.
+  // Every path removing a member from an active workspace must call this, or only all-records roles can manage their records
   async transferRecordSharesToSuccessor({
     removedUserWorkspace,
     removedWorkspaceMemberId,
@@ -268,8 +266,7 @@ export class RecordSharingWriteService {
     }
   }
 
-  // RULE rows in the scope that no grant asks for are deleted, so the caller
-  // must own every RULE row in that scope.
+  // Deletes RULE rows no grant asks for, so the caller must own every RULE row in the scope
   async syncRuleRecordShares({
     workspaceId,
     objectMetadataId,
