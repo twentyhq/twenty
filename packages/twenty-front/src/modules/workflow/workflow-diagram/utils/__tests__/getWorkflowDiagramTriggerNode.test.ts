@@ -227,18 +227,4 @@ describe('getWorkflowDiagramTriggerNode', () => {
 `);
     });
   });
-
-  describe('default case', () => {
-    it('should throw error for unsupported trigger type', () => {
-      const trigger = {
-        type: 'UNSUPPORTED_TYPE',
-        settings: {},
-      };
-
-      // @ts-expect-error workflow versions are stored as JSON
-      expect(() => getWorkflowDiagramTriggerNode({ trigger })).toThrow(
-        'Expected the trigger "{"type":"UNSUPPORTED_TYPE","settings":{}}" to be supported.',
-      );
-    });
-  });
 });

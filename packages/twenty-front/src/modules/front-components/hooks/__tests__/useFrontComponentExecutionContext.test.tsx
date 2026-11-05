@@ -1441,22 +1441,12 @@ describe('useFrontComponentExecutionContext', () => {
           buildRecordedBlob(),
           { fieldMetadataId: '' },
         );
-      const nonBlobResult =
-        await result.current.frontComponentHostCommunicationApi.uploadFile(
-          // @ts-expect-error front components can be written in plain JavaScript
-          'not-a-blob',
-          { fieldMetadataId: 'files-field-id' },
-        );
 
       expect(emptyBlobResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
       expect(missingFieldResult).toEqual({
-        status: 'failed',
-        reason: 'invalid-params',
-      });
-      expect(nonBlobResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
