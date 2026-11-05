@@ -37,7 +37,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
       ['featureFlagsMap'],
     );
 
-    return !!featureFlagsMap[
+    return featureFlagsMap[
       FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
     ];
   }
