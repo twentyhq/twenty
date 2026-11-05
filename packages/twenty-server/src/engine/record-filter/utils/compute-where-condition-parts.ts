@@ -4,12 +4,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
+import { findPostgresDefaultNullEquivalentValue } from 'src/engine/record-filter/utils/find-postgres-default-null-equivalent-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import {
   escapeIdentifier,

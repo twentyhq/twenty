@@ -4,7 +4,7 @@ import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-r
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
 import { GraphqlDirectExecutionException } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
 import { graphqlDirectExecutionToGraphqlApiExceptionHandler } from 'src/engine/api/graphql/direct-execution/utils/graphql-direct-execution-to-graphql-api-exception-handler.util';
-import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { GraphqlQueryRunnerException } from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';

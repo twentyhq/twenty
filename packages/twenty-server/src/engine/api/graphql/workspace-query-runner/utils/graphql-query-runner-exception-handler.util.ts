@@ -3,7 +3,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   type GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+} from 'src/engine/record-filter/exceptions/graphql-query-runner.exception';
 import {
   NotFoundError,
   UserInputError,
