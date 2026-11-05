@@ -312,11 +312,15 @@ export class ToolRegistryService {
   async suggestSimilarToolNames(
     toolNames: string[],
     context: ToolContext,
+    isToolAllowed?: (toolName: string) => boolean,
   ): Promise<Record<string, string[]>> {
     const fullContext = this.buildContextFromToolContext(context);
 
     const catalog = await this.getCatalog(fullContext);
-    const candidateToolNames = catalog.map((entry) => entry.name);
+    // Filter before ranking so the suggestion limit only counts allowed tools.
+    const candidateToolNames = catalog
+      .map((entry) => entry.name)
+      .filter((name) => !isToolAllowed || isToolAllowed(name));
 
     const suggestionsByToolName: Record<string, string[]> = {};
 
