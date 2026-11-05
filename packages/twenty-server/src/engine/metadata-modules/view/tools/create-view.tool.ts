@@ -14,9 +14,10 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
+import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
+import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import {
   ViewException,
@@ -98,7 +99,7 @@ const createViewInputSchema = z.object({
 @DefineTool({
   name: 'create_view',
   category: ToolCategory.VIEW,
-  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
+  accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description:
     'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
 })
@@ -109,14 +110,20 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     private readonly viewService: ViewService,
     private readonly viewFieldService: ViewFieldService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
+    private readonly viewAccessService: ViewAccessService,
   ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
+    await this.viewAccessService.canUserCreateView({
+      visibility: input.visibility,
+      accessContext: { workspaceId, userWorkspaceId, authContext },
+    });
+
     const objectMetadataId =
       await this.viewToolIdentifierService.resolveObjectMetadataIdOrThrow({
         workspaceId,

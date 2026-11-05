@@ -34,6 +34,7 @@ export default defineCommandMenuItem({
 | `isPinned`                              | No           | Quando `true`, mostra il comando come pulsante di azione rapida nell'angolo in alto a destra della pagina                                                                                                                                                                                                   |
 | `availabilityType`                      | No           | Controlla dove compare il comando: `'GLOBAL'` (sempre disponibile), `'GLOBAL_OBJECT_CONTEXT'` (solo sulle pagine con un contesto oggetto — pagine indice e pagine record), `'RECORD_SELECTION'` (solo quando sono selezionati dei record) o `'FALLBACK'` (mostrato quando nessun altro comando corrisponde) |
 | `availabilityObjectUniversalIdentifier` | No           | Limita il comando alle pagine di uno specifico tipo di oggetto (ad es. solo sui record Company)                                                                                                                                                                                                             |
+| `availabilityCoreObjectName`            | No           | Limita il comando alle pagine di un oggetto core integrato anziché di un oggetto dello spazio di lavoro. È supportato solo `'workflow'` (l'elenco Workflows e la pagina di un workflow). Non può essere combinato con `availabilityObjectUniversalIdentifier`                                               |
 | `conditionalAvailabilityExpression`     | No           | Un'espressione booleana che controlla dinamicamente la visibilità (vedi sotto)                                                                                                                                                                                                                              |
 | `conditionalPinnedExpression`           | No           | Un'espressione booleana che restringe `isPinned`: il comando viene visualizzato come pulsante di azione rapida solo finché è valida, altrimenti rimane nel menu dei comandi. Stessa sintassi e stesse variabili di `conditionalAvailabilityExpression`                                                      |
 
@@ -85,20 +86,21 @@ export default defineCommandMenuItem({
 
 Rappresentano lo stato corrente della pagina:
 
-| Variabile                      | Tipo      | Descrizione                                                              |
-| ------------------------------ | --------- | ------------------------------------------------------------------------ |
-| `pageType`                     | `string`  | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Indica se il componente è renderizzato in un pannello laterale           |
-| `numberOfSelectedRecords`      | `number`  | Numero di record attualmente selezionati                                 |
-| `isSelectAll`                  | `boolean` | Indica se "seleziona tutto" è attivo                                     |
-| `selectedRecords`              | `array`   | Gli oggetti dei record selezionati                                       |
-| `favoriteRecordIds`            | `array`   | ID dei record aggiunti ai preferiti                                      |
-| `objectPermissions`            | `object`  | Autorizzazioni per il tipo di oggetto corrente                           |
-| `targetObjectReadPermissions`  | `object`  | Autorizzazioni di lettura per l'oggetto di destinazione                  |
-| `targetObjectWritePermissions` | `object`  | Autorizzazioni di scrittura per l'oggetto di destinazione                |
-| `featureFlags`                 | `object`  | Flag delle funzionalità attivi                                           |
-| `objectMetadataItem`           | `object`  | Metadati del tipo di oggetto corrente                                    |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Indica se la vista corrente ha un filtro di soft-delete                  |
+| Variabile                      | Tipo             | Descrizione                                                                                    |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------- |
+| `pageType`                     | `string`         | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`)                       |
+| `isInSidePanel`                | `boolean`        | Indica se il componente è renderizzato in un pannello laterale                                 |
+| `numberOfSelectedRecords`      | `number`         | Numero di record attualmente selezionati                                                       |
+| `isSelectAll`                  | `boolean`        | Indica se "seleziona tutto" è attivo                                                           |
+| `selectedRecords`              | `array`          | Gli oggetti dei record selezionati                                                             |
+| `favoriteRecordIds`            | `array`          | ID dei record aggiunti ai preferiti                                                            |
+| `objectPermissions`            | `object`         | Autorizzazioni per il tipo di oggetto corrente                                                 |
+| `targetObjectReadPermissions`  | `object`         | Autorizzazioni di lettura per l'oggetto di destinazione                                        |
+| `targetObjectWritePermissions` | `object`         | Autorizzazioni di scrittura per l'oggetto di destinazione                                      |
+| `featureFlags`                 | `object`         | Flag delle funzionalità attivi                                                                 |
+| `objectMetadataItem`           | `object`         | Metadati del tipo di oggetto corrente                                                          |
+| `coreObjectName`               | `string \| null` | Oggetto core della pagina corrente (`'workflow'` nelle pagine di Workflows), altrimenti `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | Indica se la vista corrente ha un filtro di soft-delete                                        |
 
 ### Operatori
 

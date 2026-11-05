@@ -104,7 +104,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      recordsPermissions: outerQueryBuilder.recordsPermissions,
       flatObjectMetadata: this.flatObjectMetadata,
       flatFieldMetadata: fieldMetadata,
     });
@@ -354,7 +354,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      recordsPermissions: outerQueryBuilder.recordsPermissions,
       flatObjectMetadata: referencedScope.flatObjectMetadata,
       flatFieldMetadata: referencedFieldMetadata,
     });

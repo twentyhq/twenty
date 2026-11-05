@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
@@ -18,7 +14,13 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
@@ -57,7 +59,7 @@ export class CommonSelectFieldsBuilder {
   }
 
   buildFromDepth({
-    objectsPermissions,
+    recordsPermissions,
     readableObjectMetadataIds,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -68,7 +70,7 @@ export class CommonSelectFieldsBuilder {
     requestedFields,
     maximumDefaultFieldCount,
   }: {
-    objectsPermissions: ObjectsPermissions;
+    recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
     readableObjectMetadataIds: ReadonlySet<string>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -81,8 +83,17 @@ export class CommonSelectFieldsBuilder {
   }): {
     selectedFields: CommonSelectedFields;
   } {
-    const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id].restrictedFields;
+    const objectRecordsPermissions =
+      recordsPermissions.objects[flatObjectMetadata.id];
+
+    if (!isDefined(objectRecordsPermissions)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    const restrictedFields = objectRecordsPermissions.restrictedFields;
 
     const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatObjectMetadata.fieldIds,
@@ -123,7 +134,7 @@ export class CommonSelectFieldsBuilder {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
-      objectsPermissions,
+      recordsPermissions,
       readableObjectMetadataIds,
       depth,
       onlyUseLabelIdentifierFieldsInRelations,

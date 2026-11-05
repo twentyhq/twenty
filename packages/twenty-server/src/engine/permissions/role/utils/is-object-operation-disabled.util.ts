@@ -1,11 +1,11 @@
+import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const getObjectPermissionAction = (
-  operationType: OperationType,
+  operationType: ObjectRecordsOperationType,
 ): ObjectPermissionAction => {
   switch (operationType) {
     case 'select':
@@ -28,7 +28,7 @@ export const isObjectOperationDisabled = ({
   operationType,
 }: {
   objectMetadata: Pick<FlatObjectMetadata, 'disabledObjectPermissionActions'>;
-  operationType: OperationType;
+  operationType: ObjectRecordsOperationType;
 }): boolean =>
   objectMetadata.disabledObjectPermissionActions?.includes(
     getObjectPermissionAction(operationType),

@@ -58,19 +58,8 @@ export class AgentChatInboxParticipantWriterService {
     });
 
     const { workspaceId, threadId } = access;
-
-    await this.sharingService.getParticipantObjectMetadataId(workspaceId);
-
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
-      ]);
     const participantObjectMetadata =
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThreadParticipant',
-      ) ?? throwAgentChatThreadNotFound();
+      await this.getParticipantObjectMetadata(workspaceId);
 
     const participantWrites =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -95,6 +84,59 @@ export class AgentChatInboxParticipantWriterService {
         ...participantWrite,
       });
     }
+  }
+
+  // Unchecked inside the message's transaction: its new shares are not committed yet, and no member wrote it
+  async writeParticipantInboxStateInTransaction({
+    scope,
+    workspaceId,
+    threadId,
+    workspaceMemberIds,
+    reason,
+    participantObjectMetadata,
+  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
+    scope: WorkspaceTransactionScope;
+    workspaceMemberIds: string[];
+    reason: AgentChatInboxDeliveryReason;
+    participantObjectMetadata: FlatObjectMetadata;
+  }): Promise<void> {
+    const participantWrites = await this.upsertParticipantInboxState({
+      scope,
+      workspaceId,
+      threadId,
+      memberIds: [...new Set(workspaceMemberIds)],
+      reason,
+      participantObjectMetadata,
+    });
+
+    scope.afterCommit(async () => {
+      for (const participantWrite of participantWrites) {
+        await this.participantEventService.emitParticipantWritten({
+          workspaceId,
+          ...participantWrite,
+        });
+      }
+    });
+  }
+
+  // Read before a transaction starts, so the cache reads inside it are warm
+  async getParticipantObjectMetadata(
+    workspaceId: string,
+  ): Promise<FlatObjectMetadata> {
+    await this.sharingService.getParticipantObjectMetadataId(workspaceId);
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'featureFlagsMap',
+      ]);
+
+    return (
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThreadParticipant',
+      ) ?? throwAgentChatThreadNotFound()
+    );
   }
 
   private async assertCanDeliverToWorkspaceMembers({

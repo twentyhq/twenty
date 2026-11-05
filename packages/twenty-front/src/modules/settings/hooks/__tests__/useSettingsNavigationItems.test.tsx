@@ -75,7 +75,7 @@ const setPermissionFlags = (permissionFlags: PermissionFlagType[]) => {
   jotaiStore.set(currentUserWorkspaceState.atom, {
     permissionFlags,
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: [],
+    objectRecordsPermissions: [],
     isImpersonating: false,
   });
 };

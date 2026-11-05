@@ -50,6 +50,7 @@ export class AgentHistoryTransactionService {
                 await getRepository(name).delete(where);
               },
               afterCommit: transactionScope.afterCommit,
+              workspaceTransactionScope: transactionScope,
             });
           },
         ),

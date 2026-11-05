@@ -4,7 +4,9 @@ import { type Application } from 'cloudflare/resources/zero-trust/access/applica
 import GraphQLJSON from 'graphql-type-json';
 import {
   DEFAULT_AI_AGENT_MODEL_TIER,
+  DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   DEFAULT_AI_CHAT_MODEL_TIER,
+  type AiChatAssistantProfile,
   type AiModelTier,
 } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
@@ -29,6 +31,7 @@ import {
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
 import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-campaign-tracking-flags-upgrade-command-name.constant';
 import { ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-workspace-chat-assistant-modes-upgrade-command-name.constant';
+import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -412,6 +415,16 @@ export class WorkspaceEntity {
     default: AiChatAssistantMode.AUTOMATIC,
   })
   aiChatInboxAssistantMode: AiChatAssistantMode;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+  })
+  aiChatAssistantProfile: AiChatAssistantProfile;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })

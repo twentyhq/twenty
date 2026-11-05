@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
@@ -10,6 +10,7 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentChatMentionDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-mention-delivery.type';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
@@ -17,6 +18,7 @@ import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
+import { extractInboxMessageMentionedWorkspaceMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-inbox-message-mentioned-workspace-member-ids.util';
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
@@ -103,17 +105,16 @@ export class AgentInboxService {
 
     // opened on every send, so members a later send lists join the
     // conversation, even when the message it repeats was already written
-    const openThread = () =>
-      this.openThread({
-        workspaceId,
-        sender,
-        workspaceMemberIds: input.workspaceMemberIds,
-        threadKey: input.threadKey,
-        title: input.title,
-      });
+    const threadArgs = {
+      workspaceId,
+      sender,
+      workspaceMemberIds: input.workspaceMemberIds,
+      threadKey: input.threadKey,
+      title: input.title,
+    };
 
     if (await this.messageExists({ workspaceId, id: messageId })) {
-      await openThread();
+      await this.openThread(threadArgs);
 
       return {
         threadId,
@@ -148,7 +149,12 @@ export class AgentInboxService {
           })
         : undefined;
 
-    const { thread } = await openThread();
+    // read from a new message only, so sending it again mentions no one
+    const { thread, mentionDelivery } = await this.openThread({
+      ...threadArgs,
+      mentionedWorkspaceMemberIds:
+        extractInboxMessageMentionedWorkspaceMemberIds(input.text),
+    });
 
     await this.ensureOpener({
       workspaceId,
@@ -164,29 +170,19 @@ export class AgentInboxService {
       parts.push(toolCallPart.part);
     }
 
-    const isWritten = await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertMessage({
-        workspaceId,
+    const isWritten = await this.writeMessage({
+      workspaceId,
+      thread,
+      text: input.text,
+      mentionDelivery,
+      message: {
         id: messageId,
-        threadId,
         turnId,
-        role: AgentMessageRole.ASSISTANT,
-        agentId: null,
-        senderUserWorkspaceId: null,
         senderApplicationId: senderDetails.applicationId,
         isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
         parts,
-      }),
-    );
-
-    if (isWritten) {
-      await this.threadService.recordThreadActivity({
-        workspaceId,
-        threadId,
-        text: input.text,
-        threadBefore: thread,
-      });
-    }
+      },
+    });
 
     if (!isDefined(awaitingToolCall)) {
       return { threadId, toolCallId, isDismissed: false };
@@ -208,6 +204,7 @@ export class AgentInboxService {
     workspaceId,
     sender,
     workspaceMemberIds,
+    mentionedWorkspaceMemberIds = [],
     threadKey,
     title,
     isArchivedOnCreate = false,
@@ -215,12 +212,14 @@ export class AgentInboxService {
     workspaceId: string;
     sender: AgentInboxSender;
     workspaceMemberIds: string[];
+    mentionedWorkspaceMemberIds?: string[];
     threadKey: string;
     title: string;
     isArchivedOnCreate?: boolean;
   }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isCreated: boolean;
+    mentionDelivery?: AgentChatMentionDelivery;
   }> {
     const threadId = buildInboxThreadId({
       senderKey: getAgentInboxSenderDetails(sender).key,
@@ -231,13 +230,26 @@ export class AgentInboxService {
     // checked before any write, so a member who cannot use chats fails the open
     // before it creates the conversation or shares it with anyone
     if (!isDefined(existingThread?.deletedAt)) {
+      const ownerWorkspaceMemberId = isDefined(existingThread)
+        ? existingThread.workspaceMemberId
+        : workspaceMemberIds[0];
+
+      if (
+        isNonEmptyArray(mentionedWorkspaceMemberIds) &&
+        !isDefined(ownerWorkspaceMemberId)
+      ) {
+        throwAgentChatThreadNotFound();
+      }
+
       await Promise.all(
-        findNewWorkspaceMemberIds(existingThread, workspaceMemberIds).map(
-          (workspaceMemberId) =>
-            this.sharingService.getAuthContext({
-              workspaceId,
-              workspaceMemberId,
-            }),
+        findNewWorkspaceMemberIds(existingThread, [
+          ...workspaceMemberIds,
+          ...mentionedWorkspaceMemberIds,
+        ]).map((workspaceMemberId) =>
+          this.sharingService.getAuthContext({
+            workspaceId,
+            workspaceMemberId,
+          }),
         ),
       );
     }
@@ -252,15 +264,27 @@ export class AgentInboxService {
           isArchived: isArchivedOnCreate,
         });
 
-    if (!isDefined(openedThread.thread.deletedAt)) {
-      await this.addParticipants({
-        workspaceId,
-        thread: openedThread.thread,
-        workspaceMemberIds,
-      });
+    if (isDefined(openedThread.thread.deletedAt)) {
+      return openedThread;
     }
 
-    return openedThread;
+    const mentionDelivery =
+      await this.inboxDeliveryService.prepareMentionDeliveryOrThrow({
+        workspaceId,
+        thread: openedThread.thread,
+        mentionedWorkspaceMemberIds,
+      });
+
+    await this.addParticipants({
+      workspaceId,
+      thread: openedThread.thread,
+      workspaceMemberIds: workspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !mentionedWorkspaceMemberIds.includes(workspaceMemberId),
+      ),
+    });
+
+    return { ...openedThread, mentionDelivery };
   }
 
   private async createThread({
@@ -337,6 +361,72 @@ export class AgentInboxService {
 
     if (deliveredWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
       throwAgentChatThreadNotFound();
+    }
+  }
+
+  // One transaction, so a failed send leaves neither the message nor its mentions.
+  // Shares and participants come after the thread row, the order sharing changes and replies lock them in.
+  private async writeMessage({
+    workspaceId,
+    thread,
+    text,
+    mentionDelivery,
+    message,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    text: string;
+    mentionDelivery: AgentChatMentionDelivery | undefined;
+    message: {
+      id: string;
+      turnId: string;
+      senderApplicationId: string | null;
+      isAwaitingAnswer?: boolean;
+      parts: ExtendedUIMessagePart[];
+    };
+  }): Promise<boolean> {
+    try {
+      await this.conversationWriterService.runInTransaction(
+        workspaceId,
+        async (scope) => {
+          await this.conversationWriterService.insertMessage({
+            ...message,
+            workspaceId,
+            threadId: thread.id,
+            role: AgentMessageRole.ASSISTANT,
+            agentId: null,
+            senderUserWorkspaceId: null,
+            scope,
+          });
+          await this.threadService.recordThreadActivityInTransactionOrThrow({
+            scope: scope.workspaceTransactionScope,
+            workspaceId,
+            threadBefore: thread,
+            text,
+            addedWriterWorkspaceMemberIds:
+              mentionDelivery?.addedWorkspaceMemberIds ?? [],
+          });
+
+          if (isDefined(mentionDelivery)) {
+            await this.inboxDeliveryService.deliverMentionsInTransaction({
+              scope: scope.workspaceTransactionScope,
+              mentionDelivery,
+            });
+          }
+        },
+      );
+
+      return true;
+    } catch (error) {
+      // a share can conflict too, so only a message already written is a duplicate
+      if (
+        isUniqueViolationError(error) &&
+        (await this.messageExists({ workspaceId, id: message.id }))
+      ) {
+        return false;
+      }
+
+      throw error;
     }
   }
 

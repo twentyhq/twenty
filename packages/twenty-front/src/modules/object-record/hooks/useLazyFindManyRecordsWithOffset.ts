@@ -12,6 +12,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { canReachSomeRecords } from 'twenty-shared/utils';
 
 type UseLazyFindManyRecordsWithOffsetParams = Pick<
   UseFindManyRecordsParams<ObjectRecord>,
@@ -46,7 +47,10 @@ export const useLazyFindManyRecordsWithOffset = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = canReachSomeRecords({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'select',
+  });
 
   const findManyRecordsLazyWithOffset = useCallback(
     async (limit: number, offset: number) => {

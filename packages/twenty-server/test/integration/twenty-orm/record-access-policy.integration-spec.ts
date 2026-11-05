@@ -1,3 +1,4 @@
+import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { randomUUID } from 'node:crypto';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -13,7 +14,6 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -85,7 +85,7 @@ describe('RecordAccessPolicyService', () => {
   }: {
     authContext: PermissionsAuthContext;
     recordIds: string[];
-    operationType?: OperationType;
+    operationType?: ObjectRecordsOperationType;
   }): Promise<boolean> =>
     recordAccessPolicyService.hasAccessToRecords({
       authContext,

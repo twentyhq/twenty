@@ -1,5 +1,8 @@
+import {
+  type ObjectRecordsPermissions,
+  type ObjectRecordsOperationType,
+} from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -14,18 +17,16 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const workspaceId = 'workspace-id';
 
-const allObjectPermissions: ObjectPermissions = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
+const allObjectRecordsPermissions: ObjectRecordsPermissions = {
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
   restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
 };
 
 const createFlatObject = (
@@ -41,26 +42,26 @@ const createFlatObject = (
 
 type GenerateDescriptorsTestOptions = {
   explicitObjectGrants?: ExplicitObjectGrants;
-  composedObjectPermissions?: Partial<ObjectPermissions>;
-  sharedOperationTypes?: OperationType[];
+  composedObjectRecordsPermissions?: Partial<ObjectRecordsPermissions>;
+  sharedOperationTypes?: ObjectRecordsOperationType[];
 };
 
 const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
   Record<
-    OperationType,
+    ObjectRecordsOperationType,
     keyof Pick<
-      ObjectPermissions,
-      | 'canReadObjectRecords'
-      | 'canUpdateObjectRecords'
-      | 'canSoftDeleteObjectRecords'
-      | 'canDestroyObjectRecords'
+      ObjectRecordsPermissions,
+      | 'canReadAllRecords'
+      | 'canUpdateAllRecords'
+      | 'canSoftDeleteAllRecords'
+      | 'canDestroyAllRecords'
     >
   >
 > = {
-  select: 'canReadObjectRecords',
-  update: 'canUpdateObjectRecords',
-  'soft-delete': 'canSoftDeleteObjectRecords',
-  delete: 'canDestroyObjectRecords',
+  select: 'canReadAllRecords',
+  update: 'canUpdateAllRecords',
+  'soft-delete': 'canSoftDeleteAllRecords',
+  delete: 'canDestroyAllRecords',
 };
 
 describe('DatabaseToolProvider', () => {
@@ -78,15 +79,19 @@ describe('DatabaseToolProvider', () => {
         object.universalIdentifier;
     }
 
-    const composedObjectPermissionsByObjectId = Object.fromEntries(
-      objects.map((object) => [
-        object.id,
-        {
-          ...allObjectPermissions,
-          ...options?.composedObjectPermissions,
-        },
-      ]),
-    );
+    const objectRecordsPermissions = {
+      ...allObjectRecordsPermissions,
+      ...options?.composedObjectRecordsPermissions,
+    };
+    const composedRecordsPermissions: RoleRecordsPermissions = {
+      canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
+      canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
+      canSoftDeleteAllRecords: objectRecordsPermissions.canSoftDeleteAllRecords,
+      canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
+      objects: Object.fromEntries(
+        objects.map((object) => [object.id, objectRecordsPermissions]),
+      ),
+    };
 
     const flatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
@@ -117,22 +122,23 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
-    const objectPermissions = {
-      ...allObjectPermissions,
-      ...options?.composedObjectPermissions,
-    };
     const scopedRecordAccessPolicy = {
-      findObjectsPermissions: jest
+      findRecordsPermissions: jest
         .fn()
-        .mockResolvedValue(composedObjectPermissionsByObjectId),
+        .mockResolvedValue(composedRecordsPermissions),
       hasAccessToSomeRecords: jest.fn(
-        async ({ operationType }: { operationType: OperationType }) => {
+        async ({
+          operationType,
+        }: {
+          operationType: ObjectRecordsOperationType;
+        }) => {
           const objectPermission =
             OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
 
           return (
             (options?.sharedOperationTypes ?? []).includes(operationType) ||
-            (isDefined(objectPermission) && objectPermissions[objectPermission])
+            (isDefined(objectPermission) &&
+              objectRecordsPermissions[objectPermission])
           );
         },
       ),
@@ -311,11 +317,11 @@ describe('DatabaseToolProvider', () => {
     const descriptorNames = await generateDescriptorNames(
       [createFlatObject({ nameSingular: 'company', namePlural: 'companies' })],
       {
-        composedObjectPermissions: {
-          canReadObjectRecords: false,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
+        composedObjectRecordsPermissions: {
+          canReadAllRecords: false,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
         },
         sharedOperationTypes: ['select', 'update'],
       },
@@ -344,7 +350,7 @@ describe('DatabaseToolProvider', () => {
   it('does not advertise merge without the destroy permission', async () => {
     const descriptorNames = await generateDescriptorNames(
       [createFlatObject({ nameSingular: 'company', namePlural: 'companies' })],
-      { composedObjectPermissions: { canDestroyObjectRecords: false } },
+      { composedObjectRecordsPermissions: { canDestroyAllRecords: false } },
     );
 
     expect(descriptorNames).toContain('delete_one_company');
@@ -447,9 +453,9 @@ describe('DatabaseToolProvider', () => {
             },
           ],
         },
-        composedObjectPermissions: {
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
+        composedObjectRecordsPermissions: {
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
         },
       });
 
@@ -477,7 +483,7 @@ describe('DatabaseToolProvider', () => {
           canReadAllObjectRecords: true,
           canUpdateAllObjectRecords: true,
         },
-        composedObjectPermissions: { canUpdateObjectRecords: false },
+        composedObjectRecordsPermissions: { canUpdateAllRecords: false },
       });
 
       expect(descriptorNames).toContain('find_many_people');

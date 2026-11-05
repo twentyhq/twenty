@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { Equal, In, IsNull, Or } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -17,6 +17,7 @@ import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-mo
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { buildAgentChatThreadLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-last-message-text.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
@@ -28,6 +29,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatThreadService {
@@ -600,6 +602,92 @@ export class AgentChatThreadService {
     }
 
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
+  }
+
+  async recordThreadActivityInTransactionOrThrow({
+    scope,
+    workspaceId,
+    threadBefore,
+    text,
+    addedWriterWorkspaceMemberIds,
+  }: {
+    scope: WorkspaceTransactionScope;
+    workspaceId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+    text: string;
+    addedWriterWorkspaceMemberIds: string[];
+  }): Promise<void> {
+    const threadRepository =
+      scope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
+        'agentChatThread',
+        { shouldSkipEventEmission: true },
+      );
+    const lastMessageText = buildAgentChatThreadLastMessageText(text);
+
+    while (true) {
+      const thread = await threadRepository.findOne({
+        select: ['writerWorkspaceMemberIds', 'pendingQuestionMessageId'],
+        where: { id: threadBefore.id },
+      });
+
+      if (!isDefined(thread)) {
+        return throwAgentChatThreadNotFound();
+      }
+
+      const newWriterWorkspaceMemberIds = addedWriterWorkspaceMemberIds.filter(
+        (workspaceMemberId) =>
+          !thread.writerWorkspaceMemberIds?.includes(workspaceMemberId),
+      );
+      const hasNewWriters = isNonEmptyArray(newWriterWorkspaceMemberIds);
+      const writerWorkspaceMemberIds = hasNewWriters
+        ? [
+            ...(thread.writerWorkspaceMemberIds ?? []),
+            ...newWriterWorkspaceMemberIds,
+          ]
+        : thread.writerWorkspaceMemberIds;
+      const recordedAt = new Date();
+
+      const { generatedMaps: updatedThreads } = await threadRepository.update(
+        {
+          id: threadBefore.id,
+          ...(hasNewWriters
+            ? {
+                writerWorkspaceMemberIds: isNonEmptyArray(
+                  thread.writerWorkspaceMemberIds,
+                )
+                  ? Equal(thread.writerWorkspaceMemberIds)
+                  : Or(IsNull(), Equal([])),
+              }
+            : {}),
+        },
+        {
+          lastActivityAt: recordedAt.toISOString(),
+          updatedAt: recordedAt.toISOString(),
+          lastMessageText,
+          lastMessageSenderWorkspaceMemberId: null,
+          ...(hasNewWriters ? { writerWorkspaceMemberIds } : {}),
+        },
+      );
+
+      if (isNonEmptyArray(updatedThreads)) {
+        scope.afterCommit(() =>
+          this.emitThreadActivityUpdated({
+            workspaceId,
+            thread: threadBefore,
+            activity: {
+              lastActivityAt: recordedAt,
+              updatedAt: recordedAt,
+              lastMessageText,
+              lastMessageSenderWorkspaceMemberId: null,
+              writerWorkspaceMemberIds,
+              pendingQuestionMessageId: thread.pendingQuestionMessageId,
+            },
+          }),
+        );
+
+        return;
+      }
+    }
   }
 
   private async recordAgentActivity({

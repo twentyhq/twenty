@@ -258,7 +258,7 @@ describe('Workflow version step type change into Code (e2e)', () => {
     await api.cleanup();
   });
 
-  it('creates a new logic function when a step shared with a published version is changed back into Code', async () => {
+  it('rebuilds an inline Code step when a step shared with a published version is changed back into Code', async () => {
     const { workflowId, versionId: publishedVersionId } =
       await api.createDraftVersion();
     const codeStepId = v4();
@@ -324,19 +324,15 @@ describe('Workflow version step type change into Code (e2e)', () => {
       await api.updateStep(draftVersionId, { ...draftDelayStep, type: 'CODE' }),
     );
 
-    const publishedCodeStep = findStepOrThrow(
-      await api.getSteps(publishedVersionId),
-      codeStepId,
-    );
     const rebuiltCodeStep = findStepOrThrow(
       await api.getSteps(draftVersionId),
       codeStepId,
     );
 
     expect(rebuiltCodeStep.type).toBe('CODE');
-    expect(rebuiltCodeStep.settings.input.logicFunctionId).toBeDefined();
-    expect(rebuiltCodeStep.settings.input.logicFunctionId).not.toBe(
-      publishedCodeStep.settings.input.logicFunctionId,
+    expect(rebuiltCodeStep.settings.input.code).toEqual(
+      expect.stringContaining('export const main'),
     );
+    expect(rebuiltCodeStep.settings.input.logicFunctionId).toBeUndefined();
   });
 });

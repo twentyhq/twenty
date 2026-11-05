@@ -19,11 +19,9 @@ export const createGetLogicFunctionSourceTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'get_logic_function_source' as const,
-  description: `Read the current TypeScript source code of a logic function used in a workflow CODE step.
+  description: `Read the current TypeScript source code of a logic function used in a legacy workflow CODE step.
 
-Use this to inspect the code that runs when a CODE step executes — for example, before editing an existing function with update_logic_function_source, so the edit is based on the real current source rather than a guess.
-
-To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
+Only for CODE steps that have settings.input.logicFunctionId and no settings.input.code: other CODE steps carry their source in settings.input.code. Use this before editing a legacy function with update_logic_function_source, so the edit is based on the real current source rather than a guess.`,
   inputSchema: getLogicFunctionSourceSchema,
   execute: async (parameters: { logicFunctionId: string }) => {
     try {

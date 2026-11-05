@@ -1,8 +1,13 @@
 import {
-  type ObjectsPermissions,
+  type ObjectRecordsPermissions,
   type RestrictedFieldPermissions,
   type RowLevelPermissionPredicate,
+  type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // Keeping a field constrained by one role alone would let it cancel another role's deny in the insert guard
 const intersectRowLevelPermissionPredicates = (
@@ -23,101 +28,139 @@ const intersectRowLevelPermissionPredicates = (
   );
 };
 
-export const computePermissionIntersection = (
-  permissionsArray: ObjectsPermissions[],
-): ObjectsPermissions => {
-  if (permissionsArray.length === 0) {
-    return {};
-  }
+const denyIfAnyDenies = (values: (boolean | null | undefined)[]) =>
+  values.some((value) => value === false) ? false : null;
 
-  if (permissionsArray.length === 1) {
-    return permissionsArray[0];
-  }
+const intersectRestrictedFields = (
+  objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[],
+): Record<string, RestrictedFieldPermissions> => {
+  const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
 
-  const result: ObjectsPermissions = {};
+  for (const objectRecordsPermissions of objectRecordsPermissionsPerRole) {
+    for (const [fieldMetadataId, fieldPermissions] of Object.entries(
+      objectRecordsPermissions?.restrictedFields ?? {},
+    )) {
+      const current = restrictedFields[fieldMetadataId] ?? {
+        canRead: null,
+        canUpdate: null,
+      };
 
-  const allObjectMetadataIds = new Set<string>();
-
-  for (const permissions of permissionsArray) {
-    for (const id of Object.keys(permissions)) {
-      allObjectMetadataIds.add(id);
+      restrictedFields[fieldMetadataId] = {
+        canRead: denyIfAnyDenies([current.canRead, fieldPermissions.canRead]),
+        canUpdate: denyIfAnyDenies([
+          current.canUpdate,
+          fieldPermissions.canUpdate,
+        ]),
+      };
     }
   }
 
-  for (const objectMetadataId of allObjectMetadataIds) {
-    let canReadObjectRecords = true;
-    let canUpdateObjectRecords = true;
-    let canSoftDeleteObjectRecords = true;
-    let canDestroyObjectRecords = true;
-    const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
-    const rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][] =
-      [];
+  return restrictedFields;
+};
 
-    for (const permissions of permissionsArray) {
-      const objPerm = permissions[objectMetadataId];
+const intersectObjectRecordsPermissions = (
+  objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[],
+): ObjectRecordsPermissions => {
+  const isGrantedToAllRecordsByEveryRole = (
+    isGranted: (objectRecordsPermissions: ObjectRecordsPermissions) => boolean,
+  ) =>
+    objectRecordsPermissionsPerRole.every(
+      (objectRecordsPermissions) =>
+        isDefined(objectRecordsPermissions) &&
+        isGranted(objectRecordsPermissions),
+    );
+  const isReachingSomeRecordsForEveryRole = (
+    operationType: ObjectRecordsOperationType,
+  ) =>
+    objectRecordsPermissionsPerRole.every((objectRecordsPermissions) =>
+      canReachSomeRecords({ objectRecordsPermissions, operationType }),
+    );
 
-      if (!objPerm) {
-        canReadObjectRecords = false;
-        canUpdateObjectRecords = false;
-        canSoftDeleteObjectRecords = false;
-        canDestroyObjectRecords = false;
-        rowLevelPermissionPredicatesPerRole.push([]);
-        continue;
-      }
+  const intersectedObjectRecordsPermissions: ObjectRecordsPermissions = {
+    canReadAllRecords: isGrantedToAllRecordsByEveryRole(
+      ({ canReadAllRecords }) => canReadAllRecords,
+    ),
+    canUpdateAllRecords: isGrantedToAllRecordsByEveryRole(
+      ({ canUpdateAllRecords }) => canUpdateAllRecords,
+    ),
+    canSoftDeleteAllRecords: isGrantedToAllRecordsByEveryRole(
+      ({ canSoftDeleteAllRecords }) => canSoftDeleteAllRecords,
+    ),
+    canDestroyAllRecords: isGrantedToAllRecordsByEveryRole(
+      ({ canDestroyAllRecords }) => canDestroyAllRecords,
+    ),
+    restrictedFields: intersectRestrictedFields(
+      objectRecordsPermissionsPerRole,
+    ),
+  };
 
-      canReadObjectRecords =
-        canReadObjectRecords && objPerm.canReadObjectRecords === true;
-      canUpdateObjectRecords =
-        canUpdateObjectRecords && objPerm.canUpdateObjectRecords === true;
-      canSoftDeleteObjectRecords =
-        canSoftDeleteObjectRecords &&
-        objPerm.canSoftDeleteObjectRecords === true;
-      canDestroyObjectRecords =
-        canDestroyObjectRecords && objPerm.canDestroyObjectRecords === true;
+  const hasRowLevelPermissions = objectRecordsPermissionsPerRole.some(
+    (objectRecordsPermissions) =>
+      isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions),
+  );
 
-      rowLevelPermissionPredicatesPerRole.push(
-        objPerm.rowLevelPermissionPredicates,
-      );
+  if (!hasRowLevelPermissions) {
+    return intersectedObjectRecordsPermissions;
+  }
 
-      if (objPerm.restrictedFields) {
-        for (const [fieldName, fieldPerm] of Object.entries(
-          objPerm.restrictedFields,
-        )) {
-          if (!restrictedFields[fieldName]) {
-            restrictedFields[fieldName] = {
-              canRead: null,
-              canUpdate: null,
-            };
-          }
-
-          const current = restrictedFields[fieldName];
-
-          restrictedFields[fieldName] = {
-            canRead:
-              current.canRead === false || fieldPerm.canRead === false
-                ? false
-                : null,
-            canUpdate:
-              current.canUpdate === false || fieldPerm.canUpdate === false
-                ? false
-                : null,
-          };
-        }
-      }
-    }
-
-    result[objectMetadataId] = {
-      canReadObjectRecords,
-      canUpdateObjectRecords,
-      canSoftDeleteObjectRecords,
-      canDestroyObjectRecords,
-      restrictedFields,
-      rowLevelPermissionPredicates: intersectRowLevelPermissionPredicates(
-        rowLevelPermissionPredicatesPerRole,
+  return {
+    ...intersectedObjectRecordsPermissions,
+    rowLevelRecordsPermissions: {
+      canReadRecords: isReachingSomeRecordsForEveryRole('select'),
+      canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
+      canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('soft-delete'),
+      canDestroyRecords: isReachingSomeRecordsForEveryRole('delete'),
+      predicates: intersectRowLevelPermissionPredicates(
+        objectRecordsPermissionsPerRole.map(
+          (objectRecordsPermissions) =>
+            objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates ??
+            [],
+        ),
       ),
-      rowLevelPermissionPredicateGroups: [],
-    };
+      predicateGroups: [],
+    },
+  };
+};
+
+export const computePermissionIntersection = (
+  recordsPermissionsPerRole: RoleRecordsPermissions[],
+): RoleRecordsPermissions => {
+  if (recordsPermissionsPerRole.length === 0) {
+    return NO_ROLE_RECORDS_PERMISSIONS;
   }
 
-  return result;
+  if (recordsPermissionsPerRole.length === 1) {
+    return recordsPermissionsPerRole[0];
+  }
+
+  const objectMetadataIds = new Set(
+    recordsPermissionsPerRole.flatMap((recordsPermissions) =>
+      Object.keys(recordsPermissions.objects),
+    ),
+  );
+  const objects: RoleRecordsPermissions['objects'] = {};
+
+  for (const objectMetadataId of objectMetadataIds) {
+    objects[objectMetadataId] = intersectObjectRecordsPermissions(
+      recordsPermissionsPerRole.map(
+        (recordsPermissions) => recordsPermissions.objects[objectMetadataId],
+      ),
+    );
+  }
+
+  return {
+    canReadAllRecords: recordsPermissionsPerRole.every(
+      ({ canReadAllRecords }) => canReadAllRecords,
+    ),
+    canUpdateAllRecords: recordsPermissionsPerRole.every(
+      ({ canUpdateAllRecords }) => canUpdateAllRecords,
+    ),
+    canSoftDeleteAllRecords: recordsPermissionsPerRole.every(
+      ({ canSoftDeleteAllRecords }) => canSoftDeleteAllRecords,
+    ),
+    canDestroyAllRecords: recordsPermissionsPerRole.every(
+      ({ canDestroyAllRecords }) => canDestroyAllRecords,
+    ),
+    objects,
+  };
 };

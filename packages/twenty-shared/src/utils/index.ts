@@ -25,6 +25,7 @@ export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
 export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
+export { canReachSomeRecords } from './canReachSomeRecords';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
 export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuCoreObjectName';

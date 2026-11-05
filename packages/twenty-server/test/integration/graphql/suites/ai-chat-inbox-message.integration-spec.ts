@@ -1,6 +1,13 @@
+import { formatRecordReference } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { parse } from 'graphql';
+import {
+  findMyParticipant,
+  findParticipantEvents,
+  runInboxAction,
+  spyOnParticipantEvents,
+} from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
@@ -420,6 +427,230 @@ describe('Sending an inbox message as an application', () => {
       }),
       expect.anything(),
     );
+  });
+
+  describe('with members mentioned in its text', () => {
+    const { JANE, JONY, TIM } = WORKSPACE_MEMBER_DATA_SEED_IDS;
+
+    const mention = (workspaceMemberId: string) =>
+      formatRecordReference({
+        objectNameSingular: 'workspaceMember',
+        recordId: workspaceMemberId,
+        displayName: 'Teammate',
+      });
+
+    const buildThreadId = (threadKey: string) =>
+      buildInboxMessageIds({
+        senderKey: `application:${application.id}`,
+        threadKey,
+        idempotencyKey: '',
+      }).threadId;
+
+    it('mentions every member it names, the owner too, once for a message sent twice at once', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+      const eventSpy = spyOnParticipantEvents();
+
+      try {
+        const responses = await Promise.all(
+          [1, 2].map(() =>
+            sendInboxMessage(applicationToken, {
+              toolCall: null,
+              threadKey,
+              idempotencyKey: 'review-request',
+              text: `${mention(JONY)}, ${mention(JANE)} and ${mention(JONY)} again: the deck is ready.`,
+            }),
+          ),
+        );
+
+        expect(responses.map(({ body }) => body.errors)).toEqual([
+          undefined,
+          undefined,
+        ]);
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+        expect(
+          await findMyParticipant(
+            mentionThreadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).toMatchObject({
+          isSubscribed: true,
+          lastReadAt: null,
+          lastMentionedAt: expect.any(String),
+          mentionsResolvedAt: null,
+        });
+        expect(await findMyParticipant(mentionThreadId)).toMatchObject({
+          lastReadAt: null,
+          lastMentionedAt: expect.any(String),
+          mentionsResolvedAt: null,
+        });
+        expect(
+          findParticipantEvents(eventSpy, mentionThreadId)
+            .map(({ action }) => action)
+            .sort(),
+        ).toEqual(['created', 'created', 'updated']);
+      } finally {
+        eventSpy.mockRestore();
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
+
+    it('mentions a member again for a new message, never for a message sent again', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+
+      try {
+        await sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'comment:1',
+          text: `${mention(JONY)}, can you check the figures?`,
+        });
+        await runInboxAction('READ', mentionThreadId, {
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        });
+
+        const resolvedParticipant = await findMyParticipant(
+          mentionThreadId,
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+        const retryResponse = await sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'comment:1',
+          text: `${mention(TIM)}, can you check the figures?`,
+        });
+
+        expect(retryResponse.body.errors).toBeUndefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+        expect(
+          await findMyParticipant(
+            mentionThreadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).toMatchObject({
+          lastMentionedAt: resolvedParticipant?.lastMentionedAt,
+          mentionsResolvedAt: resolvedParticipant?.mentionsResolvedAt,
+        });
+        expect(
+          await global.testDataSource.query(
+            `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThreadParticipant"
+             WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+            [mentionThreadId, TIM],
+          ),
+        ).toEqual([]);
+
+        await sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'comment:2',
+          text: `${mention(JONY)}, one more thing.`,
+        });
+
+        const mentionedAgainParticipant = await findMyParticipant(
+          mentionThreadId,
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+
+        expect(
+          new Date(mentionedAgainParticipant!.lastMentionedAt!).getTime(),
+        ).toBeGreaterThan(
+          new Date(resolvedParticipant!.mentionsResolvedAt!).getTime(),
+        );
+        expect(mentionedAgainParticipant?.mentionsResolvedAt).toBe(
+          resolvedParticipant?.mentionsResolvedAt,
+        );
+      } finally {
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
+
+    it('refuses a mention of a member who cannot have the conversation', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const response = await sendInboxMessage(applicationToken, {
+        toolCall: null,
+        threadKey,
+        idempotencyKey: 'stranger',
+        text: `${mention(uuidv4())}, can you check the figures?`,
+      });
+
+      expect(JSON.stringify(response.body.errors)).toContain(
+        'THREAD_NOT_FOUND',
+      );
+      expect(await readMessages(buildThreadId(threadKey))).toEqual([]);
+      expect(await findMyParticipant(buildThreadId(threadKey))).toBeUndefined();
+    });
+
+    it('writes neither the message nor its mention when the mention fails, and delivers both on retry', async () => {
+      const threadKey = `inbox-thread-${uuidv4()}`;
+      const mentionThreadId = buildThreadId(threadKey);
+      const workspaceOrmManager =
+        getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+      const workspaceRepositoryPrototype: WorkspaceRepository =
+        await workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            Object.getPrototypeOf(
+              workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+                'agentChatThreadParticipant',
+              ),
+            ),
+          buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+          { lite: true },
+        );
+      const insert = workspaceRepositoryPrototype.insert;
+      const failParticipantInsertSpy = jest
+        .spyOn(workspaceRepositoryPrototype, 'insert')
+        .mockImplementation(function (
+          this: WorkspaceRepository,
+          ...args: Parameters<WorkspaceRepository['insert']>
+        ) {
+          const [values] = args;
+
+          if ([values].flat().some((value) => 'lastMentionedAt' in value)) {
+            return Promise.reject(new Error('Participant write failed'));
+          }
+
+          return insert.apply(this, args);
+        });
+      const send = async () =>
+        sendInboxMessage(applicationToken, {
+          toolCall: null,
+          threadKey,
+          idempotencyKey: 'review-request',
+          text: `${mention(JONY)}, the deck is ready.`,
+        });
+
+      const failedResponse = await send().finally(() =>
+        failParticipantInsertSpy.mockRestore(),
+      );
+
+      try {
+        expect(failedResponse.body.errors).toBeDefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(1);
+        expect(
+          await findMyParticipant(
+            mentionThreadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).toBeUndefined();
+
+        const retryResponse = await send();
+
+        expect(retryResponse.body.errors).toBeUndefined();
+        expect(await readMessages(mentionThreadId)).toHaveLength(2);
+        expect(
+          await findMyParticipant(
+            mentionThreadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+        ).toMatchObject({
+          lastMentionedAt: expect.any(String),
+          mentionsResolvedAt: null,
+        });
+      } finally {
+        await destroyAgentChatThread({ threadId: mentionThreadId });
+      }
+    });
   });
 });
 

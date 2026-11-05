@@ -63,6 +63,7 @@ describe('Workflow code step running an installed application function', () => {
       name: 'Code step running a non workflow action function',
       stepType: 'CODE',
       input: {
+        code: undefined,
         logicFunctionId: installedApplication.logicFunctionId,
         logicFunctionInput: { chosenBy: 'workflow author' },
       },
@@ -81,6 +82,7 @@ describe('Workflow code step running an installed application function', () => {
       name: 'Code step running a workflow action function',
       stepType: 'CODE',
       input: {
+        code: undefined,
         logicFunctionId: installedApplication.workflowActionLogicFunctionId,
         logicFunctionInput: { chosenBy: 'workflow author' },
       },

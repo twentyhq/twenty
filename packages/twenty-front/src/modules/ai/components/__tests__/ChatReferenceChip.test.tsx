@@ -196,7 +196,7 @@ const renderWithReferences = (
       store.set(currentUserWorkspaceState.atom, {
         permissionFlags,
         twoFactorAuthenticationMethodSummary: [],
-        objectsPermissions: [],
+        objectRecordsPermissions: [],
       });
       store.set(
         shouldOpenAiChatAfterOnboardingState.atom,
