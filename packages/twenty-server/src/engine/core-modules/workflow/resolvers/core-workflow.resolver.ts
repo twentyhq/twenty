@@ -126,6 +126,7 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
+      callerApplication: undefined,
       coreWorkflowId: input.coreWorkflowId,
     });
   }
@@ -230,6 +231,7 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
+      callerApplication: undefined,
       coreWorkflowId,
     });
   }
