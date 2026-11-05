@@ -68,7 +68,7 @@ export class AdminPanelQueueService {
 
     jobSizeLimiter.checkJobSizes({
       queueName,
-      jobs: [{ groupKey: groupKeys[0] ?? 'unknown', sizeBytes }],
+      jobs: [{ index: 0, groupKey: groupKeys[0] ?? 'unknown', sizeBytes }],
     });
 
     if (groupKeys.length === 0 || !job.id) {

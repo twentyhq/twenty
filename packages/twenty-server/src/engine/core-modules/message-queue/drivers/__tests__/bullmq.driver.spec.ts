@@ -861,6 +861,23 @@ describe('BullMQDriver job size limit', () => {
     expect(mockAllocateTickets).not.toHaveBeenCalled();
   });
 
+  it('reports the index of the oversized job in the caller batch', async () => {
+    const { driver } = buildDriver('enforce');
+
+    mockGetRanges.mockResolvedValue(['waiting-job']);
+
+    await expect(
+      driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
+        {
+          data: SMALL_DATA,
+          jobId: 'waiting-job',
+          ...buildWorkspaceJobScope('ws-1'),
+        },
+        { data: LARGE_DATA, ...buildWorkspaceJobScope('ws-1') },
+      ]),
+    ).rejects.toMatchObject({ details: { index: 1 } });
+  });
+
   it('refuses a single job that is too large in enforce', async () => {
     const { driver } = buildDriver('enforce');
 

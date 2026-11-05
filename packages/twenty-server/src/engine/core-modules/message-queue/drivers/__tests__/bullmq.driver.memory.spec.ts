@@ -19,6 +19,7 @@ jest.mock('bullmq', () => ({
     get client() {
       return Promise.resolve(mockQueueClient.current);
     },
+    toKey: (jobId: string) => `bull:logic-function-queue:${jobId}`,
     add: mockAdd,
     addBulk: mockAddBulk,
     getJob: mockGetJob,
@@ -92,7 +93,7 @@ const createDriver = async (mode: string) => {
   const readUsedBytes = async (groupKey: string) =>
     Number((await redis.get(`${KEY_PREFIX}:jobmem:used:${groupKey}`)) ?? 0);
 
-  return { driver, readUsedBytes };
+  return { driver, redis, readUsedBytes };
 };
 
 describe('BullMQDriver job memory', () => {
@@ -148,6 +149,28 @@ describe('BullMQDriver job memory', () => {
 
     expect(report.availableBytes).toBeNull();
     expect(await readUsedBytes('workspace:ws-1')).toBe(0);
+  });
+
+  it('does not charge a job id that BullMQ still holds', async () => {
+    const { driver, redis, readUsedBytes } = await createDriver('observe');
+
+    await redis.hset(`${KEY_PREFIX}:${QUEUE}:finished-job`, 'name', 'job');
+
+    const report = await driver.bulkAddWithReport(QUEUE, 'job', [
+      { ...buildApplicationJob('ws-1'), jobId: 'finished-job' },
+      { ...buildApplicationJob('ws-1'), jobId: 'new-job' },
+    ]);
+
+    const [finishedJob, newJob] = mockAddBulk.mock.calls[0][0];
+
+    expect(finishedJob.opts.memoryGroupKeys).toBeUndefined();
+    expect(newJob.opts.memoryGroupKeys).toEqual([
+      'workspace:ws-1',
+      'application:app-1',
+    ]);
+    expect(await readUsedBytes('workspace:ws-1')).toBe(
+      report.jobs[1].sizeBytes,
+    );
   });
 
   it('releases the charge of a job deduplicated into another one', async () => {
