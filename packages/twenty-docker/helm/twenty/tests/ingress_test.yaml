@@ -90,8 +90,8 @@ tests:
     set:
       server.ingress.enabled: true
       server.ingress.annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-        custom.annotation/key: "value"
+        nginx.ingress.kubernetes.io/proxy-body-size: '50m'
+        custom.annotation/key: 'value'
       server.ingress.hosts:
         - host: twenty.example.com
           paths:
@@ -100,10 +100,10 @@ tests:
     asserts:
       - equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/proxy-body-size"]
-          value: "50m"
+          value: '50m'
       - equal:
           path: metadata.annotations["custom.annotation/key"]
-          value: "value"
+          value: 'value'
 
   - it: supports custom className
     set:

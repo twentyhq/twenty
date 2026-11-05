@@ -11,7 +11,8 @@ import {
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: LAST_EMAIL_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    LAST_EMAIL_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
   type: FieldType.RELATION,

@@ -1,7 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { enqueueJobs } from 'twenty-sdk/logic-function';
-import { compare } from 'semver'
+import { compare } from 'semver';
 
 import {
   BACKFILL_MAX_STALLED_RUNS,
@@ -30,18 +33,23 @@ type BackfillPayload = InstallPayload & {
 
 const shouldRunPostInstall = ({
   previousVersion,
-  newVersion
-}: InstallPayload): boolean  => {
-  if(!isDefined(previousVersion)) { // Fresh install
+  newVersion,
+}: InstallPayload): boolean => {
+  if (!isDefined(previousVersion)) {
+    // Fresh install
     return true;
   }
 
-  if (compare(previousVersion, "1.5.0") <= 0 && compare(newVersion, "1.6.0") >= 0) { // Rate limitation fix
+  if (
+    compare(previousVersion, '1.5.0') <= 0 &&
+    compare(newVersion, '1.6.0') >= 0
+  ) {
+    // Rate limitation fix
     return true;
   }
 
-  return false
-}
+  return false;
+};
 
 const handler = async (payload: BackfillPayload): Promise<object> => {
   const deadlineMs = Date.now() + BACKFILL_RUN_BUDGET_MS;
@@ -66,12 +74,15 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     console.log('Backfill applying recently started meetings');
     const recentlyStartedParticipants = await collectPersonMeetingParticipants(
       client,
-      { from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS), to: new Date() },
+      {
+        from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS),
+        to: new Date(),
+      },
     );
 
     await applyMeetingInteractions(client, recentlyStartedParticipants);
 
-    if(!shouldRunPostInstall(payload)) {
+    if (!shouldRunPostInstall(payload)) {
       console.log('Backfill skipped: this upgrade does not require a backfill');
 
       return {};
@@ -138,7 +149,8 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
 };
 
 export default definePostInstallLogicFunction({
-  universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
     'Schedules upcoming meetings, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time at a paced call rate. A run that reaches its time budget or keeps getting rate limited enqueues itself to resume from where it stopped, and the backfill stops after 5 runs in a row fail before finishing a batch.',

@@ -40,7 +40,8 @@ export default defineObject({
     SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
-      universalIdentifier: SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Name',
       description: 'Short preview of the request',
@@ -123,7 +124,8 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Request',
       description: 'Message text with the bot mention stripped',

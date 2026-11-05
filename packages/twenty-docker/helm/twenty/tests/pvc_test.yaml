@@ -45,7 +45,7 @@ tests:
     template: templates/pvc-server.yaml
     set:
       server.persistence.enabled: true
-      server.persistence.storageClass: ""
+      server.persistence.storageClass: ''
     asserts:
       - isNull:
           path: spec.storageClassName

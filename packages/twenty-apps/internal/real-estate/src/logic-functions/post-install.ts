@@ -8,14 +8,52 @@ const eur = (amount: number) => ({
 });
 
 const FIRST = [
-  'Emma', 'Lucas', 'Chloe', 'Louis', 'Jade', 'Hugo', 'Lea', 'Nathan',
-  'Manon', 'Enzo', 'Camille', 'Gabriel', 'Sarah', 'Raphael', 'Ines',
-  'Arthur', 'Zoe', 'Paul', 'Julie', 'Adam', 'Alice', 'Theo', 'Lina',
-  'Noah', 'Eva', 'Tom', 'Rose', 'Sacha', 'Nina', 'Leo',
+  'Emma',
+  'Lucas',
+  'Chloe',
+  'Louis',
+  'Jade',
+  'Hugo',
+  'Lea',
+  'Nathan',
+  'Manon',
+  'Enzo',
+  'Camille',
+  'Gabriel',
+  'Sarah',
+  'Raphael',
+  'Ines',
+  'Arthur',
+  'Zoe',
+  'Paul',
+  'Julie',
+  'Adam',
+  'Alice',
+  'Theo',
+  'Lina',
+  'Noah',
+  'Eva',
+  'Tom',
+  'Rose',
+  'Sacha',
+  'Nina',
+  'Leo',
 ];
 const LAST = [
-  'Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit',
-  'Durand', 'Leroy', 'Moreau', 'Simon', 'Laurent', 'Lefevre', 'Michel',
+  'Martin',
+  'Bernard',
+  'Dubois',
+  'Thomas',
+  'Robert',
+  'Richard',
+  'Petit',
+  'Durand',
+  'Leroy',
+  'Moreau',
+  'Simon',
+  'Laurent',
+  'Lefevre',
+  'Michel',
   'Garcia',
 ];
 const lastFor = (i: number) => LAST[i % LAST.length];
@@ -33,22 +71,57 @@ const buyerFirst = FIRST.slice(
 );
 
 const AREAS = [
-  'Le Marais', 'Montmartre', 'Belleville', 'Bastille', 'Latin Quarter',
-  'Saint-Germain', 'Canal Saint-Martin', 'Batignolles', 'Butte-aux-Cailles',
-  'Pigalle', 'Oberkampf', 'Nation',
+  'Le Marais',
+  'Montmartre',
+  'Belleville',
+  'Bastille',
+  'Latin Quarter',
+  'Saint-Germain',
+  'Canal Saint-Martin',
+  'Batignolles',
+  'Butte-aux-Cailles',
+  'Pigalle',
+  'Oberkampf',
+  'Nation',
 ];
 const STREETS = [
-  'Rue de Rivoli', 'Avenue Montaigne', 'Rue des Martyrs', 'Villa Leandre',
-  'Boulevard Haussmann', 'Rue Oberkampf', 'Rue du Bac', 'Avenue Foch',
-  'Rue de la Pompe', 'Quai de Valmy', 'Rue Lepic', 'Cours Mirabeau',
+  'Rue de Rivoli',
+  'Avenue Montaigne',
+  'Rue des Martyrs',
+  'Villa Leandre',
+  'Boulevard Haussmann',
+  'Rue Oberkampf',
+  'Rue du Bac',
+  'Avenue Foch',
+  'Rue de la Pompe',
+  'Quai de Valmy',
+  'Rue Lepic',
+  'Cours Mirabeau',
 ];
 const CITIES: [string, string][] = [
-  ['Paris', '75001'], ['Paris', '75008'], ['Lyon', '69002'],
-  ['Bordeaux', '33000'], ['Marseille', '13001'], ['Nice', '06000'],
+  ['Paris', '75001'],
+  ['Paris', '75008'],
+  ['Lyon', '69002'],
+  ['Bordeaux', '33000'],
+  ['Marseille', '13001'],
+  ['Nice', '06000'],
 ];
 const TYPES = ['APARTMENT', 'HOUSE', 'CONDO', 'LAND'];
-const STATUSES = ['ACTIVE', 'ACTIVE', 'ACTIVE', 'UNDER_OFFER', 'COMING_SOON', 'SOLD'];
-const SHOWING_STATUSES = ['COMPLETED', 'SCHEDULED', 'COMPLETED', 'NO_SHOW', 'CANCELLED'];
+const STATUSES = [
+  'ACTIVE',
+  'ACTIVE',
+  'ACTIVE',
+  'UNDER_OFFER',
+  'COMING_SOON',
+  'SOLD',
+];
+const SHOWING_STATUSES = [
+  'COMPLETED',
+  'SCHEDULED',
+  'COMPLETED',
+  'NO_SHOW',
+  'CANCELLED',
+];
 const BUYER_STAGE_CYCLE = [
   BuyerStage.COMPLETING_PROFILE,
   BuyerStage.SHOWING,
@@ -175,7 +248,8 @@ const handler = async () => {
   } as any)) as any;
 
   const opportunityId = (name: string): string =>
-    createOpportunities.find((opportunity: any) => opportunity.name === name).id;
+    createOpportunities.find((opportunity: any) => opportunity.name === name)
+      .id;
 
   const showingsData = buyerFirst.flatMap((firstName, b) => {
     const opportunityName = `${firstName} ${lastFor(AGENT_COUNT + SELLER_COUNT + b)}`;

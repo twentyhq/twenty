@@ -1,6 +1,6 @@
-formatter: "markdown table" # this is required
+formatter: 'markdown table' # this is required
 
-version: ""
+version: ''
 
 header-from: main.tf
 
@@ -9,7 +9,7 @@ recursive:
   path: modules
 
 output:
-  file: "README.md"
+  file: 'README.md'
   mode: inject
   template: |-
     <!-- BEGIN_TF_DOCS -->
@@ -26,7 +26,7 @@ output:
 
 output-values:
   enabled: false
-  from: "outputs.tf"
+  from: 'outputs.tf'
 
 sort:
   enabled: true

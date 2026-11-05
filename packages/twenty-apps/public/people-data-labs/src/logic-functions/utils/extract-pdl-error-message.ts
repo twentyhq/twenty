@@ -2,9 +2,7 @@ import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 
 import { isDefined } from 'src/utils/is-defined';
 
-const extractMessageFromValue = (
-  messageValue: unknown,
-): string | undefined => {
+const extractMessageFromValue = (messageValue: unknown): string | undefined => {
   if (isNonEmptyString(messageValue)) {
     return messageValue;
   }

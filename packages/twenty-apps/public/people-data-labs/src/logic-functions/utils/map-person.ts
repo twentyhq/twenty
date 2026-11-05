@@ -29,16 +29,18 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 const SENIORITY_VALUES = buildAllowedValues(SENIORITY_OPTIONS);
 const JOB_ROLE_VALUES = buildAllowedValues(JOB_ROLE_OPTIONS);
 const JOB_TITLE_CLASS_VALUES = buildAllowedValues(JOB_TITLE_CLASS_OPTIONS);
-const JOB_TITLE_SUB_ROLE_VALUES = buildAllowedValues(JOB_TITLE_SUB_ROLE_OPTIONS);
+const JOB_TITLE_SUB_ROLE_VALUES = buildAllowedValues(
+  JOB_TITLE_SUB_ROLE_OPTIONS,
+);
 const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
 const INFERRED_SALARY_VALUES = buildAllowedValues(INFERRED_SALARY_OPTIONS);
 const SEX_VALUES = buildAllowedValues(SEX_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
 
 export const mapPerson = (personData: PdlPersonData): MappedRecord => {
-  const emailEntries = (isArray(personData.emails) ? personData.emails : []).map(
-    (rawEmail) => (isString(rawEmail) ? rawEmail : rawEmail.address),
-  );
+  const emailEntries = (
+    isArray(personData.emails) ? personData.emails : []
+  ).map((rawEmail) => (isString(rawEmail) ? rawEmail : rawEmail.address));
 
   const standard = pruneUndefined({
     name: buildFullName({
@@ -49,7 +51,9 @@ export const mapPerson = (personData: PdlPersonData): MappedRecord => {
     emails: buildEmails([
       personData.work_email,
       personData.recommended_personal_email,
-      ...(isArray(personData.personal_emails) ? personData.personal_emails : []),
+      ...(isArray(personData.personal_emails)
+        ? personData.personal_emails
+        : []),
       ...emailEntries,
     ]),
     phones: buildPhones([

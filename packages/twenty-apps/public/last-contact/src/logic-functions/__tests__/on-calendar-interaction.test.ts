@@ -118,9 +118,7 @@ describe('on-calendar-interaction handler', () => {
     ]);
 
     await handler(
-      buildBatch([
-        { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
-      ]),
+      buildBatch([{ personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID }]),
     );
 
     expect(
@@ -154,9 +152,7 @@ describe('on-calendar-interaction handler', () => {
     ]);
 
     await handler(
-      buildBatch([
-        { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
-      ]),
+      buildBatch([{ personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID }]),
     );
 
     expect(mutationMock).not.toHaveBeenCalled();

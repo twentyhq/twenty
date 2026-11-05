@@ -5,7 +5,10 @@ import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-er
 describe('extractPdlErrorMessage', () => {
   it('reads the nested PDL error message', () => {
     expect(
-      extractPdlErrorMessage({ json: { error: { message: 'boom' } }, httpStatus: 500 }),
+      extractPdlErrorMessage({
+        json: { error: { message: 'boom' } },
+        httpStatus: 500,
+      }),
     ).toBe('boom');
   });
 

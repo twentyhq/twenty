@@ -118,7 +118,9 @@ describe('exa_web_search handler', () => {
 
     const result = await handler({ query: 'openai', category: 'company' });
 
-    expect(result.message).toBe('Found 1 results for "openai" (category: company)');
+    expect(result.message).toBe(
+      'Found 1 results for "openai" (category: company)',
+    );
   });
 
   it('should fall back to empty strings for a missing title and missing highlights', async () => {
@@ -164,7 +166,9 @@ describe('exa_web_search handler', () => {
   });
 
   it('should return a failure result and not charge credits when the Exa search throws', async () => {
-    searchAndContentsMock.mockRejectedValue(new Error('Exa rate limit exceeded'));
+    searchAndContentsMock.mockRejectedValue(
+      new Error('Exa rate limit exceeded'),
+    );
 
     const result = await handler({ query: 'boom' });
 

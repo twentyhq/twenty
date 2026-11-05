@@ -114,7 +114,10 @@ const buildHarness = (configs: RecordConfig[]) => {
         throw new Error('build failed');
       }
 
-      return { mappedData: { mapped: node.id }, persistData: { value: node.id } };
+      return {
+        mappedData: { mapped: node.id },
+        persistData: { value: node.id },
+      };
     },
   );
 
@@ -275,7 +278,10 @@ describe('runBatchEnrichment', () => {
       recordIds: ['a', 'b'],
     });
     expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
-    expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }, { id: 'b' }]);
+    expect(harness.enrichBatch).toHaveBeenCalledWith([
+      { id: 'a' },
+      { id: 'b' },
+    ]);
     expect(harness.updateOne).toHaveBeenCalledTimes(2);
     expect(result).toMatchObject({
       total: 2,
@@ -289,7 +295,10 @@ describe('runBatchEnrichment', () => {
     const harness = buildHarness([
       { id: 'a', outcome: { outcome: 'not_found', httpStatus: 404 } },
       { id: 'b', outcome: { outcome: 'not_found', httpStatus: 404 } },
-      { id: 'c', outcome: { outcome: 'error', httpStatus: 500, message: 'boom' } },
+      {
+        id: 'c',
+        outcome: { outcome: 'error', httpStatus: 500, message: 'boom' },
+      },
     ]);
 
     const result = await runBatchEnrichment({
@@ -322,7 +331,10 @@ describe('runBatchEnrichment', () => {
   });
 
   it('skips no-identifier records before the PDL call', async () => {
-    const harness = buildHarness([{ id: 'a', hasIdentifier: false }, { id: 'b' }]);
+    const harness = buildHarness([
+      { id: 'a', hasIdentifier: false },
+      { id: 'b' },
+    ]);
 
     const result = await runBatchEnrichment({
       client: CLIENT,
@@ -339,12 +351,18 @@ describe('runBatchEnrichment', () => {
 
     await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a'), updateFields: UPDATE_FIELDS_OPTIONS.overwrite },
+      input: {
+        records: records('a'),
+        updateFields: UPDATE_FIELDS_OPTIONS.overwrite,
+      },
       adapter: harness.adapter,
     });
 
     expect(harness.buildMatchedData).toHaveBeenCalledWith(
-      expect.objectContaining({ overrideExistingValues: true, shouldPersist: true }),
+      expect.objectContaining({
+        overrideExistingValues: true,
+        shouldPersist: true,
+      }),
     );
   });
 
@@ -373,7 +391,10 @@ describe('runBatchEnrichment', () => {
 
     const result = await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a', 'b'), updateFields: UPDATE_FIELDS_OPTIONS.no },
+      input: {
+        records: records('a', 'b'),
+        updateFields: UPDATE_FIELDS_OPTIONS.no,
+      },
       adapter: harness.adapter,
     });
 
@@ -400,7 +421,9 @@ describe('runBatchEnrichment', () => {
     });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+    expect(
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'Test b not found',
     });
@@ -416,10 +439,12 @@ describe('runBatchEnrichment', () => {
       adapter: harness.adapter,
     });
 
+    expect(result.results.find((entry) => entry.recordId === 'a')?.status).toBe(
+      'MATCHED',
+    );
     expect(
-      result.results.find((entry) => entry.recordId === 'a')?.status,
-    ).toBe('MATCHED');
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'update failed',
     });
@@ -465,10 +490,12 @@ describe('runBatchEnrichment', () => {
       adapter: harness.adapter,
     });
 
+    expect(result.results.find((entry) => entry.recordId === 'a')?.status).toBe(
+      'MATCHED',
+    );
     expect(
-      result.results.find((entry) => entry.recordId === 'a')?.status,
-    ).toBe('MATCHED');
-    expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
+      result.results.find((entry) => entry.recordId === 'b'),
+    ).toMatchObject({
       status: 'ERROR',
       error: 'build failed',
     });
@@ -487,7 +514,10 @@ describe('runBatchEnrichment', () => {
     const harness = buildHarness([
       { id: 'matched' },
       { id: 'notfound', outcome: { outcome: 'not_found', httpStatus: 404 } },
-      { id: 'errored', outcome: { outcome: 'error', httpStatus: 500, message: 'x' } },
+      {
+        id: 'errored',
+        outcome: { outcome: 'error', httpStatus: 500, message: 'x' },
+      },
       { id: 'skipped', hasIdentifier: false },
       { id: 'missing', exists: false },
     ]);
@@ -495,7 +525,13 @@ describe('runBatchEnrichment', () => {
     const result = await runBatchEnrichment({
       client: CLIENT,
       input: {
-        records: records('matched', 'notfound', 'errored', 'skipped', 'missing'),
+        records: records(
+          'matched',
+          'notfound',
+          'errored',
+          'skipped',
+          'missing',
+        ),
       },
       adapter: harness.adapter,
     });

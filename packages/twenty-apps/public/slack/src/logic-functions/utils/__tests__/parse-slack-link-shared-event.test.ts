@@ -12,7 +12,10 @@ const buildLinkSharedBody = ({
     message_ts: '1700000000.000100',
     user: 'U123',
     links: [
-      { url: 'https://acme.twenty.com/object/person/abc', domain: 'acme.twenty.com' },
+      {
+        url: 'https://acme.twenty.com/object/person/abc',
+        domain: 'acme.twenty.com',
+      },
     ],
     ...eventOverrides,
   },

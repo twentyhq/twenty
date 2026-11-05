@@ -144,7 +144,9 @@ export const rule = defineRule({
     },
   },
   create: (context) => {
-    const options = (context.options as [{ depConstraints: DepConstraint[] }])?.[0];
+    const options = (
+      context.options as [{ depConstraints: DepConstraint[] }]
+    )?.[0];
     const depConstraints = options?.depConstraints ?? [];
 
     if (depConstraints.length === 0) {
@@ -157,11 +159,7 @@ export const rule = defineRule({
       },
       ImportExpression: (node: any) => {
         if (node.source?.type === 'Literal') {
-          checkImport(
-            { source: node.source },
-            context,
-            depConstraints,
-          );
+          checkImport({ source: node.source }, context, depConstraints);
         }
       },
     };

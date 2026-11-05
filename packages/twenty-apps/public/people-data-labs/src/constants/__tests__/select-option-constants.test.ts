@@ -20,7 +20,7 @@ import {
   PDL_FIELD_UNIVERSAL_IDENTIFIERS,
   PDL_LOGIC_FUNCTION_CONSTANTS,
   PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS,
-  PDL_VIEW_UNIVERSAL_IDENTIFIERS
+  PDL_VIEW_UNIVERSAL_IDENTIFIERS,
 } from 'src/constants/universal-identifiers';
 import { type SelectOptionMeta } from 'src/types/select-option-meta';
 import { normalizeEnumValue } from 'src/utils/normalize-enum-value';
@@ -54,29 +54,99 @@ const selectFieldCases: {
   field: unknown;
   options: readonly SelectOptionMeta[];
 }[] = [
-  { name: 'person.pdlSeniority', field: personSeniorityField, options: SENIORITY_OPTIONS },
-  { name: 'person.pdlJobRole', field: personJobRoleField, options: JOB_ROLE_OPTIONS },
-  { name: 'person.pdlJobTitleClass', field: personJobTitleClassField, options: JOB_TITLE_CLASS_OPTIONS },
-  { name: 'person.pdlJobTitleSubRole', field: personJobTitleSubRoleField, options: JOB_TITLE_SUB_ROLE_OPTIONS },
+  {
+    name: 'person.pdlSeniority',
+    field: personSeniorityField,
+    options: SENIORITY_OPTIONS,
+  },
+  {
+    name: 'person.pdlJobRole',
+    field: personJobRoleField,
+    options: JOB_ROLE_OPTIONS,
+  },
+  {
+    name: 'person.pdlJobTitleClass',
+    field: personJobTitleClassField,
+    options: JOB_TITLE_CLASS_OPTIONS,
+  },
+  {
+    name: 'person.pdlJobTitleSubRole',
+    field: personJobTitleSubRoleField,
+    options: JOB_TITLE_SUB_ROLE_OPTIONS,
+  },
   { name: 'person.pdlSex', field: personSexField, options: SEX_OPTIONS },
-  { name: 'person.pdlInferredSalary', field: personInferredSalaryField, options: INFERRED_SALARY_OPTIONS },
-  { name: 'person.pdlIndustry', field: personIndustryField, options: INDUSTRY_OPTIONS },
-  { name: 'person.pdlLocationMetro', field: personLocationMetroField, options: METRO_OPTIONS },
-  { name: 'person.pdlEnrichmentStatus', field: personEnrichmentStatusField, options: ENRICHMENT_STATUS_OPTIONS },
-  { name: 'company.pdlCompanyType', field: companyTypeField, options: COMPANY_TYPE_OPTIONS },
-  { name: 'company.pdlLocationContinent', field: companyLocationContinentField, options: LOCATION_CONTINENT_OPTIONS },
-  { name: 'company.pdlMicExchange', field: companyMicExchangeField, options: MIC_EXCHANGE_OPTIONS },
-  { name: 'company.pdlIndustry', field: companyIndustryField, options: INDUSTRY_OPTIONS },
-  { name: 'company.pdlLocationMetro', field: companyLocationMetroField, options: METRO_OPTIONS },
-  { name: 'company.pdlSizeRange', field: companySizeRangeField, options: SIZE_OPTIONS },
-  { name: 'company.pdlLatestFundingStage', field: companyLatestFundingStageField, options: FUNDING_STAGE_OPTIONS },
-  { name: 'company.pdlFundingStages', field: companyFundingStagesField, options: FUNDING_STAGE_OPTIONS },
-  { name: 'company.pdlEnrichmentStatus', field: companyEnrichmentStatusField, options: ENRICHMENT_STATUS_OPTIONS },
+  {
+    name: 'person.pdlInferredSalary',
+    field: personInferredSalaryField,
+    options: INFERRED_SALARY_OPTIONS,
+  },
+  {
+    name: 'person.pdlIndustry',
+    field: personIndustryField,
+    options: INDUSTRY_OPTIONS,
+  },
+  {
+    name: 'person.pdlLocationMetro',
+    field: personLocationMetroField,
+    options: METRO_OPTIONS,
+  },
+  {
+    name: 'person.pdlEnrichmentStatus',
+    field: personEnrichmentStatusField,
+    options: ENRICHMENT_STATUS_OPTIONS,
+  },
+  {
+    name: 'company.pdlCompanyType',
+    field: companyTypeField,
+    options: COMPANY_TYPE_OPTIONS,
+  },
+  {
+    name: 'company.pdlLocationContinent',
+    field: companyLocationContinentField,
+    options: LOCATION_CONTINENT_OPTIONS,
+  },
+  {
+    name: 'company.pdlMicExchange',
+    field: companyMicExchangeField,
+    options: MIC_EXCHANGE_OPTIONS,
+  },
+  {
+    name: 'company.pdlIndustry',
+    field: companyIndustryField,
+    options: INDUSTRY_OPTIONS,
+  },
+  {
+    name: 'company.pdlLocationMetro',
+    field: companyLocationMetroField,
+    options: METRO_OPTIONS,
+  },
+  {
+    name: 'company.pdlSizeRange',
+    field: companySizeRangeField,
+    options: SIZE_OPTIONS,
+  },
+  {
+    name: 'company.pdlLatestFundingStage',
+    field: companyLatestFundingStageField,
+    options: FUNDING_STAGE_OPTIONS,
+  },
+  {
+    name: 'company.pdlFundingStages',
+    field: companyFundingStagesField,
+    options: FUNDING_STAGE_OPTIONS,
+  },
+  {
+    name: 'company.pdlEnrichmentStatus',
+    field: companyEnrichmentStatusField,
+    options: ENRICHMENT_STATUS_OPTIONS,
+  },
 ];
 
 describe.each(selectFieldCases)('$name options', ({ field, options }) => {
   it('resolves a universalIdentifier for every option', () => {
-    expect(fieldOptions(field).every((option) => Boolean(option.id))).toBe(true);
+    expect(fieldOptions(field).every((option) => Boolean(option.id))).toBe(
+      true,
+    );
   });
 
   it('exposes exactly the values from its source constant', () => {

@@ -104,4 +104,3 @@ tests:
       - matchRegex:
           path: spec.template.spec.initContainers[?(@.name=="ensure-database-exists")].command[2]
           pattern: ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES
-

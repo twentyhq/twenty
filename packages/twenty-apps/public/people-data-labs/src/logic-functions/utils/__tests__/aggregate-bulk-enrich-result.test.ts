@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { aggregateBulkEnrichResult } from 'src/logic-functions/utils/aggregate-bulk-enrich-result';
 import { type EnrichResult } from 'src/types/enrich-result';
 
-const result = (status: EnrichResult['status'], recordId: string): EnrichResult => ({
+const result = (
+  status: EnrichResult['status'],
+  recordId: string,
+): EnrichResult => ({
   success: status !== 'ERROR',
   recordId,
   status,

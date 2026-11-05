@@ -1,8 +1,14 @@
 query IntrospectionQuery {
   __schema {
-    queryType { name }
-    mutationType { name }
-    subscriptionType { name }
+    queryType {
+      name
+    }
+    mutationType {
+      name
+    }
+    subscriptionType {
+      name
+    }
     types {
       kind
       name
@@ -131,7 +137,7 @@ query IntrospectionQuery {
               name
               ofType {
                 kind
-                  name
+                name
                 ofType {
                   kind
                   name
@@ -231,4 +237,4 @@ query IntrospectionQuery {
       }
     }
   }
-} 
+}

@@ -14,10 +14,22 @@ export const PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS = {
 } as const;
 
 export const PDL_LOGIC_FUNCTION_CONSTANTS = {
-  enrichPeople: { universalIdentifier: '65356a82-6734-4fc9-8172-7d30ed1b7859', path: '/people-data-labs/enrich-people' },
-  enrichPerson: { universalIdentifier:'864ad69b-ff9f-4635-9aed-16fd0c2ad210', path: '/people-data-labs/enrich-person' },
-  enrichCompanies: { universalIdentifier:'c769fb49-d495-469f-a58f-1a69ab90ec24', path: '/people-data-labs/enrich-companies' },
-  enrichCompany: { universalIdentifier:'560bbfd9-1107-4f7f-8398-ea835e7e5bbe', path: '/people-data-labs/enrich-company' },
+  enrichPeople: {
+    universalIdentifier: '65356a82-6734-4fc9-8172-7d30ed1b7859',
+    path: '/people-data-labs/enrich-people',
+  },
+  enrichPerson: {
+    universalIdentifier: '864ad69b-ff9f-4635-9aed-16fd0c2ad210',
+    path: '/people-data-labs/enrich-person',
+  },
+  enrichCompanies: {
+    universalIdentifier: 'c769fb49-d495-469f-a58f-1a69ab90ec24',
+    path: '/people-data-labs/enrich-companies',
+  },
+  enrichCompany: {
+    universalIdentifier: '560bbfd9-1107-4f7f-8398-ea835e7e5bbe',
+    path: '/people-data-labs/enrich-company',
+  },
 } as const;
 
 export const PDL_FIELD_UNIVERSAL_IDENTIFIERS = {
@@ -102,12 +114,12 @@ export const PDL_VIEW_UNIVERSAL_IDENTIFIERS = {
 export const PDL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIERS = {
   enrichCompanies: '1061d505-6748-48c1-96e9-5dbf6fef6561',
   enrichPeople: '3f9af38b-be42-4dc8-89cc-e37566d3aecb',
-}
+};
 
 export const PDL_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = {
   enrichCompanies: 'df33eaa8-51eb-40c4-8b6c-aceeea4d8fcc',
   enrichPeople: '86b3427b-9e86-4077-ba7b-07609b2d095b',
-}
+};
 
 export const PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS = {
   personEnrichmentStatus: {

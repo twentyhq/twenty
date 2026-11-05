@@ -40,7 +40,10 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   if (!document?.id) {
     return htmlResponse(
-      documentHtmlPage('Document not found', `No document with id ${documentId}.`),
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
       404,
     );
   }

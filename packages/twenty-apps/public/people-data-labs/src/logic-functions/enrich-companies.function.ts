@@ -1,17 +1,24 @@
-import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import {
+  defineLogicFunction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
 import { PDL_COMPANY_REQUIRED_FIELD_VALUES } from 'src/constants/pdl-company-required-field-values';
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 import { enrichCompaniesCore } from 'src/logic-functions/handlers/enrich-companies';
-import { type EnrichInput, toBulkEnrichInput } from 'src/logic-functions/utils/to-bulk-enrich-input';
+import {
+  type EnrichInput,
+  toBulkEnrichInput,
+} from 'src/logic-functions/utils/to-bulk-enrich-input';
 
 const handler = (input: EnrichInput) => {
   return enrichCompaniesCore({ input: toBulkEnrichInput(input) });
-}
+};
 
 export default defineLogicFunction({
-  universalIdentifier: PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
+  universalIdentifier:
+    PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.universalIdentifier,
   name: 'enrich-companies',
   description: 'Enrich one or more Company records with People Data Labs data',
   timeoutSeconds: 300,
@@ -19,7 +26,7 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: PDL_LOGIC_FUNCTION_CONSTANTS.enrichCompanies.path,
     httpMethod: 'POST',
-    isAuthRequired: true
+    isAuthRequired: true,
   },
   workflowActionTriggerSettings: {
     label: 'Enrich Companies',

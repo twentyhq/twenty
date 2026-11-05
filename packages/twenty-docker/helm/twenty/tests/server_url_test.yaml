@@ -20,12 +20,12 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].env[?(@.name=="SERVER_URL")].value
-          value: "https://crm.example.com:443"
+          value: 'https://crm.example.com:443'
   - it: falls back to service when ingress disabled
     set:
       server.ingress.enabled: false
       server.service.port: 3000
-      server.env.SERVER_URL: ""
+      server.env.SERVER_URL: ''
     asserts:
       - matchRegex:
           path: spec.template.spec.containers[0].env[?(@.name=="SERVER_URL")].value

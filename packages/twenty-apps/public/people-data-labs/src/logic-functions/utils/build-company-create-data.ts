@@ -18,7 +18,9 @@ export const buildCompanyCreateData = (
 ): Record<string, unknown> =>
   pruneUndefined<unknown>({
     name: toText(personData.job_company_name),
-    domainName: buildLinks({ url: normalizeDomain(personData.job_company_website) }),
+    domainName: buildLinks({
+      url: normalizeDomain(personData.job_company_website),
+    }),
     linkedinLink: buildLinks({
       url: normalizeLinkedinUrl(personData.job_company_linkedin_url),
     }),

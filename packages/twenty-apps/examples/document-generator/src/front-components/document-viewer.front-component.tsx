@@ -8,15 +8,21 @@ import { DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/consta
 import { Markdown } from 'src/utils/markdown-to-react';
 
 const useCurrentRecordId = (): string | null =>
-  useFrontComponentExecutionContext((context) =>
-    context.recordId ??
-    (context.selectedRecordIds.length === 1
-      ? context.selectedRecordIds[0]
-      : null),
+  useFrontComponentExecutionContext(
+    (context) =>
+      context.recordId ??
+      (context.selectedRecordIds.length === 1
+        ? context.selectedRecordIds[0]
+        : null),
   );
 
 const styles: Record<string, CSSProperties> = {
-  scroll: { height: '100%', overflow: 'auto', background: '#eef1f6', padding: '24px' },
+  scroll: {
+    height: '100%',
+    overflow: 'auto',
+    background: '#eef1f6',
+    padding: '24px',
+  },
   paper: {
     maxWidth: '720px',
     margin: '0 auto',
@@ -24,17 +30,24 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: '10px',
     boxShadow: '0 10px 40px rgba(24, 39, 75, 0.08)',
     overflow: 'hidden',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif",
   },
   body: { padding: '48px 56px 56px' },
-  empty: { padding: '40px', textAlign: 'center', color: '#6b7280', fontFamily: 'sans-serif' },
+  empty: {
+    padding: '40px',
+    textAlign: 'center',
+    color: '#6b7280',
+    fontFamily: 'sans-serif',
+  },
   actions: {
     maxWidth: '720px',
     margin: '0 auto 16px',
     display: 'flex',
     gap: '10px',
     justifyContent: 'flex-end',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif",
   },
   actionLink: {
     fontSize: '13px',
@@ -91,7 +104,11 @@ const DocumentViewer = () => {
   }, [recordId]);
 
   if (loading || !document) {
-    return <div style={styles.empty}>{loading ? 'Loading…' : 'Open a document to preview it here.'}</div>;
+    return (
+      <div style={styles.empty}>
+        {loading ? 'Loading…' : 'Open a document to preview it here.'}
+      </div>
+    );
   }
 
   const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
@@ -101,11 +118,21 @@ const DocumentViewer = () => {
   return (
     <div style={styles.scroll}>
       <div style={styles.actions}>
-        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+        <a
+          style={styles.actionLink}
+          href={webUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Open web page
         </a>
         {document.pdfUrl ? (
-          <a style={styles.actionLink} href={document.pdfUrl} target="_blank" rel="noopener noreferrer">
+          <a
+            style={styles.actionLink}
+            href={document.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Download PDF
           </a>
         ) : null}

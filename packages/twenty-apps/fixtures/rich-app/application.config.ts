@@ -124,7 +124,8 @@ export default defineApplication({
       isRequired: false,
     },
     POSTCARD_SANDBOX_MODE: {
-      description: 'Send postcards through the provider sandbox instead of production',
+      description:
+        'Send postcards through the provider sandbox instead of production',
       type: FieldType.BOOLEAN,
       isSecret: false,
       isRequired: false,

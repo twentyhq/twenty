@@ -8,7 +8,10 @@ const buildRecords = (count: number) =>
     lastContactAt: '2026-06-10T09:00:00.000Z',
   }));
 
-let client: { query: ReturnType<typeof vi.fn>; mutation: ReturnType<typeof vi.fn> };
+let client: {
+  query: ReturnType<typeof vi.fn>;
+  mutation: ReturnType<typeof vi.fn>;
+};
 
 beforeEach(() => {
   client = { query: vi.fn(), mutation: vi.fn().mockResolvedValue({}) };
@@ -16,7 +19,11 @@ beforeEach(() => {
 
 describe('upsertRecordsInBatches', () => {
   it('writes a whole batch of distinct payloads in one call', async () => {
-    await upsertRecordsInBatches(client as never, 'createPeople', buildRecords(200));
+    await upsertRecordsInBatches(
+      client as never,
+      'createPeople',
+      buildRecords(200),
+    );
 
     expect(client.mutation).toHaveBeenCalledTimes(1);
     expect(client.mutation.mock.calls[0][0].createPeople.__args.upsert).toBe(
@@ -28,7 +35,11 @@ describe('upsertRecordsInBatches', () => {
   });
 
   it('splits at the maximum number of records the API accepts', async () => {
-    await upsertRecordsInBatches(client as never, 'createPeople', buildRecords(201));
+    await upsertRecordsInBatches(
+      client as never,
+      'createPeople',
+      buildRecords(201),
+    );
 
     expect(client.mutation).toHaveBeenCalledTimes(2);
     expect(

@@ -48,9 +48,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename(
-        '1-21/__tests__/1-21-workspace-command.spec.ts',
-      ),
+      filename: filename('1-21/__tests__/1-21-workspace-command.spec.ts'),
     },
     {
       code: DUMMY_CODE,
@@ -64,9 +62,7 @@ ruleTester.run(RULE_NAME, rule, {
   invalid: [
     {
       code: DUMMY_CODE,
-      filename: filename(
-        '1-21/1-21-workspace-command-add-feature.command.ts',
-      ),
+      filename: filename('1-21/1-21-workspace-command-add-feature.command.ts'),
       errors: [{ messageId: 'invalidWorkspaceCommandFilename' }],
     },
     {
@@ -78,9 +74,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
-      filename: filename(
-        '1-21/1-21-instance-command-fast-add-column.ts',
-      ),
+      filename: filename('1-21/1-21-instance-command-fast-add-column.ts'),
       errors: [{ messageId: 'invalidInstanceCommandFastFilename' }],
     },
     {

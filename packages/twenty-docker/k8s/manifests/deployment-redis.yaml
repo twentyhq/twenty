@@ -25,21 +25,21 @@ spec:
         - name: redis
           image: redis/redis-stack-server:latest
           imagePullPolicy: Always
-          args: ["--maxmemory-policy", "noeviction"]
+          args: ['--maxmemory-policy', 'noeviction']
           env:
             - name: PORT
-              value: "6379"
+              value: '6379'
           ports:
             - containerPort: 6379
               name: redis
               protocol: TCP
           resources:
             requests:
-              memory: "1024Mi"
-              cpu: "250m"
+              memory: '1024Mi'
+              cpu: '250m'
             limits:
-              memory: "2048Mi"
-              cpu: "500m"
+              memory: '2048Mi'
+              cpu: '500m'
 
       dnsPolicy: ClusterFirst
       restartPolicy: Always

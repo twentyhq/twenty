@@ -20,9 +20,27 @@ export default defineView({
   icon: 'IconUserStar',
   position: 10,
   fields: [
-    { universalIdentifier: 'be978ab0-6e04-4c63-a233-982310142296', fieldMetadataUniversalIdentifier: personFields.name.universalIdentifier, position: 0, isVisible: true, size: 220 },
-    { universalIdentifier: '7543b11d-9058-420e-912b-558a9623d806', fieldMetadataUniversalIdentifier: PERSON_TYPE_FIELD_UNIVERSAL_IDENTIFIER, position: 1, isVisible: true, size: 130 },
-    { universalIdentifier: 'dde38d0d-2e36-4cc5-9205-3fb2b6a19612', fieldMetadataUniversalIdentifier: LISTED_PROPERTIES_ON_PERSON_ID, position: 2, isVisible: true, size: 260 },
+    {
+      universalIdentifier: 'be978ab0-6e04-4c63-a233-982310142296',
+      fieldMetadataUniversalIdentifier: personFields.name.universalIdentifier,
+      position: 0,
+      isVisible: true,
+      size: 220,
+    },
+    {
+      universalIdentifier: '7543b11d-9058-420e-912b-558a9623d806',
+      fieldMetadataUniversalIdentifier: PERSON_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+      isVisible: true,
+      size: 130,
+    },
+    {
+      universalIdentifier: 'dde38d0d-2e36-4cc5-9205-3fb2b6a19612',
+      fieldMetadataUniversalIdentifier: LISTED_PROPERTIES_ON_PERSON_ID,
+      position: 2,
+      isVisible: true,
+      size: 260,
+    },
   ],
   filters: [
     {

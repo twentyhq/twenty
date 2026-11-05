@@ -84,7 +84,9 @@ describe('enrichPersonCore', () => {
   });
 
   it('records NOT_FOUND and writes the status via updatePeople', async () => {
-    enrichPersonMock.mockResolvedValue([{ outcome: 'not_found', httpStatus: 404 }]);
+    enrichPersonMock.mockResolvedValue([
+      { outcome: 'not_found', httpStatus: 404 },
+    ]);
     const captured: Captured = {};
     const client = buildClient([PERSON_NODE_MOCK], captured);
 

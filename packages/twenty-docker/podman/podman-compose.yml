@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
@@ -14,7 +14,7 @@ services:
   redis:
     container_name: twenty-redis
     image: redis:latest
-    command: ["--maxmemory-policy", "noeviction"]
+    command: ['--maxmemory-policy', 'noeviction']
     volumes:
       - twenty-redis-data:/data:Z
 
@@ -23,10 +23,10 @@ services:
     image: twentycrm/twenty:latest
     stop_grace_period: 120s
     environment:
-      NODE_PORT: "3000"
+      NODE_PORT: '3000'
       SERVER_URL: ${SERVER_URL}
-      PG_DATABASE_URL: "postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty"
-      REDIS_URL: "redis://twenty-redis:6379"
+      PG_DATABASE_URL: 'postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty'
+      REDIS_URL: 'redis://twenty-redis:6379'
       APP_SECRET: ${APP_SECRET}
       NODE_ENV: production
       LOG_LEVEL: info
@@ -41,10 +41,10 @@ services:
     command: yarn worker:prod
     environment:
       SERVER_URL: ${SERVER_URL}
-      PG_DATABASE_URL: "postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty"
-      REDIS_URL: "redis://twenty-redis:6379"
+      PG_DATABASE_URL: 'postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty'
+      REDIS_URL: 'redis://twenty-redis:6379'
       APP_SECRET: ${APP_SECRET}
-      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_DB_MIGRATIONS: 'true'
       NODE_ENV: production
       LOG_LEVEL: info
     volumes:

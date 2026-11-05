@@ -9,7 +9,8 @@ const { updateSlackAssistantRequestFeedbackMock } = vi.hoisted(() => ({
 vi.mock(
   'src/logic-functions/data/update-slack-assistant-request-feedback',
   () => ({
-    updateSlackAssistantRequestFeedback: updateSlackAssistantRequestFeedbackMock,
+    updateSlackAssistantRequestFeedback:
+      updateSlackAssistantRequestFeedbackMock,
   }),
 );
 

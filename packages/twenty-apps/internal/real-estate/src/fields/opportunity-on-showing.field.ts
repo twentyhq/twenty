@@ -7,8 +7,7 @@ import {
 } from 'twenty-sdk/define';
 import { SHOWING_UNIVERSAL_IDENTIFIER } from '../objects/showing.object';
 
-export const OPPORTUNITY_ON_SHOWING_ID =
-  '69fa9f30-dc06-4c2c-b6e5-79351c7a52c8';
+export const OPPORTUNITY_ON_SHOWING_ID = '69fa9f30-dc06-4c2c-b6e5-79351c7a52c8';
 export const SHOWINGS_ON_OPPORTUNITY_ID =
   '4f296937-b62c-4e43-9316-6278148909c4';
 

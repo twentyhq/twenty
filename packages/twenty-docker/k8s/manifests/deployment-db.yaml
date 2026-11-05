@@ -31,24 +31,24 @@ spec:
           imagePullPolicy: Always
           env:
             - name: PGUSER_SUPERUSER
-              value: "postgres"
+              value: 'postgres'
             - name: PGPASSWORD_SUPERUSER
-              value: "postgres"
+              value: 'postgres'
             - name: SPILO_PROVIDER
-              value: "local"
+              value: 'local'
             - name: ALLOW_NOSSL
-              value: "true"
+              value: 'true'
           ports:
             - containerPort: 5432
               name: tcp
               protocol: TCP
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: '256Mi'
+              cpu: '250m'
             limits:
-              memory: "1024Mi"
-              cpu: "1000m"
+              memory: '1024Mi'
+              cpu: '1000m'
           stdin: true
           tty: true
           volumeMounts:

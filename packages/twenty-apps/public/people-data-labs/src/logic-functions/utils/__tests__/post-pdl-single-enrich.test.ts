@@ -16,7 +16,9 @@ const buildResponse = (
   status,
   ok: status >= 200 && status < 300,
   json: () =>
-    jsonThrows ? Promise.reject(new Error('invalid json')) : Promise.resolve(json),
+    jsonThrows
+      ? Promise.reject(new Error('invalid json'))
+      : Promise.resolve(json),
 });
 
 const stubFetch = (response: FetchResponse | Error) => {
@@ -74,7 +76,12 @@ describe('postPdlSingleEnrich', () => {
 
   it('maps a 200 company match whose fields are at the top level', async () => {
     stubFetch(
-      buildResponse(200, { status: 200, likelihood: 6, id: 'c1', name: 'Acme' }),
+      buildResponse(200, {
+        status: 200,
+        likelihood: 6,
+        id: 'c1',
+        name: 'Acme',
+      }),
     );
 
     const result = await postPdlSingleEnrich({
@@ -91,7 +98,9 @@ describe('postPdlSingleEnrich', () => {
   });
 
   it('treats a 404 no-match as not_found from the body status', async () => {
-    stubFetch(buildResponse(404, { status: 404, error: { message: 'no match' } }));
+    stubFetch(
+      buildResponse(404, { status: 404, error: { message: 'no match' } }),
+    );
 
     const result = await postPdlSingleEnrich({
       path: '/person/enrich',
@@ -113,7 +122,9 @@ describe('postPdlSingleEnrich', () => {
   });
 
   it('reports an error on a non-2xx response with an error body', async () => {
-    stubFetch(buildResponse(401, { status: 401, error: { message: 'unauthorized' } }));
+    stubFetch(
+      buildResponse(401, { status: 401, error: { message: 'unauthorized' } }),
+    );
 
     const result = await postPdlSingleEnrich({
       path: '/person/enrich',

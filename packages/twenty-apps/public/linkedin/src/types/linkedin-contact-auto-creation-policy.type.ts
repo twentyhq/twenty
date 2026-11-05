@@ -1,2 +1,4 @@
 export type LinkedinContactAutoCreationPolicy =
-  'SENT_AND_RECEIVED' | 'SENT' | 'NONE';
+  | 'SENT_AND_RECEIVED'
+  | 'SENT'
+  | 'NONE';

@@ -1,8 +1,4 @@
-import type {
-  Reporter,
-  TestCase,
-  TestResult,
-} from '@playwright/test/reporter';
+import type { Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 
 class LogSummaryReporter implements Reporter {
   private passed: string[] = [];
@@ -32,8 +28,12 @@ class LogSummaryReporter implements Reporter {
       }
     }
 
-    const uniquePassed = this.passed.filter((testName) => !flaky.includes(testName));
-    const uniqueFailed = this.failed.filter((testName) => !flaky.includes(testName));
+    const uniquePassed = this.passed.filter(
+      (testName) => !flaky.includes(testName),
+    );
+    const uniqueFailed = this.failed.filter(
+      (testName) => !flaky.includes(testName),
+    );
 
     console.log('\n=== Playwright summary ===');
     if (uniquePassed.length) {

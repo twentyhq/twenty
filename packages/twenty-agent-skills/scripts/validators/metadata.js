@@ -18,7 +18,9 @@ import {
 const assertJsonMetadata = (fail) => {
   const { readJson, readOptionalJson } = createJsonReaders(fail);
   const packageJson = readJson('packages/twenty-agent-skills/package.json');
-  const pluginJson = readJson('packages/twenty-agent-skills/.codex-plugin/plugin.json');
+  const pluginJson = readJson(
+    'packages/twenty-agent-skills/.codex-plugin/plugin.json',
+  );
   const mcpJson = readJson('packages/twenty-agent-skills/.mcp.json');
   const marketplaceJson = readOptionalJson('.agents/plugins/marketplace.json');
 
@@ -27,11 +29,15 @@ const assertJsonMetadata = (fail) => {
   }
 
   if (!packageJson?.files?.includes('.mcp.json')) {
-    fail('package.json files must include .mcp.json for the public docs MCP server');
+    fail(
+      'package.json files must include .mcp.json for the public docs MCP server',
+    );
   }
 
   if (!packageJson?.files?.includes('references')) {
-    fail('package.json files must include references for shared plugin guidance');
+    fail(
+      'package.json files must include references for shared plugin guidance',
+    );
   }
 
   if (pluginJson?.mcpServers !== './.mcp.json') {
@@ -45,13 +51,20 @@ const assertJsonMetadata = (fail) => {
   } else {
     const serverNames = Object.keys(servers);
 
-    if (serverNames.length !== 1 || serverNames[0] !== PUBLIC_DOCS_MCP_SERVER_NAME) {
+    if (
+      serverNames.length !== 1 ||
+      serverNames[0] !== PUBLIC_DOCS_MCP_SERVER_NAME
+    ) {
       fail(`.mcp.json must only declare ${PUBLIC_DOCS_MCP_SERVER_NAME}`);
     }
 
     const docsServer = servers[PUBLIC_DOCS_MCP_SERVER_NAME];
 
-    if (!docsServer || typeof docsServer !== 'object' || Array.isArray(docsServer)) {
+    if (
+      !docsServer ||
+      typeof docsServer !== 'object' ||
+      Array.isArray(docsServer)
+    ) {
       fail(`${PUBLIC_DOCS_MCP_SERVER_NAME} must be an object`);
     } else {
       const docsServerKeys = Object.keys(docsServer);
@@ -61,29 +74,47 @@ const assertJsonMetadata = (fail) => {
       }
 
       if (docsServer.url !== PUBLIC_DOCS_MCP_URL) {
-        fail(`${PUBLIC_DOCS_MCP_SERVER_NAME} url must be ${PUBLIC_DOCS_MCP_URL}`);
+        fail(
+          `${PUBLIC_DOCS_MCP_SERVER_NAME} url must be ${PUBLIC_DOCS_MCP_URL}`,
+        );
       }
     }
   }
 
-  const marketplaceEntry = marketplaceJson?.plugins?.find((entry) => entry.name === 'twenty');
+  const marketplaceEntry = marketplaceJson?.plugins?.find(
+    (entry) => entry.name === 'twenty',
+  );
 
   if (marketplaceJson && !marketplaceEntry) {
-    fail('.agents/plugins/marketplace.json includes plugins but not the twenty plugin entry');
-  } else if (marketplaceEntry && marketplaceEntry.source?.path !== './packages/twenty-agent-skills/dist') {
-    fail('marketplace twenty source path must be ./packages/twenty-agent-skills/dist');
+    fail(
+      '.agents/plugins/marketplace.json includes plugins but not the twenty plugin entry',
+    );
+  } else if (
+    marketplaceEntry &&
+    marketplaceEntry.source?.path !== './packages/twenty-agent-skills/dist'
+  ) {
+    fail(
+      'marketplace twenty source path must be ./packages/twenty-agent-skills/dist',
+    );
   }
 
   if (fs.existsSync(path.join(REPO_ROOT, 'plugins', 'twenty'))) {
-    fail('legacy plugins/twenty path must not exist; use packages/twenty-agent-skills/dist');
+    fail(
+      'legacy plugins/twenty path must not exist; use packages/twenty-agent-skills/dist',
+    );
   }
 };
 
 const assertNoBundledMcpConfig = (fail) => {
   const gitignorePath = path.join(PLUGIN_ROOT, '.gitignore');
 
-  if (fs.existsSync(gitignorePath) && readText(gitignorePath).split(/\r?\n/).includes('.mcp.json')) {
-    fail('packages/twenty-agent-skills/.gitignore must not ignore the public .mcp.json');
+  if (
+    fs.existsSync(gitignorePath) &&
+    readText(gitignorePath).split(/\r?\n/).includes('.mcp.json')
+  ) {
+    fail(
+      'packages/twenty-agent-skills/.gitignore must not ignore the public .mcp.json',
+    );
   }
 
   for (const filePath of listFiles(PLUGIN_ROOT)) {
@@ -93,12 +124,19 @@ const assertNoBundledMcpConfig = (fail) => {
       continue;
     }
 
-    if (path.basename(filePath) === '.mcp.json' && relativePath !== '.mcp.json') {
-      fail(`workspace-specific MCP config must not be shipped: ${relativePath}`);
+    if (
+      path.basename(filePath) === '.mcp.json' &&
+      relativePath !== '.mcp.json'
+    ) {
+      fail(
+        `workspace-specific MCP config must not be shipped: ${relativePath}`,
+      );
     }
 
     if (path.basename(filePath) === '.app.json') {
-      fail(`app declarations must not be shipped unless intentionally allowed in validation: ${relativePath}`);
+      fail(
+        `app declarations must not be shipped unless intentionally allowed in validation: ${relativePath}`,
+      );
     }
 
     const contents = readText(filePath);
@@ -119,7 +157,9 @@ const assertNoBundledMcpConfig = (fail) => {
       }
 
       if (!isAllowedDocumentationHost(parsedUrl.hostname)) {
-        fail(`non-placeholder URL found in ${relativePath}: ${parsedUrl.origin}`);
+        fail(
+          `non-placeholder URL found in ${relativePath}: ${parsedUrl.origin}`,
+        );
       }
     }
 
@@ -135,10 +175,16 @@ const assertNoBundledMcpConfig = (fail) => {
 
 const assertInterfaceFields = (fail) => {
   const { readJson } = createJsonReaders(fail);
-  const pluginJson = readJson('packages/twenty-agent-skills/.codex-plugin/plugin.json');
+  const pluginJson = readJson(
+    'packages/twenty-agent-skills/.codex-plugin/plugin.json',
+  );
   const interfaceMetadata = pluginJson?.interface;
 
-  if (!interfaceMetadata || typeof interfaceMetadata !== 'object' || Array.isArray(interfaceMetadata)) {
+  if (
+    !interfaceMetadata ||
+    typeof interfaceMetadata !== 'object' ||
+    Array.isArray(interfaceMetadata)
+  ) {
     fail('.codex-plugin/plugin.json must declare an interface object');
     return;
   }
@@ -161,52 +207,88 @@ const assertInterfaceFields = (fail) => {
     const value = interfaceMetadata[field];
 
     if (typeof value !== 'string' || value.trim().length === 0) {
-      fail(`.codex-plugin/plugin.json interface.${field} must be a non-empty string`);
+      fail(
+        `.codex-plugin/plugin.json interface.${field} must be a non-empty string`,
+      );
     }
   }
 
-  if (typeof interfaceMetadata.shortDescription === 'string' && interfaceMetadata.shortDescription.length > SHORT_DESCRIPTION_MAX) {
-    fail(`.codex-plugin/plugin.json interface.shortDescription must be ${SHORT_DESCRIPTION_MAX} characters or fewer`);
+  if (
+    typeof interfaceMetadata.shortDescription === 'string' &&
+    interfaceMetadata.shortDescription.length > SHORT_DESCRIPTION_MAX
+  ) {
+    fail(
+      `.codex-plugin/plugin.json interface.shortDescription must be ${SHORT_DESCRIPTION_MAX} characters or fewer`,
+    );
   }
 
-  if (typeof interfaceMetadata.brandColor === 'string' && !/^#[0-9a-fA-F]{6}$/.test(interfaceMetadata.brandColor)) {
-    fail('.codex-plugin/plugin.json interface.brandColor must match #RRGGBB hex format');
+  if (
+    typeof interfaceMetadata.brandColor === 'string' &&
+    !/^#[0-9a-fA-F]{6}$/.test(interfaceMetadata.brandColor)
+  ) {
+    fail(
+      '.codex-plugin/plugin.json interface.brandColor must match #RRGGBB hex format',
+    );
   }
 
-  if (typeof interfaceMetadata.category === 'string' && !VALID_CATEGORIES.has(interfaceMetadata.category)) {
-    fail(`.codex-plugin/plugin.json interface.category must be one of: ${[...VALID_CATEGORIES].join(', ')}`);
+  if (
+    typeof interfaceMetadata.category === 'string' &&
+    !VALID_CATEGORIES.has(interfaceMetadata.category)
+  ) {
+    fail(
+      `.codex-plugin/plugin.json interface.category must be one of: ${[...VALID_CATEGORIES].join(', ')}`,
+    );
   }
 
-  if (!Array.isArray(interfaceMetadata.capabilities) || interfaceMetadata.capabilities.length === 0) {
-    fail('.codex-plugin/plugin.json interface.capabilities must be a non-empty array');
+  if (
+    !Array.isArray(interfaceMetadata.capabilities) ||
+    interfaceMetadata.capabilities.length === 0
+  ) {
+    fail(
+      '.codex-plugin/plugin.json interface.capabilities must be a non-empty array',
+    );
   } else {
     for (const capability of interfaceMetadata.capabilities) {
       if (!VALID_CAPABILITIES.has(capability)) {
-        fail(`.codex-plugin/plugin.json interface.capabilities contains invalid value: ${capability}`);
+        fail(
+          `.codex-plugin/plugin.json interface.capabilities contains invalid value: ${capability}`,
+        );
       }
     }
   }
 
-  if (!Array.isArray(interfaceMetadata.defaultPrompt) || interfaceMetadata.defaultPrompt.length === 0) {
-    fail('.codex-plugin/plugin.json interface.defaultPrompt must be a non-empty array of strings');
+  if (
+    !Array.isArray(interfaceMetadata.defaultPrompt) ||
+    interfaceMetadata.defaultPrompt.length === 0
+  ) {
+    fail(
+      '.codex-plugin/plugin.json interface.defaultPrompt must be a non-empty array of strings',
+    );
   } else {
     for (const prompt of interfaceMetadata.defaultPrompt) {
       if (typeof prompt !== 'string' || prompt.trim().length === 0) {
-        fail('.codex-plugin/plugin.json interface.defaultPrompt entries must be non-empty strings');
+        fail(
+          '.codex-plugin/plugin.json interface.defaultPrompt entries must be non-empty strings',
+        );
       }
     }
   }
 
   if (!Array.isArray(interfaceMetadata.screenshots)) {
-    fail('.codex-plugin/plugin.json interface.screenshots must be an array (use [] if no screenshots yet)');
+    fail(
+      '.codex-plugin/plugin.json interface.screenshots must be an array (use [] if no screenshots yet)',
+    );
   }
 };
 
 const assertMarketplaceTemplate = (fail) => {
   const { readJson, readOptionalJson } = createJsonReaders(fail);
-  const templatePath = 'packages/twenty-agent-skills/templates/marketplace.example.json';
+  const templatePath =
+    'packages/twenty-agent-skills/templates/marketplace.example.json';
   const template = readOptionalJson(templatePath);
-  const pluginJson = readJson('packages/twenty-agent-skills/.codex-plugin/plugin.json');
+  const pluginJson = readJson(
+    'packages/twenty-agent-skills/.codex-plugin/plugin.json',
+  );
 
   if (!template) {
     fail(`marketplace template is missing at ${templatePath}`);
@@ -217,7 +299,10 @@ const assertMarketplaceTemplate = (fail) => {
     fail(`${templatePath} name must be a non-empty string`);
   }
 
-  if (typeof template.interface?.displayName !== 'string' || template.interface.displayName.trim().length === 0) {
+  if (
+    typeof template.interface?.displayName !== 'string' ||
+    template.interface.displayName.trim().length === 0
+  ) {
     fail(`${templatePath} interface.displayName must be a non-empty string`);
   }
 
@@ -240,19 +325,31 @@ const assertMarketplaceTemplate = (fail) => {
   }
 
   if (twentyEntry.source?.path !== './packages/twenty-agent-skills/dist') {
-    fail(`${templatePath} twenty.source.path must be ./packages/twenty-agent-skills/dist`);
+    fail(
+      `${templatePath} twenty.source.path must be ./packages/twenty-agent-skills/dist`,
+    );
   }
 
-  if (!['NOT_AVAILABLE', 'AVAILABLE', 'INSTALLED_BY_DEFAULT'].includes(twentyEntry.policy?.installation)) {
-    fail(`${templatePath} twenty.policy.installation must be NOT_AVAILABLE, AVAILABLE, or INSTALLED_BY_DEFAULT`);
+  if (
+    !['NOT_AVAILABLE', 'AVAILABLE', 'INSTALLED_BY_DEFAULT'].includes(
+      twentyEntry.policy?.installation,
+    )
+  ) {
+    fail(
+      `${templatePath} twenty.policy.installation must be NOT_AVAILABLE, AVAILABLE, or INSTALLED_BY_DEFAULT`,
+    );
   }
 
   if (!['ON_INSTALL', 'ON_USE'].includes(twentyEntry.policy?.authentication)) {
-    fail(`${templatePath} twenty.policy.authentication must be ON_INSTALL or ON_USE`);
+    fail(
+      `${templatePath} twenty.policy.authentication must be ON_INSTALL or ON_USE`,
+    );
   }
 
   if (twentyEntry.category !== pluginJson?.interface?.category) {
-    fail(`${templatePath} twenty.category must match plugin.json interface.category`);
+    fail(
+      `${templatePath} twenty.category must match plugin.json interface.category`,
+    );
   }
 };
 

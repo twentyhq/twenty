@@ -4,7 +4,10 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 
 describe('pruneUndefined', () => {
   it('removes keys whose value is undefined', () => {
-    expect(pruneUndefined({ a: 1, b: undefined, c: 3 })).toEqual({ a: 1, c: 3 });
+    expect(pruneUndefined({ a: 1, b: undefined, c: 3 })).toEqual({
+      a: 1,
+      c: 3,
+    });
   });
 
   it('keeps falsy values that are not undefined', () => {

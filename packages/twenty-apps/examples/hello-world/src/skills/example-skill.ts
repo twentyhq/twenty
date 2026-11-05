@@ -9,5 +9,6 @@ export default defineSkill({
   label: 'Example Skill',
   description: 'A sample skill for your application',
   icon: 'IconBrain',
-  content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
+  content:
+    'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
 });

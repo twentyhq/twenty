@@ -37,7 +37,9 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('links an existing company matched by pdlId alone', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;
@@ -70,7 +72,9 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('returns an existing company id without creating one', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;
@@ -175,7 +179,9 @@ describe('findOrCreateCurrentCompany', () => {
 
   it('reuses a cached company id for an identical company without re-querying', async () => {
     const query = vi.fn(() =>
-      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+      Promise.resolve({
+        companies: { edges: [{ node: { id: 'co-existing' } }] },
+      }),
     );
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;

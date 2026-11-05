@@ -23,11 +23,41 @@ export default defineView({
   icon: 'IconUserSearch',
   position: 11,
   fields: [
-    { universalIdentifier: '70f73b71-afc5-44e3-b9d7-8bb89670cd91', fieldMetadataUniversalIdentifier: personFields.name.universalIdentifier, position: 0, isVisible: true, size: 200 },
-    { universalIdentifier: '5ab16f37-55f6-4c45-98c4-096ef3087c43', fieldMetadataUniversalIdentifier: DESIRED_AREA_FIELD_UNIVERSAL_IDENTIFIER, position: 1, isVisible: true, size: 160 },
-    { universalIdentifier: '2b1766af-894e-4b9a-a974-07953ceea577', fieldMetadataUniversalIdentifier: BUDGET_MIN_FIELD_UNIVERSAL_IDENTIFIER, position: 2, isVisible: true, size: 130 },
-    { universalIdentifier: '6dd553b3-1c4b-4cea-9ae4-c600a8215bb4', fieldMetadataUniversalIdentifier: BUDGET_MAX_FIELD_UNIVERSAL_IDENTIFIER, position: 3, isVisible: true, size: 130 },
-    { universalIdentifier: 'df024778-8780-4d9b-b78b-316fe5ce519d', fieldMetadataUniversalIdentifier: PRE_APPROVED_FIELD_UNIVERSAL_IDENTIFIER, position: 4, isVisible: true, size: 120 },
+    {
+      universalIdentifier: '70f73b71-afc5-44e3-b9d7-8bb89670cd91',
+      fieldMetadataUniversalIdentifier: personFields.name.universalIdentifier,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier: '5ab16f37-55f6-4c45-98c4-096ef3087c43',
+      fieldMetadataUniversalIdentifier: DESIRED_AREA_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+      isVisible: true,
+      size: 160,
+    },
+    {
+      universalIdentifier: '2b1766af-894e-4b9a-a974-07953ceea577',
+      fieldMetadataUniversalIdentifier: BUDGET_MIN_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2,
+      isVisible: true,
+      size: 130,
+    },
+    {
+      universalIdentifier: '6dd553b3-1c4b-4cea-9ae4-c600a8215bb4',
+      fieldMetadataUniversalIdentifier: BUDGET_MAX_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 130,
+    },
+    {
+      universalIdentifier: 'df024778-8780-4d9b-b78b-316fe5ce519d',
+      fieldMetadataUniversalIdentifier: PRE_APPROVED_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 4,
+      isVisible: true,
+      size: 120,
+    },
   ],
   filters: [
     {

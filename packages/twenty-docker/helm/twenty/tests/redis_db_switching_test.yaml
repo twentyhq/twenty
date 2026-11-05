@@ -49,7 +49,7 @@ tests:
           content: --port
       - contains:
           path: spec.template.spec.containers[0].args
-          content: "6379"
+          content: '6379'
 
   - it: internal db deployment renders when enabled
     template: templates/deployment-db-internal.yaml

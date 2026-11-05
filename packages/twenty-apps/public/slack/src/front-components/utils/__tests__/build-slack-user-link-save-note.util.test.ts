@@ -110,7 +110,11 @@ describe('buildSlackUserLinkSaveNote', () => {
   it('should announce replacement plus the outcome when re-pointing to another member', () => {
     const note = buildSlackUserLinkSaveNote({
       resolvedUser: buildResolvedUser(),
-      selectedMember: { ...MEMBER, id: 'member-2', userEmail: 'bob@twenty.com' },
+      selectedMember: {
+        ...MEMBER,
+        id: 'member-2',
+        userEmail: 'bob@twenty.com',
+      },
       existingLink: buildExistingLink(),
     });
 
