@@ -221,6 +221,25 @@ export class AgentChatThreadService {
     return this.restoreDeletedThread({ args, threadBefore });
   }
 
+  async restoreDirectMessageThread({
+    workspaceId,
+    thread,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+  }): Promise<void> {
+    await this.threadRepository.restore(workspaceId, {
+      id: thread.id,
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+    });
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      action: DatabaseEventAction.RESTORED,
+    });
+  }
+
   private async restoreDeletedThread({
     args,
     threadBefore,
