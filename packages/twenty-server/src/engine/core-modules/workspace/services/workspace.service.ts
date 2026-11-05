@@ -492,6 +492,18 @@ export class WorkspaceService {
         workspaceId: workspace.id,
         userFriendlyMessage: msg`AI data policy is not enabled for this workspace.`,
       });
+
+      const isAiDataPolicyColumnHidden = !isDefined(workspace.aiDataPolicy);
+
+      if (isAiDataPolicyColumnHidden) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`AI data policy is not available until the upgrade has completed.`,
+          },
+        );
+      }
     }
 
     if (
