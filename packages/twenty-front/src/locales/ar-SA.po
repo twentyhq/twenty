@@ -1027,16 +1027,6 @@ msgstr "{remainingCount} أخرى"
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {لا مزيد من المسودات بعد هذه} one {مسودة أخرى واحدة بعد هذه} two {مسودتان أخريان بعد هذه} few {# مسودات أخرى بعد هذه} many {# مسودة أخرى بعد هذه} other {# مسودة أخرى بعد هذه}}"
 
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, zero {أكمل # خطوة بحلول {formattedTrialEnd}} one {أكمل # خطوة بحلول {formattedTrialEnd}} two {أكمل # خطوتين بحلول {formattedTrialEnd}} few {أكمل # خطوات بحلول {formattedTrialEnd}} many {أكمل # خطوة بحلول {formattedTrialEnd}} other {أكمل # خطوة بحلول {formattedTrialEnd}}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, zero {أنهِ ٠ خطوات} one {أنهِ خطوة واحدة} two {أنهِ خطوتين} few {أنهِ # خطوات} many {أنهِ # خطوة} other {أنهِ # خطوة}}"
-
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
@@ -3335,11 +3325,6 @@ msgstr "كل الإعدادات"
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
 msgid "All Sources"
 msgstr "كل المصادر"
-
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "اكتملت جميع الخطوات"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
