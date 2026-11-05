@@ -1,15 +1,9 @@
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
-import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
@@ -40,8 +34,6 @@ export class AgentChatThreadTargetService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
 
   // chat turns run in a queue worker, so the sender's context is passed to write the link as them
@@ -83,11 +75,6 @@ export class AgentChatThreadTargetService {
       objectNameSingular,
     });
 
-    await this.assertAgentChatThreadAcceptsRecordLinksOrThrow({
-      workspaceId,
-      threadId,
-    });
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       // A record in the trash keeps its links, but nothing new is filed under it.
       await this.assertRecordIsReadableOrThrow({
@@ -97,33 +84,6 @@ export class AgentChatThreadTargetService {
 
       await writeLink({ threadId, [joinColumnName]: recordId });
     }, authContext);
-  }
-
-  private async assertAgentChatThreadAcceptsRecordLinksOrThrow({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const agentChatThread = await this.agentChatThreadRepository.findOne(
-      workspaceId,
-      { where: { id: threadId }, select: ['id', 'conversationType'] },
-    );
-
-    if (!isDefined(agentChatThread)) {
-      return throwAgentChatThreadNotFound();
-    }
-
-    if (
-      agentChatThread.conversationType ===
-      AgentChatThreadConversationType.DIRECT_MESSAGE
-    ) {
-      throw new AiException(
-        doNotTranslate('Direct messages do not support linked records'),
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
   }
 
   private getThreadTargetRepository() {
