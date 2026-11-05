@@ -11,7 +11,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   type FindOptionsLike,
   type ObjectWhereLike,
@@ -26,7 +26,7 @@ import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-build
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import {
   RESERVED_PARAMETER_NAMES,
   buildCountStatement,
@@ -70,7 +70,9 @@ export type QueryBuilderContext = {
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
-  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
+  onBeforeExecute: (
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ) => Promise<void> | void;
   formatResult: <T>(records: unknown) => T;
 };
 
@@ -676,14 +678,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return rows as T[];
   }
 
-  applyRowLevelPermissions(): this {
-    this.context.onBeforeExecute(this);
+  async applyRowLevelPermissions(): Promise<this> {
+    await this.context.onBeforeExecute(this);
 
     return this;
   }
 
   async getCount(): Promise<number> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
@@ -1215,7 +1217,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     allowPlainToManyJoins?: boolean;
     types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
-    this.context.onBeforeExecute(this);
+    await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);

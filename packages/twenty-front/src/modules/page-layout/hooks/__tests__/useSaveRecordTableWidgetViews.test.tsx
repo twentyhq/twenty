@@ -49,7 +49,7 @@ const relationTraversalViewFilter: FlatViewFilter = {
   viewId: snapshot.view.id,
 };
 
-const recordTableWidget = {
+const recordTableWidget: PageLayoutWidget = {
   ...makeWidget(WIDGET_ID, 0),
   type: WidgetType.RECORD_TABLE,
   configuration: {
@@ -57,7 +57,7 @@ const recordTableWidget = {
     configurationType: WidgetConfigurationType.RECORD_TABLE,
     viewId: snapshot.view.id,
   },
-} as unknown as PageLayoutWidget;
+};
 
 const upsertViewWidgetResult = jest.fn(
   (variables: { input: UpsertViewWidgetInput }) => ({

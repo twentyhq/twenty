@@ -1,7 +1,6 @@
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const baseRecord: ObjectRecord = {
@@ -20,7 +19,7 @@ const richTextFieldMetadata = [
 
 const mockFileUrlService = {
   signFileByIdUrl: jest.fn().mockReturnValue('signed-path'),
-} as unknown as FileUrlService;
+};
 
 describe('RichTextFieldQueryResultGetterHandler', () => {
   let handler: RichTextFieldQueryResultGetterHandler;

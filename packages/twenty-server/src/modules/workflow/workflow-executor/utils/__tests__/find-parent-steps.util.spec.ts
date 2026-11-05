@@ -72,7 +72,7 @@ describe('findParentSteps', () => {
   it('should handle undefined steps gracefully', () => {
     const parent = createMockCodeStep('parent', ['child']);
     const child = createMockCodeStep('child');
-    const steps = [parent, undefined as unknown as WorkflowAction, child];
+    const steps = [parent, undefined, child];
 
     const result = findParentSteps({ step: child, steps });
 

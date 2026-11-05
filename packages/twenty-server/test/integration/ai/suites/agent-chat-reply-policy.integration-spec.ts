@@ -10,6 +10,7 @@ import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { buildAskQuestionPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
+import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
@@ -183,7 +184,7 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     await context.setConversationType({
       threadId: directMessageThreadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
 
     await expect(
@@ -242,7 +243,7 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     await context.setConversationType({
       threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     await context.setAssistantModes({
       aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
@@ -503,7 +504,7 @@ describe('Assistant reply selection with stored conversation participants', () =
 
     await context.setConversationType({
       threadId,
-      conversationType: 'DIRECT_MESSAGE',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
     const { messageId } = await saveMessageWithReplyContext({
       threadId,

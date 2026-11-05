@@ -599,7 +599,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const { authContext, flatObjectMetadata, repository, transactionScope } =
+    const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
@@ -624,7 +624,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
-      apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       createdRecordSharing,
       transactionScope,
     });

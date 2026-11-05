@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 18:13\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4749,10 +4749,10 @@ msgstr "ICP"
 msgid "Identity"
 msgstr "Identidade"
 
-#. js-lingui-id: 02Xy0V
+#. js-lingui-id: 9JU/6K
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr "Se for o primeiro espaço de trabalho Twenty e ainda não houver nenhum código de parceiro definido nele, a pessoa poderá inserir o seu em Configurações → Cobrança durante o período de avaliação gratuito. Em até 30 dias após o primeiro pagamento, ela também poderá nos pedir para adicioná-lo. Depois que um código for salvo em um espaço de trabalho, ele não poderá ser alterado."
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Se este for o primeiro espaço de trabalho Twenty e ainda não houver nenhum código de parceiro definido nele, a pessoa poderá inserir o seu na página /settings/partner do espaço de trabalho durante o período de teste gratuito. Em até 30 dias após o primeiro pagamento, ela também poderá nos pedir para adicioná-lo. Depois que um código é salvo em um espaço de trabalho, ele não pode ser alterado."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts

@@ -5,6 +5,9 @@ import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fet
 export type CalendarEventCreationDriver = {
   createCalendarEvent(
     input: CalendarEventToCreate,
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'id' | 'provider' | 'handle'
+    >,
   ): Promise<FetchedCalendarEvent>;
 };

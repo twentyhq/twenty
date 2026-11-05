@@ -586,6 +586,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetDashboard": {
         "universalIdentifier": "3af87717-6757-5d61-940e-3016cff35cdc",
       },
+      "targetMessage": {
+        "universalIdentifier": "4d1a84b6-ba6c-5f18-baf6-084aae64eccd",
+      },
       "targetNote": {
         "universalIdentifier": "a627557c-db37-53be-8a59-9aa2d45cd7ee",
       },
@@ -617,6 +620,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "dashboardIdIndex": {
         "universalIdentifier": "c10eba2d-ff1a-4eab-9285-50481c12a003",
+      },
+      "messageIdIndex": {
+        "universalIdentifier": "83c77988-2dc4-4575-bac5-f0f50c05568e",
       },
       "noteIdIndex": {
         "universalIdentifier": "9d31ea73-13b6-4e06-84ee-c66c72bf7787",
@@ -1701,6 +1707,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "message": {
     "fields": {
+      "attachments": {
+        "universalIdentifier": "cd2ccd87-c134-5aba-a8e7-937a4a1ca2d6",
+      },
       "createdAt": {
         "universalIdentifier": "74d0ddc0-4dbe-5c29-8d4a-2e512c1e66ab",
       },

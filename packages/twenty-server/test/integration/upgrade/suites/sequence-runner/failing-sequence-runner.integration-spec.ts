@@ -8,7 +8,6 @@ import {
   DEFAULT_OPTIONS,
   makeFastInstance,
   makeSlowInstance,
-  makeStep,
   makeWorkspace,
   migrationRecordToKey,
   resetSeedSequenceCounter,
@@ -22,45 +21,42 @@ import {
   WS_2,
 } from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
 
-const makeFailingFastInstance = (name: string, error: Error): UpgradeStep =>
-  ({
-    ...makeStep('fast-instance', name),
-    command: {
-      up: async () => {
-        throw error;
-      },
-      down: async () => {},
+const makeFailingFastInstance = (name: string, error: Error): UpgradeStep => ({
+  ...makeFastInstance(name),
+  command: {
+    up: async () => {
+      throw error;
     },
-  }) as unknown as UpgradeStep;
+    down: async () => {},
+  },
+});
 
 const makeFailingWorkspace = (
   name: string,
   error: Error,
-): WorkspaceUpgradeStep =>
-  ({
-    ...makeStep('workspace', name),
-    command: {
-      runOnWorkspace: async () => {
-        throw error;
-      },
+): WorkspaceUpgradeStep => ({
+  ...makeWorkspace(name),
+  command: {
+    runOnWorkspace: async () => {
+      throw error;
     },
-  }) as unknown as WorkspaceUpgradeStep;
+  },
+});
 
 const makeWorkspaceFailingForIds = (
   name: string,
   failingWorkspaceIds: Set<string>,
   error: Error,
-): WorkspaceUpgradeStep =>
-  ({
-    ...makeStep('workspace', name),
-    command: {
-      runOnWorkspace: async ({ workspaceId }: { workspaceId: string }) => {
-        if (failingWorkspaceIds.has(workspaceId)) {
-          throw error;
-        }
-      },
+): WorkspaceUpgradeStep => ({
+  ...makeWorkspace(name),
+  command: {
+    runOnWorkspace: async ({ workspaceId }) => {
+      if (failingWorkspaceIds.has(workspaceId)) {
+        throw error;
+      }
     },
-  }) as unknown as WorkspaceUpgradeStep;
+  },
+});
 
 describe('UpgradeSequenceRunnerService — failing sequence (integration)', () => {
   let context: IntegrationTestContext;
@@ -230,7 +226,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
             throw error;
           },
         },
-      } as unknown as UpgradeStep,
+      },
     ];
 
     setMockActiveWorkspaceIds([WS_1]);

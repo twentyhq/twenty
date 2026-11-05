@@ -1,4 +1,3 @@
-import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 
@@ -10,7 +9,20 @@ const buildFlatWebhookMaps = (
   byUniversalIdentifier: Object.fromEntries(
     Object.entries(operationsByWebhookId).map(([webhookId, operations]) => [
       webhookId,
-      { id: webhookId, operations } as unknown as FlatWebhook,
+      {
+        id: webhookId,
+        universalIdentifier: webhookId,
+        targetUrl: 'https://example.com/webhook',
+        operations,
+        description: null,
+        secret: 'secret',
+        workspaceId: 'workspace-id',
+        applicationId: 'application-id',
+        applicationUniversalIdentifier: 'application-universal-identifier',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+        deletedAt: null,
+      },
     ]),
   ),
 });

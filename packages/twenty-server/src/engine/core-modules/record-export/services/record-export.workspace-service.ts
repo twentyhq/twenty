@@ -61,7 +61,7 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -94,7 +94,7 @@ export class RecordExportWorkspaceService {
   constructor(
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordExportQueryService: RecordExportQueryService,
     private readonly userSessionCookieService: UserSessionCookieService,
@@ -509,7 +509,7 @@ export class RecordExportWorkspaceService {
     }
 
     if (
-      !(await this.permissionsService.userHasWorkspaceSettingPermission({
+      !(await this.settingPermissionsService.userHasWorkspaceSettingPermission({
         workspaceId: authContext.workspace.id,
         ...(isApiKeyAuthContext(authContext)
           ? { apiKeyId: authContext.apiKey.id, userWorkspaceId: undefined }

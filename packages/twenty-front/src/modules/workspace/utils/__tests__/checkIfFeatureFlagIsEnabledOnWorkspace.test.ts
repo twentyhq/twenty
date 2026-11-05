@@ -1,13 +1,12 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const makeWorkspace = (
-  featureFlags?: Array<{ key: string; value: boolean; id: string }>,
-): CurrentWorkspace =>
-  ({
-    id: 'workspace-1',
-    featureFlags,
-  }) as unknown as CurrentWorkspace;
+  featureFlags?: Array<{ key: FeatureFlagKey; value: boolean }>,
+): Pick<CurrentWorkspace, 'featureFlags'> => ({
+  featureFlags,
+});
 
 describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
   it('should return false when featureKey is null', () => {
@@ -27,7 +26,7 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
   it('should return false when workspace is null', () => {
     expect(
       checkIfFeatureFlagIsEnabledOnWorkspace(
-        'IS_AIRTABLE_INTEGRATION_ENABLED' as any,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         null,
       ),
     ).toBe(false);
@@ -38,7 +37,7 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
 
     expect(
       checkIfFeatureFlagIsEnabledOnWorkspace(
-        'IS_AIRTABLE_INTEGRATION_ENABLED' as any,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace,
       ),
     ).toBe(false);
@@ -46,12 +45,12 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
 
   it('should return false when feature flag is not found', () => {
     const workspace = makeWorkspace([
-      { key: 'OTHER_FLAG', value: true, id: 'flag-1' },
+      { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
     ]);
 
     expect(
       checkIfFeatureFlagIsEnabledOnWorkspace(
-        'IS_AIRTABLE_INTEGRATION_ENABLED' as any,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace,
       ),
     ).toBe(false);
@@ -59,12 +58,12 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
 
   it('should return false when feature flag exists but is disabled', () => {
     const workspace = makeWorkspace([
-      { key: 'IS_AIRTABLE_INTEGRATION_ENABLED', value: false, id: 'flag-1' },
+      { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: false },
     ]);
 
     expect(
       checkIfFeatureFlagIsEnabledOnWorkspace(
-        'IS_AIRTABLE_INTEGRATION_ENABLED' as any,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace,
       ),
     ).toBe(false);
@@ -72,12 +71,12 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
 
   it('should return true when feature flag exists and is enabled', () => {
     const workspace = makeWorkspace([
-      { key: 'IS_AIRTABLE_INTEGRATION_ENABLED', value: true, id: 'flag-1' },
+      { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: true },
     ]);
 
     expect(
       checkIfFeatureFlagIsEnabledOnWorkspace(
-        'IS_AIRTABLE_INTEGRATION_ENABLED' as any,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace,
       ),
     ).toBe(true);
