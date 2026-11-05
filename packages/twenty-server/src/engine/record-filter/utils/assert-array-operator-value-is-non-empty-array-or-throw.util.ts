@@ -7,7 +7,7 @@ import {
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
-export const assertArrayOperatorValueIsNonEmptyArray = ({
+export const assertArrayOperatorValueIsNonEmptyArrayOrThrow = ({
   operator,
   value,
   key,

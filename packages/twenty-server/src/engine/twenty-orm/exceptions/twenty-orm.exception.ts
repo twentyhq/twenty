@@ -4,7 +4,9 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
+  DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
   INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+  QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
 } from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
@@ -72,11 +74,11 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
     case TwentyOrmExceptionCode.METHOD_NOT_ALLOWED:
       return msg`This operation is not allowed.`;
     case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
-      return msg`Query timed out. Please try again.`;
+      return QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
       return TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
-      return msg`A duplicate entry was detected.`;
+      return DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:

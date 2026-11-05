@@ -1,10 +1,11 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
+  DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
   INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+  QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
 } from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
@@ -25,11 +26,11 @@ const getWorkspaceQueryExecutorExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case WorkspaceQueryExecutorExceptionCode.QUERY_READ_TIMEOUT:
-      return msg`Query timed out. Please try again.`;
+      return QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE;
     case WorkspaceQueryExecutorExceptionCode.TRANSIENT_DATABASE_ERROR:
       return TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE;
     case WorkspaceQueryExecutorExceptionCode.DUPLICATE_ENTRY_DETECTED:
-      return msg`A duplicate entry was detected.`;
+      return DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE;
     case WorkspaceQueryExecutorExceptionCode.INVALID_INPUT:
       return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
     case WorkspaceQueryExecutorExceptionCode.MISSING_PARAMETER:

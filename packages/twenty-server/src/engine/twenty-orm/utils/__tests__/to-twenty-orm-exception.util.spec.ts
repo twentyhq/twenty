@@ -17,12 +17,14 @@ describe('toTwentyOrmException', () => {
         code,
       });
 
-      const result = toTwentyOrmException(error) as TwentyOrmException;
+      const result = toTwentyOrmException(error);
 
       expect(result).toBeInstanceOf(TwentyOrmException);
-      expect(result.code).toBe(TwentyOrmExceptionCode[code]);
-      expect(result.message).toBe('message');
-      expect(result.userFriendlyMessage).toBe(error.userFriendlyMessage);
+      expect(result).toMatchObject({
+        code: TwentyOrmExceptionCode[code],
+        message: 'message',
+        userFriendlyMessage: error.userFriendlyMessage,
+      });
     },
   );
 
