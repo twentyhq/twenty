@@ -33,19 +33,6 @@ const isBackslashEscaped = ({
   return backslashCount % 2 === 1;
 };
 
-const hasEscapedBrackets = ({
-  text,
-  reference,
-}: {
-  text: string;
-  reference: Pick<ChatReferenceMatch, 'index' | 'fullMatch'>;
-}): boolean =>
-  isBackslashEscaped({ text, index: reference.index }) ||
-  isBackslashEscaped({
-    text,
-    index: reference.index + reference.fullMatch.length - 2,
-  });
-
 const getInlineTextRaws = (tokens: Token[]): string[] =>
   tokens.flatMap((token) => {
     if (token.type === 'text') {
@@ -155,7 +142,7 @@ export const getChatReferencesInMarkdownText = ({
   references: ChatReferenceMatch[];
 }): ChatReferenceMatch[] => {
   const unescapedReferences = references.filter(
-    (reference) => !hasEscapedBrackets({ text, reference }),
+    (reference) => !isBackslashEscaped({ text, index: reference.index }),
   );
 
   if (unescapedReferences.length === 0) {

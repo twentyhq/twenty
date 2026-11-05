@@ -206,12 +206,16 @@ describe('protectChatReferencesForMarkdown', () => {
     ['an HTML tag', `<span title="${MIA_MENTION}">Mia</span>`],
     ['escaped brackets', `Type ${ESCAPED_MIA_MENTION} to mention`],
     ['an escaped opening bracket', `Type \\${MIA_MENTION} to mention`],
-    [
-      'an escaped closing bracket',
-      `Type ${MIA_MENTION.slice(0, -2)}\\]] to mention`,
-    ],
   ])('should leave a reference in %s unchanged', (_, text) => {
     expect(protectChatReferencesForMarkdown(text)).toBe(text);
+  });
+
+  it('should mark a reference whose closing bracket is escaped', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        `Type ${MIA_MENTION.slice(0, -2)}\\]] to mention`,
+      ),
+    ).toBe(`Type ${MARKER}${MIA_MENTION.slice(0, -2)}\\\\]] to mention`);
   });
 
   it('should mark only the occurrence outside code when a reference repeats', () => {
