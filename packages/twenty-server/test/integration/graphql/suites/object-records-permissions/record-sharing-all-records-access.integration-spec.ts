@@ -314,7 +314,7 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
-  it('should hand the records a removed member managed to the custodian', async () => {
+  it('should hand the records a removed member managed to the successor', async () => {
     await setShare({
       recordId: SHARED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
@@ -360,7 +360,7 @@ describe('Access to all records and ownership transfer', () => {
     try {
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.PHIL }),
@@ -397,7 +397,7 @@ describe('Access to all records and ownership transfer', () => {
 
       await getAppProviderByClassName<RecordShareOwnershipTransferService>(
         'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.JONY }),

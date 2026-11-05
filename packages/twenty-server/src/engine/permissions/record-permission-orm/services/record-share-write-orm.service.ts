@@ -139,20 +139,20 @@ export class RecordShareWriteOrmService {
             ),
           );
 
-          // The insert skips rows the custodian already holds, so raise those
+          // The insert skips rows the successor already holds, so raise those
           await executor.execute(
             compileNamedParameters(
-              `UPDATE ${recordShareTable} AS custodian
+              `UPDATE ${recordShareTable} AS successor
                SET "accessLevel" = :fullAccessLevel, "updatedAt" = NOW()
                FROM ${recordShareTable} AS departing
                WHERE ${isDepartingMemberShare('departing')} AND departing."accessLevel" = :fullAccessLevel
-                 AND custodian."objectMetadataId" = departing."objectMetadataId"
-                 AND custodian."recordId" = departing."recordId"
-                 AND custodian."rowCause" = departing."rowCause"
-                 AND custodian."principalType" = :principalType
-                 AND custodian."principalId" = :toWorkspaceMemberId
-                 AND custodian."accessLevel" <> :fullAccessLevel
-                 AND custodian."deletedAt" IS NULL`,
+                 AND successor."objectMetadataId" = departing."objectMetadataId"
+                 AND successor."recordId" = departing."recordId"
+                 AND successor."rowCause" = departing."rowCause"
+                 AND successor."principalType" = :principalType
+                 AND successor."principalId" = :toWorkspaceMemberId
+                 AND successor."accessLevel" <> :fullAccessLevel
+                 AND successor."deletedAt" IS NULL`,
               parameters,
             ),
           );
