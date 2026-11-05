@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 type SettingsAiAssistantChoiceContentProps = {
   value: Pick<
     AiChatAssistantProfile,
-    'avatarShape' | 'avatarColor' | 'avatarFace'
+    'avatarShape' | 'avatarColor' | 'avatarFace' | 'isAvatarAnimated'
   >;
   title: string;
   description: string;
@@ -70,6 +70,7 @@ export const SettingsAiAssistantChoiceContent = ({
         shape={value.avatarShape}
         color={value.avatarColor}
         face={value.avatarFace}
+        isAnimated={value.isAvatarAnimated}
         size={40}
       />
       {isCustomize && (
