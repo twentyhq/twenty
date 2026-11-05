@@ -40,6 +40,28 @@ describe('filterAndSortNavigationMenuItems', () => {
     targetRecordIdentifier: { id: 'workflow-record-id', name: 'My workflow' },
   } as unknown as NavigationMenuItem;
 
+  it('keeps native page items with a known key only', () => {
+    const workflowsNativePageItem = {
+      id: 'workflows-native-page-id',
+      type: NavigationMenuItemType.NATIVE_PAGE,
+      position: 0,
+      nativePageKey: 'workflows',
+    } as NavigationMenuItem;
+    const unknownNativePageItem = {
+      ...workflowsNativePageItem,
+      id: 'unknown-native-page-id',
+      nativePageKey: 'unknown',
+    } as NavigationMenuItem;
+
+    expect(
+      filterAndSortNavigationMenuItems(
+        [workflowsNativePageItem, unknownNativePageItem],
+        [],
+        [],
+      ),
+    ).toEqual([workflowsNativePageItem]);
+  });
+
   it('hides workflow record items', () => {
     expect(
       filterAndSortNavigationMenuItems(

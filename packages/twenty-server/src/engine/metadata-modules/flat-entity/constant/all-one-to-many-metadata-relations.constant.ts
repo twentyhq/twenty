@@ -314,6 +314,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   searchFieldMetadata: {},
   timelineActivityType: {},
   settingsMenuItem: {},
+  fieldMetadataOption: {},
   relatedRecordPath: {},
   validationRule: {},
   workflow: {},

@@ -177,6 +177,47 @@ describe('getNavigationMenuItemLabel', () => {
     });
   });
 
+  describe('when type is NATIVE_PAGE', () => {
+    it('should return the native page label when name is null', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'agents',
+        name: null,
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Agents',
+      );
+    });
+
+    it('should prefer a custom name', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
+        name: 'Automations',
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Automations',
+      );
+    });
+
+    it('should fall back to the native page label for a blank name', () => {
+      const item = {
+        ...baseItem,
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey: 'workflows',
+        name: '   ',
+      };
+
+      expect(getNavigationMenuItemLabel(item, objectMetadataItems, views)).toBe(
+        'Workflows',
+      );
+    });
+  });
+
   describe('when type is FOLDER', () => {
     it('should return the item name when present', () => {
       const item = {

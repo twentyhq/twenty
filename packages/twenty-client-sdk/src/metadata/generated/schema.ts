@@ -272,7 +272,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -871,6 +871,12 @@ export interface BillingMeteredProduct {
     __typename: 'BillingMeteredProduct'
 }
 
+export interface BillingPartnerCode {
+    isEditable: Scalars['Boolean']
+    partnerCode?: Scalars['String']
+    __typename: 'BillingPartnerCode'
+}
+
 export interface BillingPaymentIntent {
     clientSecret: Scalars['String']
     paymentIntentType: Scalars['String']
@@ -1239,6 +1245,7 @@ export interface CollectionHash {
 
 export interface CommandMenuItem {
     applicationId?: Scalars['UUID']
+    availabilityCoreObjectName?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
     availabilityType: CommandMenuItemAvailabilityType
     conditionalAvailabilityExpression?: Scalars['String']
@@ -2516,6 +2523,7 @@ export interface Mutation {
     sendMessageCampaign: SendMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
+    setBillingPartnerCode: BillingPartnerCode
     setEnterpriseKey: EnterpriseLicenseInfoDTO
     setRecordPrivate: RecordSharingDTO
     setRecordShare: RecordSharingDTO
@@ -2644,6 +2652,7 @@ export interface NavigationMenuItem {
     id: Scalars['UUID']
     link?: Scalars['String']
     name?: Scalars['String']
+    nativePageKey?: Scalars['String']
     pageLayoutId?: Scalars['UUID']
     position: Scalars['Float']
     targetObjectMetadataId?: Scalars['UUID']
@@ -2656,7 +2665,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW'
+export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -2785,6 +2794,17 @@ export interface ObjectRecordEventWithQueryIds {
 
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
 export type ObjectRecordGroupByDateGranularity = 'DAY' | 'DAY_OF_THE_WEEK' | 'MONTH' | 'MONTH_OF_THE_YEAR' | 'NONE' | 'QUARTER' | 'QUARTER_OF_THE_YEAR' | 'WEEK' | 'YEAR'
+
+export interface ObjectRecordsPermissions {
+    canDestroyAllRecords: Scalars['Boolean']
+    canReadAllRecords: Scalars['Boolean']
+    canSoftDeleteAllRecords: Scalars['Boolean']
+    canUpdateAllRecords: Scalars['Boolean']
+    objectMetadataId: Scalars['UUID']
+    restrictedFields: Scalars['JSON']
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissions
+    __typename: 'ObjectRecordsPermissions'
+}
 
 
 /** Onboarding status */
@@ -3072,6 +3092,7 @@ export interface Query {
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
     barChartData: BarChartData
+    billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
     callRecordingIdForCalendarEvent?: Scalars['UUID']
@@ -3400,6 +3421,16 @@ export interface RowLevelPermissionPredicateGroup {
 export type RowLevelPermissionPredicateGroupLogicalOperator = 'AND' | 'OR'
 
 export type RowLevelPermissionPredicateOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_OR_EQUAL' | 'IS' | 'IS_AFTER' | 'IS_BEFORE' | 'IS_EMPTY' | 'IS_IN_FUTURE' | 'IS_IN_PAST' | 'IS_NOT' | 'IS_NOT_EMPTY' | 'IS_NOT_NULL' | 'IS_RELATIVE' | 'IS_TODAY' | 'LESS_THAN_OR_EQUAL' | 'VECTOR_SEARCH'
+
+export interface RowLevelRecordsPermissions {
+    canDestroyRecords: Scalars['Boolean']
+    canReadRecords: Scalars['Boolean']
+    canSoftDeleteRecords: Scalars['Boolean']
+    canUpdateRecords: Scalars['Boolean']
+    predicateGroups: RowLevelPermissionPredicateGroup[]
+    predicates: RowLevelPermissionPredicate[]
+    __typename: 'RowLevelRecordsPermissions'
+}
 
 export type RunAgentMessageRole = 'assistant' | 'user'
 
@@ -3917,8 +3948,7 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
-    objectPermissions?: ObjectPermission[]
-    objectsPermissions?: ObjectPermission[]
+    objectRecordsPermissions?: ObjectRecordsPermissions[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -5247,6 +5277,13 @@ export interface BillingMeteredProductGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface BillingPartnerCodeGenqlSelection{
+    isEditable?: boolean | number
+    partnerCode?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingPaymentIntentGenqlSelection{
     clientSecret?: boolean | number
     paymentIntentType?: boolean | number
@@ -5637,6 +5674,7 @@ export interface CollectionHashGenqlSelection{
 
 export interface CommandMenuItemGenqlSelection{
     applicationId?: boolean | number
+    availabilityCoreObjectName?: boolean | number
     availabilityObjectMetadataId?: boolean | number
     availabilityType?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
@@ -5752,7 +5790,7 @@ export interface CreateCalendarEventOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CreateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {availabilityCoreObjectName?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,frontComponentId?: (Scalars['UUID'] | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),isPinned?: (Scalars['Boolean'] | null),label: Scalars['String'],navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null),workflowVersionId?: (Scalars['UUID'] | null)}
 
 export interface CreateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),handle: Scalars['String']}
 
@@ -5779,7 +5817,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -7151,6 +7189,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
+    setBillingPartnerCode?: (BillingPartnerCodeGenqlSelection & { __args: {partnerCode: Scalars['String']} })
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
     setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, principal: RecordSharePrincipalInput, target: RecordTargetInput} })
@@ -7281,6 +7320,7 @@ export interface NavigationMenuItemGenqlSelection{
     id?: boolean | number
     link?: boolean | number
     name?: boolean | number
+    nativePageKey?: boolean | number
     pageLayoutId?: boolean | number
     position?: boolean | number
     targetObjectMetadataId?: boolean | number
@@ -7436,6 +7476,18 @@ export interface ObjectRecordEventPropertiesGenqlSelection{
 export interface ObjectRecordEventWithQueryIdsGenqlSelection{
     objectRecordEvent?: ObjectRecordEventGenqlSelection
     queryIds?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectRecordsPermissionsGenqlSelection{
+    canDestroyAllRecords?: boolean | number
+    canReadAllRecords?: boolean | number
+    canSoftDeleteAllRecords?: boolean | number
+    canUpdateAllRecords?: boolean | number
+    objectMetadataId?: boolean | number
+    restrictedFields?: boolean | number
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissionsGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7747,6 +7799,7 @@ export interface QueryGenqlSelection{
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
+    billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
@@ -8106,6 +8159,17 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
 export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+
+export interface RowLevelRecordsPermissionsGenqlSelection{
+    canDestroyRecords?: boolean | number
+    canReadRecords?: boolean | number
+    canSoftDeleteRecords?: boolean | number
+    canUpdateRecords?: boolean | number
+    predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
+    predicates?: RowLevelPermissionPredicateGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface RunAgentInput {additionalInstructions?: (Scalars['String'] | null),agentUniversalIdentifier: Scalars['String'],input?: (RunAgentMessageInput[] | null),messages?: (RunAgentMessageInput[] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),thread?: (RunAgentThreadInput | null),waitForCompletion?: (Scalars['Boolean'] | null)}
 
@@ -8530,7 +8594,7 @@ export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateC
 
 export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),excludePrivateEvents?: (Scalars['Boolean'] | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
 
-export interface UpdateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
+export interface UpdateCommandMenuItemInput {availabilityCoreObjectName?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
 
 export interface UpdateEmailGroupChannelInput {displayName?: (Scalars['String'] | null),id: Scalars['UUID']}
 
@@ -8935,8 +8999,7 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
-    objectPermissions?: ObjectPermissionGenqlSelection
-    objectsPermissions?: ObjectPermissionGenqlSelection
+    objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -9976,6 +10039,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isBillingMeteredProduct = (obj?: { __typename?: any } | null): obj is BillingMeteredProduct => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
       return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPartnerCode_possibleTypes: string[] = ['BillingPartnerCode']
+    export const isBillingPartnerCode = (obj?: { __typename?: any } | null): obj is BillingPartnerCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPartnerCode"')
+      return BillingPartnerCode_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11204,6 +11275,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ObjectRecordsPermissions_possibleTypes: string[] = ['ObjectRecordsPermissions']
+    export const isObjectRecordsPermissions = (obj?: { __typename?: any } | null): obj is ObjectRecordsPermissions => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordsPermissions"')
+      return ObjectRecordsPermissions_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
     export const isOnboardingStepNavigation = (obj?: { __typename?: any } | null): obj is OnboardingStepNavigation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
@@ -11552,6 +11631,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isRowLevelPermissionPredicateGroup = (obj?: { __typename?: any } | null): obj is RowLevelPermissionPredicateGroup => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicateGroup"')
       return RowLevelPermissionPredicateGroup_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RowLevelRecordsPermissions_possibleTypes: string[] = ['RowLevelRecordsPermissions']
+    export const isRowLevelRecordsPermissions = (obj?: { __typename?: any } | null): obj is RowLevelRecordsPermissions => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelRecordsPermissions"')
+      return RowLevelRecordsPermissions_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12333,6 +12420,7 @@ export const enumAllMetadataName = {
    commandMenuItem: 'commandMenuItem' as const,
    connectionProvider: 'connectionProvider' as const,
    fieldMetadata: 'fieldMetadata' as const,
+   fieldMetadataOption: 'fieldMetadataOption' as const,
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,
    index: 'index' as const,
@@ -12875,6 +12963,7 @@ export const enumNavigationMenuItemType = {
    AGENT_CHAT_CHANNEL: 'AGENT_CHAT_CHANNEL' as const,
    FOLDER: 'FOLDER' as const,
    LINK: 'LINK' as const,
+   NATIVE_PAGE: 'NATIVE_PAGE' as const,
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,

@@ -348,6 +348,7 @@ export enum AllMetadataName {
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',
+  fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
@@ -1060,6 +1061,12 @@ export type BillingMeteredProduct = BillingProductDto & {
   prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
+export type BillingPartnerCode = {
+  __typename?: 'BillingPartnerCode';
+  isEditable: Scalars['Boolean']['output'];
+  partnerCode?: Maybe<Scalars['String']['output']>;
+};
+
 export type BillingPaymentIntent = {
   __typename?: 'BillingPaymentIntent';
   clientSecret: Scalars['String']['output'];
@@ -1483,6 +1490,7 @@ export type CollectionHash = {
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  availabilityCoreObjectName?: Maybe<Scalars['String']['output']>;
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
@@ -1658,6 +1666,7 @@ export type CreateCalendarEventOutput = {
 };
 
 export type CreateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
@@ -1774,6 +1783,7 @@ export type CreateNavigationMenuItemInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  nativePageKey?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
@@ -3723,6 +3733,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
@@ -4813,6 +4824,11 @@ export type MutationSetAppKeyValueArgs = {
 };
 
 
+export type MutationSetBillingPartnerCodeArgs = {
+  partnerCode: Scalars['String']['input'];
+};
+
+
 export type MutationSetEnterpriseKeyArgs = {
   enterpriseKey: Scalars['String']['input'];
 };
@@ -5373,6 +5389,7 @@ export type NavigationMenuItem = {
   id: Scalars['UUID']['output'];
   link?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  nativePageKey?: Maybe<Scalars['String']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -5388,6 +5405,7 @@ export enum NavigationMenuItemType {
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
+  NATIVE_PAGE = 'NATIVE_PAGE',
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
@@ -5568,6 +5586,17 @@ export enum ObjectRecordGroupByDateGranularity {
   WEEK = 'WEEK',
   YEAR = 'YEAR'
 }
+
+export type ObjectRecordsPermissions = {
+  __typename?: 'ObjectRecordsPermissions';
+  canDestroyAllRecords: Scalars['Boolean']['output'];
+  canReadAllRecords: Scalars['Boolean']['output'];
+  canSoftDeleteAllRecords: Scalars['Boolean']['output'];
+  canUpdateAllRecords: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  restrictedFields: Scalars['JSON']['output'];
+  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+};
 
 /** Onboarding status */
 export enum OnboardingStatus {
@@ -5922,6 +5951,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
+  billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -6881,6 +6911,16 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RowLevelRecordsPermissions = {
+  __typename?: 'RowLevelRecordsPermissions';
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  predicateGroups: Array<RowLevelPermissionPredicateGroup>;
+  predicates: Array<RowLevelPermissionPredicate>;
+};
+
 export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
@@ -7506,6 +7546,7 @@ export type UpdateCalendarChannelInputUpdates = {
 };
 
 export type UpdateCommandMenuItemInput = {
+  availabilityCoreObjectName?: InputMaybe<Scalars['String']['input']>;
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   engineComponentKey?: InputMaybe<EngineComponentKey>;
@@ -8329,8 +8370,7 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
-  objectsPermissions?: Maybe<Array<ObjectPermission>>;
+  objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];

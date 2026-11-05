@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  type ObjectsPermissions,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -12,18 +8,19 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const resolveTimelineActivityObjectColumnNames = ({
   flatObjectMetadata,
-  objectsPermissions,
+  recordsPermissions,
   flatFieldMetadataMaps,
 }: {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string[] => {
   const restrictedFields =
-    objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
+    recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields ?? {};
 
   return flatObjectMetadata.fieldIds.flatMap((fieldId) => {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -64,7 +61,7 @@ const resolveTimelineActivityObjectColumnNames = ({
 export const addTimelineActivityObjectColumnsToSelect = ({
   select,
   flatObjectMetadata,
-  objectsPermissions,
+  recordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
@@ -73,7 +70,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
     FlatObjectMetadata,
     'id' | 'nameSingular' | 'fieldIds'
   >;
-  objectsPermissions: ObjectsPermissions;
+  recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): CommonSelectedFields => {
@@ -85,7 +82,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
   ) {
     for (const columnName of resolveTimelineActivityObjectColumnNames({
       flatObjectMetadata,
-      objectsPermissions,
+      recordsPermissions,
       flatFieldMetadataMaps,
     })) {
       extendedSelect[columnName] = true;
@@ -121,7 +118,7 @@ export const addTimelineActivityObjectColumnsToSelect = ({
       addTimelineActivityObjectColumnsToSelect({
         select: relationSelect,
         flatObjectMetadata: targetFlatObjectMetadata,
-        objectsPermissions,
+        recordsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });

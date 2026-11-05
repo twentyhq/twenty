@@ -12,6 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -117,7 +118,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
 };
 
 const outerQueryBuilder = {
-  objectRecordsPermissions: {},
+  recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
 } as unknown as WorkspaceSelectQueryBuilder;
 
 const recordFilterEntries = (
@@ -449,9 +450,12 @@ describe('GraphqlQueryFilterConditionParser', () => {
 
     it('rejects a referenced field the role cannot read', () => {
       const restrictedQueryBuilder = {
-        objectRecordsPermissions: {
-          [companyObjectMetadata.id]: {
-            restrictedFields: { [createdAtField.id]: { canRead: false } },
+        recordsPermissions: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: {
+            [companyObjectMetadata.id]: {
+              restrictedFields: { [createdAtField.id]: { canRead: false } },
+            },
           },
         },
       } as unknown as WorkspaceSelectQueryBuilder;

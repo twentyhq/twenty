@@ -215,7 +215,9 @@ export const PageChangeEffect = () => {
     }
 
     switch (true) {
-      case isMatchingLocation(location, AppPath.RecordIndexPage): {
+      case isMatchingLocation(location, AppPath.RecordIndexPage) ||
+        isMatchingLocation(location, AppPath.WorkflowIndexPage) ||
+        isMatchingLocation(location, AppPath.AgentIndexPage): {
         resetFocusStackToRecordIndex();
         break;
       }

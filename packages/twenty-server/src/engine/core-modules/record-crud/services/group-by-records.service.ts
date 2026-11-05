@@ -49,7 +49,7 @@ export class GroupByRecordsService {
         queryRunnerContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions,
+        recordsPermissions,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
@@ -60,7 +60,7 @@ export class GroupByRecordsService {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           restrictedFields:
-            objectsPermissions[flatObjectMetadata.id]?.restrictedFields,
+            recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields,
         });
 
       let aggregateFieldKey: string;

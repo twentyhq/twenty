@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  type ObjectsPermissions,
+  type ObjectRecordsOperationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,20 +16,13 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
-
-export type OperationType =
-  | 'select'
-  | 'insert'
-  | 'update'
-  | 'delete'
-  | 'restore'
-  | 'soft-delete';
 
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
-  operationType: OperationType;
-  objectsPermissions: ObjectsPermissions;
+  operationType: ObjectRecordsOperationType;
+  recordsPermissions: RoleRecordsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
@@ -40,7 +33,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
 export const validateOperationIsPermittedOrThrow = ({
   entityName,
   operationType,
-  objectsPermissions,
+  recordsPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   objectIdByNameSingular,
@@ -73,7 +66,8 @@ export const validateOperationIsPermittedOrThrow = ({
     flatFieldMetadataMaps,
   );
 
-  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
+  const permissionsForEntity =
+    recordsPermissions.objects[objectMetadataIdForEntity];
 
   const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
 
@@ -101,9 +95,9 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         const rlsFieldMetadataIds = new Set(
-          (permissionsForEntity?.rowLevelPermissionPredicates ?? []).map(
-            (predicate) => predicate.fieldMetadataId,
-          ),
+          (
+            permissionsForEntity?.rowLevelRecordsPermissions?.predicates ?? []
+          ).map((predicate) => predicate.fieldMetadataId),
         );
 
         const updatedColumnsWithoutRlsFields = updatedColumns.filter(

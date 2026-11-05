@@ -4,7 +4,6 @@ import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-ite
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDeleteSelectedCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows';
 import { getDeleteCoreWorkflowsConfirmationContent } from '@/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent';
-import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -25,9 +24,7 @@ export const DeleteCoreWorkflowsCommand = () => {
       return;
     }
     closeSidePanelMenu();
-    navigate(AppPath.RecordIndexPage, {
-      objectNamePlural: StandardObjectNamePlural.Workflow,
-    });
+    navigate(AppPath.WorkflowIndexPage);
   };
 
   const { title, subtitle, confirmButtonText } =
